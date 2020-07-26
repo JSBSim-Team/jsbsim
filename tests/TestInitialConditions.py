@@ -20,7 +20,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math, shutil, gc
+import os, math, shutil
 import xml.etree.ElementTree as et
 import pandas as pd
 from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest
@@ -225,7 +225,6 @@ class TestInitialConditions(JSBSimTestCase):
             if var['tag'] == 'psi':
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
-            print('==Test== In {}: {} should be {} but found {}'.format(f, var['tag'], value, csv_value))
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
                                    msg="In {}: {} should be {} but found {}".format(f, var['tag'], value, csv_value))
 
@@ -320,11 +319,6 @@ class TestInitialConditions(JSBSimTestCase):
 
                     self.CheckICValues(self.GetVariables(latitude_tag),
                                        'IC%d' % (i,), fdm, position_tag)
-
-                    # Kill the fdm so that Windows do not block further access to BallOut.csv
-                    fdm = None
-                    self.delete_fdm()
-                    gc.collect()
 
     def test_set_initial_geodetic_latitude(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
