@@ -225,6 +225,7 @@ class TestInitialConditions(JSBSimTestCase):
             if var['tag'] == 'psi':
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
+            print('==Test== In {}: {} should be {} but found {}'.format(f, var['tag'], value, csv_value))
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
                                    msg="In {}: {} should be {} but found {}".format(f, var['tag'], value, csv_value))
 
