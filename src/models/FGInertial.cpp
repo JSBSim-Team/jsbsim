@@ -47,7 +47,7 @@ CLASS IMPLEMENTATION
 
 
 FGInertial::FGInertial(FGFDMExec* fgex)
-  : FGModel(fgex), RadiusReference(20925646.32546)
+  : FGModel(fgex)
 {
   Name = "FGInertial";
 

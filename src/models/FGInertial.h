@@ -83,7 +83,6 @@ public:
   void SetOmegaPlanet(double rate) {
     vOmegaPlanet = FGColumnVector3(0.0, 0.0, rate);
   }
-  double GetRefRadius(void) const {return RadiusReference;}
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
 
@@ -172,7 +171,6 @@ private:
 
   FGColumnVector3 vOmegaPlanet;
   FGColumnVector3 vGravAccel;
-  double RadiusReference;
   double GM;
   double C2_0; // WGS84 value for the C2,0 coefficient
   double J2;   // WGS84 value for J2
