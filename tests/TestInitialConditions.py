@@ -221,7 +221,7 @@ class TestInitialConditions(JSBSimTestCase):
                 continue
 
             value = var['value']
-            csv_value = ref[var['CSV_header']][0]
+            csv_value = float(ref[var['CSV_header']][0])
             if var['tag'] == 'psi':
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
