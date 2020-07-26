@@ -221,12 +221,12 @@ class TestInitialConditions(JSBSimTestCase):
                 continue
 
             value = var['value']
-            csv_value = ref[var['CSV_header']][0]
+            csv_value = float(ref[var['CSV_header']][0])
             if var['tag'] == 'psi':
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
-                                   msg="In %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
+                                   msg="In {}: {} should be {} but found {}".format(f, var['tag'], value, csv_value))
 
     def GetVariables(self, lat_tag):
         vars = [{'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',

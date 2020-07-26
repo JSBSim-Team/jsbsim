@@ -142,7 +142,7 @@ jobs:
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: Windows.logs
+          name: Windows_MinGW32.logs
           path: build/Testing/Temporary
 
   Windows-MSVC:
@@ -233,7 +233,7 @@ jobs:
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: Windows.logs
+          name: Windows_MSVC.logs
           path: logs
 
     # Release files
