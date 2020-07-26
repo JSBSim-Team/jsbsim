@@ -522,16 +522,15 @@ void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
 
 double FGPropagate::GetAltitudeASL() const
 {
-  return VState.vLocation.GetGeodAltitude();
+  return VState.vLocation.GetRadius() - VState.vLocation.GetSeaLevelRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetAltitudeASL(double altASL)
 {
-  double geodLat = VState.vLocation.GetGeodLatitudeRad();
-  double longitude = VState.vLocation.GetLongitude();
-  VState.vLocation.SetPositionGeodetic(longitude, geodLat, altASL);
+  double slr = VState.vLocation.GetSeaLevelRadius();
+  VState.vLocation.SetRadius(slr + altASL);
   UpdateVehicleState();
 }
 

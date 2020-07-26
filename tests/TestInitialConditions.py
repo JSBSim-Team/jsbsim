@@ -328,12 +328,12 @@ class TestInitialConditions(JSBSimTestCase):
         fdm.load_script(script_path)
         fdm.set_output_directive(output_file)
 
-        alt = fdm['ic/h-sl-ft']
+        alt = fdm['ic/h-agl-ft']
         glat = fdm['ic/lat-geod-deg'] - 30.
         fdm['ic/lat-geod-deg'] = glat
         fdm.run_ic()
 
-        self.assertAlmostEqual(fdm['ic/h-sl-ft'], alt)
+        self.assertAlmostEqual(fdm['ic/h-agl-ft'], alt)
         self.assertAlmostEqual(fdm['ic/lat-geod-deg'], glat)
         self.assertAlmostEqual(fdm['ic/lat-geod-rad'], glat*math.pi/180.)
         self.assertAlmostEqual(fdm['position/lat-geod-deg'], glat)
