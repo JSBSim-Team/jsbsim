@@ -714,7 +714,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
     break;
   }
 
-  altitudeASL = position.GetGeodAltitude();
+  altitudeASL = GetAltitudeASLFtIC();
   soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   rho = Atmosphere->GetDensity(altitudeASL);
   pressure = Atmosphere->GetPressure(altitudeASL);
@@ -763,22 +763,42 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
       double b = fdmex->GetInertial()->GetSemiminor();
       double e2 = 1.0-b*b/(a*a);
       double geodLatitude = position.GetGeodLatitudeRad();
-      double tanGeodLat = tan(geodLatitude);
       double cosGeodLat = cos(geodLatitude);
       double sinGeodLat = sin(geodLatitude);
       double N = a/sqrt(1-e2*sinGeodLat*sinGeodLat);
       double n = e2;
       double prev_n = 1.0;
       int iter = 0;
-      while (fabs(n-prev_n) > 1E-15 && iter < 10) {
-        double tanLat = (1-n)*tanGeodLat;
-        double cos2Lat = 1./(1.+tanLat*tanLat);
-        double slr = b/sqrt(1.-e2*cos2Lat);
-        double R = slr + alt;
-        double x = R*sqrt(cos2Lat); // OK, cos(latitude) is always positive.
-        prev_n = n;
-        n = e2*N*cosGeodLat/x;
-        iter++;
+      // Use tan or cotan to solve the geodetic altitude to avoid floating point
+      // exceptions.
+      if (cosGeodLat > sinGeodLat){ // tan() can safely be used.
+        double tanGeodLat = sinGeodLat/cosGeodLat;
+        double x0 = N*e2*cosGeodLat;
+        while (fabs(n-prev_n) > 1E-15 && iter < 10) {
+          double tanLat = (1-n)*tanGeodLat;
+          double cos2Lat = 1./(1.+tanLat*tanLat);
+          double slr = b/sqrt(1.-e2*cos2Lat);
+          double R = slr + alt;
+          double x = R*sqrt(cos2Lat); // OK, cos(latitude) is always positive.
+          prev_n = n;
+          n = x0/x;
+          iter++;
+        }
+      }
+      else { // better use cotan (i.e. 1./tan())
+        double cotanGeodLat = cosGeodLat/sinGeodLat;
+        double z0 = N*e2*sinGeodLat;
+        while (fabs(n-prev_n) > 1E-15 && iter < 10) {
+          double cotanLat = cotanGeodLat/(1-n);
+          double sin2Lat = 1./(1.+cotanLat*cotanLat);
+          double cos2Lat = 1.-sin2Lat;
+          double slr = b/sqrt(1.-e2*cos2Lat);
+          double R = slr + alt;
+          double z = R*sign(cotanLat)*sqrt(sin2Lat);
+          prev_n = n;
+          n = z0/(z0+z);
+          iter++;
+        }
       }
       
       double geodAlt = N*(e2/n-1.);
