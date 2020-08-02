@@ -221,12 +221,12 @@ class TestInitialConditions(JSBSimTestCase):
                 continue
 
             value = var['value']
-            csv_value = ref[var['CSV_header']][0]
+            csv_value = float(ref[var['CSV_header']][0])
             if var['tag'] == 'psi':
                 if abs(csv_value - 360.0) <= 1E-8:
                     csv_value = 0.0
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
-                                   msg="In %s: %s should be %f but found %f" % (f, var['tag'], value, csv_value))
+                                   msg="In {}: {} should be {} but found {}".format(f, var['tag'], value, csv_value))
 
     def GetVariables(self, lat_tag):
         vars = [{'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
@@ -328,12 +328,12 @@ class TestInitialConditions(JSBSimTestCase):
         fdm.load_script(script_path)
         fdm.set_output_directive(output_file)
 
-        alt = fdm['ic/h-sl-ft']
+        alt = fdm['ic/h-agl-ft']
         glat = fdm['ic/lat-geod-deg'] - 30.
         fdm['ic/lat-geod-deg'] = glat
         fdm.run_ic()
 
-        self.assertAlmostEqual(fdm['ic/h-sl-ft'], alt)
+        self.assertAlmostEqual(fdm['ic/h-agl-ft'], alt)
         self.assertAlmostEqual(fdm['ic/lat-geod-deg'], glat)
         self.assertAlmostEqual(fdm['ic/lat-geod-rad'], glat*math.pi/180.)
         self.assertAlmostEqual(fdm['position/lat-geod-deg'], glat)

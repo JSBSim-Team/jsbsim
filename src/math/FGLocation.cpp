@@ -271,11 +271,9 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 double FGLocation::GetSeaLevelRadius(void) const
 {
   assert(mEllipseSet);
-  if (!mCacheValid) ComputeDerivedUnconditional();
-
-  double sinGeodLat = sin(mGeodLat);
-
-  return a/sqrt(1+e2*sinGeodLat*sinGeodLat/ec2);
+  ComputeDerived();
+  double cosLat = GetCosLatitude();
+  return a*ec/sqrt(1.0-e2*cosLat*cosLat);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

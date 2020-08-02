@@ -51,8 +51,6 @@ double FGDefaultGroundCallback::GetAGLevel(double t, const FGLocation& loc,
   double longitude = l.GetLongitude();
   normal = FGColumnVector3(cosLat*cos(longitude), cosLat*sin(longitude),
                            sin(latitude));
-  double loc_radius = loc.GetRadius();  // Get the radius of the given location
-                                        // (e.g. the CG)
   contact.SetEllipse(a, b);
   contact.SetPositionGeodetic(longitude, latitude, mTerrainElevation);
   return l.GetGeodAltitude() - mTerrainElevation;

@@ -521,7 +521,7 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/cosine-gust/X-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustXComponent);
   PropertyManager->Tie("atmosphere/cosine-gust/Y-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustYComponent);
   PropertyManager->Tie("atmosphere/cosine-gust/Z-velocity-ft_sec", this, (Ptr)0L, &FGWinds::GustZComponent);
-  PropertyManager->Tie("atmosphere/cosine-gust/start", this, (PMFt)0L, (PMFi)&FGWinds::StartGust);
+  PropertyManager->Tie("atmosphere/cosine-gust/start", this, static_cast<bool (FGWinds::*)(void) const>(nullptr), &FGWinds::StartGust);
 
   // User-specified Up- Down-burst parameters
   PropertyManager->Tie("atmosphere/updownburst/number-of-cells", this, (PMFt)0L, &FGWinds::NumberOfUpDownburstCells);

@@ -47,7 +47,7 @@ CLASS IMPLEMENTATION
 
 
 FGInertial::FGInertial(FGFDMExec* fgex)
-  : FGModel(fgex), RadiusReference(20925646.32546)
+  : FGModel(fgex)
 {
   Name = "FGInertial";
 
@@ -74,7 +74,7 @@ FGInertial::FGInertial(FGFDMExec* fgex)
   */
 
   vOmegaPlanet = { 0.0, 0.0, RotationRate };
-  GroundCallback.reset(new FGDefaultGroundCallback(RadiusReference, RadiusReference));
+  GroundCallback.reset(new FGDefaultGroundCallback(a, b));
 
   bind();
 
