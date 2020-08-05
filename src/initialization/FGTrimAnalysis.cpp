@@ -725,7 +725,7 @@ bool FGTrimAnalysis::EditState( TaControl new_control, double new_initvalue, dou
       if( tac->GetControlType() == new_control ) {
         vTrimAnalysisControls.insert(iControls,1,new FGTrimAnalysisControl(fdmex,fgic,new_control));
         delete tac;
-        vTrimAnalysisControls.erase(iControls+1);
+        iControls = vTrimAnalysisControls.erase(iControls+1);
         result=true;
         break;
       }
