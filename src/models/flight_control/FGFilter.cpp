@@ -212,7 +212,7 @@ void FGFilter::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
 
-      for (int i=1; i <= 7; i++) {
+      for (int i=1; i < 7; i++) {
         if (!C[i]) break;
 
         cout << "      C[" << i << "]";
