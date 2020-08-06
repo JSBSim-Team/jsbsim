@@ -697,6 +697,8 @@ bool FGTrimAnalysis::RemoveControl( TaControl control ) {
   bool result=false;
 
   mode = taCustom;
+  
+  #error TODO: Iterator is used after erase(). See GH issue #309
   vector <FGTrimAnalysisControl*>::iterator iControls = vTrimAnalysisControls.begin();
   while (iControls != vTrimAnalysisControls.end()) {
       tac=*iControls;
