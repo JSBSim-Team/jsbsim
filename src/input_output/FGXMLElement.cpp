@@ -29,7 +29,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <sstream>  // for the variadic assembling of error messages.
-#include <stdexcept>  // using domain_error, invalid_argument, and invalid_length.
+#include <stdexcept>  // using domain_error, invalid_argument, and length_error.
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
 
@@ -290,7 +290,7 @@ double Element::GetAttributeValueAsNumber(const string& attr)
     string const log_message{_concat_to_string(
       ReadFrom(), "Expecting numeric attribute value, but got no data")};
     cerr << log_message << endl;
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   }
   else {
     double number=0;
@@ -362,7 +362,7 @@ double Element::GetDataAsNumber(void)
     string const log_message{_concat_to_string(
       ReadFrom(), "Expected numeric value, but got no data")};
     cerr << log_message << endl;
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   } else {
     cerr << ReadFrom() << "Attempting to get single data value in element "
          << "<" << name << ">" << endl
@@ -372,7 +372,7 @@ double Element::GetDataAsNumber(void)
     string const log_message{_concat_to_string(
       ReadFrom(), "Attempting to get single data value in element ", "<", name, ">",
       " from multiple lines (", data_lines.size(), ").")};
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   }
 }
 
@@ -442,7 +442,7 @@ double Element::FindElementValueAsNumber(const string& el)
     string const log_message{_concat_to_string(
       ReadFrom(), "Attempting to get non-existent element ", el)};
     cerr << log_message << endl;
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   }
 }
 
@@ -490,7 +490,7 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
     string const log_message{_concat_to_string(
       ReadFrom(), "Attempting to get non-existent element ", el)};
     cerr << log_message << endl;
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   }
 
   string supplied_units = element->GetAttributeValue("unit");
@@ -557,7 +557,7 @@ double Element::FindElementValueAsNumberConvertFromTo( const string& el,
     string const log_message{_concat_to_string(
       ReadFrom(), "Attempting to get non-existent element ", el)};
     cerr << log_message << endl;
-    throw invalid_length(log_message);
+    throw length_error(log_message);
   }
 
   if (!supplied_units.empty()) {
