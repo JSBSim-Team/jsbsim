@@ -287,10 +287,10 @@ double Element::GetAttributeValueAsNumber(const string& attr)
   string attribute = GetAttributeValue(attr);
 
   if (attribute.empty()) {
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Expecting numeric attribute value, but got no data")};
-    cerr << log_message << endl;
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Expecting numeric attribute value, but got no data";
+    cerr << s.str() << endl;
+    throw length_error(s.str());
   }
   else {
     double number=0;
