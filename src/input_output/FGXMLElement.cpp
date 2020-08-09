@@ -28,7 +28,7 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <sstream>  // for the variadic assembling of error messages.
+#include <sstream>  // for assembling the error messages / what of exceptions.
 #include <stdexcept>  // using domain_error, invalid_argument, and length_error.
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
@@ -43,19 +43,6 @@ namespace JSBSim {
 
 bool Element::converterIsInitialized = false;
 map <string, map <string, double> > Element::convert;
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-HELPER FUNCTIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-template <typename... T>
-std::string _concat_to_string(T&&... ts) {
-    std::stringstream s;
-    // in C++17 below statement can be simply: (s << ... << std::forward<T>(ts));
-    int dummy[] = { 0, ((s << std::forward<T>(ts)), 0)... };  // C++11 version with perfect forwarding
-    static_cast<void>(dummy); // Avoid warning for unused variable in C++11 (can drop in C++17)
-    return s.str();
-}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -297,10 +284,10 @@ double Element::GetAttributeValueAsNumber(const string& attr)
     if (is_number(trim(attribute)))
       number = atof(attribute.c_str());
     else {
-      string const log_message{_concat_to_string(
-        ReadFrom(), "Expecting numeric attribute value, but got: ", attribute)};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << ReadFrom() << "Expecting numeric attribute value, but got: " << attribute;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
 
     return (number);
@@ -351,28 +338,29 @@ double Element::GetDataAsNumber(void)
     if (is_number(trim(data_lines[0])))
       number = atof(data_lines[0].c_str());
     else {
-      string const log_message{_concat_to_string(
-        ReadFrom(), "Expected numeric value, but got: ", data_lines[0])};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << ReadFrom() << "Expected numeric value, but got: " << data_lines[0];
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
 
     return number;
   } else if (data_lines.size() == 0) {
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Expected numeric value, but got no data")};
-    cerr << log_message << endl;
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Expected numeric value, but got no data";
+    cerr << s.str() << endl;
+    throw length_error(s.str());
   } else {
     cerr << ReadFrom() << "Attempting to get single data value in element "
          << "<" << name << ">" << endl
          << " from multiple lines:" << endl;
     for(unsigned int i=0; i<data_lines.size(); ++i)
       cerr << data_lines[i] << endl;
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Attempting to get single data value in element ", "<", name, ">",
-      " from multiple lines (", data_lines.size(), ").")};
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get single data value in element "
+      << "<" << name << ">"
+      << " from multiple lines (" << data_lines.size() << ").";
+    throw length_error(s.str());
   }
 }
 
@@ -439,10 +427,10 @@ double Element::FindElementValueAsNumber(const string& el)
     value = DisperseValue(element, value);
     return value;
   } else {
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Attempting to get non-existent element ", el)};
-    cerr << log_message << endl;
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get non-existent element " << el;
+    cerr << s.str() << endl;
+    throw length_error(s.str());
   }
 }
 
@@ -487,26 +475,28 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   Element* element = FindElement(el);
 
   if (!element) {
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Attempting to get non-existent element ", el)};
-    cerr << log_message << endl;
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get non-existent element " << el;
+    cerr << s.str() << endl;
+    throw length_error(s.str());
   }
 
   string supplied_units = element->GetAttributeValue("unit");
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      string const log_message{_concat_to_string(
-        element->ReadFrom(), "Supplied unit: \"", supplied_units, "\" does not exist (typo?).")};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" does not exist (typo?).";
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      string const log_message{_concat_to_string(
-        element->ReadFrom(), "Supplied unit: \"", supplied_units, "\" cannot be converted to ", target_units)};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" cannot be converted to " << target_units;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
   }
 
@@ -554,26 +544,26 @@ double Element::FindElementValueAsNumberConvertFromTo( const string& el,
   Element* element = FindElement(el);
 
   if (!element) {
-    string const log_message{_concat_to_string(
-      ReadFrom(), "Attempting to get non-existent element ", el)};
-    cerr << log_message << endl;
-    throw length_error(log_message);
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get non-existent element " << el;
+    cerr << s.str() << endl;
+    throw length_error(s.str());
   }
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      string const log_message{_concat_to_string(
-        element->ReadFrom(), "Supplied unit: \"", supplied_units,
-        "\" does not exist (typo?).")};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" does not exist (typo?).";
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      string const log_message{_concat_to_string(
-        element->ReadFrom(), "Supplied unit: \"", supplied_units,
-        "\" cannot be converted to ", target_units)};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" cannot be converted to " << target_units;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
   }
 
@@ -598,17 +588,18 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      string const log_message{_concat_to_string(
-        ReadFrom(), "Supplied unit: \"", supplied_units, "\" does not exist (typo?).")};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" does not exist (typo?).";
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      string const log_message{_concat_to_string(
-        ReadFrom(), "Supplied unit: \"", supplied_units, "\" cannot be converted to ",
-        target_units)};
-      cerr << log_message << endl;
-      throw invalid_argument(log_message);
+      std::stringstream s;
+      s << ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" cannot be converted to " << target_units;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
     }
   }
 
@@ -683,10 +674,10 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
         value = (val + disp * urn)*(fabs(urn)/urn);
       }
     } else {
-      string const log_message{_concat_to_string(
-        ReadFrom(), "Unknown dispersion type", attType)};
-      cerr << log_message << endl;
-      throw domain_error(log_message);
+      std::stringstream s;
+      s << ReadFrom() << "Unknown dispersion type" << attType;
+      cerr << s.str() << endl;
+      throw domain_error(s.str());
     }
 
   }
