@@ -12,7 +12,6 @@ for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,5))))" | grep -q '1'; then
         "${PYBIN}/pip" install cython numpy
-        cmake .. # Generate jsbsim.pyx and setup.py
         "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
         "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
     fi
