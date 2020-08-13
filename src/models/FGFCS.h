@@ -538,7 +538,7 @@ public:
       @return true if succesful */
   bool Load(Element* el);
 
-  SGPath FindFullPathName(const SGPath& path) const;
+  SGPath FindFullPathName(const SGPath& path) const override;
 
   void AddThrottle(void);
   double GetDt(void) const;

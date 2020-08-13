@@ -107,7 +107,7 @@ public:
   /** Generate the output. This is a pure method so it must be implemented by
       the classes that inherits from FGOutputFile.
    */
-  void Print(void) = 0;
+  void Print(void) override = 0;
 
 protected:
   SGPath Filename;
