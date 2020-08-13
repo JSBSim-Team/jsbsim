@@ -195,7 +195,7 @@ public:
       @param el XMLElement that is pointing to the output directives
       @param dir optional directory path to load included files from
       @result true if the execution succeeded. */
-  virtual bool Load(Element* el, const SGPath& dir = SGPath());
+  bool Load(Element* el, const SGPath& dir = SGPath());
   /** Load the output directives and adds a new output instance to the Output
       Manager list. Unlike the Load() method, the new output instance is not
       generated from output directives read in a XML file but from a list of

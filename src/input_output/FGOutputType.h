@@ -96,7 +96,7 @@ public:
   FGOutputType(FGFDMExec* fdmex);
 
   /// Destructor
-  virtual ~FGOutputType();
+  ~FGOutputType() override;
 
   /** Set the idx for this output instance
       @param idx ID of the output instance that is constructed
@@ -138,7 +138,7 @@ public:
   virtual bool Load(Element* el);
 
   /// Init the output model according to its configitation.
-  virtual bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Executes the output directives (implement the FGModel interface).
       This method checks that the current time step matches the output
@@ -209,7 +209,7 @@ protected:
   FGExternalReactions* ExternalReactions;
   FGBuoyantForces* BuoyantForces;
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

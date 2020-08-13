@@ -80,9 +80,9 @@ class FGGroundReactions : public FGModel, public FGSurface
 {
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions(void);
+  ~FGGroundReactions(void) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
   /** Runs the Ground Reactions model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
       @param Holding if true, the executive has been directed to hold the sim from 
@@ -90,8 +90,8 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
-  virtual bool Load(Element* el);
+  bool Run(bool Holding) override;
+  bool Load(Element* el);
   const FGColumnVector3& GetForces(void) const {return vForces;}
   double GetForces(int idx) const {return vForces(idx);}
   const FGColumnVector3& GetMoments(void) const {return vMoments;}
@@ -130,7 +130,7 @@ private:
   double DsCmd;
 
   void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -192,9 +192,9 @@ public:
       @param Executive a pointer to the parent executive object */
   FGFCS(FGFDMExec*);
   /// Destructor
-  ~FGFCS();
+  ~FGFCS() override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Runs the Flight Controls model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -203,7 +203,7 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
   /// @name Pilot input command retrieval
   //@{
@@ -536,7 +536,7 @@ public:
       Load() is called from FGFDMExec.
       @param el pointer to the Element instance
       @return true if succesful */
-  virtual bool Load(Element* el);
+  bool Load(Element* el);
 
   SGPath FindFullPathName(const SGPath& path) const;
 
@@ -573,7 +573,7 @@ private:
   Channels SystemChannels;
   void bind(void);
   void bindThrottle(unsigned int);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 
