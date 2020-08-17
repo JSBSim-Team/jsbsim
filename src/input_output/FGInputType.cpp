@@ -72,7 +72,7 @@ void FGInputType::SetIdx(unsigned int idx)
 bool FGInputType::Load(Element* element)
 {
   // Perform base class Load.
-  if(!FGModel::Load(element, true))
+  if(!FGModel::Upload(element, true))
     return false;
 
   // no common attributes yet (see FGOutputType for example

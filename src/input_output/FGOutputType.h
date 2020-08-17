@@ -135,7 +135,7 @@ public:
   /** Init the output directives from an XML file (implement the FGModel interface).
       @param element XML Element that is pointing to the output directives
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Init the output model according to its configitation.
   bool InitModel(void) override;

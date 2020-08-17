@@ -365,7 +365,7 @@ bool FGPropulsion::Load(Element* el)
   Name = "Propulsion Model: " + el->GetAttributeValue("name");
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(el, true))
+  if (!FGModel::Upload(el, true))
     return false;
 
   // Process tank definitions first to establish the number of fuel tanks

@@ -117,7 +117,7 @@ bool FGBuoyantForces::Load(Element *document)
   Debug(2);
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   gas_cell_element = document->FindElement("gas_cell");

@@ -58,7 +58,7 @@ FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 bool FGExternalReactions::Load(Element* el)
 {
   // Call the base class Load() function to load interface properties.
-  if (!FGModel::Load(el, true))
+  if (!FGModel::Upload(el, true))
     return false;
 
   Debug(2);

@@ -482,7 +482,7 @@ bool FGFCS::Load(Element* document)
   }
 
   // Load interface properties from document
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   Name += document->GetAttributeValue("name");

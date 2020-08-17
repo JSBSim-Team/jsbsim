@@ -152,7 +152,7 @@ bool FGGroundReactions::Load(Element* document)
   Debug(2);
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   unsigned int numContacts = document->GetNumElements("contact");

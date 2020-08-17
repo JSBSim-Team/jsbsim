@@ -89,7 +89,7 @@ public:
   /** Init the input directives from an XML file (implement the FGModel interface).
       @param element XML Element that is pointing to the input directives
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Init the input model according to its configitation.
   bool InitModel(void) override;

@@ -102,12 +102,14 @@ protected:
   unsigned int rate;
   std::string Name;
 
-  /** Loads this model.
+  /** Uploads this model in memory.
+      Uploads the model in memory if its contents are contained in a separate
+      file.
       @param el      a pointer to the element
       @param preLoad true if model functions and local properties must be
                      preloaded.
       @return true if model is successfully loaded*/
-  bool Load(Element* el, bool preLoad);
+  bool Upload(Element* el, bool preLoad);
 
   virtual void Debug(int from);
 
