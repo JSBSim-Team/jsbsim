@@ -121,7 +121,7 @@ public:
       Characteristics of the propulsion system are read in from the config file.
       @param el pointer to an XML element that contains the engine information.
       @return true if successfully loaded, otherwise false */
-  bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Retrieves the number of engines defined for the aircraft.
   unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}

@@ -95,6 +95,7 @@ public:
   void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
   virtual SGPath FindFullPathName(const SGPath& path) const;
   const std::string& GetName(void) { return Name; }
+  virtual bool Load(Element* el) { return true; }
 
 protected:
   unsigned int exe_ctr;
@@ -106,7 +107,7 @@ protected:
       @param preLoad true if model functions and local properties must be
                      preloaded.
       @return true if model is successfully loaded*/
-  virtual bool Load(Element* el, bool preLoad);
+  bool Load(Element* el, bool preLoad);
 
   virtual void Debug(int from);
 

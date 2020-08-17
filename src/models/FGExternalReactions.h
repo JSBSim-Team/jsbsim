@@ -149,7 +149,7 @@ public:
       a FGExternalForce object will be instantiated for each force definition.
       @param el a pointer to the XML element holding the external reactions definition.
   */
-  bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Retrieves the total forces defined in the external reactions.
       @return the total force in pounds.
