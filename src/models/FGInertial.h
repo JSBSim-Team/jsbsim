@@ -153,6 +153,8 @@ public:
     FGLocation Position;
   } in;
 
+  bool Load(Element* el) override;
+
 private:
   /// These define the indices use to select the gravitation models.
   enum eGravType {
@@ -172,7 +174,6 @@ private:
   FGColumnVector3 vOmegaPlanet;
   FGColumnVector3 vGravAccel;
   double GM;
-  double C2_0; // WGS84 value for the C2,0 coefficient
   double J2;   // WGS84 value for J2
   double a;    // WGS84 semimajor axis length in feet 
   double b;    // WGS84 semiminor axis length in feet

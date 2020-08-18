@@ -101,6 +101,12 @@ public:
    */
   virtual void SetTerrainElevation(double h) {}
 
+  /** Set the planet semimajor and semiminor axes.
+      Only needs to be implemented if JSBSim should be allowed to modify
+      the planet dimensions.
+   */
+  virtual void SetEllipse(double semimajor, double semiminor) {}
+
   /** Set the simulation time.
       The elapsed time can be used by the ground callbck to assess the planet
       rotation or the movement of objects.
@@ -129,6 +135,9 @@ public:
 
   void SetTerrainElevation(double h) override
   { mTerrainElevation = h; }
+
+  void SetEllipse(double semimajor, double semiminor) override
+  { a = semimajor; b = semiminor; }
 
 private:
   double a, b;

@@ -36,6 +36,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInertial.h"
+#include "input_output/FGXMLElement.h"
 
 using namespace std;
 
@@ -53,12 +54,9 @@ FGInertial::FGInertial(FGFDMExec* fgex)
 
   // Earth defaults
   double RotationRate    = 0.00007292115;
-//  RotationRate    = 0.000072921151467;
   GM              = 14.0764417572E15;   // WGS84 value
-  C2_0            = -4.84165371736E-04; // WGS84 value for the C2,0 coefficient
   J2              = 1.08262982E-03;     // WGS84 value for J2
   a               = 20925646.32546;     // WGS84 semimajor axis length in feet
-//  a               = 20902254.5305;      // Effective Earth radius for a sphere
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
   gravType = gtWGS84;
 
@@ -66,8 +64,6 @@ FGInertial::FGInertial(FGFDMExec* fgex)
   /*
   double RotationRate    = 0.0000026617;
   GM              = 1.7314079E14;         // Lunar GM
-  RadiusReference = 5702559.05;           // Equatorial radius
-  C2_0            = 0;                    // value for the C2,0 coefficient
   J2              = 2.033542482111609E-4; // value for J2
   a               = 5702559.05;           // semimajor axis length in feet
   b               = 5695439.63;           // semiminor axis length in feet
@@ -86,6 +82,30 @@ FGInertial::FGInertial(FGFDMExec* fgex)
 FGInertial::~FGInertial(void)
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInertial::Load(Element* el)
+{
+  if (!Upload(el, true)) return false;
+
+  if (el->FindElement("semimajor_axis"))
+    a = el->FindElementValueAsNumberConvertTo("semimajor_axis", "FT");
+  if (el->FindElement("semiminor_axis"))
+    b = el->FindElementValueAsNumberConvertTo("semiminor_axis", "FT");
+  if (el->FindElement("rotation_rate")) {
+    double RotationRate = el->FindElementValueAsNumberConvertTo("rotation_rate", "RAD/SEC");
+    vOmegaPlanet = {0., 0., RotationRate};
+  }
+  if (el->FindElement("GM"))
+    GM = el->FindElementValueAsNumberConvertTo("GM", "FT3/SEC2");
+  if (el->FindElement("J2"))
+    J2 = el->FindElementValueAsNumber("J2"); // Dimensionless
+
+  GroundCallback->SetEllipse(a, b);
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

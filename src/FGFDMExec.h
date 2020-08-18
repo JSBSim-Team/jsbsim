@@ -653,6 +653,7 @@ private:
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);
+  void InitializeModels(void);
   int GetDisperse(void) const {return disperse;}
   SGPath GetFullPath(const SGPath& name) {
     if (name.isRelative())

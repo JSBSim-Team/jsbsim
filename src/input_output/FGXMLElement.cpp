@@ -164,6 +164,9 @@ Element::Element(const string& nm)
     // Density
     convert["KG/L"]["LBS/GAL"] = 8.3454045;
     convert["LBS/GAL"]["KG/L"] = 1.0/convert["KG/L"]["LBS/GAL"];
+    // Gravitational
+    convert["FT3/SEC2"]["M3/SEC2"] = convert["FT3"]["M3"];
+    convert["M3/SEC2"]["FT3/SEC2"] = convert["M3"]["FT3"];
 
     // Length
     convert["M"]["M"] = 1.00;
@@ -237,6 +240,9 @@ Element::Element(const string& nm)
     // Density
     convert["KG/L"]["KG/L"] = 1.0;
     convert["LBS/GAL"]["LBS/GAL"] = 1.0;
+    // Gravitational
+    convert["FT3/SEC2"]["FT3/SEC2"] = 1.0;
+    convert["M3/SEC2"]["M3/SEC2"] = 1.0;
   }
 }
 

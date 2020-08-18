@@ -276,13 +276,7 @@ bool FGFDMExec::Allocate(void)
   LoadPlanetConstants();
 
   // Initialize models
-  for (unsigned int i = 0; i < Models.size(); i++) {
-    // The Input/Output models must not be initialized prior to IC loading
-    if (i == eInput || i == eOutput) continue;
-
-    LoadInputs(i);
-    Models[i]->InitModel();
-  }
+  InitializeModels();
 
   IC = new FGInitialCondition(this);
   IC->bind(instance);
@@ -290,6 +284,19 @@ bool FGFDMExec::Allocate(void)
   modelLoaded = false;
 
   return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::InitializeModels(void)
+{
+  for (unsigned int i = 0; i < Models.size(); i++) {
+    // The Input/Output models must not be initialized prior to IC loading
+    if (i == eInput || i == eOutput) continue;
+
+    LoadInputs(i);
+    Models[i]->InitModel();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -539,8 +546,6 @@ void FGFDMExec::LoadModelConstants(void)
   Auxiliary->in.Wingspan         = Aircraft->GetWingSpan();
   Auxiliary->in.Wingchord        = Aircraft->Getcbar();
   GroundReactions->in.vXYZcg     = MassBalance->GetXYZcg();
-
-  LoadPlanetConstants();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -600,13 +605,7 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 
   if (mode == 1) Output->SetStartNewOutput();
 
-  for (unsigned int i = 0; i < Models.size(); i++) {
-    // The Input/Output models will be initialized during the RunIC() execution
-    if (i == eInput || i == eOutput) continue;
-
-    LoadInputs(i);
-    Models[i]->InitModel();
-  }
+  InitializeModels();
 
   if (Script)
     Script->ResetEvents();
@@ -717,6 +716,19 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     }
 
     if (IsChild) debug_lvl = 0;
+
+    // Process the planet element. This element is OPTIONAL.
+    element = document->FindElement("planet");
+    if (element) {
+      result = Models[eInertial]->Load(element);
+      if (!result) {
+        cerr << endl << "Planet element has problems in file " << aircraftCfgFileName << endl;
+        return result;
+      }
+      // Reload the planet constants and re-initialize the models.
+      LoadPlanetConstants();
+      InitializeModels();
+    }
 
     // Process the metrics element. This element is REQUIRED.
     element = document->FindElement("metrics");
