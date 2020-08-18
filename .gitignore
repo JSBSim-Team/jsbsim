@@ -64,6 +64,7 @@ ipch/
 *.VC.opendb
 
 .vs/
+.vscode/
 
 #################
 ## Jupyter
