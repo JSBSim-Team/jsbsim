@@ -106,7 +106,7 @@ public:
   FGAircraft(FGFDMExec *Executive);
 
   /// Destructor
-  ~FGAircraft();
+  ~FGAircraft() override;
 
   /** Runs the Aircraft model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -116,15 +116,15 @@ public:
                      "Resume" command to be given.
       @see JSBSim.cpp documentation
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
       @param el a pointer to the element tree
       @return true if successful */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */
@@ -164,9 +164,6 @@ public:
 
   void SetWingArea(double S) {WingArea = S;}
 
-  void bind(void);
-  void unbind(void);
-
   struct Inputs {
     FGColumnVector3 AeroForce;
     FGColumnVector3 PropForce;
@@ -193,7 +190,9 @@ private:
   double lbarh,lbarv,vbarh,vbarv;
   std::string AircraftName;
 
-  void Debug(int from);
+  void bind(void);
+  void unbind(void);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

@@ -66,15 +66,15 @@ public:
   /// Constructor
   FGOutputFG(FGFDMExec* fdmex);
 
-  virtual void Print(void);
+  void Print(void) override;
 
   /** Evaluate the output directives from an XML file.
       @param element XML Element that is pointing to the output directives
   */
-  virtual bool Load(Element*);
+  bool Load(Element*) override;
 
 protected:
-  virtual void PrintHeaders(void) {};
+  void PrintHeaders(void) override {};
 
 private:
 

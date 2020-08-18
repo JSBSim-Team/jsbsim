@@ -77,17 +77,17 @@ public:
   /** Init the output directives from an XML file.
       @param element XML Element that is pointing to the output directives
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Generates the output to the text file.
-  virtual void Print(void);
+  void Print(void) override;
 
 protected:
   std::string delimeter;
   sg_ofstream datafile;
 
-  virtual bool OpenFile(void);
-  virtual void CloseFile(void) { if (datafile.is_open()) datafile.close(); }
+  bool OpenFile(void) override;
+  void CloseFile(void) override { if (datafile.is_open()) datafile.close(); }
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

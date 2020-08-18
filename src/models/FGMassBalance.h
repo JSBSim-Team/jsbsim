@@ -111,7 +111,7 @@ public:
   explicit FGMassBalance(FGFDMExec*);
   ~FGMassBalance();
 
-  bool Load(Element* el);
+  bool Load(Element* el) override;
   bool InitModel(void) override;
   /** Runs the Mass Balance model; called by the Executive
       Can pass in a value indicating if the executive is directing the

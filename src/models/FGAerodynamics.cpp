@@ -329,7 +329,7 @@ bool FGAerodynamics::Load(Element *document)
   Name = "Aerodynamics Model: " + document->GetAttributeValue("name");
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   DetermineAxisSystem(document); // Determine if Lift/Side/Drag, etc. is used.

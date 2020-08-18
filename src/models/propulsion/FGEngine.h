@@ -142,7 +142,7 @@ public:
   };
 
   FGEngine(int engine_number, struct Inputs& input);
-  virtual ~FGEngine();
+  ~FGEngine() override;
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
 
@@ -241,7 +241,7 @@ protected:
 
   std::vector <int> SourceTanks;
 
-  virtual bool Load(FGFDMExec *exec, Element *el);
+  bool Load(FGFDMExec *exec, Element *el);
   void Debug(int from);
 };
 }

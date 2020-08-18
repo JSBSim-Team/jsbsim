@@ -721,7 +721,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the metrics element. This element is REQUIRED.
     element = document->FindElement("metrics");
     if (element) {
-      result = ((FGAircraft*)Models[eAircraft])->Load(element);
+      result = Models[eAircraft]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft metrics element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -734,7 +734,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the mass_balance element. This element is REQUIRED.
     element = document->FindElement("mass_balance");
     if (element) {
-      result = ((FGMassBalance*)Models[eMassBalance])->Load(element);
+      result = Models[eMassBalance]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft mass_balance element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -747,7 +747,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the ground_reactions element. This element is REQUIRED.
     element = document->FindElement("ground_reactions");
     if (element) {
-      result = ((FGGroundReactions*)Models[eGroundReactions])->Load(element);
+      result = Models[eGroundReactions]->Load(element);
       if (!result) {
         cerr << endl << element->ReadFrom()
              << "Aircraft ground_reactions element has problems in file "
@@ -762,7 +762,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the external_reactions element. This element is OPTIONAL.
     element = document->FindElement("external_reactions");
     if (element) {
-      result = ((FGExternalReactions*)Models[eExternalReactions])->Load(element);
+      result = Models[eExternalReactions]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft external_reactions element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -772,7 +772,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the buoyant_forces element. This element is OPTIONAL.
     element = document->FindElement("buoyant_forces");
     if (element) {
-      result = ((FGBuoyantForces*)Models[eBuoyantForces])->Load(element);
+      result = Models[eBuoyantForces]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft buoyant_forces element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -782,19 +782,20 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the propulsion element. This element is OPTIONAL.
     element = document->FindElement("propulsion");
     if (element) {
-      result = ((FGPropulsion*)Models[ePropulsion])->Load(element);
+      auto propulsion = static_cast<FGPropulsion*>(Models[ePropulsion]);
+      result = propulsion->Load(element);
       if (!result) {
         cerr << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
-      for (unsigned int i=0; i<((FGPropulsion*)Models[ePropulsion])->GetNumEngines(); i++)
+      for (unsigned int i=0; i < propulsion->GetNumEngines(); i++)
         ((FGFCS*)Models[eSystems])->AddThrottle();
     }
 
     // Process the system element[s]. This element is OPTIONAL, and there may be more than one.
     element = document->FindElement("system");
     while (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element);
+      result = Models[eSystems]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft system element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -805,7 +806,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the autopilot element. This element is OPTIONAL.
     element = document->FindElement("autopilot");
     if (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element);
+      result = Models[eSystems]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft autopilot element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -815,7 +816,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the flight_control element. This element is OPTIONAL.
     element = document->FindElement("flight_control");
     if (element) {
-      result = ((FGFCS*)Models[eSystems])->Load(element);
+      result = Models[eSystems]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft flight_control element has problems in file " << aircraftCfgFileName << endl;
         return result;
@@ -825,7 +826,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the aerodynamics element. This element is OPTIONAL, but almost always expected.
     element = document->FindElement("aerodynamics");
     if (element) {
-      result = ((FGAerodynamics*)Models[eAerodynamics])->Load(element);
+      result = Models[eAerodynamics]->Load(element);
       if (!result) {
         cerr << endl << "Aircraft aerodynamics element has problems in file " << aircraftCfgFileName << endl;
         return result;

@@ -102,7 +102,7 @@ public:
   /// Constructor
   FGPropulsion(FGFDMExec*);
   /// Destructor
-  ~FGPropulsion();
+  ~FGPropulsion() override;
 
   /** Executes the propulsion model.
       The initial plan for the FGPropulsion class calls for Run() to be executed,
@@ -113,15 +113,15 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Loads the propulsion system (engine[s] and tank[s]).
       Characteristics of the propulsion system are read in from the config file.
       @param el pointer to an XML element that contains the engine information.
       @return true if successfully loaded, otherwise false */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Retrieves the number of engines defined for the aircraft.
   unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
@@ -173,7 +173,7 @@ public:
   const FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void) const;
 
-  SGPath FindFullPathName(const SGPath& path) const;
+  SGPath FindFullPathName(const SGPath& path) const override;
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) const {return FuelFreeze;}
 
@@ -221,7 +221,7 @@ private:
   bool ReadingEngine;
 
   void bind();
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

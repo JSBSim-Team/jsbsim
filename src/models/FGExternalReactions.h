@@ -130,9 +130,9 @@ public:
       Within the destructor the Forces and interface_properties vectors are
       cleared out and the items pointed to are deleted.
   */
-  ~FGExternalReactions(void);
+  ~FGExternalReactions(void) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Sum all the constituent forces for this cycle.
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -141,7 +141,7 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return true always.  */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
   
   /** Loads the external forces from the XML configuration file.
       If the external_reactions section is encountered in the vehicle configuration
@@ -149,7 +149,7 @@ public:
       a FGExternalForce object will be instantiated for each force definition.
       @param el a pointer to the XML element holding the external reactions definition.
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Retrieves the total forces defined in the external reactions.
       @return the total force in pounds.
@@ -171,7 +171,7 @@ private:
   FGColumnVector3 vTotalMoments;
 
   void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

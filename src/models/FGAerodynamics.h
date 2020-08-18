@@ -118,9 +118,9 @@ public:
       @param Executive a pointer to the parent executive object */
   FGAerodynamics(FGFDMExec* Executive);
   /// Destructor
-  ~FGAerodynamics();
+  ~FGAerodynamics() override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Runs the Aerodynamics model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -129,14 +129,14 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
   /** Loads the Aerodynamics model.
       The Load function for this class expects the XML parser to
       have found the aerodynamics keyword in the configuration file.
       @param element pointer to the current XML element for aerodynamics parameters.
       @return true if successful */
-  virtual bool Load(Element* element);
+  bool Load(Element* element) override;
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
@@ -283,7 +283,7 @@ private:
   void bind(void);
   void BuildStabilityTransformMatrices(void);
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

@@ -236,7 +236,7 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   includePath = dir;
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, false))
+  if (!FGModel::Upload(document, false))
     return false;
 
   size_t idx = OutputTypes.size();

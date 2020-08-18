@@ -107,7 +107,7 @@ SGPath FGModel::FindFullPathName(const SGPath& path) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModel::Load(Element* el, bool preLoad)
+bool FGModel::Upload(Element* el, bool preLoad)
 {
   FGModelLoader ModelLoader(this);
   Element* document = ModelLoader.Open(el);
