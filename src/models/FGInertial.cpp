@@ -50,7 +50,7 @@ CLASS IMPLEMENTATION
 FGInertial::FGInertial(FGFDMExec* fgex)
   : FGModel(fgex)
 {
-  Name = "FGInertial";
+  Name = "Earth";
 
   // Earth defaults
   double RotationRate    = 0.00007292115;
@@ -90,6 +90,8 @@ bool FGInertial::Load(Element* el)
 {
   if (!Upload(el, true)) return false;
 
+  Name = el->GetAttributeValue("name");
+
   if (el->FindElement("semimajor_axis"))
     a = el->FindElementValueAsNumberConvertTo("semimajor_axis", "FT");
   if (el->FindElement("semiminor_axis"))
@@ -104,6 +106,8 @@ bool FGInertial::Load(Element* el)
     J2 = el->FindElementValueAsNumber("J2"); // Dimensionless
 
   GroundCallback->SetEllipse(a, b);
+
+  Debug(2);
 
   return true;
 }
@@ -214,8 +218,14 @@ void FGInertial::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    if (from == 0) { // Constructor
-
+    if (from == 0) {} // Constructor
+    if (from == 2) { // Loading
+      cout << endl << "  Planet " << Name << endl;
+      cout << "    Semi major axis: " << a << endl;
+      cout << "    Semi minor axis: " << b << endl;
+      cout << "    Rotation rate  : " << scientific << vOmegaPlanet(eZ) << endl;
+      cout << "    GM             : " << GM << endl;
+      cout << "    J2             : " << J2 << endl << defaultfloat;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
