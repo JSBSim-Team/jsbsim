@@ -149,6 +149,35 @@ public:
   */
   void SetGroundCallback(FGGroundCallback* gc) { GroundCallback.reset(gc); }
 
+  /** Transform matrix from the local horizontal frame to earth centered.
+      The local frame is the NED (North-East-Down) frame. Since the Down
+      direction depends on the gravity so is the local frame.
+      The East direction is tangent to the spheroid with a null component along
+      the Z axis.
+      The North direction is obtained from the cross product between East and
+      Down.
+      @param location The location at which the transform matrix must be
+                      evaluated.
+      @return a rotation matrix of the transform from the earth centered frame
+              to the local horizontal frame.
+  */
+  FGMatrix33 GetTl2ec(FGLocation& location) const;
+
+  /** Transform matrix from the earth centered to local horizontal frame.
+      The local frame is the NED (North-East-Down) frame. Since the Down
+      direction depends on the gravity so is the local frame.
+      The East direction is tangent to the spheroid with a null component along
+      the Z axis.
+      The North direction is obtained from the cross product between East and
+      Down.
+      @param location The location at which the transform matrix must be
+                      evaluated.
+      @return a rotation matrix of the transform from the earth centered frame
+              to the local horizontal frame.
+  */
+  FGMatrix33 GetTec2l(FGLocation& location) const
+  { return GetTl2ec(location).Transposed(); }
+
   struct Inputs {
     FGLocation Position;
   } in;

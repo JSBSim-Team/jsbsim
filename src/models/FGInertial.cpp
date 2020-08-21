@@ -138,6 +138,31 @@ bool FGInertial::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGMatrix33 FGInertial::GetTl2ec(FGLocation& location) const
+{
+  FGColumnVector3 North, Down, East{-location.GetSinLongitude(),
+                                    location.GetCosLongitude(), 0.};
+
+  switch (gravType) {
+  case gtStandard:
+    {
+      Down = location;
+      Down *= -1.0;
+    }
+    break;
+  case gtWGS84:
+    Down = GetGravityJ2(location);
+  }
+  Down.Normalize();
+  North = East*Down;
+
+  return FGMatrix33{North(eX), East(eX), Down(eX),
+                    North(eY), East(eY), Down(eY),
+                    North(eZ), 0.0,      Down(eZ)};
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double FGInertial::GetGAccel(double r) const
 {
   return GM/(r*r);
