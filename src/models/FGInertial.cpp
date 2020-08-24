@@ -138,10 +138,9 @@ bool FGInertial::Run(bool Holding)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGInertial::GetTl2ec(FGLocation& location) const
+FGMatrix33 FGInertial::GetTl2ec(const FGLocation& location) const
 {
-  FGColumnVector3 North, Down, East{-location.GetSinLongitude(),
-                                    location.GetCosLongitude(), 0.};
+  FGColumnVector3 North, Down, East{-location(eY), location(eX), 0.};
 
   switch (gravType) {
   case gtStandard:
@@ -151,9 +150,15 @@ FGMatrix33 FGInertial::GetTl2ec(FGLocation& location) const
     }
     break;
   case gtWGS84:
-    Down = GetGravityJ2(location);
-  }
+    {
+      FGLocation sea_level = location;
+      sea_level.SetPositionGeodetic(location.GetLongitude(),
+                                    location.GetGeodLatitudeRad(), 0.0);
+      Down = GetGravityJ2(location);
+      Down -= vOmegaPlanet*(vOmegaPlanet*sea_level);}
+    }
   Down.Normalize();
+  East.Normalize();
   North = East*Down;
 
   return FGMatrix33{North(eX), East(eX), Down(eX),

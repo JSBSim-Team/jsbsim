@@ -161,7 +161,7 @@ public:
       @return a rotation matrix of the transform from the earth centered frame
               to the local horizontal frame.
   */
-  FGMatrix33 GetTl2ec(FGLocation& location) const;
+  FGMatrix33 GetTl2ec(const FGLocation& location) const;
 
   /** Transform matrix from the earth centered to local horizontal frame.
       The local frame is the NED (North-East-Down) frame. Since the Down
@@ -175,7 +175,7 @@ public:
       @return a rotation matrix of the transform from the earth centered frame
               to the local horizontal frame.
   */
-  FGMatrix33 GetTec2l(FGLocation& location) const
+  FGMatrix33 GetTec2l(const FGLocation& location) const
   { return GetTl2ec(location).Transposed(); }
 
   struct Inputs {
