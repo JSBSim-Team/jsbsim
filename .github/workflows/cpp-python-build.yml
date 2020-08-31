@@ -4,7 +4,10 @@ on: [push]
 
 jobs:
   Linux:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen cxxtest valgrind
@@ -89,8 +92,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ github.job}} rolling release
-          tag_name: ${{ github.job }}
+          name: ${{ github.job}} rolling release for ${{ matrix.os }}
+          tag_name: ${{ github.job }}-${{ matrix.os }}
           prerelease: true
           body: |
             Contains the ${{ github.job}} packages built from the bleeding edge code
