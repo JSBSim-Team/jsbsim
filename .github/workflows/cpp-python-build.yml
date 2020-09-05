@@ -92,8 +92,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ github.job}} rolling release for ${{ matrix.os }}
-          tag_name: ${{ github.job }}-${{ matrix.os }}
+          name: ${{ github.job}} rolling release
+          tag_name: ${{ github.job }}
           prerelease: true
           body: |
             Contains the ${{ github.job}} packages built from the bleeding edge code
