@@ -4,7 +4,10 @@ on: [push]
 
 jobs:
   Linux:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen cxxtest valgrind
@@ -42,6 +45,7 @@ jobs:
           cd build
           cpack
       - name: Build ManyLinux wheel packages (PEP 513)
+        if: ${{ matrix.os == 'ubuntu-20.04'}}
         run: |
           cd build
           rm -f CMakeCache.txt
@@ -54,6 +58,7 @@ jobs:
           # Build the manylinux1 wheel binary packages
           docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
+        if: ${{ matrix.os == 'ubuntu-20.04'}}
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
