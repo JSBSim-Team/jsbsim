@@ -31,11 +31,8 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   TS_ASSERT_DELTA(lat, loc.GetLatitude(), epsilon);
   TS_ASSERT_DELTA(sin(lon), loc.GetSinLongitude(), epsilon);
   TS_ASSERT_DELTA(cos(lon), loc.GetCosLongitude(), epsilon);
-  TS_ASSERT_DELTA(sin(lat), loc.GetSinLatitude(), epsilon);
-  TS_ASSERT_DELTA(cos(lat), loc.GetCosLatitude(), epsilon);
-  TS_ASSERT_DELTA(tan(lat), loc.GetTanLatitude(), epsilon);
 
-  q = JSBSim::FGQuaternion(0., -lat, lon);
+  q = JSBSim::FGQuaternion(0., -loc.GetGeodLatitudeRad(), lon);
   JSBSim::FGMatrix33 m = (q * qloc).GetT();
   TS_ASSERT_MATRIX_EQUALS(m, loc.GetTec2l());
   TS_ASSERT_MATRIX_EQUALS(m.Transposed(), loc.GetTl2ec());
@@ -59,9 +56,6 @@ public:
     TS_ASSERT_EQUALS(1.0, l0.GetRadius());
     TS_ASSERT_EQUALS(0.0, l0.GetSinLongitude());
     TS_ASSERT_EQUALS(1.0, l0.GetCosLongitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetSinLatitude());
-    TS_ASSERT_EQUALS(1.0, l0.GetCosLatitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetTanLatitude());
 
     l0.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
@@ -78,9 +72,6 @@ public:
     TS_ASSERT_DELTA(-45.0, l.GetLatitudeDeg(), epsilon);
     TS_ASSERT_DELTA(0.5, l.GetSinLongitude(), epsilon);
     TS_ASSERT_DELTA(0.5*sqrt(3.0), l.GetCosLongitude(), epsilon);
-    TS_ASSERT_DELTA(-0.5*sqrt(2.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.5*sqrt(2.0), l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
 
     l.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
@@ -122,12 +113,14 @@ public:
     v = JSBSim::FGColumnVector3(1.5,-2.,3.);
     JSBSim::FGLocation lv3(v);
 
+    lv3.SetEllipse(1., 1.);
     CheckLocation(lv3, v);
   }
 
   void testCopyConstructor() {
     JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
     JSBSim::FGLocation l(v);
+    l.SetEllipse(1., 1.);
     JSBSim::FGLocation lv(l);
 
     TS_ASSERT_DELTA(l(1), lv(1), epsilon);
@@ -191,6 +184,7 @@ public:
   void testAssignment() {
     JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
     JSBSim::FGLocation lv(v);
+    lv.SetEllipse(1., 1.);
     JSBSim::FGLocation l;
 
     TS_ASSERT_EQUALS(1.0, l(1));
@@ -276,7 +270,8 @@ public:
 
   void testOperations() {
     const JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
-    const JSBSim::FGLocation l(v);
+    JSBSim::FGLocation l(v);
+    l.SetEllipse(1., 1.);
     JSBSim::FGLocation l2(l);
 
     l2 += l;
@@ -390,9 +385,6 @@ public:
       TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
       TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
       TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
-      TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-      TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-      TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
       q = JSBSim::FGQuaternion(0.0, -lat, 0.0);
       m = (q * qloc).GetT();
@@ -407,9 +399,6 @@ public:
         TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
         TS_ASSERT_DELTA(sin(lon), l.GetSinLongitude(), epsilon);
         TS_ASSERT_DELTA(cos(lon), l.GetCosLongitude(), epsilon);
-        TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-        TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-        TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
         q = JSBSim::FGQuaternion(0.0, -lat, lon);
         m = (q * qloc).GetT();
@@ -436,9 +425,6 @@ public:
         TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
         TS_ASSERT_DELTA(sin(lon), l.GetSinLongitude(), epsilon);
         TS_ASSERT_DELTA(cos(lon), l.GetCosLongitude(), epsilon);
-        TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-        TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-        TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
         q = JSBSim::FGQuaternion(0.0, -lat, lon);
         m = (q * qloc).GetT();
@@ -456,13 +442,11 @@ public:
     TS_ASSERT_DELTA(0.0, l.GetRadius(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetRadius(1.0);
+    l.SetEllipse(1., 1.);
     CheckLocation(l, JSBSim::FGColumnVector3(1., 0., 0.).Normalize());
 
     l = v;
@@ -546,27 +530,18 @@ public:
 
     TS_ASSERT_DELTA(M_PI*0.5, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     // Check that SetLongitude is a no-op when applied at the North pole
     l.SetLongitude(M_PI/6.0);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetLatitude(M_PI/3.0);
     TS_ASSERT_DELTA(M_PI/3.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.5, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.5*sqrt(3.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(sqrt(3.0), l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
@@ -574,27 +549,18 @@ public:
     l = -1.0 * v;
     TS_ASSERT_DELTA(-M_PI*0.5, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     // Check that SetLongitude is a no-op when applied at the South pole
     l.SetLongitude(M_PI/6.0);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetLatitude(-M_PI/3.0);
     TS_ASSERT_DELTA(-M_PI/3.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.5, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-0.5*sqrt(3.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(-sqrt(3.0), l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 

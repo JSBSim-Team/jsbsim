@@ -186,7 +186,7 @@ FGColumnVector3 FGInertial::GetGravityJ2(const FGLocation& position) const
 
   // Gravitation accel
   double r = position.GetRadius();
-  double sinLat = position.GetSinLatitude();
+  double sinLat = sin(position.GetLatitude());
 
   double adivr = a/r;
   double preCommon = 1.5*J2*adivr*adivr;

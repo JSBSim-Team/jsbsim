@@ -272,7 +272,7 @@ double FGLocation::GetSeaLevelRadius(void) const
 {
   assert(mEllipseSet);
   ComputeDerived();
-  double cosLat = GetCosLatitude();
+  double cosLat = cos(mLat);
   return a*ec/sqrt(1.0-e2*cosLat*cosLat);
 }
 
@@ -319,22 +319,6 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   else
     mLat = atan2( mECLoc(eZ), rxy );
 
-  // Compute the transform matrices from and to the earth centered frame.
-  // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
-  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e - the
-  // orientation of the navigation (local) frame relative to the ECEF frame,
-  // and a transformation from ECEF to nav (local) frame.
-
-  mTec2l = { -cosLon*sinLat, -sinLon*sinLat,  cosLat,
-                 -sinLon   ,     cosLon    ,    0.0 ,
-             -cosLon*cosLat, -sinLon*cosLat, -sinLat  };
-
-  // In Stevens and Lewis notation, this is C_e/n - the
-  // orientation of the ECEF frame relative to the nav (local) frame,
-  // and a transformation from nav (local) to ECEF frame.
-
-  mTl2ec = mTec2l.Transposed();
-
   // Calculate the geodetic latitude based on "Transformation from Cartesian to
   // geodetic coordinates accelerated by Halley's method", Fukushima T. (2006)
   // Journal of Geodesy, Vol. 79, pp. 689-693
@@ -359,10 +343,28 @@ void FGLocation::ComputeDerivedUnconditional(void) const
     s1 = s1*a03-b0*s0;
     double cc = ec*(c1*a03-b0*c0);
     mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
+    cosLat = cos(mGeodLat);
+    sinLat = sin(mGeodLat);
     double s12 = s1 * s1;
     double cc2 = cc * cc;
     GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / sqrt(s12 + cc2);
   }
+
+  // Compute the transform matrices from and to the earth centered frame.
+  // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
+  // Eqn. 1.4-13, page 40. In Stevens and Lewis notation, this is C_n/e - the
+  // orientation of the navigation (local) frame relative to the ECEF frame,
+  // and a transformation from ECEF to nav (local) frame.
+
+  mTec2l = { -cosLon*sinLat, -sinLon*sinLat,  cosLat,
+                 -sinLon   ,     cosLon    ,    0.0 ,
+             -cosLon*cosLat, -sinLon*cosLat, -sinLat  };
+
+  // In Stevens and Lewis notation, this is C_e/n - the
+  // orientation of the ECEF frame relative to the nav (local) frame,
+  // and a transformation from nav (local) to ECEF frame.
+
+  mTl2ec = mTec2l.Transposed();
 
   // Mark the cached values as valid
   mCacheValid = true;
@@ -389,11 +391,12 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 double FGLocation::GetDistanceTo(double target_longitude,
                                  double target_latitude) const
 {
-  double delta_lat_rad = target_latitude  - GetLatitude();
-  double delta_lon_rad = target_longitude - GetLongitude();
+  ComputeDerived();
+  double delta_lat_rad = target_latitude  - mLat;
+  double delta_lon_rad = target_longitude - mLon;
 
   double distance_a = pow(sin(0.5*delta_lat_rad), 2.0)
-    + (GetCosLatitude() * cos(target_latitude)
+    + (cos(mLat) * cos(target_latitude)
        * (pow(sin(0.5*delta_lon_rad), 2.0)));
 
   return 2.0 * GetRadius() * atan2(sqrt(distance_a), sqrt(1.0 - distance_a));
@@ -418,11 +421,12 @@ double FGLocation::GetDistanceTo(double target_longitude,
 double FGLocation::GetHeadingTo(double target_longitude,
                                 double target_latitude) const
 {
-  double delta_lon_rad = target_longitude - GetLongitude();
+  ComputeDerived();
+  double delta_lon_rad = target_longitude - mLon;
 
   double Y = sin(delta_lon_rad) * cos(target_latitude);
-  double X = GetCosLatitude() * sin(target_latitude)
-    - GetSinLatitude() * cos(target_latitude) * cos(delta_lon_rad);
+  double X = cos(mLat) * sin(target_latitude)
+    - sin(mLat) * cos(target_latitude) * cos(delta_lon_rad);
 
   double heading_to_waypoint_rad = atan2(Y, X);
   if (heading_to_waypoint_rad < 0) heading_to_waypoint_rad += 2.0*M_PI;

@@ -7,7 +7,7 @@
   <latitude unit="DEG">   37.86  </latitude>
   <longitude unit="DEG">-122.34  </longitude>
   <phi unit="DEG">         0.0   </phi>
-  <theta unit="DEG">      -2.5   </theta>
+  <theta unit="DEG">      -1.0   </theta>
   <psi unit="DEG">       180.0   </psi>
   <altitude unit="FT">  5500.0   </altitude>
 </initialize>

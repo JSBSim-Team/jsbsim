@@ -27,7 +27,7 @@ from JSBSim_utils import JSBSimTestCase, CopyAircraftDef, ExecuteUntil, RunTest
 
 class TestAccelerometer(JSBSimTestCase):
     def AddAccelerometersToAircraft(self, script_path):
-        tree, aircraft_name, b = CopyAircraftDef(script_path, self.sandbox)
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
         system_tag = et.SubElement(tree.getroot(), 'system')
         system_tag.attrib['file'] = 'accelerometers'
         tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
@@ -80,22 +80,24 @@ class TestAccelerometer(JSBSimTestCase):
         fdm['ic/psi-true-rad'] = 0.0
         fdm.run_ic()
 
-        for i in range(1000):
+        for _ in range(1000):
             fdm.run()
 
         r = fdm['position/radius-to-vehicle-ft']
         g = fdm['accelerations/gravity-ft_sec2']
         latitude = fdm['position/lat-gc-rad']
+        geodLat = fdm['position/lat-geod-rad']
+        deviation = geodLat - latitude
         pitch = fdm['attitude/theta-rad']
         omega = 0.00007292115  # Earth rotation rate in rad/sec
         fc = r * math.cos(latitude) * omega * omega
 
-        fax = fc * math.sin(latitude - pitch) + g * math.sin(pitch)
-        faz = fc * math.cos(latitude - pitch) - g * math.cos(pitch)
+        fax = fc * math.sin(geodLat - pitch) + g * math.sin(pitch - deviation)
+        faz = fc * math.cos(geodLat - pitch) - g * math.cos(pitch - deviation)
 
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-7)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], 0.0, delta=1E-7)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z']/faz, 1.0, delta=1E-8)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z']/faz, 1.0, delta=1E-7)
 
     def testSteadyFlight(self):
         script_name = 'c1722.xml'
@@ -121,19 +123,21 @@ class TestAccelerometer(JSBSimTestCase):
         pitch = fdm['attitude/theta-rad']
         roll = fdm['attitude/phi-rad']
         latitude = fdm['position/lat-gc-rad']
+        geodLat = fdm['position/lat-geod-rad']
+        deviation = geodLat - latitude
         g = fdm['accelerations/gravity-ft_sec2']
         omega = 0.00007292115  # Earth rotation rate in rad/sec
         fc = r * math.cos(latitude) * omega * omega  # Centrifugal force
 
         uvw = np.array(fdm.get_propagate().get_uvw().T)[0]
-        Omega = omega * np.array([math.cos(pitch - latitude),
-                                  math.sin(pitch - latitude) * math.sin(roll),
-                                  math.sin(pitch - latitude) * math.cos(roll)])
+        Omega = omega * np.array([math.cos(pitch - geodLat),
+                                  math.sin(pitch - geodLat) * math.sin(roll),
+                                  math.sin(pitch - geodLat) * math.cos(roll)])
 
         # Compute the acceleration measured by the accelerometer as the sum of
         # the gravity and the centrifugal and Coriolis forces.
-        fa_yz = (fc * math.cos(latitude - pitch) - g * math.cos(pitch))
-        fa = np.array([(fc * math.sin(latitude - pitch) + g * math.sin(pitch)),
+        fa_yz = (fc * math.cos(geodLat - pitch) - g * math.cos(pitch - deviation))
+        fa = np.array([(fc * math.sin(geodLat - pitch) + g * math.sin(pitch - deviation)),
                        fa_yz * math.sin(roll),
                        fa_yz * math.cos(roll)]) + np.cross(2.0*Omega, uvw)
 

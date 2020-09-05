@@ -78,9 +78,9 @@ CLASS DOCUMENTATION
     It is common to associate a parent frame with a location. This frame is
     usually called the local horizontal frame or simply the local frame. It is
     also called the NED frame (North, East, Down), as well as the Navigation
-    frame. This frame has its X/Y plane parallel to the surface of the Earth
-    (with the assumption of a spherical Earth). The X-axis points towards north,
-    the Y-axis points east and the Z-axis points to the center of the Earth.
+    frame. This frame has its X/Y plane parallel to the surface of the Earth.
+    The X-axis points towards north, the Y-axis points east and the Z-axis
+    is normal to the reference spheroid (WGS84 for Earth).
 
     Since the local frame is determined by the location (and NOT by the
     orientation of the vehicle IN any frame), this class also provides the
@@ -110,7 +110,7 @@ CLASS DOCUMENTATION
     Given,
 
     - that we model a vehicle near the Earth
-    - that the Earth surface radius is about 2*10^7, ft
+    - that the Earth surface average radius is about 2*10^7, ft
     - that we use double values for the representation of the location
 
     we have an accuracy of about
@@ -135,9 +135,8 @@ CLASS DOCUMENTATION
     change is of the same magnitude for all components in this representation
     which is an advantage for numerical stability in implicit time-stepping.
 
-    Note: The latitude is a GEOCENTRIC value. FlightGear converts latitude to a
-    geodetic value and uses that. In order to get best matching relative to a
-    map, geocentric latitude must be converted to geodetic.
+    Note: Both GEOCENTRIC and GEODETIC latitudes can be used. In order to get
+    best matching relative to a map, geodetic latitude must be used.
 
     @see Stevens and Lewis, "Aircraft Control and Simulation", Second edition
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
@@ -173,39 +172,40 @@ public:
 
   /** Set the longitude.
       @param longitude Longitude in rad to set.
-      Sets the longitude of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in rad. The latitude and the radius value are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero it is changed to be
-      equal to 1.0 past this call. Longitude is positive east and negative west. */
+      Sets the longitude of the location represented with this class instance to
+      the value of the given argument. The value is meant to be in rad. The
+      latitude and the radius value are preserved with this call with the
+      exception of radius being equal to zero. If the radius is previously set
+      to zero it is changed to be equal to 1.0 past this call.
+      Longitude is positive east and negative west.
+      The arguments should be within the bounds of -pi <= lon <= pi.
+      The behavior of this function with arguments outside this range is left as
+      an exercise to the gentle reader ... */
   void SetLongitude(double longitude);
 
-  /** Set the latitude.
-      @param latitude Latitude in rad to set.
-      Sets the latitude of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in rad. The longitude and the radius value are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero it is changed to be
-      equal to 1.0 past this call.
+  /** Set the GEOCENTRIC latitude.
+      @param latitude GEOCENTRIC latitude in rad to set.
+      Sets the latitude of the location represented with this class instance to
+      the value of the given argument. The value is meant to be in rad. The
+      longitude and the radius value are preserved with this call with the
+      exception of radius being equal to zero. If the radius is previously set
+      to zero it is changed to be equal to 1.0 past this call.
       Latitude is positive north and negative south.
       The arguments should be within the bounds of -pi/2 <= lat <= pi/2.
-      The behavior of this function with arguments outside this range is
-      left as an exercise to the gentle reader ... */
+      The behavior of this function with arguments outside this range is left as
+      an exercise to the gentle reader ... */
   void SetLatitude(double latitude);
 
   /** Set the distance from the center of the earth.
       @param radius Radius in ft to set.
-      Sets the radius of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in ft. The latitude and longitude values are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero, latitude and
-      longitude is set equal to zero past this call.
+      Sets the radius of the location represented with this class instance to
+      the value of the given argument. The value is meant to be in ft. The
+      latitude and longitude values are preserved with this call with the
+      exception of radius being equal to zero. If the radius is previously set
+      to zero, latitude and longitude is set equal to zero past this call.
       The argument should be positive.
-      The behavior of this function called with a negative argument is
-      left as an exercise to the gentle reader ... */
+      The behavior of this function called with a negative argument is left as
+      an exercise to the gentle reader ... */
   void SetRadius(double radius);
 
   /** Sets the longitude, latitude and the distance from the center of the earth.
@@ -214,7 +214,7 @@ public:
       @param radius distance from center of earth to vehicle in feet*/
   void SetPosition(double lon, double lat, double radius);
 
-  /** Sets the longitude, latitude and the distance above the reference ellipsoid.
+  /** Sets the longitude, latitude and the distance above the reference spheroid.
       @param lon longitude in radians
       @param lat GEODETIC latitude in radians
       @param height distance above the reference ellipsoid to vehicle in feet*/
@@ -222,7 +222,9 @@ public:
 
   /** Sets the semimajor and semiminor axis lengths for this planet.
       The eccentricity and flattening are calculated from the semimajor
-      and semiminor axis lengths */
+      and semiminor axis lengths.
+      @param semimajor planet semi-major axis in ft.
+      @param semiminor planet semi-minor axis in ft.*/
   void SetEllipse(double semimajor, double semiminor);
 
   /** Get the longitude.
@@ -243,13 +245,13 @@ public:
   /** Get the cosine of Longitude. */
   double GetCosLongitude() const { ComputeDerived(); return mTec2l(2,2); }
 
-  /** Get the latitude.
-      @return the latitude in rad of the location represented with this
-      class instance. The returned values are in the range between
+  /** Get the GEOCENTRIC latitude in radians.
+      @return the geocentric latitude in rad of the location represented with
+      this class instance. The returned values are in the range between
       -pi/2 <= lon <= pi/2. Latitude is positive north and negative south. */
   double GetLatitude() const { ComputeDerived(); return mLat; }
 
-  /** Get the geodetic latitude.
+  /** Get the GEODETIC latitude in radians.
       @return the geodetic latitude in rad of the location represented with this
       class instance. The returned values are in the range between
       -pi/2 <= lon <= pi/2. Latitude is positive north and negative south. */
@@ -258,13 +260,13 @@ public:
     ComputeDerived(); return mGeodLat;
   }
 
-  /** Get the latitude.
-      @return the latitude in deg of the location represented with this
-      class instance. The returned value is in the range between
+  /** Get the GEOCENTRIC latitude in degrees.
+      @return the geocentric latitude in deg of the location represented with
+      this class instance. The returned value is in the range between
       -90 <= lon <= 90. Latitude is positive north and negative south. */
   double GetLatitudeDeg() const { ComputeDerived(); return radtodeg*mLat; }
 
-  /** Get the geodetic latitude in degrees.
+  /** Get the GEODETIC latitude in degrees.
       @return the geodetic latitude in degrees of the location represented by
       this class instance. The returned value is in the range between
       -90 <= lon <= 90. Latitude is positive north and negative south. */
@@ -279,26 +281,10 @@ public:
     ComputeDerived(); return GeodeticAltitude;
   }
 
-  /** Get the sine of Latitude. */
-  double GetSinLatitude() const { ComputeDerived(); return -mTec2l(3,3); }
-
-  /** Get the cosine of Latitude. */
-  double GetCosLatitude() const { ComputeDerived(); return mTec2l(1,3); }
-
-  /** Get the cosine of Latitude. */
-  double GetTanLatitude() const {
-    ComputeDerived();
-    double cLat = mTec2l(1,3);
-    if (cLat == 0.0)
-      return 0.0;
-    else
-      return -mTec2l(3,3)/cLat;
-  }
-
-  /** Get the sea level radius below the current location. */
+  /** Get the sea level radius in feet below the current location. */
   double GetSeaLevelRadius(void) const;
 
-  /** Get the distance from the center of the earth.
+  /** Get the distance from the center of the earth in feet.
       @return the distance of the location represented with this class
       instance to the center of the earth in ft. The radius value is
       always positive. */
@@ -317,16 +303,16 @@ public:
   /** Get the geodetic distance between the current location and a given
       location. This corresponds to the shortest distance between the two
       locations. Earth curvature is taken into account.
-      @param target_longitude the target longitude
-      @param target_latitude the target latitude
+      @param target_longitude the target longitude in radians
+      @param target_latitude the target latitude in radians
       @return The geodetic distance between the two locations */
   double GetDistanceTo(double target_longitude, double target_latitude) const;
   
   /** Get the heading that should be followed from the current location to
-      a given location along the shortest path. Earth curvature is
-      taken into account.
-      @param target_longitude the target longitude
-      @param target_latitude the target latitude
+      a given location along the shortest path. Earth curvature is taken into
+      account.
+      @param target_longitude the target longitude in radians
+      @param target_latitude the target latitude in radians
       @return The heading that should be followed to reach the targeted
               location along the shortest path */
   double GetHeadingTo(double target_longitude, double target_latitude) const;
@@ -406,7 +392,7 @@ public:
   }
 
   /** Sets this location via the supplied location object.
-      @param v A location object reference.
+      @param l A location object reference.
       @return a reference to the FGLocation object. */
   FGLocation& operator=(const FGLocation& l);
 
@@ -462,14 +448,18 @@ public:
       A new object is returned that defines a position which is the sum of the
       cartesian coordinates of the two positions provided. */
   FGLocation operator+(const FGLocation& l) const {
-    return FGLocation(mECLoc + l.mECLoc);
+    FGLocation result(mECLoc + l.mECLoc);
+    if (mEllipseSet) result.SetEllipse(a, ec*a);
+    return result;
   }
 
   /** This operator substracts two ECEF position vectors.
       A new object is returned that defines a position which is the difference
       of the cartesian coordinates of the two positions provided. */
   FGLocation operator-(const FGLocation& l) const {
-    return FGLocation(mECLoc - l.mECLoc);
+    FGLocation result(mECLoc - l.mECLoc);
+    if (mEllipseSet) result.SetEllipse(a, ec*a);
+    return result;
   }
 
   /** This operator scales an ECEF position vector.
@@ -477,7 +467,9 @@ public:
       coordinates of the provided ECEF position scaled by the supplied scalar
       value. */
   FGLocation operator*(double scalar) const {
-    return FGLocation(scalar*mECLoc);
+    FGLocation result(scalar*mECLoc);
+    if (mEllipseSet) result.SetEllipse(a, ec*a);
+    return result;
   }
 
   /** Cast to a simple 3d vector */
