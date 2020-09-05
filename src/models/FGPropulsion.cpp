@@ -705,7 +705,6 @@ int FGPropulsion::GetCutoff(void) const
       return ((FGTurbine*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
     case FGEngine::etTurboprop:
       return ((FGTurboProp*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
-      break;
     default:
       break;
     }
