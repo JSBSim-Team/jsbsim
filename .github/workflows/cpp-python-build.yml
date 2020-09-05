@@ -97,7 +97,7 @@ jobs:
             (branch ${{ github.ref }} commit ${{ github.sha}})
           files: |
             build/*.deb
-            build/python/dist/*-manylinux1*.whl
+            build/python/dist/*-manylinux*.whl
 
   Windows-MinGW32:
     runs-on: windows-latest
