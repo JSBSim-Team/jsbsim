@@ -149,6 +149,22 @@ public:
   */
   void SetGroundCallback(FGGroundCallback* gc) { GroundCallback.reset(gc); }
 
+  /// These define the indices use to select the gravitation models.
+  enum eGravType {
+    /// Evaluate gravity using Newton's classical formula assuming the Earth is
+    /// spherical
+    gtStandard,
+    /// Evaluate gravity using WGS84 formulas that take the Earth oblateness
+    /// into account
+    gtWGS84
+  };
+
+  /// Get the gravity type.
+  int GetGravityType(void) const { return gravType; }
+
+  /// Set the gravity type.
+  void SetGravityType(int gt);
+
   /** Transform matrix from the local horizontal frame to earth centered.
       The local frame is the NED (North-East-Down) frame. Since the Down
       direction depends on the gravity so is the local frame.
@@ -185,16 +201,6 @@ public:
   bool Load(Element* el) override;
 
 private:
-  /// These define the indices use to select the gravitation models.
-  enum eGravType {
-    /// Evaluate gravity using Newton's classical formula assuming the Earth is
-    /// spherical
-    gtStandard,
-    /// Evaluate gravity using WGS84 formulas that take the Earth oblateness
-    /// into account
-    gtWGS84
-  };
-
   // Standard gravity (9.80665 m/s^2) in ft/s^2 which is the gravity at 45 deg.
   // of latitude (see ISA 1976 and Steven & Lewis)
   // It includes the centripetal acceleration.
