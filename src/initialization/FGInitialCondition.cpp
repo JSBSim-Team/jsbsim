@@ -1236,7 +1236,6 @@ bool FGInitialCondition::Load_v2(Element* document)
       position = Ti2ec * position_el->FindElementTripletConvertTo("FT");
     } else if (frame == "ecef") {
       if (!position_el->FindElement("x") && !position_el->FindElement("y") && !position_el->FindElement("z")) {
-        double longitude = 0.0;
         if (position_el->FindElement("longitude")) {
           SetLongitudeRadIC(position_el->FindElementValueAsNumberConvertTo("longitude", "RAD"));
         }
