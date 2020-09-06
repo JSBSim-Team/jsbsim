@@ -5,5 +5,5 @@ includedir=@CMAKE_INSTALL_PREFIX@/include
 Name: JSBSim
 Description: An open source flight dynamics & control software library
 Version: @PROJECT_VERSION@
-Libs: -L${libdir} -lJSBSim
+Libs: -L${libdir} -lJSBSim@JSBSIM_PKG_CONFIG_LINK_LIBRARIES@
 Cflags: -I${includedir}/JSBSim

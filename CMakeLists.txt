@@ -28,12 +28,15 @@ function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
   set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
 endfunction()
 
+find_package(PkgConfig)
+
 ################################################################################
 # Build JSBSim libs and exec                                                   #
 ################################################################################
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
+get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 
 ################################################################################
 # Documentation                                                                #
@@ -90,9 +93,12 @@ endif(CXXTEST_FOUND)
 # Packaging                                                                    #
 ################################################################################
 
-find_package(PkgConfig)
-
 if (PKG_CONFIG_FOUND)
+  if (NOT BUILD_SHARED_LIBS)
+    foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
+      set(JSBSIM_PKG_CONFIG_LINK_LIBRARIES "${JSBSIM_PKG_CONFIG_LINK_LIBRARIES} -l${_LIB}")
+    endforeach(_LIB)
+  endif(NOT BUILD_SHARED_LIBS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.pc.in ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc @ONLY)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig COMPONENT devel)
 endif()
@@ -176,6 +182,9 @@ set(CPACK_DEBIAN_RUNTIME_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.deb")
 set(CPACK_DEBIAN_DEVEL_FILE_NAME "${CMAKE_PROJECT_NAME}-devel${EXTENSION_NAME}.deb")
 set(CPACK_DEBIAN_PYMODULES_PACKAGE_NAME "python${PYTHON_VERSION_MAJOR}-${CPACK_PACKAGE_NAME}")
 set(CPACK_DEBIAN_PYMODULES_FILE_NAME "python${PYTHON_VERSION_MAJOR}-${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.deb")
+if (SYSTEM_EXPAT)
+  set(CPACK_DEBIAN_RUNTIME_PACKAGE_DEPENDS "libexpat1")
+endif(SYSTEM_EXPAT)
 if(BUILD_SHARED_LIBS)
   set(CPACK_DEBIAN_DEVEL_PACKAGE_DEPENDS "${CPACK_DEBIAN_RUNTIME_PACKAGE_NAME} (>=${CPACK_PACKAGE_VERSION})")
   set(CPACK_DEBIAN_PYMODULES_PACKAGE_DEPENDS "${CPACK_DEBIAN_RUNTIME_PACKAGE_NAME} (>=${CPACK_PACKAGE_VERSION})")
