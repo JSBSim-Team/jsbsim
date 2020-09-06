@@ -8,9 +8,13 @@ jobs:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04]
         expat: [ON, OFF]
+        shared_libs: [ON, OFF]
         exclude:
           - os: ubuntu-18.04
             expat: ON
+          - os: ubuntu-18.04
+            expat: OFF
+            shared_libs: ON
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
@@ -31,7 +35,7 @@ jobs:
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
       - name: Build JSBSim
         working-directory: build
         run: make -j2
@@ -41,12 +45,13 @@ jobs:
           valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2
+        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2
       - name: Build Ubuntu packages
+        if: ${{ matrix.shared_libs == 'OFF' }}
         working-directory: build
         run: cpack
       - name: Build ManyLinux wheel packages (PEP 513)
-        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' }}
+        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
         working-directory: build
         run: |
           rm -f CMakeCache.txt
@@ -59,7 +64,7 @@ jobs:
           # Build the manylinux1 wheel binary packages
           docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
-        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' }}
+        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
@@ -77,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}.logs
+          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
           path: logs
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
@@ -86,7 +91,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: ${{ matrix.expat == 'OFF' }}
+        if: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
