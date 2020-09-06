@@ -67,13 +67,13 @@ jobs:
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
-          cp build/python/*-build.log logs/.
+          cp build/tests/*-build.log logs/.
           cp valgrind_Short_S23_3.xml logs/.
       - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
         with:
-          name: Linux.logs
+          name: Linux-${{ matrix.os }}.logs
           path: logs
       - name: On failure - Display a summary of valgrind errors.
         if: failure()
@@ -215,7 +215,7 @@ jobs:
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
-          cp build/python/*-build.log logs/.
+          cp build/tests/*-build.log logs/.
       - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
@@ -318,7 +318,7 @@ jobs:
         run: |
           mkdir logs
           cp build/Testing/Temporary/*.log logs/.
-          cp build/python/*-build.log logs/.
+          cp build/tests/*-build.log logs/.
       - name: On failure - Upload logs
         uses: actions/upload-artifact@v1
         if: failure()
