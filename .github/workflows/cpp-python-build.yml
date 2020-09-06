@@ -350,3 +350,45 @@ jobs:
             (branch ${{ github.ref }} commit ${{ github.sha}})
           files: |
             build/python/dist/*.whl
+
+  Documentation:
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: sudo apt-get install doxygen graphviz cxxtest lcov
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython sphinx
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Configure JSBSim
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
+      - name: Build Python docs
+        working-directory: build
+        run: |
+          touch documentation/html/.nojekyll
+          sphinx-build -b html documentation documentation/html/python
+      - name: Build JSBSim
+        working-directory: build
+        run: make -j2
+      - name: Unit tests coverage
+        working-directory: build
+        run: |
+          ctest -R Test1
+          lcov -d . -c -o tmp.info
+          lcov -r tmp.info /usr/include/c++/\* /usr/include/cxxtest/\* \*/tests/unit_tests/\* -o coverage.info
+          genhtml -o documentation/html/coverage -t "JSBSim unit tests" coverage.info
+      - name: Publish docs to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: build/documentation/html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
