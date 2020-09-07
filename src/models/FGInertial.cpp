@@ -230,11 +230,11 @@ void FGInertial::SetGravityType(int gt)
   {
   case eGravType::gtStandard: 
     if (a != b)
-      cout << "Set standard gravity for a non-spherical planet" << endl;
+      cout << "Warning: Standard gravity model has been set for a non-spherical planet" << endl;
     break;
   case eGravType::gtWGS84:
     if (J2 == 0.0)
-      cout << "Set WGS84 with a null gravitational constant J2." << endl;
+      cout << "Warning: WGS84 gravity model has been set without specifying the J2 gravitational constant." << endl;
   }
 
   gravType = gt;
