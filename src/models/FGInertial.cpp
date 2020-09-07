@@ -107,6 +107,12 @@ bool FGInertial::Load(Element* el)
 
   GroundCallback->SetEllipse(a, b);
 
+  // Messages to warn the user about possible inconsistencies.
+  if (a != b && J2 == 0.0)
+    cout << "Gravitational constant J2 is null for a non-spherical planet." << endl;
+  if (a == b && J2 != 0.0)
+    cout << "Gravitational constant J2 is non-zero for a spherical planet." << endl;
+
   Debug(2);
 
   return true;
@@ -217,11 +223,31 @@ void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGInertial::SetGravityType(int gt)
+{
+  // Messages to warn the user about possible inconsistencies.
+  switch (gt)
+  {
+  case eGravType::gtStandard: 
+    if (a != b)
+      cout << "Warning: Standard gravity model has been set for a non-spherical planet" << endl;
+    break;
+  case eGravType::gtWGS84:
+    if (J2 == 0.0)
+      cout << "Warning: WGS84 gravity model has been set without specifying the J2 gravitational constant." << endl;
+  }
+
+  gravType = gt;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGInertial::bind(void)
 {
   PropertyManager->Tie("inertial/sea-level-radius_ft", &in.Position,
                        &FGLocation::GetSeaLevelRadius);
-  PropertyManager->Tie("simulation/gravity-model", &gravType);
+  PropertyManager->Tie("simulation/gravity-model", this, &FGInertial::GetGravityType,
+                       &FGInertial::SetGravityType);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
