@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -51,7 +51,7 @@ LandingGear::LandingGear(Aeromatic *p) : System(p, true),
     _inputs.push_back(new Param("Is this a taildragger?", 0, _taildragger));
 }
 
-void LandingGear::set(const float *cg_loc)
+void LandingGear::set(const float cg_loc[3])
 {
     _cg_loc[X] = cg_loc[X];
     _cg_loc[Y] = cg_loc[Y];
@@ -221,6 +221,74 @@ std::string LandingGear::fdm()
     return file.str();
 }
 
+std::string LandingGear::json(const float cg_loc[3])
+{
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    std::string param = "  \"gear\"";
+    file << std::setw(12) << param << ": [ " << std::endl;
+
+    // NOSE, TAIL
+    file << "  {" << std::endl;
+    param  = "    \"pos\"";
+    file << std::setw(14) << param << ": [ "
+               << _gear_loc[_taildragger ? TAIL : NOSE][X]-cg_loc[X] << ", "
+               << _gear_loc[_taildragger ? TAIL : NOSE][Y]-cg_loc[Y] << ", "
+               << _gear_loc[_taildragger ? TAIL : NOSE][Z]-cg_loc[Z] << " ],"
+               << std::endl;
+
+    param  = "    \"spring\"";
+    file << std::setw(14) << param << ": "
+         << _gear_spring[_taildragger ? TAIL : NOSE]  << ", " << std::endl;
+
+    param  = "    \"damp\"";
+    file << std::setw(14) << param << ": "
+         << _gear_damp[_taildragger ? TAIL : NOSE]  << std::endl;
+    file << "  }," << std::endl;
+
+    // LEFT MAIN
+    file << "  {" << std::endl;
+    param  = "    \"pos\"";
+    file << std::setw(14) << param << ": [ "
+               << _gear_loc[MAIN][X]-cg_loc[X] << ", "
+               << -_gear_loc[MAIN][Y]-cg_loc[Y] << ", "
+               << _gear_loc[MAIN][Z]-cg_loc[Z] << " ],"
+               << std::endl;
+
+    param  = "    \"spring\"";
+    file << std::setw(14) << param << ": "
+         << _gear_spring[MAIN]  << ", " << std::endl;
+
+    param  = "    \"damp\"";
+    file << std::setw(14) << param << ": "
+         << _gear_damp[MAIN]  << std::endl;
+    file << "  }," << std::endl;
+
+    // RIGHT MAIN
+    file << "  {" << std::endl;
+    param  = "    \"pos\"";
+    file << std::setw(14) << param << ": [ "
+               << _gear_loc[MAIN][X]-cg_loc[X] << ", "
+               << _gear_loc[MAIN][Y]-cg_loc[Y] << ", "
+               << _gear_loc[MAIN][Z]-cg_loc[Z] << " ],"
+               << std::endl;
+
+    param  = "    \"spring\"";
+    file << std::setw(14) << param << ": "
+         << _gear_spring[MAIN]  << ", " << std::endl;
+
+    param  = "    \"damp\"";
+    file << std::setw(14) << param << ": "
+         << _gear_damp[MAIN]  << std::endl;
+    file << "  } ]";
+
+    return file.str();
+}
+
 std::string LandingGear::system()
 {
     std::stringstream file;
@@ -303,6 +371,6 @@ float const LandingGear::_CDfixed_gear_t[MAX_AIRCRAFT][5] =
     { 0.002f, 0.002f, 0.002f, 0.002f, 0.002f },		// JET_TRANSPORT
     { 0.003f, 0.003f, 0.003f, 0.003f, 0.003f }
 };
- 
+
 } /* namespace Aeromatic */
 

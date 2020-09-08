@@ -50,6 +50,7 @@ public:
     virtual std::string lift() { return ""; }
     virtual std::string pitch() { return ""; }
     virtual std::string roll() { return ""; }
+    virtual std::string json() { return ""; }
 
     const char* get_name() {
         return _thruster_name;
@@ -93,6 +94,7 @@ public:
     std::string lift();
     std::string pitch();
     std::string roll();
+    std::string json();
 
     float max_rpm() { return _max_rpm; }
     float Cp0() { return _Cp0; }

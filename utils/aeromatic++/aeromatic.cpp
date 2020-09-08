@@ -130,7 +130,8 @@ int main(int argc, char *argv[])
     ofstream log;
     ifstream in;
 
-    if (getCommandLineOption(argc, argv, (char*)"-h") != NULL) {
+    if (getCommandLineOption(argc, argv, (char*)"-h") != NULL ||
+        getCommandLineOption(argc, argv, (char*)"--help") != NULL) {
         help();
     }
 
