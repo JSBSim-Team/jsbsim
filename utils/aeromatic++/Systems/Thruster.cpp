@@ -154,7 +154,7 @@ void  Propeller::bladeElement()
 
     float RPM = _engine_rpm;
     float D = _diameter;
-    float B = static_cast<float>(_blades);
+    float B = _blades;
     float R = D/2.0f;
 
     if (_max_chord == 0) {
@@ -182,7 +182,7 @@ void  Propeller::bladeElement()
     do
     {
         float step = 0.05f;
-        for (float J=1e-9f; J<2.4f; J += step)
+        for (float J=1e-9; J<2.4f; J += step)
         {
             _ixx = 0.0f;
 
@@ -209,7 +209,7 @@ void  Propeller::bladeElement()
                 float AR = rstep/chord;
                 float PAR = PI*AR;
 
-                float eff = 0.71f + (i*0.23f/NUM_ELEMENTS);
+                float eff = 0.71 + (i*0.23f/NUM_ELEMENTS);
                 float CL0 = 4.0f*PI*CC;
                 float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
                 float CDi = 1.0f/(eff*B*PAR);
@@ -404,7 +404,7 @@ std::string Propeller::pitch()
     float Sh = aircraft->_htail.area;
     float cbarw = aircraft->_wing.chord_mean;
     
-    float Knp = static_cast<float>(aircraft->_no_engines);
+    float Knp = aircraft->_no_engines;
     if (Knp > 3.0f) Knp = 2.0f;
     Knp /= aircraft->_no_engines;
 
@@ -455,7 +455,7 @@ std::string Propeller::roll()
 //  float TR = aircraft->_wing.taper;
 
     // http://www.princeton.edu/~stengel/MAE331Lecture5.pdf
-    float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0f);
+    float dClT = (_dCLTalpha/2.0f)*((1.0f-k*k)/3.0);
     
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <function name=\"aero/moment/Roll_differential_propwash\">" << std::endl;
@@ -539,7 +539,7 @@ std::string Propeller::thruster()
         file << " <!-- thrust coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_THRUST\" type=\"internal\">" << std::endl;
         file << "      <tableData>" << std::endl;
-        size_t size = _performance.size()/_pitch_levels;
+        unsigned size = _performance.size()/_pitch_levels;
         file << std::setw(16) << "";
         for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
             file << std::setw(10) << -15+int(p*15);
@@ -578,7 +578,7 @@ std::string Propeller::thruster()
         file << " <!-- power coefficient as a function of advance ratio and blade angle -->" << std::endl;
         file << "  <table name=\"C_POWER\" type=\"internal\">" << std::endl;
         file << "     <tableData>" << std::endl;
-        size_t size = _performance.size()/_pitch_levels;
+        unsigned size = _performance.size()/_pitch_levels;
         file << std::setw(16) << "";
         for (unsigned p=0; p<NUM_PROP_PITCHES; ++p) {
             file << std::setw(10) << -15+int(p*15);
@@ -618,6 +618,36 @@ std::string Propeller::thruster()
     file << "</table>" << std::endl;
 
     file << "\n</propeller>" << std::endl;
+
+    return file.str();
+}
+
+std::string Propeller::json()
+{
+    std::stringstream file;
+
+    file.precision(4);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    std::string param  = "    \"CTmax\"";
+    file << std::setw(14) << param << ": " << _performance[0].CT << "," << std::endl;
+
+    param  = "    \"CTu\"";
+    file << std::setw(14) << param << ": " << 0.0f << "," << std::endl;
+    file << std::endl;
+
+    file.precision(2);
+    param  = "    \"D\"";
+    file << std::setw(14) << param << ": " << _diameter*FEET_TO_INCH
+         << "," << std::endl;
+
+    param  = "    \"RPM\"";
+    file << std::setw(14) << param << ": " << _max_rpm << "," << std::endl;
+
+    file.precision(3);
+    param  = "    \"Ixx\"";
+    file << std::setw(14) << param << ": " << _ixx;
 
     return file.str();
 }
