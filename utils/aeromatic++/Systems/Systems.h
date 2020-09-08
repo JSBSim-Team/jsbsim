@@ -54,9 +54,10 @@ public:
     }
 
     /* construct the configuration file(s) */
-    virtual void set(const float* cg_loc) {}
+    virtual void set(const float cg_loc[3]) {}
     virtual std::string comment() { return ""; }
     virtual std::string fdm() { return ""; }
+    virtual std::string json(const float cg_loc[3]) { return ""; }
     virtual std::string mass_balance() { return ""; }
     virtual std::string system() { return ""; }
     virtual std::string external_force() { return ""; }
@@ -118,7 +119,7 @@ public:
     std::string lift();
     std::string drag();
 
-private:
+public:
     static float const _dCLflaps_t[MAX_AIRCRAFT][5];
     static float const _CDflaps_t[MAX_AIRCRAFT][5];
 
@@ -132,9 +133,10 @@ public:
     LandingGear(Aeromatic *p);
     ~LandingGear() {}
 
-    void set(const float* cg_loc);
+    void set(const float cg_loc[3]);
     std::string comment();
     std::string fdm();
+    std::string json(const float cg_loc[3]);
     std::string system();
 
     std::string drag();
