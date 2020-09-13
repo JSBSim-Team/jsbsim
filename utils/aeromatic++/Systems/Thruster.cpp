@@ -148,7 +148,7 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
 void  Propeller::bladeElement()
 {
     const float Y = 167.0f;	// Specific Weight of aluminum
-    const float rho = 1.225f;
+    const float rho =  0.002379;// Standard sea level density (slug/ft3)
     const float Cf = 0.006f;	// skin Friction Coefficient
     const float k1 = 0.2f;	// correction factor for airfoil thickness
 
@@ -293,7 +293,7 @@ void Propeller::set_thruster(float mrpm)
     float rps3 = rps2 * max_rps;
     float d4 = _diameter * _diameter * _diameter * _diameter;
     float d5 = d4 * _diameter;
-    float rho = 0.002378f;
+    float rho = 0.002379f;
 
     // power and thrust coefficients at design point
     // for fixed pitch design point is beta=22, J=0.2
@@ -630,24 +630,19 @@ std::string Propeller::json()
     file.flags(std::ios::left);
     file << std::fixed << std::showpoint;
 
-    std::string param  = "    \"CTmax\"";
-    file << std::setw(14) << param << ": " << _performance[0].CT << "," << std::endl;
+    float RPM = _max_rpm/60.0f;
+    float D = _diameter;
+    float FT = _fixed_pitch ? _performance[0].CT
+                          : _performance[_performance.size()/_pitch_levels].CT;
+    FT *= (RPM*RPM * D*D*D*D);
 
-    param  = "    \"CTu\"";
-    file << std::setw(14) << param << ": " << 0.0f << "," << std::endl;
-    file << std::endl;
+    std::string param  = "    \"FTmax\"";
+    file << std::setw(14) << param << ": " << FT << "," << std::endl;
 
-    file.precision(2);
-    param  = "    \"D\"";
-    file << std::setw(14) << param << ": " << _diameter*FEET_TO_INCH
-         << "," << std::endl;
+    float MT = -_ixx*(2.0f*RPM*PI);
 
-    param  = "    \"RPM\"";
-    file << std::setw(14) << param << ": " << _max_rpm << "," << std::endl;
-
-    file.precision(3);
-    param  = "    \"Ixx\"";
-    file << std::setw(14) << param << ": " << _ixx;
+    param  = "    \"MTmax\"";
+    file << std::setw(14) << param << ": " << MT;
 
     return file.str();
 }
