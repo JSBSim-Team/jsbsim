@@ -949,6 +949,7 @@ Aeromatic::write_JSON()
     file << std::setw(12) << param << ": " << _inertia[Z] << "," << std::endl;
 
     param = "  \"Ixz\"";
+
     file << std::setw(12) << param << ": " << 0.0f << "," << std::endl;
     file << std::endl;
 

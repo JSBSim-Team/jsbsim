@@ -494,7 +494,9 @@ std::string Propulsion::json(const float cg_loc[3])
                    << _thruster_orient[i][PITCH] << ", "
                    << _thruster_orient[i][ROLL] << ", "
                    << _thruster_orient[i][YAW] << " ]";
+
         param = _propulsion[_ptype]->json();
+
         if (!param.empty())
         {
             file << "," << std::endl;
@@ -990,7 +992,6 @@ std::string RocketEngine::json()
     file << std::setw(14) << param << ": " << 0.0f;
 
     return file.str();
-
 }
 
 
