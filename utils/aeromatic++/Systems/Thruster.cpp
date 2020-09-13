@@ -148,7 +148,7 @@ Propeller::Propeller(Propulsion *p) : Thruster(p),
 void  Propeller::bladeElement()
 {
     const float Y = 167.0f;	// Specific Weight of aluminum
-    const float rho = 1.225f;
+    const float rho =  0.002379;// Standard sea level density (slug/ft3)
     const float Cf = 0.006f;	// skin Friction Coefficient
     const float k1 = 0.2f;	// correction factor for airfoil thickness
 
