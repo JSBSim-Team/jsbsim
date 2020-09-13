@@ -430,21 +430,16 @@ bool Aeromatic::fdm()
     _aero_rp[Z] = 0;
 
 //***** CG LOCATION ***********************************
-#if 0
     // http://www.rcgroups.com/forums/showatt.php?attachmentid=1651636
     float TR = _wing.taper;
     float Sw = _wing.area;
-    float cbar = _wing.chord_mean;
+    float R = _wing.chord_mean;
     float Sh = _htail.area;
     float L = _htail.arm;
-
-    float R =  3.0f*cbar/(2.0f*(1.0f+TR-(TR/(1.0f+TR))));
     float T = R * TR;
     float P = L*Sh/(3.0f*Sw) - ((R*R + R*T + T*T)/(R+T))/15.0f;
-    _cg_loc[X] = _aero_rp[X] + P * FEET_TO_INCH;
-#else
-    _cg_loc[X] = _aero_rp[X];
-#endif
+
+    _cg_loc[X] = _aero_rp[X] - P * FEET_TO_INCH;
     _cg_loc[Y] = 0;
     _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
