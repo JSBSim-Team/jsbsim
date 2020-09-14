@@ -758,7 +758,21 @@ std::string TurbineEngine::engine()
 
 std::string TurbineEngine::json()
 {
-    return "";
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+    if (_augmented) { 
+        max_thrust *= 1.5f;
+    }
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
+
+    return file.str();
 }
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
@@ -957,7 +971,18 @@ std::string RocketEngine::engine()
 
 std::string RocketEngine::json()
 {
-    return "";
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
+
+    return file.str();
 }
 
 
