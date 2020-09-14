@@ -317,6 +317,7 @@ void CableControls::set(const float* cg_loc)
 
         _aircraft->_Clbeta.at(i*2) = Cmin - Clbwf - alpha*Clbvt;
         _aircraft->_Clbeta.at(i*2+1) = Cmax - Clbwf - alpha*Clbvt;
+        _aircraft->_Clbeta.at(i*2+2) = Cmin - Clbwf;
 
         float Clr_const = 2.0f*lv*zv/bw/bw*CYbeta;
         Cmin = (CLmin/4.0f)-Clr_const;

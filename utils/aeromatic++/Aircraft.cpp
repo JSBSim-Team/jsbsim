@@ -189,7 +189,7 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     _CDalpha.resize(4, 0.0f);
     _CYp.resize(4, 0.0f);
-    _Clbeta.resize(8, 0.0f);
+    _Clbeta.resize(9, 0.0f);
     _Clr.resize(9, 0.0f);
     _Cnp.resize(4, 0.0f);
 
@@ -948,7 +948,7 @@ Aeromatic::write_JSON()
     param = "  \"Izz\"";
     file << std::setw(12) << param << ": " << _inertia[Z] << "," << std::endl;
 
-    param = "  \"Izz\"";
+    param = "  \"Ixz\"";
     file << std::setw(12) << param << ": " << 0.0f << "," << std::endl;
     file << std::endl;
 

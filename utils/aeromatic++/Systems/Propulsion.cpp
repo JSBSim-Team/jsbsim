@@ -490,27 +490,19 @@ std::string Propulsion::json(const float cg_loc[3])
                    << std::endl;
 
         param  = "    \"dir\"";
-#if 1
-        file << std::setw(14) << param << ": [ "
-                   << 1.0f << ", "
-                   << 0.0f << ", "
-                   << 0.0f << " ]";
-#else
         file << std::setw(14) << param << ": [ "
                    << _thruster_orient[i][PITCH] << ", "
                    << _thruster_orient[i][ROLL] << ", "
                    << _thruster_orient[i][YAW] << " ]";
-#endif
-        param = _propulsion[_ptype]->_thruster->json();
+        param = _propulsion[_ptype]->json();
         if (!param.empty())
         {
             file << "," << std::endl;
             file << std::endl;
             file << param << std::endl;;
         }
-        file << std::endl;
-
-        file << "  }";
+        if (i == no_engines-1) file << "  }";
+        else file << "  },";
     }
 
     file << " ]";
