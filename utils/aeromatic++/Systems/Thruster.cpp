@@ -365,7 +365,7 @@ void Propeller::set_thruster(float mrpm)
     _max_thrust = _fixed_pitch ? _performance[0].CT
                           : _performance[_performance.size()/_pitch_levels].CT;
     _max_thrust *= rho * n2 * D4;
-    _max_torque = -_ixx*(2.0f*PI*_max_rpm);
+    _max_torque = -rho * _ixx*(2.0f*PI*_max_rpm);
 }
 
 std::string Propeller::lift()
@@ -651,11 +651,7 @@ std::string Propeller::json()
     file << std::setw(14) << param << ": " << _max_torque << "," << std::endl;
 
     param  = "    \"rpm_max\"";
-    file << std::setw(14) << param << ": " << _max_rpm << "," << std::endl;
-
-    file.precision(3);
-    param  = "    \"Ixx\"";
-    file << std::setw(14) << param << ": " << _ixx;
+    file << std::setw(14) << param << ": " << _max_rpm;
 
     return file.str();
 }
