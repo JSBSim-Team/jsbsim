@@ -18,7 +18,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
-        run: sudo apt-get install doxygen cxxtest valgrind
+        run: |
+          sudo apt-get update
+          sudo apt-get install doxygen cxxtest valgrind
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
