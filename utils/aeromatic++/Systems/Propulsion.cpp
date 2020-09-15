@@ -490,27 +490,19 @@ std::string Propulsion::json(const float cg_loc[3])
                    << std::endl;
 
         param  = "    \"dir\"";
-#if 1
-        file << std::setw(14) << param << ": [ "
-                   << 1.0f << ", "
-                   << 0.0f << ", "
-                   << 0.0f << " ]";
-#else
         file << std::setw(14) << param << ": [ "
                    << _thruster_orient[i][PITCH] << ", "
                    << _thruster_orient[i][ROLL] << ", "
                    << _thruster_orient[i][YAW] << " ]";
-#endif
-        param = _propulsion[_ptype]->_thruster->json();
+        param = _propulsion[_ptype]->json();
         if (!param.empty())
         {
             file << "," << std::endl;
             file << std::endl;
             file << param << std::endl;;
         }
-        file << std::endl;
-
-        file << "  }";
+        if (i == no_engines-1) file << "  }";
+        else file << "  },";
     }
 
     file << " ]";
@@ -766,7 +758,21 @@ std::string TurbineEngine::engine()
 
 std::string TurbineEngine::json()
 {
-    return "";
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+    if (_augmented) { 
+        max_thrust *= 1.5f;
+    }
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
+
+    return file.str();
 }
 
 TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
@@ -965,7 +971,18 @@ std::string RocketEngine::engine()
 
 std::string RocketEngine::json()
 {
-    return "";
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
+
+    return file.str();
 }
 
 
