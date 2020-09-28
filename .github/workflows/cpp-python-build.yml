@@ -1,6 +1,6 @@
 name: C/C++ build
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   Linux:
@@ -93,7 +93,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/master' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -238,7 +238,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -342,7 +342,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -358,7 +358,7 @@ jobs:
   Documentation:
     needs: Linux
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen graphviz cxxtest lcov
