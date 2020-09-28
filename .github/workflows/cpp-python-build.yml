@@ -49,11 +49,11 @@ jobs:
         working-directory: build
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2
       - name: Build Ubuntu packages
-        if: ${{ matrix.shared_libs == 'OFF' }}
+        if: matrix.shared_libs == 'OFF'
         working-directory: build
         run: cpack
       - name: Build ManyLinux wheel packages (PEP 513)
-        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
         working-directory: build
         run: |
           rm -f CMakeCache.txt
@@ -66,7 +66,7 @@ jobs:
           # Build the manylinux1 wheel binary packages
           docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
-        if: ${{ matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
@@ -93,7 +93,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: ${{ github.ref == 'master' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+        if: github.ref == 'refs/heads/master' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -238,7 +238,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: ${{ github.ref == 'master' }}
+        if: github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -342,7 +342,7 @@ jobs:
     # Release files
       - name: Release binaries
         uses: softprops/action-gh-release@v1
-        if: ${{ github.ref == 'master' }}
+        if: github.ref == 'refs/heads/master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -358,7 +358,7 @@ jobs:
   Documentation:
     needs: Linux
     runs-on: ubuntu-latest
-    if: ${{ github.ref == 'master' }}
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen graphviz cxxtest lcov
