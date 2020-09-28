@@ -47,7 +47,7 @@ jobs:
           valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         working-directory: build
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2
+        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
       - name: Build Ubuntu packages
         if: matrix.shared_libs == 'OFF'
         working-directory: build
@@ -139,7 +139,7 @@ jobs:
         run: mingw32-make -j2
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2
+        run: ctest -j2 --output-on-failure
 
     # Upload files
       - name: On failure - Upload logs
@@ -185,7 +185,7 @@ jobs:
         run: cmake --build . --config RelWithDebInfo
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo
+        run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
       - name: Build wheel package for Python 3.8
         working-directory: build
         run: python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
@@ -289,7 +289,7 @@ jobs:
         run: make -j2
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 -E TestInputSocket
+        run: ctest -j2 -E TestInputSocket --output-on-failure
       - name: Build wheel package for Python 3.6
         working-directory: build
         run: python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
@@ -386,7 +386,7 @@ jobs:
       - name: Unit tests coverage
         working-directory: build
         run: |
-          ctest -R Test1
+          ctest -R Test1 --output-on-failure
           lcov -d . -c -o tmp.info
           lcov -r tmp.info /usr/include/c++/\* /usr/include/cxxtest/\* \*/tests/unit_tests/\* -o coverage.info
           genhtml -o documentation/html/coverage -t "JSBSim unit tests" coverage.info
