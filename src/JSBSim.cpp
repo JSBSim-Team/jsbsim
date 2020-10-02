@@ -492,7 +492,8 @@ int real_main(int argc, char* argv[])
   char s[100];
   time_t tod;
   time(&tod);
-  strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
+  struct tm local;
+  strftime(s, 99, "%A %B %d %Y %X", localtime_r(&tod, &local));
   cout << "Start: " << s << " (HH:MM:SS)" << endl;
 
   frame_duration = FDMExec->GetDeltaT();
@@ -558,7 +559,7 @@ int real_main(int argc, char* argv[])
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
-  strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
+  strftime(s, 99, "%A %B %d %Y %X", localtime_r(&tod, &local));
   cout << "End: " << s << " (HH:MM:SS)" << endl;
 
   // CLEAN UP
