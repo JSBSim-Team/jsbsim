@@ -20,7 +20,7 @@ jobs:
       - name: Install Ubuntu packages
         run: |
           sudo apt-get update
-          sudo apt-get install doxygen cxxtest valgrind
+          sudo apt-get install cxxtest valgrind
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
@@ -29,12 +29,16 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
         uses: actions/checkout@v2
-      - name: Configure JSBSim
+      - name: Install & Configure Doxygen
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
         run: |
+          sudo apt-get install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Configure JSBSim
+        run: |
           mkdir build
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
@@ -158,10 +162,16 @@ jobs:
           python-version: '3.8'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
-      - name: Install Doxygen
-        run: cinst doxygen.install
       - name: Checkout JSBSim
         uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          cinst doxygen.install
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
       - name: Checkout CxxTest
         uses: actions/checkout@v2
         with:
@@ -173,10 +183,6 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
-          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build
           cd build
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
@@ -262,10 +268,16 @@ jobs:
           python-version: '3.6'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel
-      - name: Install Doxygen
-        run: brew install doxygen
       - name: Checkout JSBSim
         uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: |
+          brew install doxygen
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Checkout CxxTest
         uses: actions/checkout@v2
         with:
@@ -277,10 +289,6 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           mkdir build
           cd build
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
