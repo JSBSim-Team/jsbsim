@@ -491,7 +491,7 @@ Aeromatic::write_XML()
 
     time(&t);
     struct tm ti;
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
     localtime_s(&ti, &t);
 #else
     localtime_r(&t, &ti);

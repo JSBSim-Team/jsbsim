@@ -494,7 +494,7 @@ int real_main(int argc, char* argv[])
   time(&tod);
   struct tm local;
 #ifdef _MSC_VER
-  localtime_r(&local, &tod);
+  localtime_s(&local, &tod);
 #else
   localtime_r(&tod, &local);
 #endif
@@ -565,7 +565,7 @@ int real_main(int argc, char* argv[])
   // PRINT ENDING CLOCK TIME
   time(&tod);
 #ifdef _MSC_VER
-  localtime_r(&local, &tod);
+  localtime_s(&local, &tod);
 #else
   localtime_r(&tod, &local);
 #endif
