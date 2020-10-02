@@ -75,7 +75,11 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
   time_t rawtime;
   time( &rawtime );
   struct tm ptm;
+  #ifdef _MSC_VER
+  gmtime_s(&ptm, &rawtime);
+  #else
   gmtime_r(&rawtime, &ptm);
+  #endif
 
   int year = ptm.tm_year;
   if(year>100)

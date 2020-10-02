@@ -490,14 +490,13 @@ Aeromatic::write_XML()
     time_t t;
 
     time(&t);
-#ifdef _MSC_VER
     struct tm ti;
+#ifdef _MSC_VER
     localtime_s(&ti, &t);
-    strftime(str, sizeof(str), "%d %b %Y", &ti);
 #else
-    struct tm *ti= localtime(&t);
-    strftime(str, sizeof(str), "%d %b %Y", ti);
+    localtime_r(&t, &ti);
 #endif
+    strftime(str, sizeof(str), "%d %b %Y", &ti);
 
     _dir = _subdir ? create_dir(_path, _name) : _path;
     if (_dir.empty()) {
