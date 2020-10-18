@@ -640,7 +640,11 @@ public:
         // Compute the distance
         double distance_a = pow(sin(0.5 * dlat), 2.) + (cos(lat0) * cos(lat) * pow(sin(0.5 * dlon), 2.));
         double distance = 2. * slr * atan2(sqrt(distance_a), sqrt(1. - distance_a));
+#ifdef __APPLE__
+        TS_ASSERT_DELTA(distance, l0.GetDistanceTo(lon, lat), 1E-6);
+#else
         TS_ASSERT_DELTA(distance, l0.GetDistanceTo(lon, lat), 1E-7);
+#endif
         // Compute the heading
         double Y = sin(dlon) * cos(lat);
         double X = cos(lat0) * sin(lat) - sin(lat0) * cos(lat) * cos(dlon);
