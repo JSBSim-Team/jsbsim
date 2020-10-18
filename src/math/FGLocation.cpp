@@ -373,22 +373,6 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the waypoint distance calculation:
-//
-//  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
-//  c = 2∙atan2(√a, √(1−a))
-//  d = R∙c
 
 double FGLocation::GetDistanceTo(double target_longitude,
                                  double target_latitude) const
@@ -404,20 +388,6 @@ double FGLocation::GetDistanceTo(double target_longitude,
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the heading angle calculation:
-//
-//  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1)∙cos(lat2)∙cos(Δlong))
 
 double FGLocation::GetHeadingTo(double target_longitude,
                                 double target_latitude) const
