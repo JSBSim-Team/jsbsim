@@ -126,12 +126,6 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
     throw("Malformed waypoint definition");
   }
 
-  if (element->FindElement("radius"))
-    radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
-  else {
-    radius = 20925646.32546; // Radius of Earth in feet.
-  }
-
   unit = element->GetAttributeValue("unit");
   if (WaypointType == eHeading) {
     if (!unit.empty()) {
@@ -180,7 +174,7 @@ bool FGWaypoint::Run(void )
   double source_longitude_rad = source_longitude->GetValue() * source_longitude_unit;
   double target_latitude_rad = target_latitude->GetValue() * target_latitude_unit;
   double target_longitude_rad = target_longitude->GetValue() * target_longitude_unit;
-  source.SetPosition(source_longitude_rad, source_latitude_rad, radius);
+  source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (WaypointType == eHeading) {     // Calculate Heading
     double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude_rad,

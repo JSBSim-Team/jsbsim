@@ -29,24 +29,61 @@ class TestWaypoint(JSBSimTestCase):
         aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         fdm.load_ic(os.path.join(aircraft_path, 'c310', 'reset00'), False)
 
-        slr = 20925646.32546  # Sea Level Radius
-        TestCases = ((0.25*math.pi, 0.5*math.pi, 0.0, 0.0),
-                     (0.0, 0.5*math.pi, math.pi, slr*0.25*math.pi),
-                     # North pole
-                     (0.5*math.pi, 0.5*math.pi, 0.0, slr*0.25*math.pi),
-                     # South pole
-                     (-0.5*math.pi, 0.5*math.pi, math.pi, slr*0.75*math.pi),
-                     (0.0, 0.0, 1.5*math.pi, slr*0.5*math.pi),
-                     (0.0, math.pi, 0.5*math.pi, slr*0.5*math.pi))
+        a = 20925646.32546  # WGS84 semimajor axis length in feet
+        b = 20855486.5951   # WGS84 semiminor axis length in feet
+        h = (a - b) / (a + b)
+        sq_h = h * h
+        p = math.pi * (a + b) * (1. + 3. * sq_h/(10. + math.sqrt(4. - 3. * sq_h)))
 
-        fdm['ic/lat-gc-rad'] = TestCases[0][0]
-        fdm['ic/long-gc-rad'] = TestCases[0][1]
+        fdm['ic/lat-geod-rad'] = 0.0
+        fdm['ic/long-gc-rad'] = 0.0
+        fdm['guidance/target_wp_latitude_rad'] = 0.0
 
-        for case in TestCases:
-            fdm['guidance/target_wp_latitude_rad'] = case[0]
-            fdm['guidance/target_wp_longitude_rad'] = case[1]
+        # Check the distance and heading to other points on the equator.
+        for ilon in range(-5, 6):
+            lon = ilon * math.pi/6.0
+            fdm['guidance/target_wp_longitude_rad'] = lon
             fdm.run_ic()
-            self.assertAlmostEqual(fdm['guidance/wp-heading-rad'], case[2])
-            self.assertAlmostEqual(fdm['guidance/wp-distance'], case[3])
+            distance = abs(lon * a)
+            self.assertAlmostEqual(fdm['guidance/wp-distance'], distance,
+                                   delta=1.)
+            if abs(distance > 1E-9):
+                self.assertAlmostEqual(fdm['guidance/wp-heading-rad'],
+                                       lon * 0.5 * math.pi / abs(lon))
+
+        # Check the distance and heading to the North pole
+        fdm['guidance/target_wp_latitude_rad'] = 0.5 * math.pi
+        fdm['guidance/target_wp_longitude_rad'] = 0.0
+        for ilon in range(-5, 7):
+            lon = ilon * math.pi / 6.0
+            fdm['ic/long-gc-rad'] = lon
+            fdm.run_ic()
+            self.assertAlmostEqual(fdm['guidance/wp-distance'], 0.25 * p,
+                                   delta=1.)
+            self.assertAlmostEqual(fdm['guidance/wp-heading-rad'], 0.0)
+
+        # Check the distance and heading to the South pole
+        fdm['guidance/target_wp_latitude_rad'] = -0.5 * math.pi
+        fdm['guidance/target_wp_longitude_rad'] = 0.0
+        for ilon in range(-5, 7):
+            lon = ilon * math.pi / 6.0
+            fdm['ic/long-gc-rad'] = lon
+            fdm.run_ic()
+            self.assertAlmostEqual(fdm['guidance/wp-distance'], 0.25 * p,
+                                   delta=1.)
+            self.assertAlmostEqual(fdm['guidance/wp-heading-rad'], math.pi)
+
+        # Check the distance to the antipode
+        for ilat in range(-5, 6):
+            glat = ilat * math.pi / 12.
+            fdm['ic/lat-geod-rad'] = glat
+            fdm['guidance/target_wp_latitude_rad'] = -glat
+            for ilon in range(-5, 6):
+                lon = ilon * math.pi / 6.
+                fdm['ic/long-gc-rad'] = lon
+                fdm['guidance/target_wp_longitude_rad'] = lon + math.pi
+                fdm.run_ic()
+                self.assertAlmostEqual(fdm['guidance/wp-distance'], 0.5 * p,
+                                       delta=1.)
 
 RunTest(TestWaypoint)

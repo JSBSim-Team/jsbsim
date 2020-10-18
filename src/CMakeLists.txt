@@ -68,6 +68,7 @@ add_subdirectory(input_output)
 add_subdirectory(math)
 add_subdirectory(models)
 add_subdirectory(simgear)
+add_subdirectory(GeographicLib)
 
 if(EXPAT_FOUND)
   include_directories(${EXPAT_INCLUDE_DIRS})
@@ -98,6 +99,7 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:IOStreams>
   $<TARGET_OBJECTS:Structure>
   $<TARGET_OBJECTS:Simgear>
+  $<TARGET_OBJECTS:GeographicLib>
   )
 
 set_target_properties (libJSBSim PROPERTIES

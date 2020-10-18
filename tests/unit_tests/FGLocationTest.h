@@ -619,4 +619,79 @@ public:
       TS_ASSERT_DELTA(h, l.GetGeodAltitude(), 1E-8);
     }
   }
+
+  void testNavigationOnSphericalEarth()
+  {
+    double slr = 20925646.32546; // Sea Level Radius
+    double lat0 = 1.0;
+    double lon0 = 1.0;
+    JSBSim::FGLocation l0(lon0, lat0, slr);
+    l0.SetEllipse(slr, slr);
+
+    // Compare the computations with Haversine formulas.
+    for (int ilat = -6; ilat <= 6; ilat++)
+    {
+      double lat = ilat * M_PI / 12.0;
+      double dlat = lat - lat0;
+      for (int ilon = -5; ilon < 6; ilon++)
+      {
+        double lon = NormalizedAngle(ilon * M_PI / 6.0);
+        double dlon = lon - lon0;
+        // Compute the distance
+        double distance_a = pow(sin(0.5 * dlat), 2.) + (cos(lat0) * cos(lat) * pow(sin(0.5 * dlon), 2.));
+        double distance = 2. * slr * atan2(sqrt(distance_a), sqrt(1. - distance_a));
+        TS_ASSERT_DELTA(distance, l0.GetDistanceTo(lon, lat), 1E-7);
+        // Compute the heading
+        double Y = sin(dlon) * cos(lat);
+        double X = cos(lat0) * sin(lat) - sin(lat0) * cos(lat) * cos(dlon);
+        double heading = NormalizedAngle(atan2(Y, X));
+        TS_ASSERT_DELTA(heading, l0.GetHeadingTo(lon, lat), epsilon);
+      }
+    }
+  }
+
+  void testNavigationOnOblateEarth()
+  {
+    const double a = 20925646.32546; // WGS84 semimajor axis length in feet
+    const double b = 20855486.5951;  // WGS84 semiminor axis length in feet
+    JSBSim::FGLocation l;
+    l.SetEllipse(a, b);
+    l.SetPositionGeodetic(0., 0., 0.);
+
+    // Distance and heading to other points on the equator.
+    for (int ilon = -5; ilon < 6; ilon++)
+    {
+      double lon = NormalizedAngle(ilon * M_PI / 6.0);
+      double distance = abs(lon * a);
+      TS_ASSERT_DELTA(distance, l.GetDistanceTo(lon, 0.), 1.);
+      if (ilon != 0)
+        TS_ASSERT_DELTA(lon > 0 ? 0.5 * M_PI : -0.5 * M_PI,
+                        l.GetHeadingTo(lon, 0.), epsilon);
+    }
+
+    // Compute the ellipse perimeter
+    double h = (a-b)/(a+b);
+    double p = M_PI*(a+b)*(1.+3.*h*h/(10.+sqrt(4-3.*h*h)));
+
+    // Distance and heading to the poles.
+    for (int ilon = -5; ilon < 6; ilon++)
+    {
+      double lon = NormalizedAngle(ilon * M_PI / 6.0);
+      l.SetPositionGeodetic(lon, 0., 0.);
+      TS_ASSERT_DELTA(0.25*p, l.GetDistanceTo(0., 0.5*M_PI), 1.);
+      TS_ASSERT_DELTA(0., l.GetHeadingTo(0., 0.5*M_PI), epsilon);
+      TS_ASSERT_DELTA(0.25*p, l.GetDistanceTo(0., -0.5*M_PI), 1.);
+      TS_ASSERT_DELTA(M_PI, l.GetHeadingTo(0., -0.5*M_PI), epsilon);
+    }
+
+    // Distance to the antipode.
+    for (int ilat = -5; ilat <= 5; ++ilat) {
+      double glat = ilat * M_PI / 12.0;
+      for (int ilon = -5; ilon <= 6; ++ilon) {
+        double lon = NormalizedAngle(ilon * M_PI / 6.0);
+        l.SetPositionGeodetic(lon, glat, 0.);
+        TS_ASSERT_DELTA(0.5*p, l.GetDistanceTo(lon+M_PI, -glat), 1.);
+      }
+    }
+  }
 };
