@@ -102,7 +102,6 @@ FGMagnetometer::~FGMagnetometer()
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void FGMagnetometer::updateInertialMag(void)
 {
-  counter++;
   if (counter++ % INERTIAL_UPDATE_RATE == 0)//dont need to update every iteration
   {
     counter = 0;
