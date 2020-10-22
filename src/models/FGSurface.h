@@ -112,7 +112,7 @@ public:
   bool GetSolid(void) { return isSolid; }
 
   /// Returns the height of the bump at the provided offset
-  float  GetBumpHeight();
+  double  GetBumpHeight();
 
   std::string GetSurfaceStrings(std::string delimeter) const;
   std::string GetSurfaceValues(std::string delimeter) const;
