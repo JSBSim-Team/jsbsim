@@ -114,7 +114,7 @@ void FGSurface::bind(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGSurface::GetBumpHeight()
+double FGSurface::GetBumpHeight()
 {
   if (bumpiness < 0.001) return 0.0f;
 
@@ -129,8 +129,8 @@ float FGSurface::GetBumpHeight()
   //height. This is not very fast, but for a beginning.
   //maybe this should be done by interpolating between some precalculated
   //values
-  static const float maxGroundBumpAmplitude=0.4;
-  float h = sin(x)+sin(7*x)+sin(8*x)+sin(13*x);
+  static const double maxGroundBumpAmplitude=0.4;
+  double h = sin(x)+sin(7*x)+sin(8*x)+sin(13*x);
   h += sin(2*y)+sin(5*y)+sin(9*y*x)+sin(17*y);
 
   return h*(1/8.)*bumpiness*maxGroundBumpAmplitude;
