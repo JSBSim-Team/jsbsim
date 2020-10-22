@@ -346,6 +346,9 @@
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GeographicLib\Geodesic.cpp" />
+    <ClCompile Include="src\GeographicLib\GeodesicLine.cpp" />
+    <ClCompile Include="src\GeographicLib\Math.cpp" />
     <ClCompile Include="src\input_output\FGInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGInputType.cpp" />
     <ClCompile Include="src\input_output\FGModelLoader.cpp" />
