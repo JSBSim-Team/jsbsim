@@ -58,7 +58,7 @@ Note that wheel packages for Linux meet the [ManyLinux packages requirements](ht
 ### Other platforms
 At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 16.04 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
-You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/Release_Candidate_v1.0.0.tar.gz).
+You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.0.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.0.tar.gz).
 ## Quick start
 Once you have downloaded (or built) the binaries and unzipped the [aircraft data](#aircraft-data-and-example-scripts). Go to the root of the data package and make sure the executable is accessible from there.
 
