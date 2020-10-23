@@ -236,14 +236,24 @@ jobs:
             build/Testing/Temporary/*.log
             build/tests/*-build.log
 
+      - name: Build JSBSim installer for Windows
+        if: env.release == 'true'
+        id: BuildInstaller
+        working-directory: build
+        run: |
+          cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+          # Unzip the Python 3.8 wheel to get the MSVC C++ DLL
+          7z e python\dist\JSBSim*cp38*.whl
+          iscc JSBSim.iss
+
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true'
+        if: steps.BuildInstaller.outcome == 'success'
         with:
           name: Windows_MSVC.binaries
           path: |
-            build\src\RelWithDebInfo\JSBSim.exe
-            build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+            build\Output\*.exe
             build\python\dist\*.whl
 
   MacOSX:
