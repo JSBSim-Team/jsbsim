@@ -40,7 +40,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && env.static_linking == 'true'
+        if: env.release == 'true' && env.static_link == 'true'
         run: |
           sudo apt-get install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true' && env.static_linking == 'true'
+        if: env.release == 'true' && env.static_link == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
           path: |
