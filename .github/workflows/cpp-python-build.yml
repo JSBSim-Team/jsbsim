@@ -9,15 +9,22 @@ jobs:
   Linux:
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
         exclude:
+          - os: ubuntu-16.04
+            expat: ON
+          - os: ubuntu-16.04
+            expat: OFF
+            shared_libs: ON
           - os: ubuntu-18.04
             expat: ON
           - os: ubuntu-18.04
             expat: OFF
             shared_libs: ON
+    env:
+      static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
@@ -33,7 +40,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: env.release == 'true' && env.static_linking == 'true'
         run: |
           sudo apt-get install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -56,11 +63,12 @@ jobs:
         working-directory: build
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
       - name: Build Ubuntu packages
-        if: matrix.shared_libs == 'OFF' && matrix.expat == 'OFF'
+        if: env.static_link == 'true'
         working-directory: build
         run: cpack
       - name: Build ManyLinux wheel packages (PEP 513)
-        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        id: ManyLinux
+        if: matrix.os == 'ubuntu-20.04' && env.static_link == 'true'
         working-directory: build
         run: |
           rm -f CMakeCache.txt
@@ -73,7 +81,7 @@ jobs:
           # Build the manylinux1 wheel binary packages
           docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
-        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: steps.ManyLinux.outcome == 'success'
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
@@ -95,7 +103,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: env.release == 'true' && env.static_linking == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
           path: |
