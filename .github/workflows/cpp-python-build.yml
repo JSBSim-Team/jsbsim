@@ -431,9 +431,8 @@ jobs:
             dist/*.deb
 
   Documentation:
-    needs: Linux
+    needs: Official-Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen graphviz cxxtest lcov
