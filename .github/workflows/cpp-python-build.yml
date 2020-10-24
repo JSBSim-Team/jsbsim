@@ -437,12 +437,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release v${{ env.VERSION }}
-          body: JSBSim version ${{ env.VERSION }}
+          body: |
+            JSBSim version ${{ env.VERSION }}
+
+            Release files
+            - Windows 64 bits
+              - `JSBSim*-setup.exe` (Windows installer)
+              - `*-win_amd64.whl` (Python wheel package)
+            - Mac OSX
+              - `*-macosx_10_14_x86_64.whl` (Python wheel package)
+            - Linux 64 bits
+              - `*-linux_x86_64.whl` (Python wheel package)
+            - Ubuntu Xenial 16.04, Bionic 18.04 or Focal 20.04 - amd64
+              - `*.deb` (Debian packages)            
           prerelease: false
           draft: false
           files: |
             dist/*.exe
-            dist/*.whl
             dist/*.deb
 
   Documentation:
