@@ -27,7 +27,7 @@ class TestMagnetometer(JSBSimTestCase):
         tripod = FlightModel(self, "tripod")
         tripod.include_system_test_file("magnetometer.xml")
         fdm = tripod.start()
-        self.assertAlmostEqual(fdm['test/magnetic-field']/27661.104, 1.0)
+        self.assertAlmostEqual(fdm['test/magnetic-field']/27661.1, 1.0, 5)
 
 
 RunTest(TestMagnetometer)
