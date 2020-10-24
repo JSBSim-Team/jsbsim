@@ -236,15 +236,30 @@ jobs:
             build/Testing/Temporary/*.log
             build/tests/*-build.log
 
-      - name: Build JSBSim installer for Windows
+    # Build the Windows installer
+      - name: Checkout JSBSim logos
         if: env.release == 'true'
+        id: InstallLogos
+        uses: actions/checkout@v2
+        with:
+          repository: JSBSim-Team/jsbsim-logo
+          path: jsbsim-logo
+      - name: Build JSBSim installer for Windows
+        if: steps.InstallLogos.outcome == 'success'
         id: BuildInstaller
         working-directory: build
         run: |
+          # Relocate the logos for the wizard installer
+          mkdir logos
+          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+          mkdir small
+          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+          # Relocate the executables for the installer
           cp src\RelWithDebInfo\JSBSim.exe src\.
           cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
           # Unzip the Python 3.8 wheel to get the MSVC C++ DLL
           7z e python\dist\JSBSim*cp38*.whl
+          # Compile the installer with Inno Setup
           iscc JSBSim.iss
 
       - name: Upload Files for Release

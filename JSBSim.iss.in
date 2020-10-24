@@ -6,6 +6,10 @@ DefaultDirName={sd}\JSBSim
 OutputBaseFilename=JSBSim-${PROJECT_VERSION}-setup
 AlwaysShowDirOnReadyPage=yes
 LicenseFile=${CMAKE_SOURCE_DIR}\COPYING
+WizardStyle=modern
+WizardImageStretch=no
+WizardImageFile=logos\*.bmp
+WizardSmallImageFile=small\*.bmp
 
 [Components]
 Name: "executables"; Description: "JSBSim and aeromatic executables"; Types: full compact
