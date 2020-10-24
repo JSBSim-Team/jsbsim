@@ -9,15 +9,22 @@ jobs:
   Linux:
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
         exclude:
+          - os: ubuntu-16.04
+            expat: ON
+          - os: ubuntu-16.04
+            expat: OFF
+            shared_libs: ON
           - os: ubuntu-18.04
             expat: ON
           - os: ubuntu-18.04
             expat: OFF
             shared_libs: ON
+    env:
+      static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
@@ -33,7 +40,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: env.release == 'true' && env.static_link == 'true'
         run: |
           sudo apt-get install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -56,11 +63,12 @@ jobs:
         working-directory: build
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
       - name: Build Ubuntu packages
-        if: matrix.shared_libs == 'OFF' && matrix.expat == 'OFF'
+        if: env.static_link == 'true'
         working-directory: build
         run: cpack
       - name: Build ManyLinux wheel packages (PEP 513)
-        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        id: ManyLinux
+        if: matrix.os == 'ubuntu-20.04' && env.static_link == 'true'
         working-directory: build
         run: |
           rm -f CMakeCache.txt
@@ -73,7 +81,7 @@ jobs:
           # Build the manylinux1 wheel binary packages
           docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
       - name: Test wheel package
-        if: matrix.os == 'ubuntu-20.04' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: steps.ManyLinux.outcome == 'success'
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
@@ -95,7 +103,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true' && matrix.expat == 'OFF' && matrix.shared_libs == 'OFF'
+        if: env.release == 'true' && env.static_link == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
           path: |
@@ -228,14 +236,39 @@ jobs:
             build/Testing/Temporary/*.log
             build/tests/*-build.log
 
+    # Build the Windows installer
+      - name: Checkout JSBSim logos
+        if: env.release == 'true'
+        id: InstallLogos
+        uses: actions/checkout@v2
+        with:
+          repository: JSBSim-Team/jsbsim-logo
+          path: jsbsim-logo
+      - name: Build JSBSim installer for Windows
+        if: steps.InstallLogos.outcome == 'success'
+        id: BuildInstaller
+        working-directory: build
+        run: |
+          # Relocate the logos for the wizard installer
+          mkdir logos
+          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+          mkdir small
+          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+          # Relocate the executables for the installer
+          cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+          # Unzip the Python 3.8 wheel to get the MSVC C++ DLL
+          7z e python\dist\JSBSim*cp38*.whl
+          # Compile the installer with Inno Setup
+          iscc JSBSim.iss
+
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true'
+        if: steps.BuildInstaller.outcome == 'success'
         with:
           name: Windows_MSVC.binaries
           path: |
-            build\src\RelWithDebInfo\JSBSim.exe
-            build\utils\aeromatic++\RelWithDebInfo\aeromatic.exe
+            build\Output\*.exe
             build\python\dist\*.whl
 
   MacOSX:
@@ -404,18 +437,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release v${{ env.VERSION }}
-          body: JSBSim version ${{ env.VERSION }}
+          body: |
+            JSBSim version ${{ env.VERSION }}
+
+            Release files
+            - Windows 64 bits
+              - `JSBSim*-setup.exe` (Windows installer)
+              - `*-win_amd64.whl` (Python wheel package)
+            - Mac OSX
+              - `*-macosx_10_14_x86_64.whl` (Python wheel package)
+            - Linux 64 bits
+              - `*-linux_x86_64.whl` (Python wheel package)
+            - Ubuntu Xenial 16.04, Bionic 18.04 or Focal 20.04 - amd64
+              - `*.deb` (Debian packages)            
           prerelease: false
           draft: false
           files: |
             dist/*.exe
-            dist/*.whl
             dist/*.deb
 
   Documentation:
-    needs: Linux
+    needs: Official-Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Install Ubuntu packages
         run: sudo apt-get install doxygen graphviz cxxtest lcov
