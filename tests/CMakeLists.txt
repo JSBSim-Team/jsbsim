@@ -45,6 +45,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestFilter
                  TestFunctions
                  TestDistributor
+                 TestMagnetometer
                  )
 
 foreach(test ${PYTHON_TESTS})
