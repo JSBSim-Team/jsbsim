@@ -7,7 +7,7 @@ project(JSBSim)
 
 set(PROJECT_VERSION_MAJOR "1")
 set(PROJECT_VERSION_MINOR "1")
-set(PROJECT_VERSION_PATCH "2")
+set(PROJECT_VERSION_PATCH "1")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
 
@@ -204,6 +204,14 @@ set(CPACK_RPM_PACKAGE_LICENSE "LGPL-2.1")
 if(BUILD_SHARED_LIBS)
   set(CPACK_RPM_DEVEL_PACKAGE_REQUIRES "${CPACK_RPM_RUNTIME_PACKAGE_NAME} >= ${CPACK_PACKAGE_VERSION}")
   set(CPACK_RPM_PYMODULES_PACKAGE_REQUIRES "${CPACK_RPM_RUNTIME_PACKAGE_NAME} >= ${CPACK_PACKAGE_VERSION}")
+endif()
+
+################################################################################
+# Windows installer                                                            #
+################################################################################
+
+if(WIN32)
+  configure_file(${CMAKE_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
 endif()
 
 ################################################################################
