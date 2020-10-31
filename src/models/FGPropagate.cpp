@@ -548,8 +548,9 @@ void FGPropagate::RecomputeLocalTerrainVelocity()
 
 double FGPropagate::GetTerrainElevation(void) const
 {
-  FGLocation contact;
   FGColumnVector3 vDummy;
+  FGLocation contact;
+  contact.SetEllipse(in.SemiMajor, in.SemiMinor);
   Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
   return contact.GetGeodAltitude();
 }

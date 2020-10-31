@@ -662,8 +662,11 @@ double FGInitialCondition::GetAltitudeASLFtIC(void) const
 
 double FGInitialCondition::GetTerrainElevationFtIC(void) const
 {
-  FGLocation contact;
   FGColumnVector3 normal, v, w;
+  FGLocation contact;
+  double a = fdmex->GetInertial()->GetSemimajor();
+  double b = fdmex->GetInertial()->GetSemiminor();
+  contact.SetEllipse(a, b);
   fdmex->GetInertial()->GetContactPoint(position, contact, normal, v, w);
   return contact.GetGeodAltitude();
 }
