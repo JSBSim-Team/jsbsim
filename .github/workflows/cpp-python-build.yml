@@ -113,10 +113,10 @@ jobs:
   Windows-MinGW32:
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Checkout CxxTest
@@ -155,10 +155,26 @@ jobs:
   Windows-MSVC:
     runs-on: windows-latest
     steps:
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest for Python 3.9
+        working-directory: cxxtest\python
+        run: python setup.py install
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
           python-version: '3.8'
+      - name: Configure CxxTest for Python 3.8
+        working-directory: cxxtest\python
+        run: python setup.py install
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
@@ -171,15 +187,6 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
-      - name: Checkout CxxTest
-        uses: actions/checkout@v2
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name: Configure CxxTest
-        working-directory: cxxtest\python
-        run: python setup.py install
       - name: Configure JSBSim
         run: |
           mkdir build
@@ -440,16 +447,13 @@ jobs:
           body: |
             JSBSim version ${{ env.VERSION }}
 
-            Release files
+            **Release files:**
             - Windows 64 bits
-              - `JSBSim*-setup.exe` (Windows installer)
-              - `*-win_amd64.whl` (Python wheel package)
-            - Mac OSX
-              - `*-macosx_10_14_x86_64.whl` (Python wheel package)
-            - Linux 64 bits
-              - `*-linux_x86_64.whl` (Python wheel package)
+              - `JSBSim-${{ env.VERSION}}-setup.exe` (Windows installer)
             - Ubuntu Xenial 16.04, Bionic 18.04 or Focal 20.04 - amd64
-              - `*.deb` (Debian packages)            
+              - `*.deb` (Debian packages)
+            - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
+            **Changelog:**
           prerelease: false
           draft: false
           files: |
