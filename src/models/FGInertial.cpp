@@ -211,8 +211,9 @@ FGColumnVector3 FGInertial::GetGravityJ2(const FGLocation& position) const
 
 void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
 {
-  FGLocation contact;
   FGColumnVector3 vDummy;
+  FGLocation contact;
+  contact.SetEllipse(a, b);
   GroundCallback->GetAGLevel(location, contact, vDummy, vDummy, vDummy);
   double groundHeight = contact.GetGeodAltitude();
   double longitude = location.GetLongitude();
