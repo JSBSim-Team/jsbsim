@@ -245,10 +245,10 @@ void FGFCSComponent::Clip(void)
     double range = vmax - vmin;
 
     if (range < 0.0) {
-      cerr << "Trying to clip with a max value " << ClipMax->GetName()
-           << " lower than the min value " << ClipMin->GetName()
-           << endl;
-      throw("JSBSim aborts");
+      cerr << "Trying to clip with a max value (" << vmax << ") from "
+           << ClipMax->GetName() << " lower than the min value (" << vmin
+           << ") from " << ClipMin->GetName() << "." << endl
+           << "Clipping is ignored." << endl;
       return;
     }
 
