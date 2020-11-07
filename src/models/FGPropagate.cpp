@@ -275,6 +275,9 @@ bool FGPropagate::Run(bool Holding)
   // frame.
   vVel = Tb2l * VState.vUVW;
 
+  // Compute orbital parameters in the inertial frame
+  ComputeOrbitalParameters();
+
   Debug(2);
   return false;
 }
@@ -489,6 +492,53 @@ void FGPropagate::UpdateBodyMatrices(void)
   Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
 
   Qec2b = Tec2b.GetQuaternion();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::ComputeOrbitalParameters(void)
+{
+  const FGColumnVector3 Z{0., 0., 1.};
+  FGColumnVector3 R = VState.vInertialPosition;
+  FGColumnVector3 angularMomentum = R * VState.vInertialVelocity;
+  h = angularMomentum.Magnitude();
+  Inclination = acos(angularMomentum(eZ)/h)*radtodeg;
+  FGColumnVector3 N;
+  if (abs(Inclination) > 1E-8) {
+    N = Z * angularMomentum;
+    RightAscension = atan2(N(eY), N(eX))*radtodeg;
+    N.Normalize();
+  }
+  else {
+    RightAscension = 0.0;
+    N = {1., 0., 0.};
+  }
+  R.Normalize();
+  double vr = DotProduct(R, VState.vInertialVelocity);
+  FGColumnVector3 eVector = (VState.vInertialVelocity*angularMomentum/in.GM - R);
+  Eccentricity = eVector.Magnitude();
+  if (Eccentricity > 1E-8) {
+    eVector /= Eccentricity;
+    PerigeeArgument = acos(DotProduct(N, eVector))*radtodeg;
+    if (eVector(eZ) < 0) PerigeeArgument = 360. - PerigeeArgument;
+  }
+  else
+  {
+    eVector = {1., 0., 0.};
+    PerigeeArgument = 0.0;
+  }
+
+  TrueAnomaly = acos(Constrain(-1.0, DotProduct(eVector, R), 1.0)) * radtodeg;
+  if (vr < 0.0) TrueAnomaly = 360. - TrueAnomaly;
+  ApoapsisRadius = h*h / (in.GM * (1-Eccentricity));
+  PeriapsisRadius = h*h / (in.GM * (1+Eccentricity));
+
+  if (Eccentricity < 1.0) {
+    double semimajor = 0.5*(ApoapsisRadius + PeriapsisRadius);
+    OrbitalPeriod = 2.*M_PI*pow(semimajor, 1.5)/sqrt(in.GM);
+  }
+  else
+    OrbitalPeriod = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -831,6 +881,16 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
+
+  PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
+  PropertyManager->Tie("orbital/inclination-deg", &Inclination);
+  PropertyManager->Tie("orbital/right-ascension-deg", &RightAscension);
+  PropertyManager->Tie("orbital/eccentricity", &Eccentricity);
+  PropertyManager->Tie("orbital/argument-of-perigee-deg", &PerigeeArgument);
+  PropertyManager->Tie("orbital/true-anomaly-deg", &TrueAnomaly);
+  PropertyManager->Tie("orbital/apoapsis-radius-ft", &ApoapsisRadius);
+  PropertyManager->Tie("orbital/periapsis-radius-ft", &PeriapsisRadius);
+  PropertyManager->Tie("orbital/period-sec", &OrbitalPeriod);
 
   PropertyManager->Tie("simulation/integrator/rate/rotational", (int*)&integrator_rotational_rate);
   PropertyManager->Tie("simulation/integrator/rate/translational", (int*)&integrator_translational_rate);

@@ -611,6 +611,7 @@ public:
     FGColumnVector3 vOmegaPlanet;
     double SemiMajor;
     double SemiMinor;
+    double GM; // Gravitational parameter
     double DeltaT;
   } in;
 
@@ -635,6 +636,17 @@ private:
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
   double epa;        // Earth Position Angle
+
+  // Orbital parameters
+  double h;               // Specific angular momentum
+  double Inclination;     // Inclination (angle between the orbital plane and the equatorial plane)
+  double RightAscension;  // Right ascension of the ascending node
+  double Eccentricity;    // Eccentricity
+  double PerigeeArgument; // Argument of perigee (angle between the apsis line and the node line)
+  double TrueAnomaly;     // True anomaly (angle of the vehicule from the apsis line)
+  double ApoapsisRadius;  // Apoapsis radius (farthest point from the planet)
+  double PeriapsisRadius; // Periapsis radius (closest point to the planet)
+  double OrbitalPeriod;   // Peroid of elliptic orbits
 
   FGQuaternion Qec2b;
 
@@ -664,6 +676,7 @@ private:
   void UpdateLocationMatrices(void);
   void UpdateBodyMatrices(void);
   void UpdateVehicleState(void);
+  void ComputeOrbitalParameters(void);
 
   void WriteStateFile(int num);
   void bind(void);

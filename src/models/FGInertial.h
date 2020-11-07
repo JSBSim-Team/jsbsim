@@ -85,6 +85,7 @@ public:
   }
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
+  double GetGM(void) {return GM;}
 
   /** @name Functions that rely on the ground callback
       The following functions allow to set and get the vehicle position above
@@ -208,7 +209,7 @@ private:
 
   FGColumnVector3 vOmegaPlanet;
   FGColumnVector3 vGravAccel;
-  double GM;
+  double GM;   // Gravitation parameter
   double J2;   // WGS84 value for J2
   double a;    // WGS84 semimajor axis length in feet 
   double b;    // WGS84 semiminor axis length in feet

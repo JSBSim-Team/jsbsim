@@ -531,6 +531,7 @@ void FGFDMExec::LoadPlanetConstants(void)
   Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
   Propagate->in.SemiMajor        = Inertial->GetSemimajor();
   Propagate->in.SemiMinor        = Inertial->GetSemiminor();
+  Propagate->in.GM               = Inertial->GetGM();
   Auxiliary->in.StandardGravity  = Inertial->GetStandardGravity();
 }
 
