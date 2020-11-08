@@ -18,14 +18,24 @@ Features include:
 
 * Nonlinear 6 DoF (Degree of Freedom)
 * Fully configurable flight control system, aerodynamics, propulsion, landing gear arrangement, etc. through XML-based text file format.
-* Rotational earth effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
-* The earth atmosphere is modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf)
+* Accurate Earth model including:
+  * Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
+  * Oblate spherical shape and geodetic coordinates according to the [WGS84 geodetic system](https://en.wikipedia.org/wiki/World_Geodetic_System).
+  * Atmosphere modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf).
 * Configurable data output formats to screen, file, socket, or any combination of those.
 * A [Python](https://www.python.org) module which provides the exact same features than the C++ library
 
-More information on JSBSim can be found at the JSBSim home page here:
+In 2015, [the NASA performed some verification check cases on 7 flight dynamics software **including JSBSim**](https://nescacademy.nasa.gov/flightsim) (the other 6 being NASA in-house software). The results showed that the 7 simulation tools *"were good enough to indicate agreement between a majority of simulation tools for all cases published. Most of the remaining differences are explained and could be reduced with further effort."*
 
-http://www.jsbsim.org
+## Applications and Usages
+JSBSim is used in a range of projects among which:
+
+* Flight simulation: [FlightGear](http://www.flightgear.org), [OutTerra](https://www.outerra.com/wfeatures.html)
+* SITL (Software In The Loop) Drone Autopilot testing : [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://dev.px4.io/master/en/simulation/jsbsim.html), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
+* Machine Learning Aircraft control: [gym-jsbsim](https://github.com/galleon/gym-jsbsim)
+* [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news-events/2019-10-21) where one of the AI went undefeated in five rounds of mock air combat against an Air Force fighter (see the [video on YouTube](https://www.youtube.com/watch?v=IOJhgC1ksNU)).
+
+JSBSim is also used in academic and industry research ([more than 600 citations referenced by Google Scholar](https://scholar.google.com/scholar?&q=jsbsim) as of November 2020).
 
 # User Guide
 **[Installation](#installation)** |
