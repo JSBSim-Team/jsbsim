@@ -296,7 +296,7 @@ double FGAuxiliary::GetLatitudeRelativePosition(void) const
 
 double FGAuxiliary::GetDistanceRelativePosition(void) const
 {
-  FGInitialCondition *ic = FDMExec->GetIC();
+  auto ic = FDMExec->GetIC();
   return in.vLocation.GetDistanceTo(ic->GetLongitudeRadIC(),
                                     ic->GetGeodLatitudeRadIC())* fttom;
 }

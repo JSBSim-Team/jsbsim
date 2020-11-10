@@ -140,7 +140,7 @@ bool FGPropagate::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
+void FGPropagate::SetInitialState(std::shared_ptr<FGInitialCondition> FGIC)
 {
   // Initialize the State Vector elements and the transformation matrices
 

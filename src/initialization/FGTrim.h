@@ -52,7 +52,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "FGTrimAxis.h"
-#include "FGInitialCondition.h"
+#include "math/FGColumnVector3.h"
 
 #include <vector>
 
@@ -63,6 +63,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
+class FGInitialCondition;
 
 typedef enum { tLongitudinal=0, tFull, tGround, tPullup,
                tCustom, tTurn, tNone } TrimMode;
@@ -124,8 +125,6 @@ CLASS DECLARATION
 
 class FGTrim : public FGJSBBase
 {
-private:
-
   std::vector<FGTrimAxis> TrimAxes;
   unsigned int Nsub;
   TrimMode mode;
@@ -145,7 +144,7 @@ private:
   double psidot;
 
   FGFDMExec* fdmex;
-  FGInitialCondition fgic;
+  std::shared_ptr<FGInitialCondition> fgic;
 
   bool solve(FGTrimAxis& axis);
 

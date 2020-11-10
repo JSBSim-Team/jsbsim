@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#include <memory>
 
 #include "FGJSBBase.h"
 
@@ -92,7 +93,7 @@ public:
        @param state a State type (enum)
        @param control a Control type (enum) */
   FGTrimAxis(FGFDMExec* fdmex, 
-             FGInitialCondition *IC, 
+             std::shared_ptr<FGInitialCondition> IC, 
              State state,
              Control control );
   /// Destructor
@@ -146,7 +147,7 @@ public:
 
 private:
   FGFDMExec *fdmex;
-  FGInitialCondition *fgic;
+  std::shared_ptr<FGInitialCondition> fgic;
 
   State   state;
   Control control;

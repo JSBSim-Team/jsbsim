@@ -47,6 +47,7 @@ INCLUDES
 #include "models/FGAccelerations.h"
 #include "models/FGMassBalance.h"
 #include "models/FGFCS.h"
+#include "FGInitialCondition.h"
 
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
@@ -59,7 +60,6 @@ namespace JSBSim {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
-  : fgic(FDMExec)
 {
 
   Nsub=0;
@@ -70,12 +70,13 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
 
   Debug=0;DebugLevel=0;
   fdmex=FDMExec;
-  fgic = *fdmex->GetIC();
+  fgic = std::make_shared<FGInitialCondition>(FDMExec);
+  *fgic = *fdmex->GetIC();
   total_its=0;
   gamma_fallback=false;
   mode=tt;
   xlo=xhi=alo=ahi=0.0;
-  targetNlf=fgic.GetTargetNlfIC();
+  targetNlf=fgic->GetTargetNlfIC();
   debug_axis=tAll;
   SetMode(tt);
   if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
@@ -135,7 +136,7 @@ bool FGTrim::AddState( State state, Control control ) {
       return false;
   }
 
-  TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,state,control));
+  TrimAxes.push_back(FGTrimAxis(fdmex, fgic, state, control));
   sub_iterations.resize(TrimAxes.size());
   successful.resize(TrimAxes.size());
   solution.resize(TrimAxes.size());
@@ -173,7 +174,7 @@ bool FGTrim::EditState( State state, Control new_control ){
   vector <FGTrimAxis>::iterator iAxes = TrimAxes.begin();
   while (iAxes != TrimAxes.end()) {
       if( iAxes->GetStateType() == state ) {
-        *iAxes = FGTrimAxis(fdmex,&fgic,state,new_control);
+        *iAxes = FGTrimAxis(fdmex, fgic, state, new_control);
         return true;
       }
       ++iAxes;
@@ -200,19 +201,19 @@ bool FGTrim::DoTrim(void) {
   fdmex->SetTrimStatus(true);
   fdmex->SuspendIntegration();
 
-  fgic.SetPRadpsIC(0.0);
-  fgic.SetQRadpsIC(0.0);
-  fgic.SetRRadpsIC(0.0);
+  fgic->SetPRadpsIC(0.0);
+  fgic->SetQRadpsIC(0.0);
+  fgic->SetRRadpsIC(0.0);
 
   if (mode == tGround) {
-    fdmex->Initialize(&fgic);
+    fdmex->Initialize(fgic);
     fdmex->Run();
     trimOnGround();
-    double theta = fgic.GetThetaRadIC();
-    double phi = fgic.GetPhiRadIC();
+    double theta = fgic->GetThetaRadIC();
+    double phi = fgic->GetPhiRadIC();
     // Take opportunity of the first approx. found by trimOnGround() to
     // refine the control limits.
-    TrimAxes[0].SetControlLimits(0., fgic.GetAltitudeAGLFtIC());
+    TrimAxes[0].SetControlLimits(0., fgic->GetAltitudeAGLFtIC());
     TrimAxes[1].SetControlLimits(theta - 5.0 * degtorad, theta + 5.0 * degtorad);
     TrimAxes[2].SetControlLimits(phi - 30.0 * degtorad, phi + 30.0 * degtorad);
   }
@@ -292,7 +293,7 @@ bool FGTrim::DoTrim(void) {
               else
                 TrimAxes[current_axis].SetControlToMax();
               TrimAxes[current_axis].Run();
-              TrimAxes[current_axis]=FGTrimAxis(fdmex,&fgic,tUdot,tGamma);
+              TrimAxes[current_axis]=FGTrimAxis(fdmex, fgic, tUdot, tGamma);
             } else {
               cout << "  Sorry, " << TrimAxes[current_axis].GetStateName()
               << " doesn't appear to be trimmable" << endl;
@@ -316,7 +317,7 @@ bool FGTrim::DoTrim(void) {
     total_its=N;
 
     // Restore the aircraft parameters to their initial values
-    fgic = *fdmex->GetIC();
+    *fgic = *fdmex->GetIC();
     FCS->SetDeCmd(elevator0);
     FCS->SetDaCmd(aileron0);
     FCS->SetDrCmd(rudder0);
@@ -324,7 +325,7 @@ bool FGTrim::DoTrim(void) {
     for (unsigned int i=0; i < throttle0.size(); i++)
       FCS->SetThrottleCmd(i, throttle0[i]);
 
-    fdmex->Initialize(&fgic);
+    fdmex->Initialize(fgic);
     fdmex->Run();
 
     // If WOW is true we must make sure there are no gears into the ground.
@@ -425,8 +426,8 @@ void FGTrim::trimOnGround(void)
 
   // Update the initial conditions: this should remove the forces generated
   // by overcompressed landing gears
-  fgic.SetAltitudeASLFtIC(fgic.GetAltitudeASLFtIC() - hmin);
-  fdmex->Initialize(&fgic);
+  fgic->SetAltitudeASLFtIC(fgic->GetAltitudeASLFtIC() - hmin);
+  fdmex->Initialize(fgic);
   fdmex->Run();
 
   // Compute the rotation axis: it is obtained from the direction of the
@@ -468,11 +469,11 @@ void FGTrim::trimOnGround(void)
   FGQuaternion q1(rParam.angleMin, rotationAxis);
 
   // Update the aircraft orientation
-  FGColumnVector3 euler = (fgic.GetOrientation() * q0 * q1).GetEuler();
+  FGColumnVector3 euler = (fgic->GetOrientation() * q0 * q1).GetEuler();
 
-  fgic.SetPhiRadIC(euler(1));
-  fgic.SetThetaRadIC(euler(2));
-  fgic.SetPsiRadIC(euler(3));
+  fgic->SetPhiRadIC(euler(1));
+  fgic->SetThetaRadIC(euler(2));
+  fgic->SetPsiRadIC(euler(3));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -729,12 +730,12 @@ bool FGTrim::checkLimits(FGTrimAxis& axis)
 void FGTrim::setupPullup() {
   double g,q,cgamma;
   g=fdmex->GetInertial()->GetGravity().Magnitude();
-  cgamma=cos(fgic.GetFlightPathAngleRadIC());
+  cgamma=cos(fgic->GetFlightPathAngleRadIC());
   cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
-       << fgic.GetVtrueFpsIC() << endl;
-  q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
+       << fgic->GetVtrueFpsIC() << endl;
+  q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
   cout << targetNlf << ", " << q << endl;
-  fgic.SetQRadpsIC(q);
+  fgic->SetQRadpsIC(q);
   cout << "setPitchRateInPullup() complete" << endl;
 
 }
@@ -743,11 +744,11 @@ void FGTrim::setupPullup() {
 
 void FGTrim::setupTurn(void){
   double g,phi;
-  phi = fgic.GetPhiRadIC();
+  phi = fgic->GetPhiRadIC();
   if( fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
     targetNlf = 1 / cos(phi);
     g = fdmex->GetInertial()->GetGravity().Magnitude();
-    psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
+    psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
     cout << targetNlf << ", " << psidot << endl;
   }
 
@@ -757,28 +758,28 @@ void FGTrim::setupTurn(void){
 
 void FGTrim::updateRates(void){
   if( mode == tTurn ) {
-    double phi = fgic.GetPhiRadIC();
+    double phi = fgic->GetPhiRadIC();
     double g = fdmex->GetInertial()->GetGravity().Magnitude();
     double p,q,r,theta;
     if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
-      theta=fgic.GetThetaRadIC();
-      phi=fgic.GetPhiRadIC();
-      psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
+      theta=fgic->GetThetaRadIC();
+      phi=fgic->GetPhiRadIC();
+      psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
       p=-psidot*sin(theta);
       q=psidot*cos(theta)*sin(phi);
       r=psidot*cos(theta)*cos(phi);
     } else {
       p=q=r=0;
     }
-    fgic.SetPRadpsIC(p);
-    fgic.SetQRadpsIC(q);
-    fgic.SetRRadpsIC(r);
+    fgic->SetPRadpsIC(p);
+    fgic->SetQRadpsIC(q);
+    fgic->SetRRadpsIC(r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
       double g,q,cgamma;
       g=fdmex->GetInertial()->GetGravity().Magnitude();
-      cgamma=cos(fgic.GetFlightPathAngleRadIC());
-      q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
-      fgic.SetQRadpsIC(q);
+      cgamma=cos(fgic->GetFlightPathAngleRadIC());
+      q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
+      fgic->SetQRadpsIC(q);
   }
 }
 
@@ -804,44 +805,44 @@ void FGTrim::SetMode(TrimMode tt) {
       case tFull:
         if (debug_lvl > 0)
           cout << "  Full Trim" << endl;
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tPitchTrim ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tWdot, tAlpha));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tUdot, tThrottle));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tQdot, tPitchTrim));
         //TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tHmgt,tBeta ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tVdot,tPhi ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tPdot,tAileron ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tRdot,tRudder ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tVdot, tPhi));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tPdot, tAileron));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tRdot, tRudder));
         break;
       case tLongitudinal:
         if (debug_lvl > 0)
           cout << "  Longitudinal Trim" << endl;
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tPitchTrim ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tWdot, tAlpha));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tUdot, tThrottle));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tQdot, tPitchTrim));
         break;
       case tGround:
         if (debug_lvl > 0)
           cout << "  Ground Trim" << endl;
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAltAGL ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tTheta ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tPdot,tPhi ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tWdot, tAltAGL));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tQdot, tTheta));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tPdot, tPhi));
         break;
       case tPullup:
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tNlf,tAlpha ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tPitchTrim ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tHmgt,tBeta ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tVdot,tPhi ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tPdot,tAileron ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tRdot,tRudder ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tNlf, tAlpha));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tUdot, tThrottle));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tQdot, tPitchTrim));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tHmgt, tBeta));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tVdot, tPhi));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tPdot, tAileron));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tRdot, tRudder));
         break;
       case tTurn:
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tPitchTrim ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tVdot,tBeta ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tPdot,tAileron ));
-        TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tRdot,tRudder ));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tWdot, tAlpha));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tUdot, tThrottle));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tQdot, tPitchTrim));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tVdot, tBeta));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tPdot, tAileron));
+        TrimAxes.push_back(FGTrimAxis(fdmex, fgic, tRdot, tRudder));
         break;
       case tCustom:
       case tNone:

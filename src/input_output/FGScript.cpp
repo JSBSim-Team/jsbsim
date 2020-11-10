@@ -182,7 +182,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
     return false;
   }
 
-  FGInitialCondition *IC=FDMExec->GetIC();
+  auto IC = FDMExec->GetIC();
   if ( ! IC->Load( initialize )) {
     cerr << "Initialization unsuccessful" << endl;
     return false;

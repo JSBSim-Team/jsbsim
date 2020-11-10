@@ -252,7 +252,7 @@ public:
     DummyGroundCallback* cb = new DummyGroundCallback(planet->GetSemimajor(),
                                                       planet->GetSemiminor());
     planet->SetGroundCallback(cb);
-    FGInitialCondition* IC = fdmex.GetIC();
+    auto IC = fdmex.GetIC();
     TS_ASSERT_DELTA(IC->GetTerrainElevationFtIC(), 0.0, 1E-8);
     TS_ASSERT_DELTA(propagate->GetTerrainElevation(), 0.0, 1E-8);
     FGLocation loc;

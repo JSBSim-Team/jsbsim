@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "models/FGModel.h"
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
@@ -579,7 +581,7 @@ public:
   void SetDistanceAGL(double tt);
   void SetDistanceAGLKm(double tt);
 
-  void SetInitialState(const FGInitialCondition*);
+  void SetInitialState(std::shared_ptr<FGInitialCondition>);
   void SetLocation(const FGLocation& l);
   void SetLocation(const FGColumnVector3& lv)
   {
@@ -646,7 +648,7 @@ private:
   double TrueAnomaly;     // True anomaly (angle of the vehicule from the apsis line)
   double ApoapsisRadius;  // Apoapsis radius (farthest point from the planet)
   double PeriapsisRadius; // Periapsis radius (closest point to the planet)
-  double OrbitalPeriod;   // Peroid of elliptic orbits
+  double OrbitalPeriod;   // Period of elliptic orbits
 
   FGQuaternion Qec2b;
 

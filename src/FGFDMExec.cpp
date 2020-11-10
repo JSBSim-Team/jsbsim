@@ -61,6 +61,7 @@ INCLUDES
 #include "initialization/FGTrim.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
+#include "initialization/FGInitialCondition.h"
 
 using namespace std;
 
@@ -270,7 +271,7 @@ bool FGFDMExec::Allocate(void)
   // Initialize models
   InitializeModels();
 
-  IC = new FGInitialCondition(this);
+  IC = std::make_shared<FGInitialCondition>(this);
   IC->bind(instance);
 
   modelLoaded = false;
@@ -298,8 +299,6 @@ bool FGFDMExec::DeAllocate(void)
 
   for (unsigned int i=0; i<eNumStandardModels; i++) delete Models[i];
   Models.clear();
-
-  delete IC;
 
   modelLoaded = false;
   return modelLoaded;
@@ -581,7 +580,7 @@ bool FGFDMExec::RunIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::Initialize(FGInitialCondition* FGIC)
+void FGFDMExec::Initialize(std::shared_ptr<FGInitialCondition> FGIC)
 {
   Propagate->SetInitialState(FGIC);
   Winds->SetWindNED(FGIC->GetWindNEDFpsIC());

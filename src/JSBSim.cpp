@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "initialization/FGTrim.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -403,7 +404,7 @@ int real_main(int argc, char* argv[])
       return 0;
     }
 
-    JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
+    auto IC = FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
       delete FDMExec;
       cerr << "Initialization unsuccessful" << endl;

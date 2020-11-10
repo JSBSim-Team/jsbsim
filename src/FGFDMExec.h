@@ -351,9 +351,9 @@ public:
   /// Returns the FGOutput pointer.
   FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
   /// Retrieves the script object
-  std::shared_ptr<FGScript> GetScript(void) {return Script;}
+  std::shared_ptr<FGScript> GetScript(void) const {return Script;}
   /// Returns a pointer to the FGInitialCondition object
-  FGInitialCondition* GetIC(void)      {return IC;}
+  std::shared_ptr<FGInitialCondition> GetIC(void) const {return IC;}
   /// Returns a pointer to the FGTrim object
   std::shared_ptr<FGTrim> GetTrim(void);
   ///@}
@@ -547,7 +547,7 @@ public:
 
   /** Initializes the simulation with initial conditions
       @param FGIC The initial conditions that will be passed to the simulation. */
-  void Initialize(FGInitialCondition *FGIC);
+  void Initialize(std::shared_ptr<FGInitialCondition> FGIC);
 
   /** Sets the property forces/hold-down. This allows to do hard 'hold-down'
       such as for rockets on a launch pad with engines ignited.
@@ -616,9 +616,9 @@ private:
   unsigned int ResetMode;
   int trim_completed;
 
-  std::shared_ptr<FGScript> Script;
-  FGInitialCondition* IC;
-  std::shared_ptr<FGTrim>   Trim;
+  std::shared_ptr<FGScript>           Script;
+  std::shared_ptr<FGInitialCondition> IC;
+  std::shared_ptr<FGTrim>             Trim;
 
   FGPropertyManager* Root;
   bool StandAlone;
