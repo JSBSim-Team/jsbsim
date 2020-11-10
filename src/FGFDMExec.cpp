@@ -312,7 +312,7 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
-  for (auto ChildFDM: ChildFDMList) {
+  for (auto &ChildFDM: ChildFDMList) {
     ChildFDM->AssignState( (FGPropagate*)Models[ePropagate] ); // Transfer state to the child FDM
     ChildFDM->Run();
   }
@@ -627,7 +627,7 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
   FDMList.push_back(Aircraft->GetAircraftName());
 
-  for (auto ChildFDM: ChildFDMList)
+  for (auto &ChildFDM: ChildFDMList)
     FDMList.push_back(ChildFDM->exec->GetAircraft()->GetAircraftName());
 
   return FDMList;
@@ -926,9 +926,9 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 
 string FGFDMExec::QueryPropertyCatalog(const string& in)
 {
-  string results="";
-  for (unsigned i=0; i<PropertyCatalog.size(); i++) {
-    if (PropertyCatalog[i].find(in) != string::npos) results += PropertyCatalog[i] + "\n";
+  string results;
+  for (auto &catalogElm: PropertyCatalog) {
+    if (catalogElm.find(in) != string::npos) results += catalogElm + "\n";
   }
   if (results.empty()) return "No matches found\n";
   return results;
@@ -941,9 +941,8 @@ void FGFDMExec::PrintPropertyCatalog(void)
   cout << endl;
   cout << "  " << fgblue << highint << underon << "Property Catalog for "
        << modelName << reset << endl << endl;
-  for (unsigned i=0; i<PropertyCatalog.size(); i++) {
-    cout << "    " << PropertyCatalog[i] << endl;
-  }
+  for (auto &catalogElm: PropertyCatalog)
+    cout << "    " << catalogElm << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
