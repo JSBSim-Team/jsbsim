@@ -359,7 +359,7 @@ public:
   /// Returns a pointer to the FGInitialCondition object
   FGInitialCondition* GetIC(void)      {return IC;}
   /// Returns a pointer to the FGTrim object
-  FGTrim* GetTrim(void);
+  std::shared_ptr<FGTrim> GetTrim(void);
   ///@}
 
   /// Retrieves the engine path.
@@ -622,7 +622,7 @@ private:
 
   FGScript*           Script;
   FGInitialCondition* IC;
-  FGTrim*             Trim;
+  std::shared_ptr<FGTrim> Trim;
 
   FGPropertyManager* Root;
   bool StandAlone;

@@ -78,7 +78,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
 {
   Frame           = 0;
   IC              = nullptr;
-  Trim            = nullptr;
   Script          = nullptr;
   disperse        = 0;
 
@@ -309,7 +308,6 @@ bool FGFDMExec::DeAllocate(void)
 
   delete Script;
   delete IC;
-  delete Trim;
 
   modelLoaded = false;
   return modelLoaded;
@@ -1107,10 +1105,9 @@ bool FGFDMExec::ReadChild(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTrim* FGFDMExec::GetTrim(void)
+std::shared_ptr<FGTrim> FGFDMExec::GetTrim(void)
 {
-  delete Trim;
-  Trim = new FGTrim(this,tNone);
+  Trim = std::make_shared<FGTrim>(this,tNone);
   return Trim;
 }
 
