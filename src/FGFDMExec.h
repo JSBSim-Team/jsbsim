@@ -355,7 +355,7 @@ public:
   /// Returns the FGOutput pointer.
   FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
   /// Retrieves the script object
-  FGScript* GetScript(void) {return Script;}
+  std::shared_ptr<FGScript> GetScript(void) {return Script;}
   /// Returns a pointer to the FGInitialCondition object
   FGInitialCondition* GetIC(void)      {return IC;}
   /// Returns a pointer to the FGTrim object
@@ -620,9 +620,9 @@ private:
   unsigned int ResetMode;
   int trim_completed;
 
-  FGScript*           Script;
+  std::shared_ptr<FGScript> Script;
   FGInitialCondition* IC;
-  std::shared_ptr<FGTrim> Trim;
+  std::shared_ptr<FGTrim>   Trim;
 
   FGPropertyManager* Root;
   bool StandAlone;

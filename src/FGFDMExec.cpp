@@ -78,7 +78,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
 {
   Frame           = 0;
   IC              = nullptr;
-  Script          = nullptr;
   disperse        = 0;
 
   RootDir = "";
@@ -306,7 +305,6 @@ bool FGFDMExec::DeAllocate(void)
   for (unsigned int i=0; i<eNumStandardModels; i++) delete Models[i];
   Models.clear();
 
-  delete Script;
   delete IC;
 
   modelLoaded = false;
@@ -329,7 +327,7 @@ bool FGFDMExec::Run(void)
   IncrTime();
 
   // returns true if success, false if complete
-  if (Script != 0 && !IntegrationSuspended()) success = Script->RunScript();
+  if (Script && !IntegrationSuspended()) success = Script->RunScript();
 
   for (unsigned int i = 0; i < Models.size(); i++) {
     LoadInputs(i);
@@ -648,12 +646,8 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 bool FGFDMExec::LoadScript(const SGPath& script, double deltaT,
                            const SGPath& initfile)
 {
-  bool result;
-
-  Script = new FGScript(this);
-  result = Script->LoadScript(GetFullPath(script), deltaT, initfile);
-
-  return result;
+  Script = std::make_shared<FGScript>(this);
+  return Script->LoadScript(GetFullPath(script), deltaT, initfile);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
