@@ -158,7 +158,7 @@ bool FGMassBalance::Load(Element* document)
   }
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
@@ -186,7 +186,7 @@ bool FGMassBalance::Run(bool Holding)
   RunPreFunctions();
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 

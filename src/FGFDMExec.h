@@ -179,7 +179,7 @@ CLASS DECLARATION
 class FGFDMExec : public FGJSBBase
 {
   struct childData {
-    FGFDMExec* exec;
+    std::shared_ptr<FGFDMExec> exec;
     std::string info;
     FGColumnVector3 Loc;
     FGColumnVector3 Orient;
@@ -197,10 +197,6 @@ class FGFDMExec : public FGJSBBase
     void Run(void) {exec->Run();}
     void AssignState(FGPropagate* source_prop) {
       exec->GetPropagate()->SetVState(source_prop->GetVState());
-    }
-
-    ~childData(void) {
-      delete exec;
     }
   };
 
@@ -392,9 +388,9 @@ public:
   /// Returns a vector of strings representing the names of all loaded models (future)
   std::vector <std::string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
-  int GetFDMCount(void) const {return (int)ChildFDMList.size();}
+  size_t GetFDMCount(void) const {return ChildFDMList.size();}
   /// Gets a particular child FDM.
-  childData* GetChildFDM(int i) const {return ChildFDMList[i];}
+  std::shared_ptr<childData> GetChildFDM(int i) const {return ChildFDMList[i];}
   /// Marks this instance of the Exec object as a "child" object.
   void SetChild(bool ch) {IsChild = ch;}
 
@@ -638,7 +634,7 @@ private:
   std::shared_ptr<unsigned int> FDMctr;
 
   std::vector <std::string> PropertyCatalog;
-  std::vector <childData*> ChildFDMList;
+  std::vector <std::shared_ptr<childData>> ChildFDMList;
   std::vector <FGModel*> Models;
   std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
 

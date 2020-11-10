@@ -190,8 +190,6 @@ FGFDMExec::~FGFDMExec()
     cout << "Caught error: " << msg << endl;
   }
 
-  for (unsigned int i=1; i<ChildFDMList.size(); i++) delete ChildFDMList[i]->exec;
-
   if (!FDMctr) (*FDMctr)--;
 
   Debug(1);
@@ -315,9 +313,9 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
-  for (unsigned int i=1; i<ChildFDMList.size(); i++) {
-    ChildFDMList[i]->AssignState( (FGPropagate*)Models[ePropagate] ); // Transfer state to the child FDM
-    ChildFDMList[i]->Run();
+  for (auto ChildFDM: ChildFDMList) {
+    ChildFDM->AssignState( (FGPropagate*)Models[ePropagate] ); // Transfer state to the child FDM
+    ChildFDM->Run();
   }
 
   IncrTime();
@@ -630,9 +628,8 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
   FDMList.push_back(Aircraft->GetAircraftName());
 
-  for (unsigned int i=1; i<ChildFDMList.size(); i++) {
-    FDMList.push_back(ChildFDMList[i]->exec->GetAircraft()->GetAircraftName());
-  }
+  for (auto ChildFDM: ChildFDMList)
+    FDMList.push_back(ChildFDM->exec->GetAircraft()->GetAircraftName());
 
   return FDMList;
 }
@@ -1057,9 +1054,9 @@ bool FGFDMExec::ReadChild(Element* el)
   // Load the model given the aircraft name
   // reset debug level to prior setting
 
-  struct childData* child = new childData;
+  auto child = std::make_shared<childData>();
 
-  child->exec = new FGFDMExec(Root, FDMctr);
+  child->exec = std::make_shared<FGFDMExec>(Root, FDMctr);
   child->exec->SetChild(true);
 
   string childAircraft = el->GetAttributeValue("name");
