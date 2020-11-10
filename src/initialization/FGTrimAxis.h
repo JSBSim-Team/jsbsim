@@ -69,6 +69,8 @@ const std::string ControlNames[] =  { "Throttle","Sideslip","Angle of Attack",
 class FGInitialCondition;
 class FGFDMExec;
 
+using FGInitialCondition_ptr = std::shared_ptr<FGInitialCondition>;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -93,7 +95,7 @@ public:
        @param state a State type (enum)
        @param control a Control type (enum) */
   FGTrimAxis(FGFDMExec* fdmex, 
-             std::shared_ptr<FGInitialCondition> IC, 
+             FGInitialCondition_ptr IC, 
              State state,
              Control control );
   /// Destructor
@@ -147,7 +149,7 @@ public:
 
 private:
   FGFDMExec *fdmex;
-  std::shared_ptr<FGInitialCondition> fgic;
+  FGInitialCondition_ptr fgic;
 
   State   state;
   Control control;

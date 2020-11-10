@@ -63,7 +63,6 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
-class FGInitialCondition;
 
 typedef enum { tLongitudinal=0, tFull, tGround, tPullup,
                tCustom, tTurn, tNone } TrimMode;
@@ -144,7 +143,7 @@ class FGTrim : public FGJSBBase
   double psidot;
 
   FGFDMExec* fdmex;
-  std::shared_ptr<FGInitialCondition> fgic;
+  FGInitialCondition_ptr fgic;
 
   bool solve(FGTrimAxis& axis);
 
