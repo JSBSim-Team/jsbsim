@@ -583,7 +583,7 @@ public:
   void SetDistanceAGL(double tt);
   void SetDistanceAGLKm(double tt);
 
-  void SetInitialState(FGInitialCondition_ptr);
+  void SetInitialState(const FGInitialCondition_ptr);
   void SetLocation(const FGLocation& l);
   void SetLocation(const FGColumnVector3& lv)
   {
