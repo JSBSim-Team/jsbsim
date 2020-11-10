@@ -50,6 +50,7 @@ INCLUDES
 #include "models/FGAccelerations.h"
 #include "input_output/FGXMLFileRead.h"
 #include "FGTrim.h"
+#include "FGFDMExec.h"
 
 using namespace std;
 

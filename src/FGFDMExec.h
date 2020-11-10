@@ -70,7 +70,6 @@ class FGInertial;
 class FGInput;
 class FGPropulsion;
 class FGMassBalance;
-class FGTrim;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION

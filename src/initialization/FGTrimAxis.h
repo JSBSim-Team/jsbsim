@@ -40,9 +40,7 @@ INCLUDES
 
 #include <string>
 
-#include "FGFDMExec.h"
 #include "FGJSBBase.h"
-#include "FGInitialCondition.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -68,6 +66,7 @@ const std::string ControlNames[] =  { "Throttle","Sideslip","Angle of Attack",
                                     };
 
 class FGInitialCondition;
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
