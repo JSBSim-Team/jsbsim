@@ -572,7 +572,7 @@ public:
     TemplateFunctions[name] = new FGTemplateFunc(this, el);
   }
 
-  const std::shared_ptr<std::default_random_engine>& GetRandomEngine(void) const
+  std::shared_ptr<std::default_random_engine> GetRandomEngine(void) const
   { return RandomEngine; }
 
 private:
