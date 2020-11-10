@@ -71,7 +71,7 @@ private:
   FGPropertyValue_ptr var;
 };
 
-typedef SGSharedPtr<FGTemplateFunc> FGTemplateFunc_ptr;
+typedef std::shared_ptr<FGTemplateFunc> FGTemplateFunc_ptr;
 
 } // namespace JSBSim
 

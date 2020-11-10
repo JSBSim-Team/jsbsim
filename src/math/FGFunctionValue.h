@@ -58,10 +58,10 @@ class FGFunctionValue : public FGPropertyValue
 {
 public:
 
-  FGFunctionValue(FGPropertyNode* propNode, FGTemplateFunc* f)
+  FGFunctionValue(FGPropertyNode* propNode, FGTemplateFunc_ptr f)
     :FGPropertyValue(propNode), function(f) {}
   FGFunctionValue(std::string propName, FGPropertyManager* propertyManager,
-                  FGTemplateFunc* f)
+                  FGTemplateFunc_ptr f)
     :FGPropertyValue(propName, propertyManager), function(f) {}
 
   double GetValue(void) const override { return function->GetValue(GetNode()); }

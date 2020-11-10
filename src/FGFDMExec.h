@@ -560,12 +560,12 @@ public:
   */
   bool GetHoldDown(void) const {return HoldDown;}
 
-  FGTemplateFunc* GetTemplateFunc(const std::string& name) {
+  FGTemplateFunc_ptr GetTemplateFunc(const std::string& name) {
     return TemplateFunctions.count(name) ? TemplateFunctions[name] : nullptr;
   }
 
   void AddTemplateFunc(const std::string& name, Element* el) {
-    TemplateFunctions[name] = new FGTemplateFunc(this, el);
+    TemplateFunctions[name] = std::make_shared<FGTemplateFunc>(this, el);
   }
 
   std::shared_ptr<std::default_random_engine> GetRandomEngine(void) const

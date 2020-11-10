@@ -282,7 +282,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
 
         if (notify_property_element->HasAttribute("apply")) {
           string function_str = notify_property_element->GetAttributeValue("apply");
-          FGTemplateFunc* f = FDMExec->GetTemplateFunc(function_str);
+          auto f = FDMExec->GetTemplateFunc(function_str);
           if (f)
             newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f));
           else {

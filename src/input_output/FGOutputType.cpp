@@ -142,7 +142,7 @@ bool FGOutputType::Load(Element* element)
     } else {
       if (property_element->HasAttribute("apply")) {
         string function_str = property_element->GetAttributeValue("apply");
-        FGTemplateFunc* f = FDMExec->GetTemplateFunc(function_str);
+        auto f = FDMExec->GetTemplateFunc(function_str);
         if (f)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {
