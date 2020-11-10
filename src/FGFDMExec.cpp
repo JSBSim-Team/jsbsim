@@ -73,7 +73,7 @@ CLASS IMPLEMENTATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
-FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
+FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmctr)
   : Root(root), RandomEngine(new default_random_engine), FDMctr(fdmctr)
 {
   Frame           = 0;
@@ -109,18 +109,18 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
     debug_lvl = 1;
   }
 
-  if (Root == 0) {                 // Then this is the root FDM
+  if (Root == nullptr) {           // Then this is the root FDM
     Root = new FGPropertyManager;  // Create the property manager
     StandAlone = true;
   }
 
-  if (FDMctr == 0) {
-    FDMctr = new unsigned int;     // Create and initialize the child FDM counter
-    (*FDMctr) = 0;
+  if (!FDMctr) {
+    FDMctr = std::make_shared<unsigned int>(); // Create and initialize the child FDM counter
+    *FDMctr = 0;
   }
 
   // Store this FDM's ID
-  IdFDM = (*FDMctr); // The main (parent) JSBSim instance is always the "zeroth"
+  IdFDM = *FDMctr; // The main (parent) JSBSim instance is always the "zeroth"
 
   // Prepare FDMctr for the next child FDM id
   (*FDMctr)++;       // instance. "child" instances are loaded last.
@@ -185,10 +185,6 @@ FGFDMExec::~FGFDMExec()
             delete Root;
          Root = 0;
       }
-      if(FDMctr != 0) {
-         delete FDMctr;
-         FDMctr = 0;
-      }
     }
   } catch (const string& msg ) {
     cout << "Caught error: " << msg << endl;
@@ -196,7 +192,7 @@ FGFDMExec::~FGFDMExec()
 
   for (unsigned int i=1; i<ChildFDMList.size(); i++) delete ChildFDMList[i]->exec;
 
-  if (FDMctr != 0) (*FDMctr)--;
+  if (!FDMctr) (*FDMctr)--;
 
   Debug(1);
 }

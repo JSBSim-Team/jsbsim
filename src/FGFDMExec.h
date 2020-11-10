@@ -207,7 +207,7 @@ class FGFDMExec : public FGJSBBase
 public:
 
   /// Default constructor
-  FGFDMExec(FGPropertyManager* root = 0, unsigned int* fdmctr = 0);
+  FGFDMExec(FGPropertyManager* root = nullptr, std::shared_ptr<unsigned int> fdmctr = nullptr);
 
   /// Default destructor
   ~FGFDMExec();
@@ -635,7 +635,7 @@ private:
 
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
   // has the ID 0
-  unsigned int*      FDMctr;
+  std::shared_ptr<unsigned int> FDMctr;
 
   std::vector <std::string> PropertyCatalog;
   std::vector <childData*> ChildFDMList;
