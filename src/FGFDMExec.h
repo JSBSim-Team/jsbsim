@@ -389,7 +389,7 @@ public:
   const std::string& GetModelName(void) const { return modelName; }
 
   /// Returns a pointer to the property manager object.
-  FGPropertyManager* GetPropertyManager(void);
+  FGPropertyManager* GetPropertyManager(void) { return instance; }
   /// Returns a vector of strings representing the names of all loaded models (future)
   std::vector <std::string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.

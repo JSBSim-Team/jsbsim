@@ -1107,13 +1107,6 @@ bool FGFDMExec::ReadChild(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager* FGFDMExec::GetPropertyManager(void)
-{
-  return instance;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 FGTrim* FGFDMExec::GetTrim(void)
 {
   delete Trim;
