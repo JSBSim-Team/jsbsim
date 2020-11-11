@@ -188,14 +188,15 @@ bool FGTrim::DoTrim(void) {
   unsigned int N = 0;
   unsigned int axis_count = 0;
   auto FCS = fdmex->GetFCS();
+  auto GroundReactions = fdmex->GetGroundReactions();
   vector<double> throttle0 = FCS->GetThrottleCmd();
   double elevator0 = FCS->GetDeCmd();
   double aileron0 = FCS->GetDaCmd();
   double rudder0 = FCS->GetDrCmd();
   double PitchTrim0 = FCS->GetPitchTrimCmd();
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
-    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
+  for(int i=0;i < GroundReactions->GetNumGearUnits();i++)
+    GroundReactions->GetGearUnit(i)->SetReport(false);
 
   fdmex->SetTrimStatus(true);
   fdmex->SuspendIntegration();
@@ -328,7 +329,7 @@ bool FGTrim::DoTrim(void) {
     fdmex->Run();
 
     // If WOW is true we must make sure there are no gears into the ground.
-    if (fdmex->GetGroundReactions()->GetWOW())
+    if (GroundReactions->GetWOW())
       trimOnGround();
 
     if (debug_lvl > 0)
@@ -339,8 +340,8 @@ bool FGTrim::DoTrim(void) {
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
-    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
+  for(int i=0;i < GroundReactions->GetNumGearUnits();i++)
+    GroundReactions->GetGearUnit(i)->SetReport(true);
 
   return !trim_failed;
 }
