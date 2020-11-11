@@ -372,7 +372,11 @@ private:
 
   LagrangeMultiplier LMultiplier[3];
 
-  std::shared_ptr<FGGroundReactions> GroundReactions;
+  // NO std::shared_ptr<FGGroundReactions> here, to avoid circular references
+  // since FGGroundReactions own the instances of FGLGear.
+  // Weak pointers are not needed since this FGLGear instance would not have
+  // been called in the first place if FGGroundReactions had been destroyed.
+  FGGroundReactions* GroundReactions;
   FGPropertyManager* PropertyManager;
 
   mutable bool useFCSGearPos;

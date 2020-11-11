@@ -163,7 +163,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   else
     eSteerType = stSteer;
 
-  GroundReactions = fdmex->GetGroundReactions();
+  GroundReactions = fdmex->GetGroundReactions().get();
 
   ForceY_Table = 0;
   Element* force_table = el->FindElement("table");
