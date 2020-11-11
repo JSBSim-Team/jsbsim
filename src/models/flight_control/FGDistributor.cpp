@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
  
 #include "FGDistributor.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
@@ -52,8 +53,10 @@ CLASS IMPLEMENTATION
 FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
-  bind(element); // Bind() this component here in case it is used in its own
-                 // definition for a sample-and-hold
+  auto PropertyManager = fcs->GetPropertyManager();
+
+  bind(element, PropertyManager); // Bind() this component here in case it is used in its own
+                                  // definition for a sample-and-hold
 
   string type_string = element->GetAttributeValue("type");
   if (type_string == "inclusive") Type = eInclusive;

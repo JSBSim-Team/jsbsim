@@ -66,6 +66,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   source_longitude_unit = 1.0;
   source = fcs->GetExec()->GetIC()->GetPosition();
 
+  auto PropertyManager = fcs->GetPropertyManager();
+
   if (element->FindElement("target_latitude") ) {
     target_latitude.reset(new FGPropertyValue(element->FindElementValue("target_latitude"),
                                               PropertyManager));
@@ -155,7 +157,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
     }
   }
 
-  bind(element);
+  bind(element, PropertyManager);
   Debug(0);
 }
 

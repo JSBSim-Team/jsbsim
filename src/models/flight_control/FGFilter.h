@@ -235,7 +235,7 @@ private:
   enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
   void CalculateDynamicFilters(void);
-  void ReadFilterCoefficients(Element* el, int index);
+  void ReadFilterCoefficients(Element* el, int index, FGPropertyManager* pm);
   void Debug(int from) override;
 };
 }

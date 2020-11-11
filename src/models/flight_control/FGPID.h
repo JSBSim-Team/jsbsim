@@ -150,7 +150,7 @@ private:
 
   FGParameter *Kp, *Ki, *Kd, *Trigger, *ProcessVariableDot;
 
-  void bind(Element* el) override;
+  void bind(Element* el, FGPropertyManager* pm) override;
   void Debug(int from) override;
 };
 }

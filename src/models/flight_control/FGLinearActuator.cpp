@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLinearActuator.h"
+#include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
 using namespace std;
@@ -52,6 +53,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
   ptrSet = nullptr;
+  auto PropertyManager = fcs->GetPropertyManager();
   if (element->FindElement("set")) {
     string property_string = element->FindElementValue("set");
     ptrSet = new FGParameterValue(property_string, PropertyManager);
@@ -137,7 +139,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");
 
-  bind(element);
+  bind(element, PropertyManager);
 
   Debug(0);
 }

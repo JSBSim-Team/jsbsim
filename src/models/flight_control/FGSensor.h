@@ -175,7 +175,7 @@ protected:
   void Lag(void);
   void Gain(void);
 
-  void bind(Element* el) override;
+  void bind(Element* el, FGPropertyManager* pm) override;
 
 private:
   void Debug(int from) override;
