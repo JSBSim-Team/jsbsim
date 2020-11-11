@@ -47,6 +47,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
 #include "simgear/misc/sg_path.hxx"
@@ -704,8 +706,8 @@ private:
   int trimRequested;
 
   FGFDMExec *fdmex;
-  FGAtmosphere* Atmosphere;
-  FGAircraft* Aircraft;
+  std::shared_ptr<FGAtmosphere> Atmosphere;
+  std::shared_ptr<FGAircraft> Aircraft;
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);

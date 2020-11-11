@@ -37,6 +37,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGSensor.h"
 #include "FGSensorOrientation.h"
 
@@ -111,7 +113,7 @@ public:
   bool Run (void) override;
 
 private:
-  FGPropagate* Propagate;
+  std::shared_ptr<FGPropagate> Propagate;
   FGColumnVector3 Rates;
   FGColumnVector3 vRates;
   void CalculateTransformMatrix(void);

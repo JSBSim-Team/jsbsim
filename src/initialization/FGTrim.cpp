@@ -187,7 +187,7 @@ bool FGTrim::DoTrim(void) {
   bool trim_failed=false;
   unsigned int N = 0;
   unsigned int axis_count = 0;
-  FGFCS *FCS = fdmex->GetFCS();
+  auto FCS = fdmex->GetFCS();
   vector<double> throttle0 = FCS->GetThrottleCmd();
   double elevator0 = FCS->GetDeCmd();
   double aileron0 = FCS->GetDaCmd();
@@ -371,10 +371,10 @@ bool FGTrim::DoTrim(void) {
 
 void FGTrim::trimOnGround(void)
 {
-  FGGroundReactions* GroundReactions = fdmex->GetGroundReactions();
-  FGPropagate* Propagate = fdmex->GetPropagate();
-  FGMassBalance* MassBalance = fdmex->GetMassBalance();
-  FGAccelerations* Accelerations = fdmex->GetAccelerations();
+  auto GroundReactions = fdmex->GetGroundReactions();
+  auto Propagate = fdmex->GetPropagate();
+  auto MassBalance = fdmex->GetMassBalance();
+  auto Accelerations = fdmex->GetAccelerations();
   vector<ContactPoints> contacts;
   FGLocation CGLocation = Propagate->GetLocation();
   FGMatrix33 Tec2b = Propagate->GetTec2b();

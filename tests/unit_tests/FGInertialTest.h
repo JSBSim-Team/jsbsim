@@ -14,7 +14,7 @@ class FGInertialTest : public CxxTest::TestSuite
 public:
   void testTransformationMatricesSphericalEarth() {
     FGFDMExec fdmex;
-    FGInertial* planet = fdmex.GetInertial();
+    auto planet = fdmex.GetInertial();
     fdmex.SetPropertyValue("simulation/gravity-model", 0);
     FGLocation loc;
     FGMatrix33 Tec2l;
@@ -41,7 +41,7 @@ public:
 
   void testTransformationMatricesWGS84Earth() {
     FGFDMExec fdmex;
-    FGInertial* planet = fdmex.GetInertial();
+    auto planet = fdmex.GetInertial();
     fdmex.SetPropertyValue("simulation/gravity-model", 1);
     FGLocation loc;
     FGMatrix33 Tec2l;

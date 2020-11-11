@@ -372,7 +372,7 @@ private:
 
   LagrangeMultiplier LMultiplier[3];
 
-  FGGroundReactions* GroundReactions;
+  std::shared_ptr<FGGroundReactions> GroundReactions;
   FGPropertyManager* PropertyManager;
 
   mutable bool useFCSGearPos;

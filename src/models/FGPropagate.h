@@ -623,7 +623,7 @@ private:
 
   struct VehicleState VState;
 
-  FGInertial* Inertial = nullptr;
+  std::shared_ptr<FGInertial> Inertial;
   FGColumnVector3 vVel;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;

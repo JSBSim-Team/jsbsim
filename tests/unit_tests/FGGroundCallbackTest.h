@@ -247,8 +247,8 @@ public:
   // location in its GetAGLevel method.
   void testGroundCallback() {
     FGFDMExec fdmex;
-    FGPropagate* propagate = fdmex.GetPropagate();
-    FGInertial* planet = fdmex.GetInertial();
+    auto propagate = fdmex.GetPropagate();
+    auto planet = fdmex.GetInertial();
     DummyGroundCallback* cb = new DummyGroundCallback(planet->GetSemimajor(),
                                                       planet->GetSemiminor());
     planet->SetGroundCallback(cb);

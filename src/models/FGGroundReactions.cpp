@@ -242,7 +242,7 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
     }
   }
 
-  FGAccelerations* Accelerations = FDMExec->GetAccelerations();
+  auto Accelerations = FDMExec->GetAccelerations();
 
   buf << Accelerations->GetGroundForces(eX) << delimeter
       << Accelerations->GetGroundForces(eY) << delimeter

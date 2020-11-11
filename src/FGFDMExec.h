@@ -319,43 +319,43 @@ public:
   /// @name Top-level executive State and Model retrieval mechanism
   ///@{
   /// Returns the FGAtmosphere pointer.
-  FGAtmosphere* GetAtmosphere(void)    {return (FGAtmosphere*)Models[eAtmosphere];}
+  std::shared_ptr<FGAtmosphere>        GetAtmosphere(void) const;
   /// Returns the FGAccelerations pointer.
-  FGAccelerations* GetAccelerations(void)    {return (FGAccelerations*)Models[eAccelerations];}
+  std::shared_ptr<FGAccelerations>     GetAccelerations(void) const;
   /// Returns the FGWinds pointer.
-  FGWinds* GetWinds(void)    {return (FGWinds*)Models[eWinds];}
+  std::shared_ptr<FGWinds>             GetWinds(void) const;
   /// Returns the FGFCS pointer.
-  FGFCS* GetFCS(void)                  {return (FGFCS*)Models[eSystems];}
+  std::shared_ptr<FGFCS>               GetFCS(void) const;
   /// Returns the FGPropulsion pointer.
-  FGPropulsion* GetPropulsion(void)    {return (FGPropulsion*)Models[ePropulsion];}
+  std::shared_ptr<FGPropulsion>        GetPropulsion(void) const;
   /// Returns the FGAircraft pointer.
-  FGMassBalance* GetMassBalance(void)  {return (FGMassBalance*)Models[eMassBalance];}
+  std::shared_ptr<FGMassBalance>       GetMassBalance(void) const;
   /// Returns the FGAerodynamics pointer
-  FGAerodynamics* GetAerodynamics(void){return (FGAerodynamics*)Models[eAerodynamics];}
+  std::shared_ptr<FGAerodynamics>      GetAerodynamics(void) const;
   /// Returns the FGInertial pointer.
-  FGInertial* GetInertial(void)        {return (FGInertial*)Models[eInertial];}
+  std::shared_ptr<FGInertial>          GetInertial(void) const;
   /// Returns the FGGroundReactions pointer.
-  FGGroundReactions* GetGroundReactions(void) {return (FGGroundReactions*)Models[eGroundReactions];}
+  std::shared_ptr<FGGroundReactions>   GetGroundReactions(void) const;
   /// Returns the FGExternalReactions pointer.
-  FGExternalReactions* GetExternalReactions(void) {return (FGExternalReactions*)Models[eExternalReactions];}
+  std::shared_ptr<FGExternalReactions> GetExternalReactions(void) const;
   /// Returns the FGBuoyantForces pointer.
-  FGBuoyantForces* GetBuoyantForces(void) {return (FGBuoyantForces*)Models[eBuoyantForces];}
+  std::shared_ptr<FGBuoyantForces>     GetBuoyantForces(void) const;
   /// Returns the FGAircraft pointer.
-  FGAircraft* GetAircraft(void)        {return (FGAircraft*)Models[eAircraft];}
+  std::shared_ptr<FGAircraft>          GetAircraft(void) const;
   /// Returns the FGPropagate pointer.
-  FGPropagate* GetPropagate(void)      {return (FGPropagate*)Models[ePropagate];}
+  std::shared_ptr<FGPropagate>         GetPropagate(void) const;
   /// Returns the FGAuxiliary pointer.
-  FGAuxiliary* GetAuxiliary(void)      {return (FGAuxiliary*)Models[eAuxiliary];}
+  std::shared_ptr<FGAuxiliary>         GetAuxiliary(void) const;
   /// Returns the FGInput pointer.
-  FGInput* GetInput(void)              {return (FGInput*)Models[eInput];}
+  std::shared_ptr<FGInput>             GetInput(void) const;
   /// Returns the FGOutput pointer.
-  FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
+  std::shared_ptr<FGOutput>            GetOutput(void) const;
   /// Retrieves the script object
-  std::shared_ptr<FGScript> GetScript(void) const {return Script;}
+  std::shared_ptr<FGScript>            GetScript(void) const {return Script;}
   /// Returns a pointer to the FGInitialCondition object
-  std::shared_ptr<FGInitialCondition> GetIC(void) const {return IC;}
+  std::shared_ptr<FGInitialCondition>  GetIC(void) const {return IC;}
   /// Returns a pointer to the FGTrim object
-  std::shared_ptr<FGTrim> GetTrim(void);
+  std::shared_ptr<FGTrim>              GetTrim(void);
   ///@}
 
   /// Retrieves the engine path.
@@ -497,7 +497,7 @@ public:
   void SetTrimMode(int mode){ ta_mode = mode; }
   int GetTrimMode(void) const { return ta_mode; }
 
-  std::string GetPropulsionTankReport();
+  std::string GetPropulsionTankReport() const;
 
   /// Returns the cumulative simulation time in seconds.
   double GetSimTime(void) const { return sim_time; }
@@ -593,6 +593,7 @@ private:
   SGPath RootDir;
 
   // Standard Model pointers - shortcuts for internal executive use only.
+  // DO NOT TRY TO DELETE THEM !!!
   FGPropagate* Propagate;
   FGInertial* Inertial;
   FGAtmosphere* Atmosphere;
@@ -608,6 +609,7 @@ private:
   FGAircraft* Aircraft;
   FGAccelerations* Accelerations;
   FGOutput* Output;
+  FGInput* Input;
 
   bool trim_status;
   int ta_mode;
@@ -633,7 +635,7 @@ private:
 
   std::vector <std::string> PropertyCatalog;
   std::vector <std::shared_ptr<childData>> ChildFDMList;
-  std::vector <FGModel*> Models;
+  std::vector <std::shared_ptr<FGModel>> Models;
   std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
 
   bool ReadFileHeader(Element*);

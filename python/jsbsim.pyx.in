@@ -20,6 +20,8 @@
 
    @DoxMainPage"""
 
+from cython.operator cimport dereference as deref
+
 import os, platform, numpy
 
 __version__='${PROJECT_VERSION}'
@@ -36,22 +38,19 @@ cdef convertToNumpyVec(const c_FGColumnVector3& v):
 cdef class FGPropagate:
     """@Dox(JSBSim::FGPropagate)"""
 
-    cdef c_FGPropagate *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGPropagate] thisptr
 
     def get_Tl2b(self):
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
-        return convertToNumpyMat(self.thisptr.GetTl2b())
+        return convertToNumpyMat(deref(self.thisptr).GetTl2b())
 
     def get_Tec2b(self):
         """@Dox(JSBSim::FGPropagate::GetTec2b)"""
-        return convertToNumpyMat(self.thisptr.GetTec2b())
+        return convertToNumpyMat(deref(self.thisptr).GetTec2b())
 
     def get_uvw(self):
         """@Dox(JSBSim::FGPropagate::GetUVW)"""
-        return convertToNumpyVec(self.thisptr.GetUVW())
+        return convertToNumpyVec(deref(self.thisptr).GetUVW())
 
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
@@ -82,20 +81,17 @@ cdef class FGPropertyManager:
 cdef class FGGroundReactions:
     """@Dox(JSBSim::FGGroundReactions)"""
 
-    cdef c_FGGroundReactions *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGGroundReactions] thisptr
 
     def get_gear_unit(self, gear):
         """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
         lgear = FGLGear()
-        lgear.thisptr = self.thisptr.GetGearUnit(gear)
+        lgear.thisptr = deref(self.thisptr).GetGearUnit(gear)
         return lgear
 
     def get_num_gear_units(self):
         """@Dox(JSBSim::FGGroundReactions::GetNumGearUnits)"""
-        return self.thisptr.GetNumGearUnits()
+        return deref(self.thisptr).GetNumGearUnits()
 
 cdef class FGLGear:
     """@Dox(JSBSim::FGLGear)"""
@@ -130,86 +126,71 @@ cdef class FGLGear:
 cdef class FGAuxiliary:
     """@Dox(JSBSim::FGAuxiliary)"""
 
-    cdef c_FGAuxiliary *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGAuxiliary] thisptr
 
     def get_Tw2b(self):
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
-        return convertToNumpyMat(self.thisptr.GetTw2b())
+        return convertToNumpyMat(deref(self.thisptr).GetTw2b())
 
     def get_Tb2w(self):
         """@Dox(JSBSim::FGAuxiliary::GetTb2w)"""
-        return convertToNumpyMat(self.thisptr.GetTb2w())
+        return convertToNumpyMat(deref(self.thisptr).GetTb2w())
 
 cdef class FGAerodynamics:
     """@Dox(JSBSim::FGAerodynamics)"""
 
-    cdef c_FGAerodynamics *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGAerodynamics] thisptr
 
     def get_moments_MRC(self):
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
-        return convertToNumpyVec(self.thisptr.GetMomentsMRC())
+        return convertToNumpyVec(deref(self.thisptr).GetMomentsMRC())
 
     def get_forces(self):
         """@Dox(JSBSim::FGAerodynamics::GetForces)"""
-        return convertToNumpyVec(self.thisptr.GetForces())
+        return convertToNumpyVec(deref(self.thisptr).GetForces())
 
 cdef class FGAircraft:
     """@Dox(JSBSim::FGAircraft)"""
 
-    cdef c_FGAircraft *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGAircraft] thisptr
 
     def get_xyz_rp(self):
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
-        return convertToNumpyVec(self.thisptr.GetXYZrp())
+        return convertToNumpyVec(deref(self.thisptr).GetXYZrp())
 
 cdef class FGAtmosphere:
     """@Dox(JSBSim::FGAtmosphere)"""
 
-    cdef c_FGAtmosphere *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGAtmosphere] thisptr
 
     def set_temperature(self, t, h, unit):
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
-        return self.thisptr.SetTemperature(t, h, unit)
+        return deref(self.thisptr).SetTemperature(t, h, unit)
 
     def get_temperature(self, h):
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
-        return self.thisptr.GetTemperature(h)
+        return deref(self.thisptr).GetTemperature(h)
 
     def set_pressure_SL(self, unit, p):
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
-        return self.thisptr.SetPressureSL(unit, p)
+        return deref(self.thisptr).SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
     """@Dox(JSBSim::FGMassBalance)"""
 
-    cdef c_FGMassBalance *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGMassBalance] thisptr
 
     def get_xyz_cg(self):
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
-        return convertToNumpyVec(self.thisptr.GetXYZcg())
+        return convertToNumpyVec(deref(self.thisptr).GetXYZcg())
 
     def get_J(self):
         """@Dox(JSBSim::FGMassBalance::GetJ)"""
-        return convertToNumpyMat(self.thisptr.GetJ())
+        return convertToNumpyMat(deref(self.thisptr).GetJ())
 
     def get_Jinv(self):
         """@Dox(JSBSim::FGMassBalance::GetJinv)"""
-        return convertToNumpyMat(self.thisptr.GetJinv())
+        return convertToNumpyMat(deref(self.thisptr).GetJinv())
 
 cdef class FGJSBBase:
     """@Dox(JSBSim::FGJSBBase)"""
@@ -231,28 +212,25 @@ cdef class FGJSBBase:
 cdef class FGPropulsion:
     """@Dox(JSBSim::FGPropulsion)"""
 
-    cdef c_FGPropulsion *thisptr
-
-    def __init__(self):
-        self.thisptr = NULL
+    cdef shared_ptr[c_FGPropulsion] thisptr
 
     def init_running(self, n):
         """@Dox(JSBSim::FGPropulsion::InitRunning)"""
-        self.thisptr.InitRunning(n)
+        deref(self.thisptr).InitRunning(n)
 
     def get_num_engines(self):
         """@Dox(JSBSim::FGPropulsion::GetNumEngines)"""
-        return self.thisptr.GetNumEngines()
+        return deref(self.thisptr).GetNumEngines()
 
     def get_engine(self, idx):
         """@Dox(JSBSim::FGPropulsion::GetEngine)"""
         engine = FGEngine()
-        engine.thisptr = self.thisptr.GetEngine(idx)
+        engine.thisptr = deref(self.thisptr).GetEngine(idx)
         return engine
 
     def get_steady_state(self):
         """@Dox(JSBSim::FGPropulsion::GetSteadyState)"""
-        return self.thisptr.GetSteadyState()
+        return deref(self.thisptr).GetSteadyState()
 
 cdef class FGEngine:
     """@Dox(JSBSim::FGEngine)"""
@@ -530,7 +508,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     def load_ic(self, rstfile, useStoredPath):
         rstfile = rstfile.encode()
-        return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
+        return deref(self.thisptr.GetIC()).Load(c_SGPath(rstfile, NULL), useStoredPath)
 
     def get_propagate(self):
         """@Dox(JSBSim::FGFDMExec::GetPropagate)"""

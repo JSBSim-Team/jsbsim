@@ -37,6 +37,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGSensorOrientation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,9 +137,9 @@ public:
   bool Run (void) override;
 
 private:
-  FGPropagate* Propagate;
-  FGAccelerations* Accelerations;
-  FGMassBalance* MassBalance;
+  std::shared_ptr<FGPropagate> Propagate;
+  std::shared_ptr<FGAccelerations> Accelerations;
+  std::shared_ptr<FGMassBalance> MassBalance;
   FGColumnVector3 vLocation;
   FGColumnVector3 vRadius;
   FGColumnVector3 vAccel;

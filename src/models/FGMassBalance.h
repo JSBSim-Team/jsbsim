@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGModel.h"
 #include "math/FGMatrix33.h"
 
@@ -191,8 +193,8 @@ public:
   } in;
 
 private:
-  FGPropagate* Propagate;
-  FGGroundReactions* GroundReactions;
+  std::shared_ptr<FGPropagate> Propagate;
+  std::shared_ptr<FGGroundReactions> GroundReactions;
   double Weight;
   double EmptyWeight;
   double Mass;

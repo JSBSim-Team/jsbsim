@@ -19,7 +19,7 @@
 
 from libcpp cimport bool
 from libcpp.string cimport string
-from libcpp.vector cimport vector
+from libcpp.memory cimport shared_ptr
 
 cdef extern from "ExceptionManagement.h":
     cdef void convertJSBSimToPyExc()
@@ -186,13 +186,13 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         void Setdt(double delta_t)
         double IncrTime()
         int GetDebugLevel()
-        c_FGPropulsion* GetPropulsion()
-        c_FGInitialCondition* GetIC()
-        c_FGPropagate* GetPropagate()
+        shared_ptr[c_FGPropulsion] GetPropulsion()
+        shared_ptr[c_FGInitialCondition] GetIC()
+        shared_ptr[c_FGPropagate] GetPropagate()
         c_FGPropertyManager* GetPropertyManager()
-        c_FGGroundReactions* GetGroundReactions()
-        c_FGAuxiliary* GetAuxiliary()
-        c_FGAerodynamics* GetAerodynamics()
-        c_FGAircraft* GetAircraft()
-        c_FGAtmosphere* GetAtmosphere()
-        c_FGMassBalance* GetMassBalance()
+        shared_ptr[c_FGGroundReactions] GetGroundReactions()
+        shared_ptr[c_FGAuxiliary] GetAuxiliary()
+        shared_ptr[c_FGAerodynamics] GetAerodynamics()
+        shared_ptr[c_FGAircraft] GetAircraft()
+        shared_ptr[c_FGAtmosphere] GetAtmosphere()
+        shared_ptr[c_FGMassBalance] GetMassBalance()
