@@ -53,8 +53,6 @@ namespace JSBSim {
 class FGInitialCondition;
 class FGInertial;
 
-using FGInitialCondition_ptr = std::shared_ptr<FGInitialCondition>;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -583,7 +581,7 @@ public:
   void SetDistanceAGL(double tt);
   void SetDistanceAGLKm(double tt);
 
-  void SetInitialState(const FGInitialCondition_ptr);
+  void SetInitialState(const FGInitialCondition*);
   void SetLocation(const FGLocation& l);
   void SetLocation(const FGColumnVector3& lv)
   {

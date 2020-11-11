@@ -52,7 +52,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "FGTrimAxis.h"
-#include "math/FGColumnVector3.h"
+#include "FGInitialCondition.h"
 
 #include <vector>
 
@@ -143,7 +143,7 @@ class FGTrim : public FGJSBBase
   double psidot;
 
   FGFDMExec* fdmex;
-  FGInitialCondition_ptr fgic;
+  FGInitialCondition fgic;
 
   bool solve(FGTrimAxis& axis);
 

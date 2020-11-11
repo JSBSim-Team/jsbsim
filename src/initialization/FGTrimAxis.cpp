@@ -58,7 +58,7 @@ namespace JSBSim {
 
 /*****************************************************************************/
 
-FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition_ptr ic, State st,
+FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
                        Control ctrl) {
 
   fdmex=fdex;

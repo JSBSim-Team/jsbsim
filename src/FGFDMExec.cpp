@@ -546,7 +546,7 @@ bool FGFDMExec::RunIC(void)
   FGPropulsion* propulsion = (FGPropulsion*)Models[ePropulsion];
 
   SuspendIntegration(); // saves the integration rate, dt, then sets it to 0.0.
-  Initialize(IC);
+  Initialize(IC.get());
 
   Models[eInput]->InitModel();
   Models[eOutput]->InitModel();
@@ -580,7 +580,7 @@ bool FGFDMExec::RunIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::Initialize(FGInitialCondition_ptr FGIC)
+void FGFDMExec::Initialize(const FGInitialCondition* FGIC)
 {
   Propagate->SetInitialState(FGIC);
   Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
