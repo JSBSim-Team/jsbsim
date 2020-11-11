@@ -179,7 +179,7 @@ CLASS DECLARATION
 class FGFDMExec : public FGJSBBase
 {
   struct childData {
-    std::shared_ptr<FGFDMExec> exec;
+    std::unique_ptr<FGFDMExec> exec;
     std::string info;
     FGColumnVector3 Loc;
     FGColumnVector3 Orient;
@@ -390,7 +390,7 @@ public:
   /// Gets the number of child FDMs.
   size_t GetFDMCount(void) const {return ChildFDMList.size();}
   /// Gets a particular child FDM.
-  std::shared_ptr<childData> GetChildFDM(int i) const {return ChildFDMList[i];}
+  auto GetChildFDM(int i) const {return ChildFDMList[i];}
   /// Marks this instance of the Exec object as a "child" object.
   void SetChild(bool ch) {IsChild = ch;}
 
@@ -568,8 +568,7 @@ public:
     TemplateFunctions[name] = std::make_shared<FGTemplateFunc>(this, el);
   }
 
-  std::shared_ptr<std::default_random_engine> GetRandomEngine(void) const
-  { return RandomEngine; }
+  auto GetRandomEngine(void) const { return RandomEngine; }
 
 private:
   unsigned int Frame;

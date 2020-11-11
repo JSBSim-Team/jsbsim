@@ -1054,7 +1054,7 @@ bool FGFDMExec::ReadChild(Element* el)
 
   auto child = std::make_shared<childData>();
 
-  child->exec = std::make_shared<FGFDMExec>(Root, FDMctr);
+  child->exec = std::make_unique<FGFDMExec>(Root, FDMctr);
   child->exec->SetChild(true);
 
   string childAircraft = el->GetAttributeValue("name");
