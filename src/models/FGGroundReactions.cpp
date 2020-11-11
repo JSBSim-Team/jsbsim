@@ -37,6 +37,7 @@ INCLUDES
 
 #include <iomanip>
 
+#include "FGFDMExec.h"
 #include "FGGroundReactions.h"
 #include "FGAccelerations.h"
 #include "input_output/FGXMLElement.h"
@@ -155,15 +156,11 @@ bool FGGroundReactions::Load(Element* document)
   if (!FGModel::Upload(document, true))
     return false;
 
-  unsigned int numContacts = document->GetNumElements("contact");
-  lGear.resize(numContacts);
   Element* contact_element = document->FindElement("contact");
-  for (unsigned int idx=0; idx<numContacts; idx++) {
-    lGear[idx] = new FGLGear(contact_element, FDMExec, num++, in);
+  while (contact_element) {
+    lGear.push_back(new FGLGear(contact_element, FDMExec, num++, in));
     contact_element = document->FindNextElement("contact");
   }
-
-  for (unsigned int i=0; i<lGear.size();i++) lGear[i]->bind();
 
   PostLoad(document, FDMExec);
 
@@ -259,7 +256,7 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
 void FGGroundReactions::bind(void)
 {
   eSurfaceType = ctGROUND;
-  FGSurface::bind();
+  FGSurface::bind(PropertyManager);
 
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
   PropertyManager->Tie("gear/wow", this, &FGGroundReactions::GetWOW);

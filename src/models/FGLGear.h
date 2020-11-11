@@ -41,7 +41,7 @@ INCLUDES
 #include <string>
 
 #include "models/propulsion/FGForce.h"
-#include "math/FGColumnVector3.h"
+#include "math/FGLocation.h"
 #include "math/LagrangeMultiplier.h"
 #include "FGSurface.h"
 
@@ -54,6 +54,8 @@ namespace JSBSim {
 class FGTable;
 class Element;
 class FGPropertyManager;
+class FGGroundReactions;
+class FGFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -320,7 +322,6 @@ public:
   const struct Inputs& in;
 
   void ResetToIC(void);
-  void bind(void);
 
 private:
   int GearNumber;
@@ -373,11 +374,10 @@ private:
   LagrangeMultiplier LMultiplier[3];
 
   // NO std::shared_ptr<FGGroundReactions> here, to avoid circular references
-  // since FGGroundReactions own the instances of FGLGear.
+  // since FGGroundReactions owns the instances of FGLGear.
   // Weak pointers are not needed since this FGLGear instance would not have
-  // been called in the first place if FGGroundReactions had been destroyed.
+  // been called if FGGroundReactions had been destroyed in the first place.
   FGGroundReactions* GroundReactions;
-  FGPropertyManager* PropertyManager;
 
   mutable bool useFCSGearPos;
 
@@ -396,6 +396,7 @@ private:
   void ReportTakeoffOrLanding(void);
   void Report(ReportType rt);
   void Debug(int from);
+  void bind(FGPropertyManager* pm);
 };
 }
 

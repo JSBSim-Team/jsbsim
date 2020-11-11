@@ -42,6 +42,7 @@ INCLUDES
 #include <vector>
 #include <string>
 
+#include "FGFDMExec.h"
 #include "models/FGModel.h"
 #include "models/FGLGear.h"
 #include "models/FGGroundReactions.h"

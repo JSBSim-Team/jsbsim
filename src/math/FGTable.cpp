@@ -48,7 +48,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTable::FGTable(int NRows)
-  : nRows(NRows), nCols(1), PropertyManager(nullptr)
+  : nRows(NRows), nCols(1)
 {
   Type = tt1D;
   colCounter = 0;
@@ -63,7 +63,7 @@ FGTable::FGTable(int NRows)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTable::FGTable(int NRows, int NCols)
-  : nRows(NRows), nCols(NCols), PropertyManager(nullptr)
+  : nRows(NRows), nCols(NCols)
 {
   Type = tt2D;
   colCounter = 1;
@@ -77,7 +77,7 @@ FGTable::FGTable(int NRows, int NCols)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
+FGTable::FGTable(const FGTable& t)
 {
   Type = t.Type;
   colCounter = t.colCounter;
@@ -107,9 +107,9 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(FGPropertyManager* propMan, Element* el,
+FGTable::FGTable(FGPropertyManager* PropertyManager, Element* el,
                  const std::string& prefix)
-  : PropertyManager(propMan), Prefix(prefix)
+  : Prefix(prefix)
 {
   unsigned int i;
 
@@ -340,7 +340,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     }
   }
 
-  bind(el);
+  bind(el, PropertyManager);
 
   if (debug_lvl & 1) Print();
 }
@@ -625,7 +625,7 @@ void FGTable::Print(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::bind(Element* el)
+void FGTable::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   typedef double (FGTable::*PMF)(void) const;
   if ( !Name.empty() && !internal) {
