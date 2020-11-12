@@ -64,7 +64,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   Buoyancy = MaxVolume = MaxOverpressure = Temperature = Pressure =
@@ -501,7 +501,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   MaxVolume = MaxOverpressure = Temperature = Pressure =

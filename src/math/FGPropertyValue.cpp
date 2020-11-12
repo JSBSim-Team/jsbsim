@@ -39,7 +39,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPropertyValue::FGPropertyValue(const std::string& propName,
-                                 FGPropertyManager* propertyManager)
+                                 std::shared_ptr<FGPropertyManager> propertyManager)
   : PropertyManager(propertyManager), PropertyNode(nullptr),
     PropertyName(propName), Sign(1.0)
 {

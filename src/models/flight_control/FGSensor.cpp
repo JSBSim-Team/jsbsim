@@ -116,7 +116,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  bind(element, fcs->GetPropertyManager());
+  bind(element, fcs->GetPropertyManager().get());
 
   Debug(0);
 }

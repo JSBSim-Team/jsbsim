@@ -525,7 +525,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   OilTemp_degK = in.TAT_c + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
-  bindmodel(exec->GetPropertyManager());
+  bindmodel(exec->GetPropertyManager().get());
   return true;
 }
 

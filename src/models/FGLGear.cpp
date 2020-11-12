@@ -226,7 +226,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
 
   ResetToIC();
 
-  bind(PropertyManager);
+  bind(PropertyManager.get());
 
   Debug(0);
 }

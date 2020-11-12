@@ -55,28 +55,14 @@ cdef class FGPropagate:
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
 
-    cdef c_FGPropertyManager *thisptr
-    cdef bool thisptr_owner
+    cdef shared_ptr[c_FGPropertyManager] thisptr
 
-    def __cinit__(self, new_instance=False):
-        if new_instance:
-            self.thisptr = new c_FGPropertyManager()
-            if self.thisptr is NULL:
-                raise MemoryError()
-            self.thisptr_owner = True
-        else:
-            self.thisptr = NULL
-            self.thisptr_owner = False
-
-    def __dealloc__(self):
-        if self.thisptr is not NULL and self.thisptr_owner:
-            del self.thisptr
-            self.thisptr = NULL
-            self.thisptr_owner = False
+    def __cinit__(self):
+        self.thisptr.reset(new c_FGPropertyManager())
 
     def hasNode(self, path):
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
-        return self.thisptr.HasNode(path.encode())
+        return deref(self.thisptr).HasNode(path.encode())
 
 cdef class FGGroundReactions:
     """@Dox(JSBSim::FGGroundReactions)"""
@@ -256,7 +242,7 @@ cdef class FGFDMExec(FGJSBBase):
         # os.environ["JSBSIM_DEBUG"]=str(0)
 
         if pm_root:
-            root = pm_root.thisptr
+            root = pm_root.thisptr.get()
         else:
             root = NULL
 

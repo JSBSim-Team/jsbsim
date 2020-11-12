@@ -117,7 +117,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  bind(element, PropertyManager);
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }

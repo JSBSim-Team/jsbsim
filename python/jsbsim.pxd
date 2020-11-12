@@ -189,7 +189,7 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         shared_ptr[c_FGPropulsion] GetPropulsion()
         shared_ptr[c_FGInitialCondition] GetIC()
         shared_ptr[c_FGPropagate] GetPropagate()
-        c_FGPropertyManager* GetPropertyManager()
+        shared_ptr[c_FGPropertyManager] GetPropertyManager()
         shared_ptr[c_FGGroundReactions] GetGroundReactions()
         shared_ptr[c_FGAuxiliary] GetAuxiliary()
         shared_ptr[c_FGAerodynamics] GetAerodynamics()

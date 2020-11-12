@@ -75,10 +75,9 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmctr)
-  : Root(root), RandomEngine(new default_random_engine), FDMctr(fdmctr)
+  : RandomEngine(new default_random_engine), FDMctr(fdmctr)
 {
   Frame           = 0;
-  IC              = nullptr;
   disperse        = 0;
 
   RootDir = "";
@@ -87,7 +86,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   IsChild = false;
   holding = false;
   Terminate = false;
-  StandAlone = false;
   ResetMode = 0;
   RandomSeed = 0;
   HoldDown = false;
@@ -110,11 +108,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
     debug_lvl = 1;
   }
 
-  if (Root == nullptr) {           // Then this is the root FDM
-    Root = new FGPropertyManager;  // Create the property manager
-    StandAlone = true;
-  }
-
   if (!FDMctr) {
     FDMctr = std::make_shared<unsigned int>(); // Create and initialize the child FDM counter
     *FDMctr = 0;
@@ -126,8 +119,13 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   // Prepare FDMctr for the next child FDM id
   (*FDMctr)++;       // instance. "child" instances are loaded last.
 
-  FGPropertyNode* instanceRoot = Root->GetNode("/fdm/jsbsim",IdFDM,true);
-  instance = new FGPropertyManager(instanceRoot);
+  if (root == nullptr)          // Then this is the root FDM
+    Root = new FGPropertyNode();
+  else
+    Root = root->GetNode();
+
+  FGPropertyNode* instanceRoot = Root->GetNode("/fdm/jsbsim", IdFDM, true);
+  instance = std::make_shared<FGPropertyManager>(instanceRoot);
 
   try {
     char* num = getenv("JSBSIM_DISPERSE");
@@ -177,16 +175,6 @@ FGFDMExec::~FGFDMExec()
   try {
     Unbind();
     DeAllocate();
-
-    delete instance;
-
-    if (IdFDM == 0) { // Meaning this is no child FDM
-      if(Root != 0) {
-         if(StandAlone)
-            delete Root;
-         Root = 0;
-      }
-    }
   } catch (const string& msg ) {
     cout << "Caught error: " << msg << endl;
   }
@@ -273,7 +261,7 @@ bool FGFDMExec::Allocate(void)
   InitializeModels();
 
   IC = std::make_shared<FGInitialCondition>(this);
-  IC->bind(instance);
+  IC->bind(instance.get());
 
   modelLoaded = false;
 
@@ -986,7 +974,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   if (result) {
     struct PropertyCatalogStructure masterPCS;
     masterPCS.base_string = "";
-    masterPCS.node = Root->GetNode();
+    masterPCS.node = Root;
     BuildPropertyCatalog(&masterPCS);
   }
 
@@ -1159,7 +1147,8 @@ bool FGFDMExec::ReadChild(Element* el)
 
   auto child = std::make_shared<childData>();
 
-  child->exec = std::make_unique<FGFDMExec>(Root, FDMctr);
+  auto pm = std::make_unique<FGPropertyManager>(Root);
+  child->exec = std::make_unique<FGFDMExec>(pm.get(), FDMctr);
   child->exec->SetChild(true);
 
   string childAircraft = el->GetAttributeValue("name");

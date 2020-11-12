@@ -53,7 +53,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 // This constructor is called when tests are inside an element
-FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
+FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> PropertyManager)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
@@ -101,7 +101,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
 // This constructor is called when there are no nested test groups inside the
 // condition
 
-FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
+FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> PropertyManager,
                          Element* el)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)

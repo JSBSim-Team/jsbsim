@@ -157,7 +157,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
     }
   }
 
-  bind(element, PropertyManager);
+  bind(element, PropertyManager.get());
   Debug(0);
 }
 

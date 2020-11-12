@@ -544,7 +544,7 @@ public:
   void AddThrottle(void);
   double GetDt(void) const;
 
-  FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
+  std::shared_ptr<FGPropertyManager> GetPropertyManager(void) { return PropertyManager; }
 
   bool GetTrimStatus(void) const { return FDMExec->GetTrimStatus(); }
   double GetChannelDeltaT(void) const { return GetDt() * ChannelRate; }

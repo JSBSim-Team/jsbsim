@@ -55,8 +55,8 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
 {
   auto PropertyManager = fcs->GetPropertyManager();
 
-  bind(element, PropertyManager); // Bind() this component here in case it is used in its own
-                                  // definition for a sample-and-hold
+  bind(element, PropertyManager.get()); // Bind() this component here in case it is used in its own
+                                        // definition for a sample-and-hold
 
   string type_string = element->GetAttributeValue("type");
   if (type_string == "inclusive") Type = eInclusive;

@@ -154,7 +154,7 @@ private:
     Test(void) : condition(nullptr), Default(false) {}
 
     void setTestValue(const std::string &value, const std::string &Name,
-                      FGPropertyManager* pm)
+                      std::shared_ptr<FGPropertyManager> pm)
     {
       if (value.empty()) {
         std::cerr << "No VALUE supplied for switch component: " << Name

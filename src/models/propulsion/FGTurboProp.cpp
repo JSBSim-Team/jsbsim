@@ -138,7 +138,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     ITT_Delay = el->FindElementValueAsNumber("itt_delay");
 
   Element *table_element = el->FindElement("table");
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
 
   while (table_element) {
     string name = table_element->GetAttributeValue("name");
@@ -185,7 +185,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     *CombustionEfficiency_N1 << 110.0 << 6.0;
   }
   
-  bindmodel(PropertyManager);
+  bindmodel(PropertyManager.get());
   return true;
 }
 

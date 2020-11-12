@@ -60,7 +60,7 @@ FGTransmission::FGTransmission(FGFDMExec *exec, int num, double dt) :
 {
   auto PropertyManager = exec->GetPropertyManager();
   FreeWheelLag = Filter(200.0,dt); // avoid too abrupt changes in transmission
-  BindModel(num, PropertyManager);
+  BindModel(num, PropertyManager.get());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

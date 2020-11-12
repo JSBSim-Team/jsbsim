@@ -134,7 +134,7 @@ bool FGModel::Upload(Element* el, bool preLoad)
       // local model element. This allows general-purpose models to be defined
       // in a file, with overrides or initial loaded constants supplied in the
       // relevant element of the aircraft configuration file.
-      LocalProperties.Load(el, PropertyManager, true);
+      LocalProperties.Load(el, PropertyManager.get(), true);
     }
 
     Element* element = document->FindElement();

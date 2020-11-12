@@ -67,7 +67,7 @@ class TestMiscellaneous(JSBSimTestCase):
         # This test reproduces how FlightGear resets. The important thing is
         # that the property manager is managed by FlightGear. So it is not
         # deleted when the JSBSim instance is killed.
-        pm = jsbsim.FGPropertyManager(new_instance=True)
+        pm = jsbsim.FGPropertyManager()
 
         self.assertFalse(pm.hasNode('fdm/jsbsim/ic/lat-geod-deg'))
 

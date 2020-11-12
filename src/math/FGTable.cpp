@@ -107,8 +107,8 @@ FGTable::FGTable(const FGTable& t)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(FGPropertyManager* PropertyManager, Element* el,
-                 const std::string& prefix)
+FGTable::FGTable(std::shared_ptr<FGPropertyManager> PropertyManager,
+                 Element* el, const std::string& prefix)
   : Prefix(prefix)
 {
   unsigned int i;
@@ -340,7 +340,7 @@ FGTable::FGTable(FGPropertyManager* PropertyManager, Element* el,
     }
   }
 
-  bind(el, PropertyManager);
+  bind(el, PropertyManager.get());
 
   if (debug_lvl & 1) Print();
 }

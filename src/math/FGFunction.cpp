@@ -109,7 +109,7 @@ template<typename func_t>
 class aFunc<func_t, 0>: public FGFunction
 {
 public:
-  aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
+  aFunc(const func_t& _f, std::shared_ptr<FGPropertyManager> pm, Element* el,
         const string& Prefix)
     : FGFunction(pm), f(_f)
   {

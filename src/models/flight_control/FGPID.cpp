@@ -104,7 +104,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (el)
     Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager);
 
-  bind(el, PropertyManager);
+  bind(el, PropertyManager.get());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

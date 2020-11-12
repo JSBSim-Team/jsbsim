@@ -139,7 +139,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("gain"))
     gain = element->FindElementValueAsNumber("gain");
 
-  bind(element, PropertyManager);
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }

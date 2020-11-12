@@ -63,7 +63,7 @@ class FGPropertyManager;
 class FGParameterValue : public FGParameter
 {
 public:
-  FGParameterValue(Element* el, FGPropertyManager* pm) {
+  FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm) {
     string value = el->GetDataLine();
 
     if (el->GetNumDataLines() != 1 || value.empty()) {
@@ -77,7 +77,7 @@ public:
     Construct(value, pm);
   }
 
-  FGParameterValue(const std::string& value, FGPropertyManager* pm) {
+  FGParameterValue(const std::string& value, std::shared_ptr<FGPropertyManager> pm) {
     Construct(value, pm);
   }
 
@@ -99,7 +99,7 @@ public:
 private:
   FGParameter_ptr param;
 
-  void Construct(const std::string& value, FGPropertyManager* pm) {
+  void Construct(const std::string& value, std::shared_ptr<FGPropertyManager> pm) {
     if (is_number(value)) {
       param = new FGRealValue(atof(value.c_str()));
     } else {

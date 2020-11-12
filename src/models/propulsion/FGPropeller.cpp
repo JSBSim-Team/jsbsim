@@ -55,7 +55,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
 {
   Element *table_element, *local_element;
   string name="";
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
 
   MaxPitch = MinPitch = P_Factor = Pitch = Advance = MinRPM = MaxRPM = 0.0;
   Sense = 1; // default clockwise rotation

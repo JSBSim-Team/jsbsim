@@ -35,6 +35,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -63,7 +65,7 @@ public:
   explicit FGPropertyValue(FGPropertyNode* propNode)
     : PropertyManager(nullptr), PropertyNode(propNode), Sign(1.0) {}
   FGPropertyValue(const std::string& propName,
-                  FGPropertyManager* propertyManager);
+                  std::shared_ptr<FGPropertyManager> propertyManager);
 
   double GetValue(void) const override;
   bool IsConstant(void) const override {
@@ -83,7 +85,7 @@ protected:
   FGPropertyNode* GetNode(void) const;
 
 private:
-  FGPropertyManager* PropertyManager; // Property root used to do late binding.
+  std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   mutable FGPropertyNode_ptr PropertyNode;
   std::string PropertyName;
   double Sign;

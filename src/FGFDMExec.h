@@ -383,7 +383,7 @@ public:
   const std::string& GetModelName(void) const { return modelName; }
 
   /// Returns a pointer to the property manager object.
-  FGPropertyManager* GetPropertyManager(void) { return instance; }
+  std::shared_ptr<FGPropertyManager> GetPropertyManager(void) const { return instance; }
   /// Returns a vector of strings representing the names of all loaded models (future)
   std::vector <std::string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
@@ -620,9 +620,8 @@ private:
   std::shared_ptr<FGScript>           Script;
   std::shared_ptr<FGTrim>             Trim;
 
-  FGPropertyManager* Root;
-  bool StandAlone;
-  FGPropertyManager* instance;
+  FGPropertyNode_ptr Root;
+  std::shared_ptr<FGPropertyManager> instance;
 
   bool HoldDown;
 

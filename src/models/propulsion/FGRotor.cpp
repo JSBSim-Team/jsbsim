@@ -209,7 +209,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   damp_hagl = Filter(1.0, dt);
 
   // enable import-export
-  bindmodel(exec->GetPropertyManager());
+  bindmodel(exec->GetPropertyManager().get());
 
   Debug(0);
 

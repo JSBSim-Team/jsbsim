@@ -122,7 +122,7 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     output_unit = 1.0; // Default is radians (1.0) if unspecified
   }
 
-  bind(element, PropertyManager);
+  bind(element, PropertyManager.get());
   Debug(0);
 }
 

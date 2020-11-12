@@ -213,7 +213,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   // Read local property/value declarations
   int saved_debug_lvl = debug_lvl;
   debug_lvl = 0; // Disable messages
-  LocalProperties.Load(run_element, PropertyManager, true);
+  LocalProperties.Load(run_element, PropertyManager.get(), true);
   debug_lvl = saved_debug_lvl;
 
   // Read "events" from script

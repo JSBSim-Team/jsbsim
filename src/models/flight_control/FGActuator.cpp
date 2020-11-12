@@ -109,7 +109,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
     InitializeLagCoefficients();
   }
 
-  bind(element, PropertyManager);
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }

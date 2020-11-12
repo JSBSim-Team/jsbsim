@@ -82,8 +82,8 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   std::stringstream strEngineNumber;
   strEngineNumber << EngineNumber;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
-  bindmodel(PropertyManager); // Bind model properties first, since they might be needed in functions.
+  auto PropertyManager = exec->GetPropertyManager();
+  bindmodel(PropertyManager.get()); // Bind model properties first, since they might be needed in functions.
 
   Element* isp_el = el->FindElement("isp");
 

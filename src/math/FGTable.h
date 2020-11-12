@@ -241,7 +241,8 @@ public:
   FGTable(const FGTable& table);
 
   /// The constructor for a table
-  FGTable (FGPropertyManager* propMan, Element* el, const std::string& prefix="");
+  FGTable (std::shared_ptr<FGPropertyManager> propMan, Element* el,
+           const std::string& prefix="");
   FGTable (int );
   FGTable (int, int);
   double GetValue(void) const;

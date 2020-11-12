@@ -56,7 +56,7 @@ FGSummer::FGSummer(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (element->FindElement("bias"))
     Bias = element->FindElementValueAsNumber("bias");
 
-  bind(element, fcs->GetPropertyManager());
+  bind(element, fcs->GetPropertyManager().get());
   Debug(0);
 }
 

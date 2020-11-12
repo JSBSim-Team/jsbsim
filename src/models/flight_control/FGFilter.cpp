@@ -65,7 +65,7 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
 
   CalculateDynamicFilters();
 
-  bind(element, fcs->GetPropertyManager());
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }
@@ -89,7 +89,7 @@ void FGFilter::ResetPastStates(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFilter::ReadFilterCoefficients(Element* element, int index,
-                                      FGPropertyManager* PropertyManager)
+                                      std::shared_ptr<FGPropertyManager> PropertyManager)
 {
   // index is known to be 1-7. 
   // A stringstream would be overkill, but also trying to avoid sprintf

@@ -79,8 +79,8 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   Test *current_test;
   auto PropertyManager = fcs->GetPropertyManager();
 
-  bind(element, PropertyManager); // Bind() this component here in case it is used in its own
-                                  // definition for a sample-and-hold
+  bind(element, PropertyManager.get()); // Bind() this component here in case it is used in its own
+                                        // definition for a sample-and-hold
   Element* test_element = element->FindElement("default");
   if (test_element) {
     current_test = new Test;

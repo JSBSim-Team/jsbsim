@@ -310,7 +310,7 @@ void FGMassBalance::AddPointMass(Element* el)
     pm->SetPointMassMoI(ReadInertiaMatrix(el));
   }
 
-  pm->bind(PropertyManager, PointMasses.size());
+  pm->bind(PropertyManager.get(), PointMasses.size());
   PointMasses.push_back(pm);
 }
 
