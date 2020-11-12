@@ -4,6 +4,7 @@ include(UseCython)
 # Declare JSBSim as a C++ project
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pxd COPYONLY)
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
                                                      INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/src)
 
@@ -52,8 +53,8 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
 file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
 
-foreach(_FILE "MANIFEST.in" "jsbsim.pxd" "ExceptionManagement.h"
-              "fpectl/fpectlmodule.h" "JSBSim.py")
+foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h"
+              "JSBSim.py")
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
