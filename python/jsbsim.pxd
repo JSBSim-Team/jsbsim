@@ -3,6 +3,7 @@
 # PyJSBSim a JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
+# Copyright (c) 2014-2020 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -48,11 +49,13 @@ cdef extern from "math/FGMatrix33.h" namespace "JSBSim":
 
 cdef extern from "models/FGAerodynamics.h" namespace "JSBSim":
     cdef cppclass c_FGAerodynamics "JSBSim::FGAerodynamics":
+        c_FGAerodynamics(c_FGFDMExec* fdmex) except +
         c_FGColumnVector3& GetMomentsMRC()
         c_FGColumnVector3& GetForces()
 
 cdef extern from "models/FGAircraft.h" namespace "JSBSim":
     cdef cppclass c_FGAircraft "JSBSim::FGAircraft":
+        c_FGAircraft(c_FGFDMExec* fdmex) except +
         c_FGColumnVector3& GetXYZrp()
 
 cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
@@ -77,11 +80,13 @@ cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
 
 cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
     cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
+        c_FGAuxiliary(c_FGFDMExec* fdmex) except +
         c_FGMatrix33& GetTw2b()
         c_FGMatrix33& GetTb2w()
 
 cdef extern from "models/FGGroundReactions.h" namespace "JSBSim":
     cdef cppclass c_FGGroundReactions "JSBSim::FGGroundReactions":
+        c_FGGroundReactions(c_FGFDMExec* fdmex) except +
         c_FGLGear* GetGearUnit(int gear)
         int GetNumGearUnits()
 
@@ -96,12 +101,14 @@ cdef extern from "models/FGLGear.h" namespace "JSBSim":
 
 cdef extern from "models/FGMassBalance.h" namespace "JSBSim":
     cdef cppclass c_FGMassBalance "JSBSim::FGMassBalance":
+        c_FGMassBalance(c_FGFDMExec* fdmex) except +
         c_FGColumnVector3& GetXYZcg()
         c_FGMatrix33& GetJ()
         c_FGMatrix33& GetJinv()
 
 cdef extern from "models/FGPropagate.h" namespace "JSBSim":
     cdef cppclass c_FGPropagate "JSBSim::FGPropagate":
+        c_FGPropagate(c_FGFDMExec* fdmex) except +
         c_FGMatrix33& GetTl2b()
         c_FGMatrix33& GetTec2b()
         c_FGColumnVector3& GetUVW()
@@ -112,6 +119,7 @@ cdef extern from "models/propulsion/FGEngine.h" namespace "JSBSim":
 
 cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
     cdef cppclass c_FGPropulsion "JSBSim::FGPropulsion":
+        c_FGPropulsion(c_FGFDMExec* fdmex) except +
         void InitRunning(int n)
         int GetNumEngines()
         c_FGEngine* GetEngine(unsigned int idx)

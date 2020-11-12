@@ -1,7 +1,7 @@
 # PyJSBSim a JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
-# Copyright (c) 2014-2019 Bertrand Coconnier
+# Copyright (c) 2014-2020 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -35,10 +35,15 @@ cdef convertToNumpyMat(const c_FGMatrix33& m):
 cdef convertToNumpyVec(const c_FGColumnVector3& v):
     return numpy.mat([v.Entry(1), v.Entry(2), v.Entry(3)]).T
 
+
 cdef class FGPropagate:
     """@Dox(JSBSim::FGPropagate)"""
 
     cdef shared_ptr[c_FGPropagate] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGPropagate(fdmex.thisptr))
 
     def get_Tl2b(self):
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
@@ -52,12 +57,13 @@ cdef class FGPropagate:
         """@Dox(JSBSim::FGPropagate::GetUVW)"""
         return convertToNumpyVec(deref(self.thisptr).GetUVW())
 
+
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
 
     cdef shared_ptr[c_FGPropertyManager] thisptr
 
-    def __cinit__(self):
+    def __cinit__(self, *args, **kwargs):
         self.thisptr.reset(new c_FGPropertyManager())
 
     def hasNode(self, path):
@@ -68,6 +74,10 @@ cdef class FGGroundReactions:
     """@Dox(JSBSim::FGGroundReactions)"""
 
     cdef shared_ptr[c_FGGroundReactions] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGGroundReactions(fdmex.thisptr))
 
     def get_gear_unit(self, gear):
         """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
@@ -114,6 +124,10 @@ cdef class FGAuxiliary:
 
     cdef shared_ptr[c_FGAuxiliary] thisptr
 
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGAuxiliary(fdmex.thisptr))
+
     def get_Tw2b(self):
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
         return convertToNumpyMat(deref(self.thisptr).GetTw2b())
@@ -127,6 +141,10 @@ cdef class FGAerodynamics:
 
     cdef shared_ptr[c_FGAerodynamics] thisptr
 
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGAerodynamics(fdmex.thisptr))
+
     def get_moments_MRC(self):
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
         return convertToNumpyVec(deref(self.thisptr).GetMomentsMRC())
@@ -139,6 +157,10 @@ cdef class FGAircraft:
     """@Dox(JSBSim::FGAircraft)"""
 
     cdef shared_ptr[c_FGAircraft] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGAircraft(fdmex.thisptr))
 
     def get_xyz_rp(self):
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
@@ -166,6 +188,10 @@ cdef class FGMassBalance:
 
     cdef shared_ptr[c_FGMassBalance] thisptr
 
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGMassBalance(fdmex.thisptr))
+
     def get_xyz_cg(self):
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
         return convertToNumpyVec(deref(self.thisptr).GetXYZcg())
@@ -183,8 +209,8 @@ cdef class FGJSBBase:
 
     cdef c_FGJSBBase *baseptr
 
-    def __cinit__(self):
-        if type(self) is FGJSBBase:
+    def __cinit__(self, *args, **kwargs):
+        if type(self) is FGJSBBase: # Check if it is called from a derived class
             self.baseptr = new c_FGJSBBase()
 
     def __dealloc__(self):
@@ -199,6 +225,10 @@ cdef class FGPropulsion:
     """@Dox(JSBSim::FGPropulsion)"""
 
     cdef shared_ptr[c_FGPropulsion] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGPropulsion(fdmex.thisptr))
 
     def init_running(self, n):
         """@Dox(JSBSim::FGPropulsion::InitRunning)"""
@@ -236,7 +266,8 @@ cdef class FGFDMExec(FGJSBBase):
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
-    def __cinit__(self, root_dir=None, FGPropertyManager pm_root=None):
+    def __cinit__(self, root_dir=None, FGPropertyManager pm_root=None, *args,
+                  **kwargs):
         cdef c_FGPropertyManager* root
         # this hides startup message
         # os.environ["JSBSIM_DEBUG"]=str(0)
@@ -498,7 +529,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_propagate(self):
         """@Dox(JSBSim::FGFDMExec::GetPropagate)"""
-        propagate = FGPropagate()
+        propagate = FGPropagate(None)
         propagate.thisptr = self.thisptr.GetPropagate()
         return propagate
 
@@ -510,31 +541,31 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_ground_reactions(self):
         """@Dox(JSBSim::FGFDMExec::GetGroundReactions)"""
-        grndreact = FGGroundReactions()
+        grndreact = FGGroundReactions(None)
         grndreact.thisptr = self.thisptr.GetGroundReactions()
         return grndreact
 
     def get_auxiliary(self):
         """@Dox(JSBSim::FGFDMExec::GetAuxiliary)"""
-        auxiliary = FGAuxiliary()
+        auxiliary = FGAuxiliary(None)
         auxiliary.thisptr = self.thisptr.GetAuxiliary()
         return auxiliary
 
     def get_aerodynamics(self):
         """@Dox(JSBSim::FGFDMExec::GetAerodynamics)"""
-        aerodynamics = FGAerodynamics()
+        aerodynamics = FGAerodynamics(None)
         aerodynamics.thisptr = self.thisptr.GetAerodynamics()
         return aerodynamics
 
     def get_aircraft(self):
         """@Dox(JSBSim::FGFDMExec::GetAircraft)"""
-        aircraft = FGAircraft()
+        aircraft = FGAircraft(None)
         aircraft.thisptr = self.thisptr.GetAircraft()
         return aircraft
 
     def get_mass_balance(self):
         """@Dox(JSBSim::FGFDMExec::GetMassBalance)"""
-        massbalance = FGMassBalance()
+        massbalance = FGMassBalance(None)
         massbalance.thisptr = self.thisptr.GetMassBalance()
         return massbalance
 
@@ -546,6 +577,6 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_propulsion(self):
         """@Dox(JSBSim::FGFDMExec::GetPropulsion)"""
-        propulsion = FGPropulsion()
+        propulsion = FGPropulsion(None)
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
