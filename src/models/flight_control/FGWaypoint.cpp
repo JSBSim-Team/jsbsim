@@ -69,8 +69,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   auto PropertyManager = fcs->GetPropertyManager();
 
   if (element->FindElement("target_latitude") ) {
-    target_latitude.reset(new FGPropertyValue(element->FindElementValue("target_latitude"),
-                                              PropertyManager));
+    target_latitude = std::make_unique<FGPropertyValue>(element->FindElementValue("target_latitude"),
+                                                        PropertyManager);
     if (element->FindElement("target_latitude")->HasAttribute("unit")) {
       if (element->FindElement("target_latitude")->GetAttributeValue("unit") == "DEG") {
         target_latitude_unit = 0.017453293;
@@ -84,8 +84,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("target_longitude") ) {
-    target_longitude.reset(new FGPropertyValue(element->FindElementValue("target_longitude"),
-                                               PropertyManager));
+    target_longitude = std::make_unique<FGPropertyValue>(element->FindElementValue("target_longitude"),
+                                                         PropertyManager);
     if (element->FindElement("target_longitude")->HasAttribute("unit")) {
       if (element->FindElement("target_longitude")->GetAttributeValue("unit") == "DEG") {
         target_longitude_unit = 0.017453293;
@@ -99,8 +99,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("source_latitude") ) {
-    source_latitude.reset(new FGPropertyValue(element->FindElementValue("source_latitude"),
-                                              PropertyManager));
+    source_latitude = std::make_unique<FGPropertyValue>(element->FindElementValue("source_latitude"),
+                                                        PropertyManager);
     if (element->FindElement("source_latitude")->HasAttribute("unit")) {
       if (element->FindElement("source_latitude")->GetAttributeValue("unit") == "DEG") {
         source_latitude_unit = 0.017453293;
@@ -114,8 +114,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
   }
 
   if (element->FindElement("source_longitude") ) {
-    source_longitude.reset(new FGPropertyValue(element->FindElementValue("source_longitude"),
-                                               PropertyManager));
+    source_longitude = std::make_unique<FGPropertyValue>(element->FindElementValue("source_longitude"),
+                                                         PropertyManager);
     if (element->FindElement("source_longitude")->HasAttribute("unit")) {
       if (element->FindElement("source_longitude")->GetAttributeValue("unit") == "DEG") {
         source_longitude_unit = 0.017453293;

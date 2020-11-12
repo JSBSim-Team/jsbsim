@@ -70,7 +70,7 @@ FGInertial::FGInertial(FGFDMExec* fgex)
   */
 
   vOmegaPlanet = { 0.0, 0.0, RotationRate };
-  GroundCallback.reset(new FGDefaultGroundCallback(a, b));
+  GroundCallback = std::make_unique<FGDefaultGroundCallback>(a, b);
 
   bind();
 
