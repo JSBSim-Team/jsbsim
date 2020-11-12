@@ -140,7 +140,7 @@ public:
   void   SetClutchCtrlNorm(double x) {ClutchCtrlNorm=x;}
 
 private:
-  bool BindModel(int num);
+  bool BindModel(int num, FGPropertyManager* pm);
   void Debug(int from);
 
   inline double omega_to_rpm(double w) {
@@ -163,10 +163,7 @@ private:
 
   double EngineRPM;
   double ThrusterRPM;
-  FGPropertyManager* PropertyManager;
-
 };
-
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
