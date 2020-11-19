@@ -349,9 +349,9 @@ cdef class FGPropulsion:
 
     def get_engine(self, idx):
         """@Dox(JSBSim::FGPropulsion::GetEngine)"""
+        self.__intercept_invalid_pointer()
         engine = FGEngine()
         engine.thisptr = deref(self.thisptr).GetEngine(idx)
-        self.__intercept_invalid_pointer()
         return engine
 
     def get_steady_state(self):
