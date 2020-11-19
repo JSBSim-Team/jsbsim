@@ -45,16 +45,29 @@ cdef class FGPropagate:
         if fdmex is not None:
             self.thisptr.reset(new c_FGPropagate(fdmex.thisptr))
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def get_Tl2b(self):
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetTl2b())
 
     def get_Tec2b(self):
         """@Dox(JSBSim::FGPropagate::GetTec2b)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetTec2b())
 
     def get_uvw(self):
         """@Dox(JSBSim::FGPropagate::GetUVW)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyVec(deref(self.thisptr).GetUVW())
 
 
@@ -66,8 +79,19 @@ cdef class FGPropertyManager:
     def __cinit__(self, *args, **kwargs):
         self.thisptr.reset(new c_FGPropertyManager())
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def hasNode(self, path):
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).HasNode(path.encode())
 
 cdef class FGGroundReactions:
@@ -79,14 +103,26 @@ cdef class FGGroundReactions:
         if fdmex is not None:
             self.thisptr.reset(new c_FGGroundReactions(fdmex.thisptr))
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def get_gear_unit(self, gear):
         """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
+        self.__intercept_invalid_pointer()
         lgear = FGLGear()
         lgear.thisptr = deref(self.thisptr).GetGearUnit(gear)
         return lgear
 
     def get_num_gear_units(self):
         """@Dox(JSBSim::FGGroundReactions::GetNumGearUnits)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetNumGearUnits()
 
 cdef class FGLGear:
@@ -124,16 +160,28 @@ cdef class FGAuxiliary:
 
     cdef shared_ptr[c_FGAuxiliary] thisptr
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGAuxiliary(fdmex.thisptr))
 
     def get_Tw2b(self):
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetTw2b())
 
     def get_Tb2w(self):
         """@Dox(JSBSim::FGAuxiliary::GetTb2w)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetTb2w())
 
 cdef class FGAerodynamics:
@@ -141,16 +189,28 @@ cdef class FGAerodynamics:
 
     cdef shared_ptr[c_FGAerodynamics] thisptr
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGAerodynamics(fdmex.thisptr))
 
     def get_moments_MRC(self):
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyVec(deref(self.thisptr).GetMomentsMRC())
 
     def get_forces(self):
         """@Dox(JSBSim::FGAerodynamics::GetForces)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyVec(deref(self.thisptr).GetForces())
 
 cdef class FGAircraft:
@@ -162,8 +222,19 @@ cdef class FGAircraft:
         if fdmex is not None:
             self.thisptr.reset(new c_FGAircraft(fdmex.thisptr))
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def get_xyz_rp(self):
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyVec(deref(self.thisptr).GetXYZrp())
 
 cdef class FGAtmosphere:
@@ -171,16 +242,29 @@ cdef class FGAtmosphere:
 
     cdef shared_ptr[c_FGAtmosphere] thisptr
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def set_temperature(self, t, h, unit):
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).SetTemperature(t, h, unit)
 
     def get_temperature(self, h):
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetTemperature(h)
 
     def set_pressure_SL(self, unit, p):
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
@@ -192,16 +276,29 @@ cdef class FGMassBalance:
         if fdmex is not None:
             self.thisptr.reset(new c_FGMassBalance(fdmex.thisptr))
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def get_xyz_cg(self):
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyVec(deref(self.thisptr).GetXYZcg())
 
     def get_J(self):
         """@Dox(JSBSim::FGMassBalance::GetJ)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetJ())
 
     def get_Jinv(self):
         """@Dox(JSBSim::FGMassBalance::GetJinv)"""
+        self.__intercept_invalid_pointer()
         return convertToNumpyMat(deref(self.thisptr).GetJinv())
 
 cdef class FGJSBBase:
@@ -230,18 +327,31 @@ cdef class FGPropulsion:
         if fdmex is not None:
             self.thisptr.reset(new c_FGPropulsion(fdmex.thisptr))
 
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
     def init_running(self, n):
         """@Dox(JSBSim::FGPropulsion::InitRunning)"""
+        self.__intercept_invalid_pointer()
         deref(self.thisptr).InitRunning(n)
 
     def get_num_engines(self):
         """@Dox(JSBSim::FGPropulsion::GetNumEngines)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetNumEngines()
 
     def get_engine(self, idx):
         """@Dox(JSBSim::FGPropulsion::GetEngine)"""
         engine = FGEngine()
         engine.thisptr = deref(self.thisptr).GetEngine(idx)
+        self.__intercept_invalid_pointer()
         return engine
 
     def get_steady_state(self):
