@@ -257,8 +257,8 @@ jobs:
           # Relocate the executables for the installer
           cp src\RelWithDebInfo\JSBSim.exe src\.
           cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
-          # Unzip the Python 3.8 wheel to get the MSVC C++ DLL
-          7z e python\dist\JSBSim*cp38*.whl
+          # Unzip the Python 3.9 wheel to get the MSVC C++ DLL
+          7z e python\dist\JSBSim*cp39*.whl
           # Compile the installer with Inno Setup
           iscc JSBSim.iss
 
