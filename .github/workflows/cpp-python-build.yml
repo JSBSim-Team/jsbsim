@@ -159,22 +159,6 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.9'
-      - name: Checkout CxxTest
-        uses: actions/checkout@v2
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name: Configure CxxTest for Python 3.9
-        working-directory: cxxtest\python
-        run: python setup.py install
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.8'
-      - name: Configure CxxTest for Python 3.8
-        working-directory: cxxtest\python
-        run: python setup.py install
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
@@ -187,6 +171,15 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest
+        working-directory: cxxtest\python
+        run: python setup.py install
       - name: Configure JSBSim
         run: |
           mkdir build
