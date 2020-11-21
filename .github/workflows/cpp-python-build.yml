@@ -453,6 +453,24 @@ jobs:
             dist/*.exe
             dist/*.deb
 
+      # Bump version
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Bump patch version
+        run: |
+          # Increment the value of PROJECT_VERSION_PATCH
+          sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/echo "\1\\"$((\2+1))\\"\3"/ge' CMakeLists.txt
+          # Determine the branch name
+          export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
+          # Commit the change to CMakeLists.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout $BRANCH_NAME
+          git commit -m "Bump version" CMakeLists.txt
+          git push origin $BRANCH_NAME
+
   Documentation:
     needs: Official-Release
     runs-on: ubuntu-latest
