@@ -159,22 +159,6 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: '3.9'
-      - name: Checkout CxxTest
-        uses: actions/checkout@v2
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name: Configure CxxTest for Python 3.9
-        working-directory: cxxtest\python
-        run: python setup.py install
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.8'
-      - name: Configure CxxTest for Python 3.8
-        working-directory: cxxtest\python
-        run: python setup.py install
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
@@ -187,6 +171,15 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest
+        working-directory: cxxtest\python
+        run: python setup.py install
       - name: Configure JSBSim
         run: |
           mkdir build
@@ -198,40 +191,6 @@ jobs:
       - name: Test JSBSim
         working-directory: build
         run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
-      - name: Build wheel package for Python 3.8
-        working-directory: build
-        run: python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
-      - name: Test wheel package for Python 3.8
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-          pip uninstall jsbsim -y
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.7'
-      - name: Build wheel package for Python 3.7
-        working-directory: build
-        run: |
-          pip install -U cython numpy wheel pywin32
-          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
-      - name: Test wheel package for Python 3.7
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.6'
-      - name: Build wheel package for Python 3.6
-        working-directory: build
-        run: |
-          pip install -U cython numpy wheel pywin32
-          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
-      - name: Test wheel package for Python 3.6
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -264,8 +223,17 @@ jobs:
           # Relocate the executables for the installer
           cp src\RelWithDebInfo\JSBSim.exe src\.
           cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
-          # Unzip the Python 3.8 wheel to get the MSVC C++ DLL
-          7z e python\dist\JSBSim*cp38*.whl
+          # Get the MSVC C++ DLL
+          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
+          foreach($path in $Paths -split ';') {
+            if (Test-Path $path) {
+              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
+              if ($File) {
+                cp $File.FullName .
+                break;
+              }
+            }
+          }
           # Compile the installer with Inno Setup
           iscc JSBSim.iss
 
@@ -273,10 +241,12 @@ jobs:
         uses: actions/upload-artifact@v2
         if: steps.BuildInstaller.outcome == 'success'
         with:
-          name: Windows_MSVC.binaries
+          name: windows-latest.binaries
           path: |
             build\Output\*.exe
-            build\python\dist\*.whl
+            build\src\RelWithDebInfo\JSBSim.lib
+            build\python\jsbsim.cxx
+            build\python\setup.py
 
   MacOSX:
     runs-on: macos-latest
@@ -317,44 +287,10 @@ jobs:
       - name: Test JSBSim
         working-directory: build
         run: ctest -j2 -E TestInputSocket --output-on-failure
-      - name: Build wheel package for Python 3.6
-        working-directory: build
-        run: python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build
         run: python python/setup.py sdist
-      - name: Test wheel package for Python 3.6
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-          pip uninstall jsbsim -y
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.7'
-      - name: Build wheel package for Python 3.7
-        working-directory: build
-        run: |
-          pip install -U cython numpy wheel
-          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
-      - name: Test wheel package for Python 3.7
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.8'
-      - name: Build wheel package for Python 3.8
-        working-directory: build
-        run: |
-          pip install -U cython numpy wheel
-          python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
-      - name: Test wheel package for Python 3.8
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -370,11 +306,67 @@ jobs:
         uses: actions/upload-artifact@v2
         if: env.release == 'true'
         with:
-          name: MacOSX.binaries
-          path: build/python/dist/*
+          name: macos-latest.binaries
+          path: |
+            build/src/libJSBSim.a
+            build/python/jsbsim.cxx
+            build/python/setup.py
+            build/python/dist/*.tar.gz
 
+  Python-Wheels:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    needs: [Windows-MSVC, MacOSX]
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      VERBOSE: 1
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Prepare the build
+        run: |
+          mkdir build
+          mkdir build/python
+          mv python/ExceptionManagement.h build/python/.
+          mv python/fpectl/fpectlmodule.h build/python/.
+          mv python/JSBSim.py build/python/JSBSim
+          mv src build/python/.
+          pip install -U numpy wheel
+      - name: Download binary files
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.os }}.binaries
+          path: build
+      - name: Build wheel package for Windows
+        if: matrix.os == 'windows-latest'
+        working-directory: build
+        run: |
+          pip install -U pywin32
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
+      - name: Build wheel package for MacOSX
+        if: matrix.os == 'macos-latest'
+        working-directory: build
+        run: python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Upload Python Wheel for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}-Python${{ matrix.python-version}}.binaries
+          path: |
+            build/python/dist/*.whl
+ 
   Rolling-Release:
-    needs: [Linux, MacOSX, Windows-MSVC]
+    needs: [Linux, Python-Wheels]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
@@ -403,7 +395,7 @@ jobs:
             dist/*.deb
 
   Official-Release:
-    needs: [Linux, MacOSX, Windows-MSVC]
+    needs: [Linux, Python-Wheels]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
