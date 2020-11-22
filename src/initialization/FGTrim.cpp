@@ -387,7 +387,7 @@ void FGTrim::trimOnGround(void)
   // loop to find which one is closer to (or deeper into) the ground.
   for (int i = 0; i < GroundReactions->GetNumGearUnits(); ++i) {
     ContactPoints c;
-    FGLGear* gear = GroundReactions->GetGearUnit(i);
+    auto gear = GroundReactions->GetGearUnit(i);
 
     // Skip the retracted landing gears
     if (!gear->GetGearUnitDown())

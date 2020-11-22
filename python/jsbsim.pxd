@@ -87,7 +87,7 @@ cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
 cdef extern from "models/FGGroundReactions.h" namespace "JSBSim":
     cdef cppclass c_FGGroundReactions "JSBSim::FGGroundReactions":
         c_FGGroundReactions(c_FGFDMExec* fdmex) except +
-        c_FGLGear* GetGearUnit(int gear)
+        shared_ptr[c_FGLGear] GetGearUnit(int gear)
         int GetNumGearUnits()
 
 cdef extern from "models/FGLGear.h" namespace "JSBSim":

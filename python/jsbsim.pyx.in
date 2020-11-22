@@ -128,32 +128,32 @@ cdef class FGGroundReactions:
 cdef class FGLGear:
     """@Dox(JSBSim::FGLGear)"""
 
-    cdef c_FGLGear *thisptr
+    cdef shared_ptr[c_FGLGear] thisptr
 
     def __init__(self):
-        self.thisptr = NULL
+        self.thisptr.reset()
 
     def get_steer_norm(self):
         """@Dox(JSBSim::FGLGear::GetSteerNorm)"""
-        return self.thisptr.GetSteerNorm()
+        return deref(self.thisptr).GetSteerNorm()
 
     def get_body_x_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyXForce)"""
-        return self.thisptr.GetBodyXForce()
+        return deref(self.thisptr).GetBodyXForce()
 
     def get_body_y_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyYForce)"""
-        return self.thisptr.GetBodyYForce()
+        return deref(self.thisptr).GetBodyYForce()
 
     def get_body_z_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyZForce)"""
-        return self.thisptr.GetBodyZForce()
+        return deref(self.thisptr).GetBodyZForce()
 
     def get_location(self):
-        return convertToNumpyVec(self.thisptr.GetLocation())
+        return convertToNumpyVec(deref(self.thisptr).GetLocation())
 
     def get_acting_location(self):
-        return convertToNumpyVec(self.thisptr.GetActingLocation())
+        return convertToNumpyVec(deref(self.thisptr).GetActingLocation())
 
 cdef class FGAuxiliary:
     """@Dox(JSBSim::FGAuxiliary)"""
