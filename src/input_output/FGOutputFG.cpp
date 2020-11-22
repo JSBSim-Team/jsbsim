@@ -240,7 +240,7 @@ void FGOutputFG::SocketDataFill(void)
 
   for (i = 0; i < net1->num_engines; i++)
   {
-    FGEngine* engine = Propulsion->GetEngine(i);
+    auto engine = Propulsion->GetEngine(i);
     if (engine->GetRunning())
       net1->eng_state[i] = 2; // Engine state running
     else if (engine->GetCranking())
@@ -253,7 +253,7 @@ void FGOutputFG::SocketDataFill(void)
       break;
     case (FGEngine::etPiston):
       {
-        FGPiston* piston_engine = static_cast<FGPiston*>(engine);
+        auto piston_engine = static_pointer_cast<FGPiston>(engine);
         net1->rpm[i] = (float)(piston_engine->getRPM());
         net1->fuel_flow[i] = (float)(piston_engine->getFuelFlow_gph());
         net1->fuel_px[i] = 0; // Fuel pressure, psi  (N/A in current model)
@@ -270,7 +270,7 @@ void FGOutputFG::SocketDataFill(void)
     case (FGEngine::etTurboprop):
       break;
     case (FGEngine::etElectric):
-      net1->rpm[i] = static_cast<float>(static_cast<FGElectric *>(engine)->getRPM());
+      net1->rpm[i] = static_cast<float>(static_pointer_cast<FGElectric>(engine)->getRPM());
       break;
     case (FGEngine::etUnknown):
       break;

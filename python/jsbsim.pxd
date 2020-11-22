@@ -122,7 +122,7 @@ cdef extern from "models/FGPropulsion.h" namespace "JSBSim":
         c_FGPropulsion(c_FGFDMExec* fdmex) except +
         void InitRunning(int n)
         int GetNumEngines()
-        c_FGEngine* GetEngine(unsigned int idx)
+        shared_ptr[c_FGEngine] GetEngine(unsigned int idx)
         bool GetSteadyState()
 
 cdef extern from "simgear/misc/sg_path.hxx":

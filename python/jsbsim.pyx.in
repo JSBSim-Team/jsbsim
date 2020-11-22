@@ -130,23 +130,34 @@ cdef class FGLGear:
 
     cdef shared_ptr[c_FGLGear] thisptr
 
-    def __init__(self):
-        self.thisptr.reset()
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
 
     def get_steer_norm(self):
         """@Dox(JSBSim::FGLGear::GetSteerNorm)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetSteerNorm()
 
     def get_body_x_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyXForce)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetBodyXForce()
 
     def get_body_y_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyYForce)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetBodyYForce()
 
     def get_body_z_force(self):
         """@Dox(JSBSim::FGLGear::GetBodyZForce)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetBodyZForce()
 
     def get_location(self):
@@ -160,6 +171,10 @@ cdef class FGAuxiliary:
 
     cdef shared_ptr[c_FGAuxiliary] thisptr
 
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGAuxiliary(fdmex.thisptr))
+
     def __bool__(self):
         """Check if the object is initialized."""
         if self.thisptr:
@@ -169,10 +184,6 @@ cdef class FGAuxiliary:
     def __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
-
-    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
-        if fdmex is not None:
-            self.thisptr.reset(new c_FGAuxiliary(fdmex.thisptr))
 
     def get_Tw2b(self):
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
@@ -189,6 +200,10 @@ cdef class FGAerodynamics:
 
     cdef shared_ptr[c_FGAerodynamics] thisptr
 
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGAerodynamics(fdmex.thisptr))
+
     def __bool__(self):
         """Check if the object is initialized."""
         if self.thisptr:
@@ -198,10 +213,6 @@ cdef class FGAerodynamics:
     def __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
-
-    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
-        if fdmex is not None:
-            self.thisptr.reset(new c_FGAerodynamics(fdmex.thisptr))
 
     def get_moments_MRC(self):
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
@@ -356,19 +367,28 @@ cdef class FGPropulsion:
 
     def get_steady_state(self):
         """@Dox(JSBSim::FGPropulsion::GetSteadyState)"""
+        self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetSteadyState()
 
 cdef class FGEngine:
     """@Dox(JSBSim::FGEngine)"""
 
-    cdef c_FGEngine *thisptr
+    cdef shared_ptr[c_FGEngine] thisptr
 
-    def __init__(self):
-        self.thisptr = NULL
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
 
     def init_running(self):
         """@Dox(JSBSim::FGEngine::InitRunning)"""
-        return self.thisptr.InitRunning()
+        self.__intercept_invalid_pointer()
+        return deref(self.thisptr).InitRunning()
 
 # this is the python wrapper class
 cdef class FGFDMExec(FGJSBBase):
