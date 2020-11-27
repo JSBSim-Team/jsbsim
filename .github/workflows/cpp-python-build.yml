@@ -335,7 +335,7 @@ jobs:
           mkdir build
           mkdir build/python
           mv python/ExceptionManagement.h build/python/.
-          mv python/fpectl/fpectlmodule.h build/python/.
+          mv python/fpectl/fpectlmodule.h build/python/fpectl/.
           mv python/JSBSim.py build/python/JSBSim
           mv src build/python/.
           pip install -U numpy wheel
