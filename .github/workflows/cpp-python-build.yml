@@ -334,6 +334,7 @@ jobs:
         run: |
           mkdir build
           mkdir build/python
+          mkdir build/python/fpectl
           mv python/ExceptionManagement.h build/python/.
           mv python/fpectl/fpectlmodule.h build/python/fpectl/.
           mv python/JSBSim.py build/python/JSBSim
