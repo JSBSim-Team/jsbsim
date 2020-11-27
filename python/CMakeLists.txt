@@ -8,7 +8,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE)
 
 # Autogenerate the Python module doc strings from Doxygen docs
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND BUILD_DOCS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
     doxy2pydocs.py)
   if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
@@ -23,7 +23,7 @@ if(DOXYGEN_FOUND)
     ${CMAKE_BINARY_DIR}/documentation/conf.py)
   file(COPY ${CMAKE_SOURCE_DIR}/doc/python/sphinx/index.rst
     DESTINATION ${CMAKE_BINARY_DIR}/documentation)
-endif(DOXYGEN_FOUND)
+endif(DOXYGEN_FOUND AND BUILD_DOCS)
 
 # Build the Python module using Cython and the JSBSim library
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
