@@ -48,16 +48,15 @@ file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 file(COPY ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt)
-file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
-file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
+configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
+               ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_impl.c COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
+               ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_ns.c COPYONLY)
 
-foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h"
-              "JSBSim.py")
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h")
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${_FILE} COPYONLY)
 endforeach()
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim COPYONLY)
 
 # Copy each source file and collect the compile flags specified by add_definitions()
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
@@ -73,7 +72,7 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
     file(RELATIVE_PATH TARGET_PATH ${CMAKE_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
     file(MAKE_DIRECTORY ${TARGET_PATH})
     foreach(_FILE ${TARGET_SOURCE_FILES})
-      file(COPY ${TARGET_SOURCE_DIRECTORY}/${_FILE} DESTINATION ${TARGET_PATH})
+      configure_file(${TARGET_SOURCE_DIRECTORY}/${_FILE} ${TARGET_PATH}/${_FILE} COPYONLY)
       list(APPEND SOURCE_FILES ${TARGET_PATH}/${_FILE})
     endforeach()
   else()
