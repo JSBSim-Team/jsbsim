@@ -15,6 +15,7 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
+option(BUILD_DOCS "Set to ON to build JSBSim documentation" ON)
 option(SYSTEM_EXPAT "Set to ON to build JSBSim using the system libExpat" OFF)
 if (SYSTEM_EXPAT)
   find_package(EXPAT)
@@ -42,16 +43,18 @@ get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 # Documentation                                                                #
 ################################################################################
 
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
-    ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-endif()
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
+    configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
+      ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(doc
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOCS)
 
 ################################################################################
 # Build the Python module and the automated test infrastructure (needs Python  #
