@@ -41,7 +41,6 @@ INCLUDES
 #include <vector>
 #include <iosfwd>
 
-#include "simgear/props/propertyObject.hxx"
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
@@ -204,11 +203,11 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
-  simgear::PropertyObject<bool> refuel;
-  simgear::PropertyObject<bool> dump;
+  bool refuel;
+  bool dump;
   bool FuelFreeze;
-  simgear::PropertyObject<double> TotalFuelQuantity;
-  simgear::PropertyObject<double> TotalOxidizerQuantity;
+  double TotalFuelQuantity;
+  double TotalOxidizerQuantity;
   double DumpRate;
   double RefuelRate;
   bool IsBound;

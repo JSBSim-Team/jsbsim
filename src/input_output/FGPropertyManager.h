@@ -42,7 +42,7 @@ INCLUDES
 #endif
 
 #include <string>
-#include "simgear/props/propertyObject.hxx"
+#include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
 #endif
@@ -680,10 +680,6 @@ class FGPropertyManager
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
-
-    template <class T> simgear::PropertyObject<T>
-    CreatePropertyObject(const std::string &path)
-    { return simgear::PropertyObject<T>(root->GetNode(path, true)); }
 
   private:
     std::vector<SGPropertyNode_ptr> tied_properties;

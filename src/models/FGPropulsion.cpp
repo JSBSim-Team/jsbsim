@@ -157,8 +157,8 @@ bool FGPropulsion::Run(bool Holding)
     }
   }
 
-  if (refuel.node() && refuel) DoRefuel( in.TotalDeltaT );
-  if (dump.node() && dump) DumpFuel( in.TotalDeltaT );
+  if (refuel) DoRefuel( in.TotalDeltaT );
+  if (dump) DumpFuel( in.TotalDeltaT );
 
   RunPostFunctions();
 
@@ -825,10 +825,10 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("moments/l-prop-lbsft", this, eX, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/m-prop-lbsft", this, eY, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/n-prop-lbsft", this, eZ, (PMF)&FGPropulsion::GetMoments);
-  TotalFuelQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-fuel-lbs");
-  TotalOxidizerQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-oxidizer-lbs");
-  refuel = PropertyManager->CreatePropertyObject<bool>("propulsion/refuel");
-  dump = PropertyManager->CreatePropertyObject<bool>("propulsion/fuel_dump");
+  PropertyManager->Tie("propulsion/total-fuel-lbs", &TotalFuelQuantity);
+  PropertyManager->Tie("propulsion/total-oxidizer-lbs", &TotalOxidizerQuantity);
+  PropertyManager->Tie("propulsion/refuel", &refuel);
+  PropertyManager->Tie("propulsion/fuel_dump", &dump);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

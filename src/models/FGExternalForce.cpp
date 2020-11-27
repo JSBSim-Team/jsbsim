@@ -79,9 +79,9 @@ FGPropertyVector3::FGPropertyVector3(FGPropertyManager* pm,
                                      const std::string& ycmp,
                                      const std::string& zcmp)
 {
-  data[0] = pm->CreatePropertyObject<double>(baseName + "/" + xcmp);
-  data[1] = pm->CreatePropertyObject<double>(baseName + "/" + ycmp);
-  data[2] = pm->CreatePropertyObject<double>(baseName + "/" + zcmp);
+  data[0] = pm->GetNode(baseName + "/" + xcmp, true);
+  data[1] = pm->GetNode(baseName + "/" + ycmp, true);
+  data[2] = pm->GetNode(baseName + "/" + zcmp, true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
