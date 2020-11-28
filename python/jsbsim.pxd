@@ -127,6 +127,7 @@ cdef extern from "simgear/misc/sg_path.hxx":
 cdef extern from "FGJSBBase.h" namespace "JSBSim":
     cdef cppclass c_FGJSBBase "JSBSim::FGJSBBase":
         c_FGJSBBase()
+        short debug_lvl
         string GetVersion()
 
 cdef extern from "FGFDMExec.h" namespace "JSBSim":

@@ -2,7 +2,7 @@
 #
 # Some utilities to help developing Python scripts with JSBSim.
 #
-# Copyright (c) 2014 Bertrand Coconnier
+# Copyright (c) 2014-2020 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,10 @@ import pandas as pd
 sys.path.append(os.getcwd())
 
 import jsbsim
+
+
+# Hides startup and debug messages
+jsbsim.FGJSBBase().debug_lvl = 0
 
 
 class SandBox:
