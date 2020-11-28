@@ -325,6 +325,14 @@ cdef class FGJSBBase:
         if type(self) is FGJSBBase:
             del self.baseptr
 
+    @property
+    def debug_lvl(self):
+        return self.baseptr.debug_lvl
+
+    @debug_lvl.setter
+    def debug_lvl(self, dbglvl):
+        self.baseptr.debug_lvl = dbglvl
+
     def get_version(self):
         """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
@@ -399,8 +407,6 @@ cdef class FGFDMExec(FGJSBBase):
     def __cinit__(self, root_dir=None, FGPropertyManager pm_root=None, *args,
                   **kwargs):
         cdef c_FGPropertyManager* root
-        # this hides startup message
-        # os.environ["JSBSIM_DEBUG"]=str(0)
 
         if pm_root:
             root = pm_root.thisptr.get()
