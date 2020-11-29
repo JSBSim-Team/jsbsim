@@ -10,7 +10,7 @@ cmake --build . --target libJSBSim
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
-    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,5))))" | grep -q '1'; then
+    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,6))))" | grep -q '1'; then
         "${PYBIN}/pip" install cython numpy
         "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
         "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
@@ -25,7 +25,7 @@ done
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
-    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,5))))" | grep -q '1'; then
+    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(int(sys.version_info >= (3,6))))" | grep -q '1'; then
         "${PYBIN}/pip" install jsbsim --no-index -f python/dist
         "${PYBIN}/python" -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
         "${PYBIN}/JSBSim" --root=.. --script=scripts/c1721.xml
