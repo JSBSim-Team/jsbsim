@@ -326,7 +326,7 @@ find_child (Itr begin, Itr end, int index, const PropertyList& nodes)
 {
   size_t nNodes = nodes.size();
 #if PROPS_STANDALONE
-  for (int i = 0; i < nNodes; i++) {
+  for (size_t i = 0; i < nNodes; i++) {
     SGPropertyNode * node = nodes[i];
     if (node->getIndex() == index && compare_strings(node->getName(), begin))
       return i;
