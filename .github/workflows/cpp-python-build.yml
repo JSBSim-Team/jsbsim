@@ -79,7 +79,7 @@ jobs:
           cp ../python/build-wheels.sh .
           chmod +x build-wheels.sh
           # Build the manylinux1 wheel binary packages
-          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64:2020-11-11-201fb79 /io/build/build-wheels.sh
       - name: Test wheel package
         if: steps.ManyLinux.outcome == 'success'
         run: |
