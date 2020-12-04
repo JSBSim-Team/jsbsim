@@ -284,7 +284,8 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
           string function_str = notify_property_element->GetAttributeValue("apply");
           auto f = FDMExec->GetTemplateFunc(function_str);
           if (f)
-            newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f));
+            newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f,
+                                                                     notify_property_element));
           else {
             cerr << notify_property_element->ReadFrom()
               << fgred << highint << "  No function by the name "
@@ -294,7 +295,8 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
           }
         }
         else
-          newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager));
+          newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager,
+                                                                   notify_property_element));
         
         string caption_attribute = notify_property_element->GetAttributeValue("caption");
         if (caption_attribute.empty()) {

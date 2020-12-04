@@ -349,7 +349,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
           auto f = fdmex->GetTemplateFunc(function_str);
           if (f)
             Parameters.push_back(new FGFunctionValue(property_name,
-                                                     PropertyManager, f));
+                                                     PropertyManager, f, element));
           else {
             cerr << element->ReadFrom()
                  << fgred << highint << "  No function by the name "
@@ -360,7 +360,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         }
         else
           Parameters.push_back(new FGPropertyValue(property_name,
-                                                   PropertyManager));
+                                                   PropertyManager, element));
       }
     } else if (operation == "value" || operation == "v") {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));

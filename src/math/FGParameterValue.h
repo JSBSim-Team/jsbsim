@@ -63,7 +63,9 @@ class FGPropertyManager;
 class FGParameterValue : public FGParameter
 {
 public:
-  FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm) {
+  FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm)
+  : FGParameterValue(el->GetDataLine(), pm, el)
+  {
     string value = el->GetDataLine();
 
     if (el->GetNumDataLines() != 1 || value.empty()) {
@@ -73,12 +75,16 @@ public:
            << endl;
       throw invalid_argument("Illegal argument");
     }
-
-    Construct(value, pm);
   }
 
-  FGParameterValue(const std::string& value, std::shared_ptr<FGPropertyManager> pm) {
-    Construct(value, pm);
+  FGParameterValue(const std::string& value, std::shared_ptr<FGPropertyManager> pm,
+                   Element* el) {
+    if (is_number(value)) {
+      param = new FGRealValue(atof(value.c_str()));
+    } else {
+      // "value" must be a property if execution passes to here.
+      param = new FGPropertyValue(value, pm, el);
+    }
   }
 
   double GetValue(void) const override { return param->GetValue(); }
@@ -98,15 +104,6 @@ public:
   }
 private:
   FGParameter_ptr param;
-
-  void Construct(const std::string& value, std::shared_ptr<FGPropertyManager> pm) {
-    if (is_number(value)) {
-      param = new FGRealValue(atof(value.c_str()));
-    } else {
-      // "value" must be a property if execution passes to here.
-      param = new FGPropertyValue(value, pm);
-    }
-  }
 };
 
 typedef SGSharedPtr<FGParameterValue> FGParameterValue_ptr;

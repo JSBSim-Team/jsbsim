@@ -113,14 +113,14 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Element *init_element = element->FindElement("init");
   while (init_element) {
     InitNodes.push_back(new FGPropertyValue(init_element->GetDataLine(),
-                                            PropertyManager ));
+                                            PropertyManager, init_element));
     init_element = element->FindNextElement("init");
   }
   
   Element *input_element = element->FindElement("input");
   while (input_element) {
     InputNodes.push_back(new FGPropertyValue(input_element->GetDataLine(),
-                                             PropertyManager ));
+                                             PropertyManager, input_element));
 
     input_element = element->FindNextElement("input");
   }

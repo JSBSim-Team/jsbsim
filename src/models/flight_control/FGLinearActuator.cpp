@@ -56,7 +56,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   auto PropertyManager = fcs->GetPropertyManager();
   if (element->FindElement("set")) {
     string property_string = element->FindElementValue("set");
-    ptrSet = new FGParameterValue(property_string, PropertyManager);
+    ptrSet = new FGParameterValue(property_string, PropertyManager, element);
     if (ptrSet && ptrSet->IsConstant()) {
       set = ptrSet->GetValue() >= 0.5;
     }
@@ -65,7 +65,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   ptrReset = nullptr;
   if (element->FindElement("reset")) {
     string property_string = element->FindElementValue("reset");
-    ptrReset = new FGParameterValue(property_string, PropertyManager);
+    ptrReset = new FGParameterValue(property_string, PropertyManager, element);
     if (ptrReset && ptrReset->IsConstant()) {
       reset = ptrReset->GetValue() >= 0.5;
     }
@@ -74,7 +74,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   ptrVersus = nullptr;
   if (element->FindElement("versus")) {
     string property_string = element->FindElementValue("versus");
-    ptrVersus = new FGParameterValue(property_string, PropertyManager);
+    ptrVersus = new FGParameterValue(property_string, PropertyManager, element);
     if (ptrVersus && ptrVersus->IsConstant()) {
       versus = ptrVersus->GetValue();
     }
@@ -83,7 +83,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   ptrBias = nullptr;
   if (element->FindElement("bias")) {
     string property_string = element->FindElementValue("bias");
-    ptrBias = new FGParameterValue(property_string, PropertyManager);
+    ptrBias = new FGParameterValue(property_string, PropertyManager, element);
     if (ptrBias && ptrBias->IsConstant()) {
       bias = ptrBias->GetValue();
     }

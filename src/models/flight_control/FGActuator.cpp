@@ -82,7 +82,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   while ( ratelim_el ) {
     string rate_limit_str = ratelim_el->GetDataLine();
     FGParameter* rate_limit = new FGParameterValue(rate_limit_str,
-                                                   PropertyManager);
+                                                   PropertyManager, ratelim_el);
 
     if (ratelim_el->HasAttribute("sense")) {
       string sense = ratelim_el->GetAttributeValue("sense");
@@ -105,7 +105,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   Element* lag_el = element->FindElement("lag");
   if ( lag_el ) {
     string lag_str = lag_el->GetDataLine();
-    lag = new FGParameterValue(lag_str, PropertyManager);
+    lag = new FGParameterValue(lag_str, PropertyManager, lag_el);
     InitializeLagCoefficients();
   }
 

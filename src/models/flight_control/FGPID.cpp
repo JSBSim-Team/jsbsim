@@ -98,11 +98,11 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   el = element->FindElement("pvdot");
   if (el)
-    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager);
+    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
   el = element->FindElement("trigger");
   if (el)
-    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager);
+    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
   bind(el, PropertyManager.get());
 }

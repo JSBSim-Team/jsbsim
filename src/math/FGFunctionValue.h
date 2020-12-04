@@ -61,8 +61,8 @@ public:
   FGFunctionValue(FGPropertyNode* propNode, FGTemplateFunc_ptr f)
     :FGPropertyValue(propNode), function(f) {}
   FGFunctionValue(std::string propName, std::shared_ptr<FGPropertyManager> propertyManager,
-                  FGTemplateFunc_ptr f)
-    :FGPropertyValue(propName, propertyManager), function(f) {}
+                  FGTemplateFunc_ptr f, Element* el)
+    :FGPropertyValue(propName, propertyManager, el), function(f) {}
 
   double GetValue(void) const override { return function->GetValue(GetNode()); }
 

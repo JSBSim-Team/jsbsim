@@ -111,9 +111,9 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
   vector<string> test_strings = split(test, ' ');
 
   if (test_strings.size() == 3) {
-    TestParam1 = new FGPropertyValue(test_strings[0], PropertyManager);
+    TestParam1 = new FGPropertyValue(test_strings[0], PropertyManager, el);
     conditional = test_strings[1];
-    TestParam2 = new FGParameterValue(test_strings[2], PropertyManager);
+    TestParam2 = new FGParameterValue(test_strings[2], PropertyManager, el);
   } else {
     cerr << el->ReadFrom()
          << "  Conditional test is invalid: \"" << test

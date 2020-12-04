@@ -173,7 +173,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> PropertyManager,
       }
 
       FGPropertyValue_ptr node = new FGPropertyValue(property_string,
-                                                     PropertyManager);
+                                                     PropertyManager, axisElement);
       string lookup_axis = axisElement->GetAttributeValue("lookup");
       if (lookup_axis == string("row")) {
         lookupProperty[eRow] = node;
