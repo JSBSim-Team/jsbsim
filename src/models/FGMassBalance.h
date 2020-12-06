@@ -190,11 +190,11 @@ public:
     FGMatrix33 GasInertia;
     FGColumnVector3 TanksMoment;
     FGMatrix33 TankInertia;
+    bool WOW;
   } in;
 
 private:
   std::shared_ptr<FGPropagate> Propagate;
-  std::shared_ptr<FGGroundReactions> GroundReactions;
   double Weight;
   double EmptyWeight;
   double Mass;
