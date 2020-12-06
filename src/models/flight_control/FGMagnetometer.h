@@ -123,6 +123,7 @@ public:
   ~FGMagnetometer();
 
   bool Run (void) override;
+  void ResetPastStates(void) override;
 
 private:
   FGPropagate* Propagate;

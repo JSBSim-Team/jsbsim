@@ -27,7 +27,13 @@ class TestMagnetometer(JSBSimTestCase):
         tripod = FlightModel(self, "tripod")
         tripod.include_system_test_file("magnetometer.xml")
         fdm = tripod.start()
-        self.assertAlmostEqual(fdm['test/magnetic-field']/27661.1, 1.0, 4)
+        fdm['forces/hold-down'] = 1.0
+        magnetic_field_t0 = fdm['test/magnetic-field']
+        # Check that the magnetic field remains identical for the first 10000
+        # iterations given that the vehicle is motionless.
+        for i in range(10000):
+            fdm.run()
+            self.assertAlmostEqual(fdm['test/magnetic-field'] / magnetic_field_t0, 1.0, delta=1E-6)
 
 
 RunTest(TestMagnetometer)
