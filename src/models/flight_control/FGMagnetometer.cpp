@@ -100,12 +100,19 @@ FGMagnetometer::~FGMagnetometer()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGMagnetometer::ResetPastStates(void)
+{
+  FGSensor::ResetPastStates();
+  counter = 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGMagnetometer::updateInertialMag(void)
 {
   if (counter++ % INERTIAL_UPDATE_RATE == 0)//dont need to update every iteration
   {
-    counter = 0;
-
     usedLat = (Propagate->GetGeodLatitudeRad());//radians, N and E lat and long are positive, S and W negative
     usedLon = (Propagate->GetLongitude());//radians
     usedAlt = (Propagate->GetGeodeticAltitude()*fttom*0.001);//km

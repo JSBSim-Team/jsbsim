@@ -125,6 +125,7 @@ public:
   ~FGMagnetometer();
 
   bool Run (void) override;
+  void ResetPastStates(void) override;
 
 private:
   std::shared_ptr<FGPropagate> Propagate;
