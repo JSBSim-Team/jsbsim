@@ -336,7 +336,6 @@
     <ClInclude Include="src\simgear\xml\macconfig.h" />
     <ClInclude Include="src\simgear\xml\nametab.h" />
     <ClInclude Include="src\input_output\net_fdm.hxx" />
-    <ClInclude Include="src\simgear\props\propertyObject.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
@@ -447,7 +446,6 @@
     <ClCompile Include="src\input_output\FGXMLElement.cpp" />
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
-    <ClCompile Include="src\simgear\props\propertyObject.cxx" />
     <ClCompile Include="src\simgear\props\props.cxx" />
     <ClCompile Include="src\simgear\xml\xmlparse.c" />
     <ClCompile Include="src\simgear\xml\xmlrole.c" />
