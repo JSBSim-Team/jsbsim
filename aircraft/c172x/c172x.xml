@@ -912,6 +912,7 @@
                 <description>Drag due to Elevator Deflection</description>
                 <product>
                     <property>aero/qbar-area</property>
+                    <property>metrics/Sw-sqft</property>                  
                     <property>fcs/mag-elevator-pos-rad</property>
                     <value>0.06</value>
                 </product>
