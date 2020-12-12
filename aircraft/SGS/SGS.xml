@@ -334,7 +334,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>fcs/elevator-pos-rad</independentVar>
+                          <independentVar>fcs/elevator-pos-norm</independentVar>
                           <tableData>
                               -1.0000	0.1140
                               0.0000	0.0000
