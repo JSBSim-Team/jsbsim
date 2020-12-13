@@ -673,7 +673,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/mag-elevator-pos-rad</property>
-                    <value>0.0000</value>
+                    <value>0.06</value>
                 </product>
             </function>
 
