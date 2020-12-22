@@ -78,6 +78,10 @@ class TestMiscellaneous(JSBSimTestCase):
         fdm['ic/lat-geod-deg'] = 45.0
         fdm.run_ic()
 
+        # Delete the current instance of FGFDMExec to untie properties.
+        fdm = None
+        self.delete_fdm()
+
         # Check that the property ic/lat-geod-deg has survived the JSBSim
         # instance.
         self.assertTrue(pm.hasNode('fdm/jsbsim/ic/lat-geod-deg'))
