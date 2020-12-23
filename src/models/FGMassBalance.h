@@ -188,11 +188,11 @@ public:
     FGMatrix33 GasInertia;
     FGColumnVector3 TanksMoment;
     FGMatrix33 TankInertia;
+    bool WOW;
   } in;
 
 private:
   FGPropagate* Propagate;
-  FGGroundReactions* GroundReactions;
   double Weight;
   double EmptyWeight;
   double Mass;

@@ -483,6 +483,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     MassBalance->in.TanksWeight = Propulsion->GetTanksWeight();
     MassBalance->in.TanksMoment = Propulsion->GetTanksMoment();
     MassBalance->in.TankInertia = Propulsion->CalculateTankInertias();
+    MassBalance->in.WOW         = GroundReactions->GetWOW();
     break;
   case eAircraft:
     Aircraft->in.AeroForce     = Aerodynamics->GetForces();
