@@ -713,7 +713,7 @@ bool options(int count, char **arg)
 
     } else if (keyword == "--catalog") {
         catalog = true;
-        if (value.size() > 0) AircraftName=value;
+        if (!value.empty()) AircraftName=value;
     } else if (keyword.substr(0,2) != "--" && value.empty() ) {
       // See what kind of files we are specifying on the command line
 

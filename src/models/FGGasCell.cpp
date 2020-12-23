@@ -273,7 +273,7 @@ void FGGasCell::Calculate(double dt)
 
   //-- Gas temperature --
 
-  if (HeatTransferCoeff.size() > 0) {
+  if (!HeatTransferCoeff.empty()) {
     // The model is based on the ideal gas law.
     // However, it does look a bit fishy. Please verify.
     //   dT/dt = dU / (Cv n R)
