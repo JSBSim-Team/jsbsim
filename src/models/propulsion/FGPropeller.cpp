@@ -41,6 +41,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGPropeller.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGMassBalance.h"
 
 using namespace std;
 
@@ -200,7 +201,12 @@ void FGPropeller::ResetToIC(void)
 
 double FGPropeller::Calculate(double EnginePower)
 {
-  FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
+  FGColumnVector3 vDXYZ = MassBalance->StructuralToBody(vActingXYZn);
+  // Local air velocity is obtained from Stevens & Lewis' "Aircraft Control and
+  // Simualtion (3rd edition)" eqn 8.2-1
+  // Variables in.AeroUVW and in.AeroPQR include the wind and turbulence effects
+  // as computed by FGAuxiliary.
+  FGColumnVector3 localAeroVel = Transform().Transposed() * (in.AeroUVW + in.AeroPQR*vDXYZ);
   double omega, PowerAvailable;
 
   double Vel = localAeroVel(eU);

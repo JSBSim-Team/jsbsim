@@ -67,6 +67,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGFDMExec;
+class FGMassBalance;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -305,6 +306,7 @@ public:
 
 protected:
   FGFDMExec *fdmex;
+  FGMassBalance* MassBalance;
   FGColumnVector3 vFn;
   FGColumnVector3 vMn;
   FGColumnVector3 vOrient;
