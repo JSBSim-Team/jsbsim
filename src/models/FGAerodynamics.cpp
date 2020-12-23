@@ -560,8 +560,8 @@ string FGAerodynamics::GetAeroFunctionStrings(const string& delimeter) const
 
   string FunctionStrings = FGModelFunctions::GetFunctionStrings(delimeter);
 
-  if (FunctionStrings.size() > 0) {
-    if (AeroFunctionStrings.size() > 0) {
+  if (!FunctionStrings.empty()) {
+    if (!AeroFunctionStrings.empty()) {
       AeroFunctionStrings += delimeter + FunctionStrings;
     } else {
       AeroFunctionStrings = FunctionStrings;
@@ -586,8 +586,8 @@ string FGAerodynamics::GetAeroFunctionValues(const string& delimeter) const
 
   string FunctionValues = FGModelFunctions::GetFunctionValues(delimeter);
 
-  if (FunctionValues.size() > 0) {
-    if (buf.str().size() > 0) {
+  if (!FunctionValues.empty()) {
+    if (!buf.str().empty()) {
       buf << delimeter << FunctionValues;
     } else {
       buf << FunctionValues;

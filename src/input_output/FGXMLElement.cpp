@@ -332,7 +332,7 @@ Element* Element::GetNextElement(void)
 
 string Element::GetDataLine(unsigned int i)
 {
-  if (data_lines.size() > 0) return data_lines[i];
+  if (!data_lines.empty()) return data_lines[i];
   else return string("");
 }
 
@@ -352,7 +352,7 @@ double Element::GetDataAsNumber(void)
     }
 
     return number;
-  } else if (data_lines.size() == 0) {
+  } else if (data_lines.empty()) {
     std::stringstream s;
     s << ReadFrom() << "Expected numeric value, but got no data";
     cerr << s.str() << endl;

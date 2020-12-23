@@ -664,7 +664,7 @@ void FGScript::Debug(int from)
 
         // Print notifications
         if (Events[i].Notify) {
-          if (Events[i].NotifyProperties.size() > 0) {
+          if (!Events[i].NotifyProperties.empty()) {
             if (Events[i].NotifyKML) {
               cout << "  Notifications (KML Format):" << endl << "    {"
                    << endl;
