@@ -716,3 +716,39 @@ cdef class FGFDMExec(FGJSBBase):
         propulsion = FGPropulsion(None)
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
+
+    def do_linearization(self):
+        """@Dox(JSBSim::FGFDMExec::DoLinearization)"""
+        cdef vector[double] cdef_x0
+        cdef vector[double] cdef_u0
+        cdef vector[double] cdef_y0
+        cdef vector[vector[double]] cdef_A
+        cdef vector[vector[double]] cdef_B
+        cdef vector[vector[double]] cdef_C
+        cdef vector[vector[double]] cdef_D
+        cdef vector[string] cdef_state_names
+        cdef vector[string] cdef_input_names
+        cdef vector[string] cdef_output_names
+        cdef vector[string] cdef_state_units
+        cdef vector[string] cdef_input_units
+        cdef vector[string] cdef_output_units
+
+        self.thisptr.DoLinearization(
+            cdef_x0, cdef_u0, cdef_y0, cdef_A, cdef_B, cdef_C, cdef_D, 
+            cdef_state_names, cdef_input_names, cdef_output_names, 
+            cdef_state_units, cdef_input_units, cdef_output_units
+        )
+
+        return (numpy.array(cdef_x0),
+                numpy.array(cdef_u0),
+                numpy.array(cdef_y0),
+                numpy.array(cdef_A),
+                numpy.array(cdef_B),
+                numpy.array(cdef_C),
+                numpy.array(cdef_D),
+                tuple(x.decode('utf-8') for x in cdef_state_names),
+                tuple(x.decode('utf-8') for x in cdef_input_names),
+                tuple(x.decode('utf-8') for x in cdef_output_names),
+                tuple(x.decode('utf-8') for x in cdef_state_units),
+                tuple(x.decode('utf-8') for x in cdef_input_units),
+                tuple(x.decode('utf-8') for x in cdef_output_units))

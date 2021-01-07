@@ -21,6 +21,7 @@
 from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.memory cimport shared_ptr
+from libcpp.vector cimport vector
 
 cdef extern from "ExceptionManagement.h":
     cdef void convertJSBSimToPyExc()
@@ -205,3 +206,19 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         shared_ptr[c_FGAircraft] GetAircraft()
         shared_ptr[c_FGAtmosphere] GetAtmosphere()
         shared_ptr[c_FGMassBalance] GetMassBalance()
+
+        void DoLinearization(
+            vector[double]& out_x0,
+            vector[double]& out_u0,
+            vector[double]& out_y0,
+            vector[vector[double]]& out_A,
+            vector[vector[double]]& out_B,
+            vector[vector[double]]& out_C,
+            vector[vector[double]]& out_D,
+            vector[string]& out_state_names,
+            vector[string]& out_input_names,
+            vector[string]& out_output_names,
+            vector[string]& out_state_units,
+            vector[string]& out_input_units,
+            vector[string]& out_output_units,
+        )

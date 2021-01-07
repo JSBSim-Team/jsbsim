@@ -31,13 +31,35 @@
 #include <stdexcept>
 #include <fstream>
 #include <cstdlib>
+#include <memory>
+#include <utility>
 
 namespace JSBSim {
 
 class FGLinearization
 {
+    std::vector<std::vector<double>> A,B,C,D;
+    std::vector<double> x0, u0, y0;
+    std::shared_ptr<FGFDMExec> fdm;
+    FGStateSpace ss;
 public:
-    FGLinearization(FGFDMExec * fdmPtr, int mode);
+    FGLinearization(FGFDMExec * fdmPtr);
+
+    void WriteScicoslab();
+    void WriteScicoslab(std::string& path);
+
+    void GetStateSpace(std::vector<double> & x0_, std::vector<double> & u0_, std::vector<double> & y0_,
+                       std::vector<std::vector<double>> & A_, std::vector<std::vector<double>> & B_,
+                       std::vector<std::vector<double>> & C_, std::vector<std::vector<double>> & D_);
+
+    std::vector<std::string> GetStateNames() const;
+    std::vector<std::string> GetInputNames() const;
+    std::vector<std::string> GetOutputNames() const;
+
+    std::vector<std::string> GetStateUnits() const;
+    std::vector<std::string> GetInputUnits() const;
+    std::vector<std::string> GetOutputUnits() const;
+
 };
 
 } // JSBSim

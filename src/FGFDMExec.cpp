@@ -62,6 +62,7 @@ INCLUDES
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
 #include "initialization/FGInitialCondition.h"
+#include "initialization/FGLinearization.h"
 
 using namespace std;
 
@@ -1299,4 +1300,25 @@ void FGFDMExec::Debug(int from)
     }
   }
 }
+
+void FGFDMExec::DoLinearization(std::vector<double> & x0, std::vector<double> & u0, std::vector<double> & y0,
+                                std::vector<std::vector<double>> & A, std::vector<std::vector<double>> & B,
+                                std::vector<std::vector<double>> & C, std::vector<std::vector<double>> & D,
+                                std::vector<std::string>& state_names,
+                                std::vector<std::string>& input_names,
+                                std::vector<std::string>& output_names,
+                                std::vector<std::string>& state_units,
+                                std::vector<std::string>& input_units,
+                                std::vector<std::string>& output_units) {
+
+  FGLinearization lin(this);
+  lin.GetStateSpace(x0, u0, y0, A, B, C, D);
+  state_names = lin.GetStateNames();
+  input_names = lin.GetInputNames();
+  output_names = lin.GetOutputNames();
+  state_units = lin.GetStateUnits();
+  input_units = lin.GetInputUnits();
+  output_units = lin.GetOutputUnits();
+}
+
 }
