@@ -34,6 +34,11 @@ TAGS
 .dir-locals.el
 
 #################
+## Python
+#################
+__pycache__/
+
+#################
 ## Visual Studio
 #################
 
@@ -75,3 +80,11 @@ ipch/
 ## Mac OSX
 #################
 .DS_Store
+
+#################
+## Clion (Jetbrains IDEs)
+#################
+# Project files
+.idea/*
+# CMake
+cmake-build-*/
