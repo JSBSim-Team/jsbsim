@@ -147,7 +147,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Element* delay_elem = element->FindElement("delay");
   if ( delay_elem ) {
-    delay_time = delay_elem->GetDataAsNumber();
+    string delay_str = delay_elem->GetDataLine();
+    FGParameterValue delayParam(delay_str, PropertyManager, delay_elem);
+    delay_time = delayParam.GetValue();
     string delayType = delay_elem->GetAttributeValue("type");
     if (delayType.length() > 0) {
       if (delayType == "time") {
