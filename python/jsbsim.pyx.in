@@ -427,18 +427,22 @@ cdef class FGLinearization:
 
     @property
     def x0(self):
-         return numpy.array(deref(self.thisptr).GetInitialState())
+        """Initial state"""
+        return numpy.array(deref(self.thisptr).GetInitialState())
 
     @property
     def u0(self):
-         return numpy.array(deref(self.thisptr).GetInitialInput())
+        """Initial input"""
+        return numpy.array(deref(self.thisptr).GetInitialInput())
 
     @property
     def y0(self):
-         return numpy.array(deref(self.thisptr).GetInitialOutput())
+        """Initial output"""
+        return numpy.array(deref(self.thisptr).GetInitialOutput())
 
     @property
     def state_space(self):
+        """Tuple with the four state space matries."""
         cdef vector[vector[double]] cdef_A
         cdef vector[vector[double]] cdef_B
         cdef vector[vector[double]] cdef_C
@@ -449,31 +453,37 @@ cdef class FGLinearization:
 
     @property
     def x_names(self):
+        """State names"""
         cdef vector[string] names = deref(self.thisptr).GetStateNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
     def u_names(self):
+        "Input names"
         cdef vector[string] names = deref(self.thisptr).GetInputNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
     def y_names(self):
+        """Output names"""
         cdef vector[string] names = deref(self.thisptr).GetOutputNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
     def x_units(self):
+        """State units"""
         cdef vector[string] units = deref(self.thisptr).GetStateUnits()
         return tuple(unit.decode("utf-8") for unit in units)
 
     @property
     def u_units(self):
+        """Input unit"""
         cdef vector[string] units = deref(self.thisptr).GetInputUnits()
         return tuple(unit.decode("utf-8") for unit in units)
 
     @property
     def y_units(self):
+        """Output units"""
         cdef vector[string] units = deref(self.thisptr).GetOutputUnits()
         return tuple(unit.decode("utf-8") for unit in units)
 

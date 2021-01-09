@@ -569,24 +569,6 @@ public:
 
   auto GetRandomEngine(void) const { return RandomEngine; }
 
-  /** \brief Generates a state space system. The results are written to the references passed to the
-   * function.
-   *
-   * @param out_x0 Trim point state values
-   * @param out_u0 Trim point input values
-   * @param out_y0 Trim point output values
-   * @param out_A System matrix
-   * @param out_B Input matrix
-   * @param out_C Output matrix
-   * @param out_D Feedforward matrix
-   * @param out_state_names
-   * @param out_input_names
-   * @param out_output_names
-   * @param out_state_units
-   * @param out_input_units
-   * @param out_output_units
-   */
-
 private:
   unsigned int Frame;
   unsigned int IdFDM;

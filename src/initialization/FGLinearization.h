@@ -34,20 +34,46 @@
 
 namespace JSBSim {
 
+template <class T>
+using Vector2D = std::vector<std::vector<T>>;
+
+/** \brief Class used to create linear models from FGFDMExec instances.
+ */
 class FGLinearization
 {
-    std::vector<std::vector<double>> A,B,C,D;
+    Vector2D<double> A,B,C,D;
     std::vector<double> x0, u0, y0;
-    std::shared_ptr<FGFDMExec> fdm;
-    FGStateSpace ss;
+    std::vector<string> x_names, u_names, y_names, x_units, u_units, y_units;
+    std::string aircraft_name;
 public:
+    /**
+     * @param fdmPtr Already configured FGFDMExec instance used to create the new linear model.
+     */
     FGLinearization(FGFDMExec * fdmPtr);
 
+    /**
+     * Write Scicoslab source file with the state space model to a
+     * file in the current working directory.
+     */
     void WriteScicoslab() const;
+
+    /**
+     * Write Scicoslab source file with the state space model to the given path.
+     *
+     * @param path
+     */
     void WriteScicoslab(std::string& path) const;
 
-    void GetStateSpace(std::vector<std::vector<double>> & A_, std::vector<std::vector<double>> & B_,
-                       std::vector<std::vector<double>> & C_, std::vector<std::vector<double>> & D_) const;
+    /**
+     * Get the state space model matrices.
+     *
+     * @param A_ System matrix
+     * @param B_ Input matrix
+     * @param C_ Output matrix
+     * @param D_ Feedforward matrix
+     */
+    void GetStateSpace(Vector2D<double> & A_, Vector2D<double> & B_,
+                       Vector2D<double> & C_, Vector2D<double> & D_) const;
 
     std::vector<double> GetInitialState() const;
     std::vector<double> GetInitialInput() const;

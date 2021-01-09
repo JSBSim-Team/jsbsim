@@ -1,8 +1,6 @@
 import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, RunTest, CopyAircraftDef
-
-
 import jsbsim
 
 
@@ -27,14 +25,6 @@ class TestLinearization(JSBSimTestCase):
         fdm.run_ic()
 
         linearization = jsbsim.FGLinearization(fdm)
-
-        print(linearization.x0.shape, (12,))
-        print(linearization.u0.shape, (4,))
-        print(linearization.y0.shape, (12,))
-        print(linearization.state_space[0].shape, (12, 12))
-        print(linearization.state_space[1].shape, (12, 4))
-        print(linearization.state_space[2].shape, (12, 12))
-        print(linearization.state_space[3].shape, (12, 4))
 
         self.assertEqual(linearization.x0.shape, (12,))
         self.assertEqual(linearization.u0.shape, (4,))

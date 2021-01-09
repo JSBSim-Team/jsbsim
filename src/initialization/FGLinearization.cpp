@@ -23,8 +23,9 @@
 
 namespace JSBSim {
 
-FGLinearization::FGLinearization(FGFDMExec * fdm) : fdm(fdm), ss(fdm)
+FGLinearization::FGLinearization(FGFDMExec * fdm) : aircraft_name(fdm->GetAircraft()->GetAircraftName())
 {
+    auto ss = FGStateSpace(fdm);
     ss.x.add(new FGStateSpace::Vt);
     ss.x.add(new FGStateSpace::Alpha);
     ss.x.add(new FGStateSpace::Theta);
@@ -69,12 +70,19 @@ FGLinearization::FGLinearization(FGFDMExec * fdm) : fdm(fdm), ss(fdm)
     y0 = x0; // state feedback
 
     ss.linearize(x0,u0,y0,A,B,C,D);
+
+    x_names = ss.x.getName();
+    u_names = ss.u.getName();
+    y_names = ss.y.getName();
+    x_units = ss.x.getUnit();
+    u_units = ss.u.getUnit();
+    y_units = ss.y.getUnit();
 }
 
-void FGLinearization::GetStateSpace(std::vector<std::vector<double>> & A_,
-                                    std::vector<std::vector<double>> & B_,
-                                    std::vector<std::vector<double>> & C_,
-                                    std::vector<std::vector<double>> & D_) const {
+void FGLinearization::GetStateSpace(Vector2D<double> & A_,
+                                    Vector2D<double> & B_,
+                                    Vector2D<double> & C_,
+                                    Vector2D<double> & D_) const {
     A_ = A;
     B_ = B;
     C_ = C;
@@ -94,50 +102,48 @@ std::vector<double> FGLinearization::GetInitialOutput() const {
 };
 
 std::vector<std::string> FGLinearization::GetStateNames() const {
-    return ss.x.getName();
+    return x_names;
 }
 
 std::vector<std::string> FGLinearization::GetInputNames() const {
-    return ss.u.getName();
+    return u_names;
 }
 
 std::vector<std::string> FGLinearization::GetOutputNames() const {
-    return ss.y.getName();
+    return y_names;
 }
 
 std::vector<std::string> FGLinearization::GetStateUnits() const {
-    return ss.x.getUnit();
+    return x_units;
 }
 
 std::vector<std::string> FGLinearization::GetInputUnits() const {
-    return ss.u.getUnit();
+    return u_units;
 }
 
 std::vector<std::string> FGLinearization::GetOutputUnits() const {
-    return ss.y.getUnit();
+    return y_units;
 }
 
 void FGLinearization::WriteScicoslab() const {
-    std::string aircraft = fdm->GetAircraft()->GetAircraftName();
-    auto path = std::string(aircraft+"_lin.sce");
+    auto path = std::string(aircraft_name+"_lin.sce");
     WriteScicoslab(path);
 }
 
 void FGLinearization::WriteScicoslab(std::string& path) const {
     int width=10;
-    std::string aircraft = fdm->GetAircraft()->GetAircraftName();
     std::ofstream scicos(path.c_str());
     scicos.precision(10);
     width=20;
     scicos  << std::scientific
-            << aircraft << ".x0=..\n" << std::setw(width) << x0 << ";\n"
-            << aircraft << ".u0=..\n" << std::setw(width) << u0 << ";\n"
-            << aircraft << ".sys = syslin('c',..\n"
+            << aircraft_name << ".x0=..\n" << std::setw(width) << x0 << ";\n"
+            << aircraft_name << ".u0=..\n" << std::setw(width) << u0 << ";\n"
+            << aircraft_name << ".sys = syslin('c',..\n"
             << std::setw(width) << A << ",..\n"
             << std::setw(width) << B << ",..\n"
             << std::setw(width) << C << ",..\n"
             << std::setw(width) << D << ");\n"
-            << aircraft << ".tfm = ss2tf(" << aircraft << ".sys);\n"
+            << aircraft_name << ".tfm = ss2tf(" << aircraft_name << ".sys);\n"
             << std::endl;
 }
 

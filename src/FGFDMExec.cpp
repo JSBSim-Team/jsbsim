@@ -62,7 +62,6 @@ INCLUDES
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
 #include "initialization/FGInitialCondition.h"
-#include "initialization/FGLinearization.h"
 
 using namespace std;
 
@@ -1300,5 +1299,4 @@ void FGFDMExec::Debug(int from)
     }
   }
 }
-
 }
