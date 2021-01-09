@@ -398,6 +398,87 @@ cdef class FGEngine:
         self.__intercept_invalid_pointer()
         return deref(self.thisptr).InitRunning()
 
+cdef class FGLinearization:
+    """@Dox(JSBSim::FGLinearization)"""
+
+    cdef shared_ptr[c_FGLinearization] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGLinearization(fdmex.thisptr))
+
+    def __bool__(self):
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    def __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise AttributeError("Object is not initialized")
+
+    def write_scicoslab(self, path):
+        """@Dox(JSBSim::FGLinearization::WriteScicoslab)"""
+        self.__intercept_invalid_pointer()
+        if path is None:
+            deref(self.thisptr).WriteScicoslab()
+        else:
+            deref(self.thisptr).WriteScicoslab(path.encode("utf-8"))
+
+    @property
+    def x0(self):
+         return numpy.array(deref(self.thisptr).GetInitialState())
+
+    @property
+    def u0(self):
+         return numpy.array(deref(self.thisptr).GetInitialInput())
+
+    @property
+    def y0(self):
+         return numpy.array(deref(self.thisptr).GetInitialOutput())
+
+    @property
+    def state_space(self):
+        cdef vector[vector[double]] cdef_A
+        cdef vector[vector[double]] cdef_B
+        cdef vector[vector[double]] cdef_C
+        cdef vector[vector[double]] cdef_D
+        deref(self.thisptr).GetStateSpace(cdef_A, cdef_B, cdef_C, cdef_D)
+        return (numpy.array(cdef_A), numpy.array(cdef_B), 
+                numpy.array(cdef_C), numpy.array(cdef_D))
+
+    @property
+    def x_names(self):
+        cdef vector[string] names = deref(self.thisptr).GetStateNames()
+        return tuple(name.decode("utf-8") for name in names)
+
+    @property
+    def u_names(self):
+        cdef vector[string] names = deref(self.thisptr).GetInputNames()
+        return tuple(name.decode("utf-8") for name in names)
+
+    @property
+    def y_names(self):
+        cdef vector[string] names = deref(self.thisptr).GetOutputNames()
+        return tuple(name.decode("utf-8") for name in names)
+
+    @property
+    def x_units(self):
+        cdef vector[string] units = deref(self.thisptr).GetStateUnits()
+        return tuple(unit.decode("utf-8") for unit in units)
+
+    @property
+    def u_units(self):
+        cdef vector[string] units = deref(self.thisptr).GetInputUnits()
+        return tuple(unit.decode("utf-8") for unit in units)
+
+    @property
+    def y_units(self):
+        cdef vector[string] units = deref(self.thisptr).GetOutputUnits()
+        return tuple(unit.decode("utf-8") for unit in units)
+
+
+
 # this is the python wrapper class
 cdef class FGFDMExec(FGJSBBase):
     """@Dox(JSBSim::FGFDMExec)"""
@@ -717,38 +798,3 @@ cdef class FGFDMExec(FGJSBBase):
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
 
-    def do_linearization(self):
-        """@Dox(JSBSim::FGFDMExec::DoLinearization)"""
-        cdef vector[double] cdef_x0
-        cdef vector[double] cdef_u0
-        cdef vector[double] cdef_y0
-        cdef vector[vector[double]] cdef_A
-        cdef vector[vector[double]] cdef_B
-        cdef vector[vector[double]] cdef_C
-        cdef vector[vector[double]] cdef_D
-        cdef vector[string] cdef_state_names
-        cdef vector[string] cdef_input_names
-        cdef vector[string] cdef_output_names
-        cdef vector[string] cdef_state_units
-        cdef vector[string] cdef_input_units
-        cdef vector[string] cdef_output_units
-
-        self.thisptr.DoLinearization(
-            cdef_x0, cdef_u0, cdef_y0, cdef_A, cdef_B, cdef_C, cdef_D, 
-            cdef_state_names, cdef_input_names, cdef_output_names, 
-            cdef_state_units, cdef_input_units, cdef_output_units
-        )
-
-        return (numpy.array(cdef_x0),
-                numpy.array(cdef_u0),
-                numpy.array(cdef_y0),
-                numpy.array(cdef_A),
-                numpy.array(cdef_B),
-                numpy.array(cdef_C),
-                numpy.array(cdef_D),
-                tuple(x.decode('utf-8') for x in cdef_state_names),
-                tuple(x.decode('utf-8') for x in cdef_input_names),
-                tuple(x.decode('utf-8') for x in cdef_output_names),
-                tuple(x.decode('utf-8') for x in cdef_state_units),
-                tuple(x.decode('utf-8') for x in cdef_input_units),
-                tuple(x.decode('utf-8') for x in cdef_output_units))

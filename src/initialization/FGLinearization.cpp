@@ -23,12 +23,8 @@
 
 namespace JSBSim {
 
-// TODO make FGLinearization have X,U,Y selectable by xml config file
-
 FGLinearization::FGLinearization(FGFDMExec * fdm) : fdm(fdm), ss(fdm)
 {
-    cout << "Initializing linearization" << std::endl;
-
     ss.x.add(new FGStateSpace::Vt);
     ss.x.add(new FGStateSpace::Alpha);
     ss.x.add(new FGStateSpace::Theta);
@@ -72,23 +68,30 @@ FGLinearization::FGLinearization(FGFDMExec * fdm) : fdm(fdm), ss(fdm)
     u0 = ss.u.get();
     y0 = x0; // state feedback
 
-
-    cout << "Linearizing..." << std::endl;
     ss.linearize(x0,u0,y0,A,B,C,D);
-    cout << "Done linearizing..." << std::endl;
 }
 
-void FGLinearization::GetStateSpace(std::vector<double> & x0_, std::vector<double> & u0_, std::vector<double> & y0_,
-                                    std::vector<std::vector<double>> & A_, std::vector<std::vector<double>> & B_,
-                                    std::vector<std::vector<double>> & C_, std::vector<std::vector<double>> & D_) {
+void FGLinearization::GetStateSpace(std::vector<std::vector<double>> & A_,
+                                    std::vector<std::vector<double>> & B_,
+                                    std::vector<std::vector<double>> & C_,
+                                    std::vector<std::vector<double>> & D_) const {
     A_ = A;
     B_ = B;
     C_ = C;
     D_ = D;
-    x0_ = x0;
-    u0_ = u0;
-    y0_ = y0;
 }
+
+std::vector<double> FGLinearization::GetInitialState() const {
+    return x0;
+};
+
+std::vector<double> FGLinearization::GetInitialInput() const {
+    return u0;
+};
+
+std::vector<double> FGLinearization::GetInitialOutput() const {
+    return y0;
+};
 
 std::vector<std::string> FGLinearization::GetStateNames() const {
     return ss.x.getName();
@@ -114,20 +117,19 @@ std::vector<std::string> FGLinearization::GetOutputUnits() const {
     return ss.y.getUnit();
 }
 
-void FGLinearization::WriteScicoslab() {
+void FGLinearization::WriteScicoslab() const {
     std::string aircraft = fdm->GetAircraft()->GetAircraftName();
     auto path = std::string(aircraft+"_lin.sce");
     WriteScicoslab(path);
 }
 
-void FGLinearization::WriteScicoslab(std::string& path) {
+void FGLinearization::WriteScicoslab(std::string& path) const {
     int width=10;
     std::string aircraft = fdm->GetAircraft()->GetAircraftName();
     std::ofstream scicos(path.c_str());
     scicos.precision(10);
     width=20;
-    scicos
-            << std::scientific
+    scicos  << std::scientific
             << aircraft << ".x0=..\n" << std::setw(width) << x0 << ";\n"
             << aircraft << ".u0=..\n" << std::setw(width) << u0 << ";\n"
             << aircraft << ".sys = syslin('c',..\n"

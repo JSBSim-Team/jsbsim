@@ -31,6 +31,29 @@ cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
         c_FGInitialCondition(c_FGInitialCondition* ic)
         bool Load(const c_SGPath& rstfile, bool useStoredPath)
 
+cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
+    cdef cppclass c_FGLinearization "JSBSim::FGLinearization":
+        c_FGLinearization(c_FGFDMExec* fdme)
+        
+        void WriteScicoslab() const
+        void WriteScicoslab(string& path) const
+
+        void GetStateSpace(vector[vector[double]]& A_, vector[vector[double]]& B_,
+                           vector[vector[double]]& C_, vector[vector[double]]& D_) const
+
+        vector[double] GetInitialState() const
+        vector[double] GetInitialInput() const
+        vector[double] GetInitialOutput() const
+
+        vector[string] GetStateNames() const
+        vector[string] GetInputNames() const
+        vector[string] GetOutputNames() const
+
+        vector[string] GetStateUnits() const
+        vector[string] GetInputUnits() const
+        vector[string] GetOutputUnits() const
+
+
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
         c_FGPropertyManager()
@@ -206,19 +229,3 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         shared_ptr[c_FGAircraft] GetAircraft()
         shared_ptr[c_FGAtmosphere] GetAtmosphere()
         shared_ptr[c_FGMassBalance] GetMassBalance()
-
-        void DoLinearization(
-            vector[double]& out_x0,
-            vector[double]& out_u0,
-            vector[double]& out_y0,
-            vector[vector[double]]& out_A,
-            vector[vector[double]]& out_B,
-            vector[vector[double]]& out_C,
-            vector[vector[double]]& out_D,
-            vector[string]& out_state_names,
-            vector[string]& out_input_names,
-            vector[string]& out_output_names,
-            vector[string]& out_state_units,
-            vector[string]& out_input_units,
-            vector[string]& out_output_units,
-        )

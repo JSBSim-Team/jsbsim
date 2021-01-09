@@ -19,7 +19,6 @@
 #ifndef FGLinearization_H_
 #define FGLinearization_H_
 
-#include "initialization/FGTrimmer.h"
 #include "math/FGStateSpace.h"
 #include <iomanip>
 #include <fstream>
@@ -27,7 +26,6 @@
 #include "models/propulsion/FGEngine.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGTurboProp.h"
-#include "math/FGNelderMead.h"
 #include <stdexcept>
 #include <fstream>
 #include <cstdlib>
@@ -45,12 +43,15 @@ class FGLinearization
 public:
     FGLinearization(FGFDMExec * fdmPtr);
 
-    void WriteScicoslab();
-    void WriteScicoslab(std::string& path);
+    void WriteScicoslab() const;
+    void WriteScicoslab(std::string& path) const;
 
-    void GetStateSpace(std::vector<double> & x0_, std::vector<double> & u0_, std::vector<double> & y0_,
-                       std::vector<std::vector<double>> & A_, std::vector<std::vector<double>> & B_,
-                       std::vector<std::vector<double>> & C_, std::vector<std::vector<double>> & D_);
+    void GetStateSpace(std::vector<std::vector<double>> & A_, std::vector<std::vector<double>> & B_,
+                       std::vector<std::vector<double>> & C_, std::vector<std::vector<double>> & D_) const;
+
+    std::vector<double> GetInitialState() const;
+    std::vector<double> GetInitialInput() const;
+    std::vector<double> GetInitialOutput() const;
 
     std::vector<std::string> GetStateNames() const;
     std::vector<std::string> GetInputNames() const;

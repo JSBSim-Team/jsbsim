@@ -3,6 +3,9 @@ import xml.etree.ElementTree as et
 from JSBSim_utils import JSBSimTestCase, RunTest, CopyAircraftDef
 
 
+import jsbsim
+
+
 class TestLinearization(JSBSimTestCase):
     def test_do_linearization(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
@@ -23,27 +26,34 @@ class TestLinearization(JSBSimTestCase):
         fdm.load_script(script_path)
         fdm.run_ic()
 
-        x0, u0, y0, A, B, C, D, \
-        state_names, input_names, output_name, state_units, input_units, output_units = fdm.do_linearization()
+        linearization = jsbsim.FGLinearization(fdm)
 
-        self.assertEqual(x0.shape, (12,))
-        self.assertEqual(u0.shape, (4,))
-        self.assertEqual(y0.shape, (12,))
-        self.assertEqual(A.shape, (12, 12))
-        self.assertEqual(B.shape, (12, 4))
-        self.assertEqual(C.shape, (12, 12))
-        self.assertEqual(D.shape, (12, 4))
+        print(linearization.x0.shape, (12,))
+        print(linearization.u0.shape, (4,))
+        print(linearization.y0.shape, (12,))
+        print(linearization.state_space[0].shape, (12, 12))
+        print(linearization.state_space[1].shape, (12, 4))
+        print(linearization.state_space[2].shape, (12, 12))
+        print(linearization.state_space[3].shape, (12, 4))
 
-        self.assertEqual(state_names, ('Vt', 'Alpha', 'Theta', 'Q', 'Beta', 'Phi', 'P', 'Psi',
-                                       'R', 'Latitude', 'Longitude', 'Alt'))
-        self.assertEqual(input_names, ('ThtlCmd', 'DaCmd', 'DeCmd', 'DrCmd'))
-        self.assertEqual(output_name, ('Vt', 'Alpha', 'Theta', 'Q', 'Beta', 'Phi', 'P', 'Psi',
-                                       'R', 'Latitude', 'Longitude', 'Alt'))
-        self.assertEqual(state_units, ('ft/s', 'rad', 'rad', 'rad/s', 'rad', 'rad', 'rad/s',
-                                       'rad', 'rad/s', 'rad', 'rad', 'ft'))
-        self.assertEqual(input_units, ('norm', 'norm', 'norm', 'norm'))
-        self.assertEqual(output_units, ('ft/s', 'rad', 'rad', 'rad/s', 'rad', 'rad', 'rad/s',
-                                        'rad', 'rad/s', 'rad', 'rad', 'ft'))
+        self.assertEqual(linearization.x0.shape, (12,))
+        self.assertEqual(linearization.u0.shape, (4,))
+        self.assertEqual(linearization.y0.shape, (12,))
+        self.assertEqual(linearization.state_space[0].shape, (12, 12))
+        self.assertEqual(linearization.state_space[1].shape, (12, 4))
+        self.assertEqual(linearization.state_space[2].shape, (12, 12))
+        self.assertEqual(linearization.state_space[3].shape, (12, 4))
+
+        self.assertEqual(linearization.x_names, ('Vt', 'Alpha', 'Theta', 'Q', 'Beta', 'Phi', 'P', 'Psi',
+                                                 'R', 'Latitude', 'Longitude', 'Alt'))
+        self.assertEqual(linearization.u_names, ('ThtlCmd', 'DaCmd', 'DeCmd', 'DrCmd'))
+        self.assertEqual(linearization.y_names, ('Vt', 'Alpha', 'Theta', 'Q', 'Beta', 'Phi', 'P', 'Psi',
+                                                 'R', 'Latitude', 'Longitude', 'Alt'))
+        self.assertEqual(linearization.x_units, ('ft/s', 'rad', 'rad', 'rad/s', 'rad', 'rad', 'rad/s',
+                                                 'rad', 'rad/s', 'rad', 'rad', 'ft'))
+        self.assertEqual(linearization.u_units, ('norm', 'norm', 'norm', 'norm'))
+        self.assertEqual(linearization.y_units, ('ft/s', 'rad', 'rad', 'rad/s', 'rad', 'rad', 'rad/s',
+                                                 'rad', 'rad/s', 'rad', 'rad', 'ft'))
 
 
 RunTest(TestLinearization)

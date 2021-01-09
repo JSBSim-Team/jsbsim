@@ -586,15 +586,6 @@ public:
    * @param out_input_units
    * @param out_output_units
    */
-  void DoLinearization(std::vector<double> & out_x0, std::vector<double> & out_u0, std::vector<double> & out_y0,
-                       std::vector<std::vector<double>> & out_A, std::vector<std::vector<double>> & out_B,
-                       std::vector<std::vector<double>> & out_C, std::vector<std::vector<double>> & out_D,
-                       std::vector<std::string>& out_state_names,
-                       std::vector<std::string>& out_input_names,
-                       std::vector<std::string>& out_output_names,
-                       std::vector<std::string>& out_state_units,
-                       std::vector<std::string>& out_input_units,
-                       std::vector<std::string>& out_output_units);
 
 private:
   unsigned int Frame;

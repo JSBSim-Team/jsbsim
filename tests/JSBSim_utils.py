@@ -34,8 +34,7 @@ jsbsim.FGJSBBase().debug_lvl = 0
 class SandBox:
     def __init__(self, *args):
         self._tmpdir = tempfile.mkdtemp(dir=os.getcwd())
-        # Get path to the jsbsim repository root by starting with the path to this file.
-        path_to_jsbsim = os.path.abspath(os.path.join(os.path.join(__file__, os.pardir), os.pardir))
+        path_to_jsbsim = os.path.join(os.path.dirname(sys.argv[0]), '..', *args)
         self._relpath_to_jsbsim = os.path.relpath(path_to_jsbsim, self._tmpdir)
 
     def __call__(self, *args):
