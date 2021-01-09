@@ -66,7 +66,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
     else { // error
       cerr << element->ReadFrom()
            << "Unrecognized LOGIC token " << logic << endl;
-      throw std::invalid_argument("Illegal argument");
+      throw std::invalid_argument("FGCondition: unrecognized logic value:'" + logic + "'");
     }
   } else {
     Logic = eAND; // default
@@ -87,7 +87,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
       cerr << condition_element->ReadFrom()
            << "Unrecognized tag <" << tagName << "> in the condition statement."
            << endl;
-      throw std::invalid_argument("Illegal argument");
+      throw std::invalid_argument("FGCondition: unrecognized tag:'" + tagName + "'");
     }
 
     conditions.push_back(new FGCondition(condition_element, PropertyManager));
@@ -119,12 +119,12 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
          << "  Conditional test is invalid: \"" << test
          << "\" has " << test_strings.size() << " elements in the "
          << "test condition." << endl;
-    throw("Error in test condition.");
+    throw std::invalid_argument("FGCondition: incorrect number of test elements:" + std::to_string(test_strings.size()));
   }
 
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
-    throw("Comparison operator: \""+conditional
+    throw std::invalid_argument("FGCondition: Comparison operator: \""+conditional
           +"\" does not exist.  Please check the conditional.");
   }
 }
