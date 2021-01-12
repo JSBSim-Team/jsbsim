@@ -38,20 +38,22 @@ cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
         void WriteScicoslab() const
         void WriteScicoslab(string& path) const
 
-        void GetStateSpace(vector[vector[double]]& A_, vector[vector[double]]& B_,
-                           vector[vector[double]]& C_, vector[vector[double]]& D_) const
+        vector[vector[double]]& GetSystemMatrix() const
+        vector[vector[double]]& GetInputMatrix() const
+        vector[vector[double]]& GetOutputMatrix() const
+        vector[vector[double]]& GetFeedforwardMatrix() const
 
-        vector[double] GetInitialState() const
-        vector[double] GetInitialInput() const
-        vector[double] GetInitialOutput() const
+        vector[double]& GetInitialState() const
+        vector[double]& GetInitialInput() const
+        vector[double]& GetInitialOutput() const
 
-        vector[string] GetStateNames() const
-        vector[string] GetInputNames() const
-        vector[string] GetOutputNames() const
+        vector[string]& GetStateNames() const
+        vector[string]& GetInputNames() const
+        vector[string]& GetOutputNames() const
 
-        vector[string] GetStateUnits() const
-        vector[string] GetInputUnits() const
-        vector[string] GetOutputUnits() const
+        vector[string]& GetStateUnits() const
+        vector[string]& GetInputUnits() const
+        vector[string]& GetOutputUnits() const
 
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":

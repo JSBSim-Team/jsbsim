@@ -18,21 +18,21 @@
 
 #include "FGInitialCondition.h"
 #include "FGLinearization.h"
-#include <ctime>
 
 
 namespace JSBSim {
 
-FGLinearization::FGLinearization(FGFDMExec * fdm) : aircraft_name(fdm->GetAircraft()->GetAircraftName())
+FGLinearization::FGLinearization(FGFDMExec * fdm)
+    : aircraft_name(fdm->GetAircraft()->GetAircraftName())
 {
-    auto ss = FGStateSpace(fdm);
+    FGStateSpace ss(fdm);
     ss.x.add(new FGStateSpace::Vt);
     ss.x.add(new FGStateSpace::Alpha);
     ss.x.add(new FGStateSpace::Theta);
     ss.x.add(new FGStateSpace::Q);
 
     // get propulsion pointer to determine type/ etc.
-    auto engine0 = fdm->GetPropulsion()->GetEngine(0);
+    std::shared_ptr<FGEngine> engine0 = fdm->GetPropulsion()->GetEngine(0);
     FGThruster * thruster0 = engine0->GetThruster();
 
     if (thruster0->GetType()==FGThruster::ttPropeller)
@@ -77,52 +77,6 @@ FGLinearization::FGLinearization(FGFDMExec * fdm) : aircraft_name(fdm->GetAircra
     x_units = ss.x.getUnit();
     u_units = ss.u.getUnit();
     y_units = ss.y.getUnit();
-}
-
-void FGLinearization::GetStateSpace(Vector2D<double> & A_,
-                                    Vector2D<double> & B_,
-                                    Vector2D<double> & C_,
-                                    Vector2D<double> & D_) const {
-    A_ = A;
-    B_ = B;
-    C_ = C;
-    D_ = D;
-}
-
-std::vector<double> FGLinearization::GetInitialState() const {
-    return x0;
-};
-
-std::vector<double> FGLinearization::GetInitialInput() const {
-    return u0;
-};
-
-std::vector<double> FGLinearization::GetInitialOutput() const {
-    return y0;
-};
-
-std::vector<std::string> FGLinearization::GetStateNames() const {
-    return x_names;
-}
-
-std::vector<std::string> FGLinearization::GetInputNames() const {
-    return u_names;
-}
-
-std::vector<std::string> FGLinearization::GetOutputNames() const {
-    return y_names;
-}
-
-std::vector<std::string> FGLinearization::GetStateUnits() const {
-    return x_units;
-}
-
-std::vector<std::string> FGLinearization::GetInputUnits() const {
-    return u_units;
-}
-
-std::vector<std::string> FGLinearization::GetOutputUnits() const {
-    return y_units;
 }
 
 void FGLinearization::WriteScicoslab() const {

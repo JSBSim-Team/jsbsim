@@ -29,8 +29,8 @@
 #include <stdexcept>
 #include <fstream>
 #include <cstdlib>
-#include <memory>
-#include <utility>
+//#include <memory>
+//#include <utility>
 
 namespace JSBSim {
 
@@ -72,20 +72,22 @@ public:
      * @param C_ Output matrix
      * @param D_ Feedforward matrix
      */
-    void GetStateSpace(Vector2D<double> & A_, Vector2D<double> & B_,
-                       Vector2D<double> & C_, Vector2D<double> & D_) const;
+    const Vector2D<double>& GetSystemMatrix() const { return A; };
+    const Vector2D<double>& GetInputMatrix() const { return B; };
+    const Vector2D<double>& GetOutputMatrix() const { return C; };
+    const Vector2D<double>& GetFeedforwardMatrix() const { return D; };
 
-    std::vector<double> GetInitialState() const;
-    std::vector<double> GetInitialInput() const;
-    std::vector<double> GetInitialOutput() const;
+    const std::vector<double>& GetInitialState() const { return x0; };
+    const std::vector<double>& GetInitialInput() const { return u0; };
+    const std::vector<double>& GetInitialOutput() const { return y0; };
 
-    std::vector<std::string> GetStateNames() const;
-    std::vector<std::string> GetInputNames() const;
-    std::vector<std::string> GetOutputNames() const;
+    const std::vector<std::string>& GetStateNames() const { return x_names; };
+    const std::vector<std::string>& GetInputNames() const { return u_names; };
+    const std::vector<std::string>& GetOutputNames() const { return y_names; };
 
-    std::vector<std::string> GetStateUnits() const;
-    std::vector<std::string> GetInputUnits() const;
-    std::vector<std::string> GetOutputUnits() const;
+    const std::vector<std::string>& GetStateUnits() const { return x_units; };
+    const std::vector<std::string>& GetInputUnits() const { return u_units; };
+    const std::vector<std::string>& GetOutputUnits() const { return y_units; };
 
 };
 
