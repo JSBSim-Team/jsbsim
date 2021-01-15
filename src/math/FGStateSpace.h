@@ -221,7 +221,8 @@ public:
 
     void run() {
         // initialize
-      m_fdm->Initialize(m_fdm->GetIC());
+        m_fdm->Initialize(m_fdm->GetIC().get());
+
         for (unsigned int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++) {
             m_fdm->GetPropulsion()->GetEngine(i)->InitRunning();
         }
@@ -248,7 +249,7 @@ public:
             }
             if (i > 1000) {
                 if(m_fdm->GetDebugLevel() > 1) {
-                    std::cout << "cost failed to converge, dcost: " 
+                    std::cout << "cost failed to converge, dcost: "
                         << std::scientific
                         << dcost << std::endl;
                 }

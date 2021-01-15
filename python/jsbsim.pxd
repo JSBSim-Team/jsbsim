@@ -21,6 +21,7 @@
 from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.memory cimport shared_ptr
+from libcpp.vector cimport vector
 
 cdef extern from "ExceptionManagement.h":
     cdef void convertJSBSimToPyExc()
@@ -29,6 +30,31 @@ cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
     cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
         c_FGInitialCondition(c_FGInitialCondition* ic)
         bool Load(const c_SGPath& rstfile, bool useStoredPath)
+
+cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
+    cdef cppclass c_FGLinearization "JSBSim::FGLinearization":
+        c_FGLinearization(c_FGFDMExec* fdme)
+        
+        void WriteScicoslab() const
+        void WriteScicoslab(string& path) const
+
+        vector[vector[double]]& GetSystemMatrix() const
+        vector[vector[double]]& GetInputMatrix() const
+        vector[vector[double]]& GetOutputMatrix() const
+        vector[vector[double]]& GetFeedforwardMatrix() const
+
+        vector[double]& GetInitialState() const
+        vector[double]& GetInitialInput() const
+        vector[double]& GetInitialOutput() const
+
+        vector[string]& GetStateNames() const
+        vector[string]& GetInputNames() const
+        vector[string]& GetOutputNames() const
+
+        vector[string]& GetStateUnits() const
+        vector[string]& GetInputUnits() const
+        vector[string]& GetOutputUnits() const
+
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
