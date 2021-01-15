@@ -17,13 +17,7 @@ if(MINGW)
   add_definitions(-D_WIN32_WINNT=0x600) # Windows Vista/Windows Server 2008
 endif()
 
-if (CMAKE_VERSION VERSION_LESS 3.1)
-  if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  endif()
-else()
-  set(CMAKE_CXX_STANDARD 11)
-endif()
+set(CMAKE_CXX_STANDARD 11)
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #
