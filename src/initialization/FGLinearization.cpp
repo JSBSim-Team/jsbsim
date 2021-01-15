@@ -32,7 +32,7 @@ FGLinearization::FGLinearization(FGFDMExec * fdm)
     ss.x.add(new FGStateSpace::Q);
 
     // get propulsion pointer to determine type/ etc.
-    std::shared_ptr<FGEngine> engine0 = fdm->GetPropulsion()->GetEngine(0);
+    auto engine0 = fdm->GetPropulsion()->GetEngine(0);
     FGThruster * thruster0 = engine0->GetThruster();
 
     if (thruster0->GetType()==FGThruster::ttPropeller)
@@ -69,7 +69,9 @@ FGLinearization::FGLinearization(FGFDMExec * fdm)
     u0 = ss.u.get();
     y0 = x0; // state feedback
 
-    ss.linearize(x0,u0,y0,A,B,C,D);
+    fdm->SuspendIntegration();
+    ss.linearize(x0, u0, y0, A, B, C, D);
+    fdm->ResumeIntegration();
 
     x_names = ss.x.getName();
     u_names = ss.u.getName();
