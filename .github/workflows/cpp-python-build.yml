@@ -9,7 +9,7 @@ jobs:
   Linux:
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
         exclude:
@@ -48,10 +48,17 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Configure JSBSim
+        if: matrix.os != 'ubuntu-16.04'
         run: |
           mkdir build
           cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
+      - name: Configure JSBSim (Ubuntu 16.04 LTS)
+        if: matrix.os == 'ubuntu-16.04'
+        run: |
+          mkdir build
+          cd build
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=OFF ..
       - name: Build JSBSim
         working-directory: build
         run: make -j2
