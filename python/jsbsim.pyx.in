@@ -428,16 +428,19 @@ cdef class FGLinearization:
     @property
     def x0(self):
         """Initial state"""
+        self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialState())
 
     @property
     def u0(self):
         """Initial input"""
+        self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialInput())
 
     @property
     def y0(self):
         """Initial output"""
+        self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialOutput())
 
     @property

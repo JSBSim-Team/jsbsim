@@ -29,8 +29,6 @@
 #include <stdexcept>
 #include <fstream>
 #include <cstdlib>
-//#include <memory>
-//#include <utility>
 
 namespace JSBSim {
 
