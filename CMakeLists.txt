@@ -81,6 +81,16 @@ if (BUILD_PYTHON_MODULE)
 endif(BUILD_PYTHON_MODULE)
 
 ################################################################################
+# Build the Julia package                                                      #
+################################################################################
+
+option(BUILD_JULIA_MODULE "Set to ON to build the Julia package for JSBSim" ON)
+
+if(BUILD_JULIA_MODULE)
+  add_subdirectory(julia)
+endif(BUILD_JULIA_MODULE)
+
+################################################################################
 # Build the unit tests (needs CxxTest)                                         #
 ################################################################################
 
