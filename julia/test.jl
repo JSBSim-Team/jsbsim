@@ -2,7 +2,7 @@ using Test
 
 module JSBSim
   using CxxWrap
-  @wrapmodule(joinpath(pwd(), "libJSBSimJL.so"))
+  @wrapmodule(joinpath(pwd(), "libJSBSimJL"))
 end
 
 path = JSBSim.SGPath("Hello world!")
