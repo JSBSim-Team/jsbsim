@@ -8,6 +8,8 @@ if (Julia_EXECUTABLE)
   find_package(JlCxx)
 
   include_directories(${CMAKE_SOURCE_DIR}/src)
+  set(CMAKE_CXX_STANDARD 14)
+
   add_library(JSBSimJL SHARED jsbsimjl.cpp)
   target_link_libraries(JSBSimJL libJSBSim JlCxx::cxxwrap_julia)
 

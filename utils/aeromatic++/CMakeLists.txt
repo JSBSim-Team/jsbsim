@@ -1,17 +1,12 @@
-
-ENABLE_LANGUAGE(CXX)
-
-INCLUDE_DIRECTORIES(
-     "${CMAKE_CURRENT_SOURCE_DIR}"
-     "${CMAKE_CURRENT_BINARY_DIR}"
-   )
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+SET(CMAKE_CXX_STANDARD 11)
 
 SET(LIBAEROMATIC3 Aeromatic++)
 
-SET(AEROMATIC_HDRS 
+SET(AEROMATIC_HDRS
      types.h
      Aircraft.h
-	 config.h
+	   config.h
      Systems/Controls.h
      Systems/Propulsion.h
      Systems/Systems.h
