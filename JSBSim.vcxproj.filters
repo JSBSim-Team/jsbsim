@@ -278,12 +278,6 @@
     <ClCompile Include="src\input_output\FGXMLParse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\JSBSim.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\simgear\props\propertyObject.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\simgear\props\props.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -318,6 +312,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GeographicLib\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JSBSim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\initialization\FGLinearization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\FGStateSpace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -640,9 +643,6 @@
     <ClInclude Include="src\input_output\net_fdm.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\props\propertyObject.hxx">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\simgear\props\props.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -665,6 +665,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\flight_control\FGLinearActuator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\initialization\FGLinearization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\FGStateSpace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
