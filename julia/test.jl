@@ -6,7 +6,7 @@ module JSBSim
   function convert(::Type{String}, path::SGPath)
     s = str(path)
     if Sys.iswindows()
-      replace(s, "/" => "\\")
+      s = replace(s, "/" => "\\")
     end
     return s
   end
