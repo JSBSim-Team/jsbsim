@@ -840,9 +840,7 @@ RECURSIVE              = NO
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGLinearization.cpp \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGLinearization.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGSimplexTrim.cpp \
+EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGSimplexTrim.cpp \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGSimplexTrim.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGTrimAnalysis.cpp \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGTrimAnalysis.h \
@@ -851,9 +849,7 @@ EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGLineari
                          @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGTrimmer.cpp \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/initialization/FGTrimmer.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/src/math/FGNelderMead.cpp \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/math/FGNelderMead.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/math/FGStateSpace.cpp \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/math/FGStateSpace.h
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/math/FGNelderMead.h
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
