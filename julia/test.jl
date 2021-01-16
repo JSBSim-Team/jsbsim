@@ -3,14 +3,21 @@ using Test
 module JSBSim
   using CxxWrap
   @wrapmodule(joinpath(pwd(), "libJSBSimJL"))
+  function convert(::Type{String}, path::SGPath)
+    s = str(path)
+    if Sys.iswindows()
+      replace(s, "/" => "\\")
+    end
+    return s
+  end
   function SetRootDir(fdm::FGFDMExec, path::String)
     _SetRootDir(fdm, SGPath(path))
     SetAircraftPath(fdm, "aircraft")
     SetEnginePath(fdm, "engine")
     SetSystemsPath(fdm, "systems")
   end
-  function GetRootDir(fdm::FGFDMExec)
-    str(_GetRootDir(fdm))
+  function GetRootDir(fdm::FGFDMExec)::String
+    convert(String, _GetRootDir(fdm)[])
   end
   function SetAircraftPath(fdm::FGFDMExec, path::String)
     _SetAircraftPath(fdm, SGPath(path))
@@ -28,7 +35,7 @@ module JSBSim
     _Load(ic, SGPath(path), useStoredPath)
   end
   function LoadIC(fdm::FGFDMExec, path::String, useStoredPath::Bool)
-    ic= GetIC(fdm)
+    ic = GetIC(fdm)
     Load(getindex(ic)[], path, useStoredPath)
   end
 end
