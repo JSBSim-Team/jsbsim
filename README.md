@@ -93,7 +93,7 @@ JSBSim can be interfaced or integrated to your application via a C++ API. The  f
 int main(int argc, char **argv)
 {
   JSBSim::FGFDMExec FDMExec;
-  FDMExec.LoadScript(argv[1]);
+  FDMExec.LoadScript(SGPath(argv[1]));
   FDMExec.RunIC();
   bool result = true;
   while (result) result = FDMExec.Run();
