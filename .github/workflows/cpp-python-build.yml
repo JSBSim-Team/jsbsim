@@ -259,12 +259,15 @@ jobs:
             build\python\setup.py
 
   MacOSX:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [ macos-10.15, macos-11.0 ]
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up Python 3.6
+      - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
-          python-version: '3.6'
+          python-version: '3.7'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel
       - name: Checkout JSBSim
@@ -298,7 +301,7 @@ jobs:
         working-directory: build
         run: ctest -j2 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
-        if: env.release == 'true'
+        if: env.release == 'true' && matrix.os == 'macos-10.15'
         working-directory: build
         run: python python/setup.py sdist
 
@@ -316,7 +319,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: env.release == 'true'
         with:
-          name: macos-latest.binaries
+          name: ${{ matrix.os }}.binaries
           path: |
             build/src/libJSBSim.a
             build/python/jsbsim.cxx
@@ -329,10 +332,10 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
-        os: [windows-latest, macos-latest]
+        # Use macos-10.15 since it generates wheels for Mac OSX 10.14
+        # that are also compatible with 11.0.
+        os: [windows-latest, macos-10.15]
     runs-on: ${{ matrix.os }}
-    env:
-      VERBOSE: 1
     steps:
       - name: Set up Python
         uses: actions/setup-python@v1
@@ -356,13 +359,13 @@ jobs:
           name: ${{ matrix.os }}.binaries
           path: build
       - name: Build wheel package for Windows
-        if: matrix.os == 'windows-latest'
+        if: startsWith(matrix.os, 'windows-')
         working-directory: build
         run: |
           pip install -U pywin32
           python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Build wheel package for MacOSX
-        if: matrix.os == 'macos-latest'
+        if: startsWith(matrix.os, 'macos-')
         working-directory: build
         run: python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
       - name: Test wheel package
@@ -375,7 +378,7 @@ jobs:
           name: ${{ matrix.os }}-Python${{ matrix.python-version}}.binaries
           path: |
             build/python/dist/*.whl
- 
+
   Rolling-Release:
     needs: [Linux, Python-Wheels]
     runs-on: ubuntu-latest
