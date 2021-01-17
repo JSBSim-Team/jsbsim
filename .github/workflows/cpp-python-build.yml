@@ -39,18 +39,9 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
         uses: actions/checkout@v2
-      - name: Install & Configure Doxygen
-        if: env.release == 'true' && env.static_link == 'true'
-        run: |
-          sudo apt-get install doxygen
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Configure JSBSim
         run: |
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
       - name: Build JSBSim
         working-directory: build
@@ -66,26 +57,6 @@ jobs:
         if: env.static_link == 'true'
         working-directory: build
         run: cpack
-      - name: Build ManyLinux wheel packages (PEP 513)
-        id: ManyLinux
-        if: matrix.os == 'ubuntu-20.04' && env.static_link == 'true'
-        working-directory: build
-        run: |
-          rm -f CMakeCache.txt
-          rm -f python/dist/*.whl
-          make clean
-          # Install the Docker build environment
-          docker pull quay.io/pypa/manylinux2010_x86_64
-          cp ../python/build-wheels.sh .
-          chmod +x build-wheels.sh
-          # Build the manylinux1 wheel binary packages
-          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
-      - name: Test wheel package
-        if: steps.ManyLinux.outcome == 'success'
-        run: |
-          pip install jsbsim --no-index -f build/python/dist
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-          pip uninstall jsbsim -y
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -106,9 +77,52 @@ jobs:
         if: env.release == 'true' && env.static_link == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
-          path: |
-            build/*.deb
-            build/python/dist/*-manylinux*.whl
+          path: build/*.deb
+
+  ManyLinux-Wheels:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        run: |
+          sudo apt-get install doxygen
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DINSTALL_PYTHON_MODULE=ON ..
+      - name: Build ManyLinux wheel packages (PEP 513)
+        working-directory: build
+        run: |
+          rm -f CMakeCache.txt
+          # Install the Docker build environment
+          docker pull quay.io/pypa/manylinux2010_x86_64
+          cp ../python/build-wheels.sh .
+          chmod +x build-wheels.sh
+          # Build the manylinux1 wheel binary packages
+          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: ManyLinux-Wheels.binaries
+          path: build/python/dist/*-manylinux*.whl
 
   Windows-MinGW32:
     runs-on: windows-latest
@@ -134,8 +148,7 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
           perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
       - name: Build JSBSim
         working-directory: build
@@ -182,8 +195,7 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
       - name: Build JSBSim
         working-directory: build
@@ -281,8 +293,7 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
       - name: Build JSBSim
         working-directory: build
@@ -316,7 +327,7 @@ jobs:
             build/python/setup.py
             build/python/dist/*.tar.gz
 
-  Python-Wheels:
+  MacWin-Wheels:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     needs: [Windows-MSVC, MacOSX]
     strategy:
@@ -369,7 +380,7 @@ jobs:
             build/python/dist/*.whl
 
   Rolling-Release:
-    needs: [Linux, Python-Wheels]
+    needs: [ManyLinux-Wheels, MacWin-Wheels]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
@@ -398,7 +409,7 @@ jobs:
             dist/*.deb
 
   Official-Release:
-    needs: [Linux, Python-Wheels]
+    needs: [ManyLinux-Wheels, MacWin-Wheels]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
@@ -489,8 +500,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
-          mkdir build
-          cd build
+          mkdir build && cd build
           cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build Python docs
         working-directory: build
