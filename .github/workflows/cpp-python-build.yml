@@ -332,13 +332,10 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
-        os: [windows-latest, macos-10.15, macos-11.0]
-        exclude:
-          - os: macos-11.0
-            python-version: 3.6
+        # Use macos-latest only since wheels are generated for Mac OSX 10.14
+        # and they are compatible with 10.15 and 11.0.
+        os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      VERBOSE: 1
     steps:
       - name: Set up Python
         uses: actions/setup-python@v1
@@ -362,7 +359,7 @@ jobs:
           name: ${{ matrix.os }}.binaries
           path: build
       - name: Build wheel package for Windows
-        if: matrix.os == 'windows-latest'
+        if: startsWith(matrix.os, 'windows-')
         working-directory: build
         run: |
           pip install -U pywin32
