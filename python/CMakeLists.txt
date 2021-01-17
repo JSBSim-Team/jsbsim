@@ -11,10 +11,6 @@ set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE)
 if(DOXYGEN_FOUND AND BUILD_DOCS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
     doxy2pydocs.py)
-  if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
-    execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-  endif()
   execute_process(COMMAND ${PYTHON_EXECUTABLE} python/doxy2pydocs.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
