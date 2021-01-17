@@ -11,7 +11,7 @@ module JSBSim
     return s
   end
   function SetRootDir(fdm::FGFDMExec, path::String)
-    _SetRootDir(fdm, SGPath(path))
+    SetRootDir(fdm, SGPath(path))
     SetAircraftPath(fdm, "aircraft")
     SetEnginePath(fdm, "engine")
     SetSystemsPath(fdm, "systems")
@@ -20,19 +20,19 @@ module JSBSim
     convert(String, _GetRootDir(fdm)[])
   end
   function SetAircraftPath(fdm::FGFDMExec, path::String)
-    _SetAircraftPath(fdm, SGPath(path))
+    SetAircraftPath(fdm, SGPath(path))
   end
   function SetEnginePath(fdm::FGFDMExec, path::String)
-    _SetEnginePath(fdm, SGPath(path))
+    SetEnginePath(fdm, SGPath(path))
   end
   function SetSystemsPath(fdm::FGFDMExec, path::String)
-    _SetSystemsPath(fdm, SGPath(path))
+    SetSystemsPath(fdm, SGPath(path))
   end
   function LoadModel(fdm::FGFDMExec, model::String, addModelToPath::Bool=true)
     _LoadModel(fdm, model, addModelToPath)
   end
   function Load(ic::FGInitialCondition, path::String, useStoredPath::Bool)
-    _Load(ic, SGPath(path), useStoredPath)
+    Load(ic, SGPath(path), useStoredPath)
   end
   function LoadIC(fdm::FGFDMExec, path::String, useStoredPath::Bool)
     ic = GetIC(fdm)

@@ -18,11 +18,11 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& jsbsim)
   // FGFDMExec
   auto FDMExec = jsbsim.add_type<FGFDMExec>("FGFDMExec");
   FDMExec.constructor<FGPropertyManager*>()
-    .method("_SetRootDir", &FGFDMExec::SetRootDir)
+    .method("SetRootDir", &FGFDMExec::SetRootDir)
     .method("_GetRootDir", &FGFDMExec::GetRootDir)
-    .method("_SetAircraftPath", &FGFDMExec::SetAircraftPath)
-    .method("_SetEnginePath", &FGFDMExec::SetEnginePath)
-    .method("_SetSystemsPath", &FGFDMExec::SetSystemsPath)
+    .method("SetAircraftPath", &FGFDMExec::SetAircraftPath)
+    .method("SetEnginePath", &FGFDMExec::SetEnginePath)
+    .method("SetSystemsPath", &FGFDMExec::SetSystemsPath)
     // Resolves ambiguity between the overloaded methods FGFDMExec::LoadModel
     // by static casting the pointer.
     .method("_LoadModel", static_cast<bool (FGFDMExec::*)(const std::string&, bool)>(&FGFDMExec::LoadModel))
@@ -33,7 +33,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& jsbsim)
   // FGInitialCondition
   jsbsim.add_type<FGInitialCondition>("FGInitialCondition")
     .constructor<FGFDMExec*>()
-    .method("_Load", &FGInitialCondition::Load);
+    .method("Load", &FGInitialCondition::Load);
 
   // FGFDMExec again (methods depending on other classes)
   FDMExec.method("GetIC", &FGFDMExec::GetIC);
