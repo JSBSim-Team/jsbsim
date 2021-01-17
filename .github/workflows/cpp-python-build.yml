@@ -332,9 +332,9 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8, 3.9]
-        # Use macos-latest only since wheels are generated for Mac OSX 10.14
-        # and they are compatible with 10.15 and 11.0.
-        os: [windows-latest, macos-latest]
+        # Use macos-10.15 since it generates wheels for Mac OSX 10.14
+        # that are also compatible with 11.0.
+        os: [windows-latest, macos-10.15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python
