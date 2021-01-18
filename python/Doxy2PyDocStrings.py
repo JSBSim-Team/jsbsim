@@ -26,8 +26,6 @@ import xml.etree.ElementTree as et
 
 LASTCOL = 79
 
-version = '_'+'_'.join('${PROJECT_VERSION}'.split('.')[:2])
-
 def wrap_last_line(txt, tab):
     col = txt.rfind('\n'+tab)+len(tab)+1
     lastline = txt[col:].strip()
@@ -166,7 +164,7 @@ doxytag = re.search(request, pyx_data)
 
 while doxytag:
     names = doxytag.group(1).split('::')
-    xmlfilename = 'class'+version.join(names[:2])+'.xml'
+    xmlfilename = 'class'+'_1_1'.join(names[:2])+'.xml'
     tree = et.parse('${CMAKE_BINARY_DIR}/documentation/xml/'+xmlfilename)
     root = tree.getroot()
     docstring = ''
