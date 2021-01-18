@@ -272,7 +272,7 @@ jobs:
   MacOSX:
     strategy:
       matrix:
-        os: [ macos-10.15, macos-11.0 ]
+        os: [ macos-10.15, ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python 3.7
@@ -505,16 +505,22 @@ jobs:
         with:
           python-version: '3.6'
       - name: Install Python packages
-        run: pip install -U cython sphinx
+        run: pip install -U cython numpy sphinx
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
           cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
+      - name: Download Python wheels
+        uses: actions/download-artifact@v2
+        with:
+          name: ManyLinux-Wheels.binaries
+          path: build
       - name: Build Python docs
         working-directory: build
         run: |
+          pip install jsbsim --no-index -f .
           touch documentation/html/.nojekyll
           sphinx-build -b html documentation documentation/html/python
       - name: Build JSBSim
