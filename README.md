@@ -45,7 +45,7 @@ JSBSim is also used in academic and industry research ([more than 600 citations 
 ---
 ## Installation
 ### Windows
-A Windows installer `JSBSim-1.1.3.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.3). It installs the 2 executables along with aircraft data and some example scripts:
+A Windows installer `JSBSim-1.1.3-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.3). It installs the 2 executables along with aircraft data and some example scripts:
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
 
