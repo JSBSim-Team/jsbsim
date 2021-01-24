@@ -153,6 +153,11 @@ if compiler.compiler_type == 'unix':
 else:
     cpp_compile_flag = []
 
+if compiler.compiler_type == 'msvc':
+    link_libraries = ['wsock32', 'ws2_32']
+else:
+    link_libraries = [${JSBSIM_LINK_LIBRARIES}]
+
 # Update the JSBSim library path according to the --config option
 if args.config:
     if compiler.compiler_type == 'msvc':
@@ -167,7 +172,7 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
     # the Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
                    'include_dirs': ['src'],
-                   'libraries': ['JSBSim', ${JSBSIM_LINK_LIBRARIES}],
+                   'libraries': ['JSBSim'] + link_libraries,
                    'library_dirs': [library_path],
                    'extra_compile_args': cpp_compile_flag }
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
@@ -176,13 +181,13 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = [('/D'+flag).replace('"', '\\"') for flag in [${JSBSIM_FLAGS}]]
+        compile_flags = [('/D'+flag).replace('"', '\\"') for flag in ['_USE_MATH_DEFINES', 'NOMINMAX', ${JSBSIM_FLAGS}]]
     else:
         compile_flags = ['-D'+flag for flag in [${JSBSIM_FLAGS}]]
 
 
     ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
-                   'libraries': [${JSBSIM_LINK_LIBRARIES}],
+                   'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
     # List of required modules to build the JSBSim module from the sources.
