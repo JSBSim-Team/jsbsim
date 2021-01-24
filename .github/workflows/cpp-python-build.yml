@@ -212,10 +212,6 @@ jobs:
       - name: Test JSBSim
         working-directory: build
         run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
-      - name: Build source package for Python
-        if: env.release == 'true'
-        working-directory: build
-        run: python python/setup.py sdist --format=zip
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -272,7 +268,6 @@ jobs:
             build\src\RelWithDebInfo\JSBSim.lib
             build\python\jsbsim.cxx
             build\python\setup.py
-            build\python\dist\*.zip
 
   MacOSX:
     strategy:
@@ -356,26 +351,18 @@ jobs:
           python-version: '3.7'
       - name: Install Python packages
         run: pip install -U cython numpy
-      - name: Download binary files (Linux & MacOSX)
-        id: UnixFiles
-        if: runner.os != 'Windows'
+      - name: Download binary files
         uses: actions/download-artifact@v2
         with:
           name: macos-10.15.binaries
       - name: Build Python module from sources (Linux & MacOSX)
-        if: steps.UnixFiles.outcome == 'success'
-        run: pip install python/dist/*.tar.gz
-      - name: Download binary files (Windows)
-        id: WindowsFiles
-        if: runner.os == 'Windows'
-        uses: actions/download-artifact@v2
-        with:
-          name: ${{ matrix.os }}.binaries
+        if: runner.os != 'Windows'
+        run: pip install python/dist/*.tar.gz -vv
       - name: Build Python module from sources (Windows)
-        if: steps.WindowsFiles.outcome == 'success'
+        if: runner.os == 'Windows'
         run: |
-          $PyPackage = Get-ChildItem -Path python\dist -Filter *.zip | Select-Object -First 1
-          pip install $PyPackage.FullName
+          $PyPackage = Get-ChildItem -Path python\dist -Filter *.tar.gz | Select-Object -First 1
+          pip install $PyPackage.FullName -vv
       - name: Test Python module
         shell: python
         run: |
@@ -493,7 +480,6 @@ jobs:
           pip install -U twine
           twine upload dist/*.whl
           twine upload dist/*.tar.gz
-          twine upload dist/*.zip
 
     # Deploy stable release to GitHub
       - name: Get JSBSim version
