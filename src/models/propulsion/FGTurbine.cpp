@@ -601,6 +601,10 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/InjN2increment";
   PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
                         &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
+  property_name = base_property_name + "/tsfc";
+  PropertyManager->Tie(property_name.c_str(), &TSFC);
+  property_name = base_property_name + "/atsfc";
+  PropertyManager->Tie(property_name.c_str(), &ATSFC);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
