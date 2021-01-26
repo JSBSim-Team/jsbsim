@@ -69,7 +69,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   MaxN1 = MaxN2 = 100.0;
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
-  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
+  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = TSFCLookup = ATSFCLookup = nullptr;
   N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0; 
   N1_spindown = 2.0; N2_spindown = 2.0;
   InjectionTime = 30.0;
