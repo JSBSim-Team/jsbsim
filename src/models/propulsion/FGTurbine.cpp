@@ -234,6 +234,12 @@ double FGTurbine::Run()
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
+  // Check if there are functions for TSFC and ATSFC
+  if (TSFCLookup)
+    TSFC = TSFCLookup->GetValue();
+  if (ATSFCLookup)
+    ATSFC = ATSFCLookup->GetValue();
+
   if (!Augmentation) {
     correctedTSFC = TSFC * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 10000.0);
@@ -434,7 +440,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     string name = function_element->GetAttributeValue("name");
     if (name == "IdleThrust" || name == "MilThrust" || name == "AugThrust"
         || name == "Injection" || name == "N1SpoolUp" || name == "N1SpoolDown"
-        || name == "N2SpoolUp" || name == "N2SpoolDown")
+        || name == "N2SpoolUp" || name == "N2SpoolDown" || name == "TSFC" || name == "ATSFC")
       function_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
 
     function_element = el->FindNextElement("function");
@@ -502,6 +508,9 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   MilThrustLookup = GetPreFunction(property_prefix+"/MilThrust");
   MaxThrustLookup = GetPreFunction(property_prefix+"/AugThrust");
   InjectionLookup = GetPreFunction(property_prefix+"/Injection");
+
+  TSFCLookup = GetPreFunction(property_prefix+"/TSFC");
+  ATSFCLookup = GetPreFunction(property_prefix+"/ATSFC");
 
   // Pre-calculations and initializations
   N1SpoolUp = GetPreFunction(property_prefix+"/N1SpoolUp");

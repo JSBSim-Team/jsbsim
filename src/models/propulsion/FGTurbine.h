@@ -311,7 +311,9 @@ private:
   FGFunction *MilThrustLookup;
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
-  FGFDMExec* FDMExec;
+  FGFunction *TSFCLookup;
+  FGFunction *ATSFCLookup;
+  FGFDMExec *FDMExec;
   FGParameter *N1SpoolUp;
   FGParameter *N1SpoolDown;
   FGParameter *N2SpoolUp;
