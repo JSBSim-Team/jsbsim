@@ -248,8 +248,8 @@ private:
   double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
   double MaxThrust;        ///< Maximum Augmented Thrust, static @ S.L. (lbf)
   double BypassRatio;      ///< Bypass Ratio
-  double TSFC;             ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
-  double ATSFC;            ///< Augmented TSFC (lbm/hr/lbf)
+  FGParameter* TSFC;       ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
+  FGParameter* ATSFC;      ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
   double IgnitionN1;       ///< Ignition N1
@@ -311,7 +311,7 @@ private:
   FGFunction *MilThrustLookup;
   FGFunction *MaxThrustLookup;
   FGFunction *InjectionLookup;
-  FGFDMExec* FDMExec;
+  FGFDMExec *FDMExec;
   FGParameter *N1SpoolUp;
   FGParameter *N1SpoolDown;
   FGParameter *N2SpoolUp;
