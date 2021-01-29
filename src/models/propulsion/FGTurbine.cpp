@@ -94,6 +94,9 @@ FGTurbine::~FGTurbine()
   if (dynamic_cast<FGSpoolUp*>(N2SpoolUp)) delete N2SpoolUp;
   if (dynamic_cast<FGSpoolUp*>(N2SpoolDown)) delete N2SpoolDown;
 
+  delete TSFC;
+  delete ATSFC;
+
   Debug(1);
 }
 
