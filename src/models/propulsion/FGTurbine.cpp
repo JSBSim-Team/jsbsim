@@ -231,7 +231,11 @@ double FGTurbine::Run()
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    correctedTSFC = TSFC->GetValue() * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
+    // If TSFC function is supplied don't perform any correction/denormalisation
+    if (dynamic_cast<FGFunction*>(TSFC))
+      correctedTSFC = TSFC->GetValue();
+    else
+      correctedTSFC = TSFC->GetValue() * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 10000.0);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
@@ -605,7 +609,7 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
                         &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
   property_name = base_property_name + "/tsfc";
-  PropertyManager->Tie(property_name.c_str(), (FGParameter*)TSFC, &FGParameter::GetValue);
+  PropertyManager->Tie(property_name.c_str(), &correctedTSFC);
   property_name = base_property_name + "/atsfc";
   PropertyManager->Tie(property_name.c_str(), (FGParameter*)ATSFC, &FGParameter::GetValue);
 }
