@@ -178,8 +178,6 @@ public:
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number  */
   FGTurbine(FGFDMExec* Executive, Element *el, int engine_number, struct Inputs& input);
-  /// Destructor
-  ~FGTurbine();
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
 
@@ -248,8 +246,8 @@ private:
   double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
   double MaxThrust;        ///< Maximum Augmented Thrust, static @ S.L. (lbf)
   double BypassRatio;      ///< Bypass Ratio
-  FGParameter* TSFC;       ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
-  FGParameter* ATSFC;      ///< Augmented TSFC (lbm/hr/lbf)
+  std::unique_ptr<FGParameter> TSFC;   ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
+  std::unique_ptr<FGParameter> ATSFC;  ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
   double IgnitionN1;       ///< Ignition N1

@@ -63,8 +63,8 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Type = etTurbine;
 
   MilThrust = MaxThrust = 10000.0;
-  TSFC = new FGRealValue(0.8);
-  ATSFC = new FGRealValue(1.7);
+  TSFC = std::make_unique<FGRealValue>(0.8);
+  ATSFC = std::make_unique<FGRealValue>(1.7);
   IdleN1 = 30.0;
   IdleN2 = 60.0;
   MaxN1 = MaxN2 = 100.0;
@@ -84,19 +84,8 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTurbine::~FGTurbine()
-{
-  delete TSFC;
-  delete ATSFC;
-
-  Debug(1);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGTurbine::ResetToIC(void)
 {
-
   FGEngine::ResetToIC();
 
   N1 = N2 = InjN1increment = InjN2increment = 0.0;
@@ -497,22 +486,20 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
 
   JSBSim::Element* tsfcElement = el->FindElement("tsfc");
   if (tsfcElement) {
-    delete TSFC;
     string value = tsfcElement->GetDataLine();
     if (is_number(value))
-      TSFC = new FGRealValue(atof(value.c_str()));
+      TSFC = std::make_unique<FGRealValue>(atof(value.c_str()));
     else
-      TSFC = new FGFunction(FDMExec, tsfcElement, to_string((int)EngineNumber));
+      TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string((int)EngineNumber));
   }
 
   JSBSim::Element* atsfcElement = el->FindElement("atsfc");
   if (atsfcElement) {
-    delete ATSFC;
     string value = atsfcElement->GetDataLine();
     if (is_number(value))
-      ATSFC = new FGRealValue(atof(value.c_str()));
+      ATSFC = std::make_unique<FGRealValue>(atof(value.c_str()));
     else
-      ATSFC = new FGFunction(FDMExec, atsfcElement, to_string((int)EngineNumber));
+      ATSFC = std::make_unique<FGFunction>(FDMExec, atsfcElement, to_string((int)EngineNumber));
   }
 
   // Pre-calculations and initializations
@@ -578,36 +565,36 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/n2";
   PropertyManager->Tie( property_name.c_str(), &N2);
   property_name = base_property_name + "/injection_cmd";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjection, &FGTurbine::SetInjection);
   property_name = base_property_name + "/seized";
   PropertyManager->Tie( property_name.c_str(), &Seized);
   property_name = base_property_name + "/stalled";
   PropertyManager->Tie( property_name.c_str(), &Stalled);
   property_name = base_property_name + "/bleed-factor";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
+  PropertyManager->Tie( property_name.c_str(), this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
   property_name = base_property_name + "/MaxN1";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetMaxN1, &FGTurbine::SetMaxN1);
   property_name = base_property_name + "/MaxN2";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetMaxN2, &FGTurbine::SetMaxN2);
   property_name = base_property_name + "/InjectionTimer";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjectionTimer, &FGTurbine::SetInjectionTimer);
   property_name = base_property_name + "/InjWaterNorm";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjWaterNorm, &FGTurbine::SetInjWaterNorm);
   property_name = base_property_name + "/InjN1increment";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjN1increment, &FGTurbine::SetInjN1increment);
   property_name = base_property_name + "/InjN2increment";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
   property_name = base_property_name + "/tsfc";
-  PropertyManager->Tie(property_name.c_str(), (FGParameter*)TSFC, &FGParameter::GetValue);
+  PropertyManager->Tie(property_name.c_str(), TSFC.get(), &FGParameter::GetValue);
   property_name = base_property_name + "/atsfc";
-  PropertyManager->Tie(property_name.c_str(), (FGParameter*)ATSFC, &FGParameter::GetValue);
+  PropertyManager->Tie(property_name.c_str(), ATSFC.get(), &FGParameter::GetValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -658,8 +645,8 @@ void FGTurbine::Debug(int from)
       cout << "      MilThrust:   "         << MilThrust << endl;
       cout << "      MaxThrust:   "         << MaxThrust << endl;
       cout << "      BypassRatio: "         << BypassRatio << endl;
-      cout << "      TSFC:        "         << TSFC << endl;
-      cout << "      ATSFC:       "         << ATSFC << endl;
+      cout << "      TSFC:        "         << TSFC->GetValue() << endl;
+      cout << "      ATSFC:       "         << ATSFC->GetValue() << endl;
       cout << "      IdleN1:      "         << IdleN1 << endl;
       cout << "      IdleN2:      "         << IdleN2 << endl;
       cout << "      MaxN1:       "         << MaxN1 << endl;

@@ -60,23 +60,11 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL),
-    CombustionEfficiency_N1(NULL)
+  : FGEngine(engine_number, input)
 {
   SetDefaults();
   Load(exec, el);
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGTurboProp::~FGTurboProp()
-{
-  delete ITT_N1;
-  delete EnginePowerRPM_N1;
-  delete CombustionEfficiency_N1;
-  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,11 +141,11 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
            <<"Note: Using the EnginePowerVC without enclosed <function> tag is deprecated"
            << endl;
     } else if (name == "EnginePowerRPM_N1") {
-      EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
+      EnginePowerRPM_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
-      ITT_N1 = new FGTable(PropertyManager, table_element);
+      ITT_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else if (name == "CombustionEfficiency_N1") {
-      CombustionEfficiency_N1 = new FGTable(PropertyManager, table_element);
+      CombustionEfficiency_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else {
       cerr << el->ReadFrom() << "Unknown table type: " << name
            << " in turboprop definition." << endl;
@@ -174,7 +162,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   // default table based on '9.333 - (N1)/12.0' approximation
   // gives 430%Fuel at 60%N1
   if (! CombustionEfficiency_N1) {
-    CombustionEfficiency_N1 = new FGTable(6);
+    CombustionEfficiency_N1 = std::make_unique<FGTable>(6);
     *CombustionEfficiency_N1 <<  60.0 << 12.0/52.0;
     *CombustionEfficiency_N1 <<  82.0 << 12.0/30.0;
     *CombustionEfficiency_N1 <<  96.0 << 12.0/16.0;
