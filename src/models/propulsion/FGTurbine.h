@@ -41,6 +41,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGEngine.h"
+#include "math/FGFunction.h"
+#include "math/FGRealValue.h"
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -49,7 +52,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class Element;
-class FGFunction;
+class FGTSFC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -246,7 +249,7 @@ private:
   double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
   double MaxThrust;        ///< Maximum Augmented Thrust, static @ S.L. (lbf)
   double BypassRatio;      ///< Bypass Ratio
-  std::unique_ptr<FGParameter> TSFC;   ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
+  std::unique_ptr<FGTSFC> TSFC;        ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
   std::unique_ptr<FGParameter> ATSFC;  ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
@@ -320,6 +323,7 @@ private:
   void Debug(int from);
 
   friend class FGSpoolUp;
+  friend class FGTSFC;
 };
 
 class FGSpoolUp : public FGParameter
@@ -337,6 +341,34 @@ private:
   FGTurbine* turb;
   double delay; ///< Inverse spool-up time from idle to 100% (seconds)
 };
+
+class FGTSFC : public FGParameter
+{
+public:
+  FGTSFC(FGTurbine* _turb, double tsfcVal)
+    : turb(_turb), tsfc(new FGRealValue(tsfcVal)) {}
+
+  FGTSFC(FGTurbine* _turb, FGFDMExec* fdmexec, Element* element, int enginenumber)
+    : turb(_turb), tsfc(new FGFunction(fdmexec, element, to_string(enginenumber))) {}
+
+  string GetName(void) const { return string(); }
+
+  double GetValue(void) const {
+    // If there is a user supplied function don't perform any correction/denormalisation
+    if(dynamic_cast<FGFunction*>(tsfc.get()))
+      return tsfc->GetValue();
+    else {
+      double T = turb->in.Temperature;
+      double N2norm = turb->N2norm;
+      return tsfc->GetValue() * sqrt(T / 389.7) * (0.84 + (1 - N2norm) * (1 - N2norm));
+    }
+  }
+
+private:
+  FGTurbine* turb;
+  std::unique_ptr<FGParameter> tsfc;
+};
+
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
