@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
   n2startrate - Core rotor rpm time taken to accelerate to ignitionn2 idlen2 value (default 2.0)
   n1spindown  - Factor used in calculation for fan rotor time to spool down to zero (default 2.0)
   n2spindown  - Factor used in calculation for core rotor time to spool down to zero (default 2.0)
-  maxn1       - Fan rotor rpm (% of max) at full throttle 
+  maxn1       - Fan rotor rpm (% of max) at full throttle
   maxn2       - Core rotor rpm (% of max) at full throttle
   augmented
               0 = afterburner not installed
@@ -140,13 +140,13 @@ CLASS DOCUMENTATION
   injected
               0 = Water injection not installed
               1 = Water injection installed
-  injection-time - Time, in seconds, of water injection duration 
+  injection-time - Time, in seconds, of water injection duration
   InjN1increment - % increase in N1 when injection is taking place
   InjN2increment - % increase in N2 when injection is taking place
   disable-windmill - flag that disables engine windmilling when off if true
 </pre>
 
-<h3>NOTES:</h3>  
+<h3>NOTES:</h3>
 <pre>
     Bypass ratio is used only to estimate engine acceleration time.  The
     effect of bypass ratio on engine efficiency is already included in
@@ -235,7 +235,7 @@ public:
   void SetInjWaterNorm(double injwater) {InjWaterNorm = injwater;}
   void SetInjN1increment(double injN1inc) {InjN1increment = injN1inc;}
   void SetInjN2increment(double injN2inc) {InjN2increment = injN2inc;}
-  
+
   int InitRunning(void);
   void ResetToIC(void);
 
@@ -307,15 +307,15 @@ private:
   double Seize(void);
   double Trim();
 
-  FGFunction *IdleThrustLookup;
-  FGFunction *MilThrustLookup;
-  FGFunction *MaxThrustLookup;
-  FGFunction *InjectionLookup;
+  std::shared_ptr<FGFunction> IdleThrustLookup;
+  std::shared_ptr<FGFunction> MilThrustLookup;
+  std::shared_ptr<FGFunction> MaxThrustLookup;
+  std::shared_ptr<FGFunction> InjectionLookup;
   FGFDMExec *FDMExec;
-  FGParameter *N1SpoolUp;
-  FGParameter *N1SpoolDown;
-  FGParameter *N2SpoolUp;
-  FGParameter *N2SpoolDown;
+  std::shared_ptr<FGParameter> N1SpoolUp;
+  std::shared_ptr<FGParameter> N1SpoolDown;
+  std::shared_ptr<FGParameter> N2SpoolUp;
+  std::shared_ptr<FGParameter> N2SpoolDown;
 
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(FGPropertyManager* pm);

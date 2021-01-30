@@ -71,7 +71,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
   IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = nullptr;
-  N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0; 
+  N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0;
   N1_spindown = 2.0; N2_spindown = 2.0;
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
@@ -86,14 +86,6 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
 
 FGTurbine::~FGTurbine()
 {
-  // Delete those functions that have requested the construction of a FGSpoolUp
-  // instance. FGModelFunctions will manage the destruction of the other
-  // instances.
-  if (dynamic_cast<FGSpoolUp*>(N1SpoolUp)) delete N1SpoolUp;
-  if (dynamic_cast<FGSpoolUp*>(N1SpoolDown)) delete N1SpoolDown;
-  if (dynamic_cast<FGSpoolUp*>(N2SpoolUp)) delete N2SpoolUp;
-  if (dynamic_cast<FGSpoolUp*>(N2SpoolDown)) delete N2SpoolDown;
-
   delete TSFC;
   delete ATSFC;
 
@@ -104,9 +96,9 @@ FGTurbine::~FGTurbine()
 
 void FGTurbine::ResetToIC(void)
 {
-    
+
   FGEngine::ResetToIC();
-    
+
   N1 = N2 = InjN1increment = InjN2increment = 0.0;
   N2norm = 0.0;
   correctedTSFC = TSFC->GetValue();
@@ -143,7 +135,7 @@ void FGTurbine::Calculate(void)
     if (Running && !Starved) {
       phase = tpRun;
       N1_factor = MaxN1 - IdleN1;
-      N2_factor = MaxN2 - IdleN2;      
+      N2_factor = MaxN2 - IdleN2;
       N2 = IdleN2 + ThrottlePos * N2_factor;
       N1 = IdleN1 + ThrottlePos * N1_factor;
       OilTemp_degK = 366.0;
@@ -227,7 +219,7 @@ double FGTurbine::Run()
   if ((Injected == 1) && Injection && (InjWaterNorm > 0)) {
     N1_factor += InjN1increment;
     N2_factor += InjN2increment;
-  }  
+  }
   N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor,
             N2SpoolUp->GetValue(), N2SpoolDown->GetValue());
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor,
@@ -274,7 +266,7 @@ double FGTurbine::Run()
     InjectionTimer += in.TotalDeltaT;
     if (InjectionTimer < InjectionTime) {
        thrust = thrust * InjectionLookup->GetValue();
-       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime); 
+       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime);
     } else {
        Injection = false;
        InjWaterNorm = 0.0;
@@ -401,7 +393,7 @@ double FGTurbine::CalcFuelNeed(void)
 {
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
   FuelExpended = FuelFlowRate * in.TotalDeltaT;     // Calculates fuel expended in this time step
-  if (!Starved) FuelUsedLbs += FuelExpended; 
+  if (!Starved) FuelUsedLbs += FuelExpended;
   return FuelExpended;
 }
 
@@ -438,7 +430,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     string name = function_element->GetAttributeValue("name");
     if (name == "IdleThrust" || name == "MilThrust" || name == "AugThrust"
         || name == "Injection" || name == "N1SpoolUp" || name == "N1SpoolDown"
-        || name == "N2SpoolUp" || name == "N2SpoolDown")    
+        || name == "N2SpoolUp" || name == "N2SpoolDown")
       function_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
 
     function_element = el->FindNextElement("function");
@@ -526,19 +518,19 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   // Pre-calculations and initializations
   N1SpoolUp = GetPreFunction(property_prefix+"/N1SpoolUp");
   if (!N1SpoolUp)
-    N1SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
+    N1SpoolUp = std::make_shared<FGSpoolUp>(this, BypassRatio, 1.0);
 
   N1SpoolDown = GetPreFunction(property_prefix+"/N1SpoolDown");
   if (!N1SpoolDown)
-    N1SpoolDown = new FGSpoolUp(this, BypassRatio, 2.4);
+    N1SpoolDown = std::make_shared<FGSpoolUp>(this, BypassRatio, 2.4);
 
   N2SpoolUp = GetPreFunction(property_prefix+"/N2SpoolUp");
   if (!N2SpoolUp)
-    N2SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
+    N2SpoolUp = std::make_shared<FGSpoolUp>(this, BypassRatio, 1.0);
 
   N2SpoolDown = GetPreFunction(property_prefix+"/N2SpoolDown");
   if (!N2SpoolDown)
-    N2SpoolDown = new FGSpoolUp(this, BypassRatio, 3.0);
+    N2SpoolDown = std::make_shared<FGSpoolUp>(this, BypassRatio, 3.0);
 
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
@@ -586,7 +578,7 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/n2";
   PropertyManager->Tie( property_name.c_str(), &N2);
   property_name = base_property_name + "/injection_cmd";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, 
+  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
                         &FGTurbine::GetInjection, &FGTurbine::SetInjection);
   property_name = base_property_name + "/seized";
   PropertyManager->Tie( property_name.c_str(), &Seized);
@@ -624,9 +616,9 @@ int FGTurbine::InitRunning(void)
 {
   FDMExec->SuspendIntegration();
   Cutoff=false;
-  Running=true;  
+  Running=true;
   N1_factor = MaxN1 - IdleN1;
-  N2_factor = MaxN2 - IdleN2;      
+  N2_factor = MaxN2 - IdleN2;
   N2 = IdleN2 + ThrottlePos * N2_factor;
   N1 = IdleN1 + ThrottlePos * N1_factor;
   Calculate();

@@ -75,8 +75,6 @@ FGTurboProp::~FGTurboProp()
 {
   delete ITT_N1;
   delete EnginePowerRPM_N1;
-  if (dynamic_cast<FGTable*>(EnginePowerVC))
-    delete EnginePowerVC;
   delete CombustionEfficiency_N1;
   Debug(1);
 }
@@ -148,7 +146,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
       // ugly hack but the functionality is obsolete and will be removed some
       // time in the future.
       table_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
-      EnginePowerVC = new FGTable(PropertyManager, table_element,
+      EnginePowerVC = std::make_shared<FGTable>(PropertyManager, table_element,
                                   to_string((int)EngineNumber));
       table_element->SetAttributeValue("name", name);
       cerr << table_element->ReadFrom()
@@ -184,7 +182,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     *CombustionEfficiency_N1 << 104.0 << 1.5;
     *CombustionEfficiency_N1 << 110.0 << 6.0;
   }
-  
+
   bindmodel(PropertyManager.get());
   return true;
 }
@@ -259,7 +257,7 @@ void FGTurboProp::Calculate(void)
   // limiter intervention wanted?
   if (Ielu_max_torque > 0.0) {
     double torque = 0.0;
-    
+
     if (thrusterType == FGThruster::ttPropeller) {
       torque = ((FGPropeller*)(Thruster))->GetTorque();
     } else if (thrusterType == FGThruster::ttRotor) {
@@ -289,7 +287,7 @@ void FGTurboProp::Calculate(void)
     case tpStart:  HP = Start(); break;
     default: HP = 0;
   }
- 
+
   LoadThrusterInputs();
   Thruster->Calculate(HP * hptoftlbssec);
 
@@ -532,7 +530,7 @@ int FGTurboProp::InitRunning(void)
   double dt = in.TotalDeltaT;
   in.TotalDeltaT = 0.0;
   Cutoff=false;
-  Running=true;  
+  Running=true;
   Calculate();
   in.TotalDeltaT = dt;
   return phase==tpRun;

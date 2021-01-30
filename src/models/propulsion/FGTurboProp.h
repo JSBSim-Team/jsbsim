@@ -193,7 +193,7 @@ private:
 
   FGTable* ITT_N1;             // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
-  FGParameter* EnginePowerVC;
+  std::shared_ptr<FGParameter> EnginePowerVC;
   FGTable* CombustionEfficiency_N1;
 };
 }
