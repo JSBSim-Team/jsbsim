@@ -63,7 +63,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Type = etTurbine;
 
   MilThrust = MaxThrust = 10000.0;
-  TSFC = std::make_unique<FGRealValue>(0.8);
+  TSFC = std::make_unique<FGSimplifiedTSFC>(this, 0.8);
   ATSFC = std::make_unique<FGRealValue>(1.7);
   IdleN1 = 30.0;
   IdleN2 = 60.0;
@@ -195,7 +195,6 @@ double FGTurbine::Off(void)
 double FGTurbine::Run()
 {
   double idlethrust, milthrust, thrust;
-  double T = in.Temperature;
 
   idlethrust = MilThrust * IdleThrustLookup->GetValue();
   milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
@@ -220,7 +219,7 @@ double FGTurbine::Run()
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    correctedTSFC = TSFC->GetValue() * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
+    correctedTSFC = TSFC->GetValue();
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 10000.0);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
@@ -488,9 +487,9 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   if (tsfcElement) {
     string value = tsfcElement->GetDataLine();
     if (is_number(value))
-      TSFC = std::make_unique<FGRealValue>(atof(value.c_str()));
+      TSFC = std::make_unique<FGSimplifiedTSFC>(this, atof(value.c_str()));
     else
-      TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string((int)EngineNumber));
+      TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string(EngineNumber));
   }
 
   JSBSim::Element* atsfcElement = el->FindElement("atsfc");
@@ -591,10 +590,12 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/InjN2increment";
   PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
-  property_name = base_property_name + "/tsfc";
-  PropertyManager->Tie(property_name.c_str(), TSFC.get(), &FGParameter::GetValue);
   property_name = base_property_name + "/atsfc";
   PropertyManager->Tie(property_name.c_str(), ATSFC.get(), &FGParameter::GetValue);
+  property_name = base_property_name + "/tsfc";
+  PropertyManager->Tie(property_name.c_str(), &correctedTSFC);
+  auto node = PropertyManager->GetNode(property_name.c_str(), false);
+  node->setAttribute(SGPropertyNode::WRITE, false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

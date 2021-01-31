@@ -42,13 +42,13 @@ INCLUDES
 
 #include "FGEngine.h"
 
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
 
-class Element;
 class FGFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,6 +320,7 @@ private:
   void Debug(int from);
 
   friend class FGSpoolUp;
+  friend class FGSimplifiedTSFC;
 };
 
 class FGSpoolUp : public FGParameter
@@ -337,6 +338,27 @@ private:
   FGTurbine* turb;
   double delay; ///< Inverse spool-up time from idle to 100% (seconds)
 };
+
+class FGSimplifiedTSFC : public FGParameter
+{
+public:
+  FGSimplifiedTSFC(FGTurbine* _turb, double tsfcVal)
+    : turb(_turb), tsfc(tsfcVal) {}
+
+  string GetName(void) const { return string(); }
+
+  double GetValue(void) const {
+    // Correction/denormalisation for temp and thrust
+      double T = turb->in.Temperature;
+      double N2norm = turb->N2norm;
+      return tsfc * sqrt(T / 389.7) * (0.84 + (1 - N2norm) * (1 - N2norm));
+  }
+
+private:
+  FGTurbine* turb;
+  double tsfc;
+};
+
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
