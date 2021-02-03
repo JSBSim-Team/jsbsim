@@ -53,11 +53,10 @@ CLASS IMPLEMENTATION
 
 bool FGPropertyReader::ResetToIC(void)
 {
-  map<SGPropertyNode_ptr, double>::iterator it = interface_prop_initial_value.begin();
-  for (;it != interface_prop_initial_value.end(); ++it) {
-    SGPropertyNode* node = it->first;
+  for (auto v: interface_prop_initial_value) {
+    SGPropertyNode* node = v.first;
     if (!node->getAttribute(SGPropertyNode::PRESERVE))
-      node->setDoubleValue(it->second);
+      node->setDoubleValue(v.second);
   }
 
   return true;
@@ -67,9 +66,6 @@ bool FGPropertyReader::ResetToIC(void)
 
 void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
 {
-  // Interface properties are all stored in the interface properties array.
-  string interface_property_string = "";
-
   Element *property_element = el->FindElement("property");
   if (property_element && FGJSBBase::debug_lvl > 0) {
     cout << endl << "    ";
@@ -81,12 +77,12 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
   }
 
   while (property_element) {
-    SGPropertyNode* node = 0;
+    SGPropertyNode* node = nullptr;
     double value=0.0;
     if ( ! property_element->GetAttributeValue("value").empty())
       value = property_element->GetAttributeValueAsNumber("value");
 
-    interface_property_string = property_element->GetDataLine();
+    string interface_property_string = property_element->GetDataLine();
     if (PM->HasNode(interface_property_string)) {
       if (override) {
         node = PM->GetNode(interface_property_string);

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <system name="FULL">
-    <property value="0">tests/rate-1</property>
+    <property value="0" persistent="true">tests/rate-1</property>
     <property value="0">tests/rate-1-dt-sum</property>
     <property value="0">tests/rate-1-actuator-dmd</property>
     <property value="1">tests/rate-1-actuator-rate</property>

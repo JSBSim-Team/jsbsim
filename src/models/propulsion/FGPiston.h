@@ -252,14 +252,14 @@ public:
 protected:
 
 private:
-  int crank_counter;
+  int crank_counter = 0;
 
-  double IndicatedHorsePower;
+  double IndicatedHorsePower = 0.0;
   //double IndicatedPower;
-  double PMEP;
-  double FMEP;
-  double FMEPDynamic;
-  double FMEPStatic;
+  double PMEP = 0.0;
+  double FMEP = 0.0;
+  double FMEPDynamic = 0.0;
+  double FMEPStatic = 0.0;
   //double T_Intake;
 
   void doEngineStartup(void);
@@ -294,102 +294,102 @@ private:
   //
   // Configuration
   //
-  double MinManifoldPressure_inHg; // Inches Hg
-  double MaxManifoldPressure_inHg; // Inches Hg
+  double MinManifoldPressure_inHg = 0.0; // Inches Hg
+  double MaxManifoldPressure_inHg = 0.0; // Inches Hg
   //double MaxManifoldPressure_Percent; // MaxManifoldPressure / 29.92
-  double ManifoldPressureLag;      // Manifold Pressure delay in seconds.
-  double Displacement;             // cubic inches
-  double displacement_SI;          // cubic meters
-  double MaxHP;                    // horsepower
-  double StaticFriction_HP;        // horsepower: amount subtracted from final engine power
-  double SparkFailDrop;            // drop of power due to spark failure
-  double Cycles;                   // cycles/power stroke
-  double IdleRPM;                  // revolutions per minute
-  double MaxRPM;                   // revolutions per minute
-  double Bore;                     // inches
-  double Stroke;                   // inches
-  double Cylinders;                // number
-  double CylinderHeadMass;         // kilograms
-  double CompressionRatio;         // number
-  double Z_airbox; // number representing intake impediance before the throttle
-  double Z_throttle; // number representing slope of throttle impediance
-  double PeakMeanPistonSpeed_fps; // ft/sec speed where intake valves begin to choke. Typically 33-50 fps
-  double RatedMeanPistonSpeed_fps; // ft/sec derived from MaxRPM and stroke.
-  double Ram_Air_Factor;           // number
+  double ManifoldPressureLag = 0.0;      // Manifold Pressure delay in seconds.
+  double Displacement = 0.0;             // cubic inches
+  double displacement_SI = 0.0;          // cubic meters
+  double MaxHP = 0.0;                    // horsepower
+  double StaticFriction_HP = 0.0;        // horsepower: amount subtracted from final engine power
+  double SparkFailDrop = 0.0;            // drop of power due to spark failure
+  double Cycles = 0.0;                   // cycles/power stroke
+  double IdleRPM = 0.0;                  // revolutions per minute
+  double MaxRPM = 0.0;                   // revolutions per minute
+  double Bore = 0.0;                     // inches
+  double Stroke = 0.0;                   // inches
+  double Cylinders = 0.0;                // number
+  double CylinderHeadMass = 0.0;         // kilograms
+  double CompressionRatio = 0.0;         // number
+  double Z_airbox = 0.0; // number representing intake impediance before the throttle
+  double Z_throttle = 0.0; // number representing slope of throttle impediance
+  double PeakMeanPistonSpeed_fps = 0.0; // ft/sec speed where intake valves begin to choke. Typically 33-50 fps
+  double RatedMeanPistonSpeed_fps = 0.0; // ft/sec derived from MaxRPM and stroke.
+  double Ram_Air_Factor = 0.0;           // number
 
-  double StarterTorque;// Peak Torque of the starter motor
-  double StarterRPM;   // Peak RPM of the starter motor
-  double StarterGain;  // control the torque of the starter motor.
-  int BoostSpeeds;  // Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
-  int BoostSpeed;   // The current boost-speed (zero-based).
-  bool Boosted;     // Set true for boosted engine.
-  int BoostManual;  // The raw value read in from the config file - should be 1 or 0 - see description below.
-  bool bBoostManual;    // Set true if pilot must manually control the boost speed.
-  int BoostOverride;    // The raw value read in from the config file - should be 1 or 0 - see description below.
-  bool bBoostOverride;  // Set true if pilot override of the boost regulator was fitted.
+  double StarterTorque = 0.0;// Peak Torque of the starter motor
+  double StarterRPM = 0.0;   // Peak RPM of the starter motor
+  double StarterGain = 0.0;  // control the torque of the starter motor.
+  int BoostSpeeds = 0;  // Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
+  int BoostSpeed = 0;   // The current boost-speed (zero-based).
+  bool Boosted = false;     // Set true for boosted engine.
+  int BoostManual = 0;  // The raw value read in from the config file - should be 1 or 0 - see description below.
+  bool bBoostManual = false;    // Set true if pilot must manually control the boost speed.
+  int BoostOverride = 0;    // The raw value read in from the config file - should be 1 or 0 - see description below.
+  bool bBoostOverride = false;  // Set true if pilot override of the boost regulator was fitted.
               // (Typically called 'war emergency power').
-  bool bTakeoffBoost;   // Set true if extra takeoff / emergency boost above rated boost could be attained.
+  bool bTakeoffBoost = false;   // Set true if extra takeoff / emergency boost above rated boost could be attained.
               // (Typically by extra throttle movement past a mechanical 'gate').
-  double TakeoffBoost;  // Sea-level takeoff boost in psi. (if fitted).
-  double RatedBoost[FG_MAX_BOOST_SPEEDS];   // Sea-level rated boost in psi.
-  double RatedAltitude[FG_MAX_BOOST_SPEEDS];    // Altitude at which full boost is reached (boost regulation ends)
+  double TakeoffBoost = 0.0;  // Sea-level takeoff boost in psi. (if fitted).
+  double RatedBoost[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0};   // Sea-level rated boost in psi.
+  double RatedAltitude[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0};    // Altitude at which full boost is reached (boost regulation ends)
                           // and at which power starts to fall with altitude [ft].
-  double RatedRPM[FG_MAX_BOOST_SPEEDS]; // Engine speed at which the rated power for each boost speed is delivered [rpm].
-  double RatedPower[FG_MAX_BOOST_SPEEDS];   // Power at rated throttle position at rated altitude [HP].
-  double BoostSwitchAltitude[FG_MAX_BOOST_SPEEDS - 1];  // Altitude at which switchover (currently assumed automatic)
+  double RatedRPM[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0}; // Engine speed at which the rated power for each boost speed is delivered [rpm].
+  double RatedPower[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0};   // Power at rated throttle position at rated altitude [HP].
+  double BoostSwitchAltitude[FG_MAX_BOOST_SPEEDS - 1] = {0.0, 0.0};  // Altitude at which switchover (currently assumed automatic)
                               // from one boost speed to next occurs [ft].
-  double BoostSwitchPressure[FG_MAX_BOOST_SPEEDS - 1];  // Pressure at which boost speed switchover occurs [Pa]
-  double BoostMul[FG_MAX_BOOST_SPEEDS]; // Pressure multipier of unregulated supercharger
-  double RatedMAP[FG_MAX_BOOST_SPEEDS]; // Rated manifold absolute pressure [Pa] (BCV clamp)
-  double TakeoffMAP[FG_MAX_BOOST_SPEEDS];   // Takeoff setting manifold absolute pressure [Pa] (BCV clamp)
-  double BoostSwitchHysteresis; // Pa.
-  double BoostLossFactor; // multiplier for HP consumed by the supercharger
+  double BoostSwitchPressure[FG_MAX_BOOST_SPEEDS - 1] = {0.0, 0.0};  // Pressure at which boost speed switchover occurs [Pa]
+  double BoostMul[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0}; // Pressure multiplier of unregulated supercharger
+  double RatedMAP[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0}; // Rated manifold absolute pressure [Pa] (BCV clamp)
+  double TakeoffMAP[FG_MAX_BOOST_SPEEDS] = {0.0, 0.0, 0.0};   // Takeoff setting manifold absolute pressure [Pa] (BCV clamp)
+  double BoostSwitchHysteresis = 0.0; // Pa.
+  double BoostLossFactor = 0.0; // multiplier for HP consumed by the supercharger
 
-  double minMAP;  // Pa
-  double maxMAP;  // Pa
-  double MAP;     // Pa
-  double TMAP;    // Pa - throttle manifold pressure e.g. before the supercharger boost
-  double ISFC;    // Indicated specific fuel consumption [lbs/horsepower*hour
+  double minMAP = 0.0;  // Pa
+  double maxMAP = 0.0;  // Pa
+  double MAP = 0.0;     // Pa
+  double TMAP = 0.0;    // Pa - throttle manifold pressure e.g. before the supercharger boost
+  double ISFC = 0.0;    // Indicated specific fuel consumption [lbs/horsepower*hour
 
   //
   // Inputs (in addition to those in FGEngine).
   //
-  double p_amb;              // Pascals
-  double p_ram;              // Pascals
-  double T_amb;              // degrees Kelvin
-  double RPM;                // revolutions per minute
-  double IAS;                // knots
-  double Cooling_Factor;     // normal
-  bool Magneto_Left;
-  bool Magneto_Right;
-  int Magnetos;
+  double p_amb = 0.0;              // Pascals
+  double p_ram = 0.0;              // Pascals
+  double T_amb = 0.0;              // degrees Kelvin
+  double RPM = 0.0;                // revolutions per minute
+  double IAS = 0.0;                // knots
+  double Cooling_Factor = 0.0;     // normal
+  bool Magneto_Left = false;
+  bool Magneto_Right = false;
+  int Magnetos = 0;
 
-  double Oil_Press_Relief_Valve;
-  double Oil_Press_RPM_Max;
-  double Design_Oil_Temp;         // degK
-  double Oil_Viscosity_Index;
+  double Oil_Press_Relief_Valve = 0.0;
+  double Oil_Press_RPM_Max = 0.0;
+  double Design_Oil_Temp = 0.0;         // degK
+  double Oil_Viscosity_Index = 0.0;
 
   //
   // Outputs (in addition to those in FGEngine).
   //
-  double rho_air;
-  double volumetric_efficiency;
-  double volumetric_efficiency_reduced;
+  double rho_air = 0.0;
+  double volumetric_efficiency = 0.0;
+  double volumetric_efficiency_reduced = 0.0;
   //double map_coefficient;
-  double m_dot_air;
-  double v_dot_air;
-  double equivalence_ratio;
-  double m_dot_fuel;
-  double HP;
-  double BoostLossHP;
-  double combustion_efficiency;
-  double ExhaustGasTemp_degK;
-  double EGT_degC;
-  double ManifoldPressure_inHg;
-  double CylinderHeadTemp_degK;
-  double OilPressure_psi;
-  double OilTemp_degK;
-  double MeanPistonSpeed_fps;
+  double m_dot_air = 0.0;
+  double v_dot_air = 0.0;
+  double equivalence_ratio = 0.0;
+  double m_dot_fuel = 0.0;
+  double HP = 0.0;
+  double BoostLossHP = 0.0;
+  double combustion_efficiency = 0.0;
+  double ExhaustGasTemp_degK = 0.0;
+  double EGT_degC = 0.0;
+  double ManifoldPressure_inHg = 0.0;
+  double CylinderHeadTemp_degK = 0.0;
+  double OilPressure_psi = 0.0;
+  double OilTemp_degK = 0.0;
+  double MeanPistonSpeed_fps = 0.0;
 
   void Debug(int from);
 };

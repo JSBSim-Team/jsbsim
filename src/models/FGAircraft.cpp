@@ -118,7 +118,7 @@ bool FGAircraft::Load(Element* el)
   string element_name;
   Element* element;
 
-  if (!FGModel::Load(el, true)) return false;
+  if (!FGModel::Upload(el, true)) return false;
 
   if (el->FindElement("wingarea"))
     WingArea = el->FindElementValueAsNumberConvertTo("wingarea", "FT2");

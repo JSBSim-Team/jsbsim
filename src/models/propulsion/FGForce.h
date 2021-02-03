@@ -59,6 +59,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "math/FGMatrix33.h"
+#include "models/FGMassBalance.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -305,6 +306,7 @@ public:
 
 protected:
   FGFDMExec *fdmex;
+  std::shared_ptr<FGMassBalance> MassBalance;
   FGColumnVector3 vFn;
   FGColumnVector3 vMn;
   FGColumnVector3 vOrient;

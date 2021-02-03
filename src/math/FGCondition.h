@@ -66,14 +66,14 @@ CLASS DECLARATION
 class FGCondition : public FGJSBBase
 {
 public:
-  FGCondition(Element* element, FGPropertyManager* PropertyManager);
+  FGCondition(Element* element, std::shared_ptr<FGPropertyManager> PropertyManager);
   ~FGCondition(void);
 
   bool Evaluate(void);
   void PrintCondition(std::string indent="  ");
 
 private:
-  FGCondition(const std::string& test, FGPropertyManager* PropertyManager,
+  FGCondition(const std::string& test, std::shared_ptr<FGPropertyManager> PropertyManager,
               Element* el);
 
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};

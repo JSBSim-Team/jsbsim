@@ -30,13 +30,33 @@ class TestHoldDown(JSBSimTestCase):
         fdm.load_ic(os.path.join(aircraft_path, 'J246', 'LC39'), False)
         fdm['forces/hold-down'] = 1.0
         fdm.run_ic()
-        h0 = fdm['position/h-sl-ft']
+        h0 = fdm['position/vrp-radius-ft']
         t = 0.0
 
         while t < 420.0:
             fdm.run()
             t = fdm['simulation/sim-time-sec']
-            self.assertAlmostEqual(fdm['position/h-sl-ft'], h0, delta=1E-5)
+            self.assertAlmostEqual(fdm['position/vrp-radius-ft']/h0, 1.0,
+                                   delta=1E-9)
+
+    def test_dynamic_hold_down(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_model('J246')
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
+        fdm.load_ic(os.path.join(aircraft_path, 'J246', 'LC39'), False)
+        fdm['forces/hold-down'] = 1.0
+        fdm.run_ic()
+        h0 = fdm['position/vrp-radius-ft']
+        # Start solid rocket boosters
+        fdm['fcs/throttle-cmd-norm[0]'] = 1.0
+        fdm['fcs/throttle-cmd-norm[1]'] = 1.0
+        t = 0.0
+
+        while t < 420.0:
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+            self.assertAlmostEqual(fdm['position/vrp-radius-ft']/h0, 1.0,
+                                   delta=1E-9)
 
     def test_hold_down_with_gnd_reactions(self):
         fdm = CreateFDM(self.sandbox)

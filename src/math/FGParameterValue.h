@@ -34,8 +34,11 @@
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <stdexcept>
+
 #include "math/FGRealValue.h"
 #include "math/FGPropertyValue.h"
+#include "input_output/FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   FORWARD DECLARATIONS
@@ -60,12 +63,27 @@ class FGPropertyManager;
 class FGParameterValue : public FGParameter
 {
 public:
-  FGParameterValue(const std::string& value, FGPropertyManager* pm) {
+  FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm)
+  : FGParameterValue(el->GetDataLine(), pm, el)
+  {
+    string value = el->GetDataLine();
+
+    if (el->GetNumDataLines() != 1 || value.empty()) {
+      cerr << el->ReadFrom()
+           << "The element <" << el->GetName()
+           << "> must either contain a value number or a property name."
+           << endl;
+      throw invalid_argument("Illegal argument");
+    }
+  }
+
+  FGParameterValue(const std::string& value, std::shared_ptr<FGPropertyManager> pm,
+                   Element* el) {
     if (is_number(value)) {
       param = new FGRealValue(atof(value.c_str()));
     } else {
       // "value" must be a property if execution passes to here.
-      param = new FGPropertyValue(value, pm);
+      param = new FGPropertyValue(value, pm, el);
     }
   }
 

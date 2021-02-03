@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2009 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSensor.h"
-#include "math/FGColumnVector3.h"
+#include <memory>
+
 #include "FGSensorOrientation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,15 +109,16 @@ Example:
 </accelerometer>
 @endcode
 
-The only required element in the accelerometer definition is the input element. In that
-case, no degradation would be modeled, and the output would simply be the input.
+The only required element in the accelerometer definition is the input element.
+In that case, no degradation would be modeled, and the output would simply be
+the input.
 
 For noise, if the type is PERCENT, then the value supplied is understood to be a
 percentage variance. That is, if the number given is 0.05, the variance is
-understood to be +/-0.05 percent maximum variance. So, the actual value for the accelerometer
-will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value at any time -
-even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the delta
-time.
+understood to be +/-0.05 percent maximum variance. So, the actual value for the
+accelerometer will be *anywhere* from 0.95 to 1.05 of the actual "perfect" value
+at any time - even varying all the way from 0.95 to 1.05 in adjacent frames -
+whatever the delta time.
 
 @author Jon S. Berndt
 @version $Revision: 1.9 $
@@ -133,17 +134,17 @@ public:
   FGAccelerometer(FGFCS* fcs, Element* element);
   ~FGAccelerometer();
 
-  bool Run (void);
+  bool Run (void) override;
 
 private:
-  FGPropagate* Propagate;
-  FGAccelerations* Accelerations;
-  FGMassBalance* MassBalance;
+  std::shared_ptr<FGPropagate> Propagate;
+  std::shared_ptr<FGAccelerations> Accelerations;
+  std::shared_ptr<FGMassBalance> MassBalance;
   FGColumnVector3 vLocation;
   FGColumnVector3 vRadius;
   FGColumnVector3 vAccel;
   
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 #endif

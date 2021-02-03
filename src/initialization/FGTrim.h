@@ -50,9 +50,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
 #include "FGJSBBase.h"
 #include "FGTrimAxis.h"
+#include "FGInitialCondition.h"
 
 #include <vector>
 
@@ -61,6 +61,8 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGFDMExec;
 
 typedef enum { tLongitudinal=0, tFull, tGround, tPullup,
                tCustom, tTurn, tNone } TrimMode;
@@ -122,8 +124,6 @@ CLASS DECLARATION
 
 class FGTrim : public FGJSBBase
 {
-private:
-
   std::vector<FGTrimAxis> TrimAxes;
   unsigned int Nsub;
   TrimMode mode;

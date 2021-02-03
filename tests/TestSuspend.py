@@ -21,7 +21,7 @@
 
 import pandas as pd
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil, FindDifferences
+from JSBSim_utils import JSBSimTestCase, RunTest, ExecuteUntil, FindDifferences
 
 
 class TestSuspend(JSBSimTestCase):
@@ -44,7 +44,7 @@ class TestSuspend(JSBSimTestCase):
         run_tag.attrib['end'] = '36'
         tree.write(script_name)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(script_name)
 
         fdm['simulation/integrator/rate/rotational'] = 5
@@ -77,8 +77,6 @@ class TestSuspend(JSBSimTestCase):
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
-        del fdm
-
     def testHold(self):
         fdm = self.initFDM()
         ExecuteUntil(fdm, 1.0)
@@ -98,7 +96,5 @@ class TestSuspend(JSBSimTestCase):
         diff = FindDifferences(self.ref, out, 1E-8)
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
-
-        del fdm
 
 RunTest(TestSuspend)

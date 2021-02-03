@@ -10,21 +10,21 @@
  -------           (C) 2011  Ola Røer Thorsen (ola@silentwings.no) -----------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 ------------------------------------------------------------------------------
@@ -42,13 +42,12 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cmath>
+#include <GeographicLib/Math.hpp>
+#include <GeographicLib/Geodesic.hpp>
 
 #include "FGLocation.h"
 
 namespace JSBSim {
-
-// Set up the default ground callback object.
-FGGroundCallback_ptr FGLocation::GroundCallback = NULL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -59,17 +58,12 @@ FGLocation::FGLocation(void)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,25 +73,20 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 
   double sinLat = sin(lat);
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-  mECLoc = FGColumnVector3( radius*cosLat*cosLon,
-                            radius*cosLat*sinLon,
-                            radius*sinLat );
+  mECLoc = { radius*cosLat*cosLon,
+             radius*cosLat*sinLon,
+             radius*sinLat };
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,17 +96,12 @@ FGLocation::FGLocation(const FGColumnVector3& lv)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
-  epa = 0.0;
 
   mLon = mLat = mRadius = 0.0;
   mGeodLat = GeodeticAltitude = 0.0;
 
   mTl2ec.InitMatrix();
   mTec2l.InitMatrix();
-  mTi2ec.InitMatrix();
-  mTec2i.InitMatrix();
-  mTi2l.InitMatrix();
-  mTl2i.InitMatrix();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +114,7 @@ FGLocation::FGLocation(const FGLocation& l)
   c = l.c;
   ec = l.ec;
   ec2 = l.ec2;
-  epa = l.epa;
+  mEllipseSet = l.mEllipseSet;
 
   /*ag
    * if the cache is not valid, all of the following values are unset.
@@ -146,10 +130,6 @@ FGLocation::FGLocation(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
-  mTi2ec = l.mTi2ec;
-  mTec2i = l.mTec2i;
-  mTi2l = l.mTi2l;
-  mTl2i = l.mTl2i;
 
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
@@ -157,17 +137,17 @@ FGLocation::FGLocation(const FGLocation& l)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGLocation& FGLocation::operator=(const FGLocation& l)
+FGLocation& FGLocation::operator=(const FGLocation& l)
 {
   mECLoc = l.mECLoc;
   mCacheValid = l.mCacheValid;
+  mEllipseSet = l.mEllipseSet;
 
   a = l.a;
   e2 = l.e2;
   c = l.c;
   ec = l.ec;
   ec2 = l.ec2;
-  epa = l.epa;
 
   //ag See comment in constructor above
   if (!mCacheValid) return *this;
@@ -178,10 +158,6 @@ const FGLocation& FGLocation::operator=(const FGLocation& l)
 
   mTl2ec = l.mTl2ec;
   mTec2l = l.mTec2l;
-  mTi2ec = l.mTi2ec;
-  mTec2i = l.mTec2i;
-  mTi2l = l.mTi2l;
-  mTl2i = l.mTl2i;
 
   mGeodLat = l.mGeodLat;
   GeodeticAltitude = l.GeodeticAltitude;
@@ -257,15 +233,16 @@ void FGLocation::SetPosition(double lon, double lat, double radius)
   double sinLon = sin(lon);
   double cosLon = cos(lon);
 
-  mECLoc = FGColumnVector3( radius*cosLat*cosLon,
-                            radius*cosLat*sinLon,
-                            radius*sinLat );
+  mECLoc = { radius*cosLat*cosLon,
+             radius*cosLat*sinLon,
+             radius*sinLat };
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 {
+  assert(mEllipseSet);
   mCacheValid = false;
 
   double slat = sin(lat);
@@ -282,12 +259,23 @@ void FGLocation::SetPositionGeodetic(double lon, double lat, double height)
 void FGLocation::SetEllipse(double semimajor, double semiminor)
 {
   mCacheValid = false;
+  mEllipseSet = true;
 
   a = semimajor;
   ec = semiminor/a;
   ec2 = ec * ec;
   e2 = 1.0 - ec2;
   c = a * e2;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGLocation::GetSeaLevelRadius(void) const
+{
+  assert(mEllipseSet);
+  ComputeDerived();
+  double cosLat = cos(mLat);
+  return a*ec/sqrt(1.0-e2*cosLat*cosLat);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -299,39 +287,70 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   // The distance of the location to the Z-axis, which is the axis
   // through the poles.
-  double r02 = mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY);
-  double rxy = sqrt(r02);
+  double rxy = mECLoc.Magnitude(eX, eY);
 
-  // Compute the sin/cos values of the longitude
+  // Compute the longitude and its sin/cos values.
   double sinLon, cosLon;
   if (rxy == 0.0) {
     sinLon = 0.0;
     cosLon = 1.0;
+    mLon = 0.0;
   } else {
     sinLon = mECLoc(eY)/rxy;
     cosLon = mECLoc(eX)/rxy;
+    mLon = atan2(mECLoc(eY), mECLoc(eX));
   }
 
-  // Compute the sin/cos values of the latitude
+  // Compute the geocentric & geodetic latitudes.
   double sinLat, cosLat;
   if (mRadius == 0.0)  {
+    mLat = 0.0;
     sinLat = 0.0;
     cosLat = 1.0;
-  } else {
-    sinLat = mECLoc(eZ)/mRadius;
-    cosLat = rxy/mRadius;
+    if (mEllipseSet) {
+      mGeodLat = 0.0;
+      GeodeticAltitude = -a;
+    }
   }
-
-  // Compute the longitude and latitude itself
-  if ( mECLoc( eX ) == 0.0 && mECLoc( eY ) == 0.0 )
-    mLon = 0.0;
-  else
-    mLon = atan2( mECLoc( eY ), mECLoc( eX ) );
-
-  if ( rxy == 0.0 && mECLoc( eZ ) == 0.0 )
-    mLat = 0.0;
-  else
+  else {
     mLat = atan2( mECLoc(eZ), rxy );
+
+    // Calculate the geodetic latitude based on "Transformation from Cartesian to
+    // geodetic coordinates accelerated by Halley's method", Fukushima T. (2006)
+    // Journal of Geodesy, Vol. 79, pp. 689-693
+    // Unlike I. Sofair's method which uses a closed form solution, Fukushima's
+    // method is an iterative method whose convergence is so fast that only one
+    // iteration suffices. In addition, Fukushima's method has a much better
+    // numerical stability over Sofair's method at the North and South poles and
+    // it also gives the correct result for a spherical Earth.
+    if (mEllipseSet) {
+      double s0 = fabs(mECLoc(eZ));
+      double zc = ec * s0;
+      double c0 = ec * rxy;
+      double c02 = c0 * c0;
+      double s02 = s0 * s0;
+      double a02 = c02 + s02;
+      double a0 = sqrt(a02);
+      double a03 = a02 * a0;
+      double s1 = zc*a03 + c*s02*s0;
+      double c1 = rxy*a03 - c*c02*c0;
+      double cs0c0 = c*c0*s0;
+      double b0 = 1.5*cs0c0*((rxy*s0-zc*c0)*a0-cs0c0);
+      s1 = s1*a03-b0*s0;
+      double cc = ec*(c1*a03-b0*c0);
+      mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
+      double s12 = s1 * s1;
+      double cc2 = cc * cc;
+      double norm = sqrt(s12 + cc2);
+      cosLat = cc / norm;
+      sinLat = sign(mECLoc(eZ)) * s1 / norm;
+      GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / norm;
+    }
+    else {
+      sinLat = mECLoc(eZ)/mRadius;
+      cosLat = rxy/mRadius;
+    }
+  }
 
   // Compute the transform matrices from and to the earth centered frame.
   // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
@@ -339,9 +358,9 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // orientation of the navigation (local) frame relative to the ECEF frame,
   // and a transformation from ECEF to nav (local) frame.
 
-  mTec2l = FGMatrix33( -cosLon*sinLat, -sinLon*sinLat,  cosLat,
-                           -sinLon   ,     cosLon    ,    0.0 ,
-                       -cosLon*cosLat, -sinLon*cosLat, -sinLat  );
+  mTec2l = { -cosLon*sinLat, -sinLon*sinLat,  cosLat,
+                 -sinLon   ,     cosLon    ,    0.0 ,
+             -cosLon*cosLat, -sinLon*cosLat, -sinLat  };
 
   // In Stevens and Lewis notation, this is C_e/n - the
   // orientation of the ECEF frame relative to the nav (local) frame,
@@ -349,111 +368,38 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   mTl2ec = mTec2l.Transposed();
 
-  // Calculate the inertial to ECEF and transpose matrices
-  double cos_epa = cos(epa);
-  double sin_epa = sin(epa);
-  mTi2ec = FGMatrix33( cos_epa, sin_epa, 0.0,
-                      -sin_epa, cos_epa, 0.0,
-                           0.0,      0.0, 1.0 );
-  mTec2i = mTi2ec.Transposed();
-
-  // Now calculate the local (or nav, or ned) frame to inertial transform matrix,
-  // and the inverse.
-  mTl2i = mTec2i * mTl2ec;
-  mTi2l = mTl2i.Transposed();
-
-  // Calculate the geodetic latitude based on "Transformation from Cartesian
-  // to geodetic coordinates accelerated by Halley's method", Fukushima T. (2006)
-  // Journal of Geodesy, Vol. 79, pp. 689-693
-  // Unlike I. Sofair's method which uses a closed form solution, Fukushima's
-  // method is an iterative method whose convergence is so fast that only one
-  // iteration suffices. In addition, Fukushima's method has a much better
-  // numerical stability over Sofair's method at the North and South poles and
-  // it also gives the correct result for a spherical Earth.
-
-  double s0 = fabs(mECLoc(eZ));
-  double zc = ec * s0;
-  double c0 = ec * rxy;
-  double c02 = c0 * c0;
-  double s02 = s0 * s0;
-  double a02 = c02 + s02;
-  double a0 = sqrt(a02);
-  double a03 = a02 * a0;
-  double s1 = zc*a03 + c*s02*s0;
-  double c1 = rxy*a03 - c*c02*c0;
-  double cs0c0 = c*c0*s0;
-  double b0 = 1.5*cs0c0*((rxy*s0-zc*c0)*a0-cs0c0);
-  s1 = s1*a03-b0*s0;
-  double cc = ec*(c1*a03-b0*c0);
-  mGeodLat = sign(mECLoc(eZ))*atan(s1 / cc);
-  double s12 = s1 * s1;
-  double cc2 = cc * cc;
-  GeodeticAltitude = (rxy*cc + s0*s1 - a*sqrt(ec2*s12 + cc2)) / sqrt(s12 + cc2);
-
   // Mark the cached values as valid
   mCacheValid = true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the waypoint distance calculation:
-//
-//  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
-//  c = 2∙atan2(√a, √(1−a))
-//  d = R∙c
 
 double FGLocation::GetDistanceTo(double target_longitude,
                                  double target_latitude) const
 {
-  double delta_lat_rad = target_latitude  - GetLatitude();
-  double delta_lon_rad = target_longitude - GetLongitude();
+  assert(mEllipseSet);
+  ComputeDerived();
+  GeographicLib::Geodesic geod(a, 1 - ec);
+  GeographicLib::Math::real distance;
+  geod.Inverse(mGeodLat * radtodeg, mLon * radtodeg, target_latitude * radtodeg,
+               target_longitude * radtodeg, distance);
 
-  double distance_a = pow(sin(0.5*delta_lat_rad), 2.0)
-    + (GetCosLatitude() * cos(target_latitude)
-       * (pow(sin(0.5*delta_lon_rad), 2.0)));
-
-  return 2.0 * GetRadius() * atan2(sqrt(distance_a), sqrt(1.0 - distance_a));
+  return distance;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the heading angle calculation:
-//
-//  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1)∙cos(lat2)∙cos(Δlong))
 
 double FGLocation::GetHeadingTo(double target_longitude,
                                 double target_latitude) const
 {
-  double delta_lon_rad = target_longitude - GetLongitude();
+  assert(mEllipseSet);
+  ComputeDerived();
+  GeographicLib::Geodesic geod(a, 1 - ec);
+  GeographicLib::Math::real heading, azimuth2;
+  geod.Inverse(mGeodLat * radtodeg, mLon * radtodeg, target_latitude * radtodeg,
+               target_longitude * radtodeg, heading, azimuth2);
 
-  double Y = sin(delta_lon_rad) * cos(target_latitude);
-  double X = GetCosLatitude() * sin(target_latitude)
-    - GetSinLatitude() * cos(target_latitude) * cos(delta_lon_rad);
-
-  double heading_to_waypoint_rad = atan2(Y, X);
-  if (heading_to_waypoint_rad < 0) heading_to_waypoint_rad += 2.0*M_PI;
-
-  return heading_to_waypoint_rad;
+  return heading * degtorad;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

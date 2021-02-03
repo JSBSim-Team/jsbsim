@@ -97,8 +97,6 @@ public:
       @param el pointer to the XML element representing the turbine engine
       @param engine_number engine number*/
   FGTurboProp(FGFDMExec* Executive, Element *el, int engine_number, struct Inputs& input);
-  /// Destructor
-  ~FGTurboProp();
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpTrim };
 
@@ -191,10 +189,10 @@ private:
   void bindmodel(FGPropertyManager* pm);
   void Debug(int from);
 
-  FGTable* ITT_N1;             // ITT temperature depending on throttle command
-  FGTable* EnginePowerRPM_N1;
-  FGParameter* EnginePowerVC;
-  FGTable* CombustionEfficiency_N1;
+  std::unique_ptr<FGTable> ITT_N1;             // ITT temperature depending on throttle command
+  std::unique_ptr<FGTable> EnginePowerRPM_N1;
+  std::shared_ptr<FGParameter> EnginePowerVC;
+  std::unique_ptr<FGTable> CombustionEfficiency_N1;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

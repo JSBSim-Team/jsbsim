@@ -41,6 +41,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+#include <random>
+
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
 #include "math/FGTemplateFunc.h"
@@ -67,7 +70,6 @@ class FGInertial;
 class FGInput;
 class FGPropulsion;
 class FGMassBalance;
-class FGTrim;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -84,7 +86,7 @@ CLASS DOCUMENTATION
     executive is subsequently directed to load the chosen aircraft specification
     file:
 
-    @code
+    @code{.cpp}
     fdmex = new FGFDMExec( ... );
     result = fdmex->LoadModel( ... );
     @endcode
@@ -100,7 +102,7 @@ CLASS DOCUMENTATION
     from JSBSim. The state variables are used to drive the instrument displays
     and to place the vehicle model in world space for visual rendering:
 
-    @code
+    @code{.cpp}
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->RunIC(); // loop JSBSim once w/o integrating
     copy_from_JSBsim(); // update the bus
@@ -108,7 +110,7 @@ CLASS DOCUMENTATION
 
     Once initialization is complete, cyclic execution proceeds:
 
-    @code
+    @code{.cpp}
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->Run(); // execute JSBSim
     copy_from_JSBsim(); // update the bus
@@ -123,7 +125,7 @@ CLASS DOCUMENTATION
     file can be supplied to the stub program. Scripting (see FGScript) provides
     a way to supply command inputs to the simulation:
 
-    @code
+    @code{.cpp}
     FDMExec = new JSBSim::FGFDMExec();
     FDMExec->LoadScript( ScriptName ); // the script loads the aircraft and ICs
     result = FDMExec->Run();
@@ -177,7 +179,7 @@ CLASS DECLARATION
 class FGFDMExec : public FGJSBBase
 {
   struct childData {
-    FGFDMExec* exec;
+    std::unique_ptr<FGFDMExec> exec;
     std::string info;
     FGColumnVector3 Loc;
     FGColumnVector3 Orient;
@@ -196,16 +198,12 @@ class FGFDMExec : public FGJSBBase
     void AssignState(FGPropagate* source_prop) {
       exec->GetPropagate()->SetVState(source_prop->GetVState());
     }
-
-    ~childData(void) {
-      delete exec;
-    }
   };
 
 public:
 
   /// Default constructor
-  FGFDMExec(FGPropertyManager* root = 0, unsigned int* fdmctr = 0);
+  FGFDMExec(FGPropertyManager* root = nullptr, std::shared_ptr<unsigned int> fdmctr = nullptr);
 
   /// Default destructor
   ~FGFDMExec();
@@ -248,15 +246,6 @@ public:
       each scheduled model without integrating i.e. dt=0.
       @return true if successful */
   bool RunIC(void);
-
-  /** Sets the ground callback pointer. For optimal memory management, a shared
-      pointer is used internally that maintains a reference counter. The calling
-      application must therefore use FGGroundCallback_ptr 'smart pointers' to
-      manage their copy of the ground callback.
-      @param gc A pointer to a ground callback object
-      @see FGGroundCallback
-   */
-  void SetGroundCallback(FGGroundCallback* gc) { FGLocation::SetGroundCallback(gc); }
 
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft/ directory. For instance:
@@ -330,49 +319,43 @@ public:
   /// @name Top-level executive State and Model retrieval mechanism
   ///@{
   /// Returns the FGAtmosphere pointer.
-  FGAtmosphere* GetAtmosphere(void)    {return (FGAtmosphere*)Models[eAtmosphere];}
+  std::shared_ptr<FGAtmosphere>        GetAtmosphere(void) const;
   /// Returns the FGAccelerations pointer.
-  FGAccelerations* GetAccelerations(void)    {return (FGAccelerations*)Models[eAccelerations];}
+  std::shared_ptr<FGAccelerations>     GetAccelerations(void) const;
   /// Returns the FGWinds pointer.
-  FGWinds* GetWinds(void)    {return (FGWinds*)Models[eWinds];}
+  std::shared_ptr<FGWinds>             GetWinds(void) const;
   /// Returns the FGFCS pointer.
-  FGFCS* GetFCS(void)                  {return (FGFCS*)Models[eSystems];}
+  std::shared_ptr<FGFCS>               GetFCS(void) const;
   /// Returns the FGPropulsion pointer.
-  FGPropulsion* GetPropulsion(void)    {return (FGPropulsion*)Models[ePropulsion];}
+  std::shared_ptr<FGPropulsion>        GetPropulsion(void) const;
   /// Returns the FGAircraft pointer.
-  FGMassBalance* GetMassBalance(void)  {return (FGMassBalance*)Models[eMassBalance];}
+  std::shared_ptr<FGMassBalance>       GetMassBalance(void) const;
   /// Returns the FGAerodynamics pointer
-  FGAerodynamics* GetAerodynamics(void){return (FGAerodynamics*)Models[eAerodynamics];}
+  std::shared_ptr<FGAerodynamics>      GetAerodynamics(void) const;
   /// Returns the FGInertial pointer.
-  FGInertial* GetInertial(void)        {return (FGInertial*)Models[eInertial];}
+  std::shared_ptr<FGInertial>          GetInertial(void) const;
   /// Returns the FGGroundReactions pointer.
-  FGGroundReactions* GetGroundReactions(void) {return (FGGroundReactions*)Models[eGroundReactions];}
+  std::shared_ptr<FGGroundReactions>   GetGroundReactions(void) const;
   /// Returns the FGExternalReactions pointer.
-  FGExternalReactions* GetExternalReactions(void) {return (FGExternalReactions*)Models[eExternalReactions];}
+  std::shared_ptr<FGExternalReactions> GetExternalReactions(void) const;
   /// Returns the FGBuoyantForces pointer.
-  FGBuoyantForces* GetBuoyantForces(void) {return (FGBuoyantForces*)Models[eBuoyantForces];}
+  std::shared_ptr<FGBuoyantForces>     GetBuoyantForces(void) const;
   /// Returns the FGAircraft pointer.
-  FGAircraft* GetAircraft(void)        {return (FGAircraft*)Models[eAircraft];}
+  std::shared_ptr<FGAircraft>          GetAircraft(void) const;
   /// Returns the FGPropagate pointer.
-  FGPropagate* GetPropagate(void)      {return (FGPropagate*)Models[ePropagate];}
+  std::shared_ptr<FGPropagate>         GetPropagate(void) const;
   /// Returns the FGAuxiliary pointer.
-  FGAuxiliary* GetAuxiliary(void)      {return (FGAuxiliary*)Models[eAuxiliary];}
+  std::shared_ptr<FGAuxiliary>         GetAuxiliary(void) const;
   /// Returns the FGInput pointer.
-  FGInput* GetInput(void)              {return (FGInput*)Models[eInput];}
+  std::shared_ptr<FGInput>             GetInput(void) const;
   /// Returns the FGOutput pointer.
-  FGOutput* GetOutput(void)            {return (FGOutput*)Models[eOutput];}
-  /** Get a pointer to the ground callback currently used. It is recommanded
-      to store the returned pointer in a 'smart pointer' FGGroundCallback_ptr.
-      @return A pointer to the current ground callback object.
-      @see FGGroundCallback
-   */
-  FGGroundCallback* GetGroundCallback(void) {return FGLocation::GetGroundCallback();}
+  std::shared_ptr<FGOutput>            GetOutput(void) const;
   /// Retrieves the script object
-  FGScript* GetScript(void) {return Script;}
+  std::shared_ptr<FGScript>            GetScript(void) const {return Script;}
   /// Returns a pointer to the FGInitialCondition object
-  FGInitialCondition* GetIC(void)      {return IC;}
+  std::shared_ptr<FGInitialCondition>  GetIC(void) const {return IC;}
   /// Returns a pointer to the FGTrim object
-  FGTrim* GetTrim(void);
+  std::shared_ptr<FGTrim>              GetTrim(void);
   ///@}
 
   /// Retrieves the engine path.
@@ -387,27 +370,26 @@ public:
   /** Retrieves the value of a property.
       @param property the name of the property
       @result the value of the specified property */
-  inline double GetPropertyValue(const std::string& property)
+  double GetPropertyValue(const std::string& property)
   { return instance->GetNode()->GetDouble(property); }
 
   /** Sets a property value.
       @param property the property to be set
       @param value the value to set the property to */
-  inline void SetPropertyValue(const std::string& property, double value) {
-    instance->GetNode()->SetDouble(property, value);
-  }
+  void SetPropertyValue(const std::string& property, double value)
+  { instance->GetNode()->SetDouble(property, value); }
 
   /// Returns the model name.
   const std::string& GetModelName(void) const { return modelName; }
 
   /// Returns a pointer to the property manager object.
-  FGPropertyManager* GetPropertyManager(void);
+  std::shared_ptr<FGPropertyManager> GetPropertyManager(void) const { return instance; }
   /// Returns a vector of strings representing the names of all loaded models (future)
   std::vector <std::string> EnumerateFDMs(void);
   /// Gets the number of child FDMs.
-  int GetFDMCount(void) const {return (int)ChildFDMList.size();}
+  size_t GetFDMCount(void) const {return ChildFDMList.size();}
   /// Gets a particular child FDM.
-  childData* GetChildFDM(int i) const {return ChildFDMList[i];}
+  auto GetChildFDM(int i) const {return ChildFDMList[i];}
   /// Marks this instance of the Exec object as a "child" object.
   void SetChild(bool ch) {IsChild = ch;}
 
@@ -515,7 +497,7 @@ public:
   void SetTrimMode(int mode){ ta_mode = mode; }
   int GetTrimMode(void) const { return ta_mode; }
 
-  std::string GetPropulsionTankReport();
+  std::string GetPropulsionTankReport() const;
 
   /// Returns the cumulative simulation time in seconds.
   double GetSimTime(void) const { return sim_time; }
@@ -536,17 +518,14 @@ public:
   /** Sets the current sim time.
       @param cur_time the current time
       @return the current simulation time.      */
-  double Setsim_time(double cur_time) {
-    sim_time = cur_time;
-    GetGroundCallback()->SetTime(sim_time);
-    return sim_time;
-  }
+  double Setsim_time(double cur_time);
 
   /** Sets the integration time step for the simulation executive.
       @param delta_t the time step in seconds.     */
   void Setdt(double delta_t) { dT = delta_t; }
 
-  /** Sets the root directory where JSBSim starts looking for its system directories.
+  /** Sets the root directory where JSBSim starts looking for its system
+      directories.
       @param rootDir the string containing the root directory. */
   void SetRootDir(const SGPath& rootDir) {RootDir = rootDir;}
 
@@ -557,14 +536,7 @@ public:
   /** Increments the simulation time if not in Holding mode. The Frame counter
       is also incremented.
       @return the new simulation time.     */
-  double IncrTime(void) {
-    if (!holding && !IntegrationSuspended()) {
-      sim_time += dT;
-      GetGroundCallback()->SetTime(sim_time);
-      Frame++;
-    }
-    return sim_time;
-  }
+  double IncrTime(void);
 
   /** Retrieves the current frame count. */
   unsigned int GetFrame(void) const {return Frame;}
@@ -574,7 +546,7 @@ public:
 
   /** Initializes the simulation with initial conditions
       @param FGIC The initial conditions that will be passed to the simulation. */
-  void Initialize(FGInitialCondition *FGIC);
+  void Initialize(const FGInitialCondition* FGIC);
 
   /** Sets the property forces/hold-down. This allows to do hard 'hold-down'
       such as for rockets on a launch pad with engines ignited.
@@ -587,16 +559,17 @@ public:
   */
   bool GetHoldDown(void) const {return HoldDown;}
 
-  FGTemplateFunc* GetTemplateFunc(const std::string& name) {
+  FGTemplateFunc_ptr GetTemplateFunc(const std::string& name) {
     return TemplateFunctions.count(name) ? TemplateFunctions[name] : nullptr;
   }
 
   void AddTemplateFunc(const std::string& name, Element* el) {
-    TemplateFunctions[name] = new FGTemplateFunc(this, el);
+    TemplateFunctions[name] = std::make_shared<FGTemplateFunc>(this, el);
   }
 
+  auto GetRandomEngine(void) const { return RandomEngine; }
+
 private:
-  int Error;
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
@@ -607,7 +580,6 @@ private:
   bool holding;
   bool IncrementThenHolding;
   int TimeStepsUntilHold;
-  int RandomSeed;
   bool Constructing;
   bool modelLoaded;
   bool IsChild;
@@ -621,6 +593,7 @@ private:
   SGPath RootDir;
 
   // Standard Model pointers - shortcuts for internal executive use only.
+  // DO NOT TRY TO DELETE THEM !!!
   FGPropagate* Propagate;
   FGInertial* Inertial;
   FGAtmosphere* Atmosphere;
@@ -636,29 +609,32 @@ private:
   FGAircraft* Aircraft;
   FGAccelerations* Accelerations;
   FGOutput* Output;
+  FGInput* Input;
 
   bool trim_status;
   int ta_mode;
   unsigned int ResetMode;
   int trim_completed;
 
-  FGScript*           Script;
-  FGInitialCondition* IC;
-  FGTrim*             Trim;
+  std::shared_ptr<FGInitialCondition> IC;
+  std::shared_ptr<FGScript>           Script;
+  std::shared_ptr<FGTrim>             Trim;
 
-  FGPropertyManager* Root;
-  bool StandAlone;
-  FGPropertyManager* instance;
+  FGPropertyNode_ptr Root;
+  std::shared_ptr<FGPropertyManager> instance;
 
   bool HoldDown;
 
+  int RandomSeed;
+  std::shared_ptr<std::default_random_engine> RandomEngine;
+
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
   // has the ID 0
-  unsigned int*      FDMctr;
+  std::shared_ptr<unsigned int> FDMctr;
 
   std::vector <std::string> PropertyCatalog;
-  std::vector <childData*> ChildFDMList;
-  std::vector <FGModel*> Models;
+  std::vector <std::shared_ptr<childData>> ChildFDMList;
+  std::vector <std::shared_ptr<FGModel>> Models;
   std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
 
   bool ReadFileHeader(Element*);
@@ -671,6 +647,7 @@ private:
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);
+  void InitializeModels(void);
   int GetDisperse(void) const {return disperse;}
   SGPath GetFullPath(const SGPath& name) {
     if (name.isRelative())

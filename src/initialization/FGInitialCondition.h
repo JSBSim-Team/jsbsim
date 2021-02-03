@@ -4,24 +4,24 @@
  Author:       Tony Peden
  Date started: 7/1/99
 
- ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
+ --------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) ---------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
  HISTORY
 --------------------------------------------------------------------------------
@@ -30,11 +30,11 @@
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 
-The purpose of this class is to take a set of initial conditions and provide
-a kinematically consistent set of body axis velocity components, euler
-angles, and altitude.  This class does not attempt to trim the model i.e.
-the sim will most likely start in a very dynamic state (unless, of course,
-you have chosen your IC's wisely) even after setting it up with this class.
+The purpose of this class is to take a set of initial conditions and provide a
+kinematically consistent set of body axis velocity components, euler angles, and
+altitude. This class does not attempt to trim the model i.e. the sim will most
+likely start in a very dynamic state (unless, of course, you have chosen your
+IC's wisely) even after setting it up with this class.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -46,6 +46,8 @@ SENTRY
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <memory>
 
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
@@ -74,11 +76,11 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Initializes the simulation run.
-    Takes a set of initial conditions (IC) and provide a kinematically consistent set
-    of body axis velocity components, euler angles, and altitude.  This class
-    does not attempt to trim the model i.e. the sim will most likely start in a
-    very dynamic state (unless, of course, you have chosen your IC's wisely, or
-    started on the ground) even after setting it up with this class.
+    Takes a set of initial conditions (IC) and provide a kinematically
+    consistent set of body axis velocity components, euler angles, and altitude.
+    This class does not attempt to trim the model i.e. the sim will most likely
+    start in a very dynamic state (unless, of course, you have chosen your IC's
+    wisely, or started on the ground) even after setting it up with this class.
 
    <h3>Usage Notes</h3>
 
@@ -225,7 +227,7 @@ class FGInitialCondition : public FGJSBBase
 {
 public:
   /// Constructor
-  FGInitialCondition(FGFDMExec *fdmex);
+  explicit FGInitialCondition(FGFDMExec *fdmex);
   /// Destructor
   ~FGInitialCondition();
 
@@ -292,10 +294,6 @@ public:
   /** Sets the initial Altitude above ground level.
       @param agl Altitude above ground level in feet */
   void SetAltitudeAGLFtIC(double agl);
-
-  /** Sets the initial sea level radius from planet center
-      @param sl_rad sea level radius in feet */
-  void SetSeaLevelRadiusFtIC(double slr);
 
   /** Sets the initial terrain elevation.
       @param elev Initial terrain elevation in feet */
@@ -381,7 +379,7 @@ public:
 
   /** Gets the initial altitude above sea level.
       @return Initial altitude in feet. */
-  double GetAltitudeASLFtIC(void) const { return position.GetAltitudeASL(); }
+  double GetAltitudeASLFtIC(void) const;
 
   /** Gets the initial altitude above ground level.
       @return Initial altitude AGL in feet */
@@ -390,6 +388,10 @@ public:
   /** Gets the initial terrain elevation.
       @return Initial terrain elevation in feet */
   double GetTerrainElevationFtIC(void) const;
+
+  /** Gets the initial Earth position angle.
+      @return Initial Earth position angle in radians. */
+  double GetEarthPositionAngleIC(void) const { return epa; }
 
   /** Sets the initial ground speed.
       @param vg Initial ground speed in feet/second */
@@ -694,8 +696,8 @@ private:
   double targetNlfIC;
 
   FGMatrix33 Tw2b, Tb2w;
-  double  alpha, beta;
-  double a, e2;
+  double alpha, beta;
+  double epa;
 
   speedset lastSpeedSet;
   altitudeset lastAltitudeSet;
@@ -704,8 +706,8 @@ private:
   int trimRequested;
 
   FGFDMExec *fdmex;
-  FGAtmosphere* Atmosphere;
-  FGAircraft* Aircraft;
+  std::shared_ptr<FGAtmosphere> Atmosphere;
+  std::shared_ptr<FGAircraft> Aircraft;
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);

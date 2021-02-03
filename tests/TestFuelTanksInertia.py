@@ -24,8 +24,7 @@
 
 import os
 import xml.etree.ElementTree as et
-from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest,
-                          CopyAircraftDef)
+from JSBSim_utils import JSBSimTestCase, ExecuteUntil, RunTest, CopyAircraftDef
 
 
 class TestFuelTanksInertia(JSBSimTestCase):
@@ -41,7 +40,7 @@ class TestFuelTanksInertia(JSBSimTestCase):
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_path)
         fdm.run_ic()
@@ -91,7 +90,7 @@ class TestFuelTanksInertia(JSBSimTestCase):
 
     def test_fuel_tanks_content(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(script_path)
         fdm.run_ic()
 
@@ -144,7 +143,7 @@ class TestFuelTanksInertia(JSBSimTestCase):
         if 'unit' in bore_diameter_tag.attrib and bore_diameter_tag.attrib['unit'] == 'IN':
             bore_radius /= 12.0
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_path)
         fdm.run_ic()
@@ -157,13 +156,11 @@ class TestFuelTanksInertia(JSBSimTestCase):
         ixx = 0.5 * mass * (radius * radius + bore_radius*bore_radius)
         self.assertAlmostEqual(fdm[tank_name+'local-ixx-slug_ft2'], ixx)
 
-        del fdm
-
         tank.find('contents').text = '0.0'
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(script_path)
         fdm.run_ic()

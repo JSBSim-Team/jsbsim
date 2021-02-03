@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2013 Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGWaypoint.h"
 #include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
 #include "math/FGLocation.h"
+#include "models/FGFCS.h"
+#include "models/FGInertial.h"
+#include "initialization/FGInitialCondition.h"
 
 using namespace std;
 
@@ -52,7 +54,8 @@ CLASS IMPLEMENTATION
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element)
 {
   if      (Type == "WAYPOINT_HEADING")  WaypointType = eHeading;
   else if (Type == "WAYPOINT_DISTANCE") WaypointType = eDistance;
@@ -61,9 +64,13 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   target_longitude_unit = 1.0;
   source_latitude_unit = 1.0;
   source_longitude_unit = 1.0;
+  source = fcs->GetExec()->GetIC()->GetPosition();
+
+  auto PropertyManager = fcs->GetPropertyManager();
 
   if (element->FindElement("target_latitude") ) {
-    target_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_latitude"));
+    target_latitude = std::make_unique<FGPropertyValue>(element->FindElementValue("target_latitude"),
+                                                        PropertyManager, element);
     if (element->FindElement("target_latitude")->HasAttribute("unit")) {
       if (element->FindElement("target_latitude")->GetAttributeValue("unit") == "DEG") {
         target_latitude_unit = 0.017453293;
@@ -77,7 +84,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("target_longitude") ) {
-    target_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("target_longitude"));
+    target_longitude = std::make_unique<FGPropertyValue>(element->FindElementValue("target_longitude"),
+                                                         PropertyManager, element);
     if (element->FindElement("target_longitude")->HasAttribute("unit")) {
       if (element->FindElement("target_longitude")->GetAttributeValue("unit") == "DEG") {
         target_longitude_unit = 0.017453293;
@@ -91,7 +99,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("source_latitude") ) {
-    source_latitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_latitude"));
+    source_latitude = std::make_unique<FGPropertyValue>(element->FindElementValue("source_latitude"),
+                                                        PropertyManager, element);
     if (element->FindElement("source_latitude")->HasAttribute("unit")) {
       if (element->FindElement("source_latitude")->GetAttributeValue("unit") == "DEG") {
         source_latitude_unit = 0.017453293;
@@ -105,7 +114,8 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   }
 
   if (element->FindElement("source_longitude") ) {
-    source_longitude = PropertyManager->CreatePropertyObject<double>(element->FindElementValue("source_longitude"));
+    source_longitude = std::make_unique<FGPropertyValue>(element->FindElementValue("source_longitude"),
+                                                         PropertyManager, element);
     if (element->FindElement("source_longitude")->HasAttribute("unit")) {
       if (element->FindElement("source_longitude")->GetAttributeValue("unit") == "DEG") {
         source_longitude_unit = 0.017453293;
@@ -116,14 +126,6 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
          << "Source longitude is required for waypoint component: " << Name
          << endl;
     throw("Malformed waypoint definition");
-  }
-
-  if (element->FindElement("radius"))
-    radius = element->FindElementValueAsNumberConvertTo("radius", "FT");
-  else {
-    FGLocation source(source_longitude * source_latitude_unit,
-                      source_latitude * source_longitude_unit, 1.0);
-    radius = source.GetSeaLevelRadius(); // Radius of Earth in feet.
   }
 
   unit = element->GetAttributeValue("unit");
@@ -155,7 +157,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
     }
   }
 
-  FGFCSComponent::bind();
+  bind(element, PropertyManager.get());
   Debug(0);
 }
 
@@ -170,10 +172,11 @@ FGWaypoint::~FGWaypoint()
 
 bool FGWaypoint::Run(void )
 {
-  double target_latitude_rad = target_latitude * target_latitude_unit;
-  double target_longitude_rad = target_longitude * target_longitude_unit;
-  FGLocation source(source_longitude * source_latitude_unit,
-                    source_latitude * source_longitude_unit, radius);
+  double source_latitude_rad = source_latitude->GetValue() * source_latitude_unit;
+  double source_longitude_rad = source_longitude->GetValue() * source_longitude_unit;
+  double target_latitude_rad = target_latitude->GetValue() * target_latitude_unit;
+  double target_longitude_rad = target_longitude->GetValue() * target_longitude_unit;
+  source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (WaypointType == eHeading) {     // Calculate Heading
     double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude_rad,
@@ -191,7 +194,7 @@ bool FGWaypoint::Run(void )
   }
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

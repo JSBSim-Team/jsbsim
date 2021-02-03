@@ -220,5 +220,20 @@
         </rotation_wf_to_bf>
       </function>
     </fcs_function>
+    <fcs_function name="test/random">
+      <function>
+        <random/>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/random2">
+      <function>
+        <random/>
+      </function>
+    </fcs_function>
+    <fcs_function name="test/urandom">
+      <function>
+        <urandom/>
+      </function>
+    </fcs_function>
   </channel>
 </system>

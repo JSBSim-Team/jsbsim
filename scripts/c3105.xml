@@ -75,11 +75,9 @@
       <description>
         Put some data out before we hit the ground
       </description>
-      <condition>
-        <and>
-          simulation/sim-time-sec  ge  100
-          position/h-agl-ft le 50 
-        </and>
+      <condition logic="AND">
+        simulation/sim-time-sec  ge  100
+        position/h-agl-ft le 50
       </condition>
       <set name="simulation/notify-trigger" value="1"/>
       <notify/>
@@ -89,11 +87,9 @@
       <description>
         We hit the ground
       </description>
-      <condition>
-        <and>
-          simulation/sim-time-sec  ge  100
-          position/h-agl-ft le 10 
-        </and>
+      <condition logic="AND">
+        simulation/sim-time-sec  ge  100
+        position/h-agl-ft le 10
       </condition>
       <set name="simulation/terminate" value="1"/>
       <notify/>

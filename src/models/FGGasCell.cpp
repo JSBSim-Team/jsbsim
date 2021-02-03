@@ -64,11 +64,8 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
-
-  gasCellJ = FGMatrix33();
-  gasCellM = FGColumnVector3();
 
   Buoyancy = MaxVolume = MaxOverpressure = Temperature = Pressure =
     Contents = Volume = dVolumeIdeal = 0.0;
@@ -276,7 +273,7 @@ void FGGasCell::Calculate(double dt)
 
   //-- Gas temperature --
 
-  if (HeatTransferCoeff.size() > 0) {
+  if (!HeatTransferCoeff.empty()) {
     // The model is based on the ideal gas law.
     // However, it does look a bit fishy. Please verify.
     //   dT/dt = dU / (Cv n R)
@@ -361,13 +358,13 @@ void FGGasCell::Calculate(double dt)
   // Note: This is gross buoyancy. The weight of the gas itself and
   // any ballonets is not deducted here as the effects of the gas mass
   // is handled by FGMassBalance.
-  vFn.InitMatrix(0.0, 0.0, - Buoyancy);
+  vFn = {0.0, 0.0, - Buoyancy};
 
   // Compute the inertia of the gas cell.
   // Consider the gas cell as a shape of uniform density.
   // FIXME: If the cell isn't ellipsoid or cylindrical the inertia will
   //        be wrong.
-  gasCellJ = FGMatrix33();
+  gasCellJ.InitMatrix();
   const double mass = Contents * M_gas();
   double Ixx, Iyy, Izz;
   if ((Xradius != 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
@@ -504,10 +501,8 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
-
-  ballonetJ = FGMatrix33();
 
   MaxVolume = MaxOverpressure = Temperature = Pressure =
     Contents = Volume = dVolumeIdeal = dU = 0.0;
@@ -743,7 +738,7 @@ void FGBallonet::Calculate(double dt)
   // Consider the ballonet as a shape of uniform density.
   // FIXME: If the ballonet isn't ellipsoid or cylindrical the inertia will
   //        be wrong.
-  ballonetJ = FGMatrix33();
+  ballonetJ.InitMatrix();
   const double mass = Contents * M_air;
   double Ixx, Iyy, Izz;
   if ((Xradius != 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&

@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -40,8 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-#include "math/FGColumnVector3.h"
-#include "math/FGMatrix33.h"
 #include "math/FGLocation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,21 +101,22 @@ class FGAuxiliary : public FGModel {
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGAuxiliary(FGFDMExec* Executive);
+  explicit FGAuxiliary(FGFDMExec* Executive);
 
   /// Destructor
   ~FGAuxiliary();
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Runs the Auxiliary routines; called by the Executive
-      Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
-                     advancing time. Some models may ignore this flag, such as the Input
-                     model, which may need to be active to listen on a socket for the
-                     "Resume" command to be given.
-      @return false if no error */
-  bool Run(bool Holding);
+      Can pass in a value indicating if the executive is directing the
+      simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time. Some models may ignore this flag, such
+                     as the Input model, which may need to be active to listen
+                     on a socket for the "Resume" command to be given.  @return
+                     false if no error */
+  bool Run(bool Holding) override;
 
 // GET functions
 
@@ -146,7 +145,8 @@ public:
     @code
     tat = in.Temperature*(1 + 0.2*Mach*Mach)
     @endcode
-    (where "in.Temperature" is standard temperature calculated by the atmosphere model) */
+    (where "in.Temperature" is standard temperature calculated by the atmosphere
+    model) */
 
   double GetTotalTemperature(void) const { return tat; }
   double GetTAT_C(void) const { return tatc; }
@@ -166,7 +166,6 @@ public:
   const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;     }
   const FGLocation&      GetLocationVRP(void) const { return vLocationVRP; }
 
-  double GethVRP(void) const { return vLocationVRP.GetAltitudeASL(); }
   double GetAeroUVW (int idx) const { return vAeroUVW(idx); }
   double Getalpha   (void) const { return alpha;      }
   double Getbeta    (void) const { return beta;       }
@@ -188,19 +187,20 @@ public:
   /** Calculates and returns the wind-to-body axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTw2b(void) { return mTw2b; }
+  const FGMatrix33& GetTw2b(void) const { return mTw2b; }
 
   /** Calculates and returns the body-to-wind axis transformation matrix.
       @return a reference to the wind-to-body transformation matrix.
       */
-  const FGMatrix33& GetTb2w(void) { return mTb2w; }
+  const FGMatrix33& GetTb2w(void) const { return mTb2w; }
 
   double Getqbar          (void) const { return qbar;       }
   double GetqbarUW        (void) const { return qbarUW;     }
   double GetqbarUV        (void) const { return qbarUV;     }
   double GetReynoldsNumber(void) const { return Re;         }
 
-  /** Gets the magnitude of total vehicle velocity including wind effects in feet per second. */
+  /** Gets the magnitude of total vehicle velocity including wind effects in
+      feet per second. */
   double GetVt            (void) const { return Vt;         }
 
   /** Gets the ground speed in feet per second.
@@ -215,11 +215,14 @@ public:
   /** The mach number calculated using the vehicle X axis velocity. */
   double GetMachU         (void) const { return MachU;      }
 
-  /** The vertical acceleration in g's of the aircraft center of gravity. */
-  double GetNz            (void) const { return Nz;         }
+  /** The longitudinal acceleration in g's of the aircraft center of gravity. */
+  double GetNx            (void) const { return Nx;         }
 
   /** The lateral acceleration in g's of the aircraft center of gravity. */
   double GetNy            (void) const { return Ny;         }
+
+  /** The vertical acceleration in g's of the aircraft center of gravity. */
+  double GetNz            (void) const { return Nz;         }
 
   const FGColumnVector3& GetNwcg(void) const { return vNwcg; }
 
@@ -259,7 +262,7 @@ public:
     double DistanceAGL;
     double Wingspan;
     double Wingchord;
-    double SLGravity;
+    double StandardGravity;
     double Mass;
     FGMatrix33 Tl2b;
     FGMatrix33 Tb2l;
@@ -307,7 +310,7 @@ private:
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;
-  double Nz, Ny;
+  double Nx, Ny, Nz;
   double seconds_in_day;  // seconds since current GMT day began
   int    day_of_year;     // GMT day, 1 .. 366
 
@@ -319,7 +322,7 @@ private:
 
   void bind(void);
   double BadUnits(void) const;
-  void Debug(int from);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

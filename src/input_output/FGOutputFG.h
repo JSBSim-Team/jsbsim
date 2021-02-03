@@ -66,14 +66,29 @@ public:
   /// Constructor
   FGOutputFG(FGFDMExec* fdmex);
 
-  virtual void Print(void);
+  void Print(void) override;
+
+  /** Evaluate the output directives from an XML file.
+      @param element XML Element that is pointing to the output directives
+  */
+  bool Load(Element*) override;
 
 protected:
-  virtual void PrintHeaders(void) {};
+  void PrintHeaders(void) override {};
 
 private:
-  FGNetFDM fgSockBuf;
-  void SocketDataFill(FGNetFDM* net);
+
+  struct {
+    bool useSimTime;
+    double timeFactor;
+  } outputOptions;
+
+  static constexpr size_t s = sizeof(FGNetFDM1) + sizeof(FGNetFDM2) + sizeof(FGNetFDM3);
+  char data[s];
+  FGNetFDM1 * const net1 = (FGNetFDM1*)data;
+  FGNetFDM3 *net3;
+  size_t dataLength;
+  void SocketDataFill(void);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -49,6 +49,7 @@ public:
 
     virtual std::string system();
     virtual std::string engine() { return ""; }
+    virtual std::string json() { return _thruster ? _thruster->json() : ""; }
 
     virtual std::string get_thruster() {
         return _thruster->get_name();
@@ -129,6 +130,7 @@ public:
     ~TurbineEngine() {}
 
     std::string engine();
+    std::string json();
 
 private:
     float _oapr;
@@ -146,6 +148,7 @@ public:
     ~RocketEngine() {}
 
     std::string engine();
+    std::string json();
 };
 
 class ElectricEngine : public Engine
@@ -167,9 +170,10 @@ public:
     Propulsion(Aeromatic *p);
     ~Propulsion();
 
-    void set(const float* cg_loc);
+    void set(const float cg_loc[3]);
     std::string comment();
     std::string fdm();
+    std::string json(const float cg_loc[3]);
     std::string mass_balance();
     std::string system();
 

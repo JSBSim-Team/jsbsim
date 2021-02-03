@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2009 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,14 +37,10 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <ctime>
-#include <cstdlib>
-#include <iostream>
-
 #include "FGMagnetometer.h"
 #include "simgear/magvar/coremag.hxx"
-#include "input_output/FGXMLElement.h"
 #include "models/FGFCS.h"
+#include "models/FGMassBalance.h"
 
 using namespace std;
 
@@ -55,18 +51,22 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
-                                                               FGSensorOrientation(element),
-                                                               counter(0),
-                                                               INERTIAL_UPDATE_RATE(1000)
+FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
+  : FGSensor(fcs, element), FGSensorOrientation(element), counter(0),
+    INERTIAL_UPDATE_RATE(1000)
 {
   Propagate = fcs->GetExec()->GetPropagate();
   MassBalance = fcs->GetExec()->GetMassBalance();
   Inertial = fcs->GetExec()->GetInertial();
   
   Element* location_element = element->FindElement("location");
-  if (location_element) vLocation = location_element->FindElementTripletConvertTo("IN");
-  else {cerr << "No location given for magnetometer. " << endl; exit(-1);}
+  if (location_element)
+    vLocation = location_element->FindElementTripletConvertTo("IN");
+  else {
+    cerr << element->ReadFrom()
+         << "No location given for magnetometer. " << endl;
+    throw("Malformed magnetometer specification.");
+  }
 
   vRadius = MassBalance->StructuralToBody(vLocation);
 
@@ -74,15 +74,20 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element) : FGSensor(fcs, ele
   //would be better to get the date from the sim if its simulated...
   time_t rawtime;
   time( &rawtime );
-  tm * ptm = gmtime ( &rawtime );
+  struct tm ptm;
+  #ifdef _MSC_VER
+  gmtime_s(&ptm, &rawtime);
+  #else
+  gmtime_r(&rawtime, &ptm);
+  #endif
 
-  int year = ptm->tm_year;
+  int year = ptm.tm_year;
   if(year>100)
   {
     year-= 100;
   }
   //the months here are zero based TODO find out if the function expects 1s based
-  date = (yymmdd_to_julian_days(ptm->tm_year,ptm->tm_mon,ptm->tm_mday));//Julian 1950-2049 yy,mm,dd
+  date = (yymmdd_to_julian_days(ptm.tm_year, ptm.tm_mon, ptm.tm_mday)); //Julian 1950-2049 yy,mm,dd
   updateInertialMag();
 
   Debug(0);
@@ -95,23 +100,25 @@ FGMagnetometer::~FGMagnetometer()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGMagnetometer::ResetPastStates(void)
+{
+  FGSensor::ResetPastStates();
+  counter = 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGMagnetometer::updateInertialMag(void)
 {
-  counter++;
-  if (counter > INERTIAL_UPDATE_RATE)//dont need to update every iteration
+  if (counter++ % INERTIAL_UPDATE_RATE == 0)//dont need to update every iteration
   {
-      counter = 0;
+    usedLat = (Propagate->GetGeodLatitudeRad());//radians, N and E lat and long are positive, S and W negative
+    usedLon = (Propagate->GetLongitude());//radians
+    usedAlt = (Propagate->GetGeodeticAltitude()*fttom*0.001);//km
 
-      usedLat = (Propagate->GetGeodLatitudeRad());//radians, N and E lat and long are positive, S and W negative
-      usedLon = (Propagate->GetLongitude());//radians
-      usedAlt = (Propagate->GetGeodeticAltitude()*fttom*0.001);//km
-
-      //this should be done whenever the position changes significantly (in nTesla)
-      calc_magvar( usedLat,
-                   usedLon,
-                   usedAlt,
-                   date,
-                   field );
+    //this should be done whenever the position changes significantly (in nTesla)
+    calc_magvar( usedLat, usedLon, usedAlt, date, field );
   }
 }
 
@@ -135,7 +142,7 @@ bool FGMagnetometer::Run(void )
 
   ProcessSensorSignal();
 
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

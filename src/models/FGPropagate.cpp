@@ -9,21 +9,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -63,17 +63,13 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
 #include <iomanip>
 
-#include "initialization/FGInitialCondition.h"
 #include "FGPropagate.h"
-#include "FGGroundReactions.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
-#include "input_output/FGPropertyManager.h"
 #include "simgear/io/iostreams/sgstream.hxx"
+#include "FGInertial.h"
 
 using namespace std;
 
@@ -89,6 +85,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   Debug(0);
   Name = "FGPropagate";
 
+  Inertial = FDMExec->GetInertial();
+
   /// These define the indices use to select the various integrators.
   // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
 
@@ -101,6 +99,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(5, FGQuaternion(0.0,0.0,0.0));
+
+  epa = 0.0;
 
   bind();
   Debug(0);
@@ -121,7 +121,7 @@ bool FGPropagate::InitModel(void)
 
   // For initialization ONLY:
   VState.vLocation.SetEllipse(in.SemiMajor, in.SemiMinor);
-  VState.vLocation.SetAltitudeAGL(4.0);
+  Inertial->SetAltitudeAGL(VState.vLocation, 4.0);
 
   VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
@@ -133,19 +133,24 @@ bool FGPropagate::InitModel(void)
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
 
+  epa = 0.0;
+
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
+void FGPropagate::SetInitialState(const FGInitialCondition* FGIC)
 {
   // Initialize the State Vector elements and the transformation matrices
 
   // Set the position lat/lon/radius
   VState.vLocation = FGIC->GetPosition();
 
-  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  epa = FGIC->GetEarthPositionAngleIC();
+  Ti2ec = { cos(epa), sin(epa), 0.0,
+            -sin(epa), cos(epa), 0.0,
+            0.0, 0.0, 1.0 };
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   VState.vInertialPosition = Tec2i * VState.vLocation;
@@ -226,28 +231,34 @@ bool FGPropagate::Run(bool Holding)
     Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
   }
 
-  // CAUTION : the order of the operations below is very important to get transformation
-  // matrices that are consistent with the new state of the vehicle
+  // CAUTION : the order of the operations below is very important to get
+  // transformation matrices that are consistent with the new state of the
+  // vehicle
 
   // 1. Update the Earth position angle (EPA)
-  VState.vLocation.IncrementEarthPositionAngle(in.vOmegaPlanet(eZ)*dt);
+  epa += in.vOmegaPlanet(eZ)*dt;
 
   // 2. Update the Ti2ec and Tec2i transforms from the updated EPA
-  Ti2ec = VState.vLocation.GetTi2ec(); // ECI to ECEF transform
+  double cos_epa = cos(epa);
+  double sin_epa = sin(epa);
+  Ti2ec = { cos_epa, sin_epa, 0.0,
+            -sin_epa, cos_epa, 0.0,
+            0.0, 0.0, 1.0 };
   Tec2i = Ti2ec.Transposed();          // ECEF to ECI frame transform
 
   // 3. Update the location from the updated Ti2ec and inertial position
   VState.vLocation = Ti2ec*VState.vInertialPosition;
 
-  // 4. Update the other "Location-based" transformation matrices from the updated
-  //    vLocation vector.
+  // 4. Update the other "Location-based" transformation matrices from the
+  //    updated vLocation vector.
   UpdateLocationMatrices();
 
   // 5. Update the "Orientation-based" transformation matrices from the updated
   //    orientation quaternion and vLocation vector.
   UpdateBodyMatrices();
 
-  // Translational position derivative (velocities are integrated in the inertial frame)
+  // Translational position derivative (velocities are integrated in the
+  // inertial frame)
   CalculateUVW();
 
   // Set auxilliary state variables
@@ -260,8 +271,12 @@ bool FGPropagate::Run(bool Holding)
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
-  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
+  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal
+  // frame.
   vVel = Tb2l * VState.vUVW;
+
+  // Compute orbital parameters in the inertial frame
+  ComputeOrbitalParameters();
 
   Debug(2);
   return false;
@@ -461,7 +476,7 @@ void FGPropagate::UpdateLocationMatrices(void)
 {
   Tl2ec = VState.vLocation.GetTl2ec(); // local to ECEF transform
   Tec2l = Tl2ec.Transposed();          // ECEF to local frame transform
-  Ti2l  = VState.vLocation.GetTi2l();  // ECI to local frame transform
+  Ti2l  = Tec2l * Ti2ec;               // ECI to local frame transform
   Tl2i  = Ti2l.Transposed();           // local to ECI transform
 }
 
@@ -477,6 +492,53 @@ void FGPropagate::UpdateBodyMatrices(void)
   Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
 
   Qec2b = Tec2b.GetQuaternion();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::ComputeOrbitalParameters(void)
+{
+  const FGColumnVector3 Z{0., 0., 1.};
+  FGColumnVector3 R = VState.vInertialPosition;
+  FGColumnVector3 angularMomentum = R * VState.vInertialVelocity;
+  h = angularMomentum.Magnitude();
+  Inclination = acos(angularMomentum(eZ)/h)*radtodeg;
+  FGColumnVector3 N;
+  if (abs(Inclination) > 1E-8) {
+    N = Z * angularMomentum;
+    RightAscension = atan2(N(eY), N(eX))*radtodeg;
+    N.Normalize();
+  }
+  else {
+    RightAscension = 0.0;
+    N = {1., 0., 0.};
+  }
+  R.Normalize();
+  double vr = DotProduct(R, VState.vInertialVelocity);
+  FGColumnVector3 eVector = (VState.vInertialVelocity*angularMomentum/in.GM - R);
+  Eccentricity = eVector.Magnitude();
+  if (Eccentricity > 1E-8) {
+    eVector /= Eccentricity;
+    PerigeeArgument = acos(DotProduct(N, eVector))*radtodeg;
+    if (eVector(eZ) < 0) PerigeeArgument = 360. - PerigeeArgument;
+  }
+  else
+  {
+    eVector = {1., 0., 0.};
+    PerigeeArgument = 0.0;
+  }
+
+  TrueAnomaly = acos(Constrain(-1.0, DotProduct(eVector, R), 1.0)) * radtodeg;
+  if (vr < 0.0) TrueAnomaly = 360. - TrueAnomaly;
+  ApoapsisRadius = h*h / (in.GM * (1-Eccentricity));
+  PeriapsisRadius = h*h / (in.GM * (1+Eccentricity));
+
+  if (Eccentricity < 1.0) {
+    double semimajor = 0.5*(ApoapsisRadius + PeriapsisRadius);
+    OrbitalPeriod = 2.*M_PI*pow(semimajor, 1.5)/sqrt(in.GM);
+  }
+  else
+    OrbitalPeriod = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -508,56 +570,77 @@ void FGPropagate::SetInertialRates(const FGColumnVector3& vRates) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGPropagate::GetAltitudeASL() const
+{
+  return VState.vLocation.GetRadius() - VState.vLocation.GetSeaLevelRadius();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetAltitudeASL(double altASL)
+{
+  double slr = VState.vLocation.GetSeaLevelRadius();
+  VState.vLocation.SetRadius(slr + altASL);
+  UpdateVehicleState();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::RecomputeLocalTerrainVelocity()
 {
   FGLocation contact;
   FGColumnVector3 normal;
-  VState.vLocation.GetContactPoint(contact, normal, LocalTerrainVelocity,
-                                   LocalTerrainAngularVelocity);
+  Inertial->GetContactPoint(VState.vLocation, contact, normal,
+                            LocalTerrainVelocity, LocalTerrainAngularVelocity);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropagate::GetTerrainElevation(void) const
+{
+  FGColumnVector3 vDummy;
+  FGLocation contact;
+  contact.SetEllipse(in.SemiMajor, in.SemiMinor);
+  Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
+  return contact.GetGeodAltitude();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetTerrainElevation(double terrainElev)
 {
-  double radius = terrainElev + VState.vLocation.GetSeaLevelRadius();
-  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(radius);
-}
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropagate::SetSeaLevelRadius(double tt)
-{
-  FDMExec->GetGroundCallback()->SetSeaLevelRadius(tt);
+  Inertial->SetTerrainElevation(terrainElev);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetLocalTerrainRadius(void) const
 {
-  return VState.vLocation.GetTerrainRadius();
+  FGLocation contact;
+  FGColumnVector3 vDummy;
+  Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
+  return contact.GetRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGL(void) const
 {
-  return VState.vLocation.GetAltitudeAGL();
+  return Inertial->GetAltitudeAGL(VState.vLocation);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPropagate::GetDistanceAGLKm(void) const
 {
-  return VState.vLocation.GetAltitudeAGL()*0.0003048;
+  return GetDistanceAGL()*0.0003048;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  VState.vLocation.SetAltitudeAGL(tt);
+  Inertial->SetAltitudeAGL(VState.vLocation, tt);
   UpdateVehicleState();
 }
 
@@ -565,8 +648,7 @@ void FGPropagate::SetDistanceAGL(double tt)
 
 void FGPropagate::SetDistanceAGLKm(double tt)
 {
-  VState.vLocation.SetAltitudeAGL(tt*3280.8399);
-  UpdateVehicleState();
+  SetDistanceAGL(tt*3280.8399);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -575,8 +657,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
 {
   //ToDo: Shouldn't all of these be set from the vstate vector passed in?
   VState.vLocation = vstate.vLocation;
-  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
-  Tec2i = Ti2ec.Transposed();
   UpdateLocationMatrices();
   SetInertialOrientation(vstate.qAttitudeECI);
   RecomputeLocalTerrainVelocity();
@@ -605,8 +685,6 @@ void FGPropagate::UpdateVehicleState(void)
 void FGPropagate::SetLocation(const FGLocation& l)
 {
   VState.vLocation = l;
-  Ti2ec = VState.vLocation.GetTi2ec(); // useless ?
-  Tec2i = Ti2ec.Transposed();
   UpdateVehicleState();
 }
 
@@ -764,8 +842,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
   PropertyManager->Tie("velocities/ned-velocity-mag-fps", this, &FGPropagate::GetNEDVelocityMagnitude);
 
-  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL, true);
-  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters, true);
+  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL, false);
+  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters, false);
   PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude, false);
   PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude, false);
   PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg, false);
@@ -773,9 +851,9 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/lat-geod-rad", this, &FGPropagate::GetGeodLatitudeRad);
   PropertyManager->Tie("position/lat-geod-deg", this, &FGPropagate::GetGeodLatitudeDeg);
   PropertyManager->Tie("position/geod-alt-ft", this, &FGPropagate::GetGeodeticAltitude);
-  PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
+  PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL, false);
   PropertyManager->Tie("position/geod-alt-km", this, &FGPropagate::GetGeodeticAltitudeKm);
-  PropertyManager->Tie("position/h-agl-km", this,  &FGPropagate::GetDistanceAGLKm, &FGPropagate::SetDistanceAGLKm);
+  PropertyManager->Tie("position/h-agl-km", this,  &FGPropagate::GetDistanceAGLKm, &FGPropagate::SetDistanceAGLKm, false);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
                           &FGPropagate::GetTerrainElevation,
@@ -803,6 +881,16 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
+
+  PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
+  PropertyManager->Tie("orbital/inclination-deg", &Inclination);
+  PropertyManager->Tie("orbital/right-ascension-deg", &RightAscension);
+  PropertyManager->Tie("orbital/eccentricity", &Eccentricity);
+  PropertyManager->Tie("orbital/argument-of-perigee-deg", &PerigeeArgument);
+  PropertyManager->Tie("orbital/true-anomaly-deg", &TrueAnomaly);
+  PropertyManager->Tie("orbital/apoapsis-radius-ft", &ApoapsisRadius);
+  PropertyManager->Tie("orbital/periapsis-radius-ft", &PeriapsisRadius);
+  PropertyManager->Tie("orbital/period-sec", &OrbitalPeriod);
 
   PropertyManager->Tie("simulation/integrator/rate/rotational", (int*)&integrator_rotational_rate);
   PropertyManager->Tie("simulation/integrator/rate/translational", (int*)&integrator_translational_rate);

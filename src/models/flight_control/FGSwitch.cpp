@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -61,10 +61,9 @@ Also, see the header file (FGSwitch.h) for further details.
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-
 #include "FGSwitch.h"
-#include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
+#include "math/FGCondition.h"
 
 using namespace std;
 
@@ -78,14 +77,15 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   string value;
   Test *current_test;
+  auto PropertyManager = fcs->GetPropertyManager();
 
-  FGFCSComponent::bind(); // Bind() this component here in case it is used
-                          // in its own definition for a sample-and-hold
+  bind(element, PropertyManager.get()); // Bind() this component here in case it is used in its own
+                                        // definition for a sample-and-hold
   Element* test_element = element->FindElement("default");
   if (test_element) {
     current_test = new Test;
     value = test_element->GetAttributeValue("value");
-    current_test->setTestValue(value, Name, PropertyManager);
+    current_test->setTestValue(value, Name, PropertyManager, test_element);
     current_test->Default = true;
     if (delay > 0 && is_number(value)) {        // If there is a delay, initialize the
       for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
@@ -100,7 +100,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     current_test = new Test;
     current_test->condition = new FGCondition(test_element, PropertyManager);
     value = test_element->GetAttributeValue("value");
-    current_test->setTestValue(value, Name, PropertyManager);
+    current_test->setTestValue(value, Name, PropertyManager, test_element);
     tests.push_back(current_test);
     test_element = element->FindNextElement("test");
   }
@@ -151,7 +151,7 @@ bool FGSwitch::Run(void )
 
   if (delay != 0) Delay();
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

@@ -42,9 +42,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
+#include "FGFDMExec.h"
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
 #include "input_output/FGXMLElement.h"
+#include "models/FGInertial.h"
 
 using namespace std;
 
@@ -58,8 +60,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// Body To Structural (body frame is rotated 180 deg about Y and lengths are given in
-// ft instead of inches)
+// Body To Structural (body frame is rotated 180 deg about Y and lengths are
+// given in ft instead of inches)
 const FGMatrix33 FGLGear::Tb2s(-1./inchtoft, 0., 0., 0., 1./inchtoft, 0., 0., 0., -1./inchtoft);
 const FGMatrix33 FGLGear::Ts2b(-inchtoft, 0., 0., 0., inchtoft, 0., 0., 0., -inchtoft);
 
@@ -102,7 +104,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     dynamicFCoeff = 1.0;
   }
 
-  PropertyManager = fdmex->GetPropertyManager();
+  auto PropertyManager = fdmex->GetPropertyManager();
 
   fStrutForce = 0;
   Element* strutForce = el->FindElement("strut_force");
@@ -162,7 +164,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   else
     eSteerType = stSteer;
 
-  GroundReactions = fdmex->GetGroundReactions();
+  GroundReactions = fdmex->GetGroundReactions().get();
 
   ForceY_Table = 0;
   Element* force_table = el->FindElement("table");
@@ -223,6 +225,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Curvature = 1.03;
 
   ResetToIC();
+
+  bind(PropertyManager.get());
 
   Debug(0);
 }
@@ -288,7 +292,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
     // Compute the height of the theoretical location of the wheel (if strut is
     // not compressed) with respect to the ground level
-    double height = gearLoc.GetContactPoint(contact, normal, terrainVel, dummy);
+    double height = fdmex->GetInertial()->GetContactPoint(gearLoc, contact,
+                                                          normal, terrainVel,
+                                                          dummy);
 
     // Does this surface contact point interact with another surface?
     if (surface) {
@@ -308,9 +314,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
       vGroundNormal = in.Tec2b * normal;
 
       // The height returned by GetGroundCallback() is the AGL and is expressed
-      // in the Z direction of the local coordinate frame. We now need to transform
-      // this height in actual compression of the strut (BOGEY) or in the normal
-      // direction to the ground (STRUCTURE)
+      // in the Z direction of the local coordinate frame. We now need to
+      // transform this height in actual compression of the strut (BOGEY) or in
+      // the normal direction to the ground (STRUCTURE)
       double normalZ = (in.Tec2l*normal)(eZ);
       LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
 
@@ -348,12 +354,19 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
       vGroundWhlVel = mT.Transposed() * vBodyWhlVel;
 
-      if (fdmex->GetTrimStatus())
+      if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
         compressSpeed = 0.0; // Steady state is sought during trimming
       else {
         compressSpeed = -vGroundWhlVel(eZ);
         if (eContactType == ctBOGEY)
           compressSpeed /= LGearProj;
+
+        // If the gear is entering in contact with the ground during the current
+        // time step, the compression speed might actually be lower than the
+        // aircraft velocity projected along the gear leg (compressSpeed).
+        double maxCompressSpeed = compressLength/in.TotalDeltaT;
+        if (fabs(compressSpeed) > maxCompressSpeed)
+          compressSpeed = sign(compressSpeed)*maxCompressSpeed;
       }
 
       ComputeVerticalStrutForce();
@@ -596,13 +609,11 @@ void FGLGear::ComputeSideForceCoefficient(void)
 
 void FGLGear::ComputeVerticalStrutForce()
 {
-  double springForce = 0;
-  double dampForce = 0;
-
   if (fStrutForce)
     StrutForce = min(fStrutForce->GetValue(), (double)0.0);
   else {
-    springForce = -compressLength * kSpring;
+    double springForce = -compressLength * kSpring;
+    double dampForce = 0;
 
     if (compressSpeed >= 0.0) {
 
@@ -754,7 +765,7 @@ void FGLGear::SetstaticFCoeff(double coeff)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGLGear::bind(void)
+void FGLGear::bind(FGPropertyManager* PropertyManager)
 {
   string property_name;
   string base_property_name;
@@ -771,7 +782,7 @@ void FGLGear::bind(void)
   default:
     return;
   }
-  FGSurface::bind();
+  FGSurface::bind(PropertyManager);
 
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );

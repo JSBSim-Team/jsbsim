@@ -117,7 +117,7 @@ bool FGBuoyantForces::Load(Element *document)
   Debug(2);
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   gas_cell_element = document->FindElement("gas_cell");
@@ -168,7 +168,7 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
   
   if (size == 0) return gasCellJ;
 
-  gasCellJ = FGMatrix33();
+  gasCellJ.InitMatrix();
 
   for (unsigned int i=0; i < size; i++) {
     gasCellJ += Cells[i]->GetInertia();

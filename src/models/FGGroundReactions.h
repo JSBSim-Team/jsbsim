@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
     moments so that these may be provided to FGPropagate.  Parses the 
     \<ground_reactions> section of the aircraft configuration file.
  <h3>Configuration File Format of \<ground_reactions> Section:</h3>
-@code
+@code{.xml}
     <ground_reactions>
         <contact>
            ... {see FGLGear for specifics of this format}
@@ -80,9 +80,8 @@ class FGGroundReactions : public FGModel, public FGSurface
 {
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions(void);
 
-  bool InitModel(void);
+  bool InitModel(void) override;
   /** Runs the Ground Reactions model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
       @param Holding if true, the executive has been directed to hold the sim from 
@@ -90,8 +89,8 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
-  virtual bool Load(Element* el);
+  bool Run(bool Holding) override;
+  bool Load(Element* el) override;
   const FGColumnVector3& GetForces(void) const {return vForces;}
   double GetForces(int idx) const {return vForces(idx);}
   const FGColumnVector3& GetMoments(void) const {return vMoments;}
@@ -100,12 +99,14 @@ public:
   std::string GetGroundReactionValues(std::string delimeter) const;
   bool GetWOW(void) const;
 
+  /** Gets the number of gears.
+      @return the number of gears of the aircraft.*/
   int GetNumGearUnits(void) const { return (int)lGear.size(); }
 
   /** Gets a gear instance
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
-  FGLGear* GetGearUnit(int gear) const { return lGear[gear]; }
+  auto GetGearUnit(int gear) const { return lGear[gear]; }
 
   /** Gets the steering command.
       @return steering command in range from -1.0 - 1.0 */
@@ -121,14 +122,14 @@ public:
   FGLGear::Inputs in;
 
 private:
-  std::vector <FGLGear*> lGear;
+  std::vector <std::shared_ptr<FGLGear>> lGear;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   std::vector <LagrangeMultiplier*> multipliers;
   double DsCmd;
 
   void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -43,9 +43,9 @@ std::string Engine::system()
     {
         file << "  <channel name=\"Thruster\">" << std::endl;
         file << "   <summer name=\"Thrust Coefficient Left\">" << std::endl;
-    
+
         for (unsigned i = 0; i < _aircraft->_no_engines; ++i)
-        {   
+        {
             if (_mount_point[i] == LEFT_WING) {
                 file << "    <input>propulsion/engine[" << i << "]/thrust-coefficient</input>" << std::endl;
             }
@@ -69,14 +69,14 @@ std::string Engine::system()
         file << "    <output>systems/propulsion/thrust-coefficient-left-right</output>" << std::endl;
         file << "   </summer>" << std::endl;
         file << "   <summer name=\"Thrust Coefficient\">" << std::endl;
-    
+
         file << "    <input>systems/propulsion/thrust-coefficient-left</input>" << std::endl;
         file << "    <input>systems/propulsion/thrust-coefficient-right</input>" << std::endl;
         file << "    <output>systems/propulsion/thrust-coefficient</output>" << std::endl;
         file << "   </summer>" << std::endl;
         file << "  </channel>" << std::endl;
     }
-    
+
     return file.str();
 }
 
@@ -125,7 +125,7 @@ Propulsion::~Propulsion()
     for(it = _inputs.begin(); it != _inputs.end(); ++it) {
         delete *it;
     }
-} 
+}
 
 void Propulsion::param_reset()
 {
@@ -141,8 +141,8 @@ Param* Propulsion::param_next()
     {
         if (_param < _inputs.size()) {
             rv = _inputs[_param++];
-        } 
-        else 
+        }
+        else
         {
             rv = _propulsion[_ptype]->param_next();
             if (rv == 0) {
@@ -208,7 +208,7 @@ std::string Propulsion::system()
     return file;
 }
 
-void Propulsion::set(const float* cg_loc)
+void Propulsion::set(const float cg_loc[3])
 {
     unsigned no_engines = _aircraft->_no_engines;
 
@@ -466,6 +466,50 @@ std::string Propulsion::fdm()
     return file.str();
 }
 
+std::string Propulsion::json(const float cg_loc[3])
+{
+    unsigned no_engines = _aircraft->_no_engines;
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    std::string param = "  \"engine\"";
+    file << std::setw(12) << param << ": [ ";
+
+    for (unsigned i=0; i<no_engines; ++i)
+    {
+        file << std::endl;
+        file << "  {" << std::endl;
+        param  = "    \"pos\"";
+        file << std::setw(14) << param << ": [ "
+                   << _eng_loc[i][X]-cg_loc[X] << ", "
+                   << _eng_loc[i][Y]-cg_loc[Y] << ", "
+                   << _eng_loc[i][Z]-cg_loc[Z] << " ],"
+                   << std::endl;
+
+        param  = "    \"dir\"";
+        file << std::setw(14) << param << ": [ "
+                   << _thruster_orient[i][PITCH] << ", "
+                   << _thruster_orient[i][ROLL] << ", "
+                   << _thruster_orient[i][YAW] << " ]";
+        param = _propulsion[_ptype]->json();
+        if (!param.empty())
+        {
+            file << "," << std::endl;
+            file << std::endl;
+            file << param << std::endl;;
+        }
+        if (i == no_engines-1) file << "  }";
+        else file << "  },";
+    }
+
+    file << " ]";
+
+    return file.str();
+}
+
 
 PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
     _max_rpm(2400.0f)
@@ -529,7 +573,6 @@ std::string PistonEngine::engine()
 
     return file.str();
 }
-
 
 // http://web.mit.edu/16.unified/www/SPRING/propulsion/UnifiedPropulsion3/UnifiedPropulsion3.htm
 // http://adg.stanford.edu/aa241/propulsion/images/tvsv.gif
@@ -693,7 +736,7 @@ std::string TurbineEngine::engine()
         file << std::endl;
     }
 
-    if (_injected) 
+    if (_injected)
     {
         file << "  <function name=\"Injection\">" << std::endl;
         file << "   <table>" << std::endl;
@@ -709,6 +752,25 @@ std::string TurbineEngine::engine()
         file << std::endl;
     }
     file << "</turbine_engine>" << std::endl;
+
+    return file.str();
+}
+
+std::string TurbineEngine::json()
+{
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+    if (_augmented) { 
+        max_thrust *= 1.5f;
+    }
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
 
     return file.str();
 }
@@ -730,7 +792,7 @@ TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
 // http://www.fzt.haw-hamburg.de/pers/Scholz/Airport2030/Airport2030_PUB_ICAS_12-09-23.pdf
 //
 // _power is in kW for the following computations:
-// _oapr = overall  pressure ratio at static sea level 
+// _oapr = overall  pressure ratio at static sea level
 // Ttet = turbine  entry  temperature at static sea level in Kelvin
 //
 // mass_eng = 0.246f * _power;
@@ -903,6 +965,22 @@ std::string RocketEngine::engine()
     file << "  <slfuelflowmax>   91.50 </slfuelflowmax>" << std::endl;
     file << "  <sloxiflowmax>   105.20 </sloxiflowmax>" << std::endl;
     file << "</rocket_engine>" << std::endl;
+
+    return file.str();
+}
+
+std::string RocketEngine::json()
+{
+    std::stringstream file;
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    float max_thrust = _propulsion->_power;
+
+    std::string param  = "    \"FT_max\"";
+    file << std::setw(14) << param << ": " << max_thrust;
 
     return file.str();
 }

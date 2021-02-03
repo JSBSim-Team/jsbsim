@@ -25,6 +25,9 @@
 
     <property> simulation/notify-time-trigger </property>
 
+    <!--property value="25000"> ic/u-fps </property>
+    <property value="-7000"> ic/v-fps </property-->
+
     <event name="Time Notify" persistent="true">
       <description>Output message at 10 minute intervals</description>
       <notify>
@@ -36,6 +39,15 @@
         <property caption="Body X Velocity (ft/s):  "> velocities/u-fps                </property>
         <property caption="Simulation Frame:        "> simulation/frame                </property>
         <property caption="Density:                 "> atmosphere/rho-slugs_ft3        </property>
+        <property caption="Angular momentum (ft^2/s)"> orbital/specific-angular-momentum-ft2_sec </property>
+        <property caption="Inclination (deg)        "> orbital/inclination-deg         </property>
+        <property caption="Right ascension (deg)    "> orbital/right-ascension-deg     </property>
+        <property caption="Argument of perigee (deg)"> orbital/argument-of-perigee-deg </property>
+        <property caption="Period (s)               "> orbital/period-sec              </property>
+        <property caption="Eccentricity             "> orbital/eccentricity            </property>
+        <property caption="Apoapsis radius (ft)     "> orbital/apoapsis-radius-ft      </property>
+        <property caption="Periapsis radius (ft)    "> orbital/periapsis-radius-ft     </property>
+        <property caption="True anomaly (deg)       "> orbital/true-anomaly-deg        </property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>

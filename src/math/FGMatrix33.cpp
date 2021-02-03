@@ -160,7 +160,7 @@ FGColumnVector3 FGMatrix33::GetEuler(void) const
 {
   FGColumnVector3 mEulerAngles;
   bool GimbalLock = false;
-  
+
   if (data[6] <= -1.0) {
     mEulerAngles(2) = 0.5*M_PI;
     GimbalLock = true;
@@ -176,7 +176,7 @@ FGColumnVector3 FGMatrix33::GetEuler(void) const
     mEulerAngles(1) = atan2(-data[5], data[4]);
   else
     mEulerAngles(1) = atan2(data[7], data[8]);
-  
+
   if (GimbalLock)
     mEulerAngles(3) = 0.0;
   else {
@@ -436,11 +436,9 @@ FGMatrix33 FGMatrix33::operator/(const double scalar) const
     Quot.data[2] = data[2] * tmp;
     Quot.data[5] = data[5] * tmp;
     Quot.data[8] = data[8] * tmp;
-  } else {
-    MatrixException mE;
-    mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/(const double scalar)";
-    throw mE;
-  }
+  } else
+    throw MatrixException{"Attempt to divide by zero in method FGMatrix33::operator/(const double scalar)"};
+
   return Quot;
 }
 
@@ -459,11 +457,9 @@ FGMatrix33& FGMatrix33::operator/=(const double scalar)
     data[2] *= tmp;
     data[5] *= tmp;
     data[8] *= tmp;
-  } else {
-    MatrixException mE;
-    mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/=(const double scalar)";
-    throw mE;
-  }
+  } else
+    throw MatrixException{"Attempt to divide by zero in method FGMatrix33::operator/=(const double scalar)"};
+
   return *this;
 }
 

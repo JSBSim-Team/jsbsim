@@ -74,18 +74,18 @@ public:
   FGOutputFile(FGFDMExec* fdmex);
 
   /// Destructor : closes the file.
-  virtual ~FGOutputFile() { CloseFile(); }
+  ~FGOutputFile() override { CloseFile(); }
 
   /** Init the output directives from an XML file.
       @param element XML Element that is pointing to the output directives
   */
-  bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Initializes the instance. This method basically opens the file to which
       outputs will be directed.
       @result true if the execution succeeded.
    */
-  bool InitModel(void);
+  bool InitModel(void) override;
   /** Reset the output prior to a restart of the simulation. This method should
       be called when the simulation is restarted with, for example, new initial
       conditions. The current file is closed and reopened with a new name. The
@@ -93,13 +93,13 @@ public:
       constructor or SetOutputName() and is appended with an underscore _ and
       an ID that is incremented at each call to this method.
   */
-  void SetStartNewOutput(void);
+  void SetStartNewOutput(void) override;
   /** Overwrites the name identifier under which the output will be logged.
       For this method to take effect, it must be called prior to
       FGFDMExec::RunIC(). If it is called after, it will not take effect before
       the next call to SetStartNewOutput().
       @param name new name */
-  void SetOutputName(const std::string& fname) {
+  void SetOutputName(const std::string& fname) override {
     Name = (FDMExec->GetRootDir()/fname).utf8Str();
     runID_postfix = -1;
     Filename = SGPath();
@@ -107,7 +107,7 @@ public:
   /** Generate the output. This is a pure method so it must be implemented by
       the classes that inherits from FGOutputFile.
    */
-  void Print(void) = 0;
+  void Print(void) override = 0;
 
 protected:
   SGPath Filename;

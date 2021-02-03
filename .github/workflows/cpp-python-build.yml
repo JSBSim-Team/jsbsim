@@ -1,0 +1,597 @@
+name: C/C++ build
+
+on: [push, pull_request]
+
+env:
+  release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
+
+jobs:
+  Linux:
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        expat: [ON, OFF]
+        shared_libs: [ON, OFF]
+        exclude:
+          - os: ubuntu-16.04
+            expat: ON
+          - os: ubuntu-16.04
+            expat: OFF
+            shared_libs: ON
+          - os: ubuntu-18.04
+            expat: ON
+          - os: ubuntu-18.04
+            expat: OFF
+            shared_libs: ON
+    env:
+      static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+      skip_julia: ${{ matrix.os != 'ubuntu-18.04' }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install cxxtest valgrind
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel valgrindci
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Configure JSBSim (without Julia)
+        if: env.skip_julia == 'true'
+        id: WithoutJulia
+        run: |
+          mkdir build && cd build
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=OFF ..
+      - name: Configure JSBSim (with Julia)
+        if: steps.WithoutJulia.outcome == 'skipped'
+        run: |
+          mkdir build && cd build
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
+      - name: Build JSBSim
+        working-directory: build
+        run: make -j2
+      - name: Test with Valgrind
+        run: |
+          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+          valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
+      - name: Test JSBSim
+        working-directory: build
+        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
+      - name: Build Ubuntu packages
+        if: env.static_link == 'true'
+        working-directory: build
+        run: cpack
+
+    # On failure, upload logs
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
+          path: |
+            build/Testing/Temporary/*.log
+            build/tests/*-build.log
+            valgrind_Short_S23_3.xml
+      - name: On failure - Display a summary of valgrind errors.
+        if: failure()
+        run: valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
+
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        if: env.release == 'true' && env.static_link == 'true'
+        with:
+          name: Linux-${{ matrix.os }}.binaries
+          path: build/*.deb
+
+  ManyLinux-Wheels:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        run: |
+          sudo apt-get install doxygen
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DINSTALL_PYTHON_MODULE=ON -DBUILD_JULIA_PACKAGE=OFF ..
+      - name: Build ManyLinux wheel packages (PEP 513)
+        working-directory: build
+        run: |
+          rm -f CMakeCache.txt
+          # Install the Docker build environment
+          docker pull quay.io/pypa/manylinux2010_x86_64
+          cp ../python/build-wheels.sh .
+          chmod +x build-wheels.sh
+          # Build the manylinux1 wheel binary packages
+          docker run --rm -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER -e GITHUB_SHA=$GITHUB_SHA -v $PWD/..:/io quay.io/pypa/manylinux2010_x86_64 /io/build/build-wheels.sh
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          pip uninstall jsbsim -y
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: ManyLinux-Wheels.binaries
+          path: build/python/dist/*-manylinux*.whl
+
+  Windows-MinGW32:
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest
+        working-directory: cxxtest\python
+        run: python setup.py install
+      - name: Configure JSBSim
+        run: |
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+          mkdir build && cd build
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
+      - name: Build JSBSim
+        working-directory: build
+        run: mingw32-make -j2
+      - name: Test JSBSim
+        working-directory: build
+        run: ctest -j2 --output-on-failure
+
+    # Upload files
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: Windows_MinGW32.logs
+          path: build/Testing/Temporary
+
+  Windows-MSVC:
+    runs-on: windows-latest
+    steps:
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel pywin32
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        if: env.release == 'true'
+        run: |
+          cinst doxygen.install
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
+          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest
+        working-directory: cxxtest\python
+        run: python setup.py install
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          # Julia does not support MSVC
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=OFF ..
+      - name: Build JSBSim
+        working-directory: build
+        run: cmake --build . --config RelWithDebInfo
+      - name: Test JSBSim
+        working-directory: build
+        run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
+
+    # On failure, upload logs
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: Windows_MSVC.logs
+          path: |
+            build/Testing/Temporary/*.log
+            build/tests/*-build.log
+
+    # Build the Windows installer
+      - name: Checkout JSBSim logos
+        if: env.release == 'true'
+        id: InstallLogos
+        uses: actions/checkout@v2
+        with:
+          repository: JSBSim-Team/jsbsim-logo
+          path: jsbsim-logo
+      - name: Build JSBSim installer for Windows
+        if: steps.InstallLogos.outcome == 'success'
+        id: BuildInstaller
+        working-directory: build
+        run: |
+          # Relocate the logos for the wizard installer
+          mkdir logos
+          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+          mkdir small
+          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+          # Relocate the executables for the installer
+          cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+          # Get the MSVC C++ DLL
+          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
+          foreach($path in $Paths -split ';') {
+            if (Test-Path $path) {
+              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
+              if ($File) {
+                cp $File.FullName .
+                break;
+              }
+            }
+          }
+          # Compile the installer with Inno Setup
+          iscc JSBSim.iss
+
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        if: steps.BuildInstaller.outcome == 'success'
+        with:
+          name: windows-latest.binaries
+          path: |
+            build\Output\*.exe
+            build\src\RelWithDebInfo\JSBSim.lib
+            build\python\jsbsim.cxx
+            build\python\setup.py
+
+  MacOSX:
+    strategy:
+      matrix:
+        os: [ macos-10.15, ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Install Python packages
+        run: pip install -U cython numpy pandas scipy wheel
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Install & Configure Doxygen
+        if: env.release == 'true'
+        run: |
+          brew install doxygen
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Checkout CxxTest
+        uses: actions/checkout@v2
+        with:
+          repository: CxxTest/cxxtest
+          ref: '4.4'
+          path: cxxtest
+      - name: Configure CxxTest
+        working-directory: cxxtest/python
+        run: python setup.py install
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
+      - name: Build JSBSim
+        working-directory: build
+        run: make -j2
+      - name: Test JSBSim
+        working-directory: build
+        run: ctest -j2 -E TestInputSocket --output-on-failure
+      - name: Build source package for Python
+        if: env.release == 'true' && matrix.os == 'macos-10.15'
+        working-directory: build
+        run: python python/setup.py sdist
+
+    # On failure, upload logs
+      - name: On failure - Upload logs
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: MacOSX.logs
+          path: |
+            build/Testing/Temporary/*.log
+            build/tests/*-build.log
+
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        if: env.release == 'true'
+        with:
+          name: ${{ matrix.os }}.binaries
+          path: |
+            build/src/libJSBSim.a
+            build/python/jsbsim.cxx
+            build/python/setup.py
+            build/python/dist/*.tar.gz
+
+  Test-Build-PyPackage-From-Source:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    needs: [MacOSX, Windows-MSVC]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+      - name: Install Python packages
+        run: pip install -U cython numpy
+      - name: Download binary files
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-10.15.binaries
+      - name: Build Python module from sources (Linux & MacOSX)
+        if: runner.os != 'Windows'
+        run: pip install python/dist/*.tar.gz -vv
+      - name: Build Python module from sources (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $PyPackage = Get-ChildItem -Path python\dist -Filter *.tar.gz | Select-Object -First 1
+          pip install $PyPackage.FullName -vv
+      - name: Test Python module
+        shell: python
+        run: |
+          import jsbsim
+          fdm=jsbsim.FGFDMExec('.', None)
+          print(jsbsim.FGAircraft.__doc__)
+
+  MacWin-Wheels:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    needs: [Windows-MSVC, MacOSX]
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        # Use macos-10.15 since it generates wheels for Mac OSX 10.14
+        # that are also compatible with 11.0.
+        os: [windows-latest, macos-10.15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Prepare the build
+        run: |
+          mkdir build
+          mkdir build/python
+          mkdir build/python/fpectl
+          mv python/ExceptionManagement.h build/python/.
+          mv python/fpectl/fpectlmodule.h build/python/fpectl/.
+          mv python/JSBSim.py build/python/JSBSim
+          mv src build/python/.
+          pip install -U numpy wheel
+      - name: Download binary files
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.os }}.binaries
+          path: build
+      - name: Build wheel package for Windows
+        if: startsWith(matrix.os, 'windows-')
+        working-directory: build
+        run: |
+          pip install -U pywin32
+          python python/setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
+      - name: Build wheel package for MacOSX
+        if: startsWith(matrix.os, 'macos-')
+        working-directory: build
+        run: python python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Upload Python Wheel for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}-Python${{ matrix.python-version}}.binaries
+          path: |
+            build/python/dist/*.whl
+
+  Rolling-Release:
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    steps:
+      - name: Download files
+        uses: actions/download-artifact@v2
+      - name: Prepare files
+        run: |
+          mkdir dist
+          find . -type f -name *.exe -exec cp {} dist/. \;
+          find . -type f -name *.whl -exec cp {} dist/. \;
+          find . -type f -name *.deb -exec cp {} dist/. \;
+      - name: Rolling release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Rolling release
+          tag_name: Linux
+          prerelease: true
+          body: |
+            Contains the packages built from the bleeding edge code
+            (branch ${{ github.ref }} commit ${{ github.sha}})
+          files: |
+            dist/*.exe
+            dist/*.whl
+            dist/*.deb
+
+  Stable-Release:
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download files
+        uses: actions/download-artifact@v2
+      - name: Prepare files for deployment
+        run: |
+          mkdir dist
+          find . -type f -name *.exe -exec cp {} dist/. \;
+          find . -type f -name *.whl -exec cp {} dist/. \;
+          find . -type f -name *.deb -exec cp {} dist/. \;
+          find . -type f -name *.tar.gz -exec cp {} dist/. \;
+
+      # PyPI deployment
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: PyPI deployment
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          pip install -U twine
+          twine upload dist/*.whl
+          twine upload dist/*.tar.gz
+
+    # Deploy stable release to GitHub
+      - name: Get JSBSim version
+        run: |
+          pip install -U numpy
+          pip install jsbsim --no-index -f dist
+          export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: GitHub release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Release v${{ env.VERSION }}
+          body: |
+            JSBSim version ${{ env.VERSION }}
+
+            ## Release files
+            - Windows 64 bits
+              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer)
+            - Ubuntu Xenial 16.04, Bionic 18.04 or Focal 20.04 - amd64
+              - `*.deb` (Debian packages)
+            - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
+
+            ## Changelog
+          prerelease: false
+          draft: false
+          files: |
+            dist/*.exe
+            dist/*.deb
+
+      # Bump version
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Bump version
+        run: |
+          # Increment the value of PROJECT_VERSION_PATCH
+          sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/echo "\1\\"$((\2+1))\\"\3"/ge' CMakeLists.txt
+          # Update references to the current stable version in README.md
+          export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
+          sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
+          # Determine the branch name
+          export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
+          # Commit the change to CMakeLists.txt
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout $BRANCH_NAME
+          git commit -m "Bump version" CMakeLists.txt README.md
+          git push origin $BRANCH_NAME
+
+      # Bump stable version of the `master` branch
+      - name: Checkout JSBSim master branch
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          path: _master
+      - name: Bump stable version in README.md
+        working-directory: _master
+        run: |
+          # Update references to the current stable version in README.md
+          export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
+          sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
+          git commit -m "Bump stable release version" README.md
+          git push origin master
+
+  Documentation:
+    needs: Stable-Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: sudo apt-get install doxygen graphviz cxxtest lcov
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.6'
+      - name: Install Python packages
+        run: pip install -U cython numpy sphinx
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
+      - name: Download Python wheels
+        uses: actions/download-artifact@v2
+        with:
+          name: ManyLinux-Wheels.binaries
+          path: build
+      - name: Build Python docs
+        working-directory: build
+        run: |
+          pip install jsbsim --no-index -f .
+          touch documentation/html/.nojekyll
+          sphinx-build -b html documentation documentation/html/python
+      - name: Build JSBSim
+        working-directory: build
+        run: make -j2
+      - name: Unit tests coverage
+        working-directory: build
+        run: |
+          ctest -R Test1 --output-on-failure
+          lcov -d . -c -o tmp.info
+          lcov -r tmp.info /usr/include/c++/\* /usr/include/cxxtest/\* \*/tests/unit_tests/\* -o coverage.info
+          genhtml -o documentation/html/coverage -t "JSBSim unit tests" coverage.info
+      - name: Publish docs to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: build/documentation/html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

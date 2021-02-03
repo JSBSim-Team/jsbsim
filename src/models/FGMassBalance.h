@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2000  Jon S. Berndt (jon@jsbsim.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -38,10 +38,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
-#include <string>
+#include <memory>
+
 #include "FGModel.h"
-#include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,6 +48,9 @@ FORWARD DECLARATIONSS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGPropagate;
+class FGGroundReactions;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -68,8 +70,8 @@ CLASS DOCUMENTATION
     sign of the inertia cross products are not modified by JSBSim so in most
     cases, negative values should be provided for <ixy>, <ixz> and <iyz>.
 
-    <h3>Configuration File Format:</h3>
-@code
+    <h3>Configuration File Format for \<mass_balance> Section:</h3>
+@code{.xml}
     <mass_balance>
         <ixx unit="{SLUG*FT2 | KG*M2}"> {number} </ixx>
         <iyy unit="{SLUG*FT2 | KG*M2}"> {number} </iyy>
@@ -108,23 +110,26 @@ class FGMassBalance : public FGModel
 {
 
 public:
-  FGMassBalance(FGFDMExec*);
+  explicit FGMassBalance(FGFDMExec*);
   ~FGMassBalance();
 
-  virtual bool Load(Element* el);
-  bool InitModel(void);
+  bool Load(Element* el) override;
+  bool InitModel(void) override;
   /** Runs the Mass Balance model; called by the Executive
-      Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
-                     advancing time. Some models may ignore this flag, such as the Input
-                     model, which may need to be active to listen on a socket for the
-                     "Resume" command to be given.
-      @return false if no error */
-  bool Run(bool Holding);
+      Can pass in a value indicating if the executive is directing the
+      simulation to Hold.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time. Some models may ignore this flag, such
+                     as the Input model, which may need to be active to listen
+                     on a socket for the "Resume" command to be given.  @return
+                     false if no error */
+  bool Run(bool Holding) override;
 
   double GetMass(void) const {return Mass;}
   double GetWeight(void) const {return Weight;}
   double GetEmptyWeight(void) const {return EmptyWeight;}
+  /** Returns the coordinates of the center of gravity expressed in the
+      structural frame. */
   const FGColumnVector3& GetXYZcg(void) const {return vXYZcg;}
   double GetXYZcg(int axis) const  {return vXYZcg(axis);}
   const FGColumnVector3& GetDeltaXYZcg(void) const {return vDeltaXYZcg;}
@@ -171,7 +176,9 @@ public:
   double GetTotalPointMassWeight(void) const;
 
   const FGColumnVector3& GetPointMassMoment(void);
+  /// Returns the inertia matrix expressed in the body frame.
   const FGMatrix33& GetJ(void) const {return mJ;}
+  /// Returns the inverse of the inertia matrix expressed in the body frame.
   const FGMatrix33& GetJinv(void) const {return mJinv;}
   void SetAircraftBaseInertias(const FGMatrix33& BaseJ) {baseJ = BaseJ;}
   void GetMassPropertiesReport(int i);
@@ -183,9 +190,11 @@ public:
     FGMatrix33 GasInertia;
     FGColumnVector3 TanksMoment;
     FGMatrix33 TankInertia;
+    bool WOW;
   } in;
 
 private:
+  std::shared_ptr<FGPropagate> Propagate;
   double Weight;
   double EmptyWeight;
   double Mass;
@@ -206,19 +215,15 @@ private:
   double GetIyy(void) const { return mJ(2,2); }
   double GetIzz(void) const { return mJ(3,3); }
   double GetIxy(void) const { return -mJ(1,2); }
-  double GetIxz(void) const { return -mJ(1,3); }
+  double GetIxz(void) const { return mJ(1,3); }
   double GetIyz(void) const { return -mJ(2,3); }
 
   /** The PointMass structure encapsulates a point mass object, moments of inertia
      mass, location, etc. */
   struct PointMass {
-    PointMass(double w, FGColumnVector3& vXYZ) {
-      Weight = w;
-      Location = vXYZ;
-      mPMInertia.InitMatrix();
-      Radius = 0.0;
-      Length = 0.0;
-    }
+    PointMass(double w, FGColumnVector3& vXYZ) :
+      eShapeType(esUnspecified), Location(vXYZ), Weight(w), Radius(0.0),
+      Length(0.0) {}
 
     void CalculateShapeInertia(void) {
       switch(eShapeType) {
@@ -280,7 +285,7 @@ private:
   std::vector <struct PointMass*> PointMasses;
 
   void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

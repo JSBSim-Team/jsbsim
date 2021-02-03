@@ -38,7 +38,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "input_output/FGXMLElement.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
@@ -52,14 +51,13 @@ CLASS IMPLEMENTATION
 
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 {
-  Element *input_element,*init_element, *clip_el;
   Input = Output = delay_time = 0.0;
   delay = index = 0;
-  ClipMin = ClipMax = nullptr;
-  IsOutput = clip = cyclic_clip = false;
+  ClipMin = ClipMax = new FGRealValue(0.0);
+  clip = cyclic_clip = false;
   dt = fcs->GetChannelDeltaT();
 
-  PropertyManager = fcs->GetPropertyManager();
+  auto PropertyManager = fcs->GetPropertyManager();
   if        (element->GetName() == string("lag_filter")) {
     Type = "LAG_FILTER";
   } else if (element->GetName() == string("lead_lag_filter")) {
@@ -112,37 +110,46 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
   Name = element->GetAttributeValue("name");
 
-  init_element = element->FindElement("init");
+  Element *init_element = element->FindElement("init");
   while (init_element) {
     InitNodes.push_back(new FGPropertyValue(init_element->GetDataLine(),
-                                            PropertyManager ));
+                                            PropertyManager, init_element));
     init_element = element->FindNextElement("init");
   }
   
-  input_element = element->FindElement("input");
+  Element *input_element = element->FindElement("input");
   while (input_element) {
     InputNodes.push_back(new FGPropertyValue(input_element->GetDataLine(),
-                                             PropertyManager ));
+                                             PropertyManager, input_element));
 
     input_element = element->FindNextElement("input");
   }
 
   Element *out_elem = element->FindElement("output");
   while (out_elem) {
-    IsOutput = true;
     string output_node_name = out_elem->GetDataLine();
+    bool node_exists = PropertyManager->HasNode(output_node_name);
     FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
-    OutputNodes.push_back(OutputNode);
     if (!OutputNode) {
-      cerr << endl << "  Unable to process property: " << output_node_name << endl;
+      cerr << out_elem->ReadFrom() << "  Unable to process property: "
+           << output_node_name << endl;
       throw(string("Invalid output property name in flight control definition"));
     }
+    OutputNodes.push_back(OutputNode);
+    // If the node has just been created then it must be initialized to a
+    // sensible value since FGPropertyNode::GetNode() does not take care of
+    // that.  If the node was already existing, its current value is kept
+    // unchanged.
+    if (!node_exists)
+      OutputNode->setDoubleValue(Output);
     out_elem = element->FindNextElement("output");
   }
 
   Element* delay_elem = element->FindElement("delay");
   if ( delay_elem ) {
-    delay_time = delay_elem->GetDataAsNumber();
+    string delay_str = delay_elem->GetDataLine();
+    FGParameterValue delayParam(delay_str, PropertyManager, delay_elem);
+    delay_time = delayParam.GetValue();
     string delayType = delay_elem->GetAttributeValue("type");
     if (delayType.length() > 0) {
       if (delayType == "time") {
@@ -159,7 +166,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     for (unsigned int i=0; i<delay; i++) output_array[i] = 0.0;
   }
 
-  clip_el = element->FindElement("clipto");
+  Element *clip_el = element->FindElement("clipto");
   if (clip_el) {
     Element* el = clip_el->FindElement("min");
     if (!el) {
@@ -168,21 +175,19 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       return;
     }
 
-    string clip_string = el->GetDataLine();
-    ClipMin = new FGParameterValue(clip_string, PropertyManager);
+    ClipMin = new FGParameterValue(el, PropertyManager);
 
     el = clip_el->FindElement("max");
     if (!el) {
       cerr << clip_el->ReadFrom()
            << "Element <max> is missing, <clipto> is ignored." << endl;
+      ClipMin = nullptr;
       return;
     }
 
-    clip_string = el->GetDataLine();
-    ClipMax = new FGParameterValue(clip_string, PropertyManager);
+    ClipMax = new FGParameterValue(el, PropertyManager);
 
-    clip_string = clip_el->GetAttributeValue("type");
-    if (clip_string == "cyclic")
+    if (clip_el->GetAttributeValue("type") == "cyclic")
       cyclic_clip = true;
 
     clip = true;
@@ -219,10 +224,17 @@ void FGFCSComponent::SetOutput(void)
 
 void FGFCSComponent::Delay(void)
 {
-  output_array[index] = Output;
-  if ((unsigned int)index == delay-1) index = 0;
-  else index++;
-  Output = output_array[index];
+  if (fcs->GetTrimStatus()) {
+    // Update the whole history while trim routines are executing.
+    // Don't want to model delays while calculating a trim solution.
+    std::fill(output_array.begin(), output_array.end(), Output);
+  }
+  else {
+    output_array[index] = Output;
+    if ((unsigned int)index == delay-1) index = 0;
+    else index++;
+    Output = output_array[index];
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -231,13 +243,25 @@ void FGFCSComponent::Clip(void)
 {
   if (clip) {
     double vmin = ClipMin->GetValue();
-    if (cyclic_clip) {
+    double vmax = ClipMax->GetValue();
+    double range = vmax - vmin;
+
+    if (range < 0.0) {
+      cerr << "Trying to clip with a max value (" << vmax << ") from "
+           << ClipMax->GetName() << " lower than the min value (" << vmin
+           << ") from " << ClipMin->GetName() << "." << endl
+           << "Clipping is ignored." << endl;
+      return;
+    }
+
+    if (cyclic_clip && range != 0.0) {
       double value = Output - vmin;
-      double range = ClipMax->GetValue() - vmin;
       Output = fmod(value, range) + vmin;
+      if (Output < vmin)
+        Output += range;
     }
     else
-      Output = Constrain(vmin, Output, ClipMax->GetValue());
+      Output = Constrain(vmin, Output, vmax);
   }
 }
 
@@ -250,15 +274,30 @@ void FGFCSComponent::Clip(void)
 // properties in the FCS component name attribute. The old way is supported in
 // code at this time, but deprecated.
 
-void FGFCSComponent::bind(void)
+void FGFCSComponent::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   string tmp;
-  if (Name.find("/") == string::npos) {
+  if (Name.find("/") == string::npos)
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
-  } else {
+  else
     tmp = Name;
+
+  bool node_exists = PropertyManager->HasNode(tmp);
+  FGPropertyNode* node = PropertyManager->GetNode(tmp, true);
+
+  if (node) {
+    OutputNodes.push_back(node);
+    // If the node has just been created then it must be initialized to a
+    // sensible value since FGPropertyNode::GetNode() does not take care of
+    // that.  If the node was already existing, its current value is kept
+    // unchanged.
+    if (!node_exists)
+      node->setDoubleValue(Output);
   }
-  PropertyManager->Tie( tmp, this, &FGFCSComponent::GetOutput);
+  else {
+    cerr << el->ReadFrom()
+         << "Could not get or create property " << tmp << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

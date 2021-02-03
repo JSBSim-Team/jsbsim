@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "models/FGModel.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +98,7 @@ public:
   FGOutputType(FGFDMExec* fdmex);
 
   /// Destructor
-  virtual ~FGOutputType();
+  ~FGOutputType() override;
 
   /** Set the idx for this output instance
       @param idx ID of the output instance that is constructed
@@ -135,10 +137,10 @@ public:
   /** Init the output directives from an XML file (implement the FGModel interface).
       @param element XML Element that is pointing to the output directives
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Init the output model according to its configitation.
-  virtual bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Executes the output directives (implement the FGModel interface).
       This method checks that the current time step matches the output
@@ -195,21 +197,21 @@ protected:
   std::vector <std::string> OutputCaptions;
   bool enabled;
 
-  FGAerodynamics* Aerodynamics;
-  FGAuxiliary* Auxiliary;
-  FGAircraft* Aircraft;
-  FGAtmosphere* Atmosphere;
-  FGWinds* Winds;
-  FGPropulsion* Propulsion;
-  FGMassBalance* MassBalance;
-  FGPropagate* Propagate;
-  FGAccelerations* Accelerations;
-  FGFCS* FCS;
-  FGGroundReactions* GroundReactions;
-  FGExternalReactions* ExternalReactions;
-  FGBuoyantForces* BuoyantForces;
+  std::shared_ptr<FGAerodynamics> Aerodynamics;
+  std::shared_ptr<FGAuxiliary> Auxiliary;
+  std::shared_ptr<FGAircraft> Aircraft;
+  std::shared_ptr<FGAtmosphere> Atmosphere;
+  std::shared_ptr<FGWinds> Winds;
+  std::shared_ptr<FGPropulsion> Propulsion;
+  std::shared_ptr<FGMassBalance> MassBalance;
+  std::shared_ptr<FGPropagate> Propagate;
+  std::shared_ptr<FGAccelerations> Accelerations;
+  std::shared_ptr<FGFCS> FCS;
+  std::shared_ptr<FGGroundReactions> GroundReactions;
+  std::shared_ptr<FGExternalReactions> ExternalReactions;
+  std::shared_ptr<FGBuoyantForces> BuoyantForces;
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -18,25 +18,21 @@
 
 #include "FGInitialCondition.h"
 #include "FGLinearization.h"
-#include <ctime>
+
 
 namespace JSBSim {
 
-// TODO make FGLinearization have X,U,Y selectable by xml config file
-
-FGLinearization::FGLinearization(FGFDMExec * fdm, int mode)
+FGLinearization::FGLinearization(FGFDMExec * fdm)
+    : aircraft_name(fdm->GetAircraft()->GetAircraftName())
 {
-    std::cout << "\nlinearization: " << std::endl;
-    std::clock_t time_start=clock(), time_linDone;
     FGStateSpace ss(fdm);
-
     ss.x.add(new FGStateSpace::Vt);
     ss.x.add(new FGStateSpace::Alpha);
     ss.x.add(new FGStateSpace::Theta);
     ss.x.add(new FGStateSpace::Q);
 
     // get propulsion pointer to determine type/ etc.
-    FGEngine * engine0 = fdm->GetPropulsion()->GetEngine(0);
+    auto engine0 = fdm->GetPropulsion()->GetEngine(0);
     FGThruster * thruster0 = engine0->GetThruster();
 
     if (thruster0->GetType()==FGThruster::ttPropeller)
@@ -69,46 +65,43 @@ FGLinearization::FGLinearization(FGFDMExec * fdm, int mode)
     // state feedback
     ss.y = ss.x;
 
-    std::vector< std::vector<double> > A,B,C,D;
-    std::vector<double> x0 = ss.x.get(), u0 = ss.u.get();
-    std::vector<double> y0 = x0; // state feedback
-    std::cout << ss << std::endl;
+    x0 = ss.x.get();
+    u0 = ss.u.get();
+    y0 = x0; // state feedback
 
-    ss.linearize(x0,u0,y0,A,B,C,D);
+    fdm->SuspendIntegration();
+    ss.linearize(x0, u0, y0, A, B, C, D);
+    fdm->ResumeIntegration();
 
-    int width=10;
-    std::cout.precision(3);
-    std::cout
-        << std::fixed
-        << std::right
-        << "\nA=\n" << std::setw(width) << A
-        << "\nB=\n" << std::setw(width) << B
-        << "\nC=\n" << std::setw(width) << C
-        << "\n* note: C should be identity, if not, indicates problem with model"
-        << "\nD=\n" << std::setw(width) << D
-        << std::endl;
-
-    // write scicoslab file
-    std::string aircraft = fdm->GetAircraft()->GetAircraftName();
-    std::ofstream scicos(std::string(aircraft+"_lin.sce").c_str());
-    scicos.precision(10);
-    width=20;
-    scicos
-    << std::scientific
-    << aircraft << ".x0=..\n" << std::setw(width) << x0 << ";\n"
-    << aircraft << ".u0=..\n" << std::setw(width) << u0 << ";\n"
-    << aircraft << ".sys = syslin('c',..\n"
-    << std::setw(width) << A << ",..\n"
-    << std::setw(width) << B << ",..\n"
-    << std::setw(width) << C << ",..\n"
-    << std::setw(width) << D << ");\n"
-    << aircraft << ".tfm = ss2tf(" << aircraft << ".sys);\n"
-    << std::endl;
-
-    time_linDone = std::clock();
-    std::cout << "\nlinearization computation time: " << (time_linDone - time_start)/double(CLOCKS_PER_SEC) << " s\n" << std::endl;
+    x_names = ss.x.getName();
+    u_names = ss.u.getName();
+    y_names = ss.y.getName();
+    x_units = ss.x.getUnit();
+    u_units = ss.u.getUnit();
+    y_units = ss.y.getUnit();
 }
 
+void FGLinearization::WriteScicoslab() const {
+    auto path = std::string(aircraft_name+"_lin.sce");
+    WriteScicoslab(path);
+}
+
+void FGLinearization::WriteScicoslab(std::string& path) const {
+    int width=10;
+    std::ofstream scicos(path.c_str());
+    scicos.precision(10);
+    width=20;
+    scicos  << std::scientific
+            << aircraft_name << ".x0=..\n" << std::setw(width) << x0 << ";\n"
+            << aircraft_name << ".u0=..\n" << std::setw(width) << u0 << ";\n"
+            << aircraft_name << ".sys = syslin('c',..\n"
+            << std::setw(width) << A << ",..\n"
+            << std::setw(width) << B << ",..\n"
+            << std::setw(width) << C << ",..\n"
+            << std::setw(width) << D << ");\n"
+            << aircraft_name << ".tfm = ss2tf(" << aircraft_name << ".sys);\n"
+            << std::endl;
+}
 
 } // JSBSim
 

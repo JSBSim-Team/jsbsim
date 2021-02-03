@@ -58,9 +58,9 @@ FGTransmission::FGTransmission(FGFDMExec *exec, int num, double dt) :
   ClutchCtrlNorm(1.0), BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
   EngineRPM(0.0), ThrusterRPM(0.0)
 {
-  PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   FreeWheelLag = Filter(200.0,dt); // avoid too abrupt changes in transmission
-  BindModel(num);
+  BindModel(num, PropertyManager.get());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,7 @@ void FGTransmission::Calculate(double EnginePower, double ThrusterTorque, double
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGTransmission::BindModel(int num)
+bool FGTransmission::BindModel(int num, FGPropertyManager* PropertyManager)
 {
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", num);

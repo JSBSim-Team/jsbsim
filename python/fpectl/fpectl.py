@@ -1,8 +1,7 @@
-# fpectl.py
+# Dummy module that mimics the behavior of fpectl for platforms where fpectl
+# cannot (yet) be built.
 #
-# Check that the module fpectl catches floating point exceptions
-#
-# Copyright (c) 2018 Bertrand Coconnier
+# Copyright (c) 2020 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,20 +17,17 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import fpectl
-import unittest
-from JSBSim_utils import RunTest
+TURNON = False
 
+def turnon_sigfpe():
+    global TURNON
+    TURNON = True
 
-class check_fpectl(unittest.TestCase):
-    def testModule(self):
-        # Check that FP exceptions are not caught by default
-        fpectl.test_sigfpe()
+def turnoff_sigfpe():
+    global TURNON
+    TURNON = False
 
-        # Check that once fpectl is turned on, a Python exception is raised when
-        # a floating point error occurs.
-        with self.assertRaises(FloatingPointError):
-            fpectl.turnon_sigfpe()
-            fpectl.test_sigfpe()
-
-RunTest(check_fpectl)
+def test_sigfpe():
+    global TURNON
+    if TURNON:
+        raise FloatingPointError

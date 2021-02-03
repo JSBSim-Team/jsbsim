@@ -73,11 +73,9 @@
         <property>aero/alpha-deg</property>
         <property>simulation/frame</property>
       </notify>
-      <condition> 
-         <and>
-            simulation/sim-time-sec >= simulation/notify-time-trigger
-            simulation/trim-completed eq 1
-         </and>
+      <condition logic="AND">
+        simulation/sim-time-sec >= simulation/notify-time-trigger
+        simulation/trim-completed eq 1
       </condition>
       <set name="simulation/notify-time-trigger" value="10" type="FG_DELTA"/>
     </event>

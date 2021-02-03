@@ -7,21 +7,21 @@ Date started: Unknown
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ INCLUDES
 
 #include <string>
 #include <iosfwd>
+#include <stdexcept>
 
 #include "FGColumnVector3.h"
 
@@ -51,7 +52,6 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class FGColumnVector3;
 class FGQuaternion;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,10 +65,10 @@ CLASS DOCUMENTATION
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class MatrixException //: public FGJSBBase
+class MatrixException : public std::runtime_error
 {
 public:
-  std::string Message;
+  MatrixException(const std::string& msg) : std::runtime_error{msg} { }
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +157,8 @@ public:
 
   /** Prints the contents of the matrix.
       @param delimeter the item separator (tab or comma, etc.)
-      @param prefix an additional prefix that is used to indent the 3X3 matrix printout
+      @param prefix an additional prefix that is used to indent the 3X3 matrix
+             printout
       @return a string with the delimeter-separated contents of the matrix  */
   std::string Dump(const std::string& delimiter, const std::string& prefix) const;
 
@@ -230,8 +231,8 @@ public:
    unsigned int Cols(void) const { return eColumns; }
 
   /** Transposed matrix.
-      This function only returns the transpose of this matrix. This matrix itself
-      remains unchanged.
+      This function only returns the transpose of this matrix. This matrix
+      itself remains unchanged.
       @return the transposed matrix.
    */
   FGMatrix33 Transposed(void) const {
@@ -315,6 +316,24 @@ public:
     data[6] = A.data[6];
     data[7] = A.data[7];
     data[8] = A.data[8];
+    return *this;
+  }
+
+  /** Assignment operator.
+
+      @param lv initializer list of at most 9 values.
+
+      Copy the content of the list into *this. */
+  FGMatrix33& operator=(std::initializer_list<double> lv)
+  {
+    double *v = data;
+    for(auto& x: lv) {
+      *v = x;
+      v += 3;
+      if (v-data > 8)
+        v -= 8;
+    }
+
     return *this;
   }
 

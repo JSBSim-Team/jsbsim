@@ -85,13 +85,13 @@ class FGInput : public FGModel
 {
 public:
   FGInput(FGFDMExec*);
-  ~FGInput();
+  ~FGInput() override;
 
   /** Load the input directives and adds a new input instance to the Input
       Manager list.
       @param el XMLElement that is pointing to the input directives
       @result true if the execution succeeded. */
-  bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Initializes the instance. This method is called by FGFDMExec::RunIC().
       This is were the initialization of all classes derived from FGInputType
@@ -99,7 +99,7 @@ public:
       to FGFDMExec::RunIC() so that the initialization process can be executed
       properly.
       @result true if the execution succeeded. */
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Runs the Input model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -108,7 +108,7 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
   /** Adds a new input instance to the Input Manager. The definition of the
       new input instance is read from a file.
@@ -147,7 +147,7 @@ private:
   std::vector<FGInputType*> InputTypes;
   bool enabled;
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

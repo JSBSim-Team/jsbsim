@@ -529,6 +529,8 @@ public:
     }
 
     bool fdm();
+    bool write_XML();
+    bool write_JSON();
 
     float get_fuselage_diameter() {
         return _aircraft[_atype]->get_fuselage_diameter();
@@ -621,7 +623,7 @@ public:
             aspect(0),
             taper(1.0f),
             chord_mean(0),
-            incidence(0),
+            incidence(2.0),
             dihedral(0),
             sweep(0),
             sweep_le(0),
@@ -694,6 +696,13 @@ public:
 public:
     static char const* _estimate;
     std::vector<float> _CLaw, _CLah, _CLav;
+
+private:
+    bool wingarea_input;
+    float wing_loading;
+    float eyept_loc[3];
+    float payload_loc[3];
+    std::vector<System*> systems;
 };
 
 } /* namespace Aeromatic */

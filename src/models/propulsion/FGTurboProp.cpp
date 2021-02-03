@@ -60,25 +60,11 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input),
-    ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL),
-    CombustionEfficiency_N1(NULL)
+  : FGEngine(engine_number, input)
 {
   SetDefaults();
   Load(exec, el);
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGTurboProp::~FGTurboProp()
-{
-  delete ITT_N1;
-  delete EnginePowerRPM_N1;
-  if (dynamic_cast<FGTable*>(EnginePowerVC))
-    delete EnginePowerVC;
-  delete CombustionEfficiency_N1;
-  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +124,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     ITT_Delay = el->FindElementValueAsNumber("itt_delay");
 
   Element *table_element = el->FindElement("table");
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
 
   while (table_element) {
     string name = table_element->GetAttributeValue("name");
@@ -148,18 +134,18 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
       // ugly hack but the functionality is obsolete and will be removed some
       // time in the future.
       table_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
-      EnginePowerVC = new FGTable(PropertyManager, table_element,
+      EnginePowerVC = std::make_shared<FGTable>(PropertyManager, table_element,
                                   to_string((int)EngineNumber));
       table_element->SetAttributeValue("name", name);
       cerr << table_element->ReadFrom()
            <<"Note: Using the EnginePowerVC without enclosed <function> tag is deprecated"
            << endl;
     } else if (name == "EnginePowerRPM_N1") {
-      EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
+      EnginePowerRPM_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
-      ITT_N1 = new FGTable(PropertyManager, table_element);
+      ITT_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else if (name == "CombustionEfficiency_N1") {
-      CombustionEfficiency_N1 = new FGTable(PropertyManager, table_element);
+      CombustionEfficiency_N1 = std::make_unique<FGTable>(PropertyManager, table_element);
     } else {
       cerr << el->ReadFrom() << "Unknown table type: " << name
            << " in turboprop definition." << endl;
@@ -176,7 +162,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   // default table based on '9.333 - (N1)/12.0' approximation
   // gives 430%Fuel at 60%N1
   if (! CombustionEfficiency_N1) {
-    CombustionEfficiency_N1 = new FGTable(6);
+    CombustionEfficiency_N1 = std::make_unique<FGTable>(6);
     *CombustionEfficiency_N1 <<  60.0 << 12.0/52.0;
     *CombustionEfficiency_N1 <<  82.0 << 12.0/30.0;
     *CombustionEfficiency_N1 <<  96.0 << 12.0/16.0;
@@ -184,8 +170,8 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
     *CombustionEfficiency_N1 << 104.0 << 1.5;
     *CombustionEfficiency_N1 << 110.0 << 6.0;
   }
-  
-  bindmodel(PropertyManager);
+
+  bindmodel(PropertyManager.get());
   return true;
 }
 
@@ -259,7 +245,7 @@ void FGTurboProp::Calculate(void)
   // limiter intervention wanted?
   if (Ielu_max_torque > 0.0) {
     double torque = 0.0;
-    
+
     if (thrusterType == FGThruster::ttPropeller) {
       torque = ((FGPropeller*)(Thruster))->GetTorque();
     } else if (thrusterType == FGThruster::ttRotor) {
@@ -289,7 +275,7 @@ void FGTurboProp::Calculate(void)
     case tpStart:  HP = Start(); break;
     default: HP = 0;
   }
- 
+
   LoadThrusterInputs();
   Thruster->Calculate(HP * hptoftlbssec);
 
@@ -532,7 +518,7 @@ int FGTurboProp::InitRunning(void)
   double dt = in.TotalDeltaT;
   in.TotalDeltaT = 0.0;
   Cutoff=false;
-  Running=true;  
+  Running=true;
   Calculate();
   in.TotalDeltaT = dt;
   return phase==tpRun;

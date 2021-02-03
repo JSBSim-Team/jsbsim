@@ -53,19 +53,21 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
+FGMassBalance::FGMassBalance(FGFDMExec* fdmex)
+  : FGModel(fdmex)
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
 
-  vbaseXYZcg.InitMatrix(0.0);
-  vXYZcg.InitMatrix(0.0);
-  vLastXYZcg.InitMatrix(0.0);
-  vDeltaXYZcg.InitMatrix(0.0);
+  vbaseXYZcg.InitMatrix();
+  vXYZcg.InitMatrix();
+  vLastXYZcg.InitMatrix();
+  vDeltaXYZcg.InitMatrix();
   baseJ.InitMatrix();
   mJ.InitMatrix();
   mJinv.InitMatrix();
   pmJ.InitMatrix();
+  Propagate = fdmex->GetPropagate();
 
   bind();
 
@@ -76,8 +78,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance()
 {
-  for (unsigned int i=0; i<PointMasses.size(); i++) delete PointMasses[i];
-  PointMasses.clear();
+  for(auto pm: PointMasses) delete pm;
 
   Debug(1);
 }
@@ -88,8 +89,8 @@ bool FGMassBalance::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  vLastXYZcg.InitMatrix(0.0);
-  vDeltaXYZcg.InitMatrix(0.0);
+  vLastXYZcg.InitMatrix();
+  vDeltaXYZcg.InitMatrix();
 
   return true;
 }
@@ -130,7 +131,7 @@ bool FGMassBalance::Load(Element* document)
   Name = "Mass Properties Model: " + document->GetAttributeValue("name");
 
   // Perform base class Pre-Load
-  if (!FGModel::Load(document, true))
+  if (!FGModel::Upload(document, true))
     return false;
 
   SetAircraftBaseInertias(ReadInertiaMatrix(document));
@@ -155,7 +156,7 @@ bool FGMassBalance::Load(Element* document)
   }
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
@@ -183,7 +184,7 @@ bool FGMassBalance::Run(bool Holding)
   RunPreFunctions();
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
@@ -205,7 +206,11 @@ bool FGMassBalance::Run(bool Holding)
   vDeltaXYZcg = vXYZcg - vLastXYZcg;
   vDeltaXYZcgBody = StructuralToBody(vLastXYZcg) - StructuralToBody(vXYZcg);
   vLastXYZcg = vXYZcg;
-  FDMExec->GetPropagate()->NudgeBodyLocation(vDeltaXYZcgBody);
+
+  // Compensate displacements of the structural frame when the mass distribution
+  // is modified while the aircraft is in contact with the ground.
+  if (FDMExec->GetHoldDown() || in.WOW)
+    Propagate->NudgeBodyLocation(vDeltaXYZcgBody);
 
 // Calculate new total moments of inertia
 
@@ -225,7 +230,8 @@ bool FGMassBalance::Run(bool Holding)
   Ixz = -mJ(1,3);
   Iyz = -mJ(2,3);
 
-// Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
+// Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control &
+// Simulation")
 
   k1 = (Iyy*Izz - Iyz*Iyz);
   k2 = (Iyz*Ixz + Ixy*Izz);
@@ -239,9 +245,9 @@ bool FGMassBalance::Run(bool Holding)
   k5 = (Ixy*Ixz + Iyz*Ixx)*denom;
   k6 = (Ixx*Iyy - Ixy*Ixy)*denom;
 
-  mJinv.InitMatrix( k1, k2, k3,
-                    k2, k4, k5,
-                    k3, k5, k6 );
+  mJinv = { k1, k2, k3,
+            k2, k4, k5,
+            k3, k5, k6 };
 
   RunPostFunctions();
 
@@ -302,7 +308,7 @@ void FGMassBalance::AddPointMass(Element* el)
     pm->SetPointMassMoI(ReadInertiaMatrix(el));
   }
 
-  pm->bind(PropertyManager, PointMasses.size());
+  pm->bind(PropertyManager.get(), PointMasses.size());
   PointMasses.push_back(pm);
 }
 
@@ -312,9 +318,9 @@ double FGMassBalance::GetTotalPointMassWeight(void) const
 {
   double PM_total_weight = 0.0;
 
-  for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PM_total_weight += PointMasses[i]->Weight;
-  }
+  for(auto pm: PointMasses)
+    PM_total_weight += pm->Weight;
+
   return PM_total_weight;
 }
 
@@ -324,9 +330,9 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 {
   PointMassCG.InitMatrix();
 
-  for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PointMassCG += PointMasses[i]->Weight*PointMasses[i]->Location;
-  }
+  for (auto pm: PointMasses)
+    PointMassCG += pm->Weight * pm->Location;
+
   return PointMassCG;
 }
 
@@ -334,15 +340,13 @@ const FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 const FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
-  size_t size = PointMasses.size();
+  if (PointMasses.empty()) return pmJ;
 
-  if (size == 0) return pmJ;
+  pmJ.InitMatrix();
 
-  pmJ = FGMatrix33();
-
-  for (unsigned int i=0; i<size; i++) {
-    pmJ += GetPointmassInertia( lbtoslug * PointMasses[i]->Weight, PointMasses[i]->Location );
-    pmJ += PointMasses[i]->GetPointMassInertia();
+  for (auto pm: PointMasses) {
+    pmJ += GetPointmassInertia( lbtoslug * pm->Weight, pm->Location );
+    pmJ += pm->GetPointMassInertia();
   }
 
   return pmJ;

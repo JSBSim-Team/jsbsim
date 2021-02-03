@@ -50,17 +50,12 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// This class currently makes certain assumptions when calculating torque and
-// p-factor. That is, that the axis of rotation is the X axis of the aircraft -
-// not just the X-axis of the engine/propeller. This may or may not work for a
-// helicopter.
-
 FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
                        : FGThruster(exec, prop_element, num)
 {
   Element *table_element, *local_element;
   string name="";
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
 
   MaxPitch = MinPitch = P_Factor = Pitch = Advance = MinRPM = MaxRPM = 0.0;
   Sense = 1; // default clockwise rotation
@@ -75,7 +70,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Vinduced = 0.0;
 
   if (prop_element->FindElement("ixx"))
-    Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 0.001);
+    Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 1e-06);
 
   Sense_multiplier = 1.0;
   if (prop_element->HasAttribute("version")
@@ -205,7 +200,13 @@ void FGPropeller::ResetToIC(void)
 
 double FGPropeller::Calculate(double EnginePower)
 {
-  FGColumnVector3 localAeroVel = Transform().Transposed() * in.AeroUVW;
+  FGColumnVector3 vDXYZ = MassBalance->StructuralToBody(vActingXYZn);
+  const FGMatrix33& mT = Transform();
+  // Local air velocity is obtained from Stevens & Lewis' "Aircraft Control and
+  // Simualtion (3rd edition)" eqn 8.2-1
+  // Variables in.AeroUVW and in.AeroPQR include the wind and turbulence effects
+  // as computed by FGAuxiliary.
+  FGColumnVector3 localAeroVel = mT.Transposed() * (in.AeroUVW + in.AeroPQR*vDXYZ);
   double omega, PowerAvailable;
 
   double Vel = localAeroVel(eU);
@@ -268,6 +269,7 @@ double FGPropeller::Calculate(double EnginePower)
   omega = RPS*2.0*M_PI;
 
   vFn(eX) = Thrust;
+  vTorque(eX) = -Sense*EnginePower / max(0.01, omega);
 
   // The Ixx value and rotation speed given below are for rotation about the
   // natural axis of the engine. The transform takes place in the base class
@@ -284,7 +286,7 @@ double FGPropeller::Calculate(double EnginePower)
 
   // Transform Torque and momentum first, as PQR is used in this
   // equation and cannot be transformed itself.
-  vMn = in.PQRi*(Transform()*vH) + Transform()*vTorque;
+  vMn = in.PQRi*(mT*vH) + mT*vTorque;
 
   return Thrust; // return thrust in pounds
 }
@@ -354,7 +356,6 @@ double FGPropeller::GetPowerRequired(void)
   double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
 
   PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*in.Density;
-  vTorque(eX) = -Sense*PowerRequired / (local_RPS*2.0*M_PI);
 
   return PowerRequired;
 }

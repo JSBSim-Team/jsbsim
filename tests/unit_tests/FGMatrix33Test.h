@@ -279,6 +279,34 @@ public:
     TS_ASSERT_EQUALS(m_res(3,3), 0.0);
   }
 
+  // Check the assignment via an initializer list
+  void testAssignmentInitializerList(void) {
+    JSBSim::FGMatrix33 m;
+    TS_ASSERT_EQUALS(m(1,1), 0.0);
+    TS_ASSERT_EQUALS(m(1,2), 0.0);
+    TS_ASSERT_EQUALS(m(1,3), 0.0);
+    TS_ASSERT_EQUALS(m(2,1), 0.0);
+    TS_ASSERT_EQUALS(m(2,2), 0.0);
+    TS_ASSERT_EQUALS(m(2,3), 0.0);
+    TS_ASSERT_EQUALS(m(3,1), 0.0);
+    TS_ASSERT_EQUALS(m(3,2), 0.0);
+    TS_ASSERT_EQUALS(m(3,3), 0.0);
+
+    m = { 1.0, 2.0, -3.0,
+          4.0, -5.0, 6.0,
+          -7.0, 8.0, 9.0};
+
+    TS_ASSERT_EQUALS(m(1,1), 1.0);
+    TS_ASSERT_EQUALS(m(1,2), 2.0);
+    TS_ASSERT_EQUALS(m(1,3), -3.0);
+    TS_ASSERT_EQUALS(m(2,1), 4.0);
+    TS_ASSERT_EQUALS(m(2,2), -5.0);
+    TS_ASSERT_EQUALS(m(2,3), 6.0);
+    TS_ASSERT_EQUALS(m(3,1), -7.0);
+    TS_ASSERT_EQUALS(m(3,2), 8.0);
+    TS_ASSERT_EQUALS(m(3,3), 9.0);
+  }
+
   // This test throws an exception so it cannot be merged with other cases
   void DivideByZero1() {
     const JSBSim::FGMatrix33 m(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
@@ -292,8 +320,8 @@ public:
   }
 
   void testDivideByZero() {
-    TS_ASSERT_THROWS(DivideByZero1(), JSBSim::MatrixException);
-    TS_ASSERT_THROWS(DivideByZero2(), JSBSim::MatrixException);
+    TS_ASSERT_THROWS(DivideByZero1(), JSBSim::MatrixException&);
+    TS_ASSERT_THROWS(DivideByZero2(), JSBSim::MatrixException&);
   }
 
   void testInputOutput() {

@@ -34,6 +34,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -679,7 +681,6 @@ refers to one or more instances of a property, value, or table.
      </switch>
 
      Example: if flight-mode is 2, the switch function returns 0.50
-
      <switch>
        <p> executive/flight-mode </p>
        <v> 0.25 </v>
@@ -688,11 +689,32 @@ refers to one or more instances of a property, value, or table.
        <v> 1.00 </v>
      </switch>
      @endcode
-- @b random Takes no arguments and returns a Gaussian distributed random number
-    @code <random/> @endcode
-- @b urandom, Takes no arguments and returns a uniformly distributed random
-              number between -1 and +1
-    @code<urandom/>@endcode
+- @b random Returns a normal distributed random number.
+            The function, without parameters, returns a normal distributed 
+            random value with a distribution defined by the parameters
+            mean = 0.0 and standard deviation (stddev) = 1.0
+            The Mean of the distribution (its expected value, μ).
+            Which coincides with the location of its peak.
+            Standard deviation (σ): The square root of variance,
+            representing the dispersion of values from the distribution mean.
+            This shall be a positive value (σ>0).
+    @code
+    <random/> 
+    <random seed="1234"/>
+    <random seed="time_now"/>
+    <random seed="time_now" mean="0.0" stddev="1.0"/>
+    @endcode
+- @b urandom Returns a uniformly distributed random number.
+             The function, without parameters, returns a random value 
+             between the minimum value -1.0 and the maximum value of 1.0
+             The two maximum and minimum values can be modified using the 
+             lower and upper parameters.
+    @code
+    <urandom/>
+    <random seed="1234"/>
+    <random seed="time_now"/>
+    <random seed="time_now" lower="-1.0" upper="1.0"/>
+    @endcode
 - @b pi Takes no argument and returns the value of Pi
     @code<pi/>@endcode
 - @b interpolate1d returns the result from a 1-dimensional interpolation of the
@@ -734,12 +756,11 @@ class FGFunction : public FGParameter, public FGJSBBase
 public:
   /// Default constructor.
   FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr),
-      PropertyManager(nullptr) {}
+    : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr) {}
 
-  explicit FGFunction(FGPropertyManager* pm)
+  explicit FGFunction(std::shared_ptr<FGPropertyManager> pm)
     : FGFunction()
-  { PropertyManager = pm; }
+    { PropertyManager = pm; }
 
   /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
@@ -797,6 +818,8 @@ protected:
   bool cached;
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
+  std::shared_ptr<FGPropertyManager> PropertyManager;
+  FGPropertyNode_ptr pNode;
 
   void Load(Element* element, FGPropertyValue* var, FGFDMExec* fdmex,
             const std::string& prefix="");
@@ -804,12 +827,11 @@ protected:
   void CheckMinArguments(Element* el, unsigned int _min);
   void CheckMaxArguments(Element* el, unsigned int _max);
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
+  std::string CreateOutputNode(Element* el, const string& Prefix);
 
 private:
   std::string Name;
-  FGPropertyNode_ptr pNode;
   FGPropertyNode_ptr pCopyTo; // Property node for CopyTo property string
-  FGPropertyManager* PropertyManager;
 
   void Debug(int from);
 };

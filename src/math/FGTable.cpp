@@ -8,21 +8,21 @@
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -38,10 +38,6 @@ INCLUDES
 
 #include "FGTable.h"
 #include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
 
 using namespace std;
 
@@ -51,7 +47,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGTable::FGTable(int NRows) : nRows(NRows), nCols(1), PropertyManager(0)
+FGTable::FGTable(int NRows)
+  : nRows(NRows), nCols(1)
 {
   Type = tt1D;
   colCounter = 0;
@@ -65,7 +62,8 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1), PropertyManager(0)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols), PropertyManager(0)
+FGTable::FGTable(int NRows, int NCols)
+  : nRows(NRows), nCols(NCols)
 {
   Type = tt2D;
   colCounter = 1;
@@ -79,7 +77,7 @@ FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols), PropertyMan
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
+FGTable::FGTable(const FGTable& t)
 {
   Type = t.Type;
   colCounter = t.colCounter;
@@ -109,22 +107,15 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(FGPropertyManager* propMan, Element* el,
-                 const std::string& prefix)
-  : PropertyManager(propMan), Prefix(prefix)
+FGTable::FGTable(std::shared_ptr<FGPropertyManager> PropertyManager,
+                 Element* el, const std::string& prefix)
+  : Prefix(prefix)
 {
   unsigned int i;
 
   stringstream buf;
-  string property_string;
-  string lookup_axis;
-  string call_type;
-  string parent_type;
   string brkpt_string;
-  FGPropertyNode* node;
-  Element *tableData=0;
-  Element *parent_element=0;
-  Element *axisElement=0;
+  Element *tableData = nullptr;
   string operation_types = "function, product, sum, difference, quotient,"
                            "pow, abs, sin, cos, asin, acos, tan, atan, table";
 
@@ -134,10 +125,10 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 
   internal = false;
   Name = el->GetAttributeValue("name"); // Allow this table to be named with a property
-  call_type = el->GetAttributeValue("type");
+  string call_type = el->GetAttributeValue("type");
   if (call_type == string("internal")) {
-    parent_element = el->GetParent();
-    parent_type = parent_element->GetName();
+    Element* parent_element = el->GetParent();
+    string parent_type = parent_element->GetName();
     if (operation_types.find(parent_type) == string::npos) {
       internal = true;
     } else {
@@ -155,12 +146,12 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
   }
 
   // Determine and store the lookup properties for this table unless this table
-  // is part of a 3D table, in which case its independentVar property indexes will
-  // be set by a call from the owning table during creation
+  // is part of a 3D table, in which case its independentVar property indexes
+  // will be set by a call from the owning table during creation
 
   dimension = 0;
 
-  axisElement = el->FindElement("independentVar");
+  Element* axisElement = el->FindElement("independentVar");
   if (axisElement) {
 
     // The 'internal' attribute of the table element cannot be specified
@@ -173,24 +164,17 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       internal = false;
     }
 
-    for (i=0; i<3; i++) lookupProperty[i] = 0;
-
     while (axisElement) {
-      property_string = axisElement->GetDataLine();
+      string property_string = axisElement->GetDataLine();
       if (property_string.find("#") != string::npos) {
         if (is_number(Prefix)) {
           property_string = replace(property_string,"#",Prefix);
         }
       }
-      // The property string passed into GetNode() must have no spaces or tabs.
-      node = PropertyManager->GetNode(property_string);
 
-      if (node == 0) {
-        cerr << axisElement->ReadFrom();
-        throw("IndependentVar property, " + property_string + " in Table definition is not defined.");
-      }
-
-      lookup_axis = axisElement->GetAttributeValue("lookup");
+      FGPropertyValue_ptr node = new FGPropertyValue(property_string,
+                                                     PropertyManager, axisElement);
+      string lookup_axis = axisElement->GetAttributeValue("lookup");
       if (lookup_axis == string("row")) {
         lookupProperty[eRow] = node;
       } else if (lookup_axis == string("column")) {
@@ -225,7 +209,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
   } else {
     brkpt_string = el->GetAttributeValue("breakPoint");
     if (brkpt_string.empty()) {
-     // no independentVars found, and table is not marked as internal, nor is it a 3D table
+     // no independentVars found, and table is not marked as internal, nor is it
+     // a 3D table
       throw("No independent variable found for table.");
     }
   }
@@ -286,8 +271,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     for (i=0; i<nTables; i++) {
       Tables.push_back(new FGTable(PropertyManager, tableData));
       Data[i+1][1] = tableData->GetAttributeValueAsNumber("breakPoint");
-      Tables[i]->SetRowIndexProperty(lookupProperty[eRow]);
-      Tables[i]->SetColumnIndexProperty(lookupProperty[eColumn]);
+      Tables[i]->lookupProperty[eRow] = lookupProperty[eRow];
+      Tables[i]->lookupProperty[eColumn] = lookupProperty[eColumn];
       tableData = el->FindNextElement("tableData");
     }
 
@@ -355,7 +340,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     }
   }
 
-  bind(el);
+  bind(el, PropertyManager.get());
 
   if (debug_lvl & 1) Print();
 }
@@ -640,7 +625,7 @@ void FGTable::Print(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::bind(Element* el)
+void FGTable::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   typedef double (FGTable::*PMF)(void) const;
   if ( !Name.empty() && !internal) {

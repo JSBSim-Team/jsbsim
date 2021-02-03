@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -38,7 +38,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <vector>
 #include "models/FGModel.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,9 +95,9 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   //  *************************************************************************
   /// @name Temperature access functions.
@@ -211,8 +210,8 @@ public:
     double altitudeASL;
   } in;
 
-  static const double StdDaySLtemperature;
-  static const double StdDaySLpressure;
+  static constexpr double StdDaySLtemperature = 518.67;
+  static constexpr double StdDaySLpressure = 2116.228;
   static const double StdDaySLsoundspeed;
 
 protected:
@@ -222,7 +221,8 @@ protected:
   double PressureAltitude;
   double DensityAltitude;
 
-  const double SutherlandConstant, Beta;
+  static constexpr double SutherlandConstant = 198.72;  // deg Rankine
+  static constexpr double Beta = 2.269690E-08; // slug/(sec ft R^0.5)
   double Viscosity, KinematicViscosity;
 
   /// Calculate the atmosphere for the given altitude.
@@ -257,24 +257,23 @@ protected:
   /// @name ISA constants
   //@{
   /// Universal gas constant - ft*lbf/R/mol
-  static const double Rstar;
+  static constexpr double Rstar = 8.31432 * kgtoslug / KelvinToRankine(fttom * fttom);
   /// Mean molecular weight for air - slug/mol
-  static const double Mair;
+  static constexpr double Mair = 28.9645 * kgtoslug / 1000.0;
   /** Sea-level acceleration of gravity - ft/s^2.
       This constant is defined to compute the International Standard Atmosphere.
       It is by definition the sea level gravity at a latitude of 45deg. This
       value is fixed whichever gravity model is used by FGInertial.
-   */
-  static const double g0;
+  */
+  static constexpr double g0 = 9.80665 / fttom;
   /// Specific gas constant for air - ft*lbf/slug/R
   static double Reng;
   //@}
 
-  static const double SHRatio;
-  
+  static constexpr double SHRatio = 1.4;
 
   virtual void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

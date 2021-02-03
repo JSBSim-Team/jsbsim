@@ -36,10 +36,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPID.h"
-#include "input_output/FGXMLElement.h"
+#include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
-#include <string>
-#include <iostream>
 
 using namespace std;
 
@@ -55,23 +53,22 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   I_out_total = 0.0;
   Input_prev = Input_prev2 = 0.0;
-  Trigger = 0;
-  ProcessVariableDot = 0;
+  Trigger = nullptr;
+  ProcessVariableDot = nullptr;
   IsStandard = false;
   IntType = eNone;       // No integrator initially defined.
+  auto PropertyManager = fcs->GetPropertyManager();
 
   string pid_type = element->GetAttributeValue("type");
 
   if (pid_type == "standard") IsStandard = true;
 
-  string kp_string = "0.0";
   el = element->FindElement("kp");
   if (el)
-    kp_string = el->GetDataLine();
+    Kp = new FGParameterValue(el, PropertyManager);
+  else
+    Kp = new FGRealValue(0.0);
 
-  Kp = new FGParameterValue(kp_string, PropertyManager);
-
-  string ki_string = "0.0";
   el = element->FindElement("ki");
   if (el) {
     string integ_type = el->GetAttributeValue("type");
@@ -87,27 +84,35 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       IntType = eAdamsBashforth2;
     }
 
-    ki_string = el->GetDataLine();
+    Ki = new FGParameterValue(el, PropertyManager);
   }
+  else
+    Ki = new FGRealValue(0.0);
 
-  Ki = new FGParameterValue(ki_string, PropertyManager);
 
-  string kd_string = "0.0";
   el = element->FindElement("kd");
   if (el)
-    kd_string = el->GetDataLine();
-
-  Kd = new FGParameterValue(kd_string, PropertyManager);
+    Kd = new FGParameterValue(el, PropertyManager);
+  else
+    Kd = new FGRealValue(0.0);
 
   el = element->FindElement("pvdot");
   if (el)
-    ProcessVariableDot = PropertyManager->GetNode(el->GetDataLine());
+    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
   el = element->FindElement("trigger");
   if (el)
-    Trigger = PropertyManager->GetNode(el->GetDataLine());
+    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
-  FGFCSComponent::bind();
+  bind(el, PropertyManager.get());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPID::bind(Element *el, FGPropertyManager* PropertyManager)
+{
+  FGFCSComponent::bind(el, PropertyManager);
+
   string tmp;
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
@@ -115,7 +120,8 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     tmp = Name;
   }
   typedef double (FGPID::*PMF)(void) const;
-  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)0, &FGPID::SetInitialOutput);
+  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)nullptr,
+                       &FGPID::SetInitialOutput);
 
   Debug(0);
 }
@@ -127,6 +133,8 @@ FGPID::~FGPID()
   delete Kp;
   delete Ki;
   delete Kd;
+  delete Trigger;
+  delete ProcessVariableDot;
   Debug(1);
 }
 
@@ -160,7 +168,7 @@ bool FGPID::Run(void )
   // is negative.
 
   double test = 0.0;
-  if (Trigger != 0) test = Trigger->getDoubleValue();
+  if (Trigger) test = Trigger->getDoubleValue();
 
   if (fabs(test) < 0.000001) {
     switch(IntType) {
@@ -196,7 +204,7 @@ bool FGPID::Run(void )
   Input_prev = Input;
 
   Clip();
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }

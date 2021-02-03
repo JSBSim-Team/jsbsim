@@ -89,5 +89,41 @@ class TestSwitch(JSBSimTestCase):
         self.assertEqual(fdm['test/compare'], 1.0)
         self.assertEqual(fdm['test/group'], 0.56)
 
+    # Regression test to reproduce GitHub issue #176
+    def test_nested(self):
+        tripod = FlightModel(self, 'tripod')
+        tripod.include_system_test_file('switch.xml')
+        fdm = tripod.start()
+
+        fdm['test/reference'] = 150
+        fdm['test/input'] = 30
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 0)
+
+        fdm['test/reference'] = 180
+        fdm['test/input'] = 30
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 25)
+
+        fdm['test/reference'] = 180
+        fdm['test/input'] = 25
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 0)
+
+        fdm['test/reference'] = 210
+        fdm['test/input'] = 25
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 20)
+
+        fdm['test/reference'] = 210
+        fdm['test/input'] = 30
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 20)
+
+        fdm['test/reference'] = 210
+        fdm['test/input'] = 15
+        fdm.run()
+        self.assertEqual(fdm['test/nested'], 0)
+
 
 RunTest(TestSwitch)

@@ -21,14 +21,14 @@
 import shutil
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, isDataMatching, FindDifferences
+from JSBSim_utils import JSBSimTestCase, RunTest, isDataMatching, FindDifferences
 
 
 class TestTurboProp(JSBSimTestCase):
     def testEnginePowerVC(self):
         # Check that the same results are obtained whether the engine power
         # velocity correction is given in a <table> or <function>
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'L4102.xml'))
         fdm.run_ic()
@@ -36,7 +36,9 @@ class TestTurboProp(JSBSimTestCase):
         while fdm.run():
             pass
 
-        del fdm
+        # Kill the fdm so that Windows do not block further access to L410.csv.
+        fdm = None
+        self.delete_fdm()
 
         ref = pd.read_csv('L410.csv', index_col=0)
 
@@ -58,7 +60,7 @@ class TestTurboProp(JSBSimTestCase):
                     '.')
         self.sandbox.delete_csv_files()
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_engine_path('.')
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
                                                          'L4102.xml'))

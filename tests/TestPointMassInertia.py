@@ -18,28 +18,26 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import string
 import numpy as np
 import pandas as pd
 import xml.etree.ElementTree as et
-from JSBSim_utils import (JSBSimTestCase, CreateFDM, ExecuteUntil,
-                          CopyAircraftDef, isDataMatching, FindDifferences,
-                          RunTest)
+from JSBSim_utils import (JSBSimTestCase, ExecuteUntil, CopyAircraftDef,
+                          isDataMatching, FindDifferences, RunTest)
 
 
 class TestPointMassInertia(JSBSimTestCase):
     def test_point_mass_inertia(self):
-        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests',
                                                                   'output.xml'))
-        fdm.load_script(script_path)
+        self.load_script('J2460')
 
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
 
         ref = pd.read_csv("output.csv", index_col=0)
 
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'J2460.xml')
         tree, aircraft_name, path_to_jsbsim_aircrafts = CopyAircraftDef(script_path, self.sandbox)
 
         pointmass_element = tree.getroot().find('mass_balance/pointmass//form/..')
@@ -74,16 +72,11 @@ class TestPointMassInertia(JSBSimTestCase):
         tree.write(self.sandbox('aircraft', aircraft_name,
                                 aircraft_name+'.xml'))
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
-
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.set_output_directive(self.sandbox.path_to_jsbsim_file('tests',
                                                                   'output.xml'))
-        fdm.load_script(script_path)
+        self.load_script('J2460')
 
         fdm.run_ic()
         ExecuteUntil(fdm, 50.0)
@@ -99,5 +92,37 @@ class TestPointMassInertia(JSBSimTestCase):
         diff = FindDifferences(ref, mod, 1E-8)
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
+
+    def testInertiaMatrix(self):
+        root = self.get_aircraft_xml_tree('f16_test').getroot()
+        ixz_element = root.find('mass_balance/ixz')
+        fdm = self.create_fdm()
+        self.load_script('f16_test')
+        fdm.run_ic()
+
+        # Check that Jinv is indeed the inverse of J.
+        mass_balance = fdm.get_mass_balance()
+        J = mass_balance.get_J()
+        Jinv = mass_balance.get_Jinv()
+        identity = J*Jinv
+        self.assertAlmostEqual(identity[0,0], 1.0)
+        self.assertAlmostEqual(identity[0,1], 0.0)
+        self.assertAlmostEqual(identity[0,2], 0.0)
+        self.assertAlmostEqual(identity[1,0], 0.0)
+        self.assertAlmostEqual(identity[1,1], 1.0)
+        self.assertAlmostEqual(identity[1,2], 0.0)
+        self.assertAlmostEqual(identity[2,0], 0.0)
+        self.assertAlmostEqual(identity[2,1], 0.0)
+        self.assertAlmostEqual(identity[2,2], 1.0)
+
+        fdm['inertia/pointmass-weight-lbs'] = 0.0
+        fdm['propulsion/tank[0]/contents-lbs'] = 0.0
+        fdm['propulsion/tank[1]/contents-lbs'] = 0.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['inertia/weight-lbs'],
+                               fdm['inertia/empty-weight-lbs'])
+        self.assertAlmostEqual(fdm['inertia/ixz-slugs_ft2'],
+                               float(ixz_element.text))
+
 
 RunTest(TestPointMassInertia)

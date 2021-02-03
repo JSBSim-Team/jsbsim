@@ -7,21 +7,21 @@
  ------ Copyright (C) 2004 Mathias Froehlich (Mathias.Froehlich@web.de) -------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 -------------------------------------------------------------------------------
@@ -37,9 +37,6 @@ SENTRY
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#include "simgear/structure/SGReferenced.hxx"
-#include "simgear/structure/SGSharedPtr.hxx"
 
 namespace JSBSim {
 
@@ -62,17 +59,12 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundCallback : public SGReferenced
+class FGGroundCallback
 {
 public:
 
   FGGroundCallback() : time(0.0) {}
   virtual ~FGGroundCallback() {}
-
-  /** Compute the altitude above sealevel
-      @param l location
-   */
-  virtual double GetAltitude(const FGLocation& l) const = 0;
 
   /** Compute the altitude above ground.
       The altitude depends on time t and location l.
@@ -103,42 +95,28 @@ public:
                             FGColumnVector3& w) const
   { return GetAGLevel(time, location, contact, normal, v, w); }
 
-  /** Compute the local terrain radius
-      @param t simulation time
-      @param location location
-   */
-  virtual double GetTerrainGeoCentRadius(double t, const FGLocation& location) const = 0;
-
-  /** Compute the local terrain radius
-      @param location location
-   */
-  virtual double GetTerrainGeoCentRadius(const FGLocation& location) const
-  { return GetTerrainGeoCentRadius(time, location); }
-
-  /** Return the sea level radius
-      @param location location
-   */
-  virtual double GetSeaLevelRadius(const FGLocation& location) const = 0;
-
-  /** Set the local terrain radius.
+  /** Set the terrain elevation.
       Only needs to be implemented if JSBSim should be allowed
       to modify the local terrain radius (see the default implementation)
    */
-  virtual void SetTerrainGeoCentRadius(double radius)  { }
+  virtual void SetTerrainElevation(double h) {}
 
-  /** Set the sea level radius.
-      Only needs to be implemented if JSBSim should be allowed
-      to modify the sea level radius (see the default implementation)
+  /** Set the planet semimajor and semiminor axes.
+      Only needs to be implemented if JSBSim should be allowed to modify
+      the planet dimensions.
    */
-  virtual void SetSeaLevelRadius(double radius) {  }
+  virtual void SetEllipse(double semimajor, double semiminor) {}
 
+  /** Set the simulation time.
+      The elapsed time can be used by the ground callbck to assess the planet
+      rotation or the movement of objects.
+      @param _time elapsed time in seconds since the simulation started.
+   */
   void SetTime(double _time) { time = _time; }
 
-private:
+protected:
   double time;
 };
-
-typedef SGSharedPtr<FGGroundCallback> FGGroundCallback_ptr;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // The default sphere earth implementation:
@@ -147,29 +125,23 @@ typedef SGSharedPtr<FGGroundCallback> FGGroundCallback_ptr;
 class FGDefaultGroundCallback : public FGGroundCallback
 {
 public:
+  explicit FGDefaultGroundCallback(double semiMajor, double semiMinor) :
+    a(semiMajor), b(semiMinor) {}
 
-   // This should not be hardcoded, but retrieved from FGInertial
-   FGDefaultGroundCallback(double referenceRadius);
+  double GetAGLevel(double t, const FGLocation& location,
+                    FGLocation& contact,
+                    FGColumnVector3& normal, FGColumnVector3& v,
+                    FGColumnVector3& w) const override;
 
-   double GetAltitude(const FGLocation& l) const;
+  void SetTerrainElevation(double h) override
+  { mTerrainElevation = h; }
 
-   double GetAGLevel(double t, const FGLocation& location,
-                     FGLocation& contact,
-                     FGColumnVector3& normal, FGColumnVector3& v,
-                     FGColumnVector3& w) const;
-
-   void SetTerrainGeoCentRadius(double radius)  {  mTerrainLevelRadius = radius;}
-   double GetTerrainGeoCentRadius(double t, const FGLocation& location) const
-   { return mTerrainLevelRadius; }
-
-   void SetSeaLevelRadius(double radius) { mSeaLevelRadius = radius;   }
-   double GetSeaLevelRadius(const FGLocation& location) const
-   {return mSeaLevelRadius; }
+  void SetEllipse(double semimajor, double semiminor) override
+  { a = semimajor; b = semiminor; }
 
 private:
-
-   double mSeaLevelRadius;
-   double mTerrainLevelRadius;
+  double a, b;
+  double mTerrainElevation = 0.0;
 };
 
 }

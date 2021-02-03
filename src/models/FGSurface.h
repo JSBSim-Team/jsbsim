@@ -38,13 +38,14 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGFDMExec;
+class FGPropertyManager;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -70,7 +71,7 @@ public:
   /// Destructor
   ~FGSurface();
 
-  void bind(void);
+  void bind(FGPropertyManager* pm);
 
   /// Reset all surface values to a default
   void resetValues(void);
@@ -112,7 +113,7 @@ public:
   bool GetSolid(void) { return isSolid; }
 
   /// Returns the height of the bump at the provided offset
-  float  GetBumpHeight();
+  double  GetBumpHeight();
 
   std::string GetSurfaceStrings(std::string delimeter) const;
   std::string GetSurfaceValues(std::string delimeter) const;
@@ -130,11 +131,8 @@ private:
   int contactNumber;
   double pos[3];
 
-  FGPropertyManager* _PropertyManager;
-
   static std::string _CreateIndexedPropertyName(const std::string& Property, int index);
 };
-
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

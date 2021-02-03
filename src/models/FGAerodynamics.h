@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -63,7 +63,8 @@ CLASS DOCUMENTATION
     as ground effect, aerodynamic reference point shift, and maximum lift curve
     tailoff are handled.
 
-    @code
+    <h3>Configuration File Format for \<aerodynamics> Section:</h3>
+    @code{.xml}
     <aerodynamics>
        <alphalimits unit="{RAD | DEG}">
          <min> {number} </min>
@@ -90,12 +91,12 @@ CLASS DOCUMENTATION
 
     Optionally two other coordinate systems may be used.<br><br>
     1) Body coordinate system:
-    @code
+    @code{.xml}
        <axis name="{X | Y | Z}">
     @endcode
     <br>
     2) Axial-Normal coordinate system:
-    @code
+    @code{.xml}
        <axis name="{AXIAL | NORMAL | SIDE}">
     @endcode
     <br>
@@ -117,9 +118,9 @@ public:
       @param Executive a pointer to the parent executive object */
   FGAerodynamics(FGFDMExec* Executive);
   /// Destructor
-  ~FGAerodynamics();
+  ~FGAerodynamics() override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Runs the Aerodynamics model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -128,14 +129,14 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
   /** Loads the Aerodynamics model.
       The Load function for this class expects the XML parser to
       have found the aerodynamics keyword in the configuration file.
       @param element pointer to the current XML element for aerodynamics parameters.
       @return true if successful */
-  virtual bool Load(Element* element);
+  bool Load(Element* element) override;
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
@@ -282,7 +283,7 @@ private:
   void bind(void);
   void BuildStabilityTransformMatrices(void);
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

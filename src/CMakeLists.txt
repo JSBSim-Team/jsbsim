@@ -10,13 +10,14 @@ if(MSVC)
   add_definitions(-D_USE_MATH_DEFINES -DNOMINMAX)
 endif()
 
-if (CMAKE_VERSION VERSION_LESS 3.1)
-  if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  endif()
-else()
-  set(CMAKE_CXX_STANDARD 11)
+if(MINGW)
+  # Need to force _WIN32_WINNT to a quite recent value for FGfdmSocket to compile due
+  # to the usage of the flags AI_ADDRCONFIG and AI_V4MAPPED
+  # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
+  add_definitions(-D_WIN32_WINNT=0x600) # Windows Vista/Windows Server 2008
 endif()
+
+set(CMAKE_CXX_STANDARD 14)
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #
@@ -42,9 +43,11 @@ endif()
 
 set(VERSION_MESSAGE)
 if(DEFINED ENV{TRAVIS})
-  set(VERSION_MESSAGE " [build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
+  set(VERSION_MESSAGE " [Travis build $ENV{TRAVIS_BUILD_NUMBER}/commit $ENV{TRAVIS_COMMIT}]")
 elseif(DEFINED ENV{APPVEYOR})
-  set(VERSION_MESSAGE " [build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+  set(VERSION_MESSAGE " [AppVeyor build $ENV{APPVEYOR_BUILD_NUMBER}/commit $ENV{APPVEYOR_REPO_COMMIT}]")
+elseif(DEFINED ENV{GITHUB_RUN_NUMBER})
+  set(VERSION_MESSAGE " [GitHub build $ENV{GITHUB_RUN_NUMBER}/commit $ENV{GITHUB_SHA}]")
 endif()
 
 add_definitions(-DJSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
@@ -59,10 +62,15 @@ add_subdirectory(input_output)
 add_subdirectory(math)
 add_subdirectory(models)
 add_subdirectory(simgear)
+add_subdirectory(GeographicLib)
 
 if(EXPAT_FOUND)
   include_directories(${EXPAT_INCLUDE_DIRS})
-  set(JSBSIM_LINK_LIBRARIES ${EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
+  if (PKG_CONFIG_FOUND)
+    set(JSBSIM_LINK_LIBRARIES ${PC_EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
+  else()
+    set(JSBSIM_LINK_LIBRARIES ${EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
+  endif()
 endif()
 
 set(HEADERS FGFDMExec.h
@@ -85,6 +93,7 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:IOStreams>
   $<TARGET_OBJECTS:Structure>
   $<TARGET_OBJECTS:Simgear>
+  $<TARGET_OBJECTS:GeographicLib>
   )
 
 set_target_properties (libJSBSim PROPERTIES

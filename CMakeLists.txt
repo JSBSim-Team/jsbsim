@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 3.1)
 
 ################################################################################
 # Project description                                                          #
@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 2.8.8)
 project(JSBSim)
 
 set(PROJECT_VERSION_MAJOR "1")
-set(PROJECT_VERSION_MINOR "0")
+set(PROJECT_VERSION_MINOR "2")
 set(PROJECT_VERSION_PATCH "0.dev1")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
@@ -28,34 +28,72 @@ function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
   set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
 endfunction()
 
+find_package(PkgConfig)
+
 ################################################################################
 # Build JSBSim libs and exec                                                   #
 ################################################################################
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
+get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 
 ################################################################################
-# Build the automated test infrastructure (needs Python and Cython)            #
+# Documentation                                                                #
 ################################################################################
 
+option(BUILD_DOCS "Set to ON to build JSBSim documentation" ON)
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
+    configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
+      ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
+      execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    endif()
+    add_custom_target(doc
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOCS)
+
+################################################################################
+# Build the Python module and the automated test infrastructure (needs Python  #
+# and Cython)                                                                  #
+################################################################################
+
+option(BUILD_PYTHON_MODULE "Set to ON to build the Python module for JSBSim" ON)
 option(INSTALL_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/python/CMakeModules)
-find_package(Cython)
 
-if (CYTHON_FOUND)
-  find_package(PythonLibs)
-  if (PYTHONLIBS_FOUND)
-    include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
-    enable_testing()
-    add_subdirectory(tests)
-    add_subdirectory(python)
-  endif(PYTHONLIBS_FOUND)
-endif(CYTHON_FOUND)
+if (BUILD_PYTHON_MODULE)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/python/CMakeModules)
+  find_package(Cython)
 
-if (NOT (CYTHON_FOUND AND PYTHONLIBS_FOUND))
+  if (CYTHON_FOUND)
+    find_package(PythonLibs)
+    if (PYTHONLIBS_FOUND)
+      enable_testing()
+      add_subdirectory(tests)
+      add_subdirectory(python)
+    endif(PYTHONLIBS_FOUND)
+  elseif(NOT PYTHONLIBS_FOUND)
     message(WARNING "JSBSim Python module and test suite will not be built")
-endif()
+  endif(CYTHON_FOUND)
+endif(BUILD_PYTHON_MODULE)
+
+################################################################################
+# Build the Julia package                                                      #
+################################################################################
+
+option(BUILD_JULIA_PACKAGE "Set to ON to build the Julia package for JSBSim" ON)
+
+if(BUILD_JULIA_PACKAGE)
+  enable_testing()
+  add_subdirectory(julia)
+endif(BUILD_JULIA_PACKAGE)
 
 ################################################################################
 # Build the unit tests (needs CxxTest)                                         #
@@ -64,29 +102,24 @@ endif()
 find_package(CxxTest)
 
 if (CXXTEST_FOUND)
-  include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
+  include_directories(${CMAKE_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
 endif(CXXTEST_FOUND)
 
 ################################################################################
-# Documentation                                                                #
-################################################################################
-
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/JSBSim.dox.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-endif()
-
-################################################################################
 # Packaging                                                                    #
 ################################################################################
+
+if (PKG_CONFIG_FOUND)
+  if (NOT BUILD_SHARED_LIBS)
+    foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
+      set(JSBSIM_PKG_CONFIG_LINK_LIBRARIES "${JSBSIM_PKG_CONFIG_LINK_LIBRARIES} -l${_LIB}")
+    endforeach(_LIB)
+  endif(NOT BUILD_SHARED_LIBS)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.pc.in ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc @ONLY)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig COMPONENT devel)
+endif()
 
 # Extract the host architecture for the package name
 if (UNIX)
@@ -95,9 +128,9 @@ if (UNIX)
   if (NOT DEFINED LSB_RELEASE_EXECUTABLE)
     find_program(LSB_RELEASE_EXECUTABLE lsb_release)
     if(LSB_RELEASE_EXECUTABLE STREQUAL "LSB_RELEASE_EXECUTABLE-NOTFOUND")
-      message("-- Could NOT find LSB_Release (missing: LSB_RELEASE_EXECUTABLE)")
+      message(WARNING "-- Could NOT find LSB_Release (missing: LSB_RELEASE_EXECUTABLE)")
     else()
-      message("-- Found LSB_Release: ${LSB_RELEASE_EXECUTABLE}")
+      message(STATUS "-- Found LSB_Release: ${LSB_RELEASE_EXECUTABLE}")
     endif()
   endif()
 
@@ -116,6 +149,15 @@ if (UNIX)
       if(LINUX_DISTRIB_RELEASE STREQUAL "14.04")
         set(LINUX_DISTRIB_NAME "~trusty")
         set(LINUX_DISTRIB_RELEASE)
+      elseif(LINUX_DISTRIB_RELEASE STREQUAL "16.04")
+        set(LINUX_DISTRIB_NAME "~xenial")
+        set(LINUX_DISTRIB_RELEASE)
+      elseif(LINUX_DISTRIB_RELEASE STREQUAL "18.04")
+        set(LINUX_DISTRIB_NAME "~bionic")
+        set(LINUX_DISTRIB_RELEASE)
+      elseif(LINUX_DISTRIB_RELEASE STREQUAL "20.04")
+        set(LINUX_DISTRIB_NAME "~focal")
+        set(LINUX_DISTRIB_RELEASE)
       endif()
       if(ARCH STREQUAL "x86_64")
         set(ARCH "amd64")
@@ -126,6 +168,8 @@ if (UNIX)
   endif()
   if (DEFINED ENV{TRAVIS})
     set(LINUX_DISTRIB_NAME "-$ENV{TRAVIS_BUILD_NUMBER}${LINUX_DISTRIB_NAME}")
+  elseif(DEFINED ENV{GITHUB_RUN_NUMBER})
+    set(LINUX_DISTRIB_NAME "-$ENV{GITHUB_RUN_NUMBER}${LINUX_DISTRIB_NAME}")
   endif()
   set(HOST_ARCHITECTURE "${LINUX_DISTRIB_NAME}${LINUX_DISTRIB_RELEASE}.${ARCH}")
 endif()
@@ -156,6 +200,9 @@ set(CPACK_DEBIAN_RUNTIME_FILE_NAME "${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.deb")
 set(CPACK_DEBIAN_DEVEL_FILE_NAME "${CMAKE_PROJECT_NAME}-devel${EXTENSION_NAME}.deb")
 set(CPACK_DEBIAN_PYMODULES_PACKAGE_NAME "python${PYTHON_VERSION_MAJOR}-${CPACK_PACKAGE_NAME}")
 set(CPACK_DEBIAN_PYMODULES_FILE_NAME "python${PYTHON_VERSION_MAJOR}-${CMAKE_PROJECT_NAME}${EXTENSION_NAME}.deb")
+if (SYSTEM_EXPAT)
+  set(CPACK_DEBIAN_RUNTIME_PACKAGE_DEPENDS "libexpat1")
+endif(SYSTEM_EXPAT)
 if(BUILD_SHARED_LIBS)
   set(CPACK_DEBIAN_DEVEL_PACKAGE_DEPENDS "${CPACK_DEBIAN_RUNTIME_PACKAGE_NAME} (>=${CPACK_PACKAGE_VERSION})")
   set(CPACK_DEBIAN_PYMODULES_PACKAGE_DEPENDS "${CPACK_DEBIAN_RUNTIME_PACKAGE_NAME} (>=${CPACK_PACKAGE_VERSION})")
@@ -178,10 +225,18 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 ################################################################################
+# Windows installer                                                            #
+################################################################################
+
+if(WIN32)
+  configure_file(${CMAKE_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
+endif()
+
+################################################################################
 # Source packaging                                                             #
 ################################################################################
 
-set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_CURRENT_BINARY_DIR}/"
+set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/"
                                "/admin/"
                                "/autom4te.cache"
                                "/Makefile$"

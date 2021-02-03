@@ -36,6 +36,7 @@ INCLUDES
 
 #include <iostream>
 #include <cstdlib>
+#include <stdexcept>
 
 #include "FGCondition.h"
 #include "FGPropertyValue.h"
@@ -52,7 +53,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 // This constructor is called when tests are inside an element
-FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
+FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> PropertyManager)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
@@ -65,23 +66,32 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
     else { // error
       cerr << element->ReadFrom()
            << "Unrecognized LOGIC token " << logic << endl;
+      throw std::invalid_argument("FGCondition: unrecognized logic value:'" + logic + "'");
     }
   } else {
     Logic = eAND; // default
   }
 
+  for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
+    string data = element->GetDataLine(i);
+    conditions.push_back(new FGCondition(data, PropertyManager, element));
+  }
+
   Element* condition_element = element->GetElement();
-  if (condition_element) {
-    while (condition_element) {
-      conditions.push_back(new FGCondition(condition_element, PropertyManager));
-      condition_element = element->GetNextElement();
+  const string& elName = element->GetName();
+
+  while (condition_element) {
+    string tagName = condition_element->GetName();
+
+    if (tagName != elName) {
+      cerr << condition_element->ReadFrom()
+           << "Unrecognized tag <" << tagName << "> in the condition statement."
+           << endl;
+      throw std::invalid_argument("FGCondition: unrecognized tag:'" + tagName + "'");
     }
-  } else {
-    for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
-      string data = element->GetDataLine(i);
-      conditions.push_back(new FGCondition(data, PropertyManager,
-                                           condition_element));
-    }
+
+    conditions.push_back(new FGCondition(condition_element, PropertyManager));
+    condition_element = element->GetNextElement();
   }
 
   Debug(0);
@@ -91,7 +101,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
 // This constructor is called when there are no nested test groups inside the
 // condition
 
-FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
+FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> PropertyManager,
                          Element* el)
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
@@ -101,20 +111,20 @@ FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
   vector<string> test_strings = split(test, ' ');
 
   if (test_strings.size() == 3) {
-    TestParam1 = new FGPropertyValue(test_strings[0], PropertyManager);
+    TestParam1 = new FGPropertyValue(test_strings[0], PropertyManager, el);
     conditional = test_strings[1];
-    TestParam2 = new FGParameterValue(test_strings[2], PropertyManager);
+    TestParam2 = new FGParameterValue(test_strings[2], PropertyManager, el);
   } else {
     cerr << el->ReadFrom()
          << "  Conditional test is invalid: \"" << test
          << "\" has " << test_strings.size() << " elements in the "
          << "test condition." << endl;
-    throw("Error in test condition.");
+    throw std::invalid_argument("FGCondition: incorrect number of test elements:" + std::to_string(test_strings.size()));
   }
 
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
-    throw("Comparison operator: \""+conditional
+    throw std::invalid_argument("FGCondition: Comparison operator: \""+conditional
           +"\" does not exist.  Please check the conditional.");
   }
 }

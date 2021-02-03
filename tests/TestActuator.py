@@ -80,7 +80,7 @@ class TestActuator(JSBSimTestCase):
                         msg="The actuator rate is not linear")
 
     def CheckRateLimit(self, incr_limit, decr_limit):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
 
         self.ScriptExecution(fdm, 1.0)
@@ -91,15 +91,10 @@ class TestActuator(JSBSimTestCase):
         fdm[self.input_prop] = 0.0
         self.CheckRateValue(fdm, decr_limit)
 
-        # Because JSBSim internals use static pointers, we cannot rely on
-        # Python garbage collector to decide when the FDM is destroyed
-        # otherwise we can get dangling pointers.
-        del fdm
-
     def test_regression_bug_1503(self):
         # First, the execution time of the script c1724.xml is measured. It
         # will be used as a reference to check if JSBSim hangs or not.
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         start_time = time.time()
         self.ScriptExecution(fdm)
         exec_time = time.time() - start_time
@@ -283,7 +278,7 @@ class TestActuator(JSBSimTestCase):
         self.CheckRateLimit(0.15, -0.05)
 
     def CheckClip(self, clipmin, clipmax, rate_limit):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -362,8 +357,6 @@ class TestActuator(JSBSimTestCase):
         self.assertTrue(fdm[self.saturated_prop])
         self.assertAlmostEqual(fdm[self.output_prop], clipmin)
 
-        del fdm
-
     def test_clipto(self):
         tree, flight_control_element, actuator_element = self.prepare_actuator()
         rate_limit = float(actuator_element.find('rate_limit').text)
@@ -423,7 +416,7 @@ class TestActuator(JSBSimTestCase):
         clipto.attrib['type'] = 'cyclic'
         tree.write(output_file)
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.set_aircraft_path('aircraft')
         fdm.load_script(self.script_path)
         fdm.run_ic()
@@ -465,6 +458,132 @@ class TestActuator(JSBSimTestCase):
             self.assertAlmostEqual(fdm[self.output_prop],
                                    (t-fdm['simulation/sim-time-sec'])*rate_limit+2.0*math.pi)
             fdm.run()
+
+        # Check the cyclic clip handles correctly negative numbers (GH issue
+        # #211)
+        # Case 1 : The interval is positive
+        clipmin.text = '0.0'
+        clipmax.text = str(math.pi)
+        tree.write(output_file)
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = -2.0*math.pi
+        t0 = math.pi/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while t <= t0:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= 0.0)
+            if t == 0:
+                self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+            else:
+                self.assertAlmostEqual(fdm[self.output_prop],
+                                       math.pi-t*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        while t <= 2.0*t0:
+            self.assertTrue(fdm[self.output_prop] <= math.pi)
+            self.assertTrue(fdm[self.output_prop] >= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   math.pi-(t-t0)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        # Case 2 : The interval is negative
+        clipmin.text = str(-math.pi)
+        clipmax.text = '0.0'
+        tree.write(output_file)
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        fdm[self.input_prop] = math.pi
+        dt = math.pi/rate_limit
+        t = fdm['simulation/sim-time-sec']
+        while t <= dt:
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   t*rate_limit-math.pi)
+            self.assertTrue(fdm[self.output_prop] >= -math.pi-1E-8)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        t0 = t
+        fdm[self.input_prop] = -2.0*math.pi
+        fdm.run()
+        t = fdm['simulation/sim-time-sec']
+
+        while t <= t0+dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t0-t)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+        t0 += dt
+
+        while t <= t0+dt:
+            self.assertTrue(fdm[self.output_prop] >= -math.pi)
+            self.assertTrue(fdm[self.output_prop] <= 0.0)
+            self.assertAlmostEqual(fdm[self.output_prop],
+                                   (t0-t)*rate_limit)
+            fdm.run()
+            t = fdm['simulation/sim-time-sec']
+
+    # Regression test for the bug reported in issue #200
+    # JSBSim crashes when "fail hardover" is set while no <clipto> element is
+    # specified.
+    def test_failhardover_without_clipto(self):
+        tree, flight_control_element, actuator_element = self.prepare_actuator()
+        rate_limit = float(actuator_element.find('rate_limit').text)
+        fail_hardover = actuator_element.attrib['name']+"/malfunction/fail_hardover"
+        clipto = actuator_element.find('clipto')
+        clipmax = float(clipto.find('max').text)
+        actuator_element.remove(clipto)
+        output_file = os.path.join('aircraft', self.aircraft_name,
+                                   self.aircraft_name+'.xml')
+        tree.write(output_file)
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        fdm.load_script(self.script_path)
+        fdm.run_ic()
+
+        # Displace the actuator in the maximum position.
+        fdm[self.input_prop] = clipmax
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+
+        # Check the maximum position has been reached.
+        self.assertAlmostEqual(fdm[self.output_prop], clipmax)
+
+        # Trigger "fail hardover"
+        fdm[fail_hardover] = 1.0
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+
+        # Check the actuator is failed in neutral position
+        self.assertAlmostEqual(fdm[self.output_prop], 0.0)
+
+        # Check that setting an input different from the neutral position does
+        # not result in a modification of the actuator position.
+        fdm[self.input_prop] = clipmax
+        t = fdm['simulation/sim-time-sec']
+        dt = clipmax/rate_limit
+        while fdm['simulation/sim-time-sec'] <= t+dt:
+            fdm.run()
+            self.assertAlmostEqual(fdm[self.output_prop], 0.0)
 
 
 RunTest(TestActuator)

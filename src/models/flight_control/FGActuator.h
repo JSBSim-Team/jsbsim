@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2006 Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -69,18 +69,22 @@ CLASS DOCUMENTATION
     by setting a property to true or false (or 1 or 0).
 
     Rate limits can be specified either as a single number or property. If a
-    single <rate_limit> is supplied (with no "sense" attribute) then the actuator
-    is rate limited at +/- the specified rate limit. If the <rate_limit> element
-    is supplied with a "sense" attribute of either "incr[easing]" or 
-    "decr[easing]" then the actuator is limited to the provided numeric or property
-    value) exactly as provided.
+    single <rate_limit> is supplied (with no "sense" attribute) then the
+    actuator is rate limited at +/- the specified rate limit. If the
+    <rate_limit> element is supplied with a "sense" attribute of either
+    "incr[easing]" or "decr[easing]" then the actuator is limited to the
+    provided numeric or property value) exactly as provided.
+    
+    Lag filter's numerical integration assumes that the lag parameter is
+    constant. So a continuously varying parameter via a property will introduce
+    a non negligible error that will accumulate as the simulation progresses.
 
 Syntax:
 
 @code
 <actuator name="name">
   <input> {[-]property} </input>
-  <lag> number </lag>
+  <lag> {property name | value} </lag>
   [<rate_limit> {property name | value} </rate_limit>]
   [<rate_limit sense="incr"> {property name | value} </rate_limit>
    <rate_limit sense="decr"> {property name | value} </rate_limit>]
@@ -131,8 +135,8 @@ public:
   /** This function processes the input.
       It calls private functions if needed to perform the hysteresis, lag,
       limiting, etc. functions. */
-  bool Run (void);
-  void ResetPastStates(void);
+  bool Run (void) override;
+  void ResetPastStates(void) override;
 
   // these may need to have the bool argument replaced with a double
   /** This function fails the actuator to zero. The motion to zero
@@ -154,7 +158,8 @@ private:
   FGParameter* rate_limit_decr;
   double hysteresis_width;
   double deadband_width;
-  double lag;
+  FGParameter* lag;
+  double lagVal;
   double ca; // lag filter coefficient "a"
   double cb; // lag filter coefficient "b"
   double PreviousOutput;
@@ -174,9 +179,11 @@ private:
   void Deadband(void);
   void Bias(void);
 
-  void bind(void);
+  void bind(Element* el, FGPropertyManager* pm) override;
 
-  void Debug(int from);
+  void InitializeLagCoefficients();
+
+  void Debug(int from) override;
 };
 }
 #endif

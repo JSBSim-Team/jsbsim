@@ -2,7 +2,7 @@
 #
 # Some utilities to help developing Python scripts with JSBSim.
 #
-# Copyright (c) 2014 Bertrand Coconnier
+# Copyright (c) 2014-2020 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,13 +21,20 @@ import os, sys, tempfile, shutil, unittest, functools
 import xml.etree.ElementTree as et
 import numpy as np
 import pandas as pd
+
+sys.path.append(os.getcwd())
+
 import jsbsim
+
+
+# Hides startup and debug messages
+jsbsim.FGJSBBase().debug_lvl = 0
 
 
 class SandBox:
     def __init__(self, *args):
         self._tmpdir = tempfile.mkdtemp(dir=os.getcwd())
-        path_to_jsbsim = os.path.join(sys.argv[1], *args)
+        path_to_jsbsim = os.path.join(os.path.dirname(sys.argv[0]), '..', *args)
         self._relpath_to_jsbsim = os.path.relpath(path_to_jsbsim, self._tmpdir)
 
     def __call__(self, *args):
@@ -122,7 +129,7 @@ def CopyAircraftDef(script_path, sandbox):
             else:
                 name_with_system_path = os.path.join(path_to_jsbsim_aircrafts,
                                                      'Systems', name)
-                print(name_with_system_path)
+
                 if os.path.exists(name_with_system_path):
                     system_path = sandbox(aircraft_path, 'Systems')
                     if not os.path.exists(system_path):
@@ -144,10 +151,7 @@ class JSBSimTestCase(unittest.TestCase):
         os.chdir(self.sandbox())
 
     def tearDown(self):
-        if self._fdm:
-            del self._fdm
-            self._fdm = None
-
+        self.delete_fdm()
         os.chdir(self.currentdir)
         self.sandbox.erase()
 
@@ -164,9 +168,30 @@ class JSBSimTestCase(unittest.TestCase):
             if CheckXMLFile(fullpath, 'runscript'):
                 yield fullpath
 
-    def create_fdm(self):
-        self._fdm = CreateFDM(self.sandbox)
+    def create_fdm(self, pm=None):
+        self._fdm = CreateFDM(self.sandbox, pm)
         return self._fdm
+
+    def delete_fdm(self):
+        if self._fdm:
+            del self._fdm
+            self._fdm = None
+
+    def load_script(self, script_name):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       append_xml(script_name))
+        self._fdm.load_script(script_path)
+
+    def get_aircraft_xml_tree(self, script_name):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       append_xml(script_name))
+        tree = et.parse(script_path)
+        use_element = tree.getroot().find('use')
+        aircraft_name = use_element.attrib['aircraft']
+
+        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
+                                                         aircraft_name+'.xml')
+        return et.parse(aircraft_path)
 
 
 def spare(filename):

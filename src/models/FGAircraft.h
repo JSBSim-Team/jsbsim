@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 <p> The \<metrics> section of the aircraft configuration file is read here, and
     the metrical information is held by this class.
 <h3>Configuration File Format for \<metrics> Section:</h3>
-@code
+@code{.xml}
     <metrics>
         <wingarea unit="{FT2 | M2}"> {number} </wingarea>
         <wingspan unit="{FT | M}"> {number} </wingspan>
@@ -106,7 +106,7 @@ public:
   FGAircraft(FGFDMExec *Executive);
 
   /// Destructor
-  ~FGAircraft();
+  ~FGAircraft() override;
 
   /** Runs the Aircraft model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
@@ -116,15 +116,15 @@ public:
                      "Resume" command to be given.
       @see JSBSim.cpp documentation
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
       @param el a pointer to the element tree
       @return true if successful */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */
@@ -150,6 +150,8 @@ public:
   double GetMoments(int idx) const { return vMoments(idx); }
   const FGColumnVector3& GetForces(void) const { return vForces; }
   double GetForces(int idx) const { return vForces(idx); }
+  /** Gets the the aero reference point (RP) coordinates.
+      @return a vector containing the RP coordinates in the structural frame. */
   const FGColumnVector3& GetXYZrp(void) const { return vXYZrp; }
   const FGColumnVector3& GetXYZvrp(void) const { return vXYZvrp; }
   const FGColumnVector3& GetXYZep(void) const { return vXYZep; }
@@ -161,9 +163,6 @@ public:
   void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
 
   void SetWingArea(double S) {WingArea = S;}
-
-  void bind(void);
-  void unbind(void);
 
   struct Inputs {
     FGColumnVector3 AeroForce;
@@ -191,7 +190,9 @@ private:
   double lbarh,lbarv,vbarh,vbarv;
   std::string AircraftName;
 
-  void Debug(int from);
+  void bind(void);
+  void unbind(void);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

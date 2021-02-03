@@ -49,16 +49,6 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModelFunctions::~FGModelFunctions()
-{
-  for (auto prefunc: PreFunctions) delete prefunc;
-  for (auto postfunc: PostFunctions) delete postfunc;
-
-  if (debug_lvl & 2) cout << "Destroyed:    FGModelFunctions" << endl;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 bool FGModelFunctions::InitModel(void)
 {
   LocalProperties.ResetToIC();
@@ -70,7 +60,7 @@ bool FGModelFunctions::InitModel(void)
 
 bool FGModelFunctions::Load(Element* el, FGFDMExec* fdmex, string prefix)
 {
-  LocalProperties.Load(el, fdmex->GetPropertyManager(), false);
+  LocalProperties.Load(el, fdmex->GetPropertyManager().get(), false);
   PreLoad(el, fdmex, prefix);
 
   return true; // TODO: Need to make this value mean something.
@@ -87,7 +77,7 @@ void FGModelFunctions::PreLoad(Element* el, FGFDMExec* fdmex, string prefix)
   while (function) {
     string fType = function->GetAttributeValue("type");
     if (fType.empty() || fType == "pre")
-      PreFunctions.push_back(new FGFunction(fdmex, function, prefix));
+      PreFunctions.push_back(std::make_shared<FGFunction>(fdmex, function, prefix));
     else if (fType == "template") {
       string name = function->GetAttributeValue("name");
       fdmex->AddTemplateFunc(name, function);
@@ -106,41 +96,41 @@ void FGModelFunctions::PostLoad(Element* el, FGFDMExec* fdmex, string prefix)
   Element *function = el->FindElement("function");
   while (function) {
     if (function->GetAttributeValue("type") == "post") {
-      PostFunctions.push_back(new FGFunction(fdmex, function, prefix));
+      PostFunctions.push_back(std::make_shared<FGFunction>(fdmex, function, prefix));
     }
     function = el->FindNextElement("function");
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Tell the Functions to cache values, so when the function values 
+// Tell the Functions to cache values, so when the function values
 // are being used in the model, the functions do not get
 // calculated each time, but instead use the values that have already
 // been calculated for this frame.
 
 void FGModelFunctions::RunPreFunctions(void)
 {
-  for (auto prefunc: PreFunctions)
+  for (auto& prefunc: PreFunctions)
     prefunc->cacheValue(true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Tell the Functions to cache values, so when the function values 
+// Tell the Functions to cache values, so when the function values
 // are being used in the model, the functions do not get
 // calculated each time, but instead use the values that have already
 // been calculated for this frame.
 
 void FGModelFunctions::RunPostFunctions(void)
 {
-  for (auto postfunc: PostFunctions)
+  for (auto& postfunc: PostFunctions)
     postfunc->cacheValue(true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGFunction* FGModelFunctions::GetPreFunction(const std::string& name)
+std::shared_ptr<FGFunction> FGModelFunctions::GetPreFunction(const std::string& name)
 {
-  for (auto prefunc: PreFunctions) {
+  for (auto& prefunc: PreFunctions) {
     if (prefunc->GetName() == name)
       return prefunc;
   }
@@ -154,14 +144,14 @@ string FGModelFunctions::GetFunctionStrings(const string& delimeter) const
 {
   string FunctionStrings;
 
-  for (auto prefunc: PreFunctions) {
+  for (auto& prefunc: PreFunctions) {
     if (!FunctionStrings.empty())
       FunctionStrings += delimeter;
 
     FunctionStrings += prefunc->GetName();
   }
 
-  for (auto postfunc: PostFunctions) {
+  for (auto& postfunc: PostFunctions) {
     if (!FunctionStrings.empty())
       FunctionStrings += delimeter;
 
@@ -177,12 +167,12 @@ string FGModelFunctions::GetFunctionValues(const string& delimeter) const
 {
   ostringstream buf;
 
-  for (auto prefunc: PreFunctions) {
+  for (auto& prefunc: PreFunctions) {
     if (buf.tellp() > 0) buf << delimeter;
     buf << prefunc->GetValue();
   }
 
-  for (auto postfunc: PostFunctions) {
+  for (auto& postfunc: PostFunctions) {
     if (buf.tellp() > 0) buf << delimeter;
     buf << postfunc->GetValue();
   }

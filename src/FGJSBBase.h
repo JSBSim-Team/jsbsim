@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2001  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -78,8 +78,7 @@ public:
   virtual ~FGJSBBase() {};
 
   /// JSBSim Message structure
-  class Message {
-  public:
+  struct Message {
     unsigned int fdmId;
     unsigned int messageId;
     std::string text;
@@ -96,14 +95,15 @@ public:
     double prev_out;
     double ca;
     double cb;
-    public: Filter(void) {}
-    public: Filter(double coeff, double dt) {
+  public:
+    Filter(void) {}
+    Filter(double coeff, double dt) {
       prev_in = prev_out = 0.0;
       double denom = 2.0 + coeff*dt;
       ca = coeff*dt/denom;
       cb = (2.0 - coeff*dt)/denom;
     }
-    public: double execute(double in) {
+    double execute(double in) {
       double out = (in + prev_in)*ca + prev_out*cb;
       prev_in = in;
       prev_out = out;
@@ -164,7 +164,7 @@ public:
   void PutMessage(const std::string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return 1 if some messages */
-  int SomeMessages(void) { return !Messages.empty(); }
+  int SomeMessages(void) const { return !Messages.empty(); }
   /** Reads the message on the queue and removes it from the queue.
       This function also prints out the message.*/
   void ProcessMessage(void);
@@ -176,7 +176,7 @@ public:
 
   /** Returns the version number of JSBSim.
   *   @return The version number of JSBSim. */
-  std::string GetVersion(void) {return JSBSim_version;}
+  static const std::string& GetVersion(void) {return JSBSim_version;}
 
   /// Disables highlighting in the console output.
   void disableHighLighting(void);
@@ -186,70 +186,70 @@ public:
   /** Converts from degrees Kelvin to degrees Fahrenheit.
   *   @param kelvin The temperature in degrees Kelvin.
   *   @return The temperature in Fahrenheit. */
-  static double KelvinToFahrenheit (double kelvin) {
+  static constexpr double KelvinToFahrenheit (double kelvin) {
     return 1.8*kelvin - 459.4;
   }
 
   /** Converts from degrees Celsius to degrees Rankine.
   *   @param celsius The temperature in degrees Celsius.
   *   @return The temperature in Rankine. */
-  static double CelsiusToRankine (double celsius) {
+  static constexpr double CelsiusToRankine (double celsius) {
     return celsius * 1.8 + 491.67;
   }
 
   /** Converts from degrees Rankine to degrees Celsius.
   *   @param rankine The temperature in degrees Rankine.
   *   @return The temperature in Celsius. */
-  static double RankineToCelsius (double rankine) {
+  static constexpr double RankineToCelsius (double rankine) {
     return (rankine - 491.67)/1.8;
   }
 
   /** Converts from degrees Kelvin to degrees Rankine.
   *   @param kelvin The temperature in degrees Kelvin.
   *   @return The temperature in Rankine. */
-  static double KelvinToRankine (double kelvin) {
+  static constexpr double KelvinToRankine (double kelvin) {
     return kelvin * 1.8;
   }
 
   /** Converts from degrees Rankine to degrees Kelvin.
   *   @param rankine The temperature in degrees Rankine.
   *   @return The temperature in Kelvin. */
-  static double RankineToKelvin (double rankine) {
+  static constexpr double RankineToKelvin (double rankine) {
     return rankine/1.8;
   }
 
   /** Converts from degrees Fahrenheit to degrees Celsius.
   *   @param fahrenheit The temperature in degrees Fahrenheit.
   *   @return The temperature in Celsius. */
-  static double FahrenheitToCelsius (double fahrenheit) {
+  static constexpr double FahrenheitToCelsius (double fahrenheit) {
     return (fahrenheit - 32.0)/1.8;
   }
 
   /** Converts from degrees Celsius to degrees Fahrenheit.
   *   @param celsius The temperature in degrees Celsius.
   *   @return The temperature in Fahrenheit. */
-  static double CelsiusToFahrenheit (double celsius) {
+  static constexpr double CelsiusToFahrenheit (double celsius) {
     return celsius * 1.8 + 32.0;
   }
 
   /** Converts from degrees Celsius to degrees Kelvin
   *   @param celsius The temperature in degrees Celsius.
   *   @return The temperature in Kelvin. */
-  static double CelsiusToKelvin (double celsius) {
+  static constexpr double CelsiusToKelvin (double celsius) {
     return celsius + 273.15;
   }
 
   /** Converts from degrees Kelvin to degrees Celsius
   *   @param celsius The temperature in degrees Kelvin.
   *   @return The temperature in Celsius. */
-  static double KelvinToCelsius (double kelvin) {
+  static constexpr double KelvinToCelsius (double kelvin) {
     return kelvin - 273.15;
   }
 
   /** Converts from feet to meters
   *   @param measure The length in feet.
   *   @return The length in meters. */
-  static double FeetToMeters (double measure) {
+  static constexpr double FeetToMeters (double measure) {
     return measure*0.3048;
   }
 
@@ -324,11 +324,11 @@ public:
   
   /** Constrain a value between a minimum and a maximum value.
   */
-  static double Constrain(double min, double value, double max) {
+  static constexpr double Constrain(double min, double value, double max) {
     return value<min?(min):(value>max?(max):(value));
   }
   
-  static double sign(double num) {return num>=0.0?1.0:-1.0;}
+  static constexpr double sign(double num) {return num>=0.0?1.0:-1.0;}
 
   static double GaussianRandomNumber(void);
 
@@ -337,26 +337,30 @@ protected:
 
   static std::queue <Message> Messages;
 
-  void Debug(int) {};
-
   static unsigned int messageId;
 
-  static const double radtodeg;
-  static const double degtorad;
-  static const double hptoftlbssec;
-  static const double psftoinhg;
-  static const double psftopa;
-  static const double fpstokts;
-  static const double ktstofps;
-  static const double inchtoft;
-  static const double in3tom3;
-  static const double m3toft3;
-  static const double inhgtopa;
-  static const double fttom;
-  static const double lbtoslug;
-  static const double slugtolb;
-  static const double kgtolb;
-  static const double kgtoslug;
+  static constexpr double radtodeg = 180. / M_PI;
+  static constexpr double degtorad = M_PI / 180.;
+  static constexpr double hptoftlbssec = 550.0;
+  static constexpr double psftoinhg = 0.014138;
+  static constexpr double psftopa = 47.88;
+  static constexpr double ktstofps = 1.68781;
+  static constexpr double fpstokts = 1.0 / ktstofps;
+  static constexpr double inchtoft = 1.0/12.0;
+  static constexpr double fttom = 0.3048;
+  static constexpr double m3toft3 = 1.0/(fttom*fttom*fttom);
+  static constexpr double in3tom3 = inchtoft*inchtoft*inchtoft/m3toft3;
+  static constexpr double inhgtopa = 3386.38;
+  /** Note that definition of lbtoslug by the inverse of slugtolb and not to a
+      different constant you can also get from some tables will make
+      lbtoslug*slugtolb == 1 up to the magnitude of roundoff. So converting from
+      slug to lb and back will yield to the original value you started with up
+      to the magnitude of roundoff.
+      Taken from units gnu commandline tool */
+  static constexpr double slugtolb = 32.174049;
+  static constexpr double lbtoslug = 1.0/slugtolb;
+  static constexpr double kgtolb = 2.20462;
+  static constexpr double kgtoslug = 0.06852168;
   static const std::string needed_cfg_version;
   static const std::string JSBSim_version;
 

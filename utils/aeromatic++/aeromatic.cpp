@@ -107,18 +107,41 @@ struct noop {
     void operator()(...) const {}
 };
 
+void help()
+{
+    printf("AeromatiC++ version " AEROMATIC_VERSION_STR "\n\n");
+    printf("Usage: aeromatic [options]\n");
+    printf("A tool to generate a JSBSim Flight Dynamics Model using just a few paremeters.\n");
+
+    printf("\nOptions:\n");
+    printf(" -l, --log <file>\t\tLog the output to a log file.\n");
+    printf(" -i, --input <file>\t\tRead the input parameters from a log file.\n");
+    printf(" -h, --help\t\t\tprint this message and exit\n");
+
+    printf("\nWhen run without any parameters the program will generate an FDM and exit.\n");
+
+    printf("\n");
+    exit(-1);
+}
+
 int main(int argc, char *argv[])
 {
     Aeromatic::Aeromatic aeromatic;
     ofstream log;
     ifstream in;
 
+    if (getCommandLineOption(argc, argv, (char*)"-h") != NULL ||
+        getCommandLineOption(argc, argv, (char*)"--help") != NULL) {
+        help();
+    }
+
+
     char *file = getCommandLineOption(argc, argv, (char*)"-l");
     if (file)
     {
-       log.open(file);
-       if (log.fail() || log.bad())
-       {
+        log.open(file);
+        if (log.fail() || log.bad())
+        {
             cerr << "Failed to open logfile: " << file << endl;
             log.close();
         }
@@ -127,9 +150,9 @@ int main(int argc, char *argv[])
     file = getCommandLineOption(argc, argv, (char*)"-i");
     if (file)
     {
-       in.open(file);
-       if (in.fail() || in.bad())
-       {
+        in.open(file);
+        if (in.fail() || in.bad())
+        {
             cerr << "Failed to open parameter file: " << file << endl;
             in.close();
         }

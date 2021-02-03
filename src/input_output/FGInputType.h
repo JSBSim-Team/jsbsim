@@ -79,7 +79,7 @@ public:
   FGInputType(FGFDMExec* fdmex);
 
   /// Destructor
-  virtual ~FGInputType();
+  ~FGInputType() override;
 
   /** Set the idx for this input instance
       @param idx ID of the input instance that is constructed
@@ -89,10 +89,10 @@ public:
   /** Init the input directives from an XML file (implement the FGModel interface).
       @param element XML Element that is pointing to the input directives
   */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Init the input model according to its configitation.
-  virtual bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Executes the input directives (implement the FGModel interface).
       This method checks that the current time step matches the input
@@ -100,7 +100,7 @@ public:
       generation and finally the "post" functions.
       @result false if no error.
    */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
   /** Generate the input. This is a pure method so it must be implemented by
       the classes that inherits from FGInputType. The Read name may not be
@@ -132,7 +132,7 @@ protected:
   unsigned int InputIdx;
   bool enabled;
 
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

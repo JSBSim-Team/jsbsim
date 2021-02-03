@@ -2,6 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include <math/FGLocation.h>
 #include <math/FGQuaternion.h>
+#include "TestAssertions.h"
 
 const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
@@ -11,50 +12,8 @@ double NormalizedAngle(double angle) {
   return angle;
 }
 
-void assertVectorEqual(const char* _file, int _line,
-                       const JSBSim::FGColumnVector3& x,
-                       const JSBSim::FGColumnVector3& y,
-                       double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1), y(1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2), y(2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3), y(3), delta);
-}
-
-void assertMatrixEqual(const char* _file, int _line,
-                       const JSBSim::FGMatrix33& x,
-                       const JSBSim::FGMatrix33& y,
-                       double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1,1), y(1,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,2), y(1,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,3), y(1,3), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,1), y(2,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,2), y(2,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,3), y(2,3), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,1), y(3,1), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,2), y(3,2), delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,3), y(3,3), delta);
-}
-
-void assertMatrixIsIdentity(const char* _file, int _line,
-                            const JSBSim::FGMatrix33& x,
-                            double delta) {
-  _TS_ASSERT_DELTA(_file, _line, x(1,1), 1.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,2), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(1,3), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,1), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,2), 1.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(2,3), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,1), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,2), 0.0, delta);
-  _TS_ASSERT_DELTA(_file, _line, x(3,3), 1.0, delta);
-}
-
-#define TS_ASSERT_VECTOR_EQUALS(x, y) assertVectorEqual(__FILE__, __LINE__, x, y, epsilon)
-#define TS_ASSERT_MATRIX_EQUALS(x, y) assertMatrixEqual(__FILE__, __LINE__, x, y, epsilon)
-#define TS_ASSERT_MATRIX_IS_IDENTITY(x) assertMatrixIsIdentity(__FILE__, __LINE__, x, epsilon)
-
 void CheckLocation(const JSBSim::FGLocation& loc,
-                   JSBSim::FGColumnVector3 vec, double epa = 0.0) {
+                   JSBSim::FGColumnVector3 vec) {
   const JSBSim::FGQuaternion qloc(2, -0.5*M_PI);
   JSBSim::FGQuaternion q;
   double r = vec.Magnitude();
@@ -72,41 +31,17 @@ void CheckLocation(const JSBSim::FGLocation& loc,
   TS_ASSERT_DELTA(lat, loc.GetLatitude(), epsilon);
   TS_ASSERT_DELTA(sin(lon), loc.GetSinLongitude(), epsilon);
   TS_ASSERT_DELTA(cos(lon), loc.GetCosLongitude(), epsilon);
-  TS_ASSERT_DELTA(sin(lat), loc.GetSinLatitude(), epsilon);
-  TS_ASSERT_DELTA(cos(lat), loc.GetCosLatitude(), epsilon);
-  TS_ASSERT_DELTA(tan(lat), loc.GetTanLatitude(), epsilon);
 
-  q = JSBSim::FGQuaternion(0., -lat, lon);
+  q = JSBSim::FGQuaternion(0., -loc.GetGeodLatitudeRad(), lon);
   JSBSim::FGMatrix33 m = (q * qloc).GetT();
   TS_ASSERT_MATRIX_EQUALS(m, loc.GetTec2l());
   TS_ASSERT_MATRIX_EQUALS(m.Transposed(), loc.GetTl2ec());
-  TS_ASSERT_EQUALS(epa, loc.GetEPA());
-  if (epa == 0.0) {
-    TS_ASSERT_MATRIX_IS_IDENTITY(loc.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(loc.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(loc.GetTi2l(), loc.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(loc.GetTl2i(), loc.GetTl2ec());
-  }
-  else {
-    JSBSim::FGMatrix33 mat(cos(epa), -sin(epa), 0.0,
-                           sin(epa), cos(epa), 0.0,
-                           0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat, loc.GetTec2i());
-    JSBSim::FGMatrix33 m2 = m * mat.Transposed();
-    TS_ASSERT_MATRIX_EQUALS(m2, loc.GetTi2l());
-    TS_ASSERT_MATRIX_EQUALS(mat.Transposed(), loc.GetTi2ec());
-    m2 = mat * m.Transposed();
-    TS_ASSERT_MATRIX_EQUALS(m2, loc.GetTl2i());
-  }
 }
 
 class  FGLocationTest : public CxxTest::TestSuite
 {
 public:
   void testConstructors() {
-    TS_ASSERT_EQUALS(static_cast<JSBSim::FGGroundCallback*>(0),
-                     JSBSim::FGLocation::GetGroundCallback());
-
     JSBSim::FGLocation l0;
     TS_ASSERT_EQUALS(1.0, l0(1));
     TS_ASSERT_EQUALS(0.0, l0(2));
@@ -121,25 +56,11 @@ public:
     TS_ASSERT_EQUALS(1.0, l0.GetRadius());
     TS_ASSERT_EQUALS(0.0, l0.GetSinLongitude());
     TS_ASSERT_EQUALS(1.0, l0.GetCosLongitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetSinLatitude());
-    TS_ASSERT_EQUALS(1.0, l0.GetCosLatitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetTanLatitude());
+
+    l0.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodLatitudeDeg());
     TS_ASSERT_EQUALS(0.0, l0.GetGeodAltitude());
-    TS_ASSERT_EQUALS(0.0, l0.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l0.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l0.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTi2l(), JSBSim::FGMatrix33( 0.0, 0.0, 1.0,
-                                                              0.0, 1.0, 0.0,
-                                                              -1.0, 0.0, 0.0));
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTl2i(), JSBSim::FGMatrix33(0.0, 0.0,-1.0,
-                                                             0.0, 1.0, 0.0,
-                                                             1.0, 0.0, 0.0));
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTi2l(), l0.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(l0.GetTl2i(), l0.GetTl2ec());
-    TS_ASSERT_EQUALS(static_cast<JSBSim::FGGroundCallback*>(0),
-                     l0.GetGroundCallback());
 
     double lat = -0.25*M_PI;
     double lon = M_PI/6.0;
@@ -151,17 +72,11 @@ public:
     TS_ASSERT_DELTA(-45.0, l.GetLatitudeDeg(), epsilon);
     TS_ASSERT_DELTA(0.5, l.GetSinLongitude(), epsilon);
     TS_ASSERT_DELTA(0.5*sqrt(3.0), l.GetCosLongitude(), epsilon);
-    TS_ASSERT_DELTA(-0.5*sqrt(2.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.5*sqrt(2.0), l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetTanLatitude(), epsilon);
+
+    l.SetEllipse(1., 1.);
     TS_ASSERT_EQUALS(lat, l.GetGeodLatitudeRad());
     TS_ASSERT_EQUALS(-45.0, l.GetGeodLatitudeDeg());
     TS_ASSERT_DELTA(0.0, l.GetGeodAltitude(), epsilon);
-    TS_ASSERT_EQUALS(0.0, l.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(l.GetTi2l(), l.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(l.GetTl2i(), l.GetTl2ec());
 
     const JSBSim::FGQuaternion qloc(2, -0.5*M_PI);
     JSBSim::FGQuaternion q(0., -lat, lon);
@@ -181,11 +96,6 @@ public:
     m = (qlat * qloc).GetT();
     TS_ASSERT_MATRIX_EQUALS(m, lv1.GetTec2l());
     TS_ASSERT_MATRIX_EQUALS(m.Transposed(), lv1.GetTl2ec());
-    TS_ASSERT_EQUALS(0.0, lv1.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv1.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv1.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(lv1.GetTi2l(), lv1.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(lv1.GetTl2i(), lv1.GetTl2ec());
 
     v = JSBSim::FGColumnVector3(1.,1.,0.);
     JSBSim::FGLocation lv2(v);
@@ -199,21 +109,18 @@ public:
     m = (qlon * qloc).GetT();
     TS_ASSERT_MATRIX_EQUALS(m, lv2.GetTec2l());
     TS_ASSERT_MATRIX_EQUALS(m.Transposed(), lv2.GetTl2ec());
-    TS_ASSERT_EQUALS(0.0, lv2.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv2.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(lv2.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(lv2.GetTi2l(), lv2.GetTec2l());
-    TS_ASSERT_MATRIX_EQUALS(lv2.GetTl2i(), lv2.GetTl2ec());
 
     v = JSBSim::FGColumnVector3(1.5,-2.,3.);
     JSBSim::FGLocation lv3(v);
 
+    lv3.SetEllipse(1., 1.);
     CheckLocation(lv3, v);
   }
 
   void testCopyConstructor() {
     JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
     JSBSim::FGLocation l(v);
+    l.SetEllipse(1., 1.);
     JSBSim::FGLocation lv(l);
 
     TS_ASSERT_DELTA(l(1), lv(1), epsilon);
@@ -277,6 +184,7 @@ public:
   void testAssignment() {
     JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
     JSBSim::FGLocation lv(v);
+    lv.SetEllipse(1., 1.);
     JSBSim::FGLocation l;
 
     TS_ASSERT_EQUALS(1.0, l(1));
@@ -362,7 +270,8 @@ public:
 
   void testOperations() {
     const JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
-    const JSBSim::FGLocation l(v);
+    JSBSim::FGLocation l(v);
+    l.SetEllipse(1., 1.);
     JSBSim::FGLocation l2(l);
 
     l2 += l;
@@ -428,45 +337,6 @@ public:
     CheckLocation(l2, -0.5*v);
   }
 
-  void testEPA() {
-    const JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
-    JSBSim::FGLocation l(v);
-    double lon = l.GetLongitude();
-    double lat = l.GetLatitude();
-
-    TS_ASSERT_EQUALS(0.0, l.GetEPA());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTi2ec());
-    TS_ASSERT_MATRIX_IS_IDENTITY(l.GetTec2i());
-
-    l.SetEarthPositionAngle(M_PI/6.0);
-    TS_ASSERT_DELTA(M_PI/6.0, l.GetEPA(), epsilon);
-    TS_ASSERT_EQUALS(lon, l.GetLongitude());
-    TS_ASSERT_EQUALS(lat, l.GetLatitude());
-
-    JSBSim::FGMatrix33 mat0(sqrt(3.0) * 0.5, -0.5, 0.0,
-                            0.5, sqrt(3.0) * 0.5, 0.0,
-                            0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat0, l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(mat0.Transposed(), l.GetTi2ec());
-
-    l.IncrementEarthPositionAngle(M_PI/6.0);
-    TS_ASSERT_DELTA(M_PI/3.0, l.GetEPA(), epsilon);
-
-    mat0 = JSBSim::FGMatrix33(0.5, -0.5 * sqrt(3.0), 0.0,
-                              0.5 * sqrt(3.0), 0.5, 0.0,
-                              0.0, 0.0, 1.0);
-    TS_ASSERT_MATRIX_EQUALS(mat0, l.GetTec2i());
-    TS_ASSERT_MATRIX_EQUALS(mat0.Transposed(), l.GetTi2ec());
-
-    CheckLocation(l, v, M_PI/3.0);
-
-    // Check that a fixed point in the ECI has a relative movement to the West
-    // (i.e. increases its longitude) when the ECEF frame is rotating
-    JSBSim::FGLocation l2(mat0.Transposed() * v);
-    TS_ASSERT_EQUALS(lat, l2.GetLatitude());
-    TS_ASSERT(lon > l2.GetLongitude());
-  }
-
   void testLocalLocation() {
     const JSBSim::FGColumnVector3 v(1.5, -2.0, 3.0);
     const JSBSim::FGColumnVector3 z(0.0, 0.0, 1.0);
@@ -515,9 +385,6 @@ public:
       TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
       TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
       TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
-      TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-      TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-      TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
       q = JSBSim::FGQuaternion(0.0, -lat, 0.0);
       m = (q * qloc).GetT();
@@ -532,9 +399,6 @@ public:
         TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
         TS_ASSERT_DELTA(sin(lon), l.GetSinLongitude(), epsilon);
         TS_ASSERT_DELTA(cos(lon), l.GetCosLongitude(), epsilon);
-        TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-        TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-        TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
         q = JSBSim::FGQuaternion(0.0, -lat, lon);
         m = (q * qloc).GetT();
@@ -561,9 +425,6 @@ public:
         TS_ASSERT_DELTA(lat, l.GetLatitude(), epsilon);
         TS_ASSERT_DELTA(sin(lon), l.GetSinLongitude(), epsilon);
         TS_ASSERT_DELTA(cos(lon), l.GetCosLongitude(), epsilon);
-        TS_ASSERT_DELTA(sin(lat), l.GetSinLatitude(), epsilon);
-        TS_ASSERT_DELTA(cos(lat), l.GetCosLatitude(), epsilon);
-        TS_ASSERT_DELTA(tan(lat), l.GetTanLatitude(), epsilon);
 
         q = JSBSim::FGQuaternion(0.0, -lat, lon);
         m = (q * qloc).GetT();
@@ -581,13 +442,11 @@ public:
     TS_ASSERT_DELTA(0.0, l.GetRadius(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetRadius(1.0);
+    l.SetEllipse(1., 1.);
     CheckLocation(l, JSBSim::FGColumnVector3(1., 0., 0.).Normalize());
 
     l = v;
@@ -671,27 +530,18 @@ public:
 
     TS_ASSERT_DELTA(M_PI*0.5, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     // Check that SetLongitude is a no-op when applied at the North pole
     l.SetLongitude(M_PI/6.0);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetLatitude(M_PI/3.0);
     TS_ASSERT_DELTA(M_PI/3.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.5, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.5*sqrt(3.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(sqrt(3.0), l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
@@ -699,27 +549,18 @@ public:
     l = -1.0 * v;
     TS_ASSERT_DELTA(-M_PI*0.5, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     // Check that SetLongitude is a no-op when applied at the South pole
     l.SetLongitude(M_PI/6.0);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-1.0, l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(0.0, l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
     l.SetLatitude(-M_PI/3.0);
     TS_ASSERT_DELTA(-M_PI/3.0, l.GetLatitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetLongitude(), epsilon);
-    TS_ASSERT_DELTA(0.5, l.GetCosLatitude(), epsilon);
-    TS_ASSERT_DELTA(-0.5*sqrt(3.0), l.GetSinLatitude(), epsilon);
-    TS_ASSERT_DELTA(-sqrt(3.0), l.GetTanLatitude(), epsilon);
     TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
     TS_ASSERT_DELTA(0.0, l.GetSinLongitude(), epsilon);
 
@@ -776,6 +617,85 @@ public:
       TS_ASSERT_DELTA(1.0, l.GetCosLongitude(), epsilon);
       TS_ASSERT_DELTA(glat, l.GetGeodLatitudeRad(), epsilon);
       TS_ASSERT_DELTA(h, l.GetGeodAltitude(), 1E-8);
+    }
+  }
+
+  void testNavigationOnSphericalEarth()
+  {
+    double slr = 20925646.32546; // Sea Level Radius
+    double lat0 = 1.0;
+    double lon0 = 1.0;
+    JSBSim::FGLocation l0(lon0, lat0, slr);
+    l0.SetEllipse(slr, slr);
+
+    // Compare the computations with Haversine formulas.
+    for (int ilat = -6; ilat <= 6; ilat++)
+    {
+      double lat = ilat * M_PI / 12.0;
+      double dlat = lat - lat0;
+      for (int ilon = -5; ilon < 6; ilon++)
+      {
+        double lon = NormalizedAngle(ilon * M_PI / 6.0);
+        double dlon = lon - lon0;
+        // Compute the distance
+        double distance_a = pow(sin(0.5 * dlat), 2.) + (cos(lat0) * cos(lat) * pow(sin(0.5 * dlon), 2.));
+        double distance = 2. * slr * atan2(sqrt(distance_a), sqrt(1. - distance_a));
+#ifdef __APPLE__
+        TS_ASSERT_DELTA(distance, l0.GetDistanceTo(lon, lat), 1E-6);
+#else
+        TS_ASSERT_DELTA(distance, l0.GetDistanceTo(lon, lat), 1E-7);
+#endif
+        // Compute the heading
+        double Y = sin(dlon) * cos(lat);
+        double X = cos(lat0) * sin(lat) - sin(lat0) * cos(lat) * cos(dlon);
+        double heading = NormalizedAngle(atan2(Y, X));
+        TS_ASSERT_DELTA(heading, l0.GetHeadingTo(lon, lat), epsilon);
+      }
+    }
+  }
+
+  void testNavigationOnOblateEarth()
+  {
+    const double a = 20925646.32546; // WGS84 semimajor axis length in feet
+    const double b = 20855486.5951;  // WGS84 semiminor axis length in feet
+    JSBSim::FGLocation l;
+    l.SetEllipse(a, b);
+    l.SetPositionGeodetic(0., 0., 0.);
+
+    // Distance and heading to other points on the equator.
+    for (int ilon = -5; ilon < 6; ilon++)
+    {
+      double lon = NormalizedAngle(ilon * M_PI / 6.0);
+      double distance = abs(lon * a);
+      TS_ASSERT_DELTA(distance, l.GetDistanceTo(lon, 0.), 1.);
+      if (ilon != 0)
+        TS_ASSERT_DELTA(lon > 0 ? 0.5 * M_PI : -0.5 * M_PI,
+                        l.GetHeadingTo(lon, 0.), epsilon);
+    }
+
+    // Compute the ellipse perimeter
+    double h = (a-b)/(a+b);
+    double p = M_PI*(a+b)*(1.+3.*h*h/(10.+sqrt(4-3.*h*h)));
+
+    // Distance and heading to the poles.
+    for (int ilon = -5; ilon < 6; ilon++)
+    {
+      double lon = NormalizedAngle(ilon * M_PI / 6.0);
+      l.SetPositionGeodetic(lon, 0., 0.);
+      TS_ASSERT_DELTA(0.25*p, l.GetDistanceTo(0., 0.5*M_PI), 1.);
+      TS_ASSERT_DELTA(0., l.GetHeadingTo(0., 0.5*M_PI), epsilon);
+      TS_ASSERT_DELTA(0.25*p, l.GetDistanceTo(0., -0.5*M_PI), 1.);
+      TS_ASSERT_DELTA(M_PI, l.GetHeadingTo(0., -0.5*M_PI), epsilon);
+    }
+
+    // Distance to the antipode.
+    for (int ilat = -5; ilat <= 5; ++ilat) {
+      double glat = ilat * M_PI / 12.0;
+      for (int ilon = -5; ilon <= 6; ++ilon) {
+        double lon = NormalizedAngle(ilon * M_PI / 6.0);
+        l.SetPositionGeodetic(lon, glat, 0.);
+        TS_ASSERT_DELTA(0.5*p, l.GetDistanceTo(lon+M_PI, -glat), 1.);
+      }
     }
   }
 };

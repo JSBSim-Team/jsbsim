@@ -20,7 +20,7 @@
 #
 
 import os
-from JSBSim_utils import JSBSimTestCase, CreateFDM, CheckXMLFile, RunTest
+from JSBSim_utils import JSBSimTestCase, CheckXMLFile, RunTest
 
 
 class CheckAircrafts(JSBSimTestCase):
@@ -42,7 +42,7 @@ class CheckAircrafts(JSBSimTestCase):
             if d in ('blank'):
                 continue
 
-            fdm = CreateFDM(self.sandbox)
+            fdm = self.create_fdm()
             self.assertTrue(fdm.load_model(d),
                             msg='Failed to load aircraft %s' % (d,))
 
@@ -55,7 +55,5 @@ class CheckAircrafts(JSBSimTestCase):
                         fdm.run_ic()
                     except RuntimeError:
                         self.fail('Failed to run IC %s for aircraft %s' % (f, d))
-
-            del fdm
 
 RunTest(CheckAircrafts)

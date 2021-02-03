@@ -1,0 +1,26 @@
+[Setup]
+AppName=JSBSim
+AppVersion=${PROJECT_VERSION}
+AppPublisherURL=https://github.com/JSBSim-Team/jsbsim
+DefaultDirName={sd}\JSBSim
+OutputBaseFilename=JSBSim-${PROJECT_VERSION}-$ENV{GITHUB_RUN_NUMBER}-setup
+AlwaysShowDirOnReadyPage=yes
+LicenseFile=${CMAKE_SOURCE_DIR}\COPYING
+WizardStyle=modern
+WizardImageStretch=no
+WizardImageFile=logos\*.bmp
+WizardSmallImageFile=small\*.bmp
+
+[Components]
+Name: "executables"; Description: "JSBSim and aeromatic executables"; Types: full compact
+Name: "data"; Description: "JSBSim scripts and aircraft data"; Types: full
+
+[Files]
+Source: "${CMAKE_BINARY_DIR}\src\JSBSim.exe"; DestDir: "{app}"; Components: executables
+Source: "${CMAKE_BINARY_DIR}\utils\aeromatic++\aeromatic.exe"; DestDir: "{app}"; Components: executables
+Source: "${CMAKE_BINARY_DIR}\msvcp*.dll"; DestDir: "{app}"; Components: executables
+Source: "${CMAKE_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
+Source: "${CMAKE_SOURCE_DIR}\data_output\*.xml"; DestDir: "{app}\data_output"; Components: data
+Source: "${CMAKE_SOURCE_DIR}\engine\*.xml"; DestDir: "{app}\engine"; Components: data
+Source: "${CMAKE_SOURCE_DIR}\scripts\*.xml"; DestDir: "{app}\scripts"; Components: data
+Source: "${CMAKE_SOURCE_DIR}\systems\*.xml"; DestDir: "{app}\systems"; Components: data

@@ -276,7 +276,7 @@ void CableControls::set(const float* cg_loc)
             }
             break;
         case 1:
-            Vt = 1.1*Vs;
+            Vt = 1.1f*Vs;
             Q = 0.5f*rho*Vs*Vs;
             CL = W/Q/Sw;
             break;
@@ -315,14 +315,16 @@ void CableControls::set(const float* cg_loc)
         Cmin = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmin*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
         Cmax = (-((1.0f+2.0f*TR)/(6.0f+6.0f*TR))*(dihedral*CLaw[0] + (CLmax*tanf(sweep)/(1.0f-M2*powf(cosf(sweep), 2.0f)))));
 
-      _aircraft->_Clbeta.at(i*2) = Cmin - Clbwf - alpha*Clbvt;
-      _aircraft->_Clbeta.at(i*2+1) = Cmax - Clbwf - alpha*Clbvt;
+        _aircraft->_Clbeta.at(i*2) = Cmin - Clbwf - alpha*Clbvt;
+        _aircraft->_Clbeta.at(i*2+1) = Cmax - Clbwf - alpha*Clbvt;
+        _aircraft->_Clbeta.at(i*2+2) = Cmin - Clbwf;
 
         float Clr_const = 2.0f*lv*zv/bw/bw*CYbeta;
         Cmin = (CLmin/4.0f)-Clr_const;
         Cmax = (CLmax/4.0f)-Clr_const;
         _aircraft->_Clr.at(i*2) = Cmin;
         _aircraft->_Clr.at(i*2+1) = Cmax;
+        _aircraft->_Clr.at(i*2+2) = (CLmin/2.0f)-Clr_const;
 
         if (Vs <= 0.5f) break;
     }

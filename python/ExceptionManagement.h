@@ -17,7 +17,7 @@
  */
 
 #include <string>
-#include "fpectlmodule.h"
+#include "fpectl/fpectlmodule.h"
 
 void convertJSBSimToPyExc()
 {

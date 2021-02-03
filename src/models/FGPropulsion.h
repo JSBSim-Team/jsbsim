@@ -41,7 +41,6 @@ INCLUDES
 #include <vector>
 #include <iosfwd>
 
-#include "simgear/props/propertyObject.hxx"
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
@@ -102,7 +101,7 @@ public:
   /// Constructor
   FGPropulsion(FGFDMExec*);
   /// Destructor
-  ~FGPropulsion();
+  ~FGPropulsion() override;
 
   /** Executes the propulsion model.
       The initial plan for the FGPropulsion class calls for Run() to be executed,
@@ -113,26 +112,27 @@ public:
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
+  bool Run(bool Holding) override;
 
-  bool InitModel(void);
+  bool InitModel(void) override;
 
   /** Loads the propulsion system (engine[s] and tank[s]).
       Characteristics of the propulsion system are read in from the config file.
       @param el pointer to an XML element that contains the engine information.
       @return true if successfully loaded, otherwise false */
-  virtual bool Load(Element* el);
+  bool Load(Element* el) override;
 
   /// Retrieves the number of engines defined for the aircraft.
-  unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
+  size_t GetNumEngines(void) const {return Engines.size();}
 
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
       @return the address of the specific engine, or zero if no such engine is
               available */
-  FGEngine* GetEngine(unsigned int index) const {
-                      if (index < Engines.size()) return Engines[index];
-                      else                        return 0L;      }
+  auto GetEngine(unsigned int index) const {
+    assert(index < Engines.size());
+    return Engines[index];
+  }
 
   /// Retrieves the number of tanks defined for the aircraft.
   unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
@@ -173,7 +173,7 @@ public:
   const FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void) const;
 
-  SGPath FindFullPathName(const SGPath& path) const;
+  SGPath FindFullPathName(const SGPath& path) const override;
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) const {return FuelFreeze;}
 
@@ -189,7 +189,7 @@ public:
   struct FGEngine::Inputs in;
 
 private:
-  std::vector <FGEngine*>   Engines;
+  std::vector <std::shared_ptr<FGEngine>> Engines;
   std::vector <FGTank*>     Tanks;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;
@@ -203,11 +203,11 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
-  simgear::PropertyObject<bool> refuel;
-  simgear::PropertyObject<bool> dump;
+  bool refuel;
+  bool dump;
   bool FuelFreeze;
-  simgear::PropertyObject<double> TotalFuelQuantity;
-  simgear::PropertyObject<double> TotalOxidizerQuantity;
+  double TotalFuelQuantity;
+  double TotalOxidizerQuantity;
   double DumpRate;
   double RefuelRate;
   bool IsBound;
@@ -221,7 +221,7 @@ private:
   bool ReadingEngine;
 
   void bind();
-  void Debug(int from);
+  void Debug(int from) override;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

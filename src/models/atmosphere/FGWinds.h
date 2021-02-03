@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2011  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -39,9 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "models/FGModel.h"
-#include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
-#include "math/FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -49,12 +47,15 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class FGTable;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models atmospheric disturbances: winds, gusts, turbulence, downbursts, etc.
 
+    <h2>Turbulence</h2>
     Various turbulence models are available. They are specified
     via the property <tt>atmosphere/turb-type</tt>. The following models are
     available:
@@ -64,22 +65,23 @@ CLASS DOCUMENTATION
     - 3: ttMilspec (Dryden spectrum)
     - 4: ttTustin (Dryden spectrum)
 
-    The Milspec and Tustin models are described in the Yeager report cited below.
-    They both use a Dryden spectrum model whose parameters (scale lengths and intensities)
-    are modelled according to MIL-F-8785C. Parameters are modelled differently
-    for altitudes below 1000ft and above 2000ft, for altitudes in between they
-    are interpolated linearly.
+    The Milspec and Tustin models are described in the Yeager report cited
+    below.  They both use a Dryden spectrum model whose parameters (scale
+    lengths and intensities) are modelled according to MIL-F-8785C. Parameters
+    are modelled differently for altitudes below 1000ft and above 2000ft, for
+    altitudes in between they are interpolated linearly.
 
     The two models differ in the implementation of the transfer functions
     described in the milspec.
 
-    To use one of these two models, set <tt>atmosphere/turb-type</tt> to 4 resp. 5,
-    and specify values for <tt>atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps<tt>
-    and <tt>atmosphere/turbulence/milspec/severity<tt> (the latter corresponds to
-    the probability of exceedence curves from Fig.&nbsp;7 of the milspec, allowable
-    range is 0 (disabled) to 7). <tt>atmosphere/psiw-rad</tt> is respected as well;
-    note that you have to specify a positive wind magnitude to prevent psiw from
-    being reset to zero.
+    To use one of these two models, set <tt>atmosphere/turb-type</tt> to 4
+    resp. 5, and specify values for
+    <tt>atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps</tt> and
+    <tt>atmosphere/turbulence/milspec/severity</tt> (the latter corresponds to
+    the probability of exceedence curves from Fig.&nbsp;7 of the milspec,
+    allowable range is 0 (disabled) to 7). <tt>atmosphere/psiw-rad</tt> is
+    respected as well; note that you have to specify a positive wind magnitude
+    to prevent psiw from being reset to zero.
 
     Reference values (cf. figures 7 and 9 from the milspec):
     <table>
@@ -96,6 +98,57 @@ CLASS DOCUMENTATION
           <td>75 (45 knots)</td>
           <td>6</td></tr>
     </table>
+
+    <h2>Cosine Gust</h2>
+    A one minus cosine gust model is available. This permits a configurable,
+    predictable gust to be input to JSBSim for testing handling and
+    dynamics. Here is how a gust can be entered in a script:
+
+    ~~~{.xml}
+    <event name="Introduce gust">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="atmosphere/cosine-gust/startup-duration-sec" value="5"/>
+      <set name="atmosphere/cosine-gust/steady-duration-sec" value="1"/>
+      <set name="atmosphere/cosine-gust/end-duration-sec" value="5"/>
+      <set name="atmosphere/cosine-gust/magnitude-ft_sec" value="30"/>
+      <set name="atmosphere/cosine-gust/frame" value="2"/>
+      <set name="atmosphere/cosine-gust/X-velocity-ft_sec" value="-1"/>
+      <set name="atmosphere/cosine-gust/Y-velocity-ft_sec" value="0"/>
+      <set name="atmosphere/cosine-gust/Z-velocity-ft_sec" value="0"/>
+      <set name="atmosphere/cosine-gust/start" value="1"/>
+      <notify/>
+    </event>
+    ~~~
+
+    The x, y, z velocity components are meant to define the direction vector.
+    The vector will be normalized by the routine, so it does not need to be a
+    unit vector.
+
+    The startup duration is the time it takes to build up to full strength
+    (magnitude-ft_sec) from zero. Steady duration is the time the gust stays at
+    the specified magnitude. End duration is the time it takes to dwindle to
+    zero from the specified magnitude. The start and end transients are in a
+    smooth cosine shape.
+
+    The frame is specified from the following enum:
+
+    enum eGustFrame {gfNone=0, gfBody, gfWind, gfLocal};
+
+    That is, if you specify the X, Y, Z gust direction vector in the body frame,
+    frame will be "1". If the X, Y, and Z gust direction vector is in the Wind
+    frame, use frame = 2. If you specify the gust direction vector in the local
+    frame (N-E-D) use frame = 3. Note that an internal local frame direction
+    vector is created based on the X, Y, Z direction vector you specify and the
+    frame *at the time the gust is begun*. The direction vector is not updated
+    after the initial creation. This is to keep the gust at the same direction
+    independent of aircraft dynamics.
+
+    The gust is triggered when the property atmosphere/cosine-gust/start is set
+    to 1. It can be used repeatedly - the gust resets itself after it has
+    completed.
+
+    The cosine gust is global: it affects the whole world not just the vicinity
+    of the aircraft.
 
     @see Yeager, Jessie C.: "Implementation and Testing of Turbulence Models for
          the F18-HARV" (<a
@@ -114,18 +167,18 @@ class FGWinds : public FGModel {
 public:
 
   /// Constructor
-  FGWinds(FGFDMExec*);
+  explicit FGWinds(FGFDMExec*);
   /// Destructor
   ~FGWinds();
   /** Runs the winds model; called by the Executive
       Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
-                     advancing time. Some models may ignore this flag, such as the Input
-                     model, which may need to be active to listen on a socket for the
-                     "Resume" command to be given.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time. Some models may ignore this flag, such
+                     as the Input model, which may need to be active to listen
+                     on a socket for the "Resume" command to be given.
       @return false if no error */
-  bool Run(bool Holding);
-  bool InitModel(void);
+  bool Run(bool Holding) override;
+  bool InitModel(void) override;
   enum tType {ttNone, ttStandard, ttCulp, ttMilspec, ttTustin} turbType;
 
   // TOTAL WIND access functions (wind + gust + turbulence)
@@ -159,10 +212,11 @@ public:
   virtual double GetWindPsi(void) const { return psiw; }
 
   /** Sets the direction that the wind is coming from.
-      The direction is defined as north=0 and increases counterclockwise to 2*pi (radians). The
-      vertical component of wind is assumed to be zero - and is forcibly set to zero. This function
-      sets the vWindNED vector components based on the supplied direction. The magnitude of
-      the wind set in the vector is preserved (assuming the vertical component is non-zero).
+      The direction is defined as north=0 and increases counterclockwise to 2*pi
+      (radians). The vertical component of wind is assumed to be zero - and is
+      forcibly set to zero. This function sets the vWindNED vector components
+      based on the supplied direction. The magnitude of the wind set in the
+      vector is preserved (assuming the vertical component is non-zero).
       @param dir wind direction in the horizontal plane, in radians.*/
   virtual void SetWindPsi(double dir);
 
@@ -190,7 +244,8 @@ public:
   /// Retrieves the gust components in NED frame.
   virtual const FGColumnVector3& GetGustNED(void) const {return vGustNED;}
 
-  /** Turbulence models available: ttNone, ttStandard, ttBerndt, ttCulp, ttMilspec, ttTustin */
+  /** Turbulence models available: ttNone, ttStandard, ttBerndt, ttCulp,
+      ttMilspec, ttTustin */
   virtual void   SetTurbType(tType tt) {turbType = tt;}
   virtual tType  GetTurbType() const {return turbType;}
 
@@ -348,7 +403,7 @@ private:
   double DistanceFromRingCenter(double lat, double lon);
 
   virtual void bind(void);
-  void Debug(int from);
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

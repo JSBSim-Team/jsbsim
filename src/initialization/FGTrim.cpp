@@ -7,21 +7,21 @@
  --------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) ---------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
  HISTORY
 --------------------------------------------------------------------------------
@@ -43,7 +43,6 @@ INCLUDES
 
 #include <iomanip>
 #include "FGTrim.h"
-#include "models/FGGroundReactions.h"
 #include "models/FGInertial.h"
 #include "models/FGAccelerations.h"
 #include "models/FGMassBalance.h"
@@ -188,15 +187,16 @@ bool FGTrim::DoTrim(void) {
   bool trim_failed=false;
   unsigned int N = 0;
   unsigned int axis_count = 0;
-  FGFCS *FCS = fdmex->GetFCS();
+  auto FCS = fdmex->GetFCS();
+  auto GroundReactions = fdmex->GetGroundReactions();
   vector<double> throttle0 = FCS->GetThrottleCmd();
   double elevator0 = FCS->GetDeCmd();
   double aileron0 = FCS->GetDaCmd();
   double rudder0 = FCS->GetDrCmd();
   double PitchTrim0 = FCS->GetPitchTrimCmd();
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
-    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
+  for(int i=0;i < GroundReactions->GetNumGearUnits();i++)
+    GroundReactions->GetGearUnit(i)->SetReport(false);
 
   fdmex->SetTrimStatus(true);
   fdmex->SuspendIntegration();
@@ -329,7 +329,7 @@ bool FGTrim::DoTrim(void) {
     fdmex->Run();
 
     // If WOW is true we must make sure there are no gears into the ground.
-    if (fdmex->GetGroundReactions()->GetWOW())
+    if (GroundReactions->GetWOW())
       trimOnGround();
 
     if (debug_lvl > 0)
@@ -340,8 +340,8 @@ bool FGTrim::DoTrim(void) {
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
 
-  for(int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++)
-    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
+  for(int i=0;i < GroundReactions->GetNumGearUnits();i++)
+    GroundReactions->GetGearUnit(i)->SetReport(true);
 
   return !trim_failed;
 }
@@ -372,10 +372,10 @@ bool FGTrim::DoTrim(void) {
 
 void FGTrim::trimOnGround(void)
 {
-  FGGroundReactions* GroundReactions = fdmex->GetGroundReactions();
-  FGPropagate* Propagate = fdmex->GetPropagate();
-  FGMassBalance* MassBalance = fdmex->GetMassBalance();
-  FGAccelerations* Accelerations = fdmex->GetAccelerations();
+  auto GroundReactions = fdmex->GetGroundReactions();
+  auto Propagate = fdmex->GetPropagate();
+  auto MassBalance = fdmex->GetMassBalance();
+  auto Accelerations = fdmex->GetAccelerations();
   vector<ContactPoints> contacts;
   FGLocation CGLocation = Propagate->GetLocation();
   FGMatrix33 Tec2b = Propagate->GetTec2b();
@@ -387,7 +387,7 @@ void FGTrim::trimOnGround(void)
   // loop to find which one is closer to (or deeper into) the ground.
   for (int i = 0; i < GroundReactions->GetNumGearUnits(); ++i) {
     ContactPoints c;
-    FGLGear* gear = GroundReactions->GetGearUnit(i);
+    auto gear = GroundReactions->GetGearUnit(i);
 
     // Skip the retracted landing gears
     if (!gear->GetGearUnitDown())
@@ -398,7 +398,9 @@ void FGTrim::trimOnGround(void)
 
     FGColumnVector3 normal, vDummy;
     FGLocation lDummy;
-    double height = gearLoc.GetContactPoint(lDummy, normal, vDummy, vDummy);
+    double height = fdmex->GetInertial()->GetContactPoint(gearLoc, lDummy,
+                                                          normal, vDummy,
+                                                          vDummy);
 
     if (gear->IsBogey() && !GroundReactions->GetSolid())
       continue;
@@ -411,6 +413,9 @@ void FGTrim::trimOnGround(void)
       contactRef = contacts.size() - 1;
     }
   }
+
+  if (contacts.size() < 3)
+    return;
 
   // Remove the contact point that is closest to the ground from the list:
   // the rotation axis will be going thru this point so we need to remove it
@@ -724,7 +729,7 @@ bool FGTrim::checkLimits(FGTrimAxis& axis)
 
 void FGTrim::setupPullup() {
   double g,q,cgamma;
-  g=fdmex->GetInertial()->gravity();
+  g=fdmex->GetInertial()->GetGravity().Magnitude();
   cgamma=cos(fgic.GetFlightPathAngleRadIC());
   cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
        << fgic.GetVtrueFpsIC() << endl;
@@ -742,7 +747,7 @@ void FGTrim::setupTurn(void){
   phi = fgic.GetPhiRadIC();
   if( fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
     targetNlf = 1 / cos(phi);
-    g = fdmex->GetInertial()->gravity();
+    g = fdmex->GetInertial()->GetGravity().Magnitude();
     psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
     cout << targetNlf << ", " << psidot << endl;
   }
@@ -754,7 +759,7 @@ void FGTrim::setupTurn(void){
 void FGTrim::updateRates(void){
   if( mode == tTurn ) {
     double phi = fgic.GetPhiRadIC();
-    double g = fdmex->GetInertial()->gravity();
+    double g = fdmex->GetInertial()->GetGravity().Magnitude();
     double p,q,r,theta;
     if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
       theta=fgic.GetThetaRadIC();
@@ -771,7 +776,7 @@ void FGTrim::updateRates(void){
     fgic.SetRRadpsIC(r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
       double g,q,cgamma;
-      g=fdmex->GetInertial()->gravity();
+      g=fdmex->GetInertial()->GetGravity().Magnitude();
       cgamma=cos(fgic.GetFlightPathAngleRadIC());
       q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
       fgic.SetQRadpsIC(q);

@@ -7,21 +7,21 @@
  ------------- Copyright (C) 1999  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -38,12 +38,11 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "models/FGModel.h"
-#include "math/FGColumnVector3.h"
 #include "math/FGLocation.h"
 #include "math/FGQuaternion.h"
-#include "math/FGMatrix33.h"
-#include <deque>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -52,6 +51,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGInitialCondition;
+class FGInertial;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -146,7 +146,7 @@ public:
       - integrator, rotational position = Trapezoidal
       - integrator, translational position = Trapezoidal
       @param Executive a pointer to the parent executive object */
-  FGPropagate(FGFDMExec* Executive);
+  explicit FGPropagate(FGFDMExec* Executive);
 
   /// Destructor
   ~FGPropagate();
@@ -185,7 +185,7 @@ public:
   const FGColumnVector3& GetVel(void) const { return vVel; }
 
   /** Retrieves the body frame vehicle velocity vector.
-      The vector returned is represented by an FGColumnVector reference. The vector
+      The vector returned is represented by an FGColumnVector3 reference. The vector
       for the velocity in Body frame is organized (Vx, Vy, Vz). The vector
       is 1-based, so that the first element can be retrieved using the "()" operator.
       In other words, vUVW(1) is Vx. Various convenience enumerators are defined
@@ -199,7 +199,7 @@ public:
   /** Retrieves the body angular rates vector, relative to the ECEF frame.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
-      The vector returned is represented by an FGColumnVector reference. The vector
+      The vector returned is represented by an FGColumnVector3 reference. The vector
       for the angular velocity in Body frame is organized (P, Q, R). The vector
       is 1-based, so that the first element can be retrieved using the "()" operator.
       In other words, vPQR(1) is P. Various convenience enumerators are defined
@@ -327,7 +327,7 @@ public:
       units ft
       @return The current altitude above sea level in feet.
   */
-  double GetAltitudeASL(void) const { return VState.vLocation.GetAltitudeASL(); }
+  double GetAltitudeASL(void) const;
 
   /** Returns the current altitude above sea level.
       This function returns the altitude above sea level.
@@ -425,15 +425,21 @@ public:
       */
   double GetLocalTerrainRadius(void) const;
 
-  double GetEarthPositionAngle(void) const { return VState.vLocation.GetEPA(); }
+  /** Returns the Earth position angle.
+      @return Earth position angle in radians.
+   */
+  double GetEarthPositionAngle(void) const { return epa; }
 
-  double GetEarthPositionAngleDeg(void) const { return GetEarthPositionAngle()*radtodeg;}
+  /** Returns the Earth position angle in degrees.
+      @return Earth position angle in degrees.
+  */
+  double GetEarthPositionAngleDeg(void) const { return epa*radtodeg;}
 
   const FGColumnVector3& GetTerrainVelocity(void) const { return LocalTerrainVelocity; }
   const FGColumnVector3& GetTerrainAngularVelocity(void) const { return LocalTerrainAngularVelocity; }
   void RecomputeLocalTerrainVelocity();
 
-  double GetTerrainElevation(void) const { return GetLocalTerrainRadius() - VState.vLocation.GetSeaLevelRadius(); }
+  double GetTerrainElevation(void) const;
   double GetDistanceAGL(void)  const;
   double GetDistanceAGLKm(void)  const;
   double GetRadius(void) const {
@@ -483,11 +489,13 @@ public:
   const FGMatrix33& GetTb2i(void) const { return Tb2i; }
 
   /** Retrieves the ECEF-to-ECI transformation matrix.
-      @return a reference to the ECEF-to-ECI transformation matrix.  */
+      @return a reference to the ECEF-to-ECI transformation matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTec2i(void) const { return Tec2i; }
 
   /** Retrieves the ECI-to-ECEF transformation matrix.
-      @return a reference to the ECI-to-ECEF matrix.  */
+      @return a reference to the ECI-to-ECEF matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTi2ec(void) const { return Ti2ec; }
 
   /** Retrieves the ECEF-to-local transformation matrix.
@@ -503,18 +511,25 @@ public:
   const FGMatrix33& GetTl2ec(void) const { return Tl2ec; }
 
   /** Retrieves the local-to-inertial transformation matrix.
-      @return a reference to the local-to-inertial transformation matrix.  */
+      @return a reference to the local-to-inertial transformation matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTl2i(void) const { return Tl2i; }
 
   /** Retrieves the inertial-to-local transformation matrix.
-      @return a reference to the inertial-to-local matrix.  */
+      @return a reference to the inertial-to-local matrix.
+      @see SetEarthPositionAngle */
   const FGMatrix33& GetTi2l(void) const { return Ti2l; }
 
   const VehicleState& GetVState(void) const { return VState; }
 
   void SetVState(const VehicleState& vstate);
 
-  void SetEarthPositionAngle(double epa) {VState.vLocation.SetEarthPositionAngle(epa);}
+  /** Sets the Earth position angle.
+      This is the relative angle around the Z axis of the ECEF frame with
+      respect to the inertial frame.
+      @param EPA Earth position angle in radians.
+   */
+  void SetEarthPositionAngle(double EPA) {epa = EPA;}
 
   void SetInertialOrientation(const FGQuaternion& Qi);
   void SetInertialVelocity(const FGColumnVector3& Vi);
@@ -559,14 +574,9 @@ public:
     VState.vInertialPosition = Tec2i * VState.vLocation;
   }
 
-  void SetAltitudeASL(double altASL)
-  {
-    VState.vLocation.SetAltitudeASL(altASL);
-    UpdateVehicleState();
-  }
+  void SetAltitudeASL(double altASL);
   void SetAltitudeASLmeters(double altASL) { SetAltitudeASL(altASL/fttom); }
 
-  void SetSeaLevelRadius(double tt);
   void SetTerrainElevation(double tt);
   void SetDistanceAGL(double tt);
   void SetDistanceAGLKm(double tt);
@@ -603,6 +613,7 @@ public:
     FGColumnVector3 vOmegaPlanet;
     double SemiMajor;
     double SemiMinor;
+    double GM; // Gravitational parameter
     double DeltaT;
   } in;
 
@@ -612,6 +623,7 @@ private:
 
   struct VehicleState VState;
 
+  std::shared_ptr<FGInertial> Inertial;
   FGColumnVector3 vVel;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;
@@ -625,6 +637,18 @@ private:
   FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   FGMatrix33 Ti2l;
   FGMatrix33 Tl2i;
+  double epa;        // Earth Position Angle
+
+  // Orbital parameters
+  double h;               // Specific angular momentum
+  double Inclination;     // Inclination (angle between the orbital plane and the equatorial plane)
+  double RightAscension;  // Right ascension of the ascending node
+  double Eccentricity;    // Eccentricity
+  double PerigeeArgument; // Argument of perigee (angle between the apsis line and the node line)
+  double TrueAnomaly;     // True anomaly (angle of the vehicule from the apsis line)
+  double ApoapsisRadius;  // Apoapsis radius (farthest point from the planet)
+  double PeriapsisRadius; // Periapsis radius (closest point to the planet)
+  double OrbitalPeriod;   // Period of elliptic orbits
 
   FGQuaternion Qec2b;
 
@@ -654,6 +678,7 @@ private:
   void UpdateLocationMatrices(void);
   void UpdateBodyMatrices(void);
   void UpdateVehicleState(void);
+  void ComputeOrbitalParameters(void);
 
   void WriteStateFile(int num);
   void bind(void);

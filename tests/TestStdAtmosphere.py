@@ -21,7 +21,7 @@
 
 import math
 
-from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
+from JSBSim_utils import JSBSimTestCase, RunTest
 
 def compute_pressure(P, L, dH, T_K, factor):
     if abs(L) > 1E-8:
@@ -51,6 +51,7 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.P0 = 101325 # Pa
         self.g0 = 9.80665 # m/s^2
         self.Mair = 28.9645 # g/mol
+        self.Mwater = 18.016 # g/mol
         self.Rstar = 8.31432 # J/K/mol
         self.gamma = 1.4
         self.Reng = self.Rstar*1000/self.Mair
@@ -158,16 +159,14 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.assertAlmostEqual(1.0, P_Pa*self.Pa_to_psf/fdm['atmosphere/P-psf'])
 
     def test_std_atmosphere(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         self.check_temperature(fdm, self.T0, 0.0)
         self.check_pressure(fdm, self.P0, self.T0, 0.0)
 
-        del fdm
-
     def test_temperature_bias(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         delta_T_K = 15.0
@@ -177,10 +176,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl, 0.0)
         self.check_pressure(fdm, self.P0, T_sl, 0.0)
 
-        del fdm
-
     def test_sl_pressure_bias(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         P_sl = 95000.
@@ -189,10 +186,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, self.T0, 0.0)
         self.check_pressure(fdm, P_sl, self.T0, 0.0)
 
-        del fdm
-
     def test_pressure_and_temperature_bias(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         delta_T_K = 15.0
@@ -204,10 +199,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl, 0.0)
         self.check_pressure(fdm, P_sl, T_sl, 0.0)
 
-        del fdm
-
     def test_temperature_gradient(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         graded_delta_T_K = -10.0
@@ -220,10 +213,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, self.P0, self.T0 + graded_delta_T_K, T_gradient)
 
-        del fdm
-
     def test_temperature_gradient_and_bias(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         delta_T_K = 15.0
@@ -239,10 +230,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, self.P0, T_sl + graded_delta_T_K, T_gradient)
 
-        del fdm
-
     def test_pressure_and_temperature_gradient(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         P_sl = 95000.
@@ -257,10 +246,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, self.T0 + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, P_sl, self.T0 + graded_delta_T_K, T_gradient)
 
-        del fdm
-
     def test_pressure_and_temperature_gradient_and_bias(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
 
         P_sl = 95000.
@@ -278,10 +265,20 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.check_temperature(fdm, T_sl + graded_delta_T_K, T_gradient)
         self.check_pressure(fdm, P_sl, T_sl + graded_delta_T_K, T_gradient)
 
-        del fdm
+    def test_set_pressure_SL(self):
+        fdm = self.create_fdm()
+        fdm.load_model('ball')
+        fdm.run_ic()
+
+        atmos = fdm.get_atmosphere()
+        eInchesHg = 4
+
+        atmos.set_pressure_SL(eInchesHg, 29.92)
+        fdm.run_ic()
+        self.assertAlmostEqual(2115.8849626, fdm['atmosphere/P-psf'])
 
     def test_set_temperature(self):
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
         fdm.run_ic()
 
@@ -319,10 +316,8 @@ class TestStdAtmosphere(JSBSimTestCase):
 
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/530.0)
 
-        del fdm
-
     def test_humidity_parameters(self):
-        # Table: Dew point (deg C), Vapor pressure (Pa), RH
+        # Table: Dew point (deg C), Vapor pressure (Pa), RH, density
         humidity_table = [
             (-40.0,   19.021201,     0.815452, 1.2040321),
             (-30.0,   51.168875,     2.193645, 1.2038877),
@@ -333,7 +328,7 @@ class TestStdAtmosphere(JSBSimTestCase):
             ( 20.0, 2332.5960221, 100.,        1.1936395)
         ]
 
-        fdm = CreateFDM(self.sandbox)
+        fdm = self.create_fdm()
         fdm.load_model('ball')
         fdm['atmosphere/delta-T'] = 5.0*self.K_to_R
         fdm.run_ic()
@@ -346,15 +341,48 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.assertAlmostEqual(fdm['atmosphere/dew-point-R'], 54.054)
 
         for Tdp, Pv, RH, rho in humidity_table:
-            fdm['atmosphere/dew-point-R'] = (Tdp+273.15)*self.K_to_R
+            dew_point_R = (Tdp+273.15)*self.K_to_R
+            fdm['atmosphere/dew-point-R'] = dew_point_R
             fdm.run_ic()
+            self.assertAlmostEqual(fdm['atmosphere/dew-point-R'], dew_point_R)
             self.assertAlmostEqual(fdm['atmosphere/vapor-pressure-psf'],
                                    Pv*self.Pa_to_psf)
             self.assertAlmostEqual(fdm['atmosphere/RH'], RH)
             self.assertAlmostEqual(fdm['atmosphere/rho-slugs_ft3']/(self.kg_to_slug*math.pow(0.3048,3)),
                                    rho)
 
-        del fdm
+    def test_max_HR(self):
+        max_water_ppm = [(  0.0, 35000.),
+                         (  1.0, 31000.),
+                         (  2.0, 28000.),
+                         (  4.0, 22000.),
+                         (  6.0,  8900.),
+                         (  8.0,  4700.),
+                         ( 10.0,  1300.),
+                         ( 12.0,   230.),
+                         ( 14.0,    48.),
+                         ( 16.0,    38.),
+                         (100.0,    38.)]
 
+        fdm = self.create_fdm()
+        fdm.load_model('ball')
+        # Choose an ambient temperature high enough that the HR cannot reach 100%
+        fdm['atmosphere/delta-T'] = 40.0*self.K_to_R
+
+        for (h, ppm) in max_water_ppm:
+            fdm['ic/h-sl-ft'] = self.geometric_altitude(h)*self.km_to_ft
+            fdm.run_ic()
+
+            fdm['atmosphere/RH'] = 100.
+            fdm.run()
+
+            Pv = fdm['atmosphere/vapor-pressure-psf']/self.Pa_to_psf
+            P = fdm['atmosphere/P-psf']/self.Pa_to_psf
+            T = fdm['atmosphere/T-R']/self.K_to_R
+            rhov = Pv*self.Mwater/(self.Rstar*1000.*T)
+            rhoa = (P-Pv)/(self.Reng*T)
+
+            self.assertAlmostEqual(rhov/rhoa, ppm*1E-6)
+            self.assertAlmostEqual(fdm['atmosphere/vapor-fraction-ppm']/ppm, 1.0)
 
 RunTest(TestStdAtmosphere)

@@ -16,7 +16,7 @@
   <run start="0.0" end="1000" dt="0.008333333333333333333">
 
     <property> simulation/notify-time-trigger </property>
-    <property value="1"> simulation/run_id </property>
+    <property value="1" persistent="true"> simulation/run_id </property>
     <property value="1"> fcs/left-brake-cmd-norm </property>
     <property value="1"> fcs/right-brake-cmd-norm </property>
     <property value="1"> fcs/center-brake-cmd-norm </property>

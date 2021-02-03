@@ -54,7 +54,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   string token, strFuelName;
   Element* element;
   Element* element_Grain;
-  FGPropertyManager *PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   Area = 1.0;
   Density = 6.6;
   InitialTemperature = Temperature = -9999.0;
@@ -223,7 +223,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   // A named fuel type will override a previous density value
   if (!strFuelName.empty()) Density = ProcessFuelName(strFuelName); 
 
-  bind(PropertyManager);
+  bind(PropertyManager.get());
 
   Debug(0);
 }

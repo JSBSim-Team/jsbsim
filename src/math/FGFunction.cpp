@@ -29,6 +29,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
+#include <random>
+#include <chrono>
+#include <memory>
 
 #include "simgear/misc/strutils.hxx"
 #include "FGFDMExec.h"
@@ -37,6 +40,7 @@ INCLUDES
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGFunctionValue.h"
+
 
 using namespace std;
 
@@ -47,7 +51,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 const double invlog2val = 1.0/log10(2.0);
-const unsigned int MaxArgs = 9999;
+constexpr unsigned int MaxArgs = 9999;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -68,13 +72,13 @@ private:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-template<typename func_t, unsigned int Nmin, unsigned int Nmax=Nmin,
-         FGFunction::OddEven odd_even=FGFunction::OddEven::Either>
+template<typename func_t, unsigned int Nmin>
 class aFunc: public FGFunction
 {
 public:
   aFunc(const func_t& _f, FGFDMExec* fdmex, Element* el,
-        const string& prefix, FGPropertyValue* v)
+        const string& prefix, FGPropertyValue* v, unsigned int Nmax=Nmin,
+        FGFunction::OddEven odd_even=FGFunction::OddEven::Either)
     : FGFunction(fdmex->GetPropertyManager()), f(_f)
   {
     Load(el, v, fdmex, prefix);
@@ -83,8 +87,62 @@ public:
     CheckOddOrEvenArguments(el, odd_even);
   }
 
-  double GetValue(void) const {
+  double GetValue(void) const override {
     return cached ? cachedValue : f(Parameters);
+  }
+
+protected:
+  void bind(Element* el, const string& Prefix) override {
+    string nName = CreateOutputNode(el, Prefix);
+    if (!nName.empty())
+      PropertyManager->Tie(nName, this, &aFunc<func_t, Nmin>::GetValue);
+  }
+
+private:
+  const func_t f;
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Template specialization for functions without parameters.
+
+template<typename func_t>
+class aFunc<func_t, 0>: public FGFunction
+{
+public:
+  aFunc(const func_t& _f, std::shared_ptr<FGPropertyManager> pm, Element* el,
+        const string& Prefix)
+    : FGFunction(pm), f(_f)
+  {
+    if (el->GetNumElements() != 0) {
+      ostringstream buffer;
+      buffer << el->ReadFrom() << fgred << highint
+             << "<" << el->GetName() << "> should have no arguments." << reset
+             << endl;
+      throw WrongNumberOfArguments(buffer.str(), Parameters, el);
+    }
+
+    bind(el, Prefix);
+  }
+
+  double GetValue(void) const override {
+    double result = cached ? cachedValue : f();
+    if (pNode) pNode->setDoubleValue(result);
+    return result;
+  }
+
+  // Functions without parameters are assumed to be non-const
+  bool IsConstant(void) const override {
+    return false;
+  }
+
+protected:
+  // The method GetValue() is not bound for functions without parameters because
+  // we do not want the property to return a different value each time it is
+  // read.
+  void bind(Element* el, const string& Prefix) override {
+    CreateOutputNode(el, Prefix);
+    // Initialize the node to a sensible value.
+    if (pNode) pNode->setDoubleValue(f());
   }
 
 private:
@@ -129,7 +187,7 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
                           const string& prefix, FGPropertyValue* v)
 {
   try {
-    return new aFunc<func_t, 2, MaxArgs>(_f, fdmex, el, prefix, v);
+    return new aFunc<func_t, 2>(_f, fdmex, el, prefix, v, MaxArgs);
   }
   catch(WrongNumberOfArguments& e) {
     if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
@@ -234,11 +292,27 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+shared_ptr<default_random_engine> makeRandomEngine(Element *el, FGFDMExec* fdmex)
+{
+  string seed_attr = el->GetAttributeValue("seed");
+  unsigned int seed;
+  if (seed_attr.empty())
+    return fdmex->GetRandomEngine();
+  else if (seed_attr == "time_now")
+    seed = chrono::system_clock::now().time_since_epoch().count();
+  else
+    seed = atoi(seed_attr.c_str());
+  return make_shared<default_random_engine>(seed);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                       const string& Prefix)
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
+      
   auto sum = [](const decltype(Parameters)& Parameters)->double {
                double temp = 0.0;
 
@@ -272,10 +346,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
         if (element->HasAttribute("apply")) {
           string function_str = element->GetAttributeValue("apply");
-          FGTemplateFunc* f = fdmex->GetTemplateFunc(function_str);
+          auto f = fdmex->GetTemplateFunc(function_str);
           if (f)
             Parameters.push_back(new FGFunctionValue(property_name,
-                                                     PropertyManager, f));
+                                                     PropertyManager, f, element));
           else {
             cerr << element->ReadFrom()
                  << fgred << highint << "  No function by the name "
@@ -286,7 +360,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         }
         else
           Parameters.push_back(new FGPropertyValue(property_name,
-                                                   PropertyManager));
+                                                   PropertyManager, element));
       }
     } else if (operation == "value" || operation == "v") {
       Parameters.push_back(new FGRealValue(element->GetDataAsNumber()));
@@ -358,7 +432,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return 1.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "or") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
@@ -369,7 +444,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return 0.0;
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "quotient") {
       auto f = [](const decltype(Parameters)& p)->double {
                  double y = p[1]->GetValue();
@@ -515,15 +591,37 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 3>(f, fdmex, element, Prefix, var));
     } else if (operation == "random") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return GaussianRandomNumber();
+      double mean = 0.0;
+      double stddev = 1.0;
+      string mean_attr = element->GetAttributeValue("mean");
+      string stddev_attr = element->GetAttributeValue("stddev");
+      if (!mean_attr.empty())
+        mean = atof(mean_attr.c_str());
+      if (!stddev_attr.empty())
+        stddev = atof(stddev_attr.c_str());
+      auto distribution = make_shared<normal_distribution<double>>(mean, stddev);
+      auto generator(makeRandomEngine(element, fdmex));
+      auto f = [generator, distribution]()->double {
+                 return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
+                                                     Prefix));
     } else if (operation == "urandom") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 return -1.0 + (((double)rand()/double(RAND_MAX))*2.0);
+      double lower = -1.0;
+      double upper = 1.0;
+      string lower_attr = element->GetAttributeValue("lower");
+      string upper_attr = element->GetAttributeValue("upper");
+      if (!lower_attr.empty())
+        lower = atof(lower_attr.c_str());
+      if (!upper_attr.empty())
+        upper = atof(upper_attr.c_str());
+      auto distribution = make_shared<uniform_real_distribution<double>>(lower, upper);
+      auto generator(makeRandomEngine(element, fdmex));
+      auto f = [generator, distribution]()->double {
+                 return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
+                                                     Prefix));
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
@@ -548,7 +646,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                    throw("Fatal error");
                  }
                };
-      Parameters.push_back(new aFunc<decltype(f), 2, MaxArgs>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs));
     } else if (operation == "interpolate1d") {
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
@@ -584,7 +683,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                  return ymin + (x-xmin)*(ymax-ymin)/(xmax-xmin);
                };
-      Parameters.push_back(new aFunc<decltype(f), 5, MaxArgs, OddEven::Odd>(f, fdmex, element, Prefix, var));
+      Parameters.push_back(new aFunc<decltype(f), 5>(f, fdmex, element, Prefix,
+                                                     var, MaxArgs, OddEven::Odd));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -847,10 +947,11 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFunction::bind(Element* el, const string& Prefix)
+string FGFunction::CreateOutputNode(Element* el, const string& Prefix)
 {
+  string nName;
+
   if ( !Name.empty() ) {
-    string nName;
     if (Prefix.empty())
       nName  = PropertyManager->mkPropertyName(Name, false);
     else {
@@ -875,9 +976,19 @@ void FGFunction::bind(Element* el, const string& Prefix)
            << "Property " << nName << " has already been successfully bound (late)." << endl;
       throw("Failed to bind the property to an existing already tied node.");
     }
-
-    PropertyManager->Tie(nName, this, &FGFunction::GetValue);
   }
+
+  return nName;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFunction::bind(Element* el, const string& Prefix)
+{
+  string nName = CreateOutputNode(el, Prefix);
+
+  if (!nName.empty())
+    PropertyManager->Tie(nName, this, &FGFunction::GetValue);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

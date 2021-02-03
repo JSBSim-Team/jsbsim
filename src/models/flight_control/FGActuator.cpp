@@ -7,21 +7,21 @@
  ------------- Copyright (C) 2007 Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU Lesser General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ the terms of the GNU Lesser General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option) any
+ later version.
 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  details.
 
- You should have received a copy of the GNU Lesser General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU Lesser General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
- Further information about the GNU Lesser General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ Further information about the GNU Lesser General Public License can also be
+ found on the world wide web at http://www.gnu.org.
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -37,11 +37,9 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <stdlib.h>
-
 #include "FGActuator.h"
 #include "input_output/FGXMLElement.h"
-#include "math/FGRealValue.h"
+#include "math/FGParameterValue.h"
 #include "models/FGFCS.h"
 
 using namespace std;
@@ -52,8 +50,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGActuator::FGActuator(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element)
 {
   // inputs are read from the base class constructor
 
@@ -61,7 +59,8 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   PreviousHystOutput = 0.0;
   PreviousRateLimOutput = 0.0;
   PreviousLagInput = PreviousLagOutput = 0.0;
-  bias = lag = hysteresis_width = deadband_width = 0.0;
+  bias = hysteresis_width = deadband_width = 0.0;
+  lag = nullptr;
   rate_limit_incr = rate_limit_decr = 0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
@@ -78,24 +77,12 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   // There can be a single rate limit specified, or increasing and 
   // decreasing rate limits specified, and rate limits can be numeric, or
   // a property.
+  auto PropertyManager = fcs->GetPropertyManager();
   Element* ratelim_el = element->FindElement("rate_limit");
   while ( ratelim_el ) {
-    FGParameter* rate_limit = 0;
     string rate_limit_str = ratelim_el->GetDataLine();
-
-    trim(rate_limit_str);
-    if (is_number(rate_limit_str))
-      rate_limit = new FGRealValue(fabs(atof(rate_limit_str.c_str())));
-    else {
-      if (rate_limit_str[0] == '-') rate_limit_str.erase(0,1);
-      FGPropertyNode* rate_limit_prop = PropertyManager->GetNode(rate_limit_str, true);
-      if (!rate_limit_prop) {
-        std::cerr << "No such property, " << rate_limit_str << " for rate limiting" << std::endl;
-        ratelim_el = element->FindNextElement("rate_limit");
-        continue;
-      }
-      rate_limit = new FGPropertyValue(rate_limit_prop);
-    }
+    FGParameter* rate_limit = new FGParameterValue(rate_limit_str,
+                                                   PropertyManager, ratelim_el);
 
     if (ratelim_el->HasAttribute("sense")) {
       string sense = ratelim_el->GetAttributeValue("sense");
@@ -113,15 +100,16 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   if ( element->FindElement("bias") ) {
     bias = element->FindElementValueAsNumber("bias");
   }
-  if ( element->FindElement("lag") ) {
-    lag = element->FindElementValueAsNumber("lag");
-    double denom = 2.00 + dt*lag;
-    ca = dt*lag / denom;
-    cb = (2.00 - dt*lag) / denom;
+
+  // Lag if specified can be numeric or a property
+  Element* lag_el = element->FindElement("lag");
+  if ( lag_el ) {
+    string lag_str = lag_el->GetDataLine();
+    lag = new FGParameterValue(lag_str, PropertyManager, lag_el);
+    InitializeLagCoefficients();
   }
 
-  FGFCSComponent::bind();
-  bind();
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }
@@ -133,6 +121,8 @@ FGActuator::~FGActuator()
   delete rate_limit_incr;
   if (rate_limit_decr != rate_limit_incr)
     delete rate_limit_decr;
+
+  delete lag;
 
   Debug(1);
 }
@@ -168,7 +158,7 @@ bool FGActuator::Run(void )
   if (fail_stuck) {
     Output = PreviousOutput;
   } else {
-    if (lag != 0.0)              Lag();        // models actuator lag
+    if (lag)                Lag();        // models actuator lag
     if (rate_limit_incr != 0 || rate_limit_decr != 0) RateLimit();  // limit the actuator rate
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
@@ -195,7 +185,7 @@ bool FGActuator::Run(void )
     }
   }
 
-  if (IsOutput) SetOutput();
+  SetOutput();
 
   return true;
 }
@@ -215,8 +205,12 @@ void FGActuator::Lag(void)
   // for this Lag filter
   double input = Output;
 
-  if ( initialized )
+  if (initialized) {
+    // Check if lag value has changed via dynamic property
+    if (lagVal != lag->GetValue())
+      InitializeLagCoefficients();
     Output = ca * (input + PreviousLagInput) + PreviousLagOutput * cb;
+  }
 
   PreviousLagInput = input;
   PreviousLagOutput = Output;
@@ -226,9 +220,9 @@ void FGActuator::Lag(void)
 
 void FGActuator::Hysteresis(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this Hysteresis method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this Hysteresis method - really the input
+  // to the method.
   double input = Output;
   
   if ( initialized ) {
@@ -245,9 +239,9 @@ void FGActuator::Hysteresis(void)
 
 void FGActuator::RateLimit(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this RateLimit method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this RateLimit method - really the input
+  // to the method.
   double input = Output;
   if ( initialized ) {
     double delta = input - PreviousRateLimOutput;
@@ -269,9 +263,9 @@ void FGActuator::RateLimit(void)
 
 void FGActuator::Deadband(void)
 {
-  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
-  // is - for the purposes of this Deadband method - really the input to the
-  // method.
+  // Note: this function acts cumulatively on the "Output" parameter. So,
+  // "Output" is - for the purposes of this Deadband method - really the input
+  // to the method.
   double input = Output;
 
   if (input < -deadband_width/2.0) {
@@ -285,9 +279,12 @@ void FGActuator::Deadband(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGActuator::bind(void)
+void FGActuator::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   string tmp = Name;
+
+  FGFCSComponent::bind(el, PropertyManager);
+
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
   }
@@ -300,6 +297,16 @@ void FGActuator::bind(void)
   PropertyManager->Tie( tmp_hardover, this, &FGActuator::GetFailHardover, &FGActuator::SetFailHardover);
   PropertyManager->Tie( tmp_stuck, this, &FGActuator::GetFailStuck, &FGActuator::SetFailStuck);
   PropertyManager->Tie( tmp_sat, this, &FGActuator::IsSaturated);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::InitializeLagCoefficients()
+{
+  lagVal = lag->GetValue();
+  double denom = 2.00 + dt * lagVal;
+  ca = dt * lagVal / denom;
+  cb = (2.00 - dt * lagVal) / denom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

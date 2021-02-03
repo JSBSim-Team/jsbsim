@@ -69,7 +69,7 @@ const char*
 Aircraft::get_verbose_description(int no_engines)
 {
     static char desc[1024];
-    int num = _subclasses.size();
+    size_t num = _subclasses.size();
     std::string rv;
 
     if (no_engines < 0 || num == 0) {
@@ -79,7 +79,7 @@ Aircraft::get_verbose_description(int no_engines)
 
     if (num)
     {
-        for (int i=0; i<num; i++) {
+        for (size_t i=0; i<num; i++) {
             rv += _subclasses[i];
             if (i < (num-1)) rv += ", ";
         }
@@ -189,8 +189,8 @@ Aeromatic::Aeromatic() : Aircraft(),
 
     _CDalpha.resize(4, 0.0f);
     _CYp.resize(4, 0.0f);
-    _Clbeta.resize(8, 0.0f);
-    _Clr.resize(8, 0.0f);
+    _Clbeta.resize(9, 0.0f);
+    _Clr.resize(9, 0.0f);
     _Cnp.resize(4, 0.0f);
 
     _Cna.resize(8, 0.0f);
@@ -223,8 +223,7 @@ Aeromatic::~Aeromatic()
 bool Aeromatic::fdm()
 {
     Aircraft *aircraft = _aircraft[_atype];
-    std::vector<System*> systems = _aircraft[_atype]->get_systems();
-
+    systems = _aircraft[_atype]->get_systems();
     _engines = _MIN(_no_engines, 4);
     aircraft->_engines = _engines;
 
@@ -234,10 +233,9 @@ bool Aeromatic::fdm()
     _stall_weight = _max_weight;
 
     // first, estimate wing loading in psf
-    float wing_loading = aircraft->get_wing_loading();
+    wing_loading = aircraft->get_wing_loading();
 
     // if no wing area given, use wing loading to estimate
-    bool wingarea_input;
     if (_wing.area == 0)
     {
         wingarea_input = false;
@@ -313,11 +311,6 @@ bool Aeromatic::fdm()
         else {
             _wing.thickness = 0.15f * _wing.chord_mean;
         }
-    }
-
-    // for now let's use a standard 2 degrees wing incidence
-    if (_wing.incidence == 0) {
-        _wing.incidence = 2.0;
     }
 
     // estimate horizontal tail area
@@ -426,7 +419,6 @@ bool Aeromatic::fdm()
 
     // place pilot's eyepoint based on airplane type
     const float *_eyept_loc = aircraft->get_eyept_loc();
-    float eyept_loc[3];
     eyept_loc[X] = (_length * _eyept_loc[X]) * FEET_TO_INCH;
     eyept_loc[Y] = _eyept_loc[Y];
     eyept_loc[Z] = _eyept_loc[Z];
@@ -438,21 +430,16 @@ bool Aeromatic::fdm()
     _aero_rp[Z] = 0;
 
 //***** CG LOCATION ***********************************
-#if 0
     // http://www.rcgroups.com/forums/showatt.php?attachmentid=1651636
     float TR = _wing.taper;
     float Sw = _wing.area;
-    float cbar = _wing.chord_mean;
+    float R = _wing.chord_mean;
     float Sh = _htail.area;
     float L = _htail.arm;
-
-    float R =  3.0f*cbar/(2.0f*(1.0f+TR-(TR/(1.0f+TR))));
     float T = R * TR;
     float P = L*Sh/(3.0f*Sw) - ((R*R + R*T + T*T)/(R+T))/15.0f;
-    _cg_loc[X] = _aero_rp[X] + P * FEET_TO_INCH;
-#else
-    _cg_loc[X] = _aero_rp[X];
-#endif
+
+    _cg_loc[X] = _aero_rp[X] - P * FEET_TO_INCH;
     _cg_loc[Y] = 0;
     _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
 
@@ -460,7 +447,6 @@ bool Aeromatic::fdm()
 
     // A point mass will be placed at the CG weighing
     // 1/2 of the usable aircraft load.
-    float payload_loc[3];
     payload_loc[X] = _cg_loc[X];
     payload_loc[Y] = _cg_loc[Y];
     payload_loc[Z] = _cg_loc[Z];
@@ -489,19 +475,28 @@ bool Aeromatic::fdm()
 //*  Print out xml document                      *
 //*                                              *
 //************************************************
+    bool rv = write_XML();
+    if (rv) {
+        write_JSON();
+    }
 
+    return rv;
+}
+
+bool
+Aeromatic::write_XML()
+{
     char str[64];
     time_t t;
 
     time(&t);
-#ifdef _MSC_VER
     struct tm ti;
+#if defined(_MSC_VER) || defined(__MINGW32__)
     localtime_s(&ti, &t);
-    strftime(str, sizeof(str), "%d %b %Y", &ti);
 #else
-    struct tm *ti= localtime(&t);
-    strftime(str, sizeof(str), "%d %b %Y", ti);
+    localtime_r(&t, &ti);
 #endif
+    strftime(str, sizeof(str), "%d %b %Y", &ti);
 
     _dir = _subdir ? create_dir(_path, _name) : _path;
     if (_dir.empty()) {
@@ -904,6 +899,191 @@ bool Aeromatic::fdm()
 
     return true;
 }
+
+bool
+Aeromatic::write_JSON()
+{
+    std::string fname = _dir + "/" + std::string(_name) + ".json";
+
+    std::string version = AEROMATIC_VERSION_STR;
+
+    std::ofstream file;
+    file.open(fname.c_str());
+    if (file.fail() || file.bad())
+    {
+        file.close();
+        return false;
+    }
+
+    file.precision(1);
+    file.flags(std::ios::left);
+    file << std::fixed << std::showpoint;
+
+    file << "{" << std::endl;
+
+    std::string param  = "  \"" + std::string(_name) + "\"";
+    file << std::setw(12) << param << ": " << 1.0 << "," << std::endl;
+    file << std::endl;
+
+    param = "  \"Sw\"";
+    file << std::setw(12) << param << ": " << _wing.area << "," << std::endl;
+
+    param = "  \"cbar\"";
+    file << std::setw(12) << param << ": " << _wing.chord_mean << "," << std::endl;
+
+    param = "  \"b\"";
+    file << std::setw(12) << param << ": " << _wing.span << "," << std::endl;
+    file << std::endl;
+
+    param = "  \"mass\"";
+    file << std::setw(12) << param << ": " << 0.9f*_max_weight << "," << std::endl;
+
+    param = "  \"Ixx\"";
+    file << std::setw(12) << param << ": " << _inertia[X] << "," << std::endl;
+
+    param = "  \"Iyy\"";
+    file << std::setw(12) << param << ": " << _inertia[Y] << "," << std::endl;
+
+    param = "  \"Izz\"";
+    file << std::setw(12) << param << ": " << _inertia[Z] << "," << std::endl;
+
+    param = "  \"Ixz\"";
+    file << std::setw(12) << param << ": " << 0.0f << "," << std::endl;
+    file << std::endl;
+
+    param = "  \"cg\"";
+    file << std::setw(12) << param << ": [ "
+                          << _aero_rp[X] - _cg_loc[X] << ", "
+                          << _aero_rp[Y] - _cg_loc[Y] << ", "
+                          << _aero_rp[Z] - _cg_loc[Z] << " ]";
+
+    for (unsigned i=0; i<systems.size(); ++i)
+    {
+        if (systems[i]->enabled())
+        {
+            std::string json = systems[i]->json(_cg_loc);
+            if (!json.empty())
+            {
+                file << "," << std::endl << std::endl;
+                file << json;
+            }
+        }
+    }
+    file << "," << std::endl << std::endl;
+
+    param = "  \"de_max\"";
+    file << std::setw(12) << param << ": " << 17.5 << "," << std::endl;
+    param = "  \"dr_max\"";
+    file << std::setw(12) << param << ": " << 20.0 << "," << std::endl;
+    param = "  \"da_max\"";
+    file << std::setw(12) << param << ": " << 20.0 << "," << std::endl;
+    param = "  \"df_max\"";
+    file << std::setw(12) << param << ": " << 40.0 << "," << std::endl;
+    file << std::endl;
+
+    file.precision(4);
+
+    // LIFT
+    param = "  \"CLmin\"";
+    file << std::setw(12) << param << ": " << _CL0 << "," << std::endl;
+
+    param = "  \"CLa\"";
+    file << std::setw(12) << param << ": " << _CLalpha[0] << "," << std::endl;
+
+    param = "  \"CLadot\"";
+    file << std::setw(12) << param << ": " << _CLadot << "," << std::endl;
+
+    param = "  \"CLq\"";
+    file << std::setw(12) << param << ": " << _CLq << "," << std::endl;
+
+    float CLdf = Flaps::_dCLflaps_t[_atype][_engines];
+    param = "  \"CLdf\"";
+    file << std::setw(12) << param << ": " << CLdf << "," << std::endl;
+    file << std::endl;
+
+    // DRAG
+    param = "  \"CDmin\"";
+    file << std::setw(12) << param << ": " << _CD0 << "," << std::endl;
+
+    param = "  \"CDa\"";
+    file << std::setw(12) << param << ": " << _CDalpha[0] << "," << std::endl;
+
+    param = "  \"CDb\"";
+    file << std::setw(12) << param << ": " << _CDbeta << "," << std::endl;
+
+    param = "  \"CDi\"";
+    file << std::setw(12) << param << ": " << _Kdi << "," << std::endl;
+
+    float CDdf = Flaps::_CDflaps_t[_atype][_engines];
+    param = "  \"CDdf\"";
+    file << std::setw(12) << param << ": " << CDdf << "," << std::endl;
+    file << std::endl;
+
+    // SIDE
+    param = "  \"CYb\"";
+    file << std::setw(12) << param << ": " << _CYbeta << "," << std::endl;
+
+    param = "  \"CYp\"";
+    file << std::setw(12) << param << ": " << _CYp.back() << "," << std::endl;
+
+    param = "  \"CYr\"";
+    file << std::setw(12) << param << ": " << _CYr << "," << std::endl;
+
+    param = "  \"CYdr\"";
+    file << std::setw(12) << param << ": " << _CYdr << "," << std::endl;
+    file << std::endl;
+
+    // ROLL
+    param = "  \"Clb\"";
+    file << std::setw(12) << param << ": " << _Clbeta.back() << "," << std::endl;
+
+    param = "  \"Clp\"";
+    file << std::setw(12) << param << ": " << _Clp << "," << std::endl;
+
+    param = "  \"Clr\"";
+    file << std::setw(12) << param << ": " << _Clr.back() << "," << std::endl;
+
+    param = "  \"Clda\"";
+    file << std::setw(12) << param << ": " << _Clda << "," << std::endl;
+
+    param = "  \"Cldr\"";
+    file << std::setw(12) << param << ": " << _Cldr << "," << std::endl;
+    file << std::endl;
+
+    // PITCH
+    param = "  \"Cma\"";
+    file << std::setw(12) << param << ": " << _Cmalpha << "," << std::endl;
+
+    param = "  \"Cmadot\"";
+    file << std::setw(12) << param << ": " << _Cmadot << "," << std::endl;
+
+    param = "  \"Cmq\"";
+    file << std::setw(12) << param << ": " << _Cmq << "," << std::endl;
+
+    param = "  \"Cmde\"";
+    file << std::setw(12) << param << ": " << _Cmde << "," << std::endl;
+    file << std::endl;
+
+    // YAW
+    param = "  \"Cnb\"";
+    file << std::setw(12) << param << ": " << _Cnbeta << "," << std::endl;
+
+    param = "  \"Cnp\"";
+    file << std::setw(12) << param << ": " << _Cnp.back() << "," << std::endl;
+
+    param = "  \"Cnr\"";
+    file << std::setw(12) << param << ": " << _Cnr << "," << std::endl;
+
+    param = "  \"Cndr\"";
+    file << std::setw(12) << param << ": " << _Cndr << std::endl;
+
+    file << "}" << std::endl;
+
+    file.close();
+
+    return true;
+}
+
 
 // ----------------------------------------------------------------------------
 
