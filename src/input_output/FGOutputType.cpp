@@ -92,7 +92,7 @@ void FGOutputType::SetIdx(unsigned int idx)
 {
   string outputProp = CreateIndexedPropertyName("simulation/output", idx);
 
-  PropertyManager->Tie(outputProp + "/log_rate_hz", this, &FGOutputType::GetRateHz, &FGOutputType::SetRateHz, false);
+  PropertyManager->Tie(outputProp + "/log_rate_hz", this, &FGOutputType::GetRateHz, &FGOutputType::SetRateHz);
   PropertyManager->Tie(outputProp + "/enabled", &enabled);
   OutputIdx = idx;
 }
