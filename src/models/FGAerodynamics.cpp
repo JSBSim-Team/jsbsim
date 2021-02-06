@@ -585,8 +585,8 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("forces/lod-norm",      this, &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared",      this, &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/qbar-area", &qbar_area);
-  PropertyManager->Tie("aero/alpha-max-rad",   this, &FGAerodynamics::GetAlphaCLMax, &FGAerodynamics::SetAlphaCLMax, true);
-  PropertyManager->Tie("aero/alpha-min-rad",   this, &FGAerodynamics::GetAlphaCLMin, &FGAerodynamics::SetAlphaCLMin, true);
+  PropertyManager->Tie("aero/alpha-max-rad",   this, &FGAerodynamics::GetAlphaCLMax, &FGAerodynamics::SetAlphaCLMax);
+  PropertyManager->Tie("aero/alpha-min-rad",   this, &FGAerodynamics::GetAlphaCLMin, &FGAerodynamics::SetAlphaCLMin);
   PropertyManager->Tie("aero/bi2vel",          this, &FGAerodynamics::GetBI2Vel);
   PropertyManager->Tie("aero/ci2vel",          this, &FGAerodynamics::GetCI2Vel);
   PropertyManager->Tie("aero/alpha-wing-rad",  this, &FGAerodynamics::GetAlphaW);

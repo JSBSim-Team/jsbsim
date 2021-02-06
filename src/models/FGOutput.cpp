@@ -60,7 +60,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGOutput";
   enabled = true;
 
-  PropertyManager->Tie("simulation/force-output", this, (iOPV)0, &FGOutput::ForceOutput, false);
+  PropertyManager->Tie("simulation/force-output", this, (iOPV)0, &FGOutput::ForceOutput);
 
   Debug(0);
 }
