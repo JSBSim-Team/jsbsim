@@ -1,4 +1,6 @@
-![C/C++ build](https://github.com/JSBSim-Team/jsbsim/workflows/C/C++%20build/badge.svg?branch=master&event=push)
+[![C/C++ build](https://github.com/JSBSim-Team/jsbsim/workflows/C/C++%20build/badge.svg?branch=master&event=push)](https://github.com/bcoconni/jsbsim/actions?query=workflow%3A%22C%2FC%2B%2B+build%22)
+[![PyPI](https://img.shields.io/pypi/v/jsbsim)](https://pypi.org/project/JSBSim)
+[![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
 
 <p align="center">
 <img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
@@ -56,13 +58,34 @@ Debian packages for Ubuntu Linux "Xenial" 16.04 LTS, "Bionic" 18.04 LTS and "Foc
 * `JSBSim-devel_1.1.5-277.amd64.deb` which installs the development resources (headers and libraries)
 * `python3-JSBSim_1.1.5-277.amd64.deb` which installs the Python 3.6 module of JSBSim
 ### Python module
-JSBSim provides binary packages (a.k.a. known as [wheel packages](https://www.python.org/dev/peps/pep-0427)) for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8 and 3.9).
+JSBSim provides binary packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8 and 3.9). These can be installed using either `pip` or `conda`.
+#### Installation with `pip`
+Binary packages a.k.a. known as [wheel packages](https://www.python.org/dev/peps/pep-0427) are available from the [Python Package Index (PyPI)](https://pypi.org), a repository of software for the Python programming language. 
 
-The module is installed using the `pip` command line (check the [pip documentation](https://packaging.python.org/tutorials/installing-packages) for more details):
+Installing `jsbsim` using `pip` can be achieved with:
 ```bash
 > pip install jsbsim
 ```
+Check the [pip documentation](https://packaging.python.org/tutorials/installing-packages) for more details.
+
 Note that wheel packages for Linux meet the [ManyLinux packages requirements](https://www.python.org/dev/peps/pep-0513) and as such are compatible with all the major Linux distributions.
+#### Installation with `conda`
+[Conda](https://docs.conda.io/projects/conda/en/latest/index.html) is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. The JSBSim conda package is available from [`conda-forge`](https://conda-forge.org), a community led collection of recipes, build infrastructure and distributions for the conda package manager.
+
+Installing `jsbsim` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+```bash
+> conda config --add channels conda-forge
+```
+
+Once the `conda-forge` channel has been enabled, `jsbsim` can be installed with:
+```bash
+> conda install jsbsim
+```
+
+It is possible to list all of the versions of `jsbsim` available on your platform with:
+```bash
+> conda search jsbsim --channel conda-forge
+```
 ### Other platforms
 At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
