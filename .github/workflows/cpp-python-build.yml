@@ -215,6 +215,8 @@ jobs:
       - name: Configure Doxygen
         if: env.release == 'true'
         run: |
+          # Update PATH for CMake to find Doxygen
+          $env:Path += ";C:\Program Files\doxygen\bin"
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
@@ -231,7 +233,6 @@ jobs:
       - name: Configure JSBSim
         run: |
           New-Item -Path .\build -ItemType Directory -Force
-          $env:Path += ";C:\Program Files\doxygen\bin"
           cd build
           # Julia does not support MSVC
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=OFF ..
