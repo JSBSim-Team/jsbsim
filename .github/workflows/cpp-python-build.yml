@@ -7,7 +7,7 @@ env:
 
 jobs:
   Linux:
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     strategy:
       matrix:
         os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
@@ -52,6 +52,13 @@ jobs:
         run: |
           mkdir build && cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
+      - name: Cache CTest cost data
+        # This file is used by CTest to optimize the distribution of the tests
+        # between the cores and reduce execution time.
+        uses: actions/cache@v2
+        with:
+          path: build/Testing/Temporary/CTestCostData.txt
+          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Build JSBSim
         working-directory: build
         run: make -j2
@@ -134,7 +141,7 @@ jobs:
           path: build/python/dist/*-manylinux*.whl
 
   Windows-MinGW32:
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -176,7 +183,7 @@ jobs:
           path: build/Testing/Temporary
 
   Windows-MSVC:
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -187,6 +194,13 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
         uses: actions/checkout@v2
+      - name: Cache CTest cost data
+        # This file is used by CTest to optimize the distribution of the tests
+        # between the cores and reduce execution time.
+        uses: actions/cache@v2
+        with:
+          path: build/Testing/Temporary/CTestCostData.txt
+          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
         if: env.release == 'true'
         run: |
@@ -206,7 +220,8 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          mkdir build && cd build
+          New-Item -Path .\build -ItemType Directory -Force
+          cd build
           # Julia does not support MSVC
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=OFF ..
       - name: Build JSBSim
@@ -273,7 +288,7 @@ jobs:
             build\python\setup.py
 
   MacOSX:
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     strategy:
       matrix:
         os: [ macos-10.15, ]
@@ -287,6 +302,13 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel
       - name: Checkout JSBSim
         uses: actions/checkout@v2
+      - name: Cache CTest cost data
+        # This file is used by CTest to optimize the distribution of the tests
+        # between the cores and reduce execution time.
+        uses: actions/cache@v2
+        with:
+          path: build/Testing/Temporary/CTestCostData.txt
+          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
         if: env.release == 'true'
         run: |
@@ -306,7 +328,7 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          mkdir build && cd build
+          mkdir -p build && cd build
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
       - name: Build JSBSim
         working-directory: build
