@@ -210,7 +210,7 @@ jobs:
         # Install Doxygen if there is a cache miss - even if we are not releasing
         # Otherwise the executable doxygen.exe could be missing from the cache at
         # the next release.
-        if: env.release == 'true' || steps.cache-win-msvc.outputs.cache-hit != 'true'
+        if: steps.cache-win-msvc.outputs.cache-hit != 'true'
         run: cinst doxygen.install
       - name: Configure Doxygen
         if: env.release == 'true'
