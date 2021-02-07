@@ -194,17 +194,24 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
         uses: actions/checkout@v2
-      - name: Cache CTest cost data
-        # This file is used by CTest to optimize the distribution of the tests
+      - name: Cache CTest cost data & Doxygen
+        # Cache the file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
+        # Also caches Doxygen executable since its installation from Chocolatey
+        # takes such a looong time...
         uses: actions/cache@v2
+        id: cache-win-msvc
         with:
-          path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
-      - name: Install & Configure Doxygen
+          path: |
+            build/Testing/Temporary/CTestCostData.txt
+            C:\Program Files\doxygen\
+          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}-dox
+      - name: Install Doxygen
+        if: env.release == 'true' && steps.cache-win-msvc.outputs.cache-hit != 'true'
+        run: cinst doxygen.install
+      - name: Configure Doxygen
         if: env.release == 'true'
         run: |
-          cinst doxygen.install
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
@@ -221,6 +228,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           New-Item -Path .\build -ItemType Directory -Force
+          $env:Path += ";C:\Program Files\doxygen\bin"
           cd build
           # Julia does not support MSVC
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=OFF ..
