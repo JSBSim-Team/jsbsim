@@ -8,6 +8,7 @@ env:
 jobs:
   Linux:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+    name: C/C++ build (Linux)
     strategy:
       matrix:
         os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
@@ -89,6 +90,7 @@ jobs:
 
   ManyLinux-Wheels:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    name: Build wheels for Python (Linux)
     needs: Linux
     runs-on: ubuntu-latest
     steps:
@@ -134,6 +136,7 @@ jobs:
 
   Windows-MinGW32:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+    name: C/C++ build (MinGW32)
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -176,6 +179,7 @@ jobs:
 
   Windows-MSVC:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+    name: C/C++ build (MSVC)
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -292,6 +296,7 @@ jobs:
 
   MacOSX:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+    name: C/C++ build (MacOSX)
     strategy:
       matrix:
         os: [ macos-10.15, ]
@@ -367,6 +372,7 @@ jobs:
 
   Test-Build-PyPackage-From-Source:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    name: Build Python Module from Source
     needs: [MacOSX, Windows-MSVC]
     strategy:
       fail-fast: false
@@ -401,6 +407,7 @@ jobs:
 
   MacWin-Wheels:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    name: Build wheels for Python (Windows & MacOSX)
     needs: [Windows-MSVC, MacOSX]
     strategy:
       matrix:
@@ -453,6 +460,7 @@ jobs:
 
   Rolling-Release:
     needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
@@ -482,6 +490,7 @@ jobs:
 
   Stable-Release:
     needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    name: Deploy Stable Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
@@ -579,6 +588,7 @@ jobs:
 
   Documentation:
     needs: Stable-Release
+    name: Deploy the Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Install Ubuntu packages
