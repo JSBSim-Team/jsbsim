@@ -7,6 +7,7 @@ env:
 
 jobs:
   Linux:
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
     strategy:
       matrix:
         os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
@@ -125,6 +126,7 @@ jobs:
           path: build/python/dist/*-manylinux*.whl
 
   Windows-MinGW32:
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -166,6 +168,7 @@ jobs:
           path: build/Testing/Temporary
 
   Windows-MSVC:
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.9
@@ -261,6 +264,7 @@ jobs:
             build\python\setup.py
 
   MacOSX:
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
     strategy:
       matrix:
         os: [ macos-10.15, ]
