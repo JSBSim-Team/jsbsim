@@ -416,7 +416,7 @@ void FGMassBalance::bind(void)
                        &FGMassBalance::GetIyz);
   typedef int (FGMassBalance::*iOPV)() const;
   PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0,
-                       &FGMassBalance::GetMassPropertiesReport, false);
+                       &FGMassBalance::GetMassPropertiesReport);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -87,7 +87,8 @@ class TestMiscellaneous(JSBSimTestCase):
         self.assertTrue(pm.hasNode('fdm/jsbsim/ic/lat-geod-deg'))
 
         # Re-use the property manager just as FlightGear does.
+        # Check ic/lat-geod-deg is reset to 0.0
         fdm = self.create_fdm(pm)
-        self.assertAlmostEqual(fdm['ic/lat-geod-deg'], 45.0)
+        self.assertAlmostEqual(fdm['ic/lat-geod-deg'], 0.0)
 
 RunTest(TestMiscellaneous)
