@@ -167,6 +167,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   PropertyManager->Tie( property_name.c_str(), &PowerRequired );
   property_name = base_property_name + "/propeller-torque";
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetTorque);
+  property_name = base_property_name + "/propeller-sense";
+  PropertyManager->Tie( property_name.c_str(), &Sense );
+
   Debug(0);
 }
 
