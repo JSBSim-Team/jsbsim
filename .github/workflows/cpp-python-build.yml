@@ -11,23 +11,21 @@ jobs:
     name: C/C++ build (Linux)
     strategy:
       matrix:
-        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-20.04]
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
-        exclude:
-          - os: ubuntu-16.04
-            expat: ON
+        build_julia: [OFF]
+        include:
           - os: ubuntu-16.04
             expat: OFF
-            shared_libs: ON
-          - os: ubuntu-18.04
-            expat: ON
+            shared_libs: OFF
+            build_julia: OFF
           - os: ubuntu-18.04
             expat: OFF
-            shared_libs: ON
+            shared_libs: OFF
+            build_julia: ON
     env:
       static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
-      skip_julia: ${{ matrix.os != 'ubuntu-18.04' }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Ubuntu packages
@@ -42,17 +40,10 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel valgrindci
       - name: Checkout JSBSim
         uses: actions/checkout@v2
-      - name: Configure JSBSim (without Julia)
-        if: env.skip_julia == 'true'
-        id: WithoutJulia
+      - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=OFF ..
-      - name: Configure JSBSim (with Julia)
-        if: steps.WithoutJulia.outcome == 'skipped'
-        run: |
-          mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} ..
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
