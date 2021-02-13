@@ -39,7 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#include <WS2tcpip.h>
+#include <ws2tcpip.h>
 #elif defined(__OpenBSD__)
 #include <sys/types.h>
 #include <sys/socket.h>
