@@ -11,7 +11,7 @@ for PYBIN in /opt/python/*/bin; do
         "${PYBIN}/pip" install cmake
         "${PYBIN}/cmake" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG" -DCMAKE_BUILD_TYPE=Release ..
         # Only build libJSBSim because that's all we need for Python wheels.
-        "${PYBIN}/cmake" --build . --target libJSBSim
+        "${PYBIN}/cmake" --build . --target libJSBSim -- -j2
         break
     fi
 done
