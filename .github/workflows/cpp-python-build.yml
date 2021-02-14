@@ -38,12 +38,18 @@ jobs:
           python-version: '3.6'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel valgrindci
+      - name: Configure Julia
+        if: matrix.build_julia == 'ON'
+        run: |
+          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
+          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
+          echo "CXXWRAP_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
@@ -155,12 +161,10 @@ jobs:
         run: python setup.py install
       - name: Configure JSBSim
         run: |
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
-          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
           mkdir build && cd build
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF ..
+          julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
+          $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
       - name: Build JSBSim
         working-directory: build
         run: mingw32-make -j2
@@ -229,8 +233,7 @@ jobs:
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
-          # Julia does not support MSVC
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=OFF ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
       - name: Build JSBSim
         working-directory: build
         run: cmake --build . --config RelWithDebInfo
@@ -337,7 +340,9 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir -p build && cd build
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest ..
+          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
+          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Build JSBSim
         working-directory: build
         run: make -j2

@@ -88,7 +88,7 @@ endif(BUILD_PYTHON_MODULE)
 # Build the Julia package                                                      #
 ################################################################################
 
-option(BUILD_JULIA_PACKAGE "Set to ON to build the Julia package for JSBSim" ON)
+option(BUILD_JULIA_PACKAGE "Set to ON to build the Julia package for JSBSim" OFF)
 
 if(BUILD_JULIA_PACKAGE)
   enable_testing()
