@@ -163,9 +163,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   property_name = base_property_name + "/prop-induced-velocity_fps"; // [ft/sec]
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetInducedVelocity,
                       &FGPropeller::SetInducedVelocity );
-  property_name = base_property_name + "/propeller-power_ftlbps"; // [ft-lbs/sec]
+  property_name = base_property_name + "/propeller-power-ftlbps"; // [ft-lbs/sec]
   PropertyManager->Tie( property_name.c_str(), &PowerRequired );
-  property_name = base_property_name + "/propeller-torque_ftlb"; // [ft-lbs]
+  property_name = base_property_name + "/propeller-torque-ftlb"; // [ft-lbs]
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetTorque);
   property_name = base_property_name + "/propeller-sense";
   PropertyManager->Tie( property_name.c_str(), &Sense );
