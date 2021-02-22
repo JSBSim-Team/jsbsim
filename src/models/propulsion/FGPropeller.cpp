@@ -160,9 +160,15 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   property_name = base_property_name + "/constant-speed-mode";
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetConstantSpeed,
                       &FGPropeller::SetConstantSpeed );
-  property_name = base_property_name + "/prop-induced-velocity_fps";
+  property_name = base_property_name + "/prop-induced-velocity_fps"; // [ft/sec]
   PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetInducedVelocity,
                       &FGPropeller::SetInducedVelocity );
+  property_name = base_property_name + "/propeller-power-ftlbps"; // [ft-lbs/sec]
+  PropertyManager->Tie( property_name.c_str(), &PowerRequired );
+  property_name = base_property_name + "/propeller-torque-ftlb"; // [ft-lbs]
+  PropertyManager->Tie( property_name.c_str(), this, &FGPropeller::GetTorque);
+  property_name = base_property_name + "/propeller-sense";
+  PropertyManager->Tie( property_name.c_str(), &Sense );
 
   Debug(0);
 }
@@ -243,12 +249,12 @@ double FGPropeller::Calculate(double EnginePower)
   // Since Thrust and Vel can both be negative we need to adjust this formula
   // To handle sign (direction) separately from magnitude.
   double Vel2sum = Vel*abs(Vel) + 2.0*Thrust/(rho*Area);
-  
+
   if( Vel2sum > 0.0)
     Vinduced = 0.5 * (-Vel + sqrt(Vel2sum));
   else
     Vinduced = 0.5 * (-Vel - sqrt(-Vel2sum));
-    
+
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
   // and the relative wind that goes through the propeller disk.
@@ -353,7 +359,7 @@ double FGPropeller::GetPowerRequired(void)
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
 
   double RPS = RPM / 60.0;
-  double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
+  double local_RPS = RPS < 0.01 ? 0.01 : RPS;
 
   PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*in.Density;
 
