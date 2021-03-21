@@ -494,7 +494,7 @@ int real_main(int argc, char* argv[])
   time_t tod;
   time(&tod);
   struct tm local;
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
   localtime_s(&local, &tod);
 #else
   localtime_r(&tod, &local);
@@ -565,7 +565,7 @@ int real_main(int argc, char* argv[])
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
   localtime_s(&local, &tod);
 #else
   localtime_r(&tod, &local);
