@@ -74,15 +74,20 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
   //would be better to get the date from the sim if its simulated...
   time_t rawtime;
   time( &rawtime );
-  tm * ptm = gmtime ( &rawtime );
+  struct tm ptm;
+  #if defined(_MSC_VER) || defined(__MINGW32__)
+  gmtime_s(&ptm, &rawtime);
+  #else
+  gmtime_r(&rawtime, &ptm);
+  #endif
 
-  int year = ptm->tm_year;
+  int year = ptm.tm_year;
   if(year>100)
   {
     year-= 100;
   }
   //the months here are zero based TODO find out if the function expects 1s based
-  date = (yymmdd_to_julian_days(ptm->tm_year,ptm->tm_mon,ptm->tm_mday));//Julian 1950-2049 yy,mm,dd
+  date = (yymmdd_to_julian_days(ptm.tm_year, ptm.tm_mon, ptm.tm_mday)); //Julian 1950-2049 yy,mm,dd
   updateInertialMag();
 
   Debug(0);
@@ -95,13 +100,19 @@ FGMagnetometer::~FGMagnetometer()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGMagnetometer::ResetPastStates(void)
+{
+  FGSensor::ResetPastStates();
+  counter = 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGMagnetometer::updateInertialMag(void)
 {
-  counter++;
-  if (counter > INERTIAL_UPDATE_RATE)//dont need to update every iteration
+  if (counter++ % INERTIAL_UPDATE_RATE == 0)//dont need to update every iteration
   {
-    counter = 0;
-
     usedLat = (Propagate->GetGeodLatitudeRad());//radians, N and E lat and long are positive, S and W negative
     usedLon = (Propagate->GetLongitude());//radians
     usedAlt = (Propagate->GetGeodeticAltitude()*fttom*0.001);//km

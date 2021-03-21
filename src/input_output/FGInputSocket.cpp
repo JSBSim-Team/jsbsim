@@ -123,7 +123,7 @@ void FGInputSocket::Read(bool Holding)
     socket->WaitUntilReadable(); // block until a transmission is received
   data = socket->Receive(); // read data
 
-  if (data.size() > 0) {
+  if (!data.empty()) {
     // parse lines
     while (1) {
       string_start = data.find_first_not_of("\r\n", start);
@@ -131,13 +131,13 @@ void FGInputSocket::Read(bool Holding)
       string_end = data.find_first_of("\r\n", string_start);
       if (string_end == string::npos) break;
       line = data.substr(string_start, string_end-string_start);
-      if (line.size() == 0) break;
+      if (line.empty()) break;
 
       // now parse individual line
       vector <string> tokens = split(line,' ');
 
       string command="", argument="", str_value="";
-      if (tokens.size() > 0) {
+      if (!tokens.empty()) {
         command = to_lower(tokens[0]);
         if (tokens.size() > 1) {
           argument = trim(tokens[1]);
@@ -149,7 +149,7 @@ void FGInputSocket::Read(bool Holding)
 
       if (command == "set") {                       // SET PROPERTY
 
-        if (argument.size() == 0) {
+        if (argument.empty()) {
           socket->Reply("No property argument supplied.\n");
           break;
         }
@@ -174,7 +174,7 @@ void FGInputSocket::Read(bool Holding)
 
       } else if (command == "get") {             // GET PROPERTY
 
-        if (argument.size() == 0) {
+        if (argument.empty()) {
           socket->Reply("No property argument supplied.\n");
           break;
         }
@@ -215,7 +215,7 @@ void FGInputSocket::Read(bool Holding)
 
         int argumentInt;
         istringstream (argument) >> argumentInt;
-        if (argument.size() == 0) {
+        if (argument.empty()) {
           socket->Reply("No argument supplied for number of iterations.\n");
           break;
         }

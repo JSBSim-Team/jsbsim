@@ -1,10 +1,12 @@
 set(SOURCES FGInitialCondition.cpp
             FGTrim.cpp
-            FGTrimAxis.cpp)
+            FGTrimAxis.cpp
+            FGLinearization.cpp)
 
 set(HEADERS FGInitialCondition.h
             FGTrim.h
-            FGTrimAxis.h)
+            FGTrimAxis.h
+            FGLinearization.h)
 
 add_library(Init OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Init PROPERTIES TARGET_DIRECTORY

@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "models/FGModel.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,19 +197,19 @@ protected:
   std::vector <std::string> OutputCaptions;
   bool enabled;
 
-  FGAerodynamics* Aerodynamics;
-  FGAuxiliary* Auxiliary;
-  FGAircraft* Aircraft;
-  FGAtmosphere* Atmosphere;
-  FGWinds* Winds;
-  FGPropulsion* Propulsion;
-  FGMassBalance* MassBalance;
-  FGPropagate* Propagate;
-  FGAccelerations* Accelerations;
-  FGFCS* FCS;
-  FGGroundReactions* GroundReactions;
-  FGExternalReactions* ExternalReactions;
-  FGBuoyantForces* BuoyantForces;
+  std::shared_ptr<FGAerodynamics> Aerodynamics;
+  std::shared_ptr<FGAuxiliary> Auxiliary;
+  std::shared_ptr<FGAircraft> Aircraft;
+  std::shared_ptr<FGAtmosphere> Atmosphere;
+  std::shared_ptr<FGWinds> Winds;
+  std::shared_ptr<FGPropulsion> Propulsion;
+  std::shared_ptr<FGMassBalance> MassBalance;
+  std::shared_ptr<FGPropagate> Propagate;
+  std::shared_ptr<FGAccelerations> Accelerations;
+  std::shared_ptr<FGFCS> FCS;
+  std::shared_ptr<FGGroundReactions> GroundReactions;
+  std::shared_ptr<FGExternalReactions> ExternalReactions;
+  std::shared_ptr<FGBuoyantForces> BuoyantForces;
 
   void Debug(int from) override;
 };

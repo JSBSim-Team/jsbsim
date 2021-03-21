@@ -44,6 +44,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "math/FGFunction.h"
+#include "math/FGRealValue.h"
 #include "FGTurbine.h"
 #include "FGThruster.h"
 #include "input_output/FGXMLElement.h"
@@ -62,15 +63,15 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   Type = etTurbine;
 
   MilThrust = MaxThrust = 10000.0;
-  TSFC = 0.8;
-  ATSFC = 1.7;
+  TSFC = std::make_unique<FGSimplifiedTSFC>(this, 0.8);
+  ATSFC = std::make_unique<FGRealValue>(1.7);
   IdleN1 = 30.0;
   IdleN2 = 60.0;
   MaxN1 = MaxN2 = 100.0;
   Augmented = AugMethod = Injected = 0;
   BypassRatio = BleedDemand = 0.0;
-  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = 0;
-  N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0; 
+  IdleThrustLookup = MilThrustLookup = MaxThrustLookup = InjectionLookup = nullptr;
+  N1_spinup = 1.0; N2_spinup = 3.0; IgnitionN1 = 5.21; IgnitionN2 = 25.18; N1_start_rate = 1.4; N2_start_rate = 2.0;
   N1_spindown = 2.0; N2_spindown = 2.0;
   InjectionTime = 30.0;
   InjectionTimer = InjWaterNorm = 0.0;
@@ -83,29 +84,13 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTurbine::~FGTurbine()
-{
-  // Delete those functions that have requested the construction of a FGSpoolUp
-  // instance. FGModelFunctions will manage the destruction of the other
-  // instances.
-  if (dynamic_cast<FGSpoolUp*>(N1SpoolUp)) delete N1SpoolUp;
-  if (dynamic_cast<FGSpoolUp*>(N1SpoolDown)) delete N1SpoolDown;
-  if (dynamic_cast<FGSpoolUp*>(N2SpoolUp)) delete N2SpoolUp;
-  if (dynamic_cast<FGSpoolUp*>(N2SpoolDown)) delete N2SpoolDown;
-
-  Debug(1);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGTurbine::ResetToIC(void)
 {
-    
   FGEngine::ResetToIC();
-    
+
   N1 = N2 = InjN1increment = InjN2increment = 0.0;
   N2norm = 0.0;
-  correctedTSFC = TSFC;
+  correctedTSFC = TSFC->GetValue();
   AugmentCmd = InjWaterNorm = 0.0;
   InletPosition = NozzlePosition = 1.0;
   Stalled = Seized = Overtemp = Fire = Augmentation = Injection = Reversed = false;
@@ -139,7 +124,7 @@ void FGTurbine::Calculate(void)
     if (Running && !Starved) {
       phase = tpRun;
       N1_factor = MaxN1 - IdleN1;
-      N2_factor = MaxN2 - IdleN2;      
+      N2_factor = MaxN2 - IdleN2;
       N2 = IdleN2 + ThrottlePos * N2_factor;
       N1 = IdleN1 + ThrottlePos * N1_factor;
       OilTemp_degK = 366.0;
@@ -210,7 +195,6 @@ double FGTurbine::Off(void)
 double FGTurbine::Run()
 {
   double idlethrust, milthrust, thrust;
-  double T = in.Temperature;
 
   idlethrust = MilThrust * IdleThrustLookup->GetValue();
   milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
@@ -223,7 +207,7 @@ double FGTurbine::Run()
   if ((Injected == 1) && Injection && (InjWaterNorm > 0)) {
     N1_factor += InjN1increment;
     N2_factor += InjN2increment;
-  }  
+  }
   N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor,
             N2SpoolUp->GetValue(), N2SpoolDown->GetValue());
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor,
@@ -235,7 +219,7 @@ double FGTurbine::Run()
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    correctedTSFC = TSFC * sqrt(T/389.7) * (0.84 + (1-N2norm)*(1-N2norm));
+    correctedTSFC = TSFC->GetValue();
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 10000.0);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
@@ -250,7 +234,7 @@ double FGTurbine::Run()
 
   if ((Augmented == 1) && Augmentation && (AugMethod < 2)) {
     thrust = MaxThrustLookup->GetValue() * MaxThrust;
-    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
+    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC->GetValue(), 5000.0, 10000.0);
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   }
 
@@ -259,7 +243,7 @@ double FGTurbine::Run()
       Augmentation = true;
       double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
       thrust += (tdiff * AugmentCmd);
-      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
+      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC->GetValue(), 5000.0, 10000.0);
       NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
     } else {
       Augmentation = false;
@@ -270,7 +254,7 @@ double FGTurbine::Run()
     InjectionTimer += in.TotalDeltaT;
     if (InjectionTimer < InjectionTime) {
        thrust = thrust * InjectionLookup->GetValue();
-       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime); 
+       InjWaterNorm = 1.0 - (InjectionTimer/InjectionTime);
     } else {
        Injection = false;
        InjWaterNorm = 0.0;
@@ -397,7 +381,7 @@ double FGTurbine::CalcFuelNeed(void)
 {
   FuelFlowRate = FuelFlow_pph / 3600.0; // Calculates flow in lbs/sec from lbs/hr
   FuelExpended = FuelFlowRate * in.TotalDeltaT;     // Calculates fuel expended in this time step
-  if (!Starved) FuelUsedLbs += FuelExpended; 
+  if (!Starved) FuelUsedLbs += FuelExpended;
   return FuelExpended;
 }
 
@@ -452,10 +436,6 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     BypassRatio = el->FindElementValueAsNumber("bypassratio");
   if (el->FindElement("bleed"))
     BleedDemand = el->FindElementValueAsNumber("bleed");
-  if (el->FindElement("tsfc"))
-    TSFC = el->FindElementValueAsNumber("tsfc");
-  if (el->FindElement("atsfc"))
-    ATSFC = el->FindElementValueAsNumber("atsfc");
   if (el->FindElement("ignitionn1"))
     IgnitionN1 = el->FindElementValueAsNumber("ignitionn1");
   if (el->FindElement("ignitionn2"))
@@ -503,29 +483,47 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   MaxThrustLookup = GetPreFunction(property_prefix+"/AugThrust");
   InjectionLookup = GetPreFunction(property_prefix+"/Injection");
 
+  JSBSim::Element* tsfcElement = el->FindElement("tsfc");
+  if (tsfcElement) {
+    string value = tsfcElement->GetDataLine();
+    if (is_number(value))
+      TSFC = std::make_unique<FGSimplifiedTSFC>(this, atof(value.c_str()));
+    else
+      TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string(EngineNumber));
+  }
+
+  JSBSim::Element* atsfcElement = el->FindElement("atsfc");
+  if (atsfcElement) {
+    string value = atsfcElement->GetDataLine();
+    if (is_number(value))
+      ATSFC = std::make_unique<FGRealValue>(atof(value.c_str()));
+    else
+      ATSFC = std::make_unique<FGFunction>(FDMExec, atsfcElement, to_string((int)EngineNumber));
+  }
+
   // Pre-calculations and initializations
   N1SpoolUp = GetPreFunction(property_prefix+"/N1SpoolUp");
   if (!N1SpoolUp)
-    N1SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
+    N1SpoolUp = std::make_shared<FGSpoolUp>(this, BypassRatio, 1.0);
 
   N1SpoolDown = GetPreFunction(property_prefix+"/N1SpoolDown");
   if (!N1SpoolDown)
-    N1SpoolDown = new FGSpoolUp(this, BypassRatio, 2.4);
+    N1SpoolDown = std::make_shared<FGSpoolUp>(this, BypassRatio, 2.4);
 
   N2SpoolUp = GetPreFunction(property_prefix+"/N2SpoolUp");
   if (!N2SpoolUp)
-    N2SpoolUp = new FGSpoolUp(this, BypassRatio, 1.0);
+    N2SpoolUp = std::make_shared<FGSpoolUp>(this, BypassRatio, 1.0);
 
   N2SpoolDown = GetPreFunction(property_prefix+"/N2SpoolDown");
   if (!N2SpoolDown)
-    N2SpoolDown = new FGSpoolUp(this, BypassRatio, 3.0);
+    N2SpoolDown = std::make_shared<FGSpoolUp>(this, BypassRatio, 3.0);
 
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = in.TAT_c + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
-  bindmodel(exec->GetPropertyManager());
+  bindmodel(exec->GetPropertyManager().get());
   return true;
 }
 
@@ -566,32 +564,38 @@ void FGTurbine::bindmodel(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/n2";
   PropertyManager->Tie( property_name.c_str(), &N2);
   property_name = base_property_name + "/injection_cmd";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, 
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjection, &FGTurbine::SetInjection);
   property_name = base_property_name + "/seized";
   PropertyManager->Tie( property_name.c_str(), &Seized);
   property_name = base_property_name + "/stalled";
   PropertyManager->Tie( property_name.c_str(), &Stalled);
   property_name = base_property_name + "/bleed-factor";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
+  PropertyManager->Tie( property_name.c_str(), this, &FGTurbine::GetBleedDemand, &FGTurbine::SetBleedDemand);
   property_name = base_property_name + "/MaxN1";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetMaxN1, &FGTurbine::SetMaxN1);
   property_name = base_property_name + "/MaxN2";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetMaxN2, &FGTurbine::SetMaxN2);
   property_name = base_property_name + "/InjectionTimer";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjectionTimer, &FGTurbine::SetInjectionTimer);
   property_name = base_property_name + "/InjWaterNorm";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjWaterNorm, &FGTurbine::SetInjWaterNorm);
   property_name = base_property_name + "/InjN1increment";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjN1increment, &FGTurbine::SetInjN1increment);
   property_name = base_property_name + "/InjN2increment";
-  PropertyManager->Tie( property_name.c_str(), (FGTurbine*)this,
+  PropertyManager->Tie( property_name.c_str(), this,
                         &FGTurbine::GetInjN2increment, &FGTurbine::SetInjN2increment);
+  property_name = base_property_name + "/atsfc";
+  PropertyManager->Tie(property_name.c_str(), ATSFC.get(), &FGParameter::GetValue);
+  property_name = base_property_name + "/tsfc";
+  PropertyManager->Tie(property_name.c_str(), &correctedTSFC);
+  auto node = PropertyManager->GetNode(property_name.c_str(), false);
+  node->setAttribute(SGPropertyNode::WRITE, false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -600,9 +604,9 @@ int FGTurbine::InitRunning(void)
 {
   FDMExec->SuspendIntegration();
   Cutoff=false;
-  Running=true;  
+  Running=true;
   N1_factor = MaxN1 - IdleN1;
-  N2_factor = MaxN2 - IdleN2;      
+  N2_factor = MaxN2 - IdleN2;
   N2 = IdleN2 + ThrottlePos * N2_factor;
   N1 = IdleN1 + ThrottlePos * N1_factor;
   Calculate();
@@ -642,8 +646,8 @@ void FGTurbine::Debug(int from)
       cout << "      MilThrust:   "         << MilThrust << endl;
       cout << "      MaxThrust:   "         << MaxThrust << endl;
       cout << "      BypassRatio: "         << BypassRatio << endl;
-      cout << "      TSFC:        "         << TSFC << endl;
-      cout << "      ATSFC:       "         << ATSFC << endl;
+      cout << "      TSFC:        "         << TSFC->GetValue() << endl;
+      cout << "      ATSFC:       "         << ATSFC->GetValue() << endl;
       cout << "      IdleN1:      "         << IdleN1 << endl;
       cout << "      IdleN2:      "         << IdleN2 << endl;
       cout << "      MaxN1:       "         << MaxN1 << endl;

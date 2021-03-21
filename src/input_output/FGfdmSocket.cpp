@@ -39,11 +39,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#include <WS2tcpip.h>
+#include <ws2tcpip.h>
+#elif defined(__OpenBSD__)
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <fcntl.h>
 #else
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
 #endif
 #include <iomanip>
 #include <cstring>
@@ -87,7 +92,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
   if (!LoadWinSockDLL(debug_lvl)) return;
   #endif
 
-  struct addrinfo hints = { 0 };
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = AF_INET;
   if (protocol == ptUDP)
     hints.ai_socktype = SOCK_DGRAM;
@@ -95,7 +101,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
     hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = 0;
   if (!is_number(address))
-    hints.ai_flags = AI_V4MAPPED | AI_ADDRCONFIG;
+    hints.ai_flags = AI_ADDRCONFIG;
   else
     hints.ai_flags = AI_NUMERICHOST;
 
@@ -150,7 +156,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
   connected = false;
   Protocol = (ProtocolType)protocol;
   string ProtocolName;
- 
+
 #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL(debug_lvl)) return;
 #endif
@@ -173,7 +179,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
   if (debug_lvl > 0)
     cout << "Creating input " << ProtocolName << " socket on port " << port
          << endl;
-  
+
   if (sckt != -1) {
     memset(&scktName, 0, sizeof(struct sockaddr_in));
     scktName.sin_family = AF_INET;
@@ -189,13 +195,14 @@ FGfdmSocket::FGfdmSocket(int port, int protocol)
              << " input socket on port " << port << endl << endl;
 
       if (Protocol == ptTCP) {
-        unsigned long NoBlock = true;
         if (listen(sckt, 5) >= 0) { // successful listen()
 #if defined(_MSC_VER) || defined(__MINGW32__)
+          u_long NoBlock = 1;
           ioctlsocket(sckt, FIONBIO, &NoBlock);
           sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
 #else
-          ioctl(sckt, FIONBIO, &NoBlock);
+          int flags = fcntl(sckt, F_GETFL, 0);
+          fcntl(sckt, F_SETFL, flags | O_NONBLOCK);
           sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
 #endif
           connected = true;
@@ -229,7 +236,6 @@ string FGfdmSocket::Receive(void)
   char buf[1024];
   int len = sizeof(struct sockaddr_in);
   int num_chars=0;
-  unsigned long NoBlock = true;
   string data;      // todo: should allocate this with a standard size as a
                     // class attribute and pass as a reference?
 
@@ -241,9 +247,11 @@ string FGfdmSocket::Receive(void)
     #endif
     if (sckt_in > 0) {
       #if defined(_MSC_VER) || defined(__MINGW32__)
-         ioctlsocket(sckt_in, FIONBIO,&NoBlock);
+        u_long NoBlock = 1;
+        ioctlsocket(sckt_in, FIONBIO, &NoBlock);
       #else
-         ioctl(sckt_in, FIONBIO, &NoBlock);
+        int flags = fcntl(sckt_in, F_GETFL, 0);
+        fcntl(sckt_in, F_SETFL, flags | O_NONBLOCK);
       #endif
       send(sckt_in, "Connected to JSBSim server\nJSBSim> ", 35, 0);
     }
@@ -267,15 +275,15 @@ string FGfdmSocket::Receive(void)
     }
 #endif
   }
-  
+
   // this is for FGUDPInputSocket
   if (sckt >= 0 && Protocol == ptUDP) {
     struct sockaddr addr;
     socklen_t fromlen = sizeof addr;
     num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
-    if (num_chars != -1) data.append(buf, num_chars); 
+    if (num_chars != -1) data.append(buf, num_chars);
   }
-  
+
   return data;
 }
 

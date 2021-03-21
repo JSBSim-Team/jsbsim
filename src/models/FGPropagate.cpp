@@ -140,7 +140,7 @@ bool FGPropagate::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
+void FGPropagate::SetInitialState(const FGInitialCondition* FGIC)
 {
   // Initialize the State Vector elements and the transformation matrices
 
@@ -274,6 +274,9 @@ bool FGPropagate::Run(bool Holding)
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal
   // frame.
   vVel = Tb2l * VState.vUVW;
+
+  // Compute orbital parameters in the inertial frame
+  ComputeOrbitalParameters();
 
   Debug(2);
   return false;
@@ -493,6 +496,53 @@ void FGPropagate::UpdateBodyMatrices(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropagate::ComputeOrbitalParameters(void)
+{
+  const FGColumnVector3 Z{0., 0., 1.};
+  FGColumnVector3 R = VState.vInertialPosition;
+  FGColumnVector3 angularMomentum = R * VState.vInertialVelocity;
+  h = angularMomentum.Magnitude();
+  Inclination = acos(angularMomentum(eZ)/h)*radtodeg;
+  FGColumnVector3 N;
+  if (abs(Inclination) > 1E-8) {
+    N = Z * angularMomentum;
+    RightAscension = atan2(N(eY), N(eX))*radtodeg;
+    N.Normalize();
+  }
+  else {
+    RightAscension = 0.0;
+    N = {1., 0., 0.};
+  }
+  R.Normalize();
+  double vr = DotProduct(R, VState.vInertialVelocity);
+  FGColumnVector3 eVector = (VState.vInertialVelocity*angularMomentum/in.GM - R);
+  Eccentricity = eVector.Magnitude();
+  if (Eccentricity > 1E-8) {
+    eVector /= Eccentricity;
+    PerigeeArgument = acos(DotProduct(N, eVector))*radtodeg;
+    if (eVector(eZ) < 0) PerigeeArgument = 360. - PerigeeArgument;
+  }
+  else
+  {
+    eVector = {1., 0., 0.};
+    PerigeeArgument = 0.0;
+  }
+
+  TrueAnomaly = acos(Constrain(-1.0, DotProduct(eVector, R), 1.0)) * radtodeg;
+  if (vr < 0.0) TrueAnomaly = 360. - TrueAnomaly;
+  ApoapsisRadius = h*h / (in.GM * (1-Eccentricity));
+  PeriapsisRadius = h*h / (in.GM * (1+Eccentricity));
+
+  if (Eccentricity < 1.0) {
+    double semimajor = 0.5*(ApoapsisRadius + PeriapsisRadius);
+    OrbitalPeriod = 2.*M_PI*pow(semimajor, 1.5)/sqrt(in.GM);
+  }
+  else
+    OrbitalPeriod = 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi)
 {
   VState.qAttitudeECI = Qi;
@@ -548,8 +598,9 @@ void FGPropagate::RecomputeLocalTerrainVelocity()
 
 double FGPropagate::GetTerrainElevation(void) const
 {
-  FGLocation contact;
   FGColumnVector3 vDummy;
+  FGLocation contact;
+  contact.SetEllipse(in.SemiMajor, in.SemiMinor);
   Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
   return contact.GetGeodAltitude();
 }
@@ -791,12 +842,12 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
   PropertyManager->Tie("velocities/ned-velocity-mag-fps", this, &FGPropagate::GetNEDVelocityMagnitude);
 
-  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL, true);
-  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters, true);
-  PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude, false);
-  PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude, false);
-  PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg, false);
-  PropertyManager->Tie("position/long-gc-deg", this, &FGPropagate::GetLongitudeDeg, &FGPropagate::SetLongitudeDeg, false);
+  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::GetAltitudeASL, &FGPropagate::SetAltitudeASL);
+  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::GetAltitudeASLmeters, &FGPropagate::SetAltitudeASLmeters);
+  PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
+  PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
+  PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg);
+  PropertyManager->Tie("position/long-gc-deg", this, &FGPropagate::GetLongitudeDeg, &FGPropagate::SetLongitudeDeg);
   PropertyManager->Tie("position/lat-geod-rad", this, &FGPropagate::GetGeodLatitudeRad);
   PropertyManager->Tie("position/lat-geod-deg", this, &FGPropagate::GetGeodLatitudeDeg);
   PropertyManager->Tie("position/geod-alt-ft", this, &FGPropagate::GetGeodeticAltitude);
@@ -806,7 +857,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
                           &FGPropagate::GetTerrainElevation,
-                          &FGPropagate::SetTerrainElevation, false);
+                          &FGPropagate::SetTerrainElevation);
 
   PropertyManager->Tie("position/eci-x-ft", this, eX, (PMF)&FGPropagate::GetInertialPosition);
   PropertyManager->Tie("position/eci-y-ft", this, eY, (PMF)&FGPropagate::GetInertialPosition);
@@ -830,6 +881,16 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
+
+  PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
+  PropertyManager->Tie("orbital/inclination-deg", &Inclination);
+  PropertyManager->Tie("orbital/right-ascension-deg", &RightAscension);
+  PropertyManager->Tie("orbital/eccentricity", &Eccentricity);
+  PropertyManager->Tie("orbital/argument-of-perigee-deg", &PerigeeArgument);
+  PropertyManager->Tie("orbital/true-anomaly-deg", &TrueAnomaly);
+  PropertyManager->Tie("orbital/apoapsis-radius-ft", &ApoapsisRadius);
+  PropertyManager->Tie("orbital/periapsis-radius-ft", &PeriapsisRadius);
+  PropertyManager->Tie("orbital/period-sec", &OrbitalPeriod);
 
   PropertyManager->Tie("simulation/integrator/rate/rotational", (int*)&integrator_rotational_rate);
   PropertyManager->Tie("simulation/integrator/rate/translational", (int*)&integrator_translational_rate);

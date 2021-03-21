@@ -64,7 +64,7 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
     throw("Malformed FCS function specification.");
   }
 
-  bind(element);
+  bind(element, fcs->GetPropertyManager().get());
   Debug(0);
 }
 

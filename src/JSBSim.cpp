@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "initialization/FGTrim.h"
+#include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
 
@@ -403,7 +404,7 @@ int real_main(int argc, char* argv[])
       return 0;
     }
 
-    JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
+    auto IC = FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
       delete FDMExec;
       cerr << "Initialization unsuccessful" << endl;
@@ -492,7 +493,13 @@ int real_main(int argc, char* argv[])
   char s[100];
   time_t tod;
   time(&tod);
-  strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
+  struct tm local;
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  localtime_s(&local, &tod);
+#else
+  localtime_r(&tod, &local);
+#endif
+  strftime(s, 99, "%A %B %d %Y %X", &local);
   cout << "Start: " << s << " (HH:MM:SS)" << endl;
 
   frame_duration = FDMExec->GetDeltaT();
@@ -558,7 +565,12 @@ int real_main(int argc, char* argv[])
 
   // PRINT ENDING CLOCK TIME
   time(&tod);
-  strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
+#if defined(_MSC_VER) || defined(__MINGW32__)
+  localtime_s(&local, &tod);
+#else
+  localtime_r(&tod, &local);
+#endif
+  strftime(s, 99, "%A %B %d %Y %X", &local);
   cout << "End: " << s << " (HH:MM:SS)" << endl;
 
   // CLEAN UP
@@ -701,7 +713,7 @@ bool options(int count, char **arg)
 
     } else if (keyword == "--catalog") {
         catalog = true;
-        if (value.size() > 0) AircraftName=value;
+        if (!value.empty()) AircraftName=value;
     } else if (keyword.substr(0,2) != "--" && value.empty() ) {
       // See what kind of files we are specifying on the command line
 

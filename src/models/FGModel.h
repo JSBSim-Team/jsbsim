@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#include <memory>
 
 #include "math/FGModelFunctions.h"
 #include "simgear/misc/sg_path.hxx"
@@ -92,7 +93,7 @@ public:
   unsigned int GetRate(void)   {return rate;}
   FGFDMExec* GetExec(void)     {return FDMExec;}
 
-  void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
+  void SetPropertyManager(std::shared_ptr<FGPropertyManager> fgpm) { PropertyManager=fgpm;}
   virtual SGPath FindFullPathName(const SGPath& path) const;
   const std::string& GetName(void) { return Name; }
   virtual bool Load(Element* el) { return true; }
@@ -114,7 +115,7 @@ protected:
   virtual void Debug(int from);
 
   FGFDMExec*         FDMExec;
-  FGPropertyManager* PropertyManager;
+  std::shared_ptr<FGPropertyManager> PropertyManager;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

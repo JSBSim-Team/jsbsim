@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFilter.h"
+#include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
 using namespace std;
@@ -52,8 +53,9 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element), DynamicFilter(false), Initialize(true)
 {
   C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = nullptr;
+  auto PropertyManager = fcs->GetPropertyManager();
   for (int i=1; i<7; i++)
-    ReadFilterCoefficients(element, i);
+    ReadFilterCoefficients(element, i, PropertyManager);
 
   if      (Type == "LAG_FILTER")          FilterType = eLag        ;
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;
@@ -63,7 +65,7 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
 
   CalculateDynamicFilters();
 
-  bind(element);
+  bind(element, PropertyManager.get());
 
   Debug(0);
 }
@@ -86,7 +88,8 @@ void FGFilter::ResetPastStates(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFilter::ReadFilterCoefficients(Element* element, int index)
+void FGFilter::ReadFilterCoefficients(Element* element, int index,
+                                      std::shared_ptr<FGPropertyManager> PropertyManager)
 {
   // index is known to be 1-7. 
   // A stringstream would be overkill, but also trying to avoid sprintf

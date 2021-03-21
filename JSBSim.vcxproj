@@ -229,6 +229,7 @@
     </Xdcmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\initialization\FGLinearization.h" />
     <ClInclude Include="src\input_output\FGInputSocket.h" />
     <ClInclude Include="src\input_output\FGInputType.h" />
     <ClInclude Include="src\input_output\fgmodelloader.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="src\input_output\fgpropertyreader.h" />
     <ClInclude Include="src\input_output\FGUDPInputSocket.h" />
     <ClInclude Include="src\input_output\string_utilities.h" />
+    <ClInclude Include="src\math\FGStateSpace.h" />
     <ClInclude Include="src\math\LagrangeMultiplier.h" />
     <ClInclude Include="src\models\atmosphere\FGStandardAtmosphere.h" />
     <ClInclude Include="src\models\atmosphere\FGWinds.h" />
@@ -336,7 +338,6 @@
     <ClInclude Include="src\simgear\xml\macconfig.h" />
     <ClInclude Include="src\simgear\xml\nametab.h" />
     <ClInclude Include="src\input_output\net_fdm.hxx" />
-    <ClInclude Include="src\simgear\props\propertyObject.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
@@ -346,6 +347,10 @@
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\GeographicLib\Geodesic.cpp" />
+    <ClCompile Include="src\GeographicLib\GeodesicLine.cpp" />
+    <ClCompile Include="src\GeographicLib\Math.cpp" />
+    <ClCompile Include="src\initialization\FGLinearization.cpp" />
     <ClCompile Include="src\input_output\FGInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGInputType.cpp" />
     <ClCompile Include="src\input_output\FGModelLoader.cpp" />
@@ -356,6 +361,7 @@
     <ClCompile Include="src\input_output\FGOutputType.cpp" />
     <ClCompile Include="src\input_output\FGPropertyReader.cpp" />
     <ClCompile Include="src\input_output\FGUDPInputSocket.cpp" />
+    <ClCompile Include="src\math\FGStateSpace.cpp" />
     <ClCompile Include="src\math\FGTemplateFunc.cpp" />
     <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
     <ClCompile Include="src\models\atmosphere\FGWinds.cpp" />
@@ -444,7 +450,6 @@
     <ClCompile Include="src\input_output\FGXMLElement.cpp" />
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
-    <ClCompile Include="src\simgear\props\propertyObject.cxx" />
     <ClCompile Include="src\simgear\props\props.cxx" />
     <ClCompile Include="src\simgear\xml\xmlparse.c" />
     <ClCompile Include="src\simgear\xml\xmlrole.c" />

@@ -65,7 +65,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   GearRatio = 1.0;
   EngineNum = num;
-  FGPropertyManager* PropertyManager = FDMExec->GetPropertyManager();
+  auto PropertyManager = FDMExec->GetPropertyManager();
 
 // Determine the initial location and orientation of this thruster and load the
 // thruster with this information.

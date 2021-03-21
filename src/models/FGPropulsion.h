@@ -41,7 +41,6 @@ INCLUDES
 #include <vector>
 #include <iosfwd>
 
-#include "simgear/props/propertyObject.hxx"
 #include "FGModel.h"
 #include "propulsion/FGEngine.h"
 #include "math/FGMatrix33.h"
@@ -124,15 +123,16 @@ public:
   bool Load(Element* el) override;
 
   /// Retrieves the number of engines defined for the aircraft.
-  unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
+  size_t GetNumEngines(void) const {return Engines.size();}
 
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
       @return the address of the specific engine, or zero if no such engine is
               available */
-  FGEngine* GetEngine(unsigned int index) const {
-                      if (index < Engines.size()) return Engines[index];
-                      else                        return 0L;      }
+  auto GetEngine(unsigned int index) const {
+    assert(index < Engines.size());
+    return Engines[index];
+  }
 
   /// Retrieves the number of tanks defined for the aircraft.
   unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
@@ -189,7 +189,7 @@ public:
   struct FGEngine::Inputs in;
 
 private:
-  std::vector <FGEngine*>   Engines;
+  std::vector <std::shared_ptr<FGEngine>> Engines;
   std::vector <FGTank*>     Tanks;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;
@@ -203,11 +203,11 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
-  simgear::PropertyObject<bool> refuel;
-  simgear::PropertyObject<bool> dump;
+  bool refuel;
+  bool dump;
   bool FuelFreeze;
-  simgear::PropertyObject<double> TotalFuelQuantity;
-  simgear::PropertyObject<double> TotalOxidizerQuantity;
+  double TotalFuelQuantity;
+  double TotalOxidizerQuantity;
   double DumpRate;
   double RefuelRate;
   bool IsBound;

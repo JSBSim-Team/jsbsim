@@ -36,6 +36,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPID.h"
+#include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 
 using namespace std;
@@ -56,6 +57,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   ProcessVariableDot = nullptr;
   IsStandard = false;
   IntType = eNone;       // No integrator initially defined.
+  auto PropertyManager = fcs->GetPropertyManager();
 
   string pid_type = element->GetAttributeValue("type");
 
@@ -96,20 +98,20 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   el = element->FindElement("pvdot");
   if (el)
-    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager);
+    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
   el = element->FindElement("trigger");
   if (el)
-    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager);
+    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
 
-  bind(el);
+  bind(el, PropertyManager.get());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPID::bind(Element *el)
+void FGPID::bind(Element *el, FGPropertyManager* PropertyManager)
 {
-  FGFCSComponent::bind(el);
+  FGFCSComponent::bind(el, PropertyManager);
 
   string tmp;
   if (Name.find("/") == string::npos) {

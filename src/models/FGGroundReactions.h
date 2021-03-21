@@ -80,7 +80,6 @@ class FGGroundReactions : public FGModel, public FGSurface
 {
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions(void) override;
 
   bool InitModel(void) override;
   /** Runs the Ground Reactions model; called by the Executive
@@ -107,7 +106,7 @@ public:
   /** Gets a gear instance
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
-  FGLGear* GetGearUnit(int gear) const { return lGear[gear]; }
+  auto GetGearUnit(int gear) const { return lGear[gear]; }
 
   /** Gets the steering command.
       @return steering command in range from -1.0 - 1.0 */
@@ -123,7 +122,7 @@ public:
   FGLGear::Inputs in;
 
 private:
-  std::vector <FGLGear*> lGear;
+  std::vector <std::shared_ptr<FGLGear>> lGear;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   std::vector <LagrangeMultiplier*> multipliers;

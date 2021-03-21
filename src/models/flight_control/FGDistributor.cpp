@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
  
 #include "FGDistributor.h"
+#include "models/FGFCS.h"
 
 using namespace std;
 
@@ -52,8 +53,10 @@ CLASS IMPLEMENTATION
 FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
-  bind(element); // Bind() this component here in case it is used in its own
-                 // definition for a sample-and-hold
+  auto PropertyManager = fcs->GetPropertyManager();
+
+  bind(element, PropertyManager.get()); // Bind() this component here in case it is used in its own
+                                        // definition for a sample-and-hold
 
   string type_string = element->GetAttributeValue("type");
   if (type_string == "inclusive") Type = eInclusive;
@@ -71,7 +74,8 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
     while (prop_val_element) {
       string value_string = prop_val_element->GetAttributeValue("value");
       string property_string = prop_val_element->GetDataLine();
-      current_case->AddPropValPair(new PropValPair(property_string, value_string, PropertyManager));
+      current_case->AddPropValPair(new PropValPair(property_string, value_string,
+                                                   PropertyManager, prop_val_element));
       prop_val_element = case_element->FindNextElement("property");
     }
     Cases.push_back(current_case);

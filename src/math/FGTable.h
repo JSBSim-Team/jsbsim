@@ -241,7 +241,8 @@ public:
   FGTable(const FGTable& table);
 
   /// The constructor for a table
-  FGTable (FGPropertyManager* propMan, Element* el, const std::string& prefix="");
+  FGTable (std::shared_ptr<FGPropertyManager> propMan, Element* el,
+           const std::string& prefix="");
   FGTable (int );
   FGTable (int, int);
   double GetValue(void) const;
@@ -301,10 +302,9 @@ private:
   int colCounter, rowCounter, tableCounter;
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
   double** Allocate(void);
-  FGPropertyManager* const PropertyManager;
   std::string Prefix;
   std::string Name;
-  void bind(Element*);
+  void bind(Element*, FGPropertyManager*);
 
   unsigned int FindNumColumns(const std::string&);
   void Debug(int from);

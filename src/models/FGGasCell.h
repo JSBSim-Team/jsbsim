@@ -256,7 +256,7 @@ private:
   FGMatrix33 gasCellJ;      // [slug foot^2]
   FGColumnVector3 gasCellM; // [lbs in]
 
-  FGMassBalance* MassBalance;
+  std::shared_ptr<FGMassBalance> MassBalance;
   void Debug(int from);
 
   /* Constants. */
@@ -359,7 +359,7 @@ private:
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
   FGMatrix33 ballonetJ;     // [slug foot^2]
 
-  FGMassBalance* MassBalance;
+  std::shared_ptr<FGMassBalance> MassBalance;
   void Debug(int from);
 
   /* Constants. */

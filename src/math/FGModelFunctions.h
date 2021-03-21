@@ -34,6 +34,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGJSBBase.h"
 #include "input_output/FGPropertyReader.h"
 
@@ -54,7 +56,7 @@ CLASS DOCUMENTATION
 
 /** The model functions class provides the capability for loading, storing, and
     executing arbitrary functions.
-    For certain classes, such as the engine, aerodynamics, ground reactions, 
+    For certain classes, such as the engine, aerodynamics, ground reactions,
     mass balance, etc., it can be useful to incorporate special functions that
     can operate on the local model parameters before and/or after the model
     executes. For example, there is no inherent chamber pressure calculation
@@ -72,7 +74,6 @@ DECLARATION: FGModelFunctions
 class FGModelFunctions : public FGJSBBase
 {
 public:
-  virtual ~FGModelFunctions();
   void RunPreFunctions(void);
   void RunPostFunctions(void);
   bool Load(Element* el, FGFDMExec* fdmex, std::string prefix="");
@@ -94,11 +95,11 @@ public:
       @param name the name of the requested function.
       @return a pointer to the function (NULL if not found)
    */
-  FGFunction* GetPreFunction(const std::string& name);
+  std::shared_ptr<FGFunction> GetPreFunction(const std::string& name);
 
 protected:
-  std::vector <FGFunction*> PreFunctions;
-  std::vector <FGFunction*> PostFunctions;
+  std::vector <std::shared_ptr<FGFunction>> PreFunctions;
+  std::vector <std::shared_ptr<FGFunction>> PostFunctions;
   FGPropertyReader LocalProperties;
 
   virtual bool InitModel(void);

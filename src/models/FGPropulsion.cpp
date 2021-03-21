@@ -93,8 +93,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 
 FGPropulsion::~FGPropulsion()
 {
-  for (unsigned int i=0; i<Engines.size(); i++) delete Engines[i];
-  Engines.clear();
   for (unsigned int i=0; i<Tanks.size(); i++) delete Tanks[i];
   Tanks.clear();
   Debug(1);
@@ -136,11 +134,11 @@ bool FGPropulsion::Run(bool Holding)
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
-  for (i=0; i<numEngines; i++) {
-    Engines[i]->Calculate();
-    ConsumeFuel(Engines[i]);
-    vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
-    vMoments += Engines[i]->GetMoments();     // sum body frame moments
+  for (auto& engine: Engines) {
+    engine->Calculate();
+    ConsumeFuel(engine.get());
+    vForces  += engine->GetBodyForces();  // sum body frame forces
+    vMoments += engine->GetMoments();     // sum body frame moments
   }
 
   TotalFuelQuantity = 0.0;
@@ -159,8 +157,8 @@ bool FGPropulsion::Run(bool Holding)
     }
   }
 
-  if (refuel.node() && refuel) DoRefuel( in.TotalDeltaT );
-  if (dump.node() && dump) DumpFuel( in.TotalDeltaT );
+  if (refuel) DoRefuel( in.TotalDeltaT );
+  if (dump) DumpFuel( in.TotalDeltaT );
 
   RunPostFunctions();
 
@@ -400,27 +398,27 @@ bool FGPropulsion::Load(Element* el)
         HavePistonEngine = true;
         if (!IsBound) bind();
         Element *element = engine_element->FindElement("piston_engine");
-        Engines.push_back(new FGPiston(FDMExec, element, numEngines, in));
+        Engines.push_back(make_shared<FGPiston>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("turbine_engine")) {
         HaveTurbineEngine = true;
         if (!IsBound) bind();
         Element *element = engine_element->FindElement("turbine_engine");
-        Engines.push_back(new FGTurbine(FDMExec, element, numEngines, in));
+        Engines.push_back(make_shared<FGTurbine>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("turboprop_engine")) {
         HaveTurboPropEngine = true;
         if (!IsBound) bind();
         Element *element = engine_element->FindElement("turboprop_engine");
-        Engines.push_back(new FGTurboProp(FDMExec, element, numEngines, in));
+        Engines.push_back(make_shared<FGTurboProp>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("rocket_engine")) {
         HaveRocketEngine = true;
         if (!IsBound) bind();
         Element *element = engine_element->FindElement("rocket_engine");
-        Engines.push_back(new FGRocket(FDMExec, element, numEngines, in));
+        Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("electric_engine")) {
         HaveElectricEngine = true;
         if (!IsBound) bind();
         Element *element = engine_element->FindElement("electric_engine");
-        Engines.push_back(new FGElectric(FDMExec, element, numEngines, in));
+        Engines.push_back(make_shared<FGElectric>(FDMExec, element, numEngines, in));
       } else {
         cerr << engine_element->ReadFrom() << " Unknown engine type" << endl;
         return false;
@@ -599,15 +597,17 @@ const FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 void FGPropulsion::SetMagnetos(int setting)
 {
   if (ActiveEngine < 0) {
-    for (unsigned i=0; i<Engines.size(); i++) {
+    for (auto& engine: Engines) {
       // ToDo: first need to make sure the engine Type is really appropriate:
       //   do a check to see if it is of type Piston. This should be done for
       //   all of this kind of possibly across-the-board settings.
-      if (Engines[i]->GetType() == FGEngine::etPiston)
-        ((FGPiston*)Engines[i])->SetMagnetos(setting);
+      if (engine->GetType() == FGEngine::etPiston)
+        static_pointer_cast<FGPiston>(engine)->SetMagnetos(setting);
     }
   } else {
-    ((FGPiston*)Engines[ActiveEngine])->SetMagnetos(setting);
+    auto engine = dynamic_pointer_cast<FGPiston>(Engines[ActiveEngine]);
+    if (engine)
+      engine->SetMagnetos(setting);
   }
 }
 
@@ -616,11 +616,11 @@ void FGPropulsion::SetMagnetos(int setting)
 void FGPropulsion::SetStarter(int setting)
 {
   if (ActiveEngine < 0) {
-    for (unsigned i=0; i<Engines.size(); i++) {
+    for (auto& engine: Engines) {
       if (setting == 0)
-        Engines[i]->SetStarter(false);
+        engine->SetStarter(false);
       else
-        Engines[i]->SetStarter(true);
+        engine->SetStarter(true);
     }
   } else {
     if (setting == 0)
@@ -637,8 +637,8 @@ int FGPropulsion::GetStarter(void) const
   if (ActiveEngine < 0) {
     bool starter = true;
 
-    for (unsigned i=0; i<Engines.size(); i++)
-      starter &= Engines[i]->GetStarter();
+    for (auto& engine: Engines)
+      starter &= engine->GetStarter();
 
     return starter ? 1 : 0;
   } else
@@ -652,25 +652,26 @@ void FGPropulsion::SetCutoff(int setting)
   bool bsetting = setting == 0 ? false : true;
 
   if (ActiveEngine < 0) {
-    for (unsigned i=0; i<Engines.size(); i++) {
-      switch (Engines[i]->GetType()) { 
+    for (auto& engine: Engines) {
+      switch (engine->GetType()) { 
         case FGEngine::etTurbine:
-          ((FGTurbine*)Engines[i])->SetCutoff(bsetting);
+          static_pointer_cast<FGTurbine>(engine)->SetCutoff(bsetting);
           break;
         case FGEngine::etTurboprop:
-          ((FGTurboProp*)Engines[i])->SetCutoff(bsetting);
+          static_pointer_cast<FGTurboProp>(engine)->SetCutoff(bsetting);
           break;
         default:
           break;
       }
     }
   } else {
-    switch (Engines[ActiveEngine]->GetType()) { 
+    auto engine = Engines[ActiveEngine];
+    switch (engine->GetType()) { 
       case FGEngine::etTurbine:
-        ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(bsetting);
+        static_pointer_cast<FGTurbine>(engine)->SetCutoff(bsetting);
         break;
       case FGEngine::etTurboprop:
-        ((FGTurboProp*)Engines[ActiveEngine])->SetCutoff(bsetting);
+        static_pointer_cast<FGTurboProp>(engine)->SetCutoff(bsetting);
         break;
       default:
         break;
@@ -685,13 +686,13 @@ int FGPropulsion::GetCutoff(void) const
   if (ActiveEngine < 0) {
     bool cutoff = true;
 
-    for (unsigned i=0; i<Engines.size(); i++) {
-      switch (Engines[i]->GetType()) { 
+    for (auto& engine: Engines) {
+      switch (engine->GetType()) { 
       case FGEngine::etTurbine:
-        cutoff &= ((FGTurbine*)Engines[i])->GetCutoff();
+        cutoff &= static_pointer_cast<FGTurbine>(engine)->GetCutoff();
         break;
       case FGEngine::etTurboprop:
-        cutoff &= ((FGTurboProp*)Engines[i])->GetCutoff();
+        cutoff &= static_pointer_cast<FGTurboProp>(engine)->GetCutoff();
         break;
       default:
         return -1;
@@ -700,11 +701,12 @@ int FGPropulsion::GetCutoff(void) const
 
     return cutoff ? 1 : 0;
   } else {
-    switch (Engines[ActiveEngine]->GetType()) {
+    auto engine = Engines[ActiveEngine];
+    switch (engine->GetType()) {
     case FGEngine::etTurbine:
-      return ((FGTurbine*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
+      return static_pointer_cast<FGTurbine>(engine)->GetCutoff() ? 1 : 0;
     case FGEngine::etTurboprop:
-      return ((FGTurboProp*)Engines[ActiveEngine])->GetCutoff() ? 1 : 0;
+      return static_pointer_cast<FGTurboProp>(engine)->GetCutoff() ? 1 : 0;
     default:
       break;
     }
@@ -804,7 +806,7 @@ void FGPropulsion::bind(void)
   typedef int (FGPropulsion::*iPMF)(void) const;
 
   IsBound = true;
-  PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning, false);
+  PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning);
   if (HaveTurbineEngine || HaveTurboPropEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
     PropertyManager->Tie("propulsion/cutoff_cmd", this,  &FGPropulsion::GetCutoff, &FGPropulsion::SetCutoff);
@@ -812,21 +814,21 @@ void FGPropulsion::bind(void)
 
   if (HavePistonEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
-    PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)0, &FGPropulsion::SetMagnetos, false);
+    PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)0, &FGPropulsion::SetMagnetos);
   }
 
   PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine,
-                        &FGPropulsion::SetActiveEngine, true);
+                        &FGPropulsion::SetActiveEngine);
   PropertyManager->Tie("forces/fbx-prop-lbs", this, eX, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fby-prop-lbs", this, eY, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fbz-prop-lbs", this, eZ, (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("moments/l-prop-lbsft", this, eX, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/m-prop-lbsft", this, eY, (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/n-prop-lbsft", this, eZ, (PMF)&FGPropulsion::GetMoments);
-  TotalFuelQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-fuel-lbs");
-  TotalOxidizerQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-oxidizer-lbs");
-  refuel = PropertyManager->CreatePropertyObject<bool>("propulsion/refuel");
-  dump = PropertyManager->CreatePropertyObject<bool>("propulsion/fuel_dump");
+  PropertyManager->Tie("propulsion/total-fuel-lbs", &TotalFuelQuantity);
+  PropertyManager->Tie("propulsion/total-oxidizer-lbs", &TotalOxidizerQuantity);
+  PropertyManager->Tie("propulsion/refuel", &refuel);
+  PropertyManager->Tie("propulsion/fuel_dump", &dump);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

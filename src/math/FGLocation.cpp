@@ -42,6 +42,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <cmath>
+#include <GeographicLib/Math.hpp>
+#include <GeographicLib/Geodesic.hpp>
 
 #include "FGLocation.h"
 
@@ -371,67 +373,33 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the waypoint distance calculation:
-//
-//  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
-//  c = 2∙atan2(√a, √(1−a))
-//  d = R∙c
 
 double FGLocation::GetDistanceTo(double target_longitude,
                                  double target_latitude) const
 {
+  assert(mEllipseSet);
   ComputeDerived();
-  double delta_lat_rad = target_latitude  - mLat;
-  double delta_lon_rad = target_longitude - mLon;
+  GeographicLib::Geodesic geod(a, 1 - ec);
+  GeographicLib::Math::real distance;
+  geod.Inverse(mGeodLat * radtodeg, mLon * radtodeg, target_latitude * radtodeg,
+               target_longitude * radtodeg, distance);
 
-  double distance_a = pow(sin(0.5*delta_lat_rad), 2.0)
-    + (cos(mLat) * cos(target_latitude)
-       * (pow(sin(0.5*delta_lon_rad), 2.0)));
-
-  return 2.0 * GetRadius() * atan2(sqrt(distance_a), sqrt(1.0 - distance_a));
+  return distance;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//  The calculations, below, implement the Haversine formulas to calculate
-//  heading and distance to a set of lat/long coordinates from the current
-//  position.
-//
-//  The basic equations are (lat1, long1 are source positions; lat2
-//  long2 are target positions):
-//
-//  R = earth’s radius
-//  Δlat = lat2 − lat1
-//  Δlong = long2 − long1
-//
-//  For the heading angle calculation:
-//
-//  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1)∙cos(lat2)∙cos(Δlong))
 
 double FGLocation::GetHeadingTo(double target_longitude,
                                 double target_latitude) const
 {
+  assert(mEllipseSet);
   ComputeDerived();
-  double delta_lon_rad = target_longitude - mLon;
+  GeographicLib::Geodesic geod(a, 1 - ec);
+  GeographicLib::Math::real heading, azimuth2;
+  geod.Inverse(mGeodLat * radtodeg, mLon * radtodeg, target_latitude * radtodeg,
+               target_longitude * radtodeg, heading, azimuth2);
 
-  double Y = sin(delta_lon_rad) * cos(target_latitude);
-  double X = cos(mLat) * sin(target_latitude)
-    - sin(mLat) * cos(target_latitude) * cos(delta_lon_rad);
-
-  double heading_to_waypoint_rad = atan2(Y, X);
-  if (heading_to_waypoint_rad < 0) heading_to_waypoint_rad += 2.0*M_PI;
-
-  return heading_to_waypoint_rad;
+  return heading * degtorad;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

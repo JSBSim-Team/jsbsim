@@ -95,7 +95,7 @@ void FGUDPInputSocket::Read(bool Holding)
     
   data = socket->Receive();
  
-  if (data.size() > 0) {
+  if (!data.empty()) {
   
     vector<string> tokens;
     stringstream ss(data);

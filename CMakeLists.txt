@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.8)
+cmake_minimum_required (VERSION 3.1)
 
 ################################################################################
 # Project description                                                          #
@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 2.8.8)
 project(JSBSim)
 
 set(PROJECT_VERSION_MAJOR "1")
-set(PROJECT_VERSION_MINOR "1")
+set(PROJECT_VERSION_MINOR "2")
 set(PROJECT_VERSION_PATCH "0.dev1")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
@@ -42,16 +42,23 @@ get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 # Documentation                                                                #
 ################################################################################
 
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-  configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
-    ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM)
-endif()
+option(BUILD_DOCS "Set to ON to build JSBSim documentation" ON)
+if(BUILD_DOCS)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
+    configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
+      ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+    if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
+      execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    endif()
+    add_custom_target(doc
+      ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM)
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOCS)
 
 ################################################################################
 # Build the Python module and the automated test infrastructure (needs Python  #
@@ -76,6 +83,17 @@ if (BUILD_PYTHON_MODULE)
     message(WARNING "JSBSim Python module and test suite will not be built")
   endif(CYTHON_FOUND)
 endif(BUILD_PYTHON_MODULE)
+
+################################################################################
+# Build the Julia package                                                      #
+################################################################################
+
+option(BUILD_JULIA_PACKAGE "Set to ON to build the Julia package for JSBSim" OFF)
+
+if(BUILD_JULIA_PACKAGE)
+  enable_testing()
+  add_subdirectory(julia)
+endif(BUILD_JULIA_PACKAGE)
 
 ################################################################################
 # Build the unit tests (needs CxxTest)                                         #
@@ -110,9 +128,9 @@ if (UNIX)
   if (NOT DEFINED LSB_RELEASE_EXECUTABLE)
     find_program(LSB_RELEASE_EXECUTABLE lsb_release)
     if(LSB_RELEASE_EXECUTABLE STREQUAL "LSB_RELEASE_EXECUTABLE-NOTFOUND")
-      message("-- Could NOT find LSB_Release (missing: LSB_RELEASE_EXECUTABLE)")
+      message(WARNING "-- Could NOT find LSB_Release (missing: LSB_RELEASE_EXECUTABLE)")
     else()
-      message("-- Found LSB_Release: ${LSB_RELEASE_EXECUTABLE}")
+      message(STATUS "-- Found LSB_Release: ${LSB_RELEASE_EXECUTABLE}")
     endif()
   endif()
 
@@ -204,6 +222,14 @@ set(CPACK_RPM_PACKAGE_LICENSE "LGPL-2.1")
 if(BUILD_SHARED_LIBS)
   set(CPACK_RPM_DEVEL_PACKAGE_REQUIRES "${CPACK_RPM_RUNTIME_PACKAGE_NAME} >= ${CPACK_PACKAGE_VERSION}")
   set(CPACK_RPM_PYMODULES_PACKAGE_REQUIRES "${CPACK_RPM_RUNTIME_PACKAGE_NAME} >= ${CPACK_PACKAGE_VERSION}")
+endif()
+
+################################################################################
+# Windows installer                                                            #
+################################################################################
+
+if(WIN32)
+  configure_file(${CMAKE_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
 endif()
 
 ################################################################################

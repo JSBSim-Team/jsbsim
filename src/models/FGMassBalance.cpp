@@ -42,7 +42,6 @@ INCLUDES
 
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
-#include "FGGroundReactions.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -55,7 +54,7 @@ CLASS IMPLEMENTATION
 
 
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex)
-  : FGModel(fdmex), GroundReactions(nullptr)
+  : FGModel(fdmex)
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
@@ -90,7 +89,6 @@ bool FGMassBalance::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  GroundReactions = FDMExec->GetGroundReactions();
   vLastXYZcg.InitMatrix();
   vDeltaXYZcg.InitMatrix();
 
@@ -158,7 +156,7 @@ bool FGMassBalance::Load(Element* document)
   }
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
@@ -186,7 +184,7 @@ bool FGMassBalance::Run(bool Holding)
   RunPreFunctions();
 
   double ChildFDMWeight = 0.0;
-  for (int fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
+  for (size_t fdm=0; fdm<FDMExec->GetFDMCount(); fdm++) {
     if (FDMExec->GetChildFDM(fdm)->mated) ChildFDMWeight += FDMExec->GetChildFDM(fdm)->exec->GetMassBalance()->GetWeight();
   }
 
@@ -211,7 +209,7 @@ bool FGMassBalance::Run(bool Holding)
 
   // Compensate displacements of the structural frame when the mass distribution
   // is modified while the aircraft is in contact with the ground.
-  if (FDMExec->GetHoldDown() || GroundReactions->GetWOW())
+  if (FDMExec->GetHoldDown() || in.WOW)
     Propagate->NudgeBodyLocation(vDeltaXYZcgBody);
 
 // Calculate new total moments of inertia
@@ -310,7 +308,7 @@ void FGMassBalance::AddPointMass(Element* el)
     pm->SetPointMassMoI(ReadInertiaMatrix(el));
   }
 
-  pm->bind(PropertyManager, PointMasses.size());
+  pm->bind(PropertyManager.get(), PointMasses.size());
   PointMasses.push_back(pm);
 }
 
@@ -418,7 +416,7 @@ void FGMassBalance::bind(void)
                        &FGMassBalance::GetIyz);
   typedef int (FGMassBalance::*iOPV)() const;
   PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0,
-                       &FGMassBalance::GetMassPropertiesReport, false);
+                       &FGMassBalance::GetMassPropertiesReport);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

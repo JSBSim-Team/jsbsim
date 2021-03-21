@@ -80,7 +80,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element)
     exit(-1);
   }
 
-  bind(element);
+  bind(element, fcs->GetPropertyManager().get());
 
   Debug(0);
 }

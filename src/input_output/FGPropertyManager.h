@@ -42,7 +42,7 @@ INCLUDES
 #endif
 
 #include <string>
-#include "simgear/props/propertyObject.hxx"
+#include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
 #endif
@@ -424,109 +424,31 @@ class FGPropertyManager
      */
     void Unbind (void);
 
-        // Templates cause ambiguity here
-
     /**
-     * Tie a property to an external bool variable.
+     * Tie a property to an external variable.
      *
      * The property's value will automatically mirror the variable's
      * value, and vice-versa, until the property is untied.
      *
      * @param name The property name to tie (full path).
      * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
      */
-    void
-    Tie (const std::string &name, bool *pointer, bool useDefault = true);
+    template <typename T> void
+    Tie (const std::string &name, T *pointer)
+    {
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
+      if (!property) {
+        cerr << "Could not get or create property " << name << endl;
+        return;
+      }
 
-
-    /**
-     * Tie a property to an external int variable.
-     *
-     * The property's value will automatically mirror the variable's
-     * value, and vice-versa, until the property is untied.
-     *
-     * @param name The property name to tie (full path).
-     * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
-     */
-    void
-    Tie (const std::string &name, int *pointer, bool useDefault = true);
-
-
-    /**
-     * Tie a property to an external long variable.
-     *
-     * The property's value will automatically mirror the variable's
-     * value, and vice-versa, until the property is untied.
-     *
-     * @param name The property name to tie (full path).
-     * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
-     */
-    void
-    Tie (const std::string &name, long *pointer, bool useDefault = true);
-
-
-    /**
-     * Tie a property to an external float variable.
-     *
-     * The property's value will automatically mirror the variable's
-     * value, and vice-versa, until the property is untied.
-     *
-     * @param name The property name to tie (full path).
-     * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
-     */
-    void
-    Tie (const std::string &name, float *pointer, bool useDefault = true);
-
-    /**
-     * Tie a property to an external double variable.
-     *
-     * The property's value will automatically mirror the variable's
-     * value, and vice-versa, until the property is untied.
-     *
-     * @param name The property name to tie (full path).
-     * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
-     */
-    void
-    Tie (const std::string &name, double *pointer, bool useDefault = true);
-
-//============================================================================
-//
-//  All of the following functions *must* be inlined, otherwise linker
-//  errors will result
-//
-//============================================================================
-
-    /* template <class V> void
-    Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0,
-           bool useDefault = true);
-
-    template <class V> void
-    Tie (const std::string &name, int index, V (*getter)(int),
-           void (*setter)(int, V) = 0, bool useDefault = true);
-
-    template <class T, class V> void
-    Tie (const std::string &name, T * obj, V (T::*getter)() const,
-           void (T::*setter)(V) = 0, bool useDefault = true);
-
-    template <class T, class V> void
-    Tie (const std::string &name, T * obj, int index,
-           V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
-           bool useDefault = true); */
+      if (!property->tie(SGRawValuePointer<T>(pointer), false))
+        cerr << "Failed to tie property " << name << " to a pointer" << endl;
+      else {
+        tied_properties.push_back(property);
+        if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
+      }
+    }
 
      /**
      * Tie a property to a pair of simple functions.
@@ -540,13 +462,10 @@ class FGPropertyManager
      * @param name The property name to tie (full path).
      * @param getter The getter function, or 0 if the value is unreadable.
      * @param setter The setter function, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing
-     *        property value should be; false if the old value should be
-     *        discarded; defaults to true.
      */
 
-    template <class V> inline void
-    Tie (const std::string &name, V (*getter)(), void (*setter)(V) = 0, bool useDefault = true)
+    template <typename T> void
+    Tie (const std::string &name, T (*getter)(), void (*setter)(T) = nullptr)
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
@@ -554,16 +473,16 @@ class FGPropertyManager
         return;
       }
 
-      if (!property->tie(SGRawValueFunctions<V>(getter, setter), useDefault))
-        std::cerr << "Failed to tie property " << name << " to functions" << std::endl;
+      if (!property->tie(SGRawValueFunctions<T>(getter, setter), false))
+        std::cerr << "Failed to tie property " << name << " to functions"
+                  << std::endl;
       else {
-        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
-        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
-
 
     /**
      * Tie a property to a pair of indexed functions.
@@ -579,12 +498,10 @@ class FGPropertyManager
      *        setter functions.
      * @param getter The getter function, or 0 if the value is unreadable.
      * @param setter The setter function, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing
-     *        property value should there be one; false if the old value should be
-     *        discarded; defaults to true.
      */
-    template <class V> inline void Tie (const std::string &name, int index, V (*getter)(int),
-                                void (*setter)(int, V) = 0, bool useDefault = true)
+    template <typename T> void
+    Tie (const std::string &name, int index, T (*getter)(int),
+         void (*setter)(int, T) = nullptr)
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
@@ -592,16 +509,17 @@ class FGPropertyManager
         return;
       }
 
-      if (!property->tie(SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
-        std::cerr << "Failed to tie property " << name << " to indexed functions" << std::endl;
+      if (!property->tie(SGRawValueFunctionsIndexed<T>(index, getter, setter),
+                                                       false))
+        std::cerr << "Failed to tie property " << name << " to indexed functions"
+                  << std::endl;
       else {
-        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
-        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
-
 
     /**
      * Tie a property to a pair of object methods.
@@ -618,13 +536,10 @@ class FGPropertyManager
      *        unreadable.
      * @param setter The object's setter method, or 0 if the value is
      *        unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing
-     *        property value should there be one; false if the old value should be
-     *        discarded; defaults to true.
      */
-    template <class T, class V> inline void
+    template <class T, class V> void
     Tie (const std::string &name, T * obj, V (T::*getter)() const,
-           void (T::*setter)(V) = 0, bool useDefault = true)
+         void (T::*setter)(V) = nullptr)
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
@@ -632,11 +547,12 @@ class FGPropertyManager
         return;
       }
 
-      if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
-        std::cerr << "Failed to tie property " << name << " to object methods" << std::endl;
+      if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), false))
+        std::cerr << "Failed to tie property " << name << " to object methods"
+                  << std::endl;
       else {
-        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
-        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
@@ -657,13 +573,10 @@ class FGPropertyManager
      *        setter methods.
      * @param getter The getter method, or 0 if the value is unreadable.
      * @param setter The setter method, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing
-     *        property value should be; false if the old value should be
-     *        discarded; defaults to true.
      */
-    template <class T, class V> inline void
+    template <class T, class V> void
     Tie (const std::string &name, T * obj, int index, V (T::*getter)(int) const,
-                         void (T::*setter)(int, V) = 0, bool useDefault = true)
+         void (T::*setter)(int, V) = nullptr)
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
@@ -671,19 +584,17 @@ class FGPropertyManager
         return;
       }
 
-      if (!property->tie(SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
-        std::cerr << "Failed to tie property " << name << " to indexed object methods" << std::endl;
+      if (!property->tie(SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter),
+                                                       false))
+        std::cerr << "Failed to tie property " << name
+                  << " to indexed object methods" << std::endl;
       else {
-        if (setter == 0) property->setAttribute(SGPropertyNode::WRITE, false);
-        if (getter == 0) property->setAttribute(SGPropertyNode::READ, false);
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
-
-    template <class T> simgear::PropertyObject<T>
-    CreatePropertyObject(const std::string &path)
-    { return simgear::PropertyObject<T>(root->GetNode(path, true)); }
 
   private:
     std::vector<SGPropertyNode_ptr> tied_properties;

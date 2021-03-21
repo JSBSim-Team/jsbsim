@@ -34,6 +34,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
 
@@ -754,12 +756,11 @@ class FGFunction : public FGParameter, public FGJSBBase
 public:
   /// Default constructor.
   FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), PropertyManager(nullptr),
-      pNode(nullptr), pCopyTo(nullptr) {}
+    : cached(false), cachedValue(-HUGE_VAL), pNode(nullptr), pCopyTo(nullptr) {}
 
-  explicit FGFunction(FGPropertyManager* pm)
+  explicit FGFunction(std::shared_ptr<FGPropertyManager> pm)
     : FGFunction()
-  { PropertyManager = pm; }
+    { PropertyManager = pm; }
 
   /** Constructor.
     When this constructor is called, the XML element pointed to in memory by the
@@ -817,7 +818,7 @@ protected:
   bool cached;
   double cachedValue;
   std::vector <FGParameter_ptr> Parameters;
-  FGPropertyManager* PropertyManager;
+  std::shared_ptr<FGPropertyManager> PropertyManager;
   FGPropertyNode_ptr pNode;
 
   void Load(Element* element, FGPropertyValue* var, FGFDMExec* fdmex,

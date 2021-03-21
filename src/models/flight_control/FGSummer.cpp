@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSummer.h"
+#include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -55,7 +56,7 @@ FGSummer::FGSummer(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (element->FindElement("bias"))
     Bias = element->FindElementValueAsNumber("bias");
 
-  bind(element);
+  bind(element, fcs->GetPropertyManager().get());
   Debug(0);
 }
 

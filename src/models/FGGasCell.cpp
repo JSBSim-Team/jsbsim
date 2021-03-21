@@ -64,7 +64,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   Buoyancy = MaxVolume = MaxOverpressure = Temperature = Pressure =
@@ -194,20 +194,20 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   base_property_name = CreateIndexedPropertyName("buoyant_forces/gas-cell", CellNum);
 
   property_name = base_property_name + "/max_volume-ft3";
-  PropertyManager->Tie( property_name.c_str(), &MaxVolume, false );
+  PropertyManager->Tie( property_name.c_str(), &MaxVolume);
   PropertyManager->GetNode()->SetWritable( property_name, false );
   property_name = base_property_name + "/temp-R";
-  PropertyManager->Tie( property_name.c_str(), &Temperature, false );
+  PropertyManager->Tie( property_name.c_str(), &Temperature);
   property_name = base_property_name + "/pressure-psf";
-  PropertyManager->Tie( property_name.c_str(), &Pressure, false );
+  PropertyManager->Tie( property_name.c_str(), &Pressure);
   property_name = base_property_name + "/volume-ft3";
-  PropertyManager->Tie( property_name.c_str(), &Volume, false );
+  PropertyManager->Tie( property_name.c_str(), &Volume);
   property_name = base_property_name + "/buoyancy-lbs";
-  PropertyManager->Tie( property_name.c_str(), &Buoyancy, false );
+  PropertyManager->Tie( property_name.c_str(), &Buoyancy);
   property_name = base_property_name + "/contents-mol";
-  PropertyManager->Tie( property_name.c_str(), &Contents, false );
+  PropertyManager->Tie( property_name.c_str(), &Contents);
   property_name = base_property_name + "/valve_open";
-  PropertyManager->Tie( property_name.c_str(), &ValveOpen, false );
+  PropertyManager->Tie( property_name.c_str(), &ValveOpen);
 
   Debug(0);
 
@@ -273,7 +273,7 @@ void FGGasCell::Calculate(double dt)
 
   //-- Gas temperature --
 
-  if (HeatTransferCoeff.size() > 0) {
+  if (!HeatTransferCoeff.empty()) {
     // The model is based on the ideal gas law.
     // However, it does look a bit fishy. Please verify.
     //   dT/dt = dU / (Cv n R)
@@ -501,7 +501,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   string token;
   Element* element;
 
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
   MassBalance = exec->GetMassBalance();
 
   MaxVolume = MaxOverpressure = Temperature = Pressure =
@@ -622,23 +622,23 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   base_property_name = CreateIndexedPropertyName(base_property_name + "/ballonet", CellNum);
 
   property_name = base_property_name + "/max_volume-ft3";
-  PropertyManager->Tie( property_name, &MaxVolume, false );
+  PropertyManager->Tie( property_name, &MaxVolume);
   PropertyManager->GetNode()->SetWritable( property_name, false );
 
   property_name = base_property_name + "/temp-R";
-  PropertyManager->Tie( property_name, &Temperature, false );
+  PropertyManager->Tie( property_name, &Temperature);
 
   property_name = base_property_name + "/pressure-psf";
-  PropertyManager->Tie( property_name, &Pressure, false );
+  PropertyManager->Tie( property_name, &Pressure);
 
   property_name = base_property_name + "/volume-ft3";
-  PropertyManager->Tie( property_name, &Volume, false );
+  PropertyManager->Tie( property_name, &Volume);
 
   property_name = base_property_name + "/contents-mol";
-  PropertyManager->Tie( property_name, &Contents, false );
+  PropertyManager->Tie( property_name, &Contents);
 
   property_name = base_property_name + "/valve_open";
-  PropertyManager->Tie( property_name, &ValveOpen, false );
+  PropertyManager->Tie( property_name, &ValveOpen);
 
   Debug(0);
 

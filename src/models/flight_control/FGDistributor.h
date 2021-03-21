@@ -145,10 +145,10 @@ private:
   class PropValPair {
   public:
     PropValPair(const std::string& prop, const std::string& val,
-                FGPropertyManager* propMan)
-      : Prop(new FGPropertyValue(prop, propMan)),
-        Val(new FGParameterValue(val, propMan)) {}
-    
+                std::shared_ptr<FGPropertyManager> propMan, Element* el)
+      : Prop(new FGPropertyValue(prop, propMan, el)),
+        Val(new FGParameterValue(val, propMan, el)) {}
+
     void SetPropToValue() {
       try {
         Prop->SetValue(Val->GetValue());

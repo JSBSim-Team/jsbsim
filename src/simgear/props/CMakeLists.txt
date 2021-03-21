@@ -1,6 +1,6 @@
-set(SOURCES props.cxx propertyObject.cxx)
+set(SOURCES props.cxx)
 
-set(HEADERS props.hxx propertyObject.hxx)
+set(HEADERS props.hxx)
 
 add_library(Properties OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Properties PROPERTIES TARGET_DIRECTORY

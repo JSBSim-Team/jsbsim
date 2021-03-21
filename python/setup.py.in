@@ -1,6 +1,6 @@
 # This script has been automatically built from ${CMAKE_SOURCE_DIR}/python/setup.py.in
 #
-# Copyright (c) 2014-2019 Bertrand Coconnier
+# Copyright (c) 2014-2021 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,7 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
 from distutils import log
 from distutils.ccompiler import new_compiler
+from distutils.unixccompiler import UnixCCompiler
 from distutils.dist import Distribution
 
 
@@ -90,6 +91,36 @@ class InstallJSBSimModule(install_lib):
                                                          'msvcp140.dll'))
                     break
 
+# distutils assumes that all the files must be compiled with the same compiler
+# flags regardless of their file extension .c or .cpp.
+# JSBSim C++ files must be compiled with -std=c++1x but compilation on MacOSX
+# fails when trying to compile C files with -std=c++1x.
+# The class C_CxxCompiler adds C++ flags to compilation flags for C++ files only.
+class C_CxxCompiler(UnixCCompiler):
+    def _compile(self, obj, src, ext, cc_args, extra_postargs, pp_opts):
+        _cc_args = cc_args
+        # Add the C++ flags to the compile flags if we are dealing with a C++
+        # source file.
+        if os.path.splitext(src)[-1] in ('.cpp', '.cxx', '.cc'):
+            _cc_args = cpp_compile_flag + cc_args
+
+        UnixCCompiler._compile(self, obj, src, ext, _cc_args,
+                                extra_postargs, pp_opts)
+
+# The class BuildC_CxxExtension intercepts the build of the Python module and
+# replaces the compiler by an instance of C_CxxCompiler that select the compile
+# flags depending on whether it is a C++ source file or not.
+class BuildC_CxxExtension(build_ext):
+    def build_extension(self, ext):
+        if self.compiler.compiler_type == 'unix':
+
+            old_compiler = self.compiler
+            self.compiler = C_CxxCompiler()
+            # Copy the attributes to the new compiler instance
+            for attr, value in old_compiler.__dict__.items():
+                setattr(self.compiler, attr, value)
+        return build_ext.build_extension(self, ext)
+
 # Process the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
@@ -118,9 +149,14 @@ else:
 compiler = new_compiler(compiler=compiler_name)
 
 if compiler.compiler_type == 'unix':
-    cpp11_compile_flag = ['-std=c++11']
+    cpp_compile_flag = ['-std=c++14']
 else:
-    cpp11_compile_flag = []
+    cpp_compile_flag = []
+
+if compiler.compiler_type == 'msvc':
+    link_libraries = ['wsock32', 'ws2_32']
+else:
+    link_libraries = [${JSBSIM_LINK_LIBRARIES}]
 
 # Update the JSBSim library path according to the --config option
 if args.config:
@@ -136,26 +172,29 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
     # the Python module.
     ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
                    'include_dirs': ['src'],
-                   'libraries': ['JSBSim', ${JSBSIM_LINK_LIBRARIES}],
+                   'libraries': ['JSBSim'] + link_libraries,
                    'library_dirs': [library_path],
-                   'extra_compile_args': cpp11_compile_flag }
+                   'extra_compile_args': cpp_compile_flag }
     setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
                                    'install_lib': InstallJSBSimModule}}
 else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = [('/D'+flag).replace('"', '\\"') for flag in [${JSBSIM_FLAGS}]]
+        compile_flags = ['/D'+flag for flag in ['_USE_MATH_DEFINES', 'NOMINMAX', ${JSBSIM_FLAGS}]]
+        if sys.version_info < (3,9):
+            compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
     else:
         compile_flags = ['-D'+flag for flag in [${JSBSIM_FLAGS}]]
 
 
     ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
-                   'libraries': [${JSBSIM_LINK_LIBRARIES}],
+                   'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
-                   'extra_compile_args': compile_flags + cpp11_compile_flag}
+                   'extra_compile_args': compile_flags }
     # List of required modules to build the JSBSim module from the sources.
-    setup_kwargs = {'setup_requires': ["setuptools>=18.0", "cython>=0.25"]}
+    setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension,},
+                    'setup_requires': ["setuptools>=18.0", "cython>=0.25"]}
 
 # Build & installation process for the JSBSim Python module
 setup(
@@ -178,9 +217,12 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS :: MacOS X",
         "Programming Language :: C++",
-        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Topic :: Education",
         "Topic :: Games/Entertainment :: Simulation",
-        "Topic :: Scientific/Engineering"
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     scripts=['JSBSim'],
     install_requires=['numpy'],

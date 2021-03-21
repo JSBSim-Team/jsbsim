@@ -235,7 +235,8 @@ private:
   enum {eLag, eLeadLag, eOrder2, eWashout, eUnknown} FilterType;
 
   void CalculateDynamicFilters(void);
-  void ReadFilterCoefficients(Element* el, int index);
+  void ReadFilterCoefficients(Element* el, int index,
+                              std::shared_ptr<FGPropertyManager> pm);
   void Debug(int from) override;
 };
 }

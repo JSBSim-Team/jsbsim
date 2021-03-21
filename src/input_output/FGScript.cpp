@@ -182,7 +182,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
     return false;
   }
 
-  FGInitialCondition *IC=FDMExec->GetIC();
+  auto IC = FDMExec->GetIC();
   if ( ! IC->Load( initialize )) {
     cerr << "Initialization unsuccessful" << endl;
     return false;
@@ -213,7 +213,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   // Read local property/value declarations
   int saved_debug_lvl = debug_lvl;
   debug_lvl = 0; // Disable messages
-  LocalProperties.Load(run_element, PropertyManager, true);
+  LocalProperties.Load(run_element, PropertyManager.get(), true);
   debug_lvl = saved_debug_lvl;
 
   // Read "events" from script
@@ -282,9 +282,10 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
 
         if (notify_property_element->HasAttribute("apply")) {
           string function_str = notify_property_element->GetAttributeValue("apply");
-          FGTemplateFunc* f = FDMExec->GetTemplateFunc(function_str);
+          auto f = FDMExec->GetTemplateFunc(function_str);
           if (f)
-            newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f));
+            newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f,
+                                                                     notify_property_element));
           else {
             cerr << notify_property_element->ReadFrom()
               << fgred << highint << "  No function by the name "
@@ -294,7 +295,8 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
           }
         }
         else
-          newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager));
+          newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager,
+                                                                   notify_property_element));
         
         string caption_attribute = notify_property_element->GetAttributeValue("caption");
         if (caption_attribute.empty()) {
@@ -597,7 +599,7 @@ void FGScript::Debug(int from)
         for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
           if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
             if (Events[i].SetParam[j] == 0) {
-              if (Events[i].SetParamName[j].size() == 0) {
+              if (Events[i].SetParamName[j].empty()) {
               cerr << fgred << highint << endl
                    << "  An attempt has been made to access a non-existent property" << endl
                    << "  in this event. Please check the property names used, spelling, etc."
@@ -614,7 +616,7 @@ void FGScript::Debug(int from)
             }
           } else {
             if (Events[i].SetParam[j] == 0) {
-              if (Events[i].SetParamName[j].size() == 0) {
+              if (Events[i].SetParamName[j].empty()) {
               cerr << fgred << highint << endl
                    << "  An attempt has been made to access a non-existent property" << endl
                    << "  in this event. Please check the property names used, spelling, etc."
@@ -664,7 +666,7 @@ void FGScript::Debug(int from)
 
         // Print notifications
         if (Events[i].Notify) {
-          if (Events[i].NotifyProperties.size() > 0) {
+          if (!Events[i].NotifyProperties.empty()) {
             if (Events[i].NotifyKML) {
               cout << "  Notifications (KML Format):" << endl << "    {"
                    << endl;

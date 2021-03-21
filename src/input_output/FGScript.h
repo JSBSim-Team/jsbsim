@@ -39,6 +39,7 @@ INCLUDES
 
 #include <vector>
 #include <map>
+#include <memory>
 
 #include "FGJSBBase.h"
 #include "FGPropertyReader.h"
@@ -259,7 +260,7 @@ private:
   FGPropertyReader LocalProperties;
 
   FGFDMExec* FDMExec;
-  FGPropertyManager* PropertyManager;
+  std::shared_ptr<FGPropertyManager> PropertyManager;
   void Debug(int from);
 };
 }

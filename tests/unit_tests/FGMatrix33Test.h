@@ -320,8 +320,8 @@ public:
   }
 
   void testDivideByZero() {
-    TS_ASSERT_THROWS(DivideByZero1(), JSBSim::MatrixException);
-    TS_ASSERT_THROWS(DivideByZero2(), JSBSim::MatrixException);
+    TS_ASSERT_THROWS(DivideByZero1(), JSBSim::MatrixException&);
+    TS_ASSERT_THROWS(DivideByZero2(), JSBSim::MatrixException&);
   }
 
   void testInputOutput() {

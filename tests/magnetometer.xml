@@ -1,0 +1,13 @@
+<system>
+    <channel name="test-magnetometer">
+        <magnetometer>
+            <axis> X </axis>
+            <location>
+                <x> 0.0 </x>
+                <y> 0.0 </y>
+                <z> 0.0 </z>
+            </location>
+            <output>test/magnetic-field</output>
+        </magnetometer>
+    </channel>
+</system>

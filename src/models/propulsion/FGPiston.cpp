@@ -67,7 +67,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
   Load(exec, el);
 
   Element *table_element;
-  FGPropertyManager* PropertyManager = exec->GetPropertyManager();
+  auto PropertyManager = exec->GetPropertyManager();
 
   // Defaults and initializations
 
@@ -518,7 +518,10 @@ void FGPiston::Calculate(void)
   }
 
   LoadThrusterInputs();
-  Thruster->Calculate(HP * hptoftlbssec);
+  // Filters out negative powers.
+  // TODO: static_friction_HP should not be taken into account while the engine
+  // is not started.
+  Thruster->Calculate(max(HP * hptoftlbssec, 0.));
 
   RunPostFunctions();
 }

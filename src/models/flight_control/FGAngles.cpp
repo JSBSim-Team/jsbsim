@@ -68,6 +68,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAngles.h"
+#include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -87,6 +88,8 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   source_angle_unit = 1.0;
   target_angle_unit = 1.0;
   output_unit = 1.0;
+
+  auto PropertyManager = fcs->GetPropertyManager();
 
   if (element->FindElement("target_angle") ) {
     target_angle_pNode = PropertyManager->GetNode(element->FindElementValue("target_angle"));
@@ -119,7 +122,7 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     output_unit = 1.0; // Default is radians (1.0) if unspecified
   }
 
-  bind(element);
+  bind(element, PropertyManager.get());
   Debug(0);
 }
 

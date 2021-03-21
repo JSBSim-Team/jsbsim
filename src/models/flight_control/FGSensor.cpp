@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSensor.h"
+#include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -115,7 +116,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
   }
 
-  bind(element);
+  bind(element, fcs->GetPropertyManager().get());
 
   Debug(0);
 }
@@ -244,11 +245,11 @@ void FGSensor::Lag(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSensor::bind(Element* el)
+void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
 {
   string tmp = Name;
 
-  FGFCSComponent::bind(el);
+  FGFCSComponent::bind(el, PropertyManager);
 
   if (Name.find("/") == string::npos) {
     tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);

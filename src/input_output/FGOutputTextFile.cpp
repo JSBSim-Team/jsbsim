@@ -230,7 +230,7 @@ bool FGOutputTextFile::OpenFile(void)
       outstream << delimeter << OutputParameters[i]->GetFullyQualifiedName();
   }
 
-  if (PreFunctions.size() > 0) {
+  if (!PreFunctions.empty()) {
     for (unsigned int i=0;i<PreFunctions.size();i++) {
       outstream << delimeter << PreFunctions[i]->GetName();
     }

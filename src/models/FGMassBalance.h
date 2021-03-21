@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGModel.h"
 #include "math/FGMatrix33.h"
 
@@ -188,11 +190,11 @@ public:
     FGMatrix33 GasInertia;
     FGColumnVector3 TanksMoment;
     FGMatrix33 TankInertia;
+    bool WOW;
   } in;
 
 private:
-  FGPropagate* Propagate;
-  FGGroundReactions* GroundReactions;
+  std::shared_ptr<FGPropagate> Propagate;
   double Weight;
   double EmptyWeight;
   double Mass;

@@ -304,17 +304,17 @@ public:
       location. This corresponds to the shortest distance between the two
       locations. Earth curvature is taken into account.
       @param target_longitude the target longitude in radians
-      @param target_latitude the target latitude in radians
-      @return The geodetic distance between the two locations */
+      @param target_latitude the target geodetic latitude in radians
+      @return The geodetic distance in feet between the two locations */
   double GetDistanceTo(double target_longitude, double target_latitude) const;
   
   /** Get the heading that should be followed from the current location to
       a given location along the shortest path. Earth curvature is taken into
       account.
       @param target_longitude the target longitude in radians
-      @param target_latitude the target latitude in radians
-      @return The heading that should be followed to reach the targeted
-              location along the shortest path */
+      @param target_latitude the target geodetic latitude in radians
+      @return The heading in radians that should be followed to reach the
+              targeted location along the shortest path */
   double GetHeadingTo(double target_longitude, double target_latitude) const;
 
   /** Conversion from Local frame coordinates to a location in the

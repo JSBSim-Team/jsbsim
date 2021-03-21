@@ -79,9 +79,9 @@ FGPropertyVector3::FGPropertyVector3(FGPropertyManager* pm,
                                      const std::string& ycmp,
                                      const std::string& zcmp)
 {
-  data[0] = pm->CreatePropertyObject<double>(baseName + "/" + xcmp);
-  data[1] = pm->CreatePropertyObject<double>(baseName + "/" + ycmp);
-  data[2] = pm->CreatePropertyObject<double>(baseName + "/" + zcmp);
+  data[0] = pm->GetNode(baseName + "/" + xcmp, true);
+  data[1] = pm->GetNode(baseName + "/" + ycmp, true);
+  data[2] = pm->GetNode(baseName + "/" + zcmp, true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,7 +132,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   if (function_element) {
     return new FGFunction(fdmex, function_element);
   } else {
-    FGPropertyManager* pm = fdmex->GetPropertyManager();
+    auto pm = fdmex->GetPropertyManager();
     FGPropertyNode* node = pm->GetNode(magName, true);
     return new FGPropertyValue(node);
   }
@@ -142,11 +142,11 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
 
 void FGExternalForce::setForce(Element *el)
 {
-  FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
+  auto PropertyManager = fdmex->GetPropertyManager();
   Name = el->GetAttributeValue("name");
   string BasePropertyName = "external_reactions/" + Name;
 
-  forceDirection = FGPropertyVector3(PropertyManager, BasePropertyName,
+  forceDirection = FGPropertyVector3(PropertyManager.get(), BasePropertyName,
                                      "x", "y", "z");
   forceMagnitude = bind(el, BasePropertyName + "/magnitude", forceDirection);
 
@@ -170,11 +170,11 @@ void FGExternalForce::setForce(Element *el)
 
 void FGExternalForce::setMoment(Element *el)
 {
-  FGPropertyManager* PropertyManager = fdmex->GetPropertyManager();
+  auto PropertyManager = fdmex->GetPropertyManager();
   Name = el->GetAttributeValue("name");
   string BasePropertyName = "external_reactions/" + Name;
 
-  momentDirection = FGPropertyVector3(PropertyManager, BasePropertyName,
+  momentDirection = FGPropertyVector3(PropertyManager.get(), BasePropertyName,
                                       "l", "m", "n");
   momentMagnitude = bind(el, BasePropertyName + "/magnitude-lbsft",
                          momentDirection);

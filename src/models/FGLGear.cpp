@@ -42,6 +42,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
+#include "FGFDMExec.h"
 #include "models/FGGroundReactions.h"
 #include "math/FGTable.h"
 #include "input_output/FGXMLElement.h"
@@ -103,7 +104,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     dynamicFCoeff = 1.0;
   }
 
-  PropertyManager = fdmex->GetPropertyManager();
+  auto PropertyManager = fdmex->GetPropertyManager();
 
   fStrutForce = 0;
   Element* strutForce = el->FindElement("strut_force");
@@ -163,7 +164,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   else
     eSteerType = stSteer;
 
-  GroundReactions = fdmex->GetGroundReactions();
+  GroundReactions = fdmex->GetGroundReactions().get();
 
   ForceY_Table = 0;
   Element* force_table = el->FindElement("table");
@@ -224,6 +225,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Curvature = 1.03;
 
   ResetToIC();
+
+  bind(PropertyManager.get());
 
   Debug(0);
 }
@@ -762,7 +765,7 @@ void FGLGear::SetstaticFCoeff(double coeff)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGLGear::bind(void)
+void FGLGear::bind(FGPropertyManager* PropertyManager)
 {
   string property_name;
   string base_property_name;
@@ -779,7 +782,7 @@ void FGLGear::bind(void)
   default:
     return;
   }
-  FGSurface::bind();
+  FGSurface::bind(PropertyManager);
 
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );
