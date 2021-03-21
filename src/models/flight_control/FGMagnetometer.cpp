@@ -75,7 +75,7 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
   time_t rawtime;
   time( &rawtime );
   struct tm ptm;
-  #ifdef _MSC_VER
+  #if defined(_MSC_VER) || defined(__MINGW32__)
   gmtime_s(&ptm, &rawtime);
   #else
   gmtime_r(&rawtime, &ptm);
