@@ -71,6 +71,9 @@ public:
     virtual float get_gear_loc() { return 0.0f; }
     virtual float get_fuel_weight() { return 0.0f; }
 
+    virtual void set_cg(float cg[3], float aero[3]) {
+        for (auto system : _systems) system->set_cg(cg, aero);
+    }
     virtual void set_lift() {}
     virtual void set_drag() {}
     virtual void set_side() {}
@@ -593,7 +596,7 @@ public:
     std::vector<Param*> _geometry;
 
 public:
-    Aircraft *_aircraft[MAX_AIRCRAFT];
+    std::vector<Aircraft*> _aircraft;
     unsigned _atype;
 
     bool _system_files;

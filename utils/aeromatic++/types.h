@@ -131,7 +131,9 @@ enum WingType
     STRAIGHT = 0,
     ELLIPTICAL,
     DELTA,
-    VARIABLE_SWEEP
+    VARIABLE_SWEEP,
+
+    MAX_WING
 };
 
 enum ControlsType
@@ -151,7 +153,7 @@ enum EngineType
     ROCKET,
     ELECTRIC,
 
-    MAX_PROPULSION
+    MAX_ENGINE
 };
 
 enum EngineLayout
@@ -163,9 +165,20 @@ enum EngineLayout
     WINGS_AND_TAIL,
     WINGS_AND_NOSE,
 
+    MAX_ENGINE_LAYOUT,
+
     FUSELAGE = 0,
     LEFT_WING = 1,
     RIGHT_WING = 2
+};
+
+enum SteeringType
+{
+    STEERING = 0,
+    CASTERING,
+    FIXED,
+
+    MAX_STEERING
 };
 
 enum ParamType
@@ -210,6 +223,8 @@ public:
     template <typename T>
     Param (const char* n, const char *h, T* v, const bool& c = _false, unsigned t = 0);
 
+    Param (const char* n, const char *h, unsigned& v, unsigned mv, const bool& c = _false, unsigned t = 0);
+
     ~Param() {}
 
     std::string& name() { return _name; }
@@ -236,6 +251,7 @@ private:
     unsigned _ptype;
     const bool& _convert;
     unsigned _utype;
+    unsigned maxval;
     union {
         unsigned* i;
         float* f;

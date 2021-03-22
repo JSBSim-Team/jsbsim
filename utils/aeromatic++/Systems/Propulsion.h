@@ -217,7 +217,7 @@ public:
 
     char _engine_name[PARAM_MAX_STRING+1];
 public:
-    Engine *_propulsion[MAX_PROPULSION];
+    std::vector<Engine*> _propulsion;
     unsigned _ptype;
 
     /* engines */

@@ -32,7 +32,7 @@
 namespace Aeromatic
 {
 
-void Flaps::set(const float* cg_loc)
+void Flaps::set(const float cg_loc[3])
 {
     // http://adg.stanford.edu/aa241/highlift/clmaxest.html
     // K(sweep) is an empirically-derived sweep-correction factor.

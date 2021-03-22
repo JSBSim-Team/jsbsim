@@ -27,6 +27,7 @@
 #define __SYSTEMS_H
 
 #include <stdio.h>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -47,10 +48,10 @@ public:
         _subtype(0) {}
 
     virtual ~System() {
-        std::vector<Param*>::iterator it;
-        for(it = _inputs.begin(); it != _inputs.end(); ++it) {
-            delete *it;
+        for (auto it : _inputs) {
+            delete it;
         }
+        _inputs.clear();
     }
 
     /* construct the configuration file(s) */
@@ -77,6 +78,7 @@ public:
         return _description[_subtype];
     }
 
+    virtual void set_cg(float cg[3], const float aero[3]) {}
 
     virtual void param_reset() {
         _param = 0;
@@ -113,7 +115,7 @@ public:
     }
     ~Flaps() {}
 
-    void set(const float* cg_loc);
+    void set(const float cg_loc[3]);
     std::string system();
 
     std::string lift();
@@ -140,6 +142,10 @@ public:
     std::string system();
 
     std::string drag();
+
+    void set_cg(float cg[3], const float aero[3]) {
+        if (_taildragger) cg[X] = aero[X] + (aero[X] - cg[X]);
+    }
 
 private:
     bool _taildragger;

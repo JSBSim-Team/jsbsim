@@ -57,16 +57,16 @@ Controls::Controls(Aeromatic *p) :
 {
     _description.push_back("Aircraft control");
 
-    Param *controls = new Param("Control system", 0, _ctype);
+    Param *controls = new Param("Control system", 0, _ctype, MAX_CONTROL);
     _inputs.push_back(controls);
 
-    _control[0] = new CableControls(p);
+    _control.push_back(new CableControls(p));
     controls->add_option(_control[0]->get_description());
 
-    _control[1] = new YawDamper(p);
+    _control.push_back(new YawDamper(p));
     controls->add_option(_control[1]->get_description());
 
-    _control[2] = new FlyByWire(p);
+    _control.push_back(new FlyByWire(p));
 //  controls->add_option(_control[2]->get_description());
 }
 

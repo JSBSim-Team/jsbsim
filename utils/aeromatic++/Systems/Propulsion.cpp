@@ -99,17 +99,22 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
     layout->add_option("wings and tail");
     layout->add_option("wings and nose");
 
-    Param *type = new Param("Engine type", 0, _ptype);
+    Param *type = new Param("Engine type", 0, _ptype, MAX_ENGINE);
     _inputs.push_back(type);
-    _propulsion[0] = new PistonEngine(p, this);
+
+    _propulsion.push_back(new PistonEngine(p, this));
     type->add_option(_propulsion[0]->get_description());
-    _propulsion[1] = new TurbopropEngine(p, this);
+
+    _propulsion.push_back(new TurbopropEngine(p, this));
     type->add_option(_propulsion[1]->get_description());
-    _propulsion[2] = new TurbineEngine(p, this);
+
+    _propulsion.push_back(new TurbineEngine(p, this));
     type->add_option(_propulsion[2]->get_description());
-    _propulsion[3] = new RocketEngine(p, this);
+
+    _propulsion.push_back(new RocketEngine(p, this));
     type->add_option(_propulsion[3]->get_description());
-    _propulsion[4] = new ElectricEngine(p, this);
+
+    _propulsion.push_back(new ElectricEngine(p, this));
     type->add_option(_propulsion[4]->get_description());
 
     Engine::_propulsion = this;
@@ -117,14 +122,10 @@ Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
 
 Propulsion::~Propulsion()
 {
-    for (unsigned i=0; i<MAX_PROPULSION; ++i) {
-        delete _propulsion[i];
+    for(auto it : _propulsion) {
+        delete it;
     }
-
-    std::vector<Param*>::iterator it;
-    for(it = _inputs.begin(); it != _inputs.end(); ++it) {
-        delete *it;
-    }
+    _propulsion.clear();
 }
 
 void Propulsion::param_reset()
