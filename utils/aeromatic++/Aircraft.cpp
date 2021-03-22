@@ -63,6 +63,15 @@ Aircraft::Aircraft(Aeromatic *p) :
 
 Aircraft::~Aircraft()
 {
+    for (auto it: _general) {
+        delete it;
+    }
+    _general.clear();
+
+    for (auto it: _systems) {
+        delete it;
+    }
+    _systems.clear();
 }
 
 const char*
@@ -156,18 +165,18 @@ Aeromatic::Aeromatic() : Aircraft(),
     _geometry.push_back(new Param("Vtail area", _estimate, _vtail.area, _metric, AREA));
     _geometry.push_back(new Param("Vtail arm", _estimate, _vtail.arm, _metric, LENGTH));
 
-    Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype);
+    Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype, MAX_AIRCRAFT);
     _general.push_back(param);
 
-    _aircraft[0] = new Light(this);
+    _aircraft.push_back(new Light(this));
     param->add_option(_aircraft[0]->get_verbose_description());
-    _aircraft[1] = new Performance(this);
+    _aircraft.push_back(new Performance(this));
     param->add_option(_aircraft[1]->get_verbose_description());
-    _aircraft[2] = new Fighter(this);
+    _aircraft.push_back(new Fighter(this));
     param->add_option(_aircraft[2]->get_verbose_description());
-    _aircraft[3] = new JetTransport(this);
+    _aircraft.push_back(new JetTransport(this));
     param->add_option(_aircraft[3]->get_verbose_description());
-    _aircraft[4] = new PropTransport(this);
+    _aircraft.push_back(new PropTransport(this));
     param->add_option(_aircraft[4]->get_verbose_description());
 
     Aircraft::_aircraft = this;
@@ -204,20 +213,20 @@ Aeromatic::Aeromatic() : Aircraft(),
 
 Aeromatic::~Aeromatic()
 {
-    for (unsigned i=0; i<MAX_AIRCRAFT; ++i) {
-        delete _aircraft[i];
+    for (auto it : _weight_balance) {
+        delete it;
     }
+    _weight_balance.clear();
 
-    std::vector<Param*>::iterator it;
-    for(it = _general.begin(); it != _general.end(); ++it) {
-        delete *it;
+    for (auto it : _geometry) {
+        delete it;
     }
-    for(it = _weight_balance.begin(); it != _weight_balance.end(); ++it) {
-        delete *it;
+    _geometry.clear();
+
+    for (auto it : _aircraft) {
+        delete it;
     }
-    for(it = _geometry.begin(); it != _geometry.end(); ++it) {
-        delete *it;
-    }
+    _aircraft.clear();
 }
 
 bool Aeromatic::fdm()
@@ -442,6 +451,7 @@ bool Aeromatic::fdm()
     _cg_loc[X] = _aero_rp[X] - P * FEET_TO_INCH;
     _cg_loc[Y] = 0;
     _cg_loc[Z] = -(_length / 40.0f) * FEET_TO_INCH;
+    aircraft->set_cg(_cg_loc, _aero_rp);
 
 //***** PAYLOAD ***************************************
 
