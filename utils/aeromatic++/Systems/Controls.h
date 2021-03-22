@@ -69,7 +69,7 @@ public:
         delete _control;
     }
 
-    void set(const float* cg_loc) {
+    void set(float cg_loc[3]) {
         _control->set(cg_loc);
     }
     std::string system();
@@ -108,7 +108,7 @@ public:
         delete _control;
     }
 
-    void set(const float* cg_loc) {
+    void set(float cg_loc[3]) {
         _control->set(cg_loc);
     }
     std::string system();
@@ -143,7 +143,7 @@ public:
     Controls(Aeromatic *p);
     ~Controls();
 
-    void set(const float* cg_loc) {
+    void set(float cg_loc[3]) {
         _control[_ctype]->set(cg_loc);
     }
     std::string comment();
@@ -197,7 +197,7 @@ public:
     }
 
 public:
-    System *_control[MAX_CONTROL];
+    std::vector<System*> _control;
     unsigned _ctype;
 };
 

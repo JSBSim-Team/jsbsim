@@ -64,6 +64,7 @@ Param::Param(const char* n, const char *h,  bool& v, const bool& c, unsigned t) 
     _convert(c),
     _utype(t)
 {
+    v = false;
     _value.b = &v;
 }
 
@@ -75,7 +76,21 @@ Param::Param(const char* n, const char *h, unsigned& v, const bool& c, unsigned 
     _convert(c),
     _utype(t)
 { 
+    v = 0;
+    maxval = -1;
     _value.i = &v; 
+}
+
+Param::Param(const char* n, const char *h, unsigned& v, unsigned mv, const bool& c, unsigned t) :
+    _name(n),
+    _help(h ? h : _unspecified),
+    _ptype(PARAM_INT),
+    _convert(c),
+    _utype(t)
+{
+    v = 0;
+    maxval = mv-1;
+    _value.i = &v;
 }
 
 template <>
@@ -86,6 +101,7 @@ Param::Param(const char* n, const char *h, float& v, const bool& c, unsigned t) 
     _convert(c),
     _utype(t)
 {
+    v = 0.0f;
     _value.f = &v;
 }
 
@@ -111,6 +127,7 @@ void Param::set(std::string& v)
         break;
     case PARAM_INT:
         *_value.i = strtol(v.c_str(), NULL, 10);
+        if (*_value.i > maxval) *_value.i = maxval;
         break;
     case PARAM_FLOAT:
 #if (_MSC_VER)

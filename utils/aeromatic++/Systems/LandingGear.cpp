@@ -42,7 +42,7 @@ LandingGear::LandingGear(Aeromatic *p) : System(p, true),
 
     _inputs.push_back(new Param("Is landing gear retractable?", 0, _retractable));
 
-    Param *steer = new Param("Nose or tail wheel type", 0,_steering);
+    Param *steer = new Param("Nose or tail wheel type", 0, _steering, MAX_STEERING);
     _inputs.push_back(steer);
     steer->add_option("steering");
     steer->add_option("castering");

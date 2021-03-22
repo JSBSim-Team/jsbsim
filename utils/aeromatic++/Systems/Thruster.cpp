@@ -421,7 +421,8 @@ std::string Propeller::pitch()
     if (Knp > 3.0f) Knp = 2.0f;
     Knp /= aircraft->_no_engines;
 
-    float pfact = -Knp*lh*Sh/cbarw/Sw;
+    float pfact = Knp*lh*Sh/cbarw/Sw;
+    if (aircraft->_cg_loc[X] > aircraft->_aero_rp[X]) pfact *= -1.0f;
 
     float Cm0 = _dCLT0*pfact;
     float Cmmax = _dCLTmax*pfact;
