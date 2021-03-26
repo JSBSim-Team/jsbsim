@@ -65,10 +65,10 @@ public:
     }
 
 protected:
-    char _thruster_name[PARAM_MAX_STRING+1];
+    char _thruster_name[PARAM_MAX_STRING+1] = "";
     std::vector<Param*> _inputs;
-    unsigned _param;
-    Propulsion *_propulsion;
+    unsigned _param = 0;
+    Propulsion *_propulsion = nullptr;
 };
 
 
@@ -78,7 +78,7 @@ public:
     Direct(Propulsion *p);
     ~Direct() {}
 
-    std::string thruster();
+    std::string thruster() override;
 };
 
 
@@ -88,13 +88,13 @@ public:
     Propeller(Propulsion *p);
     ~Propeller() {}
 
-    void set_thruster(float mrpm);
-    std::string thruster();
+    void set_thruster(float mrpm) override;
+    std::string thruster() override;
 
-    std::string lift();
-    std::string pitch();
-    std::string roll();
-    std::string json();
+    std::string lift() override;
+    std::string pitch() override;
+    std::string roll() override;
+    std::string json() override;
 
     float max_rpm() { return _max_rpm; }
     float Cp0() { return _Cp0; }
@@ -149,11 +149,11 @@ public:
     Nozzle(Propulsion *p);
     ~Nozzle() {}
 
-    std::string thruster();
+    std::string thruster() override;
 
 private:
-    float _pe;
-    float _diameter;
+//  float _pe;
+    float _diameter = 3.25f;
 };
 
 } /* namespace Aeromatic */

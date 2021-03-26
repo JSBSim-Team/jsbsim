@@ -80,8 +80,7 @@ std::string Engine::system()
     return file.str();
 }
 
-Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0),
-    _layout(FWD_FUSELAGE)
+Propulsion::Propulsion(Aeromatic *p) : Engine(p, 0)
 {
     _description.push_back("Propulsion");
     _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
@@ -317,6 +316,7 @@ void Propulsion::set(const float cg_loc[3])
     for (unsigned i=0; i<no_engines; ++i)
     {
         _eng_orient[i][PITCH] = 0.0f;
+        _eng_orient[i][ROLL] = 0.0f;
         _eng_orient[i][YAW] = 0.0f;
         _thruster_loc[i][X] = _eng_loc[i][X];
         _thruster_loc[i][Y] = _eng_loc[i][Y];
@@ -512,8 +512,7 @@ std::string Propulsion::json(const float cg_loc[3])
 }
 
 
-PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-    _max_rpm(2400.0f)
+PistonEngine::PistonEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Piston Engine");
     _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _propulsion->_power, _aircraft->_metric, POWER));
@@ -583,11 +582,7 @@ std::string PistonEngine::engine()
 // eng_length = 2.4077f * powf(_power, 0.3876f);
 // eng_diameter = 1.0827f * powf(_power, 0.4134f);
 
-TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-    _oapr(16.0f),
-    _bypass_ratio(1.0f),
-    _injected(false),
-    _augmented(false)
+TurbineEngine::TurbineEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Turbine Engine");
     _inputs.push_back(new Param("Engine mil. thrust", "Providing fairly acurate engine thrust is critical for a good configuration", _propulsion->_power, _aircraft->_metric, THRUST));
@@ -776,11 +771,7 @@ std::string TurbineEngine::json()
     return file.str();
 }
 
-TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p),
-    _max_rpm(23500.0f),
-    _oapr(16.0f),
-    _itt(800.0f),
-    _water_injection(false)
+TurbopropEngine::TurbopropEngine(Aeromatic *a, Propulsion *p) : Engine(a, p)
 {
     _description.push_back("Turboprop Engine");
     _inputs.push_back(new Param("Engine power", "Providing fairly acurate engine power is critical for a good configuration", _propulsion->_power, _aircraft->_metric, POWER));

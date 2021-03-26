@@ -114,49 +114,49 @@ public:
     Light(Aeromatic *p);
     ~Light() {}
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _fuselage_diameter_t[_subtype][_engines];
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _wing_loading_t[_subtype][_engines];
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aspect_ratio_t[_subtype][_engines];
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _htail_area_t[_subtype][_engines];
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _htail_arm_t[_subtype][_engines];
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _vtail_area_t[_subtype][_engines];
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _vtail_arm_t[_subtype][_engines];
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _empty_weight_t[_subtype][_engines];
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _roskam_t[_subtype][_engines];
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _eyept_loc_t[_subtype][_engines];
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _gear_loc_t[_subtype][_engines];
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _fuel_weight_t[_subtype][_engines];
     }
 
-    void set_lift();
-    void set_drag();
-    void set_side();
-    void set_roll();
-    void set_pitch();
-    void set_yaw();
+    void set_lift() override;
+    void set_drag() override;
+    void set_side() override;
+    void set_roll() override;
+    void set_pitch() override;
+    void set_yaw() override;
 
 protected:
     static float const _fuselage_diameter_t[1][5];
@@ -196,49 +196,49 @@ public:
     Performance(Aeromatic *p);
     ~Performance() {}
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _fuselage_diameter_t[_subtype][_engines];
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _wing_loading_t[_subtype][_engines];
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aspect_ratio_t[_subtype][_engines];
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _htail_area_t[_subtype][_engines];
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _htail_arm_t[_subtype][_engines];
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _vtail_area_t[_subtype][_engines];
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _vtail_arm_t[_subtype][_engines];
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _empty_weight_t[_subtype][_engines];
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _roskam_t[_subtype][_engines];
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _eyept_loc_t[_subtype][_engines];
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _gear_loc_t[_subtype][_engines];
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _fuel_weight_t[_subtype][_engines];
     }
 
-    void set_lift();
-    void set_drag();
-    void set_side();
-    void set_roll();
-    void set_pitch();
-    void set_yaw();
+    void set_lift() override;
+    void set_drag() override;
+    void set_side() override;
+    void set_roll() override;
+    void set_pitch() override;
+    void set_yaw() override;
 
 protected:
     static float const _fuselage_diameter_t[1][5];
@@ -278,49 +278,49 @@ public:
     Fighter(Aeromatic *p);
     ~Fighter() {}
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _fuselage_diameter_t[_subtype][_engines];
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _wing_loading_t[_subtype][_engines];
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aspect_ratio_t[_subtype][_engines];
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _htail_area_t[_subtype][_engines];
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _htail_arm_t[_subtype][_engines];
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _vtail_area_t[_subtype][_engines];
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _vtail_arm_t[_subtype][_engines];
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _empty_weight_t[_subtype][_engines];
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _roskam_t[_subtype][_engines];
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _eyept_loc_t[_subtype][_engines];
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _gear_loc_t[_subtype][_engines];
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _fuel_weight_t[_subtype][_engines];
     }
 
-    void set_lift();
-    void set_drag();
-    void set_side();
-    void set_roll();
-    void set_pitch();
-    void set_yaw();
+    void set_lift() override;
+    void set_drag() override;
+    void set_side() override;
+    void set_roll() override;
+    void set_pitch() override;
+    void set_yaw() override;
 
 protected:
     static float const _fuselage_diameter_t[1][5];
@@ -360,49 +360,49 @@ public:
     JetTransport(Aeromatic *p);
     ~JetTransport() {}
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _fuselage_diameter_t[_subtype][_engines];
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _wing_loading_t[_subtype][_engines];
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aspect_ratio_t[_subtype][_engines];
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _htail_area_t[_subtype][_engines];
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _htail_arm_t[_subtype][_engines];
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _vtail_area_t[_subtype][_engines];
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _vtail_arm_t[_subtype][_engines];
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _empty_weight_t[_subtype][_engines];
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _roskam_t[_subtype][_engines];
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _eyept_loc_t[_subtype][_engines];
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _gear_loc_t[_subtype][_engines];
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _fuel_weight_t[_subtype][_engines];
     }
 
-    void set_lift();
-    void set_drag();
-    void set_side();
-    void set_roll();
-    void set_pitch();
-    void set_yaw();
+    void set_lift() override;
+    void set_drag() override;
+    void set_side() override;
+    void set_roll() override;
+    void set_pitch() override;
+    void set_yaw() override;
 
 protected:
     static float const _fuselage_diameter_t[1][5];
@@ -442,49 +442,49 @@ public:
     PropTransport(Aeromatic *p);
     ~PropTransport() {}
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _fuselage_diameter_t[_subtype][_engines];
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _wing_loading_t[_subtype][_engines];
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aspect_ratio_t[_subtype][_engines];
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _htail_area_t[_subtype][_engines];
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _htail_arm_t[_subtype][_engines];
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _vtail_area_t[_subtype][_engines];
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _vtail_arm_t[_subtype][_engines];
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _empty_weight_t[_subtype][_engines];
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _roskam_t[_subtype][_engines];
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _eyept_loc_t[_subtype][_engines];
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _gear_loc_t[_subtype][_engines];
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _fuel_weight_t[_subtype][_engines];
     }
 
-    void set_lift();
-    void set_drag();
-    void set_side();
-    void set_roll();
-    void set_pitch();
-    void set_yaw();
+    void set_lift() override;
+    void set_drag() override;
+    void set_side() override;
+    void set_roll() override;
+    void set_pitch() override;
+    void set_yaw() override;
 
 protected:
     static float const _fuselage_diameter_t[1][5];
@@ -527,67 +527,67 @@ public:
     static std::string create_dir(std::string path, std::string subdir);
     static bool overwrite(std::string path);
 
-    const std::vector<System*> get_systems() {
+    const std::vector<System*> get_systems() override {
         return _aircraft[_atype]->get_systems();
     }
 
-    bool fdm();
+    bool fdm() override;
     bool write_XML();
     bool write_JSON();
 
-    float get_fuselage_diameter() {
+    float get_fuselage_diameter() override {
         return _aircraft[_atype]->get_fuselage_diameter();
     }
-    float get_wing_loading() {
+    float get_wing_loading() override {
         return _aircraft[_atype]->get_wing_loading();
     }
-    float get_aspect_ratio() {
+    float get_aspect_ratio() override {
         return _aircraft[_atype]->get_aspect_ratio();
     }
-    float get_htail_area() {
+    float get_htail_area() override {
         return _aircraft[_atype]->get_htail_area();
     }
-    float get_htail_arm() {
+    float get_htail_arm() override {
         return _aircraft[_atype]->get_htail_arm();
     }
-    float get_vtail_area() {
+    float get_vtail_area() override {
         return _aircraft[_atype]->get_vtail_area();
     }
-    float get_vtail_arm() {
+    float get_vtail_arm() override {
         return _aircraft[_atype]->get_vtail_arm();
     }
-    float get_empty_weight() {
+    float get_empty_weight() override {
         return _aircraft[_atype]->get_empty_weight();
     }
-    const float* get_roskam() {
+    const float* get_roskam() override {
         return _aircraft[_atype]->get_roskam();
     }
-    const float* get_eyept_loc() {
+    const float* get_eyept_loc() override {
         return _aircraft[_atype]->get_eyept_loc();
     }
-    float get_gear_loc() {
+    float get_gear_loc() override {
         return _aircraft[_atype]->get_gear_loc();
     }
-    float get_fuel_weight() {
+    float get_fuel_weight() override {
         return _aircraft[_atype]->get_fuel_weight();
     }
 
-    void set_lift() {
+    void set_lift() override {
         _aircraft[_atype]->set_lift();
     }
-    void set_drag() {
+    void set_drag() override {
         _aircraft[_atype]->set_drag();
     }
-    void set_side() {
+    void set_side() override {
         _aircraft[_atype]->set_side();
     }
-    void set_roll() {
+    void set_roll() override {
         _aircraft[_atype]->set_roll();
     }
-    void set_pitch() {
+    void set_pitch() override {
         _aircraft[_atype]->set_pitch();
     }
-    void set_yaw() {
+    void set_yaw() override {
         _aircraft[_atype]->set_yaw();
     }
 
@@ -597,73 +597,52 @@ public:
 
 public:
     std::vector<Aircraft*> _aircraft;
-    unsigned _atype;
+    unsigned _atype = LIGHT;
 
-    bool _system_files;
-    bool _metric;
+    bool _system_files = true;
+    bool _metric = false;
 
     /* performance, weight and balance */
-    float _aero_rp[3];
-    float _cg_loc[3];
-    float _stall_speed;
-    float _stall_weight;
-    float _max_weight;
-    float _empty_weight;
-    float _inertia[3];                  // xx, yy, zz
+    float _aero_rp[3] = { 0.0f, 0.0f, 0.0f };
+    float _cg_loc[3] = { 0.0f, 0.0f, 0.0f };
+    float _stall_speed = 0.0f;
+    float _stall_weight = 0.0f;
+    float _max_weight = 10000.0f;
+    float _empty_weight = 0.0f;
+    float _inertia[3] = { 0.0f, 0.0f, 0.0f };	// xx, yy, zz
 
     /* geometry */
-    float _length;
-    float _payload;
+    float _length = 40.0f;
+    float _payload = 10000.0f;
 
-    int _user_wing_data;
+    int _user_wing_data = -2;
     struct _lift_device_t
     {
-        _lift_device_t() :
-            shape(STRAIGHT),
-            arm(0),
-            span(0),
-            area(0),
-            aspect(0),
-            taper(1.0f),
-            chord_mean(0),
-            incidence(2.0),
-            dihedral(0),
-            sweep(0),
-            sweep_le(0),
-            efficiency(0),
-            thickness(0),
-            flap_ratio(0),
-            twist(0),
-            camber(0),
-            de_da(0),
-            Ktf(0)
-        {}
-
         // Inputs
-        unsigned shape;
-        float arm;
-        float span;
-        float area;
-        float aspect;	// ratio
-        float taper;	// ratio
-        float chord_mean;
-        float incidence;
-        float dihedral;
-        float sweep;
-        float sweep_le;	// sweep leading edge
-        float efficiency;
-        float thickness;
-        float flap_ratio;
+        unsigned shape = STRAIGHT;
+        float arm = 0.0f;
+        float span = 0.0f;
+        float area = 0.0f;
+        float aspect = 0.0f;	// ratio
+        float taper = 1.0f;	// ratio
+        float chord_mean = 0.0f;
+        float incidence = 2.0f;
+        float dihedral = 0.0f;
+        float sweep = 0.0f;
+        float sweep_le = 0.0f;	// sweep leading edge
+        float efficiency = 0.0f;
+        float thickness = 0.0f;
+        float flap_ratio = 0.0f;
 
         // *** currently unused **
-        float twist;
-        float camber;
+        float twist = 0.0f;
+        float camber = 0.0f;
 
         // Calculated
-        float de_da;
+        float de_da = 0.0f;
 
         // Korn technology factor: 0.97 for NACA6, 0.65 for supercritical
-        float Ktf;
+        float Ktf = 0.0f;
     } _lift_device;
 
     _lift_device_t _wing;
@@ -671,8 +650,8 @@ public:
     _lift_device_t _vtail;
 
     /* array index, can not be greater than 4 */
-    unsigned _no_engines;
-    bool _wing_mounted_engines;
+    unsigned _no_engines = 0;
+    bool _wing_mounted_engines = false;
 
 public:
     /* Coefficients */

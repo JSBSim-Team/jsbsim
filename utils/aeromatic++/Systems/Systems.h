@@ -43,9 +43,7 @@ class System
 public:
     System(Aeromatic *p, bool e = false) :
         _aircraft(p),
-        _enabled(e),
-        _param(0),
-        _subtype(0) {}
+        _enabled(e) {}
 
     virtual ~System() {
         for (auto it : _inputs) {
@@ -99,8 +97,8 @@ public:
 
 protected:
     std::vector<Param*> _inputs;
-    unsigned _param;
-    int _subtype;
+    unsigned _param = 0;
+    int _subtype = 0;
 
     static char const* _supported;
 };

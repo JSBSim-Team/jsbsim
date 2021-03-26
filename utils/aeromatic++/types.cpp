@@ -76,7 +76,6 @@ Param::Param(const char* n, const char *h, unsigned& v, const bool& c, unsigned 
     _convert(c),
     _utype(t)
 { 
-    v = 0;
     maxval = -1;
     _value.i = &v; 
 }
@@ -88,7 +87,6 @@ Param::Param(const char* n, const char *h, unsigned& v, unsigned mv, const bool&
     _convert(c),
     _utype(t)
 {
-    v = 0;
     maxval = mv-1;
     _value.i = &v;
 }
