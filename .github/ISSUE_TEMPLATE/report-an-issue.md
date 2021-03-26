@@ -9,7 +9,7 @@ assignees: ''
 
 Note: for support questions, please use [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions).
 
-This repository issues are reserved for feature requests and bug reports. Issues that are neither bug reports or feature requests will be transferred to [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions) by the team and the issue will be locked and closed.
+This repository's issues are reserved for feature requests and bug reports. Issues that are neither bug reports or feature requests will be transferred to [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions) by the team and the issue will be locked and closed.
 
 ***
 <!-- please remove the notice above-->
