@@ -99,19 +99,7 @@ Aircraft::get_verbose_description(int no_engines)
     return desc;
 }
 
-Aeromatic::Aeromatic() : Aircraft(),
-    _atype(LIGHT),
-    _system_files(true),
-    _metric(0),
-    _stall_speed(0),
-    _stall_weight(0),
-    _max_weight(10000.0f),
-    _empty_weight(0),
-    _length(40.0f),
-    _payload(10000.0f),
-    _user_wing_data(-2),
-    _no_engines(0),
-    _wing_mounted_engines(false)
+Aeromatic::Aeromatic() : Aircraft()
 {
     _inertia[0] = _inertia[1] = _inertia[2] = 0.0;
     _payload = _max_weight;

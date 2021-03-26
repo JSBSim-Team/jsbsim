@@ -71,8 +71,7 @@ std::string Direct::thruster()
 }
 
 
-Nozzle::Nozzle(Propulsion *p) : Thruster(p),
-    _diameter(3.25f)
+Nozzle::Nozzle(Propulsion *p) : Thruster(p)
 {
     strCopy(_thruster_name, "my_nozzle");
 

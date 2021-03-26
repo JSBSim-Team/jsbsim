@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -43,15 +43,15 @@ public:
     }
     ~CableControls() {}
 
-    void set(const float* cg_loc);
-    std::string system();
+    void set(const float cg_loc[3]) override;
+    std::string system() override;
 
-    std::string lift();
-    std::string drag();
-    std::string side();
-    std::string roll();
-    std::string pitch();
-    std::string yaw();
+    std::string lift() override;
+    std::string drag() override;
+    std::string side() override;
+    std::string roll() override;
+    std::string pitch() override;
+    std::string yaw() override;
 
     std::string _print_vector(std::vector<float>& C);
     void _get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_t &wing);
@@ -69,27 +69,27 @@ public:
         delete _control;
     }
 
-    void set(float cg_loc[3]) {
+    void set(const float cg_loc[3]) override {
         _control->set(cg_loc);
     }
     std::string system();
 
-    std::string lift() {
+    std::string lift() override {
         return _control->lift();
     }
-    std::string drag() {
+    std::string drag() override {
         return _control->drag();
     }
-    std::string side() {
+    std::string side() override {
         return _control->side();
     }
-    std::string roll() {
+    std::string roll() override {
         return _control->roll();
     }
-    std::string pitch() {
+    std::string pitch() override {
         return _control->pitch();
     }
-    std::string yaw() {
+    std::string yaw() override {
         return _control->yaw();
     }
 
@@ -108,27 +108,27 @@ public:
         delete _control;
     }
 
-    void set(float cg_loc[3]) {
+    void set(const float cg_loc[3]) override {
         _control->set(cg_loc);
     }
     std::string system();
 
-    std::string lift() {
+    std::string lift() override {
         return _control->lift();
     }
-    std::string drag() {
+    std::string drag() override {
         return _control->drag();
     }
-    std::string side() {
+    std::string side() override {
         return _control->side();
     }
-    std::string roll() {
+    std::string roll() override {
         return _control->roll();
     }
-    std::string pitch() {
+    std::string pitch() override {
         return _control->pitch();
     }
-    std::string yaw() {
+    std::string yaw() override {
         return _control->yaw();
     }
 
@@ -143,46 +143,46 @@ public:
     Controls(Aeromatic *p);
     ~Controls();
 
-    void set(float cg_loc[3]) {
+    void set(const float cg_loc[3]) override {
         _control[_ctype]->set(cg_loc);
     }
     std::string comment();
-    std::string fdm() {
+    std::string fdm() override {
         return _control[_ctype]->fdm();
     }
-    std::string mass_balance() {
+    std::string mass_balance() override {
         return _control[_ctype]->mass_balance();
     }
-    std::string system() {
+    std::string system() override {
         return _control[_ctype]->system();
     }
 
-    std::string lift() {
+    std::string lift() override {
         return _control[_ctype]->lift();
     }
-    std::string drag() {
+    std::string drag() override {
         return _control[_ctype]->drag();
     }
-    std::string side() {
+    std::string side() override {
         return _control[_ctype]->side();
     }
-    std::string roll() {
+    std::string roll() override {
         return _control[_ctype]->roll();
     }
-    std::string pitch() {
+    std::string pitch() override {
         return _control[_ctype]->pitch();
     }
-    std::string yaw() {
+    std::string yaw() override {
         return _control[_ctype]->yaw();
     }
 
-    void param_reset() 
+    void param_reset() override
     {
         _param = 0;
         _control[_ctype]->param_reset();
     }
 
-    Param* param_next()
+    Param* param_next() override
     {
         Param* rv = 0;
         if (_enabled)
@@ -198,7 +198,7 @@ public:
 
 public:
     std::vector<System*> _control;
-    unsigned _ctype;
+    unsigned _ctype = 0;
 };
 
 
