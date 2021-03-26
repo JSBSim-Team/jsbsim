@@ -51,9 +51,7 @@
 namespace Aeromatic
 {
 
-Controls::Controls(Aeromatic *p) :
-    System(p, true),
-    _ctype(0)
+Controls::Controls(Aeromatic *p) : System(p, true)
 {
     _description.push_back("Aircraft control");
 
@@ -143,6 +141,7 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLalpha.at(1) = CLaw[1];
     _aircraft->_CLalpha.at(2) = CLaw[2];
 
+printf("CLalpha: %f\n", _aircraft->_CLalpha.at(0));
     // *** Pitch moment ***
     float lh = _aircraft->_htail.arm;
     float Vh = lh*Sh/cbarw/Sw;
@@ -1281,7 +1280,8 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
         break;
     case DELTA:
         M = 0.0f; M2 = 0.0f;
-        CLaw[0] = (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
+        // The first multiplication by 3.3 accounts for vortex lift.
+        CLaw[0] = 3.3f * (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
 
         CLaw[1] = PAR/2.0f;
 
