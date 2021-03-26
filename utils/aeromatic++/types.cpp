@@ -64,6 +64,7 @@ Param::Param(const char* n, const char *h,  bool& v, const bool& c, unsigned t) 
     _convert(c),
     _utype(t)
 {
+    v = false;
     _value.b = &v;
 }
 
@@ -98,6 +99,7 @@ Param::Param(const char* n, const char *h, float& v, const bool& c, unsigned t) 
     _convert(c),
     _utype(t)
 {
+    v = 0.0f;
     _value.f = &v;
 }
 
