@@ -141,7 +141,6 @@ void CableControls::set(const float* cg_loc)
     _aircraft->_CLalpha.at(1) = CLaw[1];
     _aircraft->_CLalpha.at(2) = CLaw[2];
 
-printf("CLalpha: %f\n", _aircraft->_CLalpha.at(0));
     // *** Pitch moment ***
     float lh = _aircraft->_htail.arm;
     float Vh = lh*Sh/cbarw/Sw;
@@ -1353,4 +1352,3 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
 }
 
 } /* namespace Aeromatic */
-
