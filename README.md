@@ -40,11 +40,6 @@ JSBSim is used in a range of projects among which:
 JSBSim is also used in academic and industry research ([more than 600 citations referenced by Google Scholar](https://scholar.google.com/scholar?&q=jsbsim) as of November 2020).
 
 # User Guide
-**[Installation](#installation)** |
-**[Quick Start](#quick-start)**   |
-**[User Docs](#user-documentation)** |
-**[Interfacing JSBSim with your app](#interfacing-jsbsim-with-your-application)**
----
 ## Installation
 ### Windows
 A Windows installer `JSBSim-1.1.5-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.5). It installs the 2 executables along with aircraft data and some example scripts:
