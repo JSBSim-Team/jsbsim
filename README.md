@@ -47,16 +47,16 @@ JSBSim is also used in academic and industry research ([more than 600 citations 
 ---
 ## Installation
 ### Windows
-A Windows installer `JSBSim-1.1.5-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.5). It installs the 2 executables along with aircraft data and some example scripts:
+A Windows installer `JSBSim-1.1.6-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.6). It installs the 2 executables along with aircraft data and some example scripts:
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
 
 Both executables are console line command.
 ### Ubuntu Linux
-Debian packages for Ubuntu Linux "Xenial" 16.04 LTS, "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.5). There are 3 packages:
-* `JSBSim_1.1.5-277.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
-* `JSBSim-devel_1.1.5-277.amd64.deb` which installs the development resources (headers and libraries)
-* `python3-JSBSim_1.1.5-277.amd64.deb` which installs the Python 3.6 module of JSBSim
+Debian packages for Ubuntu Linux "Xenial" 16.04 LTS, "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.6). There are 3 packages:
+* `JSBSim_1.1.6-320.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
+* `JSBSim-devel_1.1.6-320.amd64.deb` which installs the development resources (headers and libraries)
+* `python3-JSBSim_1.1.6-320.amd64.deb` which installs the Python 3.6 module of JSBSim
 ### Python module
 JSBSim provides binary packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8 and 3.9). These can be installed using either `pip` or `conda`.
 #### Installation with `pip`
@@ -89,7 +89,7 @@ It is possible to list all of the versions of `jsbsim` available on your platfor
 ### Other platforms
 At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
 ### Aircraft data and example scripts
-You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.5.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.5.tar.gz).
+You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.6.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.6.tar.gz).
 ## Quick start
 Once you have downloaded (or built) the binaries and unzipped the [aircraft data](#aircraft-data-and-example-scripts). Go to the root of the data package and make sure the executable is accessible from there.
 
