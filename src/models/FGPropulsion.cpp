@@ -460,6 +460,9 @@ string FGPropulsion::GetPropulsionStrings(const string& delimiter) const
   for (auto& tank: Tanks) {
     if (tank->GetType() == FGTank::ttFUEL) buf << delimiter << "Fuel Tank " << i++;
     else if (tank->GetType() == FGTank::ttOXIDIZER) buf << delimiter << "Oxidizer Tank " << i++;
+
+    const string& name = tank->GetName();
+    if (!name.empty()) buf << " (" << name << ")";
   }
 
   PropulsionStrings += buf.str();
@@ -503,20 +506,23 @@ string FGPropulsion::GetPropulsionTankReport()
 
   for (const auto& tank: Tanks) {
     string tankdesc;
+    const string& tankname = tank->GetName();
+    if (!tankname.empty()) tankdesc = tankname + " (";
     if (tank->GetType() == FGTank::ttFUEL && tank->GetGrainType() != FGTank::gtUNKNOWN) {
-      tankdesc = "Solid Fuel";
+      tankdesc += "Solid Fuel";
     } else if (tank->GetType() == FGTank::ttFUEL) {
-      tankdesc = "Fuel";
+      tankdesc += "Fuel";
     } else if (tank->GetType() == FGTank::ttOXIDIZER) {
-      tankdesc = "Oxidizer";
+      tankdesc += "Oxidizer";
     } else {
-      tankdesc = "Unknown tank type";
+      tankdesc += "Unknown tank type";
     }
-    outstream << highint << left << setw(4) << i << setw(30) << tankdesc << normint
-      << right << setw(10) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
-         << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
-         << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()
-         << setw(12) << tank->GetIzz() << endl;
+    if (!tankname.empty()) tankdesc += ")";
+    outstream << highint << left << setw(4) << i++ << setw(30) << tankdesc << normint
+      << right << setw(12) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
+      << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
+      << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()
+      << setw(12) << tank->GetIzz() << endl;
   }
   return outstream.str();
 }

@@ -452,7 +452,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
        << "         Ixy         Ixz         Iyz" << underoff << endl;
   cout.precision(1);
   cout << highint << setw(34) << left << "    Base Vehicle " << normint
-       << right << setw(10) << EmptyWeight
+       << right << setw(12) << EmptyWeight
        << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
        << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
        << setw(12) << baseJ(1,2) << setw(12) << baseJ(1,3) << setw(12) << baseJ(2,3) << endl;
@@ -461,7 +461,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
     cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
-         << right << setw(10) << pmweight << setw(8) << pm->GetLocation()(eX)
+         << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
          << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
          << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
          << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;         
