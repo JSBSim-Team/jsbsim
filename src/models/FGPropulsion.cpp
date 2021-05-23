@@ -84,7 +84,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 
 FGPropulsion::~FGPropulsion()
 {
-  for (auto& tank: Tanks) delete tank;
   Debug(1);
 }
 
@@ -185,7 +184,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
   while ((TanksWithFuel == 0) && (CurrentFuelTankPriority <= numTanks)) {
     for (unsigned int i=0; i<engine->GetNumSourceTanks(); i++) {
       unsigned int TankId = engine->GetSourceTank(i);
-      FGTank* Tank = Tanks[TankId];
+      const auto& Tank = Tanks[TankId];
       unsigned int TankPriority = Tank->GetPriority();
       if (TankPriority != 0) {
         switch(Tank->GetType()) {
@@ -213,7 +212,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
     while ((TanksWithOxidizer == 0) && (CurrentOxidizerTankPriority <= numTanks)) {
       for (unsigned int i=0; i<engine->GetNumSourceTanks(); i++) {
         unsigned int TankId = engine->GetSourceTank(i);
-        FGTank* Tank = Tanks[TankId];
+        const auto& Tank = Tanks[TankId];
         unsigned int TankPriority = Tank->GetPriority();
         if (TankPriority != 0) {
           switch(Tank->GetType()) {
@@ -358,7 +357,7 @@ bool FGPropulsion::Load(Element* el)
   unsigned int numTanks = 0;
 
   while (tank_element) {
-    Tanks.push_back(new FGTank(FDMExec, tank_element, numTanks));
+    Tanks.push_back(make_shared<FGTank>(FDMExec, tank_element, numTanks));
     const auto& tank = Tanks.back();
     if (tank->GetType() == FGTank::ttFUEL)
       FuelDensity = tank->GetDensity();

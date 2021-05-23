@@ -141,9 +141,10 @@ public:
       @param index the tank index within the vector container
       @return the address of the specific tank, or zero if no such tank is
               available */
-  FGTank* GetTank(unsigned int index) const {
-                      if (index < Tanks.size()) return Tanks[index];
-                      else                      return 0L;        }
+  auto GetTank(unsigned int index) const {
+    assert(index < Tanks.size());
+    return Tanks[index];
+  }
 
   /** Loops the engines until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
@@ -183,8 +184,8 @@ public:
   struct FGEngine::Inputs in;
 
 private:
-  std::vector <std::shared_ptr<FGEngine>> Engines;
-  std::vector <FGTank*>     Tanks;
+  std::vector<std::shared_ptr<FGEngine>> Engines;
+  std::vector<std::shared_ptr<FGTank>>   Tanks;
   int ActiveEngine;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
