@@ -1,5 +1,6 @@
 [![C/C++ build](https://github.com/JSBSim-Team/jsbsim/workflows/C/C++%20build/badge.svg?branch=master&event=push)](https://github.com/bcoconni/jsbsim/actions?query=workflow%3A%22C%2FC%2B%2B+build%22)
 [![PyPI](https://img.shields.io/pypi/v/jsbsim)](https://pypi.org/project/JSBSim)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/jsbsim?period=total&units=international_system&left_color=grey&right_color=blue&left_text=pypi%20downloads)](https://pepy.tech/project/jsbsim)
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
 
 <p align="center">
