@@ -568,8 +568,6 @@
     <function name="aero/coefficient/CLalpha">
 	<description>Lift_due_to_alpha</description>
 	<product>
-	    <property>aero/qbar-psf</property>
-	    <property>metrics/Sw-sqft</property>
 	    <property>aero/function/kCLge</property>
 	    <property>aero/function/kCLsb</property>
 	    <property>aero/function/kCLsp</property>
