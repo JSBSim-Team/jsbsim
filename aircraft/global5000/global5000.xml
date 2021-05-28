@@ -565,25 +565,6 @@
 
   <axis name="LIFT">
 
-    <function name="aero/coefficient/CLalpha">
-	<description>Lift_due_to_alpha</description>
-	<product>
-	    <property>aero/function/kCLge</property>
-	    <property>aero/function/kCLsb</property>
-	    <property>aero/function/kCLsp</property>
-	      <table>
-		  <independentVar>aero/alpha-rad</independentVar>
-		  <tableData>
-		     -0.20     -0.88
-		      0.00	0.00
-		      0.23	1.00
-		      0.46	0.80
-		  </tableData>
-	      </table>
-	</product>
-    </function>
-
-
     <function name="aero/force/Lift_alpha">
       <description>Lift due to alpha</description>
       <product>
