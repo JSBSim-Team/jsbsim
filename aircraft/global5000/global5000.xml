@@ -180,10 +180,6 @@
   </contact>
 
  </ground_reactions>
- 
-   <system file="GNCUtilities"/>
-
-  <system file="Autopilot"/>
 
  <propulsion>
 
@@ -272,15 +268,6 @@
   </tank>
 
  </propulsion>
- 
- <system file="GNCUtilities"/>
-
- <system file="Autopilot">
-      <property value="0.523"> guidance/roll-angle-limit </property>
-      <property value="0.174"> guidance/roll-rate-limit </property>
- </system>
- 
- <autopilot file="c172ap"/>
 
  <flight_control name="FCS: global5000">
 
