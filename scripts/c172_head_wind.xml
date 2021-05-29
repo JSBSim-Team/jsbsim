@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A">
+  <use aircraft="c172x" initialize="reset00"/>
+  <run start="0.0" end="25" dt="0.008333">
+    <!--
+        This test demonstrates, how the propeller windmilling builds up as the
+        head wind velocity is growing.
+    -->
+
+    <!-- Initialize with brakes on -->
+    <property value="1"> fcs/left-brake-cmd-norm </property>
+    <property value="1"> fcs/right-brake-cmd-norm </property>
+
+    <event name="Trim on ground">
+      <condition>simulation/sim-time-sec ge 0.1 </condition>
+      <set name="simulation/do_simple_trim" value="2" />
+    </event>
+
+    <event name="wind speed buildup">
+      <condition>simulation/sim-time-sec  ge  1.0</condition>
+      <set name="atmosphere/wind-north-fps" action="FG_RAMP" value="-8.0" tc="10.0"/>
+      <notify>
+        <property> attitude/psi-deg </property>
+      </notify>
+    </event>
+
+    <event name="Notification">
+      <condition> simulation/sim-time-sec ge 11.0 </condition>
+      <notify>
+        <property> attitude/psi-deg </property>
+        <property> velocities/u-aero-fps </property>
+        <property> velocities/v-aero-fps </property>
+        <property> velocities/w-aero-fps </property>
+        <property> propulsion/engine/engine-rpm </property>
+        <property> propulsion/engine/propeller-rpm </property>
+        <property> propulsion/engine/advance-ratio </property>
+        <property> propulsion/engine/thrust-coefficient </property>
+        <property> propulsion/engine/power-hp </property>
+        <property> propulsion/engine/prop-induced-velocity_fps </property>
+        <property> propulsion/engine/propeller-power-ftlbps </property>
+        <property> propulsion/engine/propeller-torque-ftlb </property>
+      </notify>
+    </event>
+  </run>
+  <output name="head_wind.csv" type="CSV" rate="120">
+    <rates>            ON </rates>
+    <velocities>       ON </velocities>
+    <position>         ON </position>
+    <atmosphere>       ON </atmosphere>
+    <fcs>              ON </fcs>
+    <ground_reactions> ON </ground_reactions>
+    <propulsion>       ON </propulsion>
+    <simulation>       ON </simulation>
+    <massprops>        ON </massprops>
+    <forces>           ON </forces>
+    <moments>          ON </moments>
+    <aerosurfaces>     ON </aerosurfaces>
+    <coefficients>     ON </coefficients>
+  </output>
+</runscript>
