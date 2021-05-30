@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE system [
+  <!ENTITY none  "0"> <!-- No magnetos    -->
+  <!ENTITY left  "1"> <!-- Left magnetos  -->
+  <!ENTITY right "2"> <!-- Right magnetos -->
+  <!ENTITY both  "3"> <!-- Both magnetos  -->
+  <!ENTITY wingLevelerMode  "0"> <!-- Roll autopilot: wing leveler mode    -->
+  <!ENTITY rollAngleHold    "1"> <!-- Roll autopilot: roll angle hold mode -->
+  <!ENTITY waypointHeading  "0"> <!-- Guidance-calculated waypoint heading -->
+  <!ENTITY specifiedHeading "1"> <!-- User-specified heading               -->
+  <!ENTITY on              "1">
+  <!ENTITY off             "0">
+]>
+<system name="GNC Utilities"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimSystem.xsd">
+
+<!-- #######################################################################
+
+  Author:   Jon Berndt
+  Date:     January 2009
+            June 20 2013 (update)
+  Function: Calculates useful GNC values
+
+  Inputs: 
+    position/lat-gc-rad (geocentric latitude in radians)
+    position/long-gc-rad (longitude in radians)
+
+    [Declared Interface Parameters]
+    guidance/target_wp_latitude_rad
+    guidance/target_wp_longitude_rad
+
+  Outputs
+    guidance/wp-distance (feet)
+    guidance/wp-heading-rad (rad)
+    guidance/wp-heading-deg (deg)
+
+######################################################################## -->
+
+  <property> guidance/target_wp_latitude_rad </property>
+  <property> guidance/target_wp_longitude_rad </property>
+
+  <channel name="Guidance Waypoint Heading Director">
+
+    <waypoint_heading name="guidance/wp-heading-rad" unit="RAD">
+      <target_latitude unit="RAD">  guidance/target_wp_latitude_rad </target_latitude>
+      <target_longitude unit="RAD"> guidance/target_wp_longitude_rad </target_longitude>
+      <source_latitude unit="RAD">  position/lat-gc-rad </source_latitude>
+      <source_longitude unit="RAD"> position/long-gc-rad </source_longitude>
+    </waypoint_heading>
+
+    <waypoint_distance name="guidance/wp-distance" unit="FT">
+      <target_latitude unit="RAD">  guidance/target_wp_latitude_rad </target_latitude>
+      <target_longitude unit="RAD"> guidance/target_wp_longitude_rad </target_longitude>
+      <source_latitude unit="RAD">  position/lat-gc-rad </source_latitude>
+      <source_longitude unit="RAD"> position/long-gc-rad </source_longitude>
+    </waypoint_distance>
+
+    <pure_gain name="guidance/wp-heading-deg">
+      <input> guidance/wp-heading-rad </input>
+      <gain> 57.3 </gain>
+    </pure_gain>
+
+  </channel>
+
+<!-- ####################################################################### -->
+
+  <property> navigation/actual-heading-rad </property>
+  <property> guidance/specified-heading-rad </property>
+  <property> guidance/heading-selector-switch </property>
+
+  <channel name="Included Angle to Heading">
+
+    <switch name="guidance/selected_target_heading">
+      <default value="guidance/wp-heading-rad"/>
+      <test value="guidance/specified-heading-rad">
+        guidance/heading-selector-switch eq &specifiedHeading;
+      </test>
+    </switch>
+
+    <angle name="guidance/angle-to-heading-rad" unit="RAD">
+      <source_angle unit="RAD">  navigation/actual-heading-rad </source_angle>
+      <target_angle unit="RAD">  guidance/selected_target_heading </target_angle>
+    </angle>
+
+  </channel>
+
+<!-- ####################################################################### -->
+
+</system>
