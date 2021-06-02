@@ -10,6 +10,7 @@
   <version>$Revision: 1.20 $</version>
   <description> 
   
+
     File created with Aeromatic 
   
     Based on Moellemi, M., Jafer, S., Towhidnejad, M. "Flight Dynamics Model of Bombardier Global 5000 Aircraft", AIAA Modeling and Simulation Technologies Conference, 13-17 June 2016, Washington D.C., AIAA 2016-3525, DOI: 10.2514/6.2016-3525
@@ -18,7 +19,6 @@
      
     Mods: 
        included feed=2 in the engine to use tank 2
-       included function for lift coefficient
        included important outputs
        adjusted CL and CD tables to match theoretical Polar Drag curve
          by considering e=0.83 and k=0.03453 and FAA TC 18-7
@@ -269,11 +269,23 @@
 
  </propulsion>
 
+ 
+ <system file="GNCUtilities"/>
+
+ <system file="Autopilot">
+      <property value="0.523"> guidance/roll-angle-limit </property>
+      <property value="0.174"> guidance/roll-rate-limit </property>
+ </system>
+ 
+ <autopilot file="global5000ap"/>
+
+
  <flight_control name="FCS: global5000">
 
   <channel name="Pitch">
 
    <summer name="Pitch Trim Sum">
+      <input>ap/elevator_cmd</input> 
       <input>fcs/elevator-cmd-norm</input>
       <input>fcs/pitch-trim-cmd-norm</input>
       <clipto>
@@ -914,6 +926,8 @@
 	<property> velocities/vtrue-kts </property>
 	<property> gear/gear-cmd-norm </property>
 	<property> aero/coefficient/CLalpha </property>
+	<property> position/h-agl-ft </property>
+
 
 	<simulation>       OFF </simulation>
 	<atmosphere>       OFF </atmosphere>
