@@ -39,9 +39,9 @@
    <vtailarea unit="FT2">  186.00 </vtailarea>
    <vtailarm unit="FT">   13.00 </vtailarm>
    <location name="AERORP" unit="IN">
-     <x> 780 </x>
+     <x> 790.80 </x>
      <y>   0.00 </y>
-     <z>   29.07 </z>
+     <z>   0.00 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
      <x>  81.40 </x>
@@ -61,15 +61,15 @@
    <izz unit="SLUG*FT2">    834676 </izz>
    <emptywt unit="LBS">     48235 </emptywt>
    <location name="CG" unit="IN">
-     <x>780.0</x>
+     <x> 750 </x>
      <y>   0.00 </y>
      <z> -29.07 </z>
    </location>
    <pointmass name="Payload">
     <description> 15172 LBS + full (24293 LBS) fuel should bring model up to entered max weight</description>
-    <weight unit="LBS">   7600 </weight>
+    <weight unit="LBS"> 15172 </weight>
     <location name="POINTMASS" unit="IN">
-      <x> 780 </x>
+      <x> 790.80 </x>
       <y>   0.00 </y>
       <z> -29.07 </z>
     </location>
@@ -128,7 +128,7 @@
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
-     <x> 419.68 </x>
+     <x> 790.80 </x>
      <y> -46.50 </y>
      <z> -29.07 </z>
     </location>
@@ -140,7 +140,7 @@
 
   <contact type="STRUCTURE" name="RIGHT_WING">
     <location unit="IN">
-     <x> 419.68 </x>
+     <x> 790.80 </x>
      <y>  46.50 </y>
      <z> -29.07 </z>
     </location>
@@ -210,32 +210,32 @@
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x> 780 </x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
   <tank type="FUEL" number="1">
      <location unit="IN">
-       <x> 780 </x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
   <tank type="FUEL" number="2">
      <location unit="IN">
-       <x> 780</x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
  </propulsion>
