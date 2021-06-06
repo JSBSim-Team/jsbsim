@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 # function to change CG in aircraft xml
 # change the directory to the aircraft to be studied
 def changeCG(cgPos,readOnly):
-    tree = ET.parse('../aircraft/global5000/global5000.xml')
+    tree = ET.parse('../../aircraft/global5000/global5000.xml')
     root = tree.getroot()
 
     for x in root.findall('mass_balance/location'):
         cg = x.find('x').text
         if not readOnly:
              x.find('x').text=str(cgPos)
-             tree.write('../aircraft/global5000/global5000.xml')
+             tree.write('../../aircraft/global5000/global5000.xml')
     return cg
 
 #Fuel Max for Global5000
@@ -45,7 +45,7 @@ h_ft=[8000,30000]
 #run the simulation varying CG, altitude, speed and total weight
 for j in range(2):
     cg=changeCG(cgPos[j],False)
-    fdm = jsbsim.FGFDMExec('../') 
+    fdm = jsbsim.FGFDMExec('../../') 
     fdm.load_model('global5000')
     # Set engines running
     fdm['propulsion/engine[0]/set-running'] = 1
