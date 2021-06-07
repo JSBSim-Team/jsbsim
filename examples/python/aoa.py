@@ -6,6 +6,8 @@ import jsbsim
 from IPython.core.display import display, HTML
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
+import matplotlib.style as style
+style.use('fivethirtyeight')
 
 # function to change CG in aircraft xml
 # change the directory to the aircraft to be studied
@@ -24,7 +26,7 @@ def changeCG(cgPos,readOnly):
 fuelmax=8097.63
 
 #prepare subplots to overlay plots
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10,8))
 
 #Define here the payloads to be studied
 payload=[1500,15172/2,15172]
