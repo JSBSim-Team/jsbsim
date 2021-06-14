@@ -1,8 +1,4 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="global5000" version="2.0" release="ALPHA"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" version="2.0" release="ALPHA" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
   <author> Aeromatic v 0.96 and fixed bugs Guilherme Lima da Silva </author>
@@ -31,44 +27,19 @@
   </description>
  </fileheader>
 
-<!--
-  File:     global5000.xml
-  Inputs:
-    name:          global5000
-    type:          two-engine transonic transport
-    max weight:    87700 lb
-    wing span:     93 ft
-    length:        96.9 ft
-    wing area:     1022 sq-ft
-    gear type:     tricycle
-    castering:     
-    retractable?:  yes
-    # engines:     2
-    engine type:   turbine
-    engine layout: aft fuselage
-    yaw damper?    yes
-  Outputs:
-    wing loading:  85.81 lb/sq-ft
-    payload:       15172.1 lbs
-    CL-alpha:      4.4 per radian
-    CL-0:          0.2
-    CL-max:        1.2
-    CD-0:          0.02
-    K:             0.043
 
--->
 
  <metrics>
-   <wingarea  unit="FT2"> 1022.00 </wingarea>
-   <wingspan  unit="FT" >   93.00 </wingspan>
+   <wingarea unit="FT2"> 1022.00 </wingarea>
+   <wingspan unit="FT">   93.00 </wingspan>
    <wing_incidence>          2.00 </wing_incidence>
-   <chord     unit="FT" >   10.99 </chord>
+   <chord unit="FT">   10.99 </chord>
    <htailarea unit="FT2">  245.00 </htailarea>
-   <htailarm  unit="FT" >   31.00 </htailarm>
+   <htailarm unit="FT">   31.00 </htailarm>
    <vtailarea unit="FT2">  186.00 </vtailarea>
-   <vtailarm  unit="FT" >   13.00 </vtailarm>
+   <vtailarm unit="FT">   13.00 </vtailarm>
    <location name="AERORP" unit="IN">
-     <x> 462.12 </x>
+     <x> 790.80 </x>
      <y>   0.00 </y>
      <z>   0.00 </z>
    </location>
@@ -88,17 +59,17 @@
    <ixx unit="SLUG*FT2">    238070 </ixx>
    <iyy unit="SLUG*FT2">    589404 </iyy>
    <izz unit="SLUG*FT2">    834676 </izz>
-   <emptywt unit="LBS" >     48235 </emptywt>
+   <emptywt unit="LBS">     48235 </emptywt>
    <location name="CG" unit="IN">
-     <x> 462.12 </x>
+     <x> 750 </x>
      <y>   0.00 </y>
      <z> -29.07 </z>
    </location>
    <pointmass name="Payload">
     <description> 15172 LBS + full (24293 LBS) fuel should bring model up to entered max weight</description>
-    <weight unit="LBS">   7600 </weight>
+    <weight unit="LBS"> 15172 </weight>
     <location name="POINTMASS" unit="IN">
-      <x> 462.12 </x>
+      <x> 790.80 </x>
       <y>   0.00 </y>
       <z> -29.07 </z>
     </location>
@@ -157,7 +128,7 @@
 
   <contact type="STRUCTURE" name="LEFT_WING">
     <location unit="IN">
-     <x> 419.68 </x>
+     <x> 790.80 </x>
      <y> -46.50 </y>
      <z> -29.07 </z>
     </location>
@@ -169,7 +140,7 @@
 
   <contact type="STRUCTURE" name="RIGHT_WING">
     <location unit="IN">
-     <x> 419.68 </x>
+     <x> 790.80 </x>
      <y>  46.50 </y>
      <z> -29.07 </z>
     </location>
@@ -239,45 +210,45 @@
 
   <tank type="FUEL" number="0">
      <location unit="IN">
-       <x> 462.12 </x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
   <tank type="FUEL" number="1">
      <location unit="IN">
-       <x> 462.12 </x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
   <tank type="FUEL" number="2">
      <location unit="IN">
-       <x> 462.12</x>
+       <x> 790.80 </x>
        <y>   0.00 </y>
        <z> -29.07 </z>
      </location>
      <capacity unit="LBS"> 8097.63 </capacity>
-     <contents unit="LBS"> 8097.63 </contents>
+     <contents unit="LBS"> 2000 </contents>
   </tank>
 
  </propulsion>
 
  
- <system file="GNCUtilities"/>
+ <system file="GNCUtilities" />
 
  <system file="Autopilot">
       <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
  </system>
  
- <autopilot file="global5000ap"/>
+ <autopilot file="global5000ap" />
 
 
  <flight_control name="FCS: global5000">
