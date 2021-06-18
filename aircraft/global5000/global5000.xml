@@ -70,7 +70,7 @@
    <location name="AERORP" unit="IN">
      <x> 780 </x>
      <y>   0.00 </y>
-     <z>   29.07 </z>
+     <z>   -29.07 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
      <x>  81.40 </x>
