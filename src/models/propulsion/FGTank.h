@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
 <h3>Configuration File Format:</h3>
 
 @code
-<tank type="{FUEL | OXIDIZER}">
+<tank type="{FUEL | OXIDIZER}" name="{string}">
   <grain_config type="{CYLINDRICAL | ENDBURNING | FUNCTION}">
     <length unit="{IN | FT | M}"> {number} </length>
     <bore_diameter unit="{IN | FT | M}"> {number} </bore_diameter>
@@ -145,6 +145,7 @@ CLASS DOCUMENTATION
 <h3>Definition of the tank configuration file parameters:</h3>
 
 - \b type - One of FUEL or OXIDIZER.  This is required.
+- \b name - Tank name for easier identification in the reports. Optional.
 - \b radius - Equivalent radius of tank for modeling slosh, defaults to inches.
 - \b grain_config type - One of CYLINDRICAL or ENDBURNING.
 - \b length - length of tank for modeling solid fuel propellant grain, defaults
@@ -235,6 +236,11 @@ public:
       @return the tank type, 0 for undefined, 1 for fuel, and 2 for oxidizer.
   */
   int GetType(void) const {return Type;}
+
+  /** Retrieves the tank name.
+      @return the tank name.
+   */
+  const std::string& GetName(void) const { return Name; }
 
   /** Resets the tank parameters to the initial conditions */
   void ResetToIC(void);
@@ -335,8 +341,7 @@ private:
   TankType Type;
   GrainType grainType;
   int TankNumber;
-  std::string type;
-  std::string strGType;
+  std::string Name;
   double ixx_unit;
   double iyy_unit;
   double izz_unit;

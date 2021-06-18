@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<!--
+
+  Author:   Jon Berndt
+  Date:     18 August 2002
+  Modified with help of Guilherme Lima da Silva, ATS, aerothermal.co
+  Mod Date: 30 May 2021
+  Function: Global5000 autopilot test file
+            the engine controls altitude
+            the elevator controls alpha
+            Note: there are some stability problems yet. Under development.
+
+
+  Note: this file represents a test only of the new autopilot
+        setup in JSBSim. The same components used in the FCS
+        can also be used in the autopilot section. There are
+        some new FCS input and output identifiers directly
+        related to the autopilot:
+
+          ap/elevator_cmd,
+          ap/aileron_cmd,
+          ap/attitude_hold,
+          ap/altitude_hold,
+          ap/alpha_hold,
+          ap/heading_hold,
+          ap/altitude_setpoint,
+          ap/heading_setpoint
+          ap/alpha_setpoint
+
+-->
+<autopilot name="Global5000 Autopilot">
+
+<!-- INTERFACE PROPERTIES -->
+
+  <property> ap/attitude_hold     </property>
+  <property> ap/altitude_hold     </property>
+  <property> ap/heading_hold      </property>
+  <property> ap/altitude_setpoint </property>
+  <property> ap/heading_setpoint  </property>
+  <property> ap/aileron_cmd       </property>
+  <property> ap/elevator_cmd      </property>
+  <property> ap/airspeed_setpoint </property>
+  <property> ap/airspeed_hold     </property>
+  <property> ap/throttle-cmd-norm </property>
+  <property> ap/alpha_setpoint </property>
+  <property> ap/alpha_hold     </property>
+
+<!-- INITIAL GAIN VALUES -->
+  
+  <property value="0.5"> ap/hdg-roll-err-c1 </property>
+  <property value="50.0"> ap/roll-pid-kp </property>
+  <property value="5.0"> ap/roll-pid-ki </property>
+  <property value="17.0"> ap/roll-pid-kd </property>
+
+<!--
+=====================================================
+ROLL CHANNEL
+=====================================================
+-->
+
+<!-- Wing leveler -->
+
+<channel name="Roll wing leveler">
+
+  <sensor name="fcs/attitude/sensor/phi-rad">
+    <input> attitude/phi-rad </input>
+    <lag> 0.5 </lag>
+    <delay> 2 </delay>
+    <noise variation="PERCENT" distribution="GAUSSIAN"> 0.05 </noise>
+    <quantization name="attitude/sensor/quantized/phi-rad">
+      <bits> 12 </bits>
+      <min> -3.1416 </min>
+      <max>  3.1416 </max>
+    </quantization>
+    <bias> 0.001 </bias>
+  </sensor>
+
+  <switch name="fcs/wing-leveler-ap-on-off">
+    <default value="-1"/>
+    <test value="0">
+      ap/attitude_hold == 1
+    </test>
+  </switch>
+
+  <pid name="fcs/roll-ap-error-pid">
+    <input>attitude/phi-rad</input>
+    <kp> ap/roll-pid-kp </kp>
+    <ki> ap/roll-pid-ki </ki>
+    <kd> ap/roll-pid-kd </kd>
+    <trigger> fcs/wing-leveler-ap-on-off </trigger>
+  </pid>
+
+  <switch name="fcs/roll-ap-autoswitch">
+    <default value="0.0"/>
+    <test value="-fcs/roll-ap-error-pid">
+      ap/attitude_hold == 1
+    </test>
+  </switch>
+
+</channel>
+
+<!-- Heading hold -->
+
+<channel name="Roll heading hold">
+  <pure_gain name="fcs/heading-true-degrees">
+    <input>attitude/heading-true-rad</input>
+    <gain>57.3</gain> <!-- convert to degrees -->
+  </pure_gain>
+
+  <summer name="fcs/heading-error">
+    <input> -fcs/heading-true-degrees</input>
+    <input> ap/heading_setpoint </input>
+  </summer>
+
+  <switch name="fcs/heading-error-bias-switch">
+    <default value="0.0"/>
+    <test value="360.0">
+      fcs/heading-error lt -180
+    </test>
+    <test value="-360.0">
+      fcs/heading-error gt 180
+    </test>
+  </switch>
+
+  <summer name="fcs/heading-corrected">
+    <input> fcs/heading-error-bias-switch </input>
+    <input> fcs/heading-error </input>
+    <clipto>
+      <min>-30</min>
+      <max>30</max>
+    </clipto>
+  </summer>
+
+  <pure_gain name="fcs/heading-command">
+    <input> fcs/heading-corrected </input>
+    <gain> 0.01745 </gain>
+  </pure_gain>
+
+  <lag_filter name="fcs/heading-roll-error-lag">
+    <input> fcs/heading-command </input>
+    <c1> ap/hdg-roll-err-c1 </c1>
+  </lag_filter>
+
+  <summer name="fcs/heading-roll-error">
+    <input> fcs/heading-roll-error-lag </input>
+    <input> -attitude/phi-rad </input>
+  </summer>
+
+  <switch name="fcs/heading-roll-error-switch">
+    <default value="0.0"/>
+    <test value="fcs/heading-roll-error">
+      ap/heading_hold == 1
+    </test>
+  </switch>
+
+  <pid name="fcs/heading-pi-controller">
+    <input> fcs/heading-roll-error-switch </input>
+    <kp> 6.0 </kp>
+    <ki> 0.13 </ki>
+    <kd> 6.0 </kd>
+  </pid>
+
+  <switch name="fcs/roll-command-selector">
+    <default value="0.0"/>
+    <test value="fcs/heading-pi-controller">
+      ap/heading_hold == 1
+      gear/unit[2]/WOW == 0
+    </test>
+    <test value="fcs/roll-ap-autoswitch">
+      ap/attitude_hold == 1
+      gear/unit[2]/WOW == 0
+    </test>
+    <output>ap/aileron_cmd</output>
+  </switch>
+<!--
+  <switch name="fcs/roll-command-selector-steering">
+    <default value="0.0"/>
+    <test value="fcs/heading-pi-controller">
+      ap/heading_hold == 1
+      gear/unit/WOW == 1
+    </test>
+    <output>fcs/steer-cmd-norm</output>
+  </switch>
+-->
+</channel>
+<!--
+=====================================================
+PITCH CHANNEL
+=====================================================
+-->
+
+
+<channel name="Alpha hold">
+
+  <summer name="aero/alpha-error">
+    <input> ap/alpha_setpoint </input>
+    <input> -aero/alpha-deg </input>
+    <clipto>
+      <min>-5</min>
+      <max> 5</max>
+    </clipto>
+  </summer>
+
+  <switch name="aero/ap-alpha-hold-switch">
+    <default value="0.0"/>
+    <test value="aero/alpha-error">
+      ap/alpha_hold == 1
+    </test>
+  </switch>
+
+  <deadband name="aero/windup-trigger">
+    <input> fcs/elevator-pos-deg </input>
+    <width>46.0</width>
+  </deadband>
+
+  <pid name="aero/alpha-hold-pid">
+    <input> aero/ap-alpha-hold-switch </input>
+    <kp> 0.01 </kp>
+    <ki> 0.0030 </ki>
+    <kd> 0.03 </kd>
+    <trigger> aero/windup-trigger </trigger>
+    <clipto> <min>-1.0</min>
+             <max> 1.0</max> </clipto>
+  </pid>
+
+  <!--
+  The elevator component flips the sign on the output of the control summer
+  above and sets the ap/elevator_command property.
+  -->
+  <pure_gain name="fcs/elevator">
+    <input> aero/alpha-hold-pid </input>
+    <gain> -1.0 </gain>
+    <output> ap/elevator_cmd </output>
+  </pure_gain>
+  
+  
+</channel>
+
+<channel name="Altitude hold">
+  
+   <summer name="fcs/altitude-error">
+      <input> -ap/altitude_setpoint </input>
+      <input> position/h-agl-ft </input>
+      <clipto>
+        <min>-500</min>
+        <max> 500</max>
+      </clipto>
+  </summer>
+  
+  <switch name="fcs/ap-alt-hold-switch">
+    <default value="0.0"/>
+    <test value="fcs/altitude-error">
+      ap/altitude_hold == 1
+    </test>
+  </switch>
+
+  <pid name="fcs/alt-hold-pid">
+    <input> fcs/ap-alt-hold-switch </input>
+    <kp> 300 </kp>
+    <ki> 50 </ki>
+    <kd> 40 </kd>
+    <clipto>
+      <min> 0  </min>
+      <max> 1 </max> 
+    </clipto>
+  </pid>
+
+  <!-- Drives engine #0 throttle position -->
+  <summer name="fcs/throttle-pos-norm[0]">
+    <input> fcs/throttle-cmd-norm[0] </input>
+    <input> -fcs/alt-hold-pid </input>
+    <clipto>
+      <min> 0.6 </min>
+      <max> 1.0 </max>
+    </clipto>
+  </summer>
+
+  <!-- Drives engine #1 throttle position -->
+  <summer name="fcs/throttle-pos-norm[1]">
+    <input> fcs/throttle-cmd-norm[1] </input>
+    <input> -fcs/alt-hold-pid </input>
+    <clipto>
+      <min> 0.6 </min>
+      <max> 1.0 </max>
+    </clipto>
+  </summer>
+  
+</channel>
+
+</autopilot>

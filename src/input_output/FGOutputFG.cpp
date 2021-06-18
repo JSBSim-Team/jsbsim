@@ -280,9 +280,7 @@ void FGOutputFG::SocketDataFill(void)
   net1->num_tanks = min(FG_MAX_TANKS, Propulsion->GetNumTanks()); // Max number of fuel tanks
 
   for (i = 0; i < net1->num_tanks; i++)
-  {
-    net1->fuel_quantity[i] = (float)(((FGTank *)Propulsion->GetTank(i))->GetContents());
-  }
+    net1->fuel_quantity[i] = (float)(Propulsion->GetTank(i)->GetContents());
 
   net3->num_wheels = min(FG_MAX_WHEELS, GroundReactions->GetNumGearUnits());
 

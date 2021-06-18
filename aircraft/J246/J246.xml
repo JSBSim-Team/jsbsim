@@ -505,7 +505,7 @@
         </thruster>
       </engine>
 
-      <tank type="OXIDIZER">
+      <tank type="OXIDIZER" name="Main Stage LOX">
         <!-- Tank number 2 (LOX) -->
         <location unit="IN">
           <x> 1956 </x>
@@ -521,7 +521,7 @@
         <contents unit="LBS"> 1389500 </contents>
       </tank>
 
-      <tank type="FUEL">
+      <tank type="FUEL" name="Main Stage LH2">
         <!-- Tank number 3 (LH2) -->
         <location unit="IN">
           <x> 2520 </x>
@@ -647,7 +647,7 @@
         </thruster>
       </engine>
 
-      <tank type="OXIDIZER">
+      <tank type="OXIDIZER" name="Upper Stage LOX">
         <!-- Tank number 4 (LOX) Upper Stage -->
         <location unit="IN">
           <x> 1250 </x>
@@ -663,7 +663,7 @@
         <contents unit="LBS"> 331674 </contents>
       </tank>
 
-      <tank type="FUEL">
+      <tank type="FUEL" name="Upper Stage LH2">
         <!-- Tank number 5 (LH2) Upper Stage -->
         <location unit="IN">
           <x> 1476 </x>

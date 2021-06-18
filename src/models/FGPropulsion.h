@@ -135,21 +135,16 @@ public:
   }
 
   /// Retrieves the number of tanks defined for the aircraft.
-  unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
+  size_t GetNumTanks(void) const {return Tanks.size();}
 
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container
       @return the address of the specific tank, or zero if no such tank is
               available */
-  FGTank* GetTank(unsigned int index) const {
-                      if (index < Tanks.size()) return Tanks[index];
-                      else                      return 0L;        }
-
-  /** Returns the number of fuel tanks currently actively supplying fuel */
-  int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
-
-  /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
-  int GetnumSelectedOxiTanks(void) const {return numSelectedOxiTanks;}
+  auto GetTank(unsigned int index) const {
+    assert(index < Tanks.size());
+    return Tanks[index];
+  }
 
   /** Loops the engines until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
@@ -189,14 +184,8 @@ public:
   struct FGEngine::Inputs in;
 
 private:
-  std::vector <std::shared_ptr<FGEngine>> Engines;
-  std::vector <FGTank*>     Tanks;
-  unsigned int numSelectedFuelTanks;
-  unsigned int numSelectedOxiTanks;
-  unsigned int numFuelTanks;
-  unsigned int numOxiTanks;
-  unsigned int numEngines;
-  unsigned int numTanks;
+  std::vector<std::shared_ptr<FGEngine>> Engines;
+  std::vector<std::shared_ptr<FGTank>>   Tanks;
   int ActiveEngine;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
@@ -210,12 +199,6 @@ private:
   double TotalOxidizerQuantity;
   double DumpRate;
   double RefuelRate;
-  bool IsBound;
-  bool HavePistonEngine;
-  bool HaveTurbineEngine;
-  bool HaveTurboPropEngine;
-  bool HaveRocketEngine;
-  bool HaveElectricEngine;
   void ConsumeFuel(FGEngine* engine);
 
   bool ReadingEngine;

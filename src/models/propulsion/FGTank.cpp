@@ -70,10 +70,12 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   ixx_unit = iyy_unit = izz_unit = 1.0;
   grainType = gtUNKNOWN; // This is the default
 
-  type = el->GetAttributeValue("type");
+  string type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
   else if (type == "OXIDIZER") Type = ttOXIDIZER;
   else                         Type = ttUNKNOWN;
+
+  Name = el->GetAttributeValue("name");
 
   element = el->FindElement("location");
   if (element)  vXYZ = element->FindElementTripletConvertTo("IN");
@@ -144,7 +146,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   element_Grain = el->FindElement("grain_config");
   if (element_Grain) {
 
-    strGType = element_Grain->GetAttributeValue("type");
+    string strGType = element_Grain->GetAttributeValue("type");
     if (strGType == "CYLINDRICAL")     grainType = gtCYLINDRICAL;
     else if (strGType == "ENDBURNING") grainType = gtENDBURNING;
     else if (strGType == "FUNCTION")   {
@@ -511,7 +513,20 @@ void FGTank::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      " << type << " tank holds " << Capacity << " lbs. " << type << endl;
+      string type;
+      switch (Type) {
+      case ttFUEL:
+        type = "FUEL";
+        break;
+      case ttOXIDIZER:
+        type = "OXIDIZER";
+        break;
+      default:
+        type = "UNKNOWN";
+        break;
+      }
+
+      cout << "      " << Name << " (" << type << ") tank holds " << Capacity << " lbs. " << type << endl;
       cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
       cout << "      Tank location (X, Y, Z): " << vXYZ(eX) << ", " << vXYZ(eY) << ", " << vXYZ(eZ) << endl;
       cout << "      Effective radius: " << Radius << " inches" << endl;

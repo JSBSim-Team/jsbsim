@@ -540,7 +540,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Release v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
           body: |
             JSBSim version ${{ env.VERSION }}
 
@@ -550,6 +550,7 @@ jobs:
             - Ubuntu Xenial 16.04, Bionic 18.04 or Focal 20.04 - amd64
               - `*.deb` (Debian packages)
             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
+            - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
 
             ## Changelog
           prerelease: false

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<initialize name="airborne">
+
+  <!-- 
+     This file sets up the aircraft initial conditions. It turns
+	 all of the engines on, and provides a default altitude and
+	 airspeed. This may be overridden in the script file that
+	 calls this initialization file.
+  -->
+  <running>                -1   </running>
+  <altitude unit="FT">  30000.0  </altitude>
+  <vc unit="KTS">        200.0  </vc>
+
+</initialize>

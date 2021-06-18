@@ -156,6 +156,7 @@ Element::Element(const string& nm)
     convert["PA"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["PA"];
     // Mass flow
     convert["KG/MIN"]["LBS/MIN"] = convert["KG"]["LBS"];
+    convert["KG/SEC"]["LBS/SEC"] = convert["KG"]["LBS"];
     convert ["N/SEC"]["LBS/SEC"] = 0.224808943;
     convert ["LBS/SEC"]["N/SEC"] = 1.0/convert ["N/SEC"]["LBS/SEC"];
     // Fuel Consumption

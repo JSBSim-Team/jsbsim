@@ -277,7 +277,10 @@ void FGTurboProp::Calculate(void)
   }
 
   LoadThrusterInputs();
-  Thruster->Calculate(HP * hptoftlbssec);
+  // Filters out negative powers when the propeller is not rotating.
+  double power = HP * hptoftlbssec;
+  if (RPM <= 0.1) power = max(power, 0.0);
+  Thruster->Calculate(power);
 
   RunPostFunctions();
 }
