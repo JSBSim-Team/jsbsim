@@ -190,7 +190,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: engine(s) running = %d\n",(int)isrunning);
-		return 1;
+		return true;
 	}
 	else if (prop == "u-fps")
 	{
