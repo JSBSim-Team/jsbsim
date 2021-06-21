@@ -136,7 +136,7 @@ bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 		}
 		value = fdmExec->GetPropertyValue(prop);
 	}
-	return 1;
+	return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs2)
