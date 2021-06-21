@@ -545,7 +545,6 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 
 	const char **fnames;       /* pointers to field names */
 	mxArray    *tmp;
-	char       *pdata=NULL;
 	int        ifield, nfields;
 	mxClassID  *classIDflags;
 	mwIndex    jstruct;
