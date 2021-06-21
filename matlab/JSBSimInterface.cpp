@@ -346,7 +346,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: rudder pos (deg) = %f\n",fdmExec->GetFCS()->GetDrPos()*180./M_PI);
-		return 1;
+		return true;
 	}
 	return 0;
 }
