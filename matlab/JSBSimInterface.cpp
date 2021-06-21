@@ -580,7 +580,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 			{
 				if (mxGetClassID(tmp) != classIDflags[ifield]) 
 				{
-					return 0;
+					return false;
 				} 
 				else if(!mxIsChar(tmp) && 
 					  ((mxIsComplex(tmp) || mxGetNumberOfElements(tmp)!=1)))
