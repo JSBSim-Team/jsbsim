@@ -706,10 +706,8 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Init(const mxArray *prhs1, vector<double>& statedot)
 {
-	if (statedot.size() != 19) return 0;
-	if (!Init(prhs1)){
-		return 0;
-	}
+	if (statedot.size() != 19) return false;
+	if (!Init(prhs1)) return false;
 	statedot[ 0] = _udot;
 	statedot[ 1] = _vdot;
 	statedot[ 2] = _wdot;
