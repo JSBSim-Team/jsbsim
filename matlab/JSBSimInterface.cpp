@@ -421,7 +421,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: altitude over sea level (mt) = %f\n",propagate->GetAltitudeASLmeters());
 //     }
     value = propagate->GetAltitudeASLmeters();
-    return 1;
+    return true;
   }
   else if (prop == "long-gc-deg")
   {
