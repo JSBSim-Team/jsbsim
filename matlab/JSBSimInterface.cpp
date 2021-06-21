@@ -585,7 +585,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 				else if(!mxIsChar(tmp) && 
 					  ((mxIsComplex(tmp) || mxGetNumberOfElements(tmp)!=1)))
 				{
-					return 0;
+					return false;
 				}
 			}
 		}
