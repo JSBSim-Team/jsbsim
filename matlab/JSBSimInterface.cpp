@@ -385,7 +385,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: propagate->GetUVW(3);= %f\n", propagate->GetUVW(3));
 //     }
     value = propagate->GetUVW(3);
-    return 1;
+    return true;
   }
   else if (prop == "p-rad_sec")
   {
