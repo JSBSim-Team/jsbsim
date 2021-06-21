@@ -146,7 +146,7 @@ bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs
 
 	char buf[128];
 	mwSize buflen;
-	buflen = mxGetNumberOfElements(prhs1) + 1;
+	buflen = min(mxGetNumberOfElements(prhs1) + 1, 128);
 	mxGetString(prhs1, buf, buflen);
 	const string prop = string(buf);
 	double value = *mxGetPr(prhs2);
