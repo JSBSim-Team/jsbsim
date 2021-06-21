@@ -336,7 +336,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: right aileron pos (deg) = %f\n",fdmExec->GetFCS()->GetDaRPos()*180./M_PI);
-		return 1;
+		return true;
 	}
 	else if (prop == "rudder-cmd-norm")
 	{
