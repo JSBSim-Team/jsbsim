@@ -316,7 +316,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		//	mexPrintf("\tEasy-set: psi -> quaternion = (%f,%f,%f,%f)\n",
 		//		propagate->GetVState().qAttitudeLocal(1),propagate->GetVState().qAttitudeLocal(2),
 		//		propagate->GetVState().qAttitudeLocal(3),propagate->GetVState().qAttitudeLocal(4));
-		return 1;
+		return true;
 	}
 	else if (prop == "elevator-cmd-norm")
 	{
