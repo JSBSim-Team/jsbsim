@@ -951,7 +951,7 @@ bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::HW_To_JSBSim(double input){
+void JSBSimInterface::HW_To_JSBSim(double input){
     //fcs->SetDePos(ofNorm, input); //rads
     SetPropertyValue("elevator-cmd-norm", input); //norm cmd 
     //fdmExec->GetFCS()->SetDePos(input);
