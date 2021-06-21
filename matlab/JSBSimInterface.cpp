@@ -507,7 +507,7 @@ bool JSBSimInterface::QueryJSBSimProperty(const string& prop)
 	for (unsigned i=0; i<catalog.size(); i++)
 	{
 		//mexPrintf("__%s__\n",catalog[i].c_str());
-		if (catalog[i].find(prop) != std::string::npos) return 1;
+		if (catalog[i].find(prop) != std::string::npos) return true;
 	}
 	return 0;
 }
