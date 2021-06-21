@@ -160,7 +160,7 @@ bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs
 		}
 		fdmExec->SetPropertyValue( prop, value );
 	}
-	return 1;
+	return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::SetPropertyValue(const string& prop, const double value)
