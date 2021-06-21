@@ -91,7 +91,7 @@ bool JSBSimInterface::Open(const string& acName)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Open(const mxArray *prhs)
 {
-	if (!fdmExec) return 0;
+	if (!fdmExec) return false;
 
 	char buf[128];
 	mwSize buflen;
