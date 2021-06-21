@@ -69,7 +69,7 @@ bool JSBSimInterface::Open(const string& acName)
                                SGPath("systems"),
                                acName)) {
       mexPrintf("\tERROR: JSBSim could not load the aircraft model.\n");
-    return 0;
+    return false;
     }
   _ac_model_loaded = true;
   // Print AC name
