@@ -101,7 +101,7 @@ bool JSBSimInterface::Open(const mxArray *prhs)
 
 
 	//mexEvalString("plot(sin(0:.1:pi))");
-  Open(acName);
+  return Open(acName);
 
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
