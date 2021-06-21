@@ -795,7 +795,7 @@ bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
      fcs->SetDfCmd(controls[6]);
      SetPropertyValue("gear/gear-cmd-norm", controls[7]); 
      
-     return 1; 
+     return true; 
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Init_To_JSBSim(double init_values[]){
