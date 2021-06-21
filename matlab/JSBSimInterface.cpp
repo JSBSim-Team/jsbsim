@@ -478,7 +478,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: elevator pos (rad) = %f\n",fdmExec->GetFCS()->GetDePos());
 //     }
     value = fdmExec->GetFCS()->GetDePos();
-    return 1;
+    return true;
   }
   else if (prop == "aileron-pos-rad")
   {
