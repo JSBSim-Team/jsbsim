@@ -701,12 +701,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 	_alphadot = auxiliary->Getadot();
 	_betadot = auxiliary->Getbdot();
 
-	if (!success)
-	{
-		return 0;
-	}
-	else
-		return 1;
+	return success;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Init(const mxArray *prhs1, vector<double>& statedot)
