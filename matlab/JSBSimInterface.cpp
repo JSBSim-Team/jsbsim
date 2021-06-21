@@ -728,7 +728,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1, vector<double>& statedot)
 	statedot[17] = _alphadot;
 	statedot[18] = _betadot;
 
-	return 1;
+	return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
