@@ -430,7 +430,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: geocentric longitude (deg) = %f\n",propagate->GetLongitudeDeg());
 //     }
     value = propagate->GetLongitudeDeg();
-    return 1;
+    return true;
   }
   else if (prop == "lat-gc-deg")
   {
