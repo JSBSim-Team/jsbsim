@@ -86,7 +86,7 @@ bool JSBSimInterface::Open(const string& acName)
 //   }
 //***********************************************************************/
 
-  return 1;
+  return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Open(const mxArray *prhs)
