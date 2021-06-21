@@ -439,7 +439,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: geocentric latitude (deg) = %f\n",propagate->GetLatitudeDeg());
 //     }
     value = propagate->GetLatitudeDeg();
-    return 1;
+    return true;
   }
   else if (prop == "phi-rad")
   {
