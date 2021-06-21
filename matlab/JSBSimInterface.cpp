@@ -498,7 +498,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
     value = fdmExec->GetFCS()->GetDrPos();
     return true;
   }
-  return 0;
+  return false;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::QueryJSBSimProperty(const string& prop)
