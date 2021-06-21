@@ -376,7 +376,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: propagate->GetUVW(2);= %f\n", propagate->GetUVW(2));
 //     }
     value = propagate->GetUVW(2);
-    return 1;
+    return true;
   }
   else if (prop == "w-fps")
   {
