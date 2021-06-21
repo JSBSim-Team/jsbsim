@@ -519,7 +519,6 @@ void JSBSimInterface::PrintCatalog()
     for (unsigned i=0; i<catalog.size(); i++)
         mexPrintf("%s\n",catalog[i].c_str());
     mexPrintf("-- end of catalog\n");
-	return;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Init(const mxArray *prhs1)
