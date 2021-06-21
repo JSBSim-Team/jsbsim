@@ -657,11 +657,6 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 	// see "FGInitialConditions.h"
 	// NOTE:
 
-	double vt = 
-		sqrt(
-			fdmExec->GetPropagate()->GetUVW(1) * fdmExec->GetPropagate()->GetUVW(1) + // to do State ??
-			fdmExec->GetPropagate()->GetUVW(2) * fdmExec->GetPropagate()->GetUVW(2) +
-			fdmExec->GetPropagate()->GetUVW(3) * fdmExec->GetPropagate()->GetUVW(3) );
 
 
 	//mexPrintf("Vt = %f\n",fdmExec->GetAuxiliary()->GetVt());
