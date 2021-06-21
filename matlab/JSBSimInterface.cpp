@@ -572,7 +572,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 			{
 				if( (!mxIsChar(tmp) && !mxIsNumeric(tmp)) || mxIsSparse(tmp)) 
 				{
-					return 0;
+					return false;
 				}
 				classIDflags[ifield]=mxGetClassID(tmp); 
 			} 
