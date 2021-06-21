@@ -939,7 +939,7 @@ bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
     state_array[8] = fcs->GetGearPos(); //gear, 0 is up, 1 is down. Down is default. 
     
     
-    return 1;     
+    return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
