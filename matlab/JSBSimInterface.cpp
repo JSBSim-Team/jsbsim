@@ -549,7 +549,6 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 	mxClassID  *classIDflags;
 	mwIndex    jstruct;
 	mwSize     NStructElems;
-	mwSize     ndim;
 
     // get input arguments
     nfields = mxGetNumberOfFields(prhs1);
