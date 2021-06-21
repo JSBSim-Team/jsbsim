@@ -540,7 +540,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 	
 	//*************************************************
 
-	bool success = 1;
+	bool success = true;
 
 	const char **fnames;       /* pointers to field names */
 	mxArray    *tmp;
