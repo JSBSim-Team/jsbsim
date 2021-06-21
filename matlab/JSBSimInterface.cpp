@@ -51,7 +51,7 @@ bool JSBSimInterface::Open(const string& acName)
   string rootDir = ""; // In case JSBSim directory is somewhere else. 
   if ( fdmExec->GetAircraft()->GetAircraftName() != ""  )
   {
-    return 0;
+    return false;
   }
 
   // JSBSim stuff
