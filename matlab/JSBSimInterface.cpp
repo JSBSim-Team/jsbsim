@@ -95,7 +95,7 @@ bool JSBSimInterface::Open(const mxArray *prhs)
 
 	char buf[128];
 	mwSize buflen;
-	buflen = mxGetNumberOfElements(prhs) + 1;
+	buflen = min(mxGetNumberOfElements(prhs) + 1, 128);
 	mxGetString(prhs, buf, buflen);
 	string acName = string(buf);
 
