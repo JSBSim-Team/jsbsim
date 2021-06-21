@@ -403,7 +403,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: pitch rate (rad/s) = %f\n",propagate->GetPQR(2));
 //     }
     value = propagate->GetPQR(2);
-    return 1;
+    return true;
   }
   else if (prop == "r-rad_sec")
   {
