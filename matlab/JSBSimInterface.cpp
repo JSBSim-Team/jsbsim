@@ -262,7 +262,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: geocentric longitude (deg) = %f\n",propagate->GetLongitudeDeg());
-		return 1;
+		return true;
 	}
 	else if (prop == "lat-gc-deg")
 	{
