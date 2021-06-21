@@ -487,7 +487,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: right aileron pos (rad) = %f\n",fdmExec->GetFCS()->GetDaRPos());
 //     }
     value = fdmExec->GetFCS()->GetDaRPos();
-    return 1;
+    return true;
   }
   else if (prop == "rudder-pos-rad")
   {
