@@ -864,7 +864,7 @@ bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGP
         return false;
     }
     fdmExec->RunIC();
-    return 1; 
+    return true;
     
     //Script = std::make_shared<FGScript>(this);
     //return Script->LoadScript(GetFullPath(script), delta_t, initfile);
