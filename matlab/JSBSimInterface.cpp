@@ -156,7 +156,7 @@ bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs
 		if ( !QueryJSBSimProperty(prop) ) // then try to set the full-path property, e.g. '/fcs/elevator-cmd-norm'
 		{
 				mexPrintf("\tERROR: JSBSim could not find the property '%s' in the aircraft catalog.\n",prop.c_str());
-			return 0;
+			return false;
 		}
 		fdmExec->SetPropertyValue( prop, value );
 	}
