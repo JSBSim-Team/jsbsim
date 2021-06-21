@@ -893,7 +893,7 @@ bool JSBSimInterface::Copy_States_From_JSBSim(double *state_array){
     state_array[10] = euler.Entry(2);
     state_array[11] = euler.Entry(3);
     
-    return 1;     
+    return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Pilot_From_JSBSim(double *state_array){
