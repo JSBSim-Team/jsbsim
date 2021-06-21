@@ -496,7 +496,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-set: rudder pos (deg) = %f\n",fdmExec->GetFCS()->GetDrPos());
 //     }
     value = fdmExec->GetFCS()->GetDrPos();
-    return 1;
+    return true;
   }
   return 0;
 }
