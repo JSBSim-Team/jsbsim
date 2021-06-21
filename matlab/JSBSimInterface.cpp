@@ -566,7 +566,7 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 			tmp = mxGetFieldByNumber(prhs1, jstruct, ifield);
 			if(tmp == NULL) 
 			{
-				return 0;
+				return false;
 			} 
 			if(jstruct==0) 
 			{
