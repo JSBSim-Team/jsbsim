@@ -217,7 +217,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: true flight speed (ft/s) = %f\n",auxiliary->GetVt());
-		return 1;
+		return true;
 	}
 	else if (prop == "p-rad_sec")
 	{
