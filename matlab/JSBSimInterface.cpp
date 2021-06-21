@@ -469,7 +469,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: psi-rad = %f\n",euler.Entry(3));
 //     }
     value = euler.Entry(3);
-    return 1;
+    return true;
   }
   else if (prop == "elevator-pos-rad")
   {
