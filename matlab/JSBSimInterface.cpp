@@ -394,7 +394,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: roll rate (rad/s) = %f\n",propagate->GetPQR(1));
 //     }
     value = propagate->GetPQR(1);
-    return 1;
+    return true;
   }
   else if (prop == "q-rad_sec")
   {
