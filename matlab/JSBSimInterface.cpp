@@ -849,7 +849,7 @@ bool JSBSimInterface::Copy_Init_To_JSBSim(double init_values[]){
      SetPropertyValue("lat-gc-deg", init_values[10]); 
      
      fdmExec->RunIC();
-    return 1; 
+    return true; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
