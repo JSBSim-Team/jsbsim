@@ -113,7 +113,7 @@ bool JSBSimInterface::ResetToInitialCondition()
   fdmExec->GetIC()->ResetIC(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   //delete fdmExec;   
   mexPrintf("Aircraft states are reset to IC\n");
-  return 1;
+  return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
