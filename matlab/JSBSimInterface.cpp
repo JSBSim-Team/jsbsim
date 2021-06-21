@@ -918,7 +918,7 @@ bool JSBSimInterface::Copy_Pilot_From_JSBSim(double *state_array){
     state_array[11] = auxiliary->Getqbar(); 
     
     state_array[12] = fcs->GetDeCmd(); //elevator cmd norm 
-    return 1;     
+    return true;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
