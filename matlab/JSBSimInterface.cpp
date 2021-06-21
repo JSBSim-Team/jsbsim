@@ -459,7 +459,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 //     	mexPrintf("\tEasy-get: theta-rad = %f\n",euler.Entry(2));
 //     }
     value = euler.Entry(2);
-    return 1;
+    return true;
   }
   else if (prop == "psi-rad")
   {
