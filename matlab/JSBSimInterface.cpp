@@ -861,7 +861,7 @@ bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGP
     
     if(!fdmExec->LoadScript(script, delta_t, initfile)){
         mexPrintf("Could not open a script \n"); 
-        return 0; 
+        return false;
     }
     fdmExec->RunIC();
     return 1; 
