@@ -759,7 +759,7 @@ void JSBSimInterface::RunIC()
 bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
     // throttle, aileron, elevator, rudder, mixture, runset, flap, gear
     // TODO: error handling if controls is not correct size. 
-    if(!fdmExec) return 0; 
+    if(!fdmExec) return false; 
     /*
      if(SetPropertyValue("fcs/throttle-cmd-norm", controls[0])){
          mexPrintf("1\n");
