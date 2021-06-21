@@ -226,7 +226,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 		auxiliary->Run(false);
 		//if ( verbosityLevel == eVeryVerbose )
 		//	mexPrintf("\tEasy-set: roll rate (rad/s) = %f\n",propagate->GetPQR(1));
-		return 1;
+		return true;
 	}
 	else if (prop == "q-rad_sec")
 	{
