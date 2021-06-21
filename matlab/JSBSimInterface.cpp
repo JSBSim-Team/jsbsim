@@ -799,7 +799,7 @@ bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Init_To_JSBSim(double init_values[]){
-    if(!fdmExec) return 0; 
+    if(!fdmExec) return false; 
     
     /*
      if(SetPropertyValue("u-fps", init_values[0])) {
