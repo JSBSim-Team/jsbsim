@@ -132,7 +132,7 @@ bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 		if ( !QueryJSBSimProperty(prop) )
 		{
 				mexPrintf("\tERROR: JSBSim could not find the property '%s' in the aircraft catalog.\n",prop.c_str());
-			return 0;
+			return false;
 		}
 		value = fdmExec->GetPropertyValue(prop);
 	}
