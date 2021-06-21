@@ -509,7 +509,7 @@ bool JSBSimInterface::QueryJSBSimProperty(const string& prop)
 		//mexPrintf("__%s__\n",catalog[i].c_str());
 		if (catalog[i].find(prop) != std::string::npos) return true;
 	}
-	return 0;
+	return false;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::PrintCatalog()
