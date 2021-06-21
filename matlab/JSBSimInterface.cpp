@@ -141,8 +141,8 @@ bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs2)
 {
-	if (!fdmExec) return 0;
-	if (!IsAircraftLoaded()) return 0;
+	if (!fdmExec) return false;
+	if (!IsAircraftLoaded()) return false;
 
 	char buf[128];
 	mwSize buflen;
