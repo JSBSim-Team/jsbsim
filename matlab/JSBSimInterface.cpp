@@ -359,7 +359,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
     //	mexPrintf("\tEasy-Get: engine(s) running = %i\n",fdmExec->GetPropulsion()->GetEngine(0)->GetRunning());
     //}
     value = (double)(fdmExec->GetPropulsion()->GetEngine(0)->GetRunning());
-    return 1;
+    return true;
   }
   else if (prop == "u-fps")
   {
