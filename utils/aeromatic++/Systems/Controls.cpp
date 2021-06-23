@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -29,6 +29,8 @@
  * http://www.dept.aoe.vt.edu/~mason/Mason_f/ConfigAeroTransonics.pdf
  * http://aerostudents.com/files/flightDynamics/lateralStabilityDerivatives.pdf
  * http://aerostudents.com/files/flightDynamics/longitudinalStabilityDerivatives.pdf
+ *
+ * Formula's for CLalpha wing for different configurations:
  * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
  *
  * See also:
@@ -113,7 +115,7 @@ void CableControls::set(const float* cg_loc)
     if (Vs > 0.5f)
     {
         // *** CLmax based on wing geometry and stall speed ***
-        _aircraft->_CLmax[0] = 2*Ws/(rho*Sw*Vs*Vs);
+        _aircraft->_CLmax[0] = 2.0f*Ws/(rho*Sw*Vs*Vs);
 
         if (_aircraft->_Mcrit == 0)
         {
@@ -144,7 +146,7 @@ void CableControls::set(const float* cg_loc)
     // *** Pitch moment ***
     float lh = _aircraft->_htail.arm;
     float Vh = lh*Sh/cbarw/Sw;
-  
+
     float nh = _aircraft->_htail.efficiency;
     float Ee = _aircraft->_htail.flap_ratio;	// elevator
     float ch = cbarw*sqrtf(Sh/Sw);
@@ -246,7 +248,10 @@ void CableControls::set(const float* cg_loc)
     float CL0 = _aircraft->_CL0;
     if (Vs > 0.5f)
     {
-        CL0 = CLaw[0]*(iw - a0w)+(Sh/Sw)*nh*CLah[0]*(ih - E0);
+        CL0 = CLaw[0]*(iw - a0w);
+        if (_aircraft->_wing.shape != DELTA) {
+            CL0 += (Sh/Sw)*nh*CLah[0]*(ih - E0);
+        }
         _aircraft->_CL0 = CL0;
     }
 
@@ -375,8 +380,8 @@ void CableControls::set(const float* cg_loc)
 
 std::string CableControls::lift()
 {
-    float CLalpha, CLmax, CL0, CLde, CLq, CLadot;
-    float alpha, alpha0, TC;
+    float CLalpha, CLa_vortex, CLmax, CL0, CLde, CLq, CLadot;
+    float alpha_CLmax, alpha0, TC;
     std::stringstream file;
 
     TC = _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
@@ -387,10 +392,15 @@ std::string CableControls::lift()
     CLadot = _aircraft->_CLadot;
     CLde = _aircraft->_CLde;
 
-    alpha = (CLmax-CL0)/CLalpha;
-    alpha0 = -CL0/CLalpha;
+    CLa_vortex = 0.0f;
+    if (_aircraft->_wing.shape == DELTA) { // account for vortex lift
+        CLalpha /= 3.3f;
+        CLa_vortex = 0.5f*CLmax;
+    }
+    alpha0 = CL0/CLalpha;
+    alpha_CLmax = CLmax/CLalpha;
 
-    if (alpha >= 0.60) {
+    if ((alpha0-alpha_CLmax) >= 0.88f) {
         std::cerr << std::endl;
         std::cerr << "*** ERROR: The alpha value for maximum lift is too high." << std::endl;
         std::cerr << "           This means the specified Stall Speed was too low." << std::endl;
@@ -415,11 +425,32 @@ std::string CableControls::lift()
     file << "              -1.22 " << std::setw(6) << (-0.6428*(1.0f-TC)) << std::endl;
     file << "              -1.05 " << std::setw(6) << (-0.8660*(1.0f-TC)) << std::endl;
     file << "              -0.88 " << std::setw(6) << (-1.0f*(1.0f-TC)) << std::endl;
-    file << "              " << std::setprecision(2) << (-0.6+alpha0) << " " << std::setw(6) << std::setprecision(4) << -(CLmax-(0.6*alpha*CLalpha)-CL0) << std::endl;
-    file << "              " << std::setprecision(2) << (-alpha+alpha0) << std::setprecision(4) << " " << (-CLmax+CL0) << std::endl;
-    file << "               0.00  " << std::setw(6) << CL0 << std::endl;
-    file << "               " << std::setprecision(2) << (alpha) << std::setprecision(4) << "  " << (CLmax) << std::endl;
-    file << "               0.60  " << std::setw(6) << (CLmax-(0.6*alpha*CLalpha)) << std::endl;
+
+    float alpha = alpha0-alpha_CLmax;
+    float CL = -(CLmax-(0.6*alpha_CLmax*CLalpha)-CL0);
+    file << "              " << std::setprecision(2)
+                             << alpha << " "
+                             << std::setw(6) << std::setprecision(4)
+                             << CL << std::endl;
+
+    alpha = 0.0f;
+    CL = CL0;
+    file << "               " << std::setprecision(2)
+                              << alpha << std::setprecision(4) << "  "
+                              << CL << std::endl;
+
+    alpha = alpha_CLmax;
+    CL = (CLmax);
+    file << "               " << std::setprecision(2)
+                              << alpha << std::setprecision(4) << "  "
+                              << CL << std::endl;
+
+    alpha = alpha0+alpha_CLmax;
+    CL = (CLmax-(0.6*alpha_CLmax*(CLalpha+CLa_vortex)));
+    file << "               " << std::setprecision(2)
+                              << alpha << std::setprecision(4) << "  "
+                              << CL << std::endl;
+
     file << "               0.88  " << std::setw(6) << (1.0f*(1.0f+TC)) << std::endl;
     file << "               1.05  " << std::setw(6) << (0.8660*(1.0f+TC)) << std::endl;
     file << "               1.22  " << std::setw(6) << (0.6428*(1.0f+TC)) << std::endl;
@@ -760,7 +791,7 @@ std::string CableControls::pitch()
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
     file << "       </product>" << std::endl;
-    file << "    </function>" << std::endl; 
+    file << "    </function>" << std::endl;
     file << std::endl;
     file << "    <function name=\"aero/moment/Pitch_damp\">" << std::endl;
     file << "       <description>Pitch moment due to pitch rate</description>" << std::endl;
@@ -1267,7 +1298,7 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
     float MT = 0.25f * wing.chord_mean;
 
     // Required to calculate CLalpha_wing
-    float TRC = (1.0f - TR)/(1.0f + TR);
+    float MC, TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
     float AR2 = AR*AR;
     switch (wing.shape)
@@ -1278,25 +1309,32 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
         CLaw[2] = PAR/2.0f;
         break;
     case DELTA:
-        M = 0.0f; M2 = 0.0f;
-        // The first multiplication by 3.3 accounts for vortex lift.
-        CLaw[0] = 3.3f * (2.0f*PAR) / (2.0f + sqrtf(AR2 * ((1.0f - M2 + powf((tanf(sweep_le) - 0.25f*AR*MT*TRC), 2.0f)) / powf((CLalpha_ic * sqrtf(1.0f - M2) / (2.0f*PI)), 2.0f)) + 4.0f));
+    {
+        M = 0.3f; M2 = 0.0f;
+        MC = sqrtf(1.0f - M2);
+
+        float xdmax_l = 0.93f; //  chordwise pos. of maximum airfoil thickness
+
+        CLaw[0] = 2.0f + sqrtf(AR2*((1.0/(1.0f - M2)) + powf((tanf(sweep_le) - (4.0*xdmax_l/AR)*TRC), 2.0f)/powf(CLalpha_ic/(2.0f*PI*MC), 2.0f)) + 4.0f);
 
         CLaw[1] = PAR/2.0f;
 
         M = 2.0f; M2 = M*M;
-        CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
+        MC = sqrtf(M2 - 1.0f);
+        CLaw[2] = (4.0f/MC)*(1.0f - TR/(2.0f*AR*MC));
         break;
+    }
     case VARIABLE_SWEEP:
     case STRAIGHT:
     default:
         M = 0.0f; M2 = 0.0f;
-        CLaw[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + 0.25f*AR2*(1.0f - M2)*(powf(tanf(sweep), 2.0f) + 1.0f)));
+        CLaw[0] = (PAR*powf(cosf(dihedral), 2.0f)) / (1.0f + sqrtf(1.0f + (AR2/4.0f)*(powf(tanf(sweep), 2.0f) + 1.0f - M2)));
 
         CLaw[1] = PAR/2.0f;
 
         M = 2.0f; M2 = M*M;
-        CLaw[2] = 4.0f / (sqrtf(M2 - 1.0f)*(1.0f-TR/(2.0f*AR*sqrtf(M2 - 1.0f))));
+        MC = sqrtf(M2 - 1.0f);
+        CLaw[2] = (4.0f/MC)*(1.0f - TR/(2.0f*AR*MC));
         break;
     }
 
