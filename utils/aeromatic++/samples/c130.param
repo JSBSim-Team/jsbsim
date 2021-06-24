@@ -1,0 +1,45 @@
+
+y
+y
+C130
+
+
+4                             ; Type of aircraft
+120                           ; Stall speed VS1 (clean, no flaps)
+155000                        ; Maximum takeoff weight
+83000                         ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+97.75                         ; Length
+                              ; Select a wing shape
+132.58333                     ; Wing span
+1745                          ; Wing area
+10                            ; Wing aspect ratio
+0.8568                        ; Wing taper ratio
+14.73                         ; Wing mean chord
+1                             ; Wing incidence
+2.5                           ; Wing dihedral
+0                             ; Wing sweep (quarter chord)
+491.23                        ; Htail area
+48.88                         ; Htail arm
+552.63                        ; Vtail area
+48.88                         ; Vtail arm
+
+T56-A-15
+4                             ; Number of engines
+3                             ; Engine layout
+1                             ; Engine type
+4910                          ; Engine power
+13821                         ; Maximum engine rpm
+11.5                          ; Overall pressure ratio
+860                           ; Turbine inlet temperature
+Hamilton Standard
+13.5                          ; Propeller diameter
+n
+1                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+

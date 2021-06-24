@@ -1,0 +1,45 @@
+
+y
+y
+Ercoupe
+
+
+                              ; Type of aircraft
+39.1                          ; Stall speed VS1 (clean, no flaps)
+1260                          ; Maximum takeoff weight
+838                           ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+20.08                         ; Length
+                              ; Select a wing shape
+30                            ; Wing span
+142.6                         ; Wing area
+6.31                          ; Wing aspect ratio
+1.0                           ; Wing taper ratio
+5.11                          ; Wing root chord
+2.5                           ; Wing incidence
+7                             ; Wing dihedral
+0.0                           ; Wing sweep (quarter chord)
+19.60                         ; Htail area
+13.25                         ; Htail arm
+9.30                          ; Vtail area
+13.25                         ; Vtail arm
+
+c-75-12
+1                             ; Number of engines
+0                             ; Engine layout
+                              ; Engine type
+75                            ; Engine power
+2300                          ; Maximum engine rpm
+prop_mccauley_7557
+6.25                          ; Propeller diameter
+
+
+n
+                              ; Nose or tail wheel type
+
+n
+y
+n
+

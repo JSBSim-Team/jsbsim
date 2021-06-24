@@ -1,0 +1,45 @@
+
+y
+y
+fokker50
+
+1
+4                             ; Type of aircraft
+155                           ; Stall speed VS1 (clean, no flaps)
+19990                         ; Maximum takeoff weight
+12250                         ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+25.25                         ; Length
+                              ; Select a wing shape
+29                            ; Wing span
+70                            ; Wing area
+12                            ; Wing aspect ratio
+0.4                           ; Wing taper ratio
+3.27                          ; Wing mean chord
+3.27                          ; Wing incidence
+1.25                          ; Wing dihedral
+1.24                          ; Wing sweep (quarter chord)
+15.87                         ; Htail area
+12.62                         ; Htail arm
+14.21                         ; Vtail area
+12.62                         ; Vtail arm
+
+PW125B
+2                             ; Number of engines
+3                             ; Engine layout
+1                             ; Engine type
+2013                          ; Engine power
+33300                         ; Maximum engine rpm
+15                            ; Overall pressure ratio
+816                           ; Turbine inlet temperature
+Propeller
+3.66                          ; Propeller diameter
+n
+1                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
