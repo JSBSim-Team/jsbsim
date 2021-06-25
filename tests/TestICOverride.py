@@ -92,8 +92,7 @@ class TestICOverride(JSBSimTestCase):
     def test_asl_override_vs_geod_lat(self):
         fdm = self.create_fdm()
         fdm.load_model('c310')
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'c310',
-                                                     'ellington.xml'), False)
+        fdm.load_ic('ellington.xml', True)
 
         geod_lat = fdm['ic/lat-geod-deg']
         fdm['ic/h-sl-ft'] = 35000.

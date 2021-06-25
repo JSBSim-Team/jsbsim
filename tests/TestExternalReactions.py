@@ -18,7 +18,6 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math
 import numpy as np
 import xml.etree.ElementTree as et
 
@@ -69,11 +68,8 @@ class TestExternalReactions(JSBSimTestCase):
 
     def test_body_frame(self):
         fdm = CreateFDM(self.sandbox)
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         fdm.load_model('f16')
-
-        aircraft_path = os.path.join(aircraft_path, 'f16')
-        fdm.load_ic(os.path.join(aircraft_path, 'reset00.xml'), False)
+        fdm.load_ic('reset00.xml', True)
         fdm.run_ic()
 
         self.assertAlmostEqual(fdm['external_reactions/pushback/location-x-in'],
@@ -203,7 +199,7 @@ class TestExternalReactions(JSBSimTestCase):
     def test_moment(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                        'ball_chute.xml')
-        tree, aircraft_name, aircraft_path = CopyAircraftDef(script_path,
+        tree, aircraft_name, _ = CopyAircraftDef(script_path,
                                                              self.sandbox)
         extReact_element = tree.getroot().find('external_reactions')
         moment_element = et.SubElement(extReact_element, 'moment')

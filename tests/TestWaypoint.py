@@ -18,7 +18,7 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, math
+import math
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest
 
 
@@ -26,8 +26,7 @@ class TestWaypoint(JSBSimTestCase):
     def test_waypoint(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('c310')
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.load_ic(os.path.join(aircraft_path, 'c310', 'reset00'), False)
+        fdm.load_ic('reset00', True)
 
         a = 20925646.32546  # WGS84 semimajor axis length in feet
         b = 20855486.5951   # WGS84 semiminor axis length in feet
