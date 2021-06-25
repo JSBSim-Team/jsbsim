@@ -1,12 +1,5 @@
 # Developer documentation
-**[Source Code](#downloading-the-source)** |
-**[Build](#building-jsbsim)**                   |
-**[Tests](#testing-jsbsim)**                    |
-**[Installation](#installing-jsbsim)**          |
-**[Packaging](#packaging-jsbsim-for-releases)** |
-**[C++ API](#c-api-documentation)**             |
-**[FAQ](#frequently-asked-questions)**
----
+
 ## Downloading the source
 
 The GitHub repository of JSBSim is reachable at this link: [github.com/JSBSim-Team/jsbsim](https://github.com/JSBSim-Team/jsbsim).
