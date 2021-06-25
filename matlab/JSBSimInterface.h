@@ -48,7 +48,7 @@ public:
     void RunIC();
     void LoadIC(SGPath ResetName);
     
-    bool HW_To_JSBSim(double input); 
+    void HW_To_JSBSim(double input); 
     double HW_From_JSBSim(); 
 
 	bool IsAircraftLoaded(){return _ac_model_loaded;}

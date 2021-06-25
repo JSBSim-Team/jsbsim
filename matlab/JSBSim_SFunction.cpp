@@ -518,7 +518,6 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 	 double *inputs   = (double *) ssGetDWork(S,0);
 	 double *states = (double *) ssGetDWork(S,1);
 	 double *controls = (double *) ssGetDWork(S,3);
-	 double *propulsion = (double *) ssGetDWork(S,4); //placeholder, not yet fixed 
 	 double *pilot = (double *) ssGetDWork(S,5);
      
 	 int k;

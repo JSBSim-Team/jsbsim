@@ -95,7 +95,7 @@ bool JSBSimInterface::Open(const mxArray *prhs)
 
 	char buf[128];
 	mwSize buflen;
-	buflen = min(mxGetNumberOfElements(prhs) + 1, 128);
+	buflen = std::min<size_t>(mxGetNumberOfElements(prhs) + 1, 128);
 	mxGetString(prhs, buf, buflen);
 	string acName = string(buf);
 
@@ -123,7 +123,7 @@ bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 
 	char buf[128];
 	mwSize buflen;
-	buflen = min(mxGetNumberOfElements(prhs1) + 1, 128);
+	buflen = std::min<size_t>(mxGetNumberOfElements(prhs1) + 1, 128);
 	mxGetString(prhs1, buf, buflen);
 	const string prop = string(buf);
 
@@ -146,7 +146,7 @@ bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs
 
 	char buf[128];
 	mwSize buflen;
-	buflen = min(mxGetNumberOfElements(prhs1) + 1, 128);
+	buflen = std::min<size_t>(mxGetNumberOfElements(prhs1) + 1, 128);
 	mxGetString(prhs1, buf, buflen);
 	const string prop = string(buf);
 	double value = *mxGetPr(prhs2);
@@ -601,9 +601,6 @@ bool JSBSimInterface::Init(const mxArray *prhs1)
 	// nfields is the number of fields in the passed Matlab struct (ic).
 	// It may have more fields, but the first two must be "name" and "value"
 	// The structure possesses generally a number of NStructElems elements.
-
-    ndim = mxGetNumberOfDimensions(prhs1);
-    dims = mxGetDimensions(prhs1);
 
 	// loop on the element of the structure
 	for (jstruct=0; jstruct<NStructElems; jstruct++) 
