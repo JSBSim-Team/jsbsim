@@ -207,7 +207,7 @@ void FGPropeller::ResetToIC(void)
 
 double FGPropeller::Calculate(double EnginePower)
 {
-  FGColumnVector3 vDXYZ = MassBalance->StructuralToBody(vActingXYZn);
+  FGColumnVector3 vDXYZ = MassBalance->StructuralToBody(vXYZn);
   const FGMatrix33& mT = Transform();
   // Local air velocity is obtained from Stevens & Lewis' "Aircraft Control and
   // Simualtion (3rd edition)" eqn 8.2-1
@@ -225,7 +225,7 @@ double FGPropeller::Calculate(double EnginePower)
   double Vtip = RPS * Diameter * M_PI;
   HelicalTipMach = sqrt(Vtip*Vtip + Vel*Vel) / in.Soundspeed;
 
-  if (RPS > 0.0) J = Vel / (Diameter * RPS); // Calculate J normally
+  if (RPS > 0.01) J = Vel / (Diameter * RPS); // Calculate J normally
   else           J = Vel / Diameter;
 
   PowerAvailable = EnginePower - GetPowerRequired();
@@ -250,12 +250,12 @@ double FGPropeller::Calculate(double EnginePower)
   // Since Thrust and Vel can both be negative we need to adjust this formula
   // To handle sign (direction) separately from magnitude.
   double Vel2sum = Vel*abs(Vel) + 2.0*Thrust/(rho*Area);
-
+  
   if( Vel2sum > 0.0)
     Vinduced = 0.5 * (-Vel + sqrt(Vel2sum));
   else
     Vinduced = 0.5 * (-Vel - sqrt(-Vel2sum));
-
+    
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
   // and the relative wind that goes through the propeller disk.
@@ -284,7 +284,7 @@ double FGPropeller::Calculate(double EnginePower)
 
   FGColumnVector3 vH(Ixx*omega*Sense*Sense_multiplier, 0.0, 0.0);
 
-  if (omega > 0.0) ExcessTorque = PowerAvailable / omega;
+  if (omega > 0.01) ExcessTorque = PowerAvailable / omega;
   else             ExcessTorque = PowerAvailable / 1.0;
 
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * in.TotalDeltaT) * 60.0;
@@ -360,7 +360,7 @@ double FGPropeller::GetPowerRequired(void)
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
 
   double RPS = RPM / 60.0;
-  double local_RPS = RPS < 0.01 ? 0.01 : RPS;
+  double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
 
   PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*in.Density;
 
