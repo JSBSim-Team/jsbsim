@@ -1,0 +1,46 @@
+
+y
+y
+f16
+
+
+2                             ; Type of aircraft
+160                           ; Stall speed VS1 (clean, no flaps)
+48000                         ; Maximum takeoff weight
+17400                         ; Empty weight
+9496                          ; Inertia Ixx
+55814                         ; Inertia Iyy
+63100                         ; Inertia Izz
+49.491666667                  ; Length
+1                             ; Select a wing shape
+30                            ; Wing span
+300                           ; Wing area
+3                             ; Wing aspect ratio
+0.2275                        ; Wing taper ratio
+11.32                         ; Wing mean chord
+0                             ; Wing incidence
+0                             ; Wing dihedral
+30.0                          ; Wing sweep (quarter chord)
+63.7                          ; Htail area
+14.7                          ; Htail arm
+54.75                         ; Vtail area + 2x ventral fin
+14.7                          ; Vtail arm
+
+F100
+1                             ; Number of engines
+2                             ; Engine layout
+2                             ; Engine type
+14590                         ; Engine mil. thrust
+0.76                          ; Bypass ratio
+25                            ; Overall pressure ratio
+y
+
+
+1                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
+
+y

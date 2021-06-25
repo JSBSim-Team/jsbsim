@@ -1,0 +1,44 @@
+
+y
+y
+c172p
+
+
+                              ; Type of aircraft
+49                            ; Stall speed VS1 (clean, no flaps)
+2300                          ; Maximum takeoff weight
+1403                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+26.917                        ; Length
+                              ; Select a wing shape
+35.833                        ; Wing span
+174                           ; Wing area
+7.52                          ; Wing aspect ratio
+0.672                         ; Wing taper ratio
+5.333                         ; Wing mean chord
+1.5                           ; Wing incidence
+1.733                         ; Wing dihedral
+                              ; Wing sweep (quarter chord)
+21.56                         ; Htail area
+15.7                          ; Htail arm
+11.24                         ; Vtail area
+15.7                          ; Vtail arm
+
+IO360
+1                             ; Number of engines
+                              ; Engine layout
+                              ; Engine type
+160                           ; Engine power
+2700                          ; Maximum engine rpm
+Propeller
+6.25                          ; Propeller diameter
+
+
+n
+                              ; Nose or tail wheel type
+
+
+
+

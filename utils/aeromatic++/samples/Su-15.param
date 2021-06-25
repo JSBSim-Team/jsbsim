@@ -1,0 +1,48 @@
+
+y
+y
+SU-15
+
+0
+2                             ; Type of aircraft
+162                           ; Stall speed VS1 (clean, no flaps)
+39683                         ; Maximum takeoff weight
+23722                         ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+64.16667                      ; Length
+0                             ; Select a wing shape
+30.58333                      ; Wing span
+394                           ; Wing area
+100                           ; Wing aspect ratio
+                              ; Wing taper ratio
+                              ; Wing root chord
+0                             ; Wing incidence
+2                             ; Wing dihedral
+60                            ; Wing sweep (quarter chord)
+                              ; Htail area
+                              ; Htail arm
+                              ; Vtail area
+                              ; Vtail arm
+
+ Klimov RD-45
+2                             ; Number of engines
+2                             ; Engine layout
+2                             ; Engine type
+5955                          ; Engine mil. thrust
+                              ; Bypass ratio
+                              ; Overall pressure ratio
+y
+n
+                              ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
+
+
+
+
+

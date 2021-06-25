@@ -1,0 +1,36 @@
+
+y
+y
+SGS-1-36
+
+0
+0                             ; Type of aircraft
+31                            ; Stall speed VS1 (clean, no flaps)
+920                           ; Maximum takeoff weight
+675                           ; Empty weight
+1014.4                        ; Inertia Ixx
+641.3                         ; Inertia Iyy
+1633                          ; Inertia Izz
+20.6                          ; Length
+0                             ; Select a wing shape
+46.17                         ; Wing span
+140.8                         ; Wing area
+15.15                         ; Wing aspect ratio
+0.451                         ; Wing taper ratio
+4.20                          ; Wing root chord
+1.0                           ; Wing incidence
+4.0                           ; Wing dihedral
+0.0                           ; Wing sweep (quarter chord)
+13.2                          ; Htail area
+8.76                          ; Htail arm
+9.10                          ; Vtail area
+8.76                          ; Vtail arm
+n
+y
+n
+2
+y
+n
+y
+n
+n

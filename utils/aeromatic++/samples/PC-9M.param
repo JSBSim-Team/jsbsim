@@ -1,0 +1,45 @@
+
+y
+y
+PC-9M
+
+1
+1                             ; Type of aircraft
+143                           ; Stall speed VS1 (clean, no flaps)
+3200                          ; Maximum takeoff weight
+1725                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+10.14                         ; Length
+                              ; Select a wing shape
+10.124                        ; Wing span
+16.29                         ; Wing area
+6.29                          ; Wing aspect ratio
+0.75                          ; Wing taper ratio
+1.65                          ; Wing mean chord
+1                             ; Wing incidence
+7                             ; Wing dihedral
+1                             ; Wing sweep (quarter chord)
+4.85                          ; Htail area
+5.03                          ; Htail arm
+2.22                          ; Vtail area
+5.03                          ; Vtail arm
+
+PT6A-62
+1                             ; Number of engines
+                              ; Engine layout
+1                             ; Engine type
+857                           ; Engine power
+39000                         ; Maximum engine rpm
+13                            ; Overall pressure ratio
+                              ; Turbine inlet temperature
+Propeller
+2.440                         ; Propeller diameter
+n
+
+
+                              ; Nose or tail wheel type
+
+
+

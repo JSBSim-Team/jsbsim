@@ -1,0 +1,38 @@
+
+y
+y
+Avro Vulcan
+y
+0
+2                             ; Type of aircraft
+135                           ; Stall speed VS1 (clean, no flaps)
+250000                        ; Maximum takeoff weight
+106000                        ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+105.5                         ; Length
+2                             ; Select a wing shape
+111                           ; Wing span
+3964                          ; Wing area
+3.1082                        ; Wing aspect ratio
+0.04                          ; Wing taper ratio
+68.6764                       ; Wing root chord
+0                             ; Wing incidence
+-0.85                         ; Wing dihedral
+45.0845                       ; Wing sweep (quarter chord)
+                              ; Htail area
+                              ; Htail arm
+                              ; Vtail area
+                              ; Vtail arm
+1                             ; Control system
+yes
+yes
+0                             ; Nose or tail wheel type
+
+
+
+yes
+
+
+
