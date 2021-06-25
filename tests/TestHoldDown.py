@@ -18,7 +18,6 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, ExecuteUntil
 
 
@@ -26,8 +25,7 @@ class TestHoldDown(JSBSimTestCase):
     def test_static_hold_down(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('J246')
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.load_ic(os.path.join(aircraft_path, 'J246', 'LC39'), False)
+        fdm.load_ic('LC39', True)
         fdm['forces/hold-down'] = 1.0
         fdm.run_ic()
         h0 = fdm['position/vrp-radius-ft']
@@ -42,8 +40,7 @@ class TestHoldDown(JSBSimTestCase):
     def test_dynamic_hold_down(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('J246')
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.load_ic(os.path.join(aircraft_path, 'J246', 'LC39'), False)
+        fdm.load_ic('LC39', True)
         fdm['forces/hold-down'] = 1.0
         fdm.run_ic()
         h0 = fdm['position/vrp-radius-ft']

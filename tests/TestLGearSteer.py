@@ -18,7 +18,6 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os
 import xml.etree.ElementTree as et
 from JSBSim_utils import JSBSimTestCase, RunTest, CopyAircraftDef
 import fpectl
@@ -28,8 +27,7 @@ class TestLGearSteer(JSBSimTestCase):
     def test_direct_steer(self):
         fdm = self.create_fdm()
         fdm.load_model('c172r')
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.load_ic(os.path.join(aircraft_path, 'c172r', 'reset00'), False)
+        fdm.load_ic('reset00', True)
         fdm.run_ic()
         self.assertAlmostEqual(fdm['fcs/steer-cmd-norm'], 0.0)
         self.assertAlmostEqual(fdm['fcs/steer-pos-deg'], 0.0)
@@ -57,8 +55,7 @@ class TestLGearSteer(JSBSimTestCase):
     def test_steer_with_fcs(self):
         fdm = self.create_fdm()
         fdm.load_model('L410')
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
-        fdm.load_ic(os.path.join(aircraft_path, 'L410', 'reset00'), False)
+        fdm.load_ic('reset00', True)
         fdm.run_ic()
         self.assertAlmostEqual(fdm['fcs/steer-cmd-norm'], 0.0)
         self.assertAlmostEqual(fdm['fcs/steer-pos-deg'], 0.0)

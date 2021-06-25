@@ -19,7 +19,6 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os
 import xml.etree.ElementTree as et
 from JSBSim_utils import JSBSimTestCase, ExecuteUntil, RunTest
 
@@ -27,11 +26,8 @@ from JSBSim_utils import JSBSimTestCase, ExecuteUntil, RunTest
 class TestSimTimeReset(JSBSimTestCase):
     def test_no_script(self):
         fdm = self.create_fdm()
-        aircraft_path = self.sandbox.path_to_jsbsim_file('aircraft')
         fdm.load_model('c172x')
-
-        aircraft_path = os.path.join(aircraft_path, 'c172x')
-        fdm.load_ic(os.path.join(aircraft_path, 'reset01.xml'), False)
+        fdm.load_ic('reset01.xml', True)
         fdm.run_ic()
 
         self.assertEqual(fdm['simulation/sim-time-sec'], 0.0)

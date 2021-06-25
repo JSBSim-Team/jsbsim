@@ -26,8 +26,7 @@ class TestKinematic(JSBSimTestCase):
     def testKinematicTiming(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('c172r')
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'c172r',
-                                                     'reset00'), False)
+        fdm.load_ic('reset00', True)
         fdm.run_ic()
         self.assertEqual(fdm['fcs/flap-cmd-norm'], 0.0)
         self.assertEqual(fdm['fcs/flap-pos-deg'], 0.0)
@@ -87,8 +86,7 @@ class TestKinematic(JSBSimTestCase):
     def testKinematicAndTrim(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('p51d')
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'p51d',
-                                                     'reset01'), False)
+        fdm.load_ic('reset01', True)
         self.assertEqual(fdm['gear/gear-cmd-norm'], 1.0)
         # Set the landing gears up. Since the command is equal to 1.0, the
         # <kinematic> system will trigger the gear down sequence.
@@ -111,8 +109,7 @@ class TestKinematic(JSBSimTestCase):
     def testKinematicSetInitialValue(self):
         fdm = CreateFDM(self.sandbox)
         fdm.load_model('p51d')
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'p51d',
-                                                     'reset01'), False)
+        fdm.load_ic('reset01', True)
         fdm.run_ic()
 
         fdm['gear/gear-cmd-norm'] = 0.5
@@ -136,8 +133,7 @@ class TestKinematic(JSBSimTestCase):
         fdm.set_aircraft_path('aircraft')
         fdm.load_model(aircraft_name)
 
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', aircraft_name,
-                                                     'reset00'), False)
+        fdm.load_ic('reset00', True)
         fdm.run_ic()
         fdm['fcs/flap-cmd-norm'] = 12.
         ExecuteUntil(fdm, 2.2)

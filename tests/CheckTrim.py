@@ -35,8 +35,7 @@ class CheckTrim(JSBSimTestCase):
 
         fdm = self.create_fdm()
         fdm.load_model('J246')
-        fdm.load_ic(self.sandbox.path_to_jsbsim_file('aircraft', 'J246',
-                                                     'LC39'), False)
+        fdm.load_ic('LC39', True)
         fdm.run_ic()
 
         # Check that the SRBs are not ignited
