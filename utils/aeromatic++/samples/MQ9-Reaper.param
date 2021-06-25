@@ -1,0 +1,46 @@
+
+y
+y
+MQ-9 Reaper
+
+
+                              ; Type of aircraft
+80                            ; Stall speed VS1 (clean, no flaps)
+10494                         ; Maximum takeoff weight
+4901                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+36.083333                     ; Length
+                              ; Select a wing shape
+65.58333                      ; Wing span
+257.283                       ; Wing area
+12                            ; Wing aspect ratio
+                              ; Wing taper ratio
+3.92                          ; Wing mean chord
+                              ; Wing incidence
+2                             ; Wing dihedral
+5                             ; Wing sweep (quarter chord)
+                              ; Htail area
+                              ; Htail arm
+                              ; Vtail area
+                              ; Vtail arm
+
+TPE331-10
+1                             ; Number of engines
+2                             ; Engine layout
+1                             ; Engine type
+940                           ; Engine power
+39000                         ; Maximum engine rpm
+10.55                         ; Overall pressure ratio
+1300                          ; Turbine inlet temperature
+Propeller
+8                             ; Propeller diameter
+n
+
+
+                              ; Nose or tail wheel type
+
+n
+n
+n

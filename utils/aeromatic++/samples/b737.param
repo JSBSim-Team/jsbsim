@@ -1,0 +1,47 @@
+
+y
+y
+b737-700
+y
+0
+3                             ; Type of aircraft
+116                           ; Stall speed VS1 (clean, no flaps)
+155500                        ; Maximum takeoff weight
+97010                         ; Empty weight
+44500                         ; Inertia Ixx
+2141000                       ; Inertia Iyy
+2588000                       ; Inertia Izz
+109.583333                    ; Length
+                              ; Select a wing shape
+112.6                         ; Wing span
+1341.0                        ; Wing area
+9.44                          ; Wing aspect ratio
+0.278                         ; Wing taper ratio
+12.9842                       ; Wing mean chord
+1                             ; Wing incidence
+6                             ; Wing dihedral
+25.02                         ; Wing sweep (quarter chord)
+352.8                         ; Htail area
+58.06                         ; Htail arm
+284.6                         ; Vtail area
+53.57                         ; Vtail arm
+
+CFM56
+2                             ; Number of engines
+3                             ; Engine layout
+2                             ; Engine type
+19500                         ; Engine mil. thrust
+5.5                           ; Bypass ratio
+32.8                          ; Overall pressure ratio
+
+
+
+1                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
+y
+y
+y

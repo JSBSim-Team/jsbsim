@@ -1,0 +1,44 @@
+
+y
+y
+J3Cub
+
+
+0                             ; Type of aircraft
+33                            ; Stall speed VS1 (clean, no flaps)
+1220                          ; Maximum takeoff weight
+765                           ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+22.41667                      ; Length
+                              ; Select a wing shape
+35.25                         ; Wing span
+178.5                         ; Wing area
+6.944                         ; Wing aspect ratio
+1.0                           ; Wing taper ratio
+5.25                          ; Wing mean chord
+2                             ; Wing incidence
+5                             ; Wing dihedral
+                              ; Wing sweep (quarter chord)
+24.5                          ; Htail area
+13.2                          ; Htail arm
+10.2                          ; Vtail area
+13.4                          ; Vtail arm
+
+Continental C90
+1                             ; Number of engines
+                              ; Engine layout
+                              ; Engine type
+95                            ; Engine power
+2300                          ; Maximum engine rpm
+CM7445 MCCauley
+6.166667                      ; Propeller diameter
+
+
+n
+1                             ; Nose or tail wheel type
+y
+n
+n
+n

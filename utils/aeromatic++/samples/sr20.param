@@ -1,0 +1,44 @@
+
+y
+y
+SR-20
+
+
+0                             ; Type of aircraft
+65                            ; Stall speed VS1 (clean, no flaps)
+3000                          ; Maximum takeoff weight
+2050                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+26                            ; Length
+                              ; Select a wing shape
+35.5                          ; Wing span
+135.2                         ; Wing area
+9.1                           ; Wing aspect ratio
+0.54                          ; Wing taper ratio
+5                             ; Wing root chord
+                              ; Wing incidence
+4.5                           ; Wing dihedral
+                              ; Wing sweep (quarter chord)
+                              ; Htail area
+                              ; Htail arm
+                              ; Vtail area
+                              ; Vtail arm
+
+IO360
+1                             ; Number of engines
+                              ; Engine layout
+                              ; Engine type
+200                           ; Engine power
+2800                          ; Maximum engine rpm
+3-blade
+6.25                          ; Propeller diameter
+
+
+n
+                              ; Nose or tail wheel type
+
+
+
+
