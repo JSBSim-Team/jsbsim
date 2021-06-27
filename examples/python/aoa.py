@@ -3,7 +3,6 @@
 # Calculation required by aircraft icing enginering
 
 import jsbsim
-from IPython.core.display import display, HTML
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import matplotlib.style as style
@@ -39,7 +38,7 @@ weight=["light","mid","heavy"]
 cgOrig=float(changeCG(0,True))
 
 #vary CG in the study
-cgPos=[cgOrig*1.02,cgOrig*0.98]
+cgPos=[cgOrig*0.95,cgOrig*1.05]
 
 #vary altitude
 h_ft=[8000,30000]
