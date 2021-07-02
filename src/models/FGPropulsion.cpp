@@ -802,6 +802,7 @@ void FGPropulsion::bind(void)
 {
   typedef double (FGPropulsion::*PMF)(int) const;
   typedef int (FGPropulsion::*iPMF)(void) const;
+  typedef bool (FGPropulsion::*bPMF)(void) const;
 
   IsBound = true;
   PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning);
@@ -827,6 +828,7 @@ void FGPropulsion::bind(void)
   TotalOxidizerQuantity = PropertyManager->CreatePropertyObject<double>("propulsion/total-oxidizer-lbs");
   refuel = PropertyManager->CreatePropertyObject<bool>("propulsion/refuel");
   dump = PropertyManager->CreatePropertyObject<bool>("propulsion/fuel_dump");
+  PropertyManager->Tie("propulsion/fuel_freeze", this, (bPMF)nullptr, &FGPropulsion::SetFuelFreeze);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
