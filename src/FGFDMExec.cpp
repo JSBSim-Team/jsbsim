@@ -86,7 +86,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   IsChild = false;
   holding = false;
   Terminate = false;
-  ResetMode = 0;
   RandomSeed = 0;
   HoldDown = false;
 
@@ -424,13 +423,6 @@ bool FGFDMExec::Run(void)
   for (unsigned int i = 0; i < Models.size(); i++) {
     LoadInputs(i);
     Models[i]->Run(holding);
-  }
-
-  if (ResetMode) {
-    unsigned int mode = ResetMode;
-
-    ResetMode = 0;
-    ResetToInitialConditions(mode);
   }
 
   if (Terminate) success = false;
