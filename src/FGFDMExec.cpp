@@ -691,7 +691,7 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 {
   if (Constructing) return;
 
-  if (mode == 1) Output->SetStartNewOutput();
+  if (mode&0x1) Output->SetStartNewOutput();
 
   InitializeModels();
 
@@ -700,7 +700,8 @@ void FGFDMExec::ResetToInitialConditions(int mode)
   else
     Setsim_time(0.0);
 
-  RunIC();
+  if(!(mode & 0x2))
+     RunIC();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

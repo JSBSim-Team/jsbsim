@@ -457,7 +457,9 @@ public:
   /** Resets the initial conditions object and prepares the simulation to run
       again. If mode is set to 1 the output instances will take special actions
       such as closing the current output file and open a new one with a
-      different name.
+      different name. If mode & 0x2 is non-zero the method will not perform
+      a RunIC() after reseting (which is useful if you want to manually RunIC()
+      later after reconfiguring other parameters).
       @param mode Sets the reset mode.*/
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
