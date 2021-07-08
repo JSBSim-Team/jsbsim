@@ -47,38 +47,8 @@ public:
     void Update();
     void RunIC();
     void LoadIC(SGPath ResetName);
-    
-    void HW_To_JSBSim(double input); 
-    double HW_From_JSBSim(); 
 
 	bool IsAircraftLoaded(){return _ac_model_loaded;}
-	/// Set an initial state
-	/*
-        *prhs1 is a Matlab structure of names/values couples, 
-        e.g. 
-        ic( 1).name  = 'u-fps';
-        ic( 1).value = 80;
-        ic( 2).name  = 'v-fps';
-        ic( 2).value = 20;
-        ic( 3).name  = 'w-fps';
-        ic( 3).value = 10;
-	*/
-	bool Init(const mxArray *prhs1);
-
-	/// put the 16 dotted quantities into statedot:
-	/*
-	dot of (u,v,w,p,q,r,q1,q2,q3,q4,x,y,z,phi,theta,psi)
-	*/
-	bool Init(const mxArray *prhs1, vector<double>& statedot);
-
-  /// Set an initial state
-  /*
-    *prhs1 is a Matlab structure of strings/values couples,
-      e.g. ['u','v','w', 'p','q','r', 'phi','tht','psi', 'lat','lon','h' ]
-      [ 80,0,0, 0,0,0, 0,2,0, 36,44,1000 ]
-      where
-      (*rhs1)(4).name = 'p'; (*rhs1)(1).value = 80;
-  */
   bool ResetToInitialCondition(void);
 
 	// Wrapper functions to the FGFDMExec class

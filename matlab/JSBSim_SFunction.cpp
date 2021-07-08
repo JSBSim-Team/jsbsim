@@ -1,8 +1,13 @@
-/* JSBSIm SFunction 2021-03-21
+/* JSBSIm SFunction 2021-07-08
  *
  * Several changes have been made to integrate Simulink with JSBSim Version 1.1.6
+ * For the original code, see 
+ * https://se.mathworks.com/matlabcentral/fileexchange/25042-jsbsim-s-function-gui-0-3
+ * and 
+ * https://github.com/podhrmic/JSBSim-Matlab
+ * A big thanks to Michal Podhradsky for the work done. 
  *
- * SFunction block parameters changed to: 
+ * SFunction block parameters are changed to: 
  * 'ac_name_string', [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg 
  *   phi-rad theta-rad psi-rad],
  * [throttle-cmd-norm aileron-cmd-norm elevator-cmd-norm rudder-cmd-norm mixture-cmd-norm set-running flaps-cmd-norm gear-cmd-norm],
@@ -27,22 +32,11 @@
  * It is currently needed to run the clearSF.m function in the command window 
  * in matlab before each simulation. This should be fixed. 
  *
- * 2021-06-16 Tilda Sikström
+ * 2021-07-08 Tilda Sikström
  * Linköping, Sweden 
  *
- *
- *  ***********************************************************************************************
- * JSBSim SFunction GUI version 0.3
- * The state vector has been simplified to 12 states instead of 19.  This has been done as a result
- * of needing to simplify the state vector for the upcoming trim and linearization functions
- * The calculated outputs vector has now been expanded to show some of the data missing from the state
- * vector, with the exception of the quaternoins, which may be added later.
- * The new GUI allows convenient control of all
- * initialization parameters using both sliders and text boxes.  The
- * simulink model, aircraft model, verbosity, JSBSim delta time, initial controls,
- * and initial states can all be controlled through the GUI.  
- * A JSBSim Multiplier function has been added to increase the execution rate of the simulation.
- * This allows JSBSim to complete from 1 to 100 simulation cycles for every Simulink cycle.
+ * 
+ * ***********************************************************************************************
  * **************************************************************************************************
  * Bug fixes
  * %%% Fixed issues with Debug Verbosity settings
@@ -211,7 +205,6 @@ static void mdlInitializeSizes(SimStruct *S)
     /* if (!ssSetNumInputPorts(S, 1)) return; */
 	ssSetNumInputPorts(S, 1);
     ssSetInputPortWidth(S, 0, 8);//[thr ail el rud mxtr run flap gear]
-    //ssSetInputPortWidth(S, 1, 1); //HW input 
     
     /* ssSetInputPortRequiredContiguous(S, 0, true); /*direct input signal access*/
 
@@ -234,8 +227,6 @@ static void mdlInitializeSizes(SimStruct *S)
 	ssSetOutputPortWidth(S, 3, 13);//Calculated outputs [pilot-Nz alpha alpha-dot beta beta-dot vc-fps vc-kts 
  						           //					 Vt-fps vg-fps mach climb-rate qbar-psf el-cmd-norm]    
     
-    //ssSetOutputPortWidth(S, 4, 1); //Hardware output vector 
-    
 	//ssSetNumSampleTimes(S, 1);
     if(!ssSetNumDWork(   S, 6)) return; //HW change 
 
@@ -256,13 +247,6 @@ static void mdlInitializeSizes(SimStruct *S)
 
 	ssSetDWorkWidth(     S, 5, ssGetOutputPortWidth(S,3));//Work vector for calculated outputs
     ssSetDWorkDataType(  S, 5, SS_DOUBLE);	
-
-    //ssSetDWorkWidth(     S, 6, ssGetInputPortWidth(S,1));//Work vector for input port for HW 
-    //ssSetDWorkDataType(  S, 6, SS_DOUBLE); /* use SS_DOUBLE if needed */
-    
-    //ssSetDWorkWidth(     S, 7, ssGetOutputPortWidth(S,4));//Work vector for output port for HW 
-    //ssSetDWorkDataType(  S, 7, SS_DOUBLE); /* use SS_DOUBLE if needed */
-
     
 	ssSetNumPWork(S, 1); // reserve element in the pointers vector
                          // to store a C++ object
@@ -497,8 +481,6 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 
 	 JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];   // retrieve C++ object pointers vector
      
-     //mexPrintf("Start update \n");
-     
 	 real_T *x2 = ssGetRealDiscStates(S);
 	 //real_T *x = ssGetContStates(S);
 	 InputRealPtrsType uPtrs = ssGetInputPortRealSignalPtrs(S,0); // Input 
@@ -530,8 +512,7 @@ static void mdlOutputs(SimStruct *S, int_T tid)
      
      double ctrl_vec[8] = {throttle, aileron, elevator, rudder, mixture, runset, flaps, gear};
 
-     if(!script_bool){
-         //double ctrl_vec[8] = {throttle, aileron, elevator, rudder, mixture, runset, flaps, gear};                
+     if(!script_bool){            
          if(JII->Copy_Controls_To_JSBSim(ctrl_vec)){
              //mexPrintf("Success to copy controls \n");
          }    
@@ -588,13 +569,6 @@ static void mdlTerminate(SimStruct *S)
 	
 	JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];   // retrieve C++ object pointers vector
         delete JII; 
-	//
-    /*if(ssGetPWork(S)[0] != NULL){
-        mexPrintf("Work vector not NULL. \n"); 
-        ssSetPWorkValue(S,0,NULL);
-        mexPrintf("Work vector set to NULL. \n");
-    }*/
-    //delete &FDMExec;
 	mexPrintf("\n");
 	mexPrintf("Simulation completed.\n");
 	mexPrintf("Remember to reset the program by typing clearSF in the matlab command window! \n");

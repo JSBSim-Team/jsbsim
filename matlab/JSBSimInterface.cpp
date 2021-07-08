@@ -3,8 +3,7 @@
 #include <models/FGAccelerations.h>
 #include <math/FGQuaternion.h>
 
-/* 2021-03-21 compiles with JSBSim 1.1.5
- * Compiles with JSBSim checkout a59596f8f0d4c7b4f7ba24e99997bc2071d6cb72
+/* 2021-07-08 compiles with JSBSim 1.1.6
  */
 
 JSBSimInterface::JSBSimInterface(void)
@@ -13,7 +12,6 @@ JSBSimInterface::JSBSimInterface(void)
 	fdmExec = new FGFDMExec;
 	propagate = fdmExec->GetPropagate().get();
 	accel = fdmExec->GetAccelerations().get();
-	accel->InitModel();
 	auxiliary = fdmExec->GetAuxiliary().get();
 	aerodynamics = fdmExec->GetAerodynamics().get();
 	propulsion = fdmExec->GetPropulsion().get();
@@ -29,7 +27,6 @@ JSBSimInterface::JSBSimInterface(double dt)
   mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
   propagate = fdmExec->GetPropagate().get();
   accel = fdmExec->GetAccelerations().get();
-  accel->InitModel();
   auxiliary = fdmExec->GetAuxiliary().get();
   aerodynamics = fdmExec->GetAerodynamics().get();
   propulsion = fdmExec->GetPropulsion().get();
@@ -40,25 +37,18 @@ JSBSimInterface::JSBSimInterface(double dt)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JSBSimInterface::~JSBSimInterface(void)
 {
-	//fdmExec = 0L;
-    //JSBSim::~FGFDMExec();
-	//delete ic;
     delete fdmExec;
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Open(const string& acName)
 {
-  string rootDir; // In case JSBSim directory is somewhere else. 
   if (!fdmExec->GetAircraft()->GetAircraftName().empty())
   {
     return false;
   }
 
-  // JSBSim stuff
-
-    mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");
-  
-    fdmExec->SetAircraftPath (SGPath("aircraft")); // remove argument (rootDir + "aircraft")    
+    mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");  
+    fdmExec->SetAircraftPath (SGPath("aircraft")); 
     fdmExec->SetEnginePath   (SGPath("engine"));
     fdmExec->SetSystemsPath  (SGPath("systems"));
 
@@ -98,10 +88,7 @@ bool JSBSimInterface::Open(const mxArray *prhs)
 	buflen = std::min<size_t>(mxGetNumberOfElements(prhs) + 1, 128);
 	mxGetString(prhs, buf, buflen);
 	string acName = string(buf);
-
-
-	//mexEvalString("plot(sin(0:.1:pi))");
-  return Open(acName);
+    return Open(acName);
 
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -521,214 +508,6 @@ void JSBSimInterface::PrintCatalog()
     mexPrintf("-- end of catalog\n");
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::Init(const mxArray *prhs1)
-{
-	// Inspired by "refbook.c"
-	// The argument prhs1 is pointer to a Matlab structure with two fields: name, value.
-	// The Matlab user is forced to build such a structure first, then to pass it to the
-	// mex-file. Example:
-	//    >> ic(1).name = 'u'; ic(1).value = 80; (ft/s)
-	//    >> ic(2).name = 'v'; ic(1).value =  0; (ft/s)
-	//    >> ic(3).name = 'w'; ic(1).value =  0; (ft/s)
-	//    >> ic(4).name = 'p'; ic(1).value =  0; (rad/s) % etc ...
-	//    >> MexJSBSim('init', ic)
-
-	//*************************************************
-	// Set dt=0 first
-
-	fdmExec->SuspendIntegration();
-	
-	//*************************************************
-
-	bool success = true;
-
-	const char **fnames;       /* pointers to field names */
-	mxArray    *tmp;
-	int        ifield, nfields;
-	mxClassID  *classIDflags;
-	mwIndex    jstruct;
-	mwSize     NStructElems;
-
-    // get input arguments
-    nfields = mxGetNumberOfFields(prhs1);
-    NStructElems = mxGetNumberOfElements(prhs1);
-    // allocate memory  for storing classIDflags
-    classIDflags = (mxClassID*)mxCalloc(nfields, sizeof(mxClassID));
-    //mexPrintf("Very Verbose: %f", eVeryVerbose); 
-
-    // check empty field, proper data type, and data type consistency;
-	// and get classID for each field (see "refbook.c")
-    for(ifield=0; ifield<nfields; ifield++) 
-	{
-		for(jstruct = 0; jstruct < NStructElems; jstruct++) 
-		{
-			tmp = mxGetFieldByNumber(prhs1, jstruct, ifield);
-			if(tmp == NULL) 
-			{
-				return false;
-			} 
-			if(jstruct==0) 
-			{
-				if( (!mxIsChar(tmp) && !mxIsNumeric(tmp)) || mxIsSparse(tmp)) 
-				{
-					return false;
-				}
-				classIDflags[ifield]=mxGetClassID(tmp); 
-			} 
-			else 
-			{
-				if (mxGetClassID(tmp) != classIDflags[ifield]) 
-				{
-					return false;
-				} 
-				else if(!mxIsChar(tmp) && 
-					  ((mxIsComplex(tmp) || mxGetNumberOfElements(tmp)!=1)))
-				{
-					return false;
-				}
-			}
-		}
-    }
-    /* allocate memory  for storing pointers */
-    fnames = (const char **)mxCalloc(nfields, sizeof(*fnames));
-    /* get field name pointers */
-    for (ifield=0; ifield< nfields; ifield++)
-	{
-		fnames[ifield] = mxGetFieldNameByNumber(prhs1,ifield);
-    }
-	// At this point we have extracted from prhs1 the vector of 
-	// field names fnames of nfields elements.
-	// nfields is the number of fields in the passed Matlab struct (ic).
-	// It may have more fields, but the first two must be "name" and "value"
-	// The structure possesses generally a number of NStructElems elements.
-
-	// loop on the element of the structure
-	for (jstruct=0; jstruct<NStructElems; jstruct++) 
-	{
-		string prop = "";
-		double value = -99.;
-
-		// scan the fields
-		// the first two must be "name" and "value"
-		for(ifield=0; ifield<2; ifield++) // for(ifield=0; ifield<nfields; ifield++) // nfields=>2
-		{
-			tmp = mxGetFieldByNumber(prhs1,jstruct,ifield);
-			if( mxIsChar(tmp) ) //  && (fnames[ifield]=="name") the "name" field
-			{
-				// mxSetCell(fout, jstruct, mxDuplicateArray(tmp));
-				char buf[128];
-				mwSize buflen;
-				buflen = mxGetNumberOfElements(tmp) + 1;
-				mxGetString(tmp, buf, buflen);
-				prop = string(buf);
-				//mexPrintf("field name: %s\n",prop.c_str());
-			}
-			else  // the "value" field
-			{
-				value = *mxGetPr(tmp);
-				//mexPrintf("field value %f\n",value);
-			}
-		}
-		//----------------------------------------------------
-		// now we have a string in prop and a double in value
-		// we got to set the property value accordingly
-		//----------------------------------------------------
-		//if ( verbosityLevel == eVeryVerbose )
-			mexPrintf("Property name: '%s'; to be set to value: %f\n",prop.c_str(),value);
-
-		//----------------------------------------------------
-		// Note: the time step is set to zero at this point, so that all calls 
-		//       to propagate->Run() will not advance the vehicle state in time
-		//----------------------------------------------------
-		// Now pass prop and value to the member function
-		success = success && SetPropertyValue(prop,value); // EasySet called here
-
-		mexPrintf("success '%d'; \n",(int)success);
-    }
-	// free memory
-    mxFree(classIDflags);
-	mxFree((void *)fnames);
-
-	//---------------------------------------------------------------
-	// see "FGInitialConditions.h"
-	// NOTE:
-
-
-
-	//mexPrintf("Vt = %f\n",fdmExec->GetAuxiliary()->GetVt());
-
-
-	fdmExec->Run(); // is using RunIC(), derivatives are not calculated. Why do it this way? 
-	fdmExec->ResumeIntegration(); // this is included if we do RunIC. Could possibly replace this later. 
-
-
-	// Calculate state derivatives
-	//fdmExec->GetAccelerations()->CalculatePQRdot();      // Angular rate derivative (should be done automatically)
-	//fdmExec->GetAccelerations()->CalculateUVWdot();      // Translational rate derivative (should be done automatically)
-	//fdmExec->GetPropagate()->CalculateQuatdot();     // Angular orientation derivative (should be done automatically)
-	//fdmExec->GetPropagate()->CalculateLocationdot(); // Translational position derivative (should be done automatically)
-
-	// FDMExec.GetAuxiliary()->Run();
-	FGColumnVector3 euler_rates = auxiliary->GetEulerRates();
-	FGColumnVector3 position_rates = propagate->GetUVW();
-
-	/*
-	 * dunno what is wrong here
-	_udot = accel->GetUVWdot(1);
-	_vdot = fdmExec->GetAccelerations()->GetUVWdot(2);
-	_wdot = fdmExec->GetAccelerations()->GetUVWdot(3);
-	_pdot = fdmExec->GetAccelerations()->GetPQRdot(1);
-	_qdot = fdmExec->GetAccelerations()->GetPQRdot(2);
-	_rdot = fdmExec->GetAccelerations()->GetPQRdot(3);
-	*/
-    /*
-	FGQuaternion Quatdot = accel->GetQuaterniondot();
-	_q1dot = Quatdot(1);
-	_q2dot = Quatdot(2);
-	_q3dot = Quatdot(3);
-	_q4dot = Quatdot(4);
-     */
-	_phidot   = euler_rates(1);
-	_thetadot = euler_rates(2);
-	_psidot   = euler_rates(3);
-	_xdot = position_rates(1);
-	_ydot = position_rates(2);
-	_zdot = position_rates(3);
-	_hdot = propagate->Gethdot();
-	_alphadot = auxiliary->Getadot();
-	_betadot = auxiliary->Getbdot();
-
-	return success;
-}
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::Init(const mxArray *prhs1, vector<double>& statedot)
-{
-	if (statedot.size() != 19) return false;
-	if (!Init(prhs1)) return false;
-	statedot[ 0] = _udot;
-	statedot[ 1] = _vdot;
-	statedot[ 2] = _wdot;
-	statedot[ 3] = _pdot;
-	statedot[ 4] = _qdot;
-	statedot[ 5] = _rdot;
-	statedot[ 6] = _q1dot;
-	statedot[ 7] = _q2dot;
-	statedot[ 8] = _q3dot;
-	statedot[ 9] = _q4dot;
-	statedot[10] = _xdot;
-	statedot[11] = _ydot;
-	statedot[12] = _zdot;
-	statedot[13] = _phidot;
-	statedot[14] = _thetadot;
-	statedot[15] = _psidot;
-	statedot[16] = _hdot;
-	statedot[17] = _alphadot;
-	statedot[18] = _betadot;
-
-	return true;
-}
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::Update()
@@ -923,7 +702,7 @@ bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
     // speedbrake-pos-rad spoiler-pos-rad gear-pos-norm]
     // Possibly add some error handling here? 
     
-    state_array[0] = fcs->GetThrottlePos(0); //should have an input command? NEEDS FIX   
+    state_array[0] = fcs->GetThrottlePos(0); //should be an input command, NEEDS FIX   
     
     state_array[1] = fcs->GetDaLPos(); //left aileron 
     state_array[2] = fcs->GetDaRPos(); //right aileron
@@ -933,22 +712,8 @@ bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
     state_array[6] = fcs->GetDsbPos(); //speedbrake
     state_array[7] = fcs->GetDspPos(); // spoiler
     
-    state_array[8] = fcs->GetGearPos(); //gear, 0 is up, 1 is down. Down is default. 
+    state_array[8] = fcs->GetGearPos(); //gear
     
     
     return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void JSBSimInterface::HW_To_JSBSim(double input){
-    //fcs->SetDePos(ofNorm, input); //rads
-    SetPropertyValue("elevator-cmd-norm", input); //norm cmd 
-    //fdmExec->GetFCS()->SetDePos(input);
-}
-
-double JSBSimInterface::HW_From_JSBSim(){
-    double output;  
-    output = fcs->GetDeCmd(); // this is the elevator cmd, between -1 and 1
-    return output; 
-    //fdmExec->GetFCS()->SetDePos(input);
 }
