@@ -454,10 +454,15 @@ public:
   void Resume(void) {holding = false;}
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
+  /// Mode flags for ResetToInitialConditions
+  static const int START_NEW_OUTPUT    = 0x1;
+  static const int DONT_EXECUTE_RUN_IC = 0x2;
   /** Resets the initial conditions object and prepares the simulation to run
-      again. If mode is set to 1 the output instances will take special actions
-      such as closing the current output file and open a new one with a
-      different name.
+      again. If the mode's first bit is set the output instances will take special actions
+      such as closing the current output file and open a new one with a different name.
+      If the second bit is set then RunIC() won't be executed, leaving it to the caller
+      to call RunIC(), e.g. in case the caller wants to set some other state like control
+      surface deflections which would've been reset.
       @param mode Sets the reset mode.*/
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
