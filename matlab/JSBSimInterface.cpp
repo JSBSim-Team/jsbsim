@@ -7,10 +7,10 @@
  * Compiles with JSBSim checkout a59596f8f0d4c7b4f7ba24e99997bc2071d6cb72
  */
 
-JSBSimInterface::JSBSimInterface(FGFDMExec *fdmex)
+JSBSimInterface::JSBSimInterface(void)
 {
 	_ac_model_loaded = false;
-	fdmExec = fdmex;
+	fdmExec = new FGFDMExec;
 	propagate = fdmExec->GetPropagate().get();
 	accel = fdmExec->GetAccelerations().get();
 	accel->InitModel();
@@ -21,10 +21,10 @@ JSBSimInterface::JSBSimInterface(FGFDMExec *fdmex)
 	ic = new FGInitialCondition(fdmExec);
 	//verbosityLevel = JSBSimInterface::eSilent;
 }
-JSBSimInterface::JSBSimInterface(FGFDMExec *fdmex, double dt)
+JSBSimInterface::JSBSimInterface(double dt)
 {
   _ac_model_loaded = false;
-  fdmExec = fdmex;
+	fdmExec = new FGFDMExec;
   fdmExec->Setdt(dt);
   mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
   propagate = fdmExec->GetPropagate().get();

@@ -13,8 +13,8 @@ using namespace JSBSim;
 class JSBSimInterface
 {
 public:
-	JSBSimInterface(FGFDMExec *);
-	JSBSimInterface(FGFDMExec *, double dt);
+  JSBSimInterface(void);
+  JSBSimInterface(double dt);
 	~JSBSimInterface(void);
 	/// Open an aircraft model from Matlab
 	bool Open(const mxArray *prhs0);

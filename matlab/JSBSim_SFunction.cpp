@@ -156,7 +156,6 @@
 #define NUMBER_OF_STRUCTS (sizeof(ic)/sizeof(struct init_cond))
 #define NUMBER_OF_FIELDS (sizeof(field_names)/sizeof(*field_names))
 
-JSBSim::FGFDMExec FDMExec;	// Instantiate new JSBSim FDMExec object
 
 struct init_cond{
 			const char *name;
@@ -309,7 +308,7 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 		   also create a pointer to the JSBSimInterface object so we can access its member
 		   functions.
 		*/
-	    ssGetPWork(S)[0] = (void *) new JSBSimInterface(&FDMExec, delta_t);
+	    ssGetPWork(S)[0] = (void *) new JSBSimInterface(delta_t);
 		JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];   // retrieve C++ object pointers vector
         
         // Check if a script file is given in Simulink.
@@ -587,10 +586,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
 static void mdlTerminate(SimStruct *S)
 {
 	
-	//JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];   // retrieve C++ object pointers vector
-    //JII->~JSBSimInterface(); //does not work to delete... 
-    //delete JII; 
-	//JII->ResetToInitialCondition();
+	JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];   // retrieve C++ object pointers vector
+        delete JII; 
 	//
     /*if(ssGetPWork(S)[0] != NULL){
         mexPrintf("Work vector not NULL. \n"); 
