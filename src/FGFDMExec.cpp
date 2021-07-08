@@ -692,8 +692,6 @@ void FGFDMExec::ResetToInitialConditions(int mode)
   if (Constructing) return;
 
   // mode flags
-  const int START_NEW_OUTPUT    = 0x1;
-  const int DONT_EXECUTE_RUN_IC = 0x2;
 
   if (mode & START_NEW_OUTPUT) Output->SetStartNewOutput();
 
