@@ -64,7 +64,6 @@ for j in range(2):
             fdm['propulsion/tank[1]/contents-lbs'] = fuel[i]
             fdm['propulsion/tank[2]/contents-lbs'] = fuel[i]
             fdm['inertia/pointmass-weight-lbs[0]'] = payload[i]
-            fdm['inertia/mass_balance-positionx-in'] = cgPos[j]
 
             fdm.run_ic() # Initialize the aircraft with initial conditions
             fdm.run()
