@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 # function to change CG in aircraft xml
 # change the directory to the aircraft to be studied
-def changeCG(cgPos,readOnly):
-    tree = ET.parse('../../aircraft/global5000/global5000.xml')
+def changeCG(fdm, cgPos, readOnly):
+    tree = ET.parse(os.path.join(fdm.get_root_dir(), 'aircraft/global5000/global5000.xml'))
     root = tree.getroot()
 
     for x in root.findall('mass_balance/location'):
