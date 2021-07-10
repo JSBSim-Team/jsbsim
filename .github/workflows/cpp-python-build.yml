@@ -77,7 +77,9 @@ jobs:
           valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
       - name: Test JSBSim
         working-directory: build
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
+        run: |
+          LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
+          LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -R fpectl -V
       - name: Build Ubuntu packages
         if: env.static_link == 'true'
         working-directory: build
