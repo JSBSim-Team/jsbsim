@@ -618,7 +618,6 @@ private:
 
   bool trim_status;
   int ta_mode;
-  unsigned int ResetMode;
   int trim_completed;
 
   std::shared_ptr<FGInitialCondition> IC;
