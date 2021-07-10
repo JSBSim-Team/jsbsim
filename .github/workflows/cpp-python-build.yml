@@ -15,15 +15,18 @@ jobs:
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
         build_julia: [OFF]
+        display_stack_trace: [ON]
         include:
           - os: ubuntu-16.04
             expat: OFF
             shared_libs: OFF
             build_julia: OFF
+            display_stack_trace: ON
           - os: ubuntu-18.04
             expat: OFF
             shared_libs: OFF
             build_julia: ON
+            display_stack_trace: OFF
     env:
       static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
     runs-on: ${{ matrix.os }}
@@ -60,7 +63,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DFPECTL_DISPLAY_STACK_TRACE=${{matrix.display_stack_trace}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH ..
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
