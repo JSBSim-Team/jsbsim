@@ -43,13 +43,24 @@ jobs:
         run: |
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          echo "CXXWRAP_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
+          echo "JSBSIM_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
       - name: Checkout JSBSim
         uses: actions/checkout@v2
+      - name: Checkout Backward-cpp
+        if: matrix.build_julia == 'OFF'
+        id: BackwardCppCheckout
+        uses: actions/checkout@v2
+        with:
+          repository: bombela/backward-cpp
+          ref: 'v1.5'
+          path: backward-cpp
+      - name: Configure Backward-cpp
+        if: steps.BackwardCppCheckout.outcome == 'success'
+        run: echo "JSBSIM_PREFIX_PATH=$PWD/backward-cpp" >> $GITHUB_ENV
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
+          cmake -DCPACK_GENERATOR=DEB -DINSTALL_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH ..
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
