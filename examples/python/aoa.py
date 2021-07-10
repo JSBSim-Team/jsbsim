@@ -16,7 +16,7 @@ def changeCG(fdm, cgPos, readOnly):
         cg = x.find('x').text
         if not readOnly:
              x.find('x').text=str(cgPos)
-             tree.write('../../aircraft/global5000/global5000.xml')
+             tree.write(os.path.join(fdm.get_root_dir(), 'aircraft/global5000/global5000.xml'))
     return cg
 
 #Fuel Max for Global5000
