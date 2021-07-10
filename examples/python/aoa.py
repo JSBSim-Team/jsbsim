@@ -43,8 +43,8 @@ h_ft=[8000,30000]
 
 #run the simulation varying CG, altitude, speed and total weight
 for j in range(2):
-    cg=changeCG(cgPos[j],False)
-    fdm = jsbsim.FGFDMExec('../../') 
+    fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES) 
+    cg=changeCG(fdm, cgPos[j],False)
     fdm.load_model('global5000')
     # Set engines running
     fdm['propulsion/engine[0]/set-running'] = 1
