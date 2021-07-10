@@ -5,8 +5,6 @@
 import jsbsim
 import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
-import matplotlib.style as style
-style.use('fivethirtyeight')
 
 # function to change CG in aircraft xml
 # change the directory to the aircraft to be studied
