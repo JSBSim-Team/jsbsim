@@ -1,6 +1,11 @@
 # Originally developed by JSBSim Team
 # Modified by Guilherme A. L. da Silva - aerothermalsolutions.co
 # Calculation required by aircraft icing enginering
+# GNU Lesser General Public License v2.1
+
+# to install jsbsim module in Python
+# pip install jsbsim
+# or conda install jsbsim (if you have anaconda, this is the best way)
 
 import jsbsim
 import xml.etree.ElementTree as ET
