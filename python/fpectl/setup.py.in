@@ -1,6 +1,6 @@
 # Setup script for the fpectl module.
 #
-# Copyright (c) 2014-2020 Bertrand Coconnier
+# Copyright (c) 2014-2021 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -45,5 +45,7 @@ setup(
     name="fpectl",
     cmdclass={'build_ext': QuietBuild},
     ext_modules=[Extension('fpectl',
-                           sources=['fpectlmodule.cpp'],
+                           sources=['${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp'],
+                           include_dirs=['${CMAKE_CURRENT_BINARY_DIR}', ${FPECTL_INCLUDE_DIRS}],
+                           libraries=[${FPECTL_LIBRARIES}],
                            language='c++')])
