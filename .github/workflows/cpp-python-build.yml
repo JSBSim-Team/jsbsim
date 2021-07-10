@@ -31,7 +31,7 @@ jobs:
       - name: Install Ubuntu packages
         run: |
           sudo apt-get update
-          sudo apt-get install cxxtest valgrind
+          sudo apt-get install cxxtest valgrind binutils-dev
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:

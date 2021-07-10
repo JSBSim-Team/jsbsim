@@ -22,6 +22,8 @@ from setuptools import setup
 from setuptools.extension import Extension
 from setuptools.command.build_ext import build_ext
 from distutils import log
+from distutils.ccompiler import new_compiler
+from distutils.dist import Distribution
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -41,6 +43,21 @@ class QuietBuild(build_ext):
             os.dup2(self.oldstdout, sys.stdout.fileno())
             self.devnull.close()
 
+# Determine which compiler will be used to build the package.
+dist = Distribution({'script_name': __file__})
+
+if dist.parse_command_line() and 'build_ext' in dist.commands:
+    compiler_name = dist.get_command_obj('build_ext').compiler
+else:
+    compiler_name = None
+
+compiler = new_compiler(compiler=compiler_name)
+
+if compiler.compiler_type == 'unix':
+    cpp_compile_flag = ['-std=c++11']
+else:
+    cpp_compile_flag = []
+
 setup(
     name="fpectl",
     cmdclass={'build_ext': QuietBuild},
@@ -48,4 +65,5 @@ setup(
                            sources=['${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp'],
                            include_dirs=['${CMAKE_CURRENT_BINARY_DIR}', ${FPECTL_INCLUDE_DIRS}],
                            libraries=[${FPECTL_LIBRARIES}],
+                           extra_compile_args=cpp_compile_flag,
                            language='c++')])
