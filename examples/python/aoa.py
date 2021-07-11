@@ -102,13 +102,13 @@ for j in range(2):
             print(result[0], result[1])
 
         speed, alpha = zip(*results)
-        plt.plot(speed, alpha,label="{0} weight {1:.0f} kft {2:.2f} % cg".format(weight[i],h_ft[j]/1000,(float(cgPos[j])/float(cgOrig)-1)*100))
+        ax.plot(speed, alpha,label="{0} weight {1:.0f} kft {2:.2f} % cg".format(weight[i],h_ft[j]/1000,(float(cgPos[j])/float(cgOrig)-1)*100))
 
 #plot final results
-plt.legend(frameon=False)
-plt.xlabel('KCAS (kt)')
-plt.ylabel('AoA (deg)')
-plt.title('AoA vs KCAS')
+ax.legend(frameon=False)
+ax.set_xlabel('KCAS (kt)')
+ax.set_ylabel('AoA (deg)')
+ax.set_title('AoA vs KCAS')
 
 plt.show()
 
