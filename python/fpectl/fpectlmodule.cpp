@@ -63,9 +63,13 @@
 
   ** Version 1.0: September 20, 1996.  Lee Busby, LLNL.
   ** JSBSim adaptation: June 18, 2016. Bertrand Coconnier
+  ** Added the display of stack trace: July 11, 2021. Bertrand Coconnier
   */
 
 #include "fpectl_config.h"
+#ifdef BACKWARD_FOUND
+#include "backward.hpp"
+#endif
 #include "fpectlmodule.h"
 
 #include <signal.h>
@@ -75,14 +79,6 @@
 #  include <float.h>
 static unsigned int fp_flags = 0;
 #elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
-#  ifdef BACKWARD_FOUND
-#    include "backward.hpp"
-
-static backward::SignalHandling sh({SIGFPE,});
-static struct sigaction backward_action;
-int r = sigaction(SIGFPE, nullptr, &backward_action);
-
-#  endif
 #  include <fenv.h>
 static int fp_flags = 0;
 #endif
@@ -102,25 +98,48 @@ static PyMethodDef fpectl_methods[] = {
   {0,0}
 };
 
-#ifdef BACKWARD_FOUND
-static void backward_sighandler(int signo, siginfo_t *info, void *_ctx)
+// Since the Backward-cpp signal handler for Windows calls abort(), we need to
+// intercept SIGABRT and throw an exception instead. This avoids an ungraceful
+// abortion of the Python interpreter.
+static void finalize_signal_handling(int signo)
 {
-  sh.handleSignal(signo, info, _ctx);
   throw JSBSim::FloatingPointException(fpe_error,
                                        "Caught signal SIGFPE in JSBSim");
 }
-#endif
 
+#ifdef BACKWARD_FOUND
+#ifdef __GNUC__
+// Setup the Backward-cpp signal handler for FPE only.
+static backward::SignalHandling sh({SIGFPE,});
+static struct sigaction backward_action;
+auto _dummy = sigaction(SIGFPE, nullptr, &backward_action);
+// Replaces the default signal handler of Backward-cpp by our own: it uses
+// backward::SignalHandling::handleSignal() to display the stack trace then
+// throw a Python exception instead of calling exit() - which is the default
+// behavior of Backward-cpp.
+static void sigfpe_handler(int signo, siginfo_t *info, void *_ctx)
+{
+  sh.handleSignal(signo, info, _ctx);
+  finalize_signal_handling(signo);
+}
+#elif defined(_MSC_VER)
+static backward::SignalHandling sh;
+// Here, we replace the SIGABRT signal handler by our own. We also get a copy of
+// the Backward-cpp default signal handler in the process.
+static PyOS_sighandler_t sigfpe_handler = PyOS_setsig(SIGABRT, finalize_signal_handling);
+#endif // _MSC_VER
+#else
+// Our default signal handler. It is used when Backward-cpp is not installed.
 static void sigfpe_handler(int signo)
 {
   PyOS_setsig(SIGFPE, sigfpe_handler);
-  throw JSBSim::FloatingPointException(fpe_error,
-                                       "Caught signal SIGFPE in JSBSim");
+  finalize_signal_handling(signo);
 }
+#endif // BACKWARD_FOUND
 
 static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 {
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
@@ -132,7 +151,7 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
   fp_flags = feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 #ifdef BACKWARD_FOUND
   handler = PyOS_setsig(SIGFPE, nullptr);
-  backward_action.sa_sigaction = &backward_sighandler;
+  backward_action.sa_sigaction = &sigfpe_handler;
   sigaction(SIGFPE, &backward_action, nullptr);
 #else
   handler = PyOS_setsig(SIGFPE, sigfpe_handler);
@@ -145,7 +164,7 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 
 static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
   _controlfp(fp_flags, _MCW_EM);
 
 #elif defined(__clang__)
@@ -167,9 +186,6 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-
 static struct PyModuleDef fpectl = {
         PyModuleDef_HEAD_INIT,
         "fpectl",
@@ -183,22 +199,11 @@ static struct PyModuleDef fpectl = {
 };
 
 PyMODINIT_FUNC PyInit_fpectl(void)
-#else
-PyMODINIT_FUNC initfpectl(void)
-#endif
 {
-  #if PY_MAJOR_VERSION >= 3
-    PyObject *m = PyModule_Create(&fpectl);
-  #else
-    PyObject *m = Py_InitModule("fpectl", fpectl_methods);
-  #endif
+  PyObject *m = PyModule_Create(&fpectl);
 
   if (m == NULL)
-    #if PY_MAJOR_VERSION >= 3
-      return NULL;
-    #else
-      return;
-    #endif
+    return NULL;
 
   PyObject *d = PyModule_GetDict(m);
   fpe_error = PyErr_NewException((char*)"fpectl.FloatingPointError",
@@ -206,9 +211,7 @@ PyMODINIT_FUNC initfpectl(void)
   if (fpe_error != NULL)
     PyDict_SetItemString(d, "FloatingPointError", fpe_error);
 
-  #if PY_MAJOR_VERSION >= 3
-    return m;
-  #endif
+  return m;
 }
 
 static PyObject *test_sigfpe(PyObject *self, PyObject *args)
