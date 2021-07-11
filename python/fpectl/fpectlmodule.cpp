@@ -63,6 +63,7 @@
 
   ** Version 1.0: September 20, 1996.  Lee Busby, LLNL.
   ** JSBSim adaptation: June 18, 2016. Bertrand Coconnier
+  ** Added the display of stack trace: July 11, 2021. Bertrand Coconnier
   */
 
 #include "fpectl_config.h"
@@ -97,28 +98,42 @@ static PyMethodDef fpectl_methods[] = {
   {0,0}
 };
 
-#ifdef BACKWARD_FOUND
-#ifdef __GNUC__
-static backward::SignalHandling sh({SIGFPE,});
-static struct sigaction backward_action;
-int r = sigaction(SIGFPE, nullptr, &backward_action);
-
-static void sigfpe_handler(int signo, siginfo_t *info, void *_ctx)
+// Since the Backward-cpp signal handler for Windows calls abort(), we need to
+// intercept SIGABRT and throw an exception instead. This avoids an ungraceful
+// abortion of the Python interpreter.
+static void finalize_signal_handling(int signo)
 {
-  sh.handleSignal(signo, info, _ctx);
   throw JSBSim::FloatingPointException(fpe_error,
                                        "Caught signal SIGFPE in JSBSim");
 }
+
+#ifdef BACKWARD_FOUND
+#ifdef __GNUC__
+// Setup the Backward-cpp signal handler for FPE only.
+static backward::SignalHandling sh({SIGFPE,});
+static struct sigaction backward_action;
+auto _dummy = sigaction(SIGFPE, nullptr, &backward_action);
+// Replaces the default signal handler of Backward-cpp by our own: it uses
+// backward::SignalHandling::handleSignal() to display the stack trace then
+// throw a Python exception instead of calling exit() - which is the default
+// behavior of Backward-cpp.
+static void sigfpe_handler(int signo, siginfo_t *info, void *_ctx)
+{
+  sh.handleSignal(signo, info, _ctx);
+  finalize_signal_handling(signo);
+}
 #elif defined(_MSC_VER)
 static backward::SignalHandling sh;
-static PyOS_sighandler_t sigfpe_handler = signal(SIGABRT, nullptr);
+// Here, we replace the SIGABRT signal handler by our own. We also get a copy of
+// the Backward-cpp default signal handler in the process.
+static PyOS_sighandler_t sigfpe_handler = PyOS_setsig(SIGABRT, finalize_signal_handling);
 #endif // _MSC_VER
 #else
+// Our default signal handler. It is used when Backward-cpp is not installed.
 static void sigfpe_handler(int signo)
 {
   PyOS_setsig(SIGFPE, sigfpe_handler);
-  throw JSBSim::FloatingPointException(fpe_error,
-                                       "Caught signal SIGFPE in JSBSim");
+  finalize_signal_handling(signo);
 }
 #endif // BACKWARD_FOUND
 
