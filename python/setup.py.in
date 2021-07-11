@@ -154,8 +154,6 @@ if args.config:
         library_path=os.path.join(library_path, args.config)
     else:
         raise ArgumentError(None, 'option --config not recognized.')
-elif compiler.compiler_type == 'msvc':
-    raise ArgumentError(None, 'option --config is missing.')
 
 if compiler.compiler_type == 'unix':
     cpp_compile_flag = ['-std=c++14']
