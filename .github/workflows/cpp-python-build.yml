@@ -78,7 +78,7 @@ jobs:
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
           valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
-      - name: Test the stack trace display when an FPE is raised
+      - name: Test the Display of the Stack Trace when an FPE is raised
         if: steps.BackwardCppCheckout.outcome == 'success'
         working-directory: build
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -R fpectl -V
@@ -261,6 +261,9 @@ jobs:
       - name: Build JSBSim
         working-directory: build
         run: cmake --build . --config RelWithDebInfo
+      - name: Test the Display of the Stack Trace when an FPE is raised
+        working-directory: build
+        run: ctest -R fpectl --build-config RelWithDebInfo -V
       - name: Test JSBSim
         working-directory: build
         run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
