@@ -305,7 +305,7 @@
             </kinematic>
 
             <aerosurface_scale name="elevator position">
-                <input>fcs/pitch-trim-sum</input>
+                <input>fcs/elevator-pos-norm</input>
                 <gain>0.01745</gain>
                 <domain>
                     <min>-1</min>

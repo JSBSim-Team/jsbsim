@@ -39,7 +39,10 @@ class CheckScripts(JSBSimTestCase):
                 ExecuteUntil(fdm, 30.)
 
             except Exception as e:
+                fpectl.turnoff_sigfpe()
                 self.fail("Script %s failed:\n%s" % (s, e.args[0]))
+
+        fpectl.turnoff_sigfpe()
 
     def testScriptEndTime(self):
         # Regression test: using a time step different than 120Hz in a script
