@@ -247,11 +247,17 @@ jobs:
       - name: Configure CxxTest
         working-directory: cxxtest\python
         run: python setup.py install
+      - name: Checkout Backward-cpp
+        uses: actions/checkout@v2
+        with:
+          repository: bombela/backward-cpp
+          ref: 'v1.5'
+          path: backward-cpp
       - name: Configure JSBSim
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
       - name: Build JSBSim
         working-directory: build
         run: cmake --build . --config RelWithDebInfo
