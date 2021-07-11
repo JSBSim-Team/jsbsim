@@ -162,7 +162,6 @@ if compiler.compiler_type == 'unix':
     cpp_link_flags = []
     link_libraries = [${JSBSIM_LINK_LIBRARIES}]
 elif compiler.compiler_type == 'msvc':
-    log.info('Configuration: "{}"'.format(args.config))
     if args.config in ('Debug', 'RelWithDebInfo'):
         # These flags are equivalent to a RelWithDebInfo configuration.
         # Since the module fpectl is not supposed to be used in production, these
