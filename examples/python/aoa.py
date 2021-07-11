@@ -7,8 +7,13 @@
 # pip install jsbsim
 # or conda install jsbsim (if you have anaconda, this is the best way)
 
+# to install matplotlib module in Python
+# pip install matplotlib
+# or conda install matplotlib (if you have anaconda, this is the best way)
+
 import jsbsim
 import xml.etree.ElementTree as ET
+import matplotlib.pyplot as plt
 
 # function to change CG in aircraft xml
 # change the directory to the aircraft to be studied
@@ -84,6 +89,15 @@ for j in range(2):
             print(result[0], result[1])
 
         speed, alpha = zip(*results)
+        plt.plot(speed, alpha,label="{0} weight {1:.0f} kft {2:.2f} % cg".format(weight[i],h_ft[j]/1000,(float(cgPos[j])/float(cgOrig)-1)*100))
+
+#plot final results
+plt.legend(frameon=False)
+plt.xlabel('KCAS (kt)')
+plt.ylabel('AoA (deg)')
+plt.title('AoA vs KCAS')
+
+plt.show()
 
 #restore original CG for the aircraft xml
-cgx=changeCG(str(cgOrig),False)
+cgx=changeCG(" {:.2f} ".format(cgOrig),False)
