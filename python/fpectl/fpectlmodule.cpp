@@ -73,6 +73,9 @@
 
 #if defined(_MSC_VER)
 #  include <float.h>
+#  ifdef BACKWARD_FOUND
+#    include "backward.hpp"
+#  endif
 static unsigned int fp_flags = 0;
 #elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
 #  ifdef BACKWARD_FOUND
@@ -103,12 +106,17 @@ static PyMethodDef fpectl_methods[] = {
 };
 
 #ifdef BACKWARD_FOUND
+#ifdef __GNUC__
 static void backward_sighandler(int signo, siginfo_t *info, void *_ctx)
 {
   sh.handleSignal(signo, info, _ctx);
   throw JSBSim::FloatingPointException(fpe_error,
                                        "Caught signal SIGFPE in JSBSim");
 }
+#elif defined(_MSC_VER)
+static backward::SignalHandling sh;
+static PyOS_sighandler_t backward_sighandler = signal(SIGABRT, nullptr);
+#endif
 #endif
 
 static void sigfpe_handler(int signo)
@@ -120,11 +128,15 @@ static void sigfpe_handler(int signo)
 
 static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 {
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
+#ifdef BACKWARD_FOUND
+  handler = PyOS_setsig(SIGFPE, backward_sighandler);
+#else
   handler = PyOS_setsig(SIGFPE, sigfpe_handler);
+#endif
 #elif defined(__clang__)
   fp_flags = feraiseexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 
@@ -145,7 +157,7 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 
 static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
   _controlfp(fp_flags, _MCW_EM);
 
 #elif defined(__clang__)
