@@ -65,6 +65,7 @@
   ** JSBSim adaptation: June 18, 2016. Bertrand Coconnier
   */
 
+#include "fpectl_config.h"
 #include "fpectlmodule.h"
 
 #include <signal.h>
@@ -74,6 +75,14 @@
 #  include <float.h>
 static unsigned int fp_flags = 0;
 #elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
+#  ifdef BACKWARD_FOUND
+#    include "backward.hpp"
+
+static backward::SignalHandling sh({SIGFPE,});
+static struct sigaction backward_action;
+int r = sigaction(SIGFPE, nullptr, &backward_action);
+
+#  endif
 #  include <fenv.h>
 static int fp_flags = 0;
 #endif
@@ -93,6 +102,15 @@ static PyMethodDef fpectl_methods[] = {
   {0,0}
 };
 
+#ifdef BACKWARD_FOUND
+static void backward_sighandler(int signo, siginfo_t *info, void *_ctx)
+{
+  sh.handleSignal(signo, info, _ctx);
+  throw JSBSim::FloatingPointException(fpe_error,
+                                       "Caught signal SIGFPE in JSBSim");
+}
+#endif
+
 static void sigfpe_handler(int signo)
 {
   PyOS_setsig(SIGFPE, sigfpe_handler);
@@ -106,15 +124,21 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
+  handler = PyOS_setsig(SIGFPE, sigfpe_handler);
 #elif defined(__clang__)
   fp_flags = feraiseexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 
 #elif defined(__GNUC__) && !defined(sgi)
   fp_flags = feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
-
+#ifdef BACKWARD_FOUND
+  handler = PyOS_setsig(SIGFPE, nullptr);
+  backward_action.sa_sigaction = &backward_sighandler;
+  sigaction(SIGFPE, &backward_action, nullptr);
+#else
+  handler = PyOS_setsig(SIGFPE, sigfpe_handler);
+#endif
 #endif
 
-  handler = PyOS_setsig(SIGFPE, sigfpe_handler);
   Py_INCREF (Py_None);
   return Py_None;
 }
@@ -129,6 +153,9 @@ static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 
 #elif defined(__GNUC__) && !defined(sgi)
   fedisableexcept(fp_flags);
+#ifdef BACKWARD_FOUND
+  sigaction(SIGFPE, nullptr, nullptr);
+#endif
 #endif
 
   PyOS_setsig(SIGFPE, handler);

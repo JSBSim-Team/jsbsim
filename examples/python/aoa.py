@@ -113,4 +113,4 @@ plt.title('AoA vs KCAS')
 plt.show()
 
 #restore original CG for the aircraft xml
-cgx=changeCG(fdm," {:.2f} ".format(cgOrig),False)
+cgx=changeCG(" {:.2f} ".format(cgOrig),False)
