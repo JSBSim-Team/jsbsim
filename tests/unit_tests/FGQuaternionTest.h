@@ -1,6 +1,6 @@
 #include <limits>
 #include <cxxtest/TestSuite.h>
-#include <math/FGMatrix33.h>
+#include "TestAssertions.h"
 #include <math/FGQuaternion.h>
 
 const double epsilon = 100. * std::numeric_limits<double>::epsilon();
@@ -140,9 +140,35 @@ public:
       for (int j=1; j<=3; j++)
         TS_ASSERT_DELTA(m(i,j), mT(j,i), epsilon);
 
-    q2(2) = 1.0;
-    q2.Normalize();
-    JSBSim::FGQuaternion q3(q2);
+    // Constructor with an angle and an axis of rotation.
+    v.InitMatrix(1.0, 2.0, -0.5);
+    q2 = JSBSim::FGQuaternion(angle, v);
+    v.Normalize();
+    TS_ASSERT_DELTA(q2(1), ca_half, epsilon);
+    TS_ASSERT_DELTA(q2(2), sa_half*v(1), epsilon);
+    TS_ASSERT_DELTA(q2(3), sa_half*v(2), epsilon);
+    TS_ASSERT_DELTA(q2(4), sa_half*v(3), epsilon);
+
+    // Initializes to zero.
+    q2 = JSBSim::FGQuaternion::zero();
+    TS_ASSERT_EQUALS(0.0, q2.Entry(1));
+    TS_ASSERT_EQUALS(0.0, q2.Entry(2));
+    TS_ASSERT_EQUALS(0.0, q2.Entry(3));
+    TS_ASSERT_EQUALS(0.0, q2.Entry(4));
+  }
+
+  void testComponentWise() {
+    JSBSim::FGQuaternion q(0.5, 1.0, -0.75);
+    double x = q(1);
+    double y = q(2);
+    double z = q(3);
+    double w = q(4);
+    q.Entry(1) = x + 1.0;
+    TS_ASSERT_EQUALS(q.Entry(1), x + 1.0);
+    // Check there are no side effects on other components
+    TS_ASSERT_EQUALS(q.Entry(2), y);
+    TS_ASSERT_EQUALS(q.Entry(3), z);
+    TS_ASSERT_EQUALS(q.Entry(4), w);
   }
 
   void testCopyConstructor() {
@@ -179,12 +205,6 @@ public:
     q2.Entry(2) = 5.0;
     TS_ASSERT_DELTA(z, q0.Entry(2), epsilon); // q0[2] must remain unchanged
     TS_ASSERT_DELTA(5.0, q2.Entry(2), epsilon); // q2[2] must now contain 5.0
-
-    q1 = JSBSim::FGQuaternion::zero();
-    TS_ASSERT_EQUALS(0.0, q1.Entry(1));
-    TS_ASSERT_EQUALS(0.0, q1.Entry(2));
-    TS_ASSERT_EQUALS(0.0, q1.Entry(3));
-    TS_ASSERT_EQUALS(0.0, q1.Entry(4));
   }
 
   void testEquality() {
@@ -225,10 +245,6 @@ public:
     TS_ASSERT_DELTA(z, q0.Entry(2), epsilon); // q0[2] must remain unchanged
     TS_ASSERT_DELTA(5.0, q1.Entry(2), epsilon); // q1[2] must now contain 5.0
 
-    // Force the cache update
-    q0.Normalize();
-    TS_ASSERT_DELTA(0.5, q0.GetEuler(1), epsilon);
-
     const JSBSim::FGQuaternion q2 = q0;
 
     // First make sure that q0 and q2 are identical
@@ -243,6 +259,19 @@ public:
     q0.Entry(2) = 5.0;
     TS_ASSERT_DELTA(z, q2.Entry(2), epsilon); // q2[2] must remain unchanged
     TS_ASSERT_DELTA(5.0, q0.Entry(2), epsilon); // q0[2] must now contain 5.0
+
+    // Test the assignment of a quaternion with a valid cache.
+    q0(3) = -1.5;
+    JSBSim::FGMatrix33 m = q0.GetT();
+    JSBSim::FGColumnVector3 v = q0.GetEuler();
+    q1 = q0;
+    TS_ASSERT_DELTA(q0(1), q1(1), epsilon);
+    TS_ASSERT_DELTA(q0(2), q1(2), epsilon);
+    TS_ASSERT_DELTA(q0(3), q1(3), epsilon);
+    TS_ASSERT_DELTA(q0(4), q1(4), epsilon);
+    TS_ASSERT_VECTOR_EQUALS(v, q1.GetEuler());
+    TS_ASSERT_MATRIX_EQUALS(m, q1.GetT());
+    TS_ASSERT_MATRIX_EQUALS(m.Transposed(), q1.GetTInv());
   }
 
   void testEulerAngles() {
@@ -470,6 +499,25 @@ public:
     TS_ASSERT_EQUALS(0.0, zero(2));
     TS_ASSERT_EQUALS(0.0, zero(3));
     TS_ASSERT_EQUALS(0.0, zero(4));
+
+    // Test the normalization of quaternion which magnitude is neither zero nor
+    // unity.
+    JSBSim::FGColumnVector3 v(1.0, 2.0, -0.5);
+    q0 = JSBSim::FGQuaternion(0.4, v);
+    double x = q0(1);
+    double y = q0(2);
+    double z = q0(3);
+    double w = q0(4);
+    q0 *= 2.0;
+    TS_ASSERT_DELTA(q0(1), 2.0*x, epsilon);
+    TS_ASSERT_DELTA(q0(2), 2.0*y, epsilon);
+    TS_ASSERT_DELTA(q0(3), 2.0*z, epsilon);
+    TS_ASSERT_DELTA(q0(4), 2.0*w, epsilon);
+    q0.Normalize();
+    TS_ASSERT_DELTA(q0(1), x, epsilon);
+    TS_ASSERT_DELTA(q0(2), y, epsilon);
+    TS_ASSERT_DELTA(q0(3), z, epsilon);
+    TS_ASSERT_DELTA(q0(4), w, epsilon);
   }
 
   void testOutput() {
