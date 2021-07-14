@@ -141,7 +141,7 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 {
 #ifdef _MSC_VER
   _clearfp();
-  fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE),
+  fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
   handler = PyOS_setsig(SIGFPE, sigfpe_handler);
 #elif defined(__clang__)
