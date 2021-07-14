@@ -827,7 +827,7 @@ protected:
   void CheckMinArguments(Element* el, unsigned int _min);
   void CheckMaxArguments(Element* el, unsigned int _max);
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
-  std::string CreateOutputNode(Element* el, const string& Prefix);
+  std::string CreateOutputNode(Element* el, const std::string& Prefix);
 
 private:
   std::string Name;
