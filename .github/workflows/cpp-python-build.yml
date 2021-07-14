@@ -496,7 +496,7 @@ jobs:
             build/python/dist/*.whl
 
   Rolling-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32]
     name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -526,7 +526,7 @@ jobs:
             dist/*.deb
 
   Stable-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32]
     name: Deploy Stable Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
