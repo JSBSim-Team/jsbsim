@@ -2,7 +2,7 @@
  * \file Math.hpp
  * \brief Header for GeographicLib::Math class
  *
- * Copyright (c) Charles Karney (2008-2019) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2008-2020) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -13,28 +13,6 @@
 
 #if !defined(GEOGRAPHICLIB_MATH_HPP)
 #define GEOGRAPHICLIB_MATH_HPP 1
-
-/**
- * Are C++11 math functions available?
- **********************************************************************/
-#if !defined(GEOGRAPHICLIB_CXX11_MATH)
-// Recent versions of g++ -std=c++11 (4.7 and later?) set __cplusplus to 201103
-// and support the new C++11 mathematical functions, std::atanh, etc.  However
-// the Android toolchain, which uses g++ -std=c++11 (4.8 as of 2014-03-11,
-// according to Pullan Lu), does not support std::atanh.  Android toolchains
-// might define __ANDROID__ or ANDROID; so need to check both.  With OSX the
-// version is GNUC version 4.2 and __cplusplus is set to 201103, so remove the
-// version check on GNUC.
-#  if defined(__GNUC__) && __cplusplus >= 201103 && \
-  !(defined(__ANDROID__) || defined(ANDROID) || defined(__CYGWIN__))
-#    define GEOGRAPHICLIB_CXX11_MATH 1
-// Visual C++ 12 supports these functions
-#  elif defined(_MSC_VER) && _MSC_VER >= 1800
-#    define GEOGRAPHICLIB_CXX11_MATH 1
-#  else
-#    define GEOGRAPHICLIB_CXX11_MATH 0
-#  endif
-#endif
 
 #if !defined(GEOGRAPHICLIB_WORDS_BIGENDIAN)
 #  define GEOGRAPHICLIB_WORDS_BIGENDIAN 0
@@ -168,28 +146,20 @@ namespace GeographicLib {
      * @tparam T the type of the returned value.
      * @return &pi;.
      **********************************************************************/
-    template<typename T> static T pi() {
+    template<typename T = real> static T pi() {
       using std::atan2;
       static const T pi = atan2(T(0), T(-1));
       return pi;
     }
-    /**
-     * A synonym for pi<real>().
-     **********************************************************************/
-    static real pi() { return pi<real>(); }
 
     /**
      * @tparam T the type of the returned value.
      * @return the number of radians in a degree.
      **********************************************************************/
-    template<typename T> static T degree() {
+    template<typename T = real> static T degree() {
       static const T degree = pi<T>() / 180;
       return degree;
     }
-    /**
-     * A synonym for degree<real>().
-     **********************************************************************/
-    static real degree() { return degree<real>(); }
 
     /**
      * Square a number.
@@ -208,8 +178,12 @@ namespace GeographicLib {
      * @param[in] x
      * @param[in] y
      * @return sqrt(<i>x</i><sup>2</sup> + <i>y</i><sup>2</sup>).
+     *
+     * \deprecated Use std::hypot(x, y).
      **********************************************************************/
-    template<typename T> static T hypot(T x, T y);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::hypot(x, y)")
+      static T hypot(T x, T y);
 
     /**
      * exp(\e x) &minus; 1 accurate near \e x = 0.
@@ -217,8 +191,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return exp(\e x) &minus; 1.
+     *
+     * \deprecated Use std::expm1(x).
      **********************************************************************/
-    template<typename T> static T expm1(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::expm1(x)")
+      static T expm1(T x);
 
     /**
      * log(1 + \e x) accurate near \e x = 0.
@@ -226,8 +204,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return log(1 + \e x).
+     *
+     * \deprecated Use std::log1p(x).
      **********************************************************************/
-    template<typename T> static T log1p(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::log1p(x)")
+      static T log1p(T x);
 
     /**
      * The inverse hyperbolic sine function.
@@ -235,8 +217,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return asinh(\e x).
+     *
+     * \deprecated Use std::asinh(x).
      **********************************************************************/
-    template<typename T> static T asinh(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::asinh(x)")
+      static T asinh(T x);
 
     /**
      * The inverse hyperbolic tangent function.
@@ -244,8 +230,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return atanh(\e x).
+     *
+     * \deprecated Use std::atanh(x).
      **********************************************************************/
-    template<typename T> static T atanh(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::atanh(x)")
+      static T atanh(T x);
 
     /**
      * Copy the sign.
@@ -257,8 +247,12 @@ namespace GeographicLib {
      *
      * This routine correctly handles the case \e y = &minus;0, returning
      * &minus|<i>x</i>|.
+     *
+     * \deprecated Use std::copysign(x, y).
      **********************************************************************/
-    template<typename T> static T copysign(T x, T y);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::copysign(x, y)")
+      static T copysign(T x, T y);
 
     /**
      * The cube root function.
@@ -266,8 +260,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return the real cube root of \e x.
+     *
+     * \deprecated Use std::cbrt(x).
      **********************************************************************/
-    template<typename T> static T cbrt(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::cbrt(x)")
+      static T cbrt(T x);
 
     /**
      * The remainder function.
@@ -276,8 +274,12 @@ namespace GeographicLib {
      * @param[in] x
      * @param[in] y
      * @return the remainder of \e x/\e y in the range [&minus;\e y/2, \e y/2].
+     *
+     * \deprecated Use std::remainder(x).
      **********************************************************************/
-    template<typename T> static T remainder(T x, T y);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::remainder(x)")
+      static T remainder(T x, T y);
 
     /**
      * The remquo function.
@@ -287,8 +289,12 @@ namespace GeographicLib {
      * @param[in] y
      * @param[out] n the low 3 bits of the quotient
      * @return the remainder of \e x/\e y in the range [&minus;\e y/2, \e y/2].
+     *
+     * \deprecated Use std::remquo(x, y, n).
      **********************************************************************/
-    template<typename T> static T remquo(T x, T y, int* n);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::remquo(x, y, n)")
+      static T remquo(T x, T y, int* n);
 
     /**
      * The round function.
@@ -296,8 +302,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument and the returned value.
      * @param[in] x
      * @return \e x round to the nearest integer (ties round away from 0).
+     *
+     * \deprecated Use std::round(x).
      **********************************************************************/
-    template<typename T> static T round(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::round(x)")
+      static T round(T x);
 
     /**
      * The lround function.
@@ -308,8 +318,12 @@ namespace GeographicLib {
      *   from 0).
      *
      * If the result does not fit in a long int, the return value is undefined.
+     *
+     * \deprecated Use std::lround(x).
      **********************************************************************/
-    template<typename T> static long lround(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::lround(x)")
+      static long lround(T x);
 
     /**
      * Fused multiply and add.
@@ -324,8 +338,12 @@ namespace GeographicLib {
      * On platforms without the <code>fma</code> instruction, no attempt is
      * made to improve on the result of a rounded multiplication followed by a
      * rounded addition.
+     *
+     * \deprecated Use std::fma(x, y, z).
      **********************************************************************/
-    template<typename T> static T fma(T x, T y, T z);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::fma(x, y, z)")
+      static T fma(T x, T y, T z);
 
     /**
      * Normalize a two-vector.
@@ -334,8 +352,24 @@ namespace GeographicLib {
      * @param[in,out] x on output set to <i>x</i>/hypot(<i>x</i>, <i>y</i>).
      * @param[in,out] y on output set to <i>y</i>/hypot(<i>x</i>, <i>y</i>).
      **********************************************************************/
-    template<typename T> static void norm(T& x, T& y)
-    { T h = hypot(x, y); x /= h; y /= h; }
+    template<typename T> static void norm(T& x, T& y) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+      // hypot for Visual Studio (A=win32) fails monotonicity, e.g., with
+      //   x  = 0.6102683302836215
+      //   y1 = 0.7906090004346522
+      //   y2 = y1 + 1e-16
+      // the test
+      //   hypot(x, y2) >= hypot(x, y1)
+      // fails.  Reported 2021-03-14:
+      //   https://developercommunity.visualstudio.com/t/1369259
+      // See also:
+      //   https://bugs.python.org/issue43088
+      using std::sqrt; T h = sqrt(x * x + y * y);
+#else
+      using std::hypot; T h = hypot(x, y);
+#endif
+      x /= h; y /= h;
+    }
 
     /**
      * The error-free sum of two numbers.
@@ -365,11 +399,14 @@ namespace GeographicLib {
      * Return 0 if \e N &lt; 0.  Return <i>p</i><sub>0</sub>, if \e N = 0 (even
      * if \e x is infinite or a nan).  The evaluation uses Horner's method.
      **********************************************************************/
-    template<typename T> static T polyval(int N, const T p[], T x)
+    template<typename T> static T polyval(int N, const T p[], T x) {
     // This used to employ Math::fma; but that's too slow and it seemed not to
     // improve the accuracy noticeably.  This might change when there's direct
     // hardware support for fma.
-    { T y = N < 0 ? 0 : *p++; while (--N >= 0) y = y * x + *p++; return y; }
+      T y = N < 0 ? 0 : *p++;
+      while (--N >= 0) y = y * x + *p++;
+      return y;
+    }
 
     /**
      * Normalize an angle.
@@ -381,6 +418,7 @@ namespace GeographicLib {
      * The range of \e x is unrestricted.
      **********************************************************************/
     template<typename T> static T AngNormalize(T x) {
+      using std::remainder;
       x = remainder(x, T(360)); return x != -180 ? x : 180;
     }
 
@@ -412,6 +450,7 @@ namespace GeographicLib {
      * &le; 0.
      **********************************************************************/
     template<typename T> static T AngDiff(T x, T y, T& e) {
+      using std::remainder;
       T t, d = AngNormalize(sum(remainder(-x, T(360)),
                                 remainder( y, T(360)), t));
       // Here y - x = d + t (mod 360), exactly, where d is in (-180,180] and
@@ -584,8 +623,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument.
      * @param[in] x
      * @return true if number is finite, false if NaN or infinite.
+     *
+     * \deprecated Use std::isfinite(x).
      **********************************************************************/
-    template<typename T> static bool isfinite(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::isfinite(x)")
+      static bool isfinite(T x);
 
     /**
      * The NaN (not a number)
@@ -593,12 +636,7 @@ namespace GeographicLib {
      * @tparam T the type of the returned value.
      * @return NaN if available, otherwise return the max real of type T.
      **********************************************************************/
-    template<typename T> static T NaN();
-
-    /**
-     * A synonym for NaN<real>().
-     **********************************************************************/
-    static real NaN() { return NaN<real>(); }
+    template<typename T = real> static T NaN();
 
     /**
      * Test for NaN.
@@ -606,8 +644,12 @@ namespace GeographicLib {
      * @tparam T the type of the argument.
      * @param[in] x
      * @return true if argument is a NaN.
+     *
+     * \deprecated Use std::isnan(x).
      **********************************************************************/
-    template<typename T> static bool isnan(T x);
+    template<typename T>
+      GEOGRAPHICLIB_DEPRECATED("Use std::isnan(x)")
+      static bool isnan(T x);
 
     /**
      * Infinity
@@ -615,12 +657,7 @@ namespace GeographicLib {
      * @tparam T the type of the returned value.
      * @return infinity if available, otherwise return the max real.
      **********************************************************************/
-    template<typename T> static T infinity();
-
-    /**
-     * A synonym for infinity<real>().
-     **********************************************************************/
-    static real infinity() { return infinity<real>(); }
+    template<typename T = real> static T infinity();
 
     /**
      * Swap the bytes of a quantity
