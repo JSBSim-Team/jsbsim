@@ -35,8 +35,9 @@
 	-->
     <event name="Trim">
       <condition> simulation/sim-time-sec ge 0.0 </condition>
-	  <set name="ic/vc-kts"  value="161.25"/>
-	  <set name="ic/h-sl-ft" value="30000.0"/>
+      <set name="ic/h-sl-ft" value="30000.0"/>
+      <set name="ap/mach_setpoint" value="0.43"/>
+      <set name="ap/mach_hold" value="1"/>
       <set name="simulation/do_simple_trim" value="1"/>
     </event>
     
@@ -44,9 +45,9 @@
         <condition> velocities/vc-kts >= 51 </condition>
         <delay>10.0</delay>
         <set name="ap/altitude_setpoint" value="30000.0"/>
-        <set name="ap/altitude_hold" value="1"/>
+        <set name="ap/altitude_hold" value="0"/>
         <set name="ap/alpha_setpoint" value="6.08"/>
-        <set name="ap/alpha_hold" value="1"/>
+        <set name="ap/alpha_hold" value="0"/>
       <set name="simulation/output/log_rate_hz" value="10"/>
       <notify>
         <property caption="Cal. airspeed (kts):  "> velocities/vc-kts</property>
@@ -62,6 +63,10 @@
       </description>
       <notify>
         <property>position/h-agl-ft</property>
+        <property>ap/mach_setpoint</property> 
+        <property>fcs/throttle-pos-norm[1]</property>
+        <property>fcs/throttle-cmd-norm[1]</property>
+        <property>ap/throttle-cmd</property>
         <property>velocities/mach</property>  
         <property>propulsion/engine[0]/n1</property>
         <property>propulsion/engine[1]/n1</property>

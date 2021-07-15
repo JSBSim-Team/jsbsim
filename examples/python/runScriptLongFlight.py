@@ -14,6 +14,9 @@
 # pip install matplotlib
 # Or conda install matplotlib (if you have anaconda, this is the best way)
 
+# You should change aircraft XML global5000.xml to use
+# autopilot global5000apMach.xml to hold Mach number
+
 import jsbsim
 import matplotlib.pyplot as plt
 
