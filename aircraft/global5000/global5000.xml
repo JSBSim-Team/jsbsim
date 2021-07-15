@@ -1,5 +1,4 @@
-<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" release="ALPHA" version="2.0" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
-
+<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" version="2.0" release="ALPHA" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
  <fileheader>
   <author> Aeromatic v 0.96 and fixed bugs Guilherme Lima da Silva </author>
   <filecreationdate>2021-05-17</filecreationdate>
@@ -25,6 +24,7 @@
     aerospace@ats4i.com
     May 2021
 
+<<<<<<< HEAD
     File:     global5000.xml
     Inputs:
     name:          global5000
@@ -53,6 +53,8 @@
   </description>
  </fileheader>
 
+=======
+>>>>>>> b82c03bddee495d672f223c52372882ba6e95291
 
 
  <metrics>
@@ -67,7 +69,7 @@
    <location name="AERORP" unit="IN">
      <x> 790.80 </x>
      <y>   0.00 </y>
-     <z>   0.00 </z>
+     <z> -29.07 </z>
    </location>
    <location name="EYEPOINT" unit="IN">
      <x>  81.40 </x>
@@ -910,31 +912,30 @@
   </axis>
 
  </aerodynamics>
-    <output name="global5000.csv" rate="60" type="CSV">
-	<property> aero/alphadot-deg_sec </property>
-	<property> aero/betadot-deg_sec  </property>
-	<property> velocities/ve-kts </property>
-	<property> velocities/vc-kts </property>
-	<property> velocities/mach </property>
-	<property> aero/beta-deg </property>
-	<property> aero/alpha-deg </property>
-	<property> velocities/vtrue-kts </property>
-	<property> gear/gear-cmd-norm </property>
-	<property> aero/coefficient/CLalpha </property>
-	<property> position/h-agl-ft </property>
+  <output name="global5000.csv" rate="60" type="CSV">
+    <property> aero/alphadot-deg_sec </property>
+    <property> aero/betadot-deg_sec  </property>
+    <property> velocities/ve-kts </property>
+    <property> velocities/vc-kts </property>
+    <property> velocities/mach </property>
+    <property> aero/beta-deg </property>
+    <property> aero/alpha-deg </property>
+    <property> velocities/vtrue-kts </property>
+    <property> gear/gear-cmd-norm </property>
+    <property> position/h-agl-ft </property>
 
-	<simulation>       OFF </simulation>
-	<atmosphere>       OFF </atmosphere>
-	<massprops>        OFF </massprops>
-	<aerosurfaces>     OFF  </aerosurfaces>
-	<rates>            OFF  </rates>
-	<velocities>       OFF </velocities>
-	<forces>           OFF </forces>
-	<moments>          OFF </moments>
-	<position>         OFF  </position>
-	<coefficients>     OFF </coefficients>
-	<ground_reactions> OFF </ground_reactions>
-	<fcs>              OFF  </fcs>
-	<propulsion>       ON </propulsion>
-    </output>
+    <simulation>       OFF </simulation>
+    <atmosphere>       OFF </atmosphere>
+    <massprops>        OFF </massprops>
+    <aerosurfaces>     OFF  </aerosurfaces>
+    <rates>            OFF  </rates>
+    <velocities>       OFF </velocities>
+    <forces>           OFF </forces>
+    <moments>          OFF </moments>
+    <position>         OFF  </position>
+    <coefficients>     OFF </coefficients>
+    <ground_reactions> OFF </ground_reactions>
+    <fcs>              OFF  </fcs>
+    <propulsion>       ON </propulsion>
+  </output>
 </fdm_config>

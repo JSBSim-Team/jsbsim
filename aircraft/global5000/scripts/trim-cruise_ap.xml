@@ -38,7 +38,6 @@
       <set name="ic/h-sl-ft" value="30000.0"/>
       <set name="ap/mach_setpoint" value="0.43"/>
       <set name="ap/mach_hold" value="1"/>
-
       <set name="simulation/do_simple_trim" value="1"/>
     </event>
     
@@ -49,7 +48,6 @@
         <set name="ap/altitude_hold" value="0"/>
         <set name="ap/alpha_setpoint" value="6.08"/>
         <set name="ap/alpha_hold" value="0"/>
-
       <set name="simulation/output/log_rate_hz" value="10"/>
       <notify>
         <property caption="Cal. airspeed (kts):  "> velocities/vc-kts</property>
