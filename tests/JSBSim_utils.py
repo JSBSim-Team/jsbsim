@@ -164,7 +164,7 @@ class JSBSimTestCase(unittest.TestCase):
 
             fullpath = os.path.join(script_path, f)
 
-            # Does f contains a JSBSim script ?
+            # Does f contain a JSBSim script ?
             if CheckXMLFile(fullpath, 'runscript'):
                 yield fullpath
 
@@ -173,9 +173,7 @@ class JSBSimTestCase(unittest.TestCase):
         return self._fdm
 
     def delete_fdm(self):
-        if self._fdm:
-            del self._fdm
-            self._fdm = None
+        self._fdm = None
 
     def load_script(self, script_name):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',

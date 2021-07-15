@@ -86,7 +86,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   IsChild = false;
   holding = false;
   Terminate = false;
-  ResetMode = 0;
   RandomSeed = 0;
   HoldDown = false;
 
@@ -426,13 +425,6 @@ bool FGFDMExec::Run(void)
     Models[i]->Run(holding);
   }
 
-  if (ResetMode) {
-    unsigned int mode = ResetMode;
-
-    ResetMode = 0;
-    ResetToInitialConditions(mode);
-  }
-
   if (Terminate) success = false;
 
   return success;
@@ -691,7 +683,9 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 {
   if (Constructing) return;
 
-  if (mode == 1) Output->SetStartNewOutput();
+  // mode flags
+
+  if (mode & START_NEW_OUTPUT) Output->SetStartNewOutput();
 
   InitializeModels();
 
@@ -700,7 +694,8 @@ void FGFDMExec::ResetToInitialConditions(int mode)
   else
     Setsim_time(0.0);
 
-  RunIC();
+  if (!(mode & DONT_EXECUTE_RUN_IC))
+    RunIC();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,6 @@
+#cmakedefine BACKWARD_FOUND
+#cmakedefine LIBBFD_FOUND
+
+#ifdef LIBBFD_FOUND
+#define BACKWARD_HAS_BFD 1
+#endif
