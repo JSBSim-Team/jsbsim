@@ -1,39 +1,31 @@
-<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="global5000" version="2.0" release="ALPHA"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" release="ALPHA" version="2.0" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
   <author> Aeromatic v 0.96 and fixed bugs Guilherme Lima da Silva </author>
   <filecreationdate>2021-05-17</filecreationdate>
   <version>$Revision: 1.20 $</version>
-  <description> 
-  
+  <description>
 
-    File created with Aeromatic 
-  
+
+    File created with Aeromatic
+
     Based on Moellemi, M., Jafer, S., Towhidnejad, M. "Flight Dynamics Model of Bombardier Global 5000 Aircraft", AIAA Modeling and Simulation Technologies Conference, 13-17 June 2016, Washington D.C., AIAA 2016-3525, DOI: 10.2514/6.2016-3525
-  
-    Models a global5000
-     
-    Mods: 
-       included feed=2 in the engine to use tank 2
-       included important outputs
-       adjusted CL and CD tables to match theoretical Polar Drag curve
-         by considering e=0.83 and k=0.03453 and FAA TC 18-7
-     
-    modified by Guilherme Lima da Silva 
-    ATS aerohermalsolutions.co 
-    aerospace@ats4i.com  
-    May 2021
-    
-  </description>
- </fileheader>
 
-<!--
-  File:     global5000.xml
-  Inputs:
+    Models a global5000
+
+    Mods:
+    included feed=2 in the engine to use tank 2
+    included important outputs
+    adjusted CL and CD tables to match theoretical Polar Drag curve
+    by considering e=0.83 and k=0.03453 and FAA TC 18-7
+
+    modified by Guilherme Lima da Silva
+    ATS aerohermalsolutions.co
+    aerospace@ats4i.com
+    May 2021
+
+    File:     global5000.xml
+    Inputs:
     name:          global5000
     type:          two-engine transonic transport
     max weight:    87700 lb
@@ -41,13 +33,13 @@
     length:        96.9 ft
     wing area:     1022 sq-ft
     gear type:     tricycle
-    castering:     
+    castering:
     retractable?:  yes
     # engines:     2
     engine type:   turbine
     engine layout: aft fuselage
     yaw damper?    yes
-  Outputs:
+    Outputs:
     wing loading:  85.81 lb/sq-ft
     payload:       15172.1 lbs
     CL-alpha:      4.4 per radian
@@ -56,17 +48,20 @@
     CD-0:          0.02
     K:             0.043
 
--->
+  </description>
+ </fileheader>
+
+
 
  <metrics>
-   <wingarea  unit="FT2"> 1022.00 </wingarea>
-   <wingspan  unit="FT" >   93.00 </wingspan>
+   <wingarea unit="FT2"> 1022.00 </wingarea>
+   <wingspan unit="FT">   93.00 </wingspan>
    <wing_incidence>          2.00 </wing_incidence>
-   <chord     unit="FT" >   10.99 </chord>
+   <chord unit="FT">   10.99 </chord>
    <htailarea unit="FT2">  245.00 </htailarea>
-   <htailarm  unit="FT" >   31.00 </htailarm>
+   <htailarm unit="FT">   31.00 </htailarm>
    <vtailarea unit="FT2">  186.00 </vtailarea>
-   <vtailarm  unit="FT" >   13.00 </vtailarm>
+   <vtailarm unit="FT">   13.00 </vtailarm>
    <location name="AERORP" unit="IN">
      <x> 790.80 </x>
      <y>   0.00 </y>
@@ -88,7 +83,7 @@
    <ixx unit="SLUG*FT2">    238070 </ixx>
    <iyy unit="SLUG*FT2">    589404 </iyy>
    <izz unit="SLUG*FT2">    834676 </izz>
-   <emptywt unit="LBS" >     48235 </emptywt>
+   <emptywt unit="LBS">     48235 </emptywt>
    <location name="CG" unit="IN">
      <x> 790.80 </x>
      <y>   0.00 </y>
@@ -107,7 +102,7 @@
 
  <ground_reactions>
 
-  <contact type="BOGEY" name="NOSE">
+  <contact name="NOSE" type="BOGEY">
    <location unit="IN">
      <x> 151.16 </x>
      <y>   0.00 </y>
@@ -123,7 +118,7 @@
    <retractable>1</retractable>
   </contact>
 
-  <contact type="BOGEY" name="LEFT_MAIN">
+  <contact name="LEFT_MAIN" type="BOGEY">
    <location unit="IN">
      <x> 822.43 </x>
      <y> -100.44 </y>
@@ -139,7 +134,7 @@
    <retractable>1</retractable>
   </contact>
 
-  <contact type="BOGEY" name="RIGHT_MAIN">
+  <contact name="RIGHT_MAIN" type="BOGEY">
    <location unit="IN">
      <x> 822.43 </x>
      <y> 100.44 </y>
@@ -155,7 +150,7 @@
    <retractable>1</retractable>
   </contact>
 
-  <contact type="STRUCTURE" name="LEFT_WING">
+  <contact name="LEFT_WING" type="STRUCTURE">
     <location unit="IN">
      <x> 790.80 </x>
      <y> -46.50 </y>
@@ -167,7 +162,7 @@
     <damping_coeff unit="LBS/FT/SEC"> 87700.00 </damping_coeff>
   </contact>
 
-  <contact type="STRUCTURE" name="RIGHT_WING">
+  <contact name="RIGHT_WING" type="STRUCTURE">
     <location unit="IN">
      <x> 790.80 </x>
      <y>  46.50 </y>
@@ -237,7 +232,7 @@
     </thruster>
   </engine>
 
-  <tank type="FUEL" number="0">
+  <tank number="0" type="FUEL">
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -247,7 +242,7 @@
      <contents unit="LBS"> 8097.63 </contents>
   </tank>
 
-  <tank type="FUEL" number="1">
+  <tank number="1" type="FUEL">
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -257,7 +252,7 @@
      <contents unit="LBS"> 8097.63 </contents>
   </tank>
 
-  <tank type="FUEL" number="2">
+  <tank number="2" type="FUEL">
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -270,14 +265,14 @@
  </propulsion>
 
  
- <system file="GNCUtilities"/>
+ <system file="GNCUtilities" />
 
  <system file="Autopilot">
       <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
  </system>
  
- <autopilot file="global5000ap"/>
+ <autopilot file="global5000ap" />
 
 
  <flight_control name="FCS: global5000">
