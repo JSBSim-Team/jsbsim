@@ -9,7 +9,11 @@
   -->
   <running>                -1   </running>
   <altitude unit="FT">  30000.0  </altitude>
+<<<<<<< HEAD
   <!-- <vc unit="KTS">        200.0  </vc> -->
   <mach>        0.43  </mach>
+=======
+  <vc unit="KTS">        200.0  </vc>
+>>>>>>> upstream/master
 
 </initialize>

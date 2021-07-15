@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 <fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" version="2.0" release="ALPHA" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+=======
+<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="global5000" release="ALPHA" version="2.0" xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+>>>>>>> upstream/master
 
  <fileheader>
   <author> Aeromatic v 0.96 and fixed bugs Guilherme Lima da Silva </author>
   <filecreationdate>2021-05-17</filecreationdate>
   <version>$Revision: 1.20 $</version>
+<<<<<<< HEAD
   <description> 
   
 
@@ -24,6 +29,52 @@
     aerospace@ats4i.com  
     May 2021
     
+=======
+  <description>
+
+
+    File created with Aeromatic
+
+    Based on Moellemi, M., Jafer, S., Towhidnejad, M. "Flight Dynamics Model of Bombardier Global 5000 Aircraft", AIAA Modeling and Simulation Technologies Conference, 13-17 June 2016, Washington D.C., AIAA 2016-3525, DOI: 10.2514/6.2016-3525
+
+    Models a global5000
+
+    Mods:
+    included feed=2 in the engine to use tank 2
+    included important outputs
+    adjusted CL and CD tables to match theoretical Polar Drag curve
+    by considering e=0.83 and k=0.03453 and FAA TC 18-7
+
+    modified by Guilherme Lima da Silva
+    ATS aerohermalsolutions.co
+    aerospace@ats4i.com
+    May 2021
+
+    File:     global5000.xml
+    Inputs:
+    name:          global5000
+    type:          two-engine transonic transport
+    max weight:    87700 lb
+    wing span:     93 ft
+    length:        96.9 ft
+    wing area:     1022 sq-ft
+    gear type:     tricycle
+    castering:
+    retractable?:  yes
+    # engines:     2
+    engine type:   turbine
+    engine layout: aft fuselage
+    yaw damper?    yes
+    Outputs:
+    wing loading:  85.81 lb/sq-ft
+    payload:       15172.1 lbs
+    CL-alpha:      4.4 per radian
+    CL-0:          0.2
+    CL-max:        1.2
+    CD-0:          0.02
+    K:             0.043
+
+>>>>>>> upstream/master
   </description>
  </fileheader>
 
@@ -41,7 +92,11 @@
    <location name="AERORP" unit="IN">
      <x> 790.80 </x>
      <y>   0.00 </y>
+<<<<<<< HEAD
      <z> -29.07 </z>
+=======
+     <z>   0.00 </z>
+>>>>>>> upstream/master
    </location>
    <location name="EYEPOINT" unit="IN">
      <x>  81.40 </x>
@@ -78,7 +133,11 @@
 
  <ground_reactions>
 
+<<<<<<< HEAD
   <contact type="BOGEY" name="NOSE">
+=======
+  <contact name="NOSE" type="BOGEY">
+>>>>>>> upstream/master
    <location unit="IN">
      <x> 151.16 </x>
      <y>   0.00 </y>
@@ -94,7 +153,11 @@
    <retractable>1</retractable>
   </contact>
 
+<<<<<<< HEAD
   <contact type="BOGEY" name="LEFT_MAIN">
+=======
+  <contact name="LEFT_MAIN" type="BOGEY">
+>>>>>>> upstream/master
    <location unit="IN">
      <x> 822.43 </x>
      <y> -100.44 </y>
@@ -110,7 +173,11 @@
    <retractable>1</retractable>
   </contact>
 
+<<<<<<< HEAD
   <contact type="BOGEY" name="RIGHT_MAIN">
+=======
+  <contact name="RIGHT_MAIN" type="BOGEY">
+>>>>>>> upstream/master
    <location unit="IN">
      <x> 822.43 </x>
      <y> 100.44 </y>
@@ -126,7 +193,11 @@
    <retractable>1</retractable>
   </contact>
 
+<<<<<<< HEAD
   <contact type="STRUCTURE" name="LEFT_WING">
+=======
+  <contact name="LEFT_WING" type="STRUCTURE">
+>>>>>>> upstream/master
     <location unit="IN">
      <x> 790.80 </x>
      <y> -46.50 </y>
@@ -138,7 +209,11 @@
     <damping_coeff unit="LBS/FT/SEC"> 87700.00 </damping_coeff>
   </contact>
 
+<<<<<<< HEAD
   <contact type="STRUCTURE" name="RIGHT_WING">
+=======
+  <contact name="RIGHT_WING" type="STRUCTURE">
+>>>>>>> upstream/master
     <location unit="IN">
      <x> 790.80 </x>
      <y>  46.50 </y>
@@ -208,7 +283,11 @@
     </thruster>
   </engine>
 
+<<<<<<< HEAD
   <tank type="FUEL" number="0">
+=======
+  <tank number="0" type="FUEL">
+>>>>>>> upstream/master
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -218,7 +297,11 @@
      <contents unit="LBS"> 8097.63 </contents>
   </tank>
 
+<<<<<<< HEAD
   <tank type="FUEL" number="1">
+=======
+  <tank number="1" type="FUEL">
+>>>>>>> upstream/master
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -228,7 +311,11 @@
      <contents unit="LBS"> 8097.63 </contents>
   </tank>
 
+<<<<<<< HEAD
   <tank type="FUEL" number="2">
+=======
+  <tank number="2" type="FUEL">
+>>>>>>> upstream/master
      <location unit="IN">
        <x> 790.80 </x>
        <y>   0.00 </y>
@@ -248,7 +335,12 @@
       <property value="0.174"> guidance/roll-rate-limit </property>
  </system>
  
+<<<<<<< HEAD
  <autopilot file="global5000apMach" />
+=======
+ <autopilot file="global5000ap" />
+
+>>>>>>> upstream/master
 
  <flight_control name="FCS: global5000">
 
@@ -885,6 +977,7 @@
 
  </aerodynamics>
 
+<<<<<<< HEAD
   <output name="global5000.csv" rate="60" type="CSV">
     <property> aero/alphadot-deg_sec </property>
     <property> aero/betadot-deg_sec  </property>
@@ -911,4 +1004,34 @@
     <fcs>              OFF  </fcs>
     <propulsion>       ON </propulsion>
   </output>
+=======
+    <output name="global5000.csv" rate="60" type="CSV">
+	<property> aero/alphadot-deg_sec </property>
+	<property> aero/betadot-deg_sec  </property>
+	<property> velocities/ve-kts </property>
+	<property> velocities/vc-kts </property>
+	<property> velocities/mach </property>
+	<property> aero/beta-deg </property>
+	<property> aero/alpha-deg </property>
+	<property> velocities/vtrue-kts </property>
+	<property> gear/gear-cmd-norm </property>
+	<property> aero/coefficient/CLalpha </property>
+	<property> position/h-agl-ft </property>
+
+
+	<simulation>       OFF </simulation>
+	<atmosphere>       OFF </atmosphere>
+	<massprops>        OFF </massprops>
+	<aerosurfaces>     OFF  </aerosurfaces>
+	<rates>            OFF  </rates>
+	<velocities>       OFF </velocities>
+	<forces>           OFF </forces>
+	<moments>          OFF </moments>
+	<position>         OFF  </position>
+	<coefficients>     OFF </coefficients>
+	<ground_reactions> OFF </ground_reactions>
+	<fcs>              OFF  </fcs>
+	<propulsion>       ON </propulsion>
+    </output>
+>>>>>>> upstream/master
 </fdm_config>

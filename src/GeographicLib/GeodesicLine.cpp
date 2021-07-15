@@ -2,7 +2,7 @@
  * \file GeodesicLine.cpp
  * \brief Implementation for GeographicLib::GeodesicLine class
  *
- * Copyright (c) Charles Karney (2009-2016) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2009-2020) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  *
@@ -60,7 +60,7 @@ namespace GeographicLib {
     _salp0 = _salp1 * cbet1; // alp0 in [0, pi/2 - |bet1|]
     // Alt: calp0 = hypot(sbet1, calp1 * cbet1).  The following
     // is slightly better (consider the case salp1 = 0).
-    _calp0 = Math::hypot(_calp1, _salp1 * sbet1);
+    _calp0 = hypot(_calp1, _salp1 * sbet1);
     // Evaluate sig with tan(bet1) = tan(sig1) * cos(alp1).
     // sig = 0 is nearest northward crossing of equator.
     // With bet1 = 0, alp1 = pi/2, we have sig1 = 0 (equatorial line).
@@ -210,7 +210,7 @@ namespace GeographicLib {
     // sin(bet2) = cos(alp0) * sin(sig2)
     sbet2 = _calp0 * ssig2;
     // Alt: cbet2 = hypot(csig2, salp0 * ssig2);
-    cbet2 = Math::hypot(_salp0, _calp0 * csig2);
+    cbet2 = hypot(_salp0, _calp0 * csig2);
     if (cbet2 == 0)
       // I.e., salp0 = 0, csig2 = 0.  Break the degeneracy in this case
       cbet2 = csig2 = tiny_;
@@ -223,7 +223,7 @@ namespace GeographicLib {
     if (outmask & LONGITUDE) {
       // tan(omg2) = sin(alp0) * tan(sig2)
       real somg2 = _salp0 * ssig2, comg2 = csig2,  // No need to normalize
-        E = Math::copysign(real(1), _salp0);       // east-going?
+        E = copysign(real(1), _salp0);       // east-going?
       // omg12 = omg2 - omg1
       real omg12 = outmask & LONG_UNROLL
         ? E * (sig12

@@ -54,9 +54,23 @@ else:
 compiler = new_compiler(compiler=compiler_name)
 
 if compiler.compiler_type == 'unix':
+<<<<<<< HEAD:python/fpectl/setup.py.in
     cpp_compile_flag = ['-std=c++11']
 else:
     cpp_compile_flag = []
+=======
+    cpp_compile_flags = ['-std=c++11']
+    cpp_link_flags = []
+elif compiler.compiler_type == 'msvc':
+    # These flags are equivalent to a RelWithDebInfo configuration.
+    # Since the module fpectl is not supposed to be used in production, these
+    # values are hardcoded.
+    cpp_compile_flags = ['/MD', '/Zi', '/O2', '/Ob1', '/DNDEBUG']
+    cpp_link_flags = ['/debug', '/INCREMENTAL']
+else:
+    cpp_compile_flags = []
+    cpp_link_flags = []
+>>>>>>> upstream/master:python/fpectl/setup.py.in
 
 setup(
     name="fpectl",
@@ -65,5 +79,10 @@ setup(
                            sources=['${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp'],
                            include_dirs=['${CMAKE_CURRENT_BINARY_DIR}', ${FPECTL_INCLUDE_DIRS}],
                            libraries=[${FPECTL_LIBRARIES}],
+<<<<<<< HEAD:python/fpectl/setup.py.in
                            extra_compile_args=cpp_compile_flag,
+=======
+                           extra_compile_args=cpp_compile_flags,
+                           extra_link_args=cpp_link_flags,
+>>>>>>> upstream/master:python/fpectl/setup.py.in
                            language='c++')])
