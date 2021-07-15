@@ -1,0 +1,49 @@
+
+y
+y
+SR71
+
+
+2                             ; Type of aircraft
+155                           ; Stall speed VS1 (clean, no flaps)
+170000                        ; Maximum takeoff weight
+59000                         ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+107.41666667                  ; Length
+2                             ; Select a wing shape
+55.58333333                   ; Wing span
+1795                          ; Wing area
+1.939                         ; Wing aspect ratio
+                              ; Wing taper ratio
+60.533                        ; Wing root chord
+                              ; Wing incidence
+0                             ; Wing dihedral
+52.629                        ; Wing sweep (quarter chord)
+                              ; Htail area
+                              ; Htail arm
+150.76                        ; Vtail area
+                              ; Vtail arm
+
+J58
+2                             ; Number of engines
+3                             ; Engine layout
+2                             ; Engine type
+25000                         ; Engine mil. thrust
+0                             ; Bypass ratio
+8.8                           ; Overall pressure ratio
+y
+
+1                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
+
+
+
+y
+
+

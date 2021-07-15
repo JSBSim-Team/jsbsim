@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Trim in Cruise configuration">
+
+  <description>
+    Trimmed at altitude/airspeed in Cruise configuration, 
+    run for 1 second
+
+      Author:
+    Bill Galbraith
+    Holy Cows, Inc.
+    billg@holycows.net
+    December 2010
+    
+      Modified by:
+    Guilherme Lima da Silva
+    ATS aerothermalsolutions.co 
+    aerospace@ats4i.com 
+    May 2021
+    
+  </description>          
+
+  <use aircraft="global5000" initialize="airborne"/>
+
+  <run start="0" end="2" dt="0.00833333">
+  
+      <property value="0"> simulation/notify-time-trigger </property>
+
+    <!-- 
+	  Specify the initial conditions for the test if
+	  different than in the initialize script, and
+	  trim the aircraft.
+	-->
+    <event name="Trim">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+	  <set name="ic/vc-kts"  value="161.25"/>
+	  <set name="ic/h-sl-ft" value="30000.0"/>
+      <set name="simulation/do_simple_trim" value="1"/>
+    </event>
+ 
+      <event name="Repeating Notify" persistent="true">
+      <description>Output message at 1 second interval, starting after
+                   trimming is completed.
+      </description>
+      <notify>
+        <property>position/h-agl-ft</property>
+        <property>velocities/mach</property>  
+        <property>propulsion/engine[0]/n2</property>
+        <property>propulsion/engine[1]/n2</property>
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>velocities/vc-kts</property>
+<!--        <property>velocities/vc-fps</property>-->
+<!--        <property>velocities/vt-fps</property>-->
+<!--        <property>attitude/theta-rad</property>-->
+        <property>aero/alpha-deg</property>
+        <property>simulation/frame</property>
+      </notify>
+      <condition logic="AND">
+        simulation/sim-time-sec >= simulation/notify-time-trigger
+        simulation/trim-completed eq 1
+      </condition>
+
+      <set name="simulation/notify-time-trigger" value="1" type="FG_DELTA"/>
+      <notify/>
+      
+    </event>
+
+  </run>
+
+</runscript>

@@ -1,0 +1,46 @@
+
+y
+y
+bae-146-rj100
+
+1
+3                             ; Type of aircraft
+189                           ; Stall speed VS1 (clean, no flaps)
+44225                         ; Maximum takeoff weight
+25640                         ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+31                            ; Length
+0                             ; Select a wing shape
+26.34                         ; Wing span
+77.3                          ; Wing area
+8.98                          ; Wing aspect ratio
+0.356                         ; Wing taper ratio
+                              ; Wing root chord
+                              ; Wing incidence
+                              ; Wing dihedral
+15                            ; Wing sweep (quarter chord)
+15.61                         ; Htail area
+                              ; Htail arm
+15.51                         ; Vtail area
+                              ; Vtail arm
+
+LF-507-1F
+4                             ; Number of engines
+3                             ; Engine layout
+2                             ; Engine type
+31                            ; Engine mil. thrust
+5.7                           ; Bypass ratio
+13.8                          ; Overall pressure ratio
+
+
+
+1                             ; Control system
+
+
+0                             ; Nose or tail wheel type
+
+
+yes
+yes

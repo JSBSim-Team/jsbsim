@@ -774,6 +774,7 @@ void FGPropulsion::SetFuelFreeze(bool f)
 void FGPropulsion::bind(void)
 {
   typedef int (FGPropulsion::*iPMF)(void) const;
+  typedef bool (FGPropulsion::*bPMF)(void) const;
   bool HavePistonEngine = false;
   bool HaveTurboEngine = false;
 
@@ -806,6 +807,7 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/total-oxidizer-lbs", &TotalOxidizerQuantity);
   PropertyManager->Tie("propulsion/refuel", &refuel);
   PropertyManager->Tie("propulsion/fuel_dump", &dump);
+  PropertyManager->Tie("propulsion/fuel_freeze", this, (bPMF)nullptr, &FGPropulsion::SetFuelFreeze);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

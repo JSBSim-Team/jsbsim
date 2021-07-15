@@ -1,0 +1,43 @@
+
+y
+y
+Cessna T-37
+
+0
+1                             ; Type of aircraft
+74                            ; Stall speed VS1 (clean, no flaps)
+6403                          ; Maximum takeoff weight
+3891                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+29.25                         ; Length
+                              ; Select a wing shape
+33.83                         ; Wing span
+209.74                        ; Wing area
+6.2                           ; Wing aspect ratio
+1                             ; Wing taper ratio
+5.47                          ; Wing root chord
+2                             ; Wing incidence
+3                             ; Wing dihedral
+0                             ; Wing sweep (quarter chord)
+46.57                         ; Htail area
+                              ; Htail arm
+35.56                         ; Vtail area
+                              ; Vtail arm
+
+J69-T9
+2                             ; Number of engines
+1                             ; Engine layout
+2                             ; Engine type
+920                           ; Engine mil. thrust
+0                             ; Bypass ratio
+4                             ; Overall pressure ratio
+ 
+ 
+
+
+                              ; Nose or tail wheel type
+
+
+

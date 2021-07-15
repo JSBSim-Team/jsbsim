@@ -252,7 +252,11 @@ bool Aeromatic::fdm()
     }
 
     if (_wing.taper == 0) {
-        _wing.taper = 1.0f;
+        if (_wing.shape == DELTA) {
+            _wing.taper = 2.0f*_wing.span/_wing.area;
+        } else {
+            _wing.taper = 1.0f;
+        }
     }
 
     if (_wing.chord_mean == 0)

@@ -1,0 +1,48 @@
+
+y
+y
+P51D
+
+
+1                             ; Type of aircraft
+87                            ; Stall speed VS1 (clean, no flaps)
+12100                         ; Maximum takeoff weight
+7635                          ; Empty weight
+                              ; Inertia Ixx
+                              ; Inertia Iyy
+                              ; Inertia Izz
+32.25                         ; Length
+                              ; Select a wing shape
+37.25                         ; Wing span
+235                           ; Wing area
+5.83                          ; Wing aspect ratio
+0.463                         ; Wing taper ratio
+8.48                          ; Wing mean chord
+0.001                         ; Wing incidence
+5.2                           ; Wing dihedral
+1.04                          ; Wing sweep (quarter chord)
+45.4                          ; Htail area
+                              ; Htail arm
+14.8                          ; Vtail area
+                              ; Vtail arm
+
+Merlin V-1650
+1                             ; Number of engines
+                              ; Engine layout
+                              ; Engine type
+1695                          ; Engine power
+3000                          ; Maximum engine rpm
+Hamilton
+11.08                         ; Propeller diameter
+
+                              ; Control system
+
+
+1                             ; Nose or tail wheel type
+y
+
+
+
+
+
+

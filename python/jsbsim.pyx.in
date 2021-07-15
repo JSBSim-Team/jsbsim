@@ -22,9 +22,19 @@
 
 from cython.operator cimport dereference as deref
 
-import os, platform, numpy
+import errno
+import os
+import platform
+
+import numpy
 
 __version__='${PROJECT_VERSION}'
+
+def append_xml(name):
+    if len(name) < 4 or name[-4:] != '.xml':
+        return name+'.xml'
+    return name
+
 
 cdef convertToNumpyMat(const c_FGMatrix33& m):
     return numpy.mat([[m.Entry(1, 1), m.Entry(1, 2), m.Entry(1, 3)],
@@ -588,6 +598,10 @@ cdef class FGFDMExec(FGJSBBase):
 
     def load_script(self, script, delta_t=0.0, initfile=""):
         """@Dox(JSBSim::FGFDMExec::LoadScript) """
+        scriptfile = os.path.join(self.get_root_dir(), script)
+        if not os.path.exists(scriptfile):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    scriptfile)
         return self.thisptr.LoadScript(c_SGPath(script.encode(), NULL), delta_t,
                                        c_SGPath(initfile.encode(),NULL))
 
@@ -777,6 +791,12 @@ cdef class FGFDMExec(FGJSBBase):
         return self.thisptr.GetDebugLevel()
 
     def load_ic(self, rstfile, useStoredPath):
+        reset_file = append_xml(rstfile)
+        if useStoredPath and not os.path.isabs(reset_file):
+            reset_file = os.path.join(self.get_full_aircraft_path(), reset_file)
+        if not os.path.exists(reset_file):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    reset_file)
         rstfile = rstfile.encode()
         return deref(self.thisptr.GetIC()).Load(c_SGPath(rstfile, NULL), useStoredPath)
 

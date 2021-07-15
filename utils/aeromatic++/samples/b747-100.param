@@ -1,0 +1,47 @@
+
+y
+y
+b747-100
+
+0
+3                             ; Type of aircraft
+105                           ; Stall speed VS1 (clean, no flaps)
+710000                        ; Maximum takeoff weight
+394088                        ; Empty weight
+1.23e+07                      ; Inertia Ixx
+2.43e+07                      ; Inertia Iyy
+3.52e+07                      ; Inertia Izz
+231.4                         ; Length
+0                             ; Select a wing shape
+211.5                         ; Wing span
+5825                          ; Wing area
+6.96                          ; Wing aspect ratio
+0.284                         ; Wing taper ratio
+23.8                         ; Wing root chord
+                              ; Wing incidence
+7                             ; Wing dihedral
+37.5                          ; Wing sweep (quarter chord)
+1470.35                       ; Htail area
+106.63                        ; Htail arm
+1060                          ; Vtail area
+98                            ; Vtail arm
+
+JT9D-7F
+4                             ; Number of engines
+3                             ; Engine layout
+2                             ; Engine type
+46750                         ; Engine mil. thrust
+5                             ; Bypass ratio
+23.4                          ; Overall pressure ratio
+
+
+
+0                             ; Control system
+
+
+                              ; Nose or tail wheel type
+
+
+y
+n
+
