@@ -43,6 +43,8 @@
   <property> ap/throttle-cmd-norm </property>
   <property> ap/alpha_setpoint </property>
   <property> ap/alpha_hold     </property>
+  <property> ap/mach_setpoint </property>
+  <property> ap/mach_hold     </property>
 
 <!-- INITIAL GAIN VALUES -->
   
@@ -336,16 +338,9 @@ PITCH CHANNEL
       <max> 5</max>
     </clipto>
   </summer>
-  
-  <switch name="aero/ap-alpha-hold-switch">
-    <default value="0.0"/>
-    <test value="aero/alpha-error">
-      ap/alpha_hold == 1
-    </test>
-  </switch>
 
   <pid name="aero/alpha-hold-pid">
-    <input> aero/ap-alpha-hold-switch </input>
+    <input> aero/alpha-error </input>
     <kp> 100 </kp>
     <ki> 0 </ki>
     <kd> 320 </kd>
@@ -379,6 +374,68 @@ PITCH CHANNEL
     <input> -ap/throttle-cmd </input>
     <clipto>
       <min> 0 </min>
+      <max> 1.0 </max>
+    </clipto>
+  </summer>
+  
+</channel>
+
+<channel name="Mach hold">
+  <!-- Compute the error between the target mach and the actual value -->
+  <summer name="aero/mach-error">
+    <input> ap/mach_setpoint </input>
+    <input> -velocities/mach</input>
+    <clipto>
+      <min> -.25 </min>
+      <max> .25 </max>
+    </clipto>
+  </summer>
+
+  <pid name="aero/mach-hold-pid">
+    <input> aero/mach-error </input>
+    <kp> 3500 </kp>
+    <ki> .25 </ki>
+    <kd> 800000 </kd>
+    <clipto>
+      <min> -1 </min>
+      <max> 1 </max> 
+    </clipto>
+  </pid>
+
+  <!-- Forces the auto throttle value to 0 when ap/alpha_hold is different than 1.0
+        This allows to disable the autothrottle. -->
+  <switch name="ap/throttle-cmd">
+    <default value="0.0"/>
+    <test value="aero/mach-hold-pid">
+      ap/mach_hold == 1
+    </test>
+  </switch>
+
+  <lag_filter name="ap/throttle-cmd-filter">
+    <input> ap/throttle-cmd </input>
+    <c1> 0.7 </c1>
+    <clipto>
+      <min> -1 </min>
+      <max> 1 </max>
+    </clipto>
+  </lag_filter>
+
+  <!-- Drives engine #0 throttle position -->
+  <summer name="fcs/throttle-pos-norm[0]">
+    <input> fcs/throttle-cmd-norm[0] </input>
+    <input> ap/throttle-cmd-filter </input>
+    <clipto>
+      <min> 0.0 </min>
+      <max> 1.0 </max>
+    </clipto>
+  </summer>
+
+  <!-- Drives engine #1 throttle position -->
+  <summer name="fcs/throttle-pos-norm[1]">
+    <input> fcs/throttle-cmd-norm[1] </input>
+    <input> ap/throttle-cmd-filter </input>
+    <clipto>
+      <min> 0.0 </min>
       <max> 1.0 </max>
     </clipto>
   </summer>
