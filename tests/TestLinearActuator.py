@@ -22,16 +22,34 @@ from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 
 
 class TestLinearActuator(JSBSimTestCase):
-    def test_bug_GH485(self):
-        """Regression test for issue GH#485"""
+    def setUp(self):
+        JSBSimTestCase.setUp(self)
         tripod = FlightModel(self, 'tripod')
         tripod.include_system_test_file('linear_actuator.xml')
-        fdm = tripod.start()
+        self.fdm = tripod.start()
 
+    def test_bug_GH485(self):
+        """Regression test for issue GH#485"""
+
+        # Oscillations at 12o'c
+        # The last sequence 1, 2, 359 triggered the bug GH#485
         for v0, v in zip((2, 1, 358, 359, 1, 2, 359), (2, 1, -2, -1, 1, 2, -1)):
-            fdm['test/input'] = v0
-            fdm.run()
-            self.assertAlmostEqual(fdm['test/output'], v)
+            self.fdm['test/input'] = v0
+            self.fdm.run()
+            self.assertAlmostEqual(self.fdm['test/output'], v)
+
+    def test_rotations(self):
+        # 2.5 clockwise rotations
+        for v in range(900):
+            self.fdm['test/input'] = v % 360
+            self.fdm.run()
+            self.assertAlmostEqual(self.fdm['test/output'], v)
+
+        # 4 anticlockwise rotations
+        for v in range(900, -540, -1):
+            self.fdm['test/input'] = v % 360
+            self.fdm.run()
+            self.assertAlmostEqual(self.fdm['test/output'], v)
 
 
 RunTest(TestLinearActuator)
