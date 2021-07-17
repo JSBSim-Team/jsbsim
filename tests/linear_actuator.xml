@@ -1,0 +1,10 @@
+<system>
+  <property>test/input</property>
+  <channel name="test">
+    <linear_actuator>
+      <input>test/input</input>
+      <module>360</module>
+      <output>test/output</output>
+    </linear_actuator>
+  </channel>
+</system>
