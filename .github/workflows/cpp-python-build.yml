@@ -139,6 +139,47 @@ jobs:
           name: ManyLinux-Wheels.binaries
           path: build/python/dist/*-manylinux*.whl
 
+  Matlab-SFunction-Linux:
+    name: Matlab S-Function (Linux)
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Set up Matlab
+        uses: matlab-actions/setup-matlab@v1
+        with:
+          release: R2020b
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_C_FLAGS_DEBUG="-g -Wall" -DCMAKE_CXX_FLAGS_DEBUG="-g -Wall" -DCMAKE_BUILD_TYPE=Debug -DBUILD_MATLAB_SFUNCTION=ON ..
+      - name: Build JSBSim S-Function
+        working-directory: build
+        run: cmake --build . --target JSBSim_SFunction -- -j2
+      - name: Prepare Tests
+        working-directory: matlab
+        # The script will be run from the directory 'matlab' so we need to link
+        # the folders that will be used by JSBSim
+        run: |
+          ln -s ../aircraft aircraft
+          ln -s ../engine engine
+          ln -s ../systems systems
+          ln -s ../scripts scripts
+      - name: Run Tests
+        uses: matlab-actions/run-command@v1
+        env:
+          # Force Matlab using the system libstdc++ rather than its own.
+          # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
+          LD_PRELOAD: /lib/x86_64-linux-gnu/libstdc++.so.6
+        with:
+          command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: Matlab-SFunction.binaries
+          path: build/matlab/JSBSim_SFunction.mex*
+
   Windows-MinGW32:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: C/C++ build (MinGW32)

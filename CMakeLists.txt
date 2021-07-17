@@ -96,6 +96,16 @@ if(BUILD_JULIA_PACKAGE)
 endif(BUILD_JULIA_PACKAGE)
 
 ################################################################################
+# Build the Matlab S-Function                                                  #
+################################################################################
+
+option(BUILD_MATLAB_SFUNCTION "Set to ON to build the Matlab S-Function for JSBSim" OFF)
+
+if(BUILD_MATLAB_SFUNCTION)
+  add_subdirectory(matlab)
+endif(BUILD_MATLAB_SFUNCTION)
+
+################################################################################
 # Build the unit tests (needs CxxTest)                                         #
 ################################################################################
 
