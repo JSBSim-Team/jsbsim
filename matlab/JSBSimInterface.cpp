@@ -38,12 +38,12 @@ JSBSimInterface::JSBSimInterface(void)
 {
 	_ac_model_loaded = false;
 	fdmExec = new FGFDMExec;
-	propagate = fdmExec->GetPropagate().get();
-	accel = fdmExec->GetAccelerations().get();
-	auxiliary = fdmExec->GetAuxiliary().get();
-	aerodynamics = fdmExec->GetAerodynamics().get();
-	propulsion = fdmExec->GetPropulsion().get();
-	fcs = fdmExec->GetFCS().get();
+	propagate = fdmExec->GetPropagate();
+	accel = fdmExec->GetAccelerations();
+	auxiliary = fdmExec->GetAuxiliary();
+	aerodynamics = fdmExec->GetAerodynamics();
+	propulsion = fdmExec->GetPropulsion();
+	fcs = fdmExec->GetFCS();
 	ic = new FGInitialCondition(fdmExec);
 	//verbosityLevel = JSBSimInterface::eSilent;
 }
@@ -53,12 +53,12 @@ JSBSimInterface::JSBSimInterface(double dt)
 	fdmExec = new FGFDMExec;
   fdmExec->Setdt(dt);
   mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
-  propagate = fdmExec->GetPropagate().get();
-  accel = fdmExec->GetAccelerations().get();
-  auxiliary = fdmExec->GetAuxiliary().get();
-  aerodynamics = fdmExec->GetAerodynamics().get();
-  propulsion = fdmExec->GetPropulsion().get();
-  fcs = fdmExec->GetFCS().get();
+  propagate = fdmExec->GetPropagate();
+  accel = fdmExec->GetAccelerations();
+  auxiliary = fdmExec->GetAuxiliary();
+  aerodynamics = fdmExec->GetAerodynamics();
+  propulsion = fdmExec->GetPropulsion();
+  fcs = fdmExec->GetFCS();
   ic = new FGInitialCondition(fdmExec);
   //verbosityLevel = JSBSimInterface::eSilent;
 }
