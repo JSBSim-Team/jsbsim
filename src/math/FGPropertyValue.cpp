@@ -30,7 +30,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropertyValue.h"
-#include "input_output/FGPropertyManager.h"
 
 namespace JSBSim {
 
