@@ -1,5 +1,5 @@
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- * 
+ *
 Module:       FGLinearActuator.cpp
 Author:       Adriano Bassignana
 Date started: 2019-01-03
@@ -43,11 +43,11 @@ INCLUDES
 using namespace std;
 
 namespace JSBSim {
-    
+
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-    
+
 FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
@@ -141,7 +141,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
 
   Debug(0);
 }
-    
+
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLinearActuator::~FGLinearActuator()
@@ -184,16 +184,11 @@ bool FGLinearActuator::Run(void )
         }
         if ((versus == 0) || (versus == direction)) {
           inputMem = Input;
-          if (direction != 0) {
-            if (abs(inputDelta) >= (module*rate)) {
-              if (direction > 0) {
-                countSpin++;
-                direction = 0;
-              } else if (direction < 0) {
-                countSpin--;
-                direction = 0;
-              }
-            }
+          if (abs(inputDelta) >= (module*rate)) {
+            if (inputDelta < 0)
+              countSpin++;
+            else
+              countSpin--;
           }
         } else if ((versus != 0) && (direction != 0) && (versus != direction)) {
           inputLast += inputDelta;
@@ -207,7 +202,7 @@ bool FGLinearActuator::Run(void )
   }
 
   if (lag > 0.0) {
-    double input = Output; 
+    double input = Output;
     Output = ca * (input + previousLagInput) + previousLagOutput * cb;
     previousLagInput = input;
     previousLagOutput = Output;
