@@ -1,0 +1,7 @@
+<planet name="Moon">
+  <semimajor_axis unit="KM">1738.1</semimajor_axis>
+  <semiminor_axis unit="KM">1736.0</semiminor_axis>
+  <rotation_rate unit="RAD/SEC">2.66167E-6</rotation_rate>
+  <GM unit="M3/SEC2">4.9E12</GM>
+  <J2>2.027E-4</J2>
+</planet>
