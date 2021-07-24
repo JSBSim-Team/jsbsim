@@ -339,6 +339,7 @@ jobs:
           cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
           # Relocate the executables for the installer
           cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp src\RelWithDebInfo\JSBSim.lib src\.
           cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
           # Get the MSVC C++ DLL
           $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
