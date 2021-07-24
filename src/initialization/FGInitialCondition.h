@@ -682,6 +682,9 @@ public:
       @return Trim type, if any requested (version 1). */
   int TrimRequested(void) const { return trimRequested; }
 
+  /** Initialize the initial conditions to default values */
+  void InitializeIC(void);
+
   void bind(FGPropertyManager* pm);
 
 private:
@@ -710,7 +713,6 @@ private:
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);
 
-  void InitializeIC(void);
   void SetEulerAngleRadIC(int idx, double angle);
   void SetBodyVelFpsIC(int idx, double vel);
   void SetNEDVelFpsIC(int idx, double vel);
