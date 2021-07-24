@@ -226,6 +226,10 @@ class FlightModel:
         system_tag = et.SubElement(self.root, 'system')
         system_tag.attrib['file'] = file_name
 
+    def include_planet_test_file(self, file_name):
+        system_tag = et.SubElement(self.root, 'planet')
+        system_tag.attrib['file'] = file_name
+
     def before_loading(self):
         pass
 

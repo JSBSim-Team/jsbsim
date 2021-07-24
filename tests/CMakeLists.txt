@@ -46,7 +46,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestFunctions
                  TestDistributor
                  TestMagnetometer
-                 TestLinearActuator)
+                 TestLinearActuator
+                 TestPlanet)
 
 foreach(test ${PYTHON_TESTS})
   add_test(NAME ${test}
