@@ -71,7 +71,7 @@ public:
            << "The element <" << el->GetName()
            << "> must either contain a value number or a property name."
            << endl;
-      throw invalid_argument("Illegal argument");
+      throw invalid_argument("FGParameterValue: Illegal argument defining: " + el->GetName());
     }
 
     Construct(value, pm);
