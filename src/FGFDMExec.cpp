@@ -803,6 +803,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       }
       // Reload the planet constants and re-initialize the models.
       LoadPlanetConstants();
+      IC->InitializeIC();
       InitializeModels();
     }
 
