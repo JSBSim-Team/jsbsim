@@ -27,6 +27,7 @@ Features include:
   * Atmosphere modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf).
 * Configurable data output formats to screen, file, socket, or any combination of those.
 * A [Python](https://www.python.org) module which provides the exact same features than the C++ library
+* A [Matlab](https://www.mathworks.com/products/matlab.html) S-Function to interface JSBSim with [Simulink](https://fr.mathworks.com/products/simulink.html).
 
 In 2015, [the NASA performed some verification check cases on 7 flight dynamics software **including JSBSim**](https://nescacademy.nasa.gov/flightsim) (the other 6 being NASA in-house software). The results showed that the 7 simulation tools *"were good enough to indicate agreement between a majority of simulation tools for all cases published. Most of the remaining differences are explained and could be reduced with further effort."*
 
