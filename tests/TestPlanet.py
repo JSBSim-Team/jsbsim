@@ -32,13 +32,13 @@ class TestPlanet(JSBSimTestCase):
         self.fdm['ic/lat-geod-deg'] = 0.0
         self.fdm.run_ic()
 
-        self.assertAlmostEqual((self.fdm['position/radius-to-vehicle-ft']-0.2)*0.3048/1738100, 1.0)
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1738100, 1.0)
         self.assertAlmostEqual(self.fdm['accelerations/gravity-ft_sec2']*0.3048, 1.62, delta=3e-3)
 
         self.fdm['ic/lat-geod-deg'] = 90.0
         self.fdm.run_ic()
 
-        self.assertAlmostEqual((self.fdm['position/radius-to-vehicle-ft']-0.2)*0.3048/1736000, 1.0)
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1736000, 1.0)
 
 
 RunTest(TestPlanet)
