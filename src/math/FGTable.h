@@ -226,6 +226,19 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 @author Jon S. Berndt
 */
 
+/** Exception convenience class.
+  */
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DECLARATION: TableException
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+class TableException : public std::runtime_error
+{
+public:
+  TableException(const std::string& msg) : std::runtime_error{msg} { }
+};
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
