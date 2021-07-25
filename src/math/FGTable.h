@@ -302,11 +302,10 @@ private:
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
   double** Allocate(void);
   FGPropertyManager* const PropertyManager;
-  std::string Prefix;
   std::string Name;
-  void bind(Element*);
+  void bind(Element* el, const std::string& Prefix);
 
-  unsigned int FindNumColumns(const std::string&);
+  std::string mkPropertyName(Element* el, const std::string& Prefix);
   void Debug(int from);
 };
 }
