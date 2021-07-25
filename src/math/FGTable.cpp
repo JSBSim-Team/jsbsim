@@ -36,6 +36,8 @@ JSB  1/9/00          Created
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <assert.h>
+
 #include "FGTable.h"
 #include "input_output/FGXMLElement.h"
 
@@ -107,9 +109,23 @@ FGTable::FGTable(const FGTable& t)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(std::shared_ptr<FGPropertyManager> PropertyManager,
-                 Element* el, const std::string& prefix)
-  : Prefix(prefix)
+unsigned int FindNumColumns(const string& test_line)
+{
+  // determine number of data columns in table (first column is row lookup - don't count)
+  size_t position=0;
+  unsigned int nCols=0;
+  while ((position = test_line.find_first_not_of(" \t", position)) != string::npos) {
+    nCols++;
+    position = test_line.find_first_of(" \t", position);
+  }
+  return nCols;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
+                 const std::string& Prefix)
+  : PropertyManager(pm)
 {
   unsigned int i;
 
@@ -340,7 +356,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> PropertyManager,
     }
   }
 
-  bind(el, PropertyManager.get());
+  bind(el, Prefix);
 
   if (debug_lvl & 1) Print();
 }
@@ -363,6 +379,13 @@ double** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
+  // Untie the bound property so that it makes no further reference to this
+  // instance of FGTable after the destruction is completed.
+  if (!Name.empty() && !internal) {
+    string tmp = mkPropertyName(nullptr, "");
+    PropertyManager->Untie(tmp);
+  }
+
   if (nTables > 0) {
     for (unsigned int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();
@@ -375,20 +398,6 @@ FGTable::~FGTable()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-unsigned int FGTable::FindNumColumns(const string& test_line)
-{
-  // determine number of data columns in table (first column is row lookup - don't count)
-  size_t position=0;
-  unsigned int nCols=0;
-  while ((position = test_line.find_first_not_of(" \t", position)) != string::npos) {
-    nCols++;
-    position = test_line.find_first_of(" \t", position);
-  }
-  return nCols;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 double FGTable::GetValue(void) const
 {
   double temp = 0;
@@ -396,13 +405,19 @@ double FGTable::GetValue(void) const
 
   switch (Type) {
   case tt1D:
+    assert(lookupProperty[eRow]);
     temp = lookupProperty[eRow]->getDoubleValue();
     temp2 = GetValue(temp);
     return temp2;
   case tt2D:
+    assert(lookupProperty[eRow]);
+    assert(lookupProperty[eColumn]);
     return GetValue(lookupProperty[eRow]->getDoubleValue(),
                     lookupProperty[eColumn]->getDoubleValue());
   case tt3D:
+    assert(lookupProperty[eRow]);
+    assert(lookupProperty[eColumn]);
+    assert(lookupProperty[eTable]);
     return GetValue(lookupProperty[eRow]->getDoubleValue(),
                     lookupProperty[eColumn]->getDoubleValue(),
                     lookupProperty[eTable]->getDoubleValue());
@@ -432,7 +447,7 @@ double FGTable::GetValue(double key) const
   }
 
   // the key is somewhere in the middle, search for the right breakpoint
-  // The search is particularly efficient if 
+  // The search is particularly efficient if
   // the correct breakpoint has not changed since last frame or
   // has only changed very little
 
@@ -508,7 +523,7 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
   }
 
   // the key is somewhere in the middle, search for the right breakpoint
-  // The search is particularly efficient if 
+  // The search is particularly efficient if
   // the correct breakpoint has not changed since last frame or
   // has only changed very little
 
@@ -625,28 +640,33 @@ void FGTable::Print(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::bind(Element* el, FGPropertyManager* PropertyManager)
+string FGTable::mkPropertyName(Element* el, const std::string& Prefix)
+{
+  if (!Prefix.empty()) {
+    if (is_number(Prefix)) {
+      if (Name.find("#") != string::npos) { // if "#" is found
+        Name = replace(Name, "#", Prefix);
+      } else {
+        cerr << el->ReadFrom()
+              << "Malformed table name with number: " << Prefix
+              << " and property name: " << Name
+              << " but no \"#\" sign for substitution." << endl;
+      }
+    } else {
+      Name = Prefix + "/" + Name;
+    }
+  }
+
+  return PropertyManager->mkPropertyName(Name, false);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTable::bind(Element* el, const string& Prefix)
 {
   typedef double (FGTable::*PMF)(void) const;
   if ( !Name.empty() && !internal) {
-    string tmp;
-    if (Prefix.empty())
-      tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper
-    else {
-      if (is_number(Prefix)) {
-        if (Name.find("#") != string::npos) { // if "#" is found
-          Name = replace(Name,"#",Prefix);
-          tmp  = PropertyManager->mkPropertyName(Name, false); // Allow upper
-        } else {
-          cerr << el->ReadFrom()
-               << "Malformed table name with number: " << Prefix
-               << " and property name: " << Name
-               << " but no \"#\" sign for substitution." << endl;
-        }
-      } else {
-        tmp  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false);
-      }
-    }
+    string tmp = mkPropertyName(el, Prefix);
 
     if (PropertyManager->HasNode(tmp)) {
       FGPropertyNode* _property = PropertyManager->GetNode(tmp);
