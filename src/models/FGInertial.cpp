@@ -94,8 +94,12 @@ bool FGInertial::Load(Element* el)
 
   if (el->FindElement("semimajor_axis"))
     a = el->FindElementValueAsNumberConvertTo("semimajor_axis", "FT");
+  else if (el->FindElement("equatorial_radius"))
+    a = el->FindElementValueAsNumberConvertTo("equatorial_radius", "FT");
   if (el->FindElement("semiminor_axis"))
     b = el->FindElementValueAsNumberConvertTo("semiminor_axis", "FT");
+  else if (el->FindElement("polar_radius"))
+    b = el->FindElementValueAsNumberConvertTo("polar_radius", "FT");
   if (el->FindElement("rotation_rate")) {
     double RotationRate = el->FindElementValueAsNumberConvertTo("rotation_rate", "RAD/SEC");
     vOmegaPlanet = {0., 0., RotationRate};
@@ -229,7 +233,7 @@ void FGInertial::SetGravityType(int gt)
   // Messages to warn the user about possible inconsistencies.
   switch (gt)
   {
-  case eGravType::gtStandard: 
+  case eGravType::gtStandard:
     if (a != b)
       cout << "Warning: Standard gravity model has been set for a non-spherical planet" << endl;
     break;
