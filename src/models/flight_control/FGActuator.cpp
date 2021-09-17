@@ -67,6 +67,8 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   initialized = 0;
   saturated = false;
 
+  CheckInputNodes(1, 1, element);
+
   if ( element->FindElement("deadband_width") ) {
     deadband_width = element->FindElementValueAsNumber("deadband_width");
   }
@@ -74,7 +76,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
     hysteresis_width = element->FindElementValueAsNumber("hysteresis_width");
   }
 
-  // There can be a single rate limit specified, or increasing and 
+  // There can be a single rate limit specified, or increasing and
   // decreasing rate limits specified, and rate limits can be numeric, or
   // a property.
   auto PropertyManager = fcs->GetPropertyManager();
@@ -134,7 +136,7 @@ void FGActuator::ResetPastStates(void)
   FGFCSComponent::ResetPastStates();
 
   PreviousOutput = PreviousHystOutput = PreviousRateLimOutput
-    = PreviousLagInput = PreviousLagOutput = Output = 0.0; 
+    = PreviousLagInput = PreviousLagOutput = Output = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,7 +169,7 @@ bool FGActuator::Run(void )
   }
 
   PreviousOutput = Output; // previous value needed for "stuck" malfunction
-  
+
   initialized = 1;
 
   Clip();
@@ -224,7 +226,7 @@ void FGActuator::Hysteresis(void)
   // "Output" is - for the purposes of this Hysteresis method - really the input
   // to the method.
   double input = Output;
-  
+
   if ( initialized ) {
     if (input > PreviousHystOutput)
       Output = max(PreviousHystOutput, input-0.5*hysteresis_width);

@@ -57,6 +57,8 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, Element* element)
   Width = nullptr;
   gain = 1.0;
 
+  CheckInputNodes(1, 1, element);
+
   auto PropertyManager = fcs->GetPropertyManager();
   Element* width_element = element->FindElement("width");
   if (width_element)

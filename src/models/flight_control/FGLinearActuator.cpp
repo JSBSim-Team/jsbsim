@@ -52,6 +52,8 @@ CLASS IMPLEMENTATION
 FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
+  CheckInputNodes(1, 1, element);
+
   ptrSet = nullptr;
   auto PropertyManager = fcs->GetPropertyManager();
   if (element->FindElement("set")) {

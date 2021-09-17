@@ -56,6 +56,8 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element)
   double tmpDetent;
   double tmpTime;
 
+  CheckInputNodes(1, 1, element);
+
   Detents.clear();
   TransitionTimes.clear();
 

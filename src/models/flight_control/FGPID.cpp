@@ -57,8 +57,10 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   ProcessVariableDot = nullptr;
   IsStandard = false;
   IntType = eNone;       // No integrator initially defined.
-  auto PropertyManager = fcs->GetPropertyManager();
 
+  CheckInputNodes(1, 1, element);
+
+  auto PropertyManager = fcs->GetPropertyManager();
   string pid_type = element->GetAttributeValue("type");
 
   if (pid_type == "standard") IsStandard = true;
@@ -192,7 +194,7 @@ bool FGPID::Run(void )
   }
 
   if (test < 0.0) I_out_total = 0.0;  // Reset integrator to 0.0
-  
+
   I_out_total += Ki->GetValue() * dt * I_out_delta;
 
   if (IsStandard)

@@ -116,7 +116,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
                                             PropertyManager, init_element));
     init_element = element->FindNextElement("init");
   }
-  
+
   Element *input_element = element->FindElement("input");
   while (input_element) {
     InputNodes.push_back(new FGPropertyValue(input_element->GetDataLine(),
@@ -210,6 +210,30 @@ void FGFCSComponent::ResetPastStates(void)
   index = 0;
   for (auto &elm: output_array)
     elm = 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCSComponent::CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* el)
+{
+  size_t num = InputNodes.size();
+
+  if (num < MinNodes) {
+    cerr << el->ReadFrom()
+         << "    Not enough <input> nodes are provided" << endl
+         << "    Expecting " << MinNodes << " while " << num
+         << " are provided." << endl;
+    throw("Some inputs are missing.");
+  }
+
+  if (num > MaxNodes) {
+    cerr << el->ReadFrom()
+         << "    Too many <input> nodes are provided" << endl
+         << "    Expecting " << MaxNodes << " while " << num
+         << " are provided." << endl
+         << "    The last " << num-MaxNodes << " input nodes will be ignored."
+         << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,7 +355,7 @@ void FGFCSComponent::Debug(int from)
       if (clip) {
         cout << "      Minimum limit: " << ClipMin->GetName() << endl;
         cout << "      Maximum limit: " << ClipMax->GetName() << endl;
-      }  
+      }
       if (delay > 0) cout <<"      Frame delay: " << delay
                                    << " frames (" << delay*dt << " sec)" << endl;
     }
