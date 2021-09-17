@@ -117,6 +117,7 @@ protected:
 
   void Delay(void);
   void Clip(void);
+  void CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* el);
   virtual void bind(Element* el);
   virtual void Debug(int from);
 };

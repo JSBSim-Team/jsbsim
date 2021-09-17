@@ -57,6 +57,8 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   InMax =  1.0;
   OutMin = OutMax = 0.0;
 
+  CheckInputNodes(1, 1, element);
+
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
       cerr << element->ReadFrom()

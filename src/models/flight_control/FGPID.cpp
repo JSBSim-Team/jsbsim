@@ -57,6 +57,8 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   IsStandard = false;
   IntType = eNone;       // No integrator initially defined.
 
+  CheckInputNodes(1, 1, element);
+
   string pid_type = element->GetAttributeValue("type");
 
   if (pid_type == "standard") IsStandard = true;
@@ -190,7 +192,7 @@ bool FGPID::Run(void )
   }
 
   if (test < 0.0) I_out_total = 0.0;  // Reset integrator to 0.0
-  
+
   I_out_total += Ki->GetValue() * dt * I_out_delta;
 
   if (IsStandard)

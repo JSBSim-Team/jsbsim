@@ -52,6 +52,9 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element), DynamicFilter(false), Initialize(true)
 {
   C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = nullptr;
+
+  CheckInputNodes(1, 1, element);
+
   for (int i=1; i<7; i++)
     ReadFilterCoefficients(element, i);
 
@@ -88,11 +91,11 @@ void FGFilter::ResetPastStates(void)
 
 void FGFilter::ReadFilterCoefficients(Element* element, int index)
 {
-  // index is known to be 1-7. 
+  // index is known to be 1-7.
   // A stringstream would be overkill, but also trying to avoid sprintf
   string coefficient = "c0";
   coefficient[1] += index;
-  
+
   if ( element->FindElement(coefficient) ) {
     C[index] = new FGParameterValue(element->FindElement(coefficient),
                                     PropertyManager);
@@ -151,9 +154,9 @@ bool FGFilter::Run(void)
   } else {
 
     Input = InputNodes[0]->getDoubleValue();
-    
+
     if (DynamicFilter) CalculateDynamicFilters();
-    
+
     switch (FilterType) {
       case eLag:
         Output = (Input + PreviousInput1) * ca + PreviousOutput1 * cb;
