@@ -117,9 +117,9 @@ static FGMatrix33 ReadInertiaMatrix(Element* document)
 
   // Transform the inertia products from the structural frame to the body frame
   // and create the inertia matrix.
-  return FGMatrix33( bixx, -bixy,  bixz,
-                    -bixy,  biyy, -biyz,
-                     bixz, -biyz,  bizz );
+  return FGMatrix33( bixx,  bixy, -bixz,
+                     bixy,  biyy,  biyz,
+                    -bixz,  biyz,  bizz );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
