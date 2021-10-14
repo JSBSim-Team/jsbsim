@@ -67,12 +67,11 @@ CLASS DOCUMENTATION
 
     The inertia tensor must be specified in the structural frame (x axis
     positive aft, y axis positive out of the right wing and z axis upward). The
-    sign of the inertia cross products are not modified by JSBSim so in most
-    cases, negative values should be provided for <ixy>, <ixz> and <iyz>.
+    sign of the inertia cross products are optional by JSBSim.
 
     <h3>Configuration File Format for \<mass_balance> Section:</h3>
 @code{.xml}
-    <mass_balance>
+    <mass_balance negated_crossproduct_inertia="true|false">
         <ixx unit="{SLUG*FT2 | KG*M2}"> {number} </ixx>
         <iyy unit="{SLUG*FT2 | KG*M2}"> {number} </iyy>
         <izz unit="{SLUG*FT2 | KG*M2}"> {number} </izz>
