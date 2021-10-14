@@ -117,7 +117,7 @@ static FGMatrix33 ReadInertiaMatrix(Element* document)
 
   // Transform the inertia products from the structural frame to the body frame
   // and create the inertia matrix.
-  if (document->GetAttributeValue("negated_inertia") == string("false")) 
+  if (document->GetAttributeValue("negated_crossproduct_inertia") == string("false")) 
     return FGMatrix33( bixx,  bixy, -bixz,
                        bixy,  biyy,  biyz,
                       -bixz,  biyz,  bizz );
