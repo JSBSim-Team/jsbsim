@@ -69,13 +69,13 @@ CLASS DOCUMENTATION
     positive aft, y axis positive out of the right wing and z axis upward). The
     sign of the inertia cross products are optional by JSBSim.
     if negated_crossproduct_inertia == "true", then define:
-        ixy = -integral( x * y * m ),
-        ixz = -integral( x * z * m ),
-        iyz = -integral( y * z * m ).
+        ixy = -integral( x * y * dm ),
+        ixz = -integral( x * z * dm ),
+        iyz = -integral( y * z * dm ).
     else if negated_crossproduct_inertia == "false", then define:
-        ixy =  integral( x * y * m ),
-        ixz =  integral( x * z * m ),
-        iyz =  integral( y * z * m ).
+        ixy =  integral( x * y * dm ),
+        ixz =  integral( x * z * dm ),
+        iyz =  integral( y * z * dm ).
     default is negated_crossproduct_inertia = "true".
     We strongly recommend defining negated_crossproduct_inertia = "false", 
     which is consistent with the specifications in the field of flight dynamics. 
