@@ -68,7 +68,18 @@ CLASS DOCUMENTATION
     The inertia tensor must be specified in the structural frame (x axis
     positive aft, y axis positive out of the right wing and z axis upward). The
     sign of the inertia cross products are optional by JSBSim.
-
+    if negated_crossproduct_inertia == "true", then define:
+        ixy = -integral( x * y * m ),
+        ixz = -integral( x * z * m ),
+        iyz = -integral( y * z * m ).
+    else if negated_crossproduct_inertia == "false", then define:
+        ixy =  integral( x * y * m ),
+        ixz =  integral( x * z * m ),
+        iyz =  integral( y * z * m ).
+    default is negated_crossproduct_inertia = "true".
+    We strongly recommend defining negated_crossproduct_inertia = "false", 
+    which is consistent with the specifications in the field of flight dynamics. 
+    
     <h3>Configuration File Format for \<mass_balance> Section:</h3>
 @code{.xml}
     <mass_balance negated_crossproduct_inertia="true|false">
@@ -99,6 +110,11 @@ CLASS DOCUMENTATION
         ... other point masses ...]
     </mass_balance>
 @endcode
+    
+    @see Stevens and Lewis, "Flight Control & Simulation"
+    @see Bernard Etkin, " Dynamics Of Atmosferic Flight"
+    @see https://en.wikipedia.org/wiki/Moment_of_inertia#Inertia_tensor
+    @see https://www.mathworks.com/help/physmod/sm/ug/specify-custom-inertia.html
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
