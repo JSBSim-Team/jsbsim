@@ -17,11 +17,6 @@ jobs:
         build_julia: [OFF]
         display_stack_trace: [ON]
         include:
-          - os: ubuntu-16.04
-            expat: OFF
-            shared_libs: OFF
-            build_julia: OFF
-            display_stack_trace: ON
           - os: ubuntu-18.04
             expat: OFF
             shared_libs: OFF
@@ -203,10 +198,10 @@ jobs:
     name: C/C++ build (MinGW32)
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Checkout CxxTest
