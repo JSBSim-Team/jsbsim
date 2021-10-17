@@ -175,8 +175,9 @@ double FGTurbine::Off(void)
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
   // some engines have inlets that close when they are off. So, if a flag is true disable windmilling
   if (disableWindmill == false) {
-    N1 = Seek(&N1, in.qbar/10.0, N1/2.0, N1/N1_spindown);
-    N2 = Seek(&N2, in.qbar/15.0, N2/2.0, N2/N2_spindown);
+    // Need a small non-zero increment for acceleration otherwise acceleration will be 0 if N1 = 0
+    N1 = Seek(&N1, in.qbar/10.0, N1/2.0 + 0.1, N1/N1_spindown);
+    N2 = Seek(&N2, in.qbar/15.0, N2/2.0 + 0.1, N2/N2_spindown);
   } else {
     N1 = Seek(&N1, 0, N1/2.0, N1/N1_spindown);
     N2 = Seek(&N2, 0, N2/2.0, N2/N2_spindown);
