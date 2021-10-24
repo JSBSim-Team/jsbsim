@@ -223,7 +223,7 @@ bool FGAuxiliary::Run(bool Holding)
   hoverbcg = in.DistanceAGL / in.Wingspan;
 
   FGColumnVector3 vMac = in.Tb2l * in.RPBody;
-  hoverbmac = (in.DistanceAGL + vMac(3)) / in.Wingspan;
+  hoverbmac = (in.DistanceAGL - vMac(3)) / in.Wingspan;
 
   return false;
 }
