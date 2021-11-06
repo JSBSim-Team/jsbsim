@@ -16,10 +16,6 @@ jobs:
         shared_libs: [ON, OFF]
         build_julia: [OFF]
         include:
-          - os: ubuntu-16.04
-            expat: OFF
-            shared_libs: OFF
-            build_julia: OFF
           - os: ubuntu-18.04
             expat: OFF
             shared_libs: OFF
@@ -185,10 +181,10 @@ jobs:
     name: C/C++ build (MinGW32)
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.9
+      - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: '3.6'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Checkout CxxTest
@@ -198,8 +194,10 @@ jobs:
           ref: '4.4'
           path: cxxtest
       - name: Configure CxxTest
-        working-directory: cxxtest\python
-        run: python setup.py install
+        working-directory: cxxtest
+        run: |
+          cp python/python3/cxxtest/*.py cxxtest/.
+          cp python/python3/scripts/cxxtestgen .
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
@@ -226,10 +224,10 @@ jobs:
     name: C/C++ build (MSVC)
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.9
+      - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
-          python-version: '3.9'
+          python-version: '3.6'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
@@ -268,8 +266,10 @@ jobs:
           ref: '4.4'
           path: cxxtest
       - name: Configure CxxTest
-        working-directory: cxxtest\python
-        run: python setup.py install
+        working-directory: cxxtest
+        run: |
+          cp python/python3/cxxtest/*.py cxxtest/.
+          cp python/python3/scripts/cxxtestgen .
       - name: Configure JSBSim
         run: |
           New-Item -Path .\build -ItemType Directory -Force
