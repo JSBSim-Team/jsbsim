@@ -1,9 +1,12 @@
 #include <sstream>
+#include <limits>
 
 #include <cxxtest/TestSuite.h>
 #include <memory>
 #include <math/FGTable.h>
 #include <input_output/FGXMLParse.h>
+
+const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
 using namespace JSBSim;
 
@@ -745,5 +748,149 @@ public:
     row->setDoubleValue(3.0);
     TS_ASSERT_EQUALS(t_2x2.GetValue(), 0.125);
     TS_ASSERT_EQUALS(output->getDoubleValue(), 0.125);
+  }
+};
+
+class FGTable3DTest : public CxxTest::TestSuite
+{
+public:
+
+  void testLoadIndepVarFromXML() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto row = pm->GetNode("x", true);
+    auto column = pm->GetNode("y", true);
+    auto table = pm->GetNode("z", true);
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test2\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData breakPoint=\"-1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"0.5\">"
+                                  "            0.5  1.5\n"
+                                  "      2.5   3.5 -2.5\n"
+                                  "      4.5  -1.5  1.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t_2x2x2(pm.get(), el_table);
+    TS_ASSERT_EQUALS(t_2x2x2.GetNumRows(), 2);
+    TS_ASSERT_EQUALS(t_2x2x2.GetName(), std::string("test2"));
+    // Check breakpoints value
+    TS_ASSERT_EQUALS(t_2x2x2(1,1), -1.0);
+    TS_ASSERT_EQUALS(t_2x2x2(2,1), 0.5);
+
+    // Check the table values.
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.0, 0.0, -1.0), 3.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.0, 0.0, -1.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.0, 1.0, -1.0), -2.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.0, 1.0, -1.0), 0.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.5, 0.5, 0.5), 3.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.5, 0.5, 0.5), -1.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.5, 1.5, 0.5), -2.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.5, 1.5, 0.5), 1.0);
+    // Check that the property "test2" is now bound to the property manager
+    TS_ASSERT(pm->HasNode("test2"));
+    auto output = pm->GetNode("test2");
+
+    table->setDoubleValue(0.5);
+    row->setDoubleValue(2.0);
+    column->setDoubleValue(0.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 3.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 3.5);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 3.1);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 3.1);
+
+    table->setDoubleValue(0.5);
+    row->setDoubleValue(4.0);
+    column->setDoubleValue(0.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.25);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -0.25);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.85);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -0.85);
+
+    table->setDoubleValue(0.5);
+    row->setDoubleValue(2.0);
+    column->setDoubleValue(1.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 0.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.5);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -1.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -1.5);
+
+    table->setDoubleValue(0.5);
+    row->setDoubleValue(4.0);
+    column->setDoubleValue(1.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.0625);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -0.0625);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_DELTA(t_2x2x2.GetValue(), 0.3875, epsilon);
+    TS_ASSERT_DELTA(output->getDoubleValue(), 0.3875, epsilon);
+
+    table->setDoubleValue(-1.0);
+    row->setDoubleValue(2.5);
+    column->setDoubleValue(0.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 0.3125);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.3125);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_DELTA(t_2x2x2.GetValue(), 0.95, epsilon);
+    TS_ASSERT_DELTA(output->getDoubleValue(), 0.95, epsilon);
+
+    table->setDoubleValue(-1.0);
+    row->setDoubleValue(4.5);
+    column->setDoubleValue(0.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.25);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -0.25);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -0.5);
+
+    table->setDoubleValue(-1.0);
+    row->setDoubleValue(2.5);
+    column->setDoubleValue(1.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -1.375);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -1.375);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -1.6);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -1.6);
+
+    table->setDoubleValue(-1.0);
+    row->setDoubleValue(4.5);
+    column->setDoubleValue(1.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 0.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.5);
+
+    table->setDoubleValue(-0.7);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), 0.6);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.6);
+
+    table->setDoubleValue(-1.5);
+    row->setDoubleValue(1.0);
+    column->setDoubleValue(2.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -2.0);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -2.0);
+
+    table->setDoubleValue(1.0);
+    row->setDoubleValue(5.0);
+    column->setDoubleValue(-0.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -1.5);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), -1.5);
   }
 };
