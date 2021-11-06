@@ -48,7 +48,7 @@
         </location>
     </metrics>
 
-    <mass_balance>
+    <mass_balance negated_crossproduct_inertia="true">
         <ixx unit="SLUG*FT2"> 28700 </ixx>
         <iyy unit="SLUG*FT2"> 165100 </iyy>
         <izz unit="SLUG*FT2"> 187900 </izz>
