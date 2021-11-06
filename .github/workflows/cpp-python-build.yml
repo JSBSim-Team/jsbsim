@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: bombela/backward-cpp
-          ref: 'v1.5'
+          ref: 'v1.6'
           path: backward-cpp
       - name: Configure Backward-cpp
         if: steps.BackwardCppCheckout.outcome == 'success'
@@ -291,7 +291,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: bombela/backward-cpp
-          ref: 'v1.5'
+          ref: 'v1.6'
           path: backward-cpp
       - name: Configure JSBSim
         run: |
