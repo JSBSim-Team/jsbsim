@@ -17,27 +17,29 @@ for PYBIN in /opt/python/*/bin; do
     fi
 done
 
+cd python
+
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info < (${PYTHON_MAX_VERSION})))" | grep -q 'True'; then
         "${PYBIN}/pip" install cython numpy
-        "${PYBIN}/cython" --cplus python/jsbsim.pyx -o python/jsbsim.cxx
-        "${PYBIN}/python" python/setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+        "${PYBIN}/cython" --cplus jsbsim.pyx -o jsbsim.cxx
+        "${PYBIN}/python" setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
     fi
 done
 
 # Bundle external shared libraries into the wheels
-for whl in python/dist/*.whl; do
-    auditwheel repair "$whl" --plat manylinux2010_x86_64 -w python/dist
+for whl in dist/*.whl; do
+    auditwheel repair "$whl" --plat manylinux2010_x86_64 -w dist
 done
 
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info <= (${PYTHON_MAX_VERSION})))" | grep -q 'True'; then
-        "${PYBIN}/pip" install jsbsim --no-index -f python/dist
+        "${PYBIN}/pip" install jsbsim --no-index -f dist
         "${PYBIN}/python" -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-        "${PYBIN}/JSBSim" --root=.. --script=scripts/c1721.xml
+        "${PYBIN}/JSBSim" --root=../.. --script=scripts/c1721.xml
     fi
 done

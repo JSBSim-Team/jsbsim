@@ -50,32 +50,12 @@ class QuietBuild(build_ext):
             os.dup2(self.oldstdout, sys.stdout.fileno())
             self.devnull.close()
 
-# The standard install_lib class installs every single file it finds in the
-# build directory. Here, we just want to install the JSBSim module so that it
-# can be accessed everywhere on the platform. This class is therefore
-# specializing the standard install_lib to do just that.
-# It also takes care of extra dependencies for Windows systems.
+# When compiled with Microsoft Visual C++, the JSBSim Python module is linked
+# with the dynamically linked library msvcp140.dll which is not a standard
+# library on Windows. So this code allows msvcp140.dll to be shipped with the
+# Python module.
 class InstallJSBSimModule(install_lib):
-    def __init__(self, dist):
-        install_lib.__init__(self, dist)
-        # Get the name of the JSBSim Python module (on some platforms this name
-        # can be quite complicated).
-        build_ext = self.get_finalized_command('build_ext')
-        self.module_name = build_ext.get_ext_filename(build_ext.extensions[0].name)
-        self.module_fullpath = build_ext.get_ext_fullpath(build_ext.extensions[0].name)
-
     def install(self):
-        if not os.path.exists(self.install_dir):
-            log.info('creating {}'.format(self.install_dir))
-            os.makedirs(self.install_dir)
-
-        self.copy_file(self.module_fullpath, os.path.join(self.install_dir,
-                                                          self.module_name))
-
-        # When compiled with Microsoft Visual C++, the JSBSim Python module is
-        # linked with the dynamically linked library msvcp140.dll which is not a
-        # standard library on Windows. So this code allows msvcp140.dll to be
-        # shipped with the Python module.
         if compiler.compiler_type == 'msvc':
             import win32api
 
@@ -87,9 +67,13 @@ class InstallJSBSimModule(install_lib):
             for d in dirs:
                 libpath = os.path.join(d, 'msvcp140.dll')
                 if os.path.exists(libpath):
+                    if not os.path.exists(self.install_dir):
+                        log.info('creating {}'.format(self.install_dir))
+                        os.makedirs(self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
                                                          'msvcp140.dll'))
                     break
+        install_lib.install(self)
 
 # distutils assumes that all the files must be compiled with the same compiler
 # flags regardless of their file extension .c or .cpp.
@@ -123,9 +107,6 @@ class BuildC_CxxExtension(build_ext):
 
 # Process the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
-
-# Move to the directory in which the script setup.py is located.
-os.chdir(os.path.dirname(__file__))
 
 # Intercept the --config option that we set for msbuild
 parser = argparse.ArgumentParser(add_help=False)
