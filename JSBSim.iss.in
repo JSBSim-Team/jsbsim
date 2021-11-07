@@ -32,7 +32,6 @@ Source: "${CMAKE_SOURCE_DIR}\utils\aeromatic++\samples\*.param"; DestDir: "{app}
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.lib"; DestDir: "{app}\lib"; Components: devfiles
 Source: "${CMAKE_SOURCE_DIR}\src\*.h"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
 Source: "${CMAKE_SOURCE_DIR}\src\*.hxx"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
-Source: "${CMAKE_SOURCE_DIR}\src\*.hpp"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.cpp"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
