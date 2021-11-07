@@ -54,6 +54,12 @@ foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h")
 endforeach()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim COPYONLY)
 
+# Duplicate data files (i.e. aircraft, engines, etc.)
+file(COPY ${CMAKE_SOURCE_DIR}/aircraft DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
+file(COPY ${CMAKE_SOURCE_DIR}/engine DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
+file(COPY ${CMAKE_SOURCE_DIR}/systems DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
+file(COPY ${CMAKE_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
+
 # Copy each source file and collect the compile flags specified by add_definitions()
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   string(SUBSTRING ${OBJECT} 0 17 HEADER)
