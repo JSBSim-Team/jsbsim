@@ -66,7 +66,7 @@ endif(BUILD_DOCS)
 ################################################################################
 
 option(BUILD_PYTHON_MODULE "Set to ON to build the Python module for JSBSim" ON)
-option(INSTALL_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
+option(INSTALL_JSBSIM_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
 
 if (BUILD_PYTHON_MODULE)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/python/CMakeModules)
