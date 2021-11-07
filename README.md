@@ -14,8 +14,9 @@
 ---
 
 # Introduction
-JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](https://www.flightgear.org/) or other flight simulator.
- 
+
+JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays a.k.a. console mode) for testing and study, or integrated with [FlightGear](https://www.flightgear.org/) or other flight simulator.
+
 Features include:
 
 * Nonlinear 6 DoF (Degree of Freedom)
@@ -30,6 +31,7 @@ Features include:
 In 2015, [the NASA performed some verification check cases on 7 flight dynamics software **including JSBSim**](https://nescacademy.nasa.gov/flightsim) (the other 6 being NASA in-house software). The results showed that the 7 simulation tools *"were good enough to indicate agreement between a majority of simulation tools for all cases published. Most of the remaining differences are explained and could be reduced with further effort."*
 
 ## Applications and Usages
+
 JSBSim is used in a range of projects among which:
 
 * Flight simulation: [FlightGear](http://www.flightgear.org), [OutTerra](https://www.outerra.com/wfeatures.html), [Skybolt Engine](https://github.com/Piraxus/Skybolt)
@@ -40,71 +42,104 @@ JSBSim is used in a range of projects among which:
 JSBSim is also used in academic and industry research ([more than 600 citations referenced by Google Scholar](https://scholar.google.com/scholar?&q=jsbsim) as of November 2020).
 
 # User Guide
+
 ## Installation
+
 ### Windows
+
 A Windows installer `JSBSim-1.1.8-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.8). It installs the 2 executables along with aircraft data and some example scripts:
+
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
 
 Both executables are console line command.
+
+The Windows installer also contains the files needed to build the JSBSim Matlab S-Function (see issue [#491](https://github.com/JSBSim-Team/jsbsim/issues/491) for more details about using JSBSim in Matlab).
+
 ### Ubuntu Linux
-Debian packages for Ubuntu Linux "Xenial" 16.04 LTS, "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platform are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.8). There are 3 packages:
+
+Debian packages for Ubuntu Linux "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.8). There are 3 packages for each platform:
+
 * `JSBSim_1.1.8-588.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
 * `JSBSim-devel_1.1.8-588.amd64.deb` which installs the development resources (headers and libraries)
 * `python3-JSBSim_1.1.8-588.amd64.deb` which installs the Python 3.6 module of JSBSim
+
 ### Python module
-JSBSim provides binary packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8 and 3.9). These can be installed using either `pip` or `conda`.
+
+JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8 and 3.9). These can be installed using either `pip` or `conda`.
+
 #### Installation with `pip`
-Binary packages a.k.a. known as [wheel packages](https://www.python.org/dev/peps/pep-0427) are available from the [Python Package Index (PyPI)](https://pypi.org), a repository of software for the Python programming language. 
+
+Binary packages a.k.a. [wheel packages](https://www.python.org/dev/peps/pep-0427) are available from the [Python Package Index (PyPI)](https://pypi.org), a repository of software for the Python programming language.
 
 Installing `jsbsim` using `pip` can be achieved with:
+
 ```bash
 > pip install jsbsim
 ```
+
 Check the [pip documentation](https://packaging.python.org/tutorials/installing-packages) for more details.
 
-Note that wheel packages for Linux meet the [ManyLinux packages requirements](https://www.python.org/dev/peps/pep-0513) and as such are compatible with all the major Linux distributions.
+Note that wheel packages for Linux meet the [PEP600 ManyLinux packages requirements](https://www.python.org/dev/peps/pep-0600) and as such are compatible with a majority of Linux distributions.
+
 #### Installation with `conda`
+
 [Conda](https://docs.conda.io/projects/conda/en/latest/index.html) is an open-source package management system and environment management system that runs on Windows, macOS, and Linux. The JSBSim conda package is available from [`conda-forge`](https://conda-forge.org), a community led collection of recipes, build infrastructure and distributions for the conda package manager.
 
 Installing `jsbsim` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
+
 ```bash
 > conda config --add channels conda-forge
 ```
 
 Once the `conda-forge` channel has been enabled, `jsbsim` can be installed with:
+
 ```bash
 > conda install jsbsim
 ```
 
 It is possible to list all of the versions of `jsbsim` available on your platform with:
+
 ```bash
 > conda search jsbsim --channel conda-forge
 ```
+
 ### Other platforms
-At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 64 bits. If you fall in this category you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
+
+At the moment, JSBSim do not provide binaries for platforms other than Windows 64 bits and Ubuntu 64 bits. Alternatively, you can use [JSBSim wheel packages](https://github.com/bcoconni/jsbsim#python-module) for Windows, Linux or MacOS. Otherwise you should follow the instructions in the [developer docs](doc/DevelopersDocs.md) to build JSBSim on your platform.
+
 ### Aircraft data and example scripts
-You can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.tar.gz).
+
+JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.8.tar.gz).
+
 ## Quick start
+
 Once you have downloaded (or built) the binaries and unzipped the [aircraft data](#aircraft-data-and-example-scripts). Go to the root of the data package and make sure the executable is accessible from there.
 
 You can then run an FDM simulation with the following command:
+
 ```bash
 > JSBSim.exe --script=scripts/c1721.xml
 ```
 
 More options are available if you run:
+
 ```bash
 > JSBSim.exe --help
 ```
+
 ## User documentation
-A first place to look at for JSBSim documentation resources is [http://jsbsim.sourceforge.net/documentation.html](http://jsbsim.sourceforge.net/documentation.html). This link points to the official [JSBSim Reference Manual](http://jsbsim.sourceforge.net/JSBSimReferenceManual.pdf), a PDF which is the best source of information for users and developers.
+
+A first place to look at for JSBSim documentation resources is <https://jsbsim.sourceforge.net/documentation.html>. This link points to the official [JSBSim Reference Manual](https://jsbsim.sourceforge.net/JSBSimReferenceManual.pdf), a PDF which is the best source of information for users and developers.
 
 However, due to the nature of the development of the project (JSBSim sources are updated often, sometimes even daily), several new features that are available in the software are not yet documented in the reference manual. Starting from March 2018 a new effort is underway to deliver an up-to-date documentation web site. You can browse the new *JSBSim Online Reference Manual* by going to: [https://jsbsim-team.github.io/jsbsim-reference-manual](https://jsbsim-team.github.io/jsbsim-reference-manual). The online manual is under construction and as a first milestone it will incorporate all the non-outdated material contained in the original PDF Reference Manual. The online manual web site is based on the GitHub Pages technology and its sources are available [here](https://github.com/JSBSim-Team/jsbsim-reference-manual). Eventually, the PDF Reference Manual will be superseded by the online manual, which is designed to be updated collaboratively as well as in efficient and timely fashion.
 
 ## Interfacing JSBSim with your application
+
 ### Using the C++ API
-JSBSim can be interfaced or integrated to your application via a C++ API. The  following  code  illustrates  how  JSBSim  could  be  called  by  a  small  program, with execution being controlled by a script: 
+
+JSBSim can be interfaced or integrated to your application via a C++ API. The following code illustrates how JSBSim can be called by a small program, with execution being controlled by a script:
+
 ```c++
 #include <FGFDMExec.h>
 
@@ -117,57 +152,78 @@ int main(int argc, char **argv)
   while (result) result = FDMExec.Run();
 }
  ```
+
 The API is described in more details in the [C++ API documentation](doc/DevelopersDocs.md#c-api-documentation)
 
 ### Using the Python module
-JSBSim can also be used as a Python module. The following code provides a simple example of how to interface with JSBSim using the Python programming language:
+
+JSBSim can also be used as a Python module. JSBSim Python wheels are provided with the proverbial "batteries included" i.e. with some default aircraft data and example scripts.
+
+The following code provides a simple example of how to interface with JSBSim using the Python programming language:
+
 ```python
 import jsbsim
 
-fdm = jsbsim.FGFDMExec('.', None)
-fdm.load_script('scripts/c1721.xml')
+fdm = jsbsim.FGFDMExec(None)  # Use JSBSim default aircraft data.
+fdm.load_script('scripts/c1723.xml')
 fdm.run_ic()
 
 while fdm.run():
   pass
 ```
-A more elaborate example is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python version of `JSBSim.exe`.
 
-# Frequently Asked Questions
+Providing `jsbsim.FGFDMExec` with the value `None` allows using the installed default aircraft data and scripts (in the example above we are using the script `scripts/c1723.xml`, one of the many scripts installed by default).
+
+The default aircraft data is located in a directory which path can be retrieved with the function `get_default_root_dir()`:
+
+```python
+print(jsbsim.get_default_root_dir())
+```
+
+A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
+
+## Frequently Asked Questions
 
 ### How can I interface JSBSim with FlightGear ?
-**Q:** I would like to visualize the aircraft model in [FlightGear](http://flightgear.org) while running the FDM with the JSBSim executable. How do I proceed ?
 
-**A:** We are assuming that FlightGear is installed on your platform. If it is not, please follow the instructions on the [FlightGear website](http://home.flightgear.org/download/main-program).
+**Q:** I would like to visualize the aircraft model in [FlightGear](https://flightgear.org) while running the FDM with the JSBSim executable. How do I proceed ?
 
-You will need to launch separately FlightGear and JSBSim from a console. In the example below, you will execute the script [ShortS23_2.xml](scripts/Short_S23_2.xml) so you might need to install the [Short Empire aircraft](http://wiki.flightgear.org/Short_Empire). This is optional however and any aircraft can be used for visualization even if it does not correspond to the FDM.
+**A:** We are assuming that FlightGear is installed on your platform. If it is not, please follow the instructions on the [FlightGear website](https://home.flightgear.org/download/main-program).
 
-First, run FlightGear and tell it that the flight dynamics will be provided thru a socket by an external program. It is assumed that the executable of FlightGear is `fgfs` (see the FlightGear docs for [details on the parameters of `--native-fdm`](http://wiki.flightgear.org/Property_Tree/Sockets#Native_Socket) argument).
+You will need to launch separately FlightGear and JSBSim from a console. In the example below, you will execute the script [ShortS23_2.xml](scripts/Short_S23_2.xml) so you might need to install the [FlightGear model of the Short Empire aircraft](https://wiki.flightgear.org/Short_Empire). This is optional however as any aircraft can be used for visualization even if it does not match the aircraft of the JSBSim FDM model.
+
+First, run FlightGear and tell it that the flight dynamics will be provided thru a socket by an external program. It is assumed that the executable of FlightGear is `fgfs` (see the FlightGear docs for [details on the parameters of `--native-fdm`](https://wiki.flightgear.org/Property_Tree/Sockets#Native_Socket) argument).
+
 ```bash
 > fgfs --fdm=null --native-fdm=socket,in,60,,5550,udp --aircraft=Short_Empire --airport=SP01
 ```
+
 Once FlightGear is launched, you will see the aircraft standing still.
 
 ![FlightGear is launched](doc/JSB2FG_interface_1.png)
 
-Now we will run JSBSim and tell it that it must send the flight dynamics data to a socket with the FlightGear protocol
+Now we will run JSBSim and tell it that it must send the flight dynamics data to FlightGear through a socket
+
 ```bash
 > JSBSim scripts/Short_S23_2.xml data_output/flightgear.xml --realtime --nice
 ```
-The parameters describing the protocol are detailed in [`data_output/flightgear.xml`](data_output/flightgear.xml). The flag `--realtime` requests JSBSim to execute in real time. Otherwise JSBSim will run as fast as it can and the flight will look like it is played fast forward. The flag `--nice` tells JSBSim to use as few CPU power as possible. This is an optional flag but since we requested `--realtime`, JSBSim will spend a considerable amount of time idling, waiting for the next time step.
+
+The parameters describing the protocol are detailed in [`data_output/flightgear.xml`](data_output/flightgear.xml). The flag `--realtime` requests JSBSim to execute in real time. Otherwise JSBSim will run as fast as it can and the flight will look like it is played fast forward. The flag `--nice` tells JSBSim to use as few CPU power as possible. This is an optional flag but since we requested `--realtime`, JSBSim will spend a considerable amount of time idling, waiting for the next frame in FlightGear.
 
 At the this stage, the two executables are interacting and FlightGear produces the visualization of the flight dynamics simulated by JSBSim.
 
 ![FlightGear/JSBSim interface running](doc/JSB2FG_interface_2.png)
 
 # Contact
-For more information on JSBSim, you can contact the development team on the mailing list jsbsim-devel@lists.sourceforge.net or submit tickets on https://github.com/JSBSim-Team/jsbsim/issues
 
-We are also on Facebook: https://www.facebook.com/jsbsim/
+For more information about JSBSim, you can contact the development team on [GitHub discussion](https://github.com/JSBSim-Team/jsbsim/discussions) or submit tickets on <https://github.com/JSBSim-Team/jsbsim/issues>
+
+We are also on Facebook: <https://www.facebook.com/jsbsim/>
 
 # Legal Notice
+
 JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
 
 No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
 
-Likewise, the aircraft models included in this project and distribution do not include any proprietary, sensitive, or classified data. All data is derived from textbooks (such as Stevens and Lewis "Aircraft Control and Simulation" and Sutton's "Rocket Propulsion Elements"), freely available technical reports (see: http://ntrs.nasa.gov and http://www.aiaa.org), or other public data (such as the FAA web site). Aircraft models included in the JSBSim distribution and with names corresponding to existing commercial or military aircraft are approximations crafted using publicly available information, and are for educational or entertainment uses only. 
+Likewise, the aircraft models included in this project and distribution do not include any proprietary, sensitive, or classified data. All data is derived from textbooks (such as Stevens and Lewis "Aircraft Control and Simulation" and Sutton's "Rocket Propulsion Elements"), freely available technical reports (see: <https://ntrs.nasa.gov> and <https://www.aiaa.org>), or other public data (such as the FAA web site). Aircraft models included in the JSBSim distribution and with names corresponding to existing commercial or military aircraft are approximations crafted using publicly available information, and are for educational or entertainment uses only.
