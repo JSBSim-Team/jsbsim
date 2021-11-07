@@ -177,6 +177,28 @@ else:
     setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension,},
                     'setup_requires': ["setuptools>=24.2", "cython>=0.25"]}
 
+# Prepare the list of XML data files (aircraft, engines, ...)
+
+# Iterate over the XML files in a directory
+def XML_files(dir_name):
+    dir_fullname = os.path.join('data', dir_name)
+    for f in os.scandir(dir_fullname):
+        if f.is_file() and os.path.splitext(f.name)[-1] == '.xml':
+            yield os.path.join(dir_fullname, f.name)
+
+data_files = [
+                ('share/${PROJECT_NAME}/engine', list(XML_files('engine'))),
+                ('share/${PROJECT_NAME}/systems', list(XML_files('systems'))),
+                ('share/${PROJECT_NAME}/scripts', list(XML_files('scripts'))),
+            ]
+
+# Iterate over the aircraft folders
+for d in os.scandir('data/aircraft'):
+    if d.is_dir():
+        dir_name = 'aircraft/' + d.name
+        data_files.append(('share/${PROJECT_NAME}/'+dir_name,
+                            list(XML_files(dir_name))))
+
 # Build & installation process for the JSBSim Python module
 setup(
     name="${PROJECT_NAME}",
@@ -209,4 +231,5 @@ setup(
     install_requires=['numpy'],
     ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.6",
+    data_files=data_files,
     **setup_kwargs)

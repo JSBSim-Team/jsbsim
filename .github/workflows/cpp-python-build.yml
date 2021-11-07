@@ -476,13 +476,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Prepare the build
         run: |
-          mkdir build
-          mkdir build/python
-          mv python/ExceptionManagement.h build/python/.
-          mv python/fpectl/fpectlmodule.h build/python/.
-          mv python/JSBSim.py build/python/JSBSim
-          mv src build/python/.
-          pip install -U numpy wheel
+          pip install -U numpy wheel cython
+          mkdir build && cd build
+          cmake -DINSTALL_PYTHON_MODULE=ON -DBUILD_JULIA_PACKAGE=OFF ..
       - name: Download binary files
         uses: actions/download-artifact@v2
         with:
