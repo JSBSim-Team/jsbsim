@@ -13,14 +13,15 @@ WizardSmallImageFile=small\*.bmp
 
 [Components]
 Name: "JSBSim"; Description: "JSBSim executable"; Types: full compact
-Name: "data"; Description: "JSBSim scripts and aircraft data"; Types: full
+Name: "data"; Description: "JSBSim aircraft data and example scripts"; Types: full
 Name: "aeromatic"; Description: "Aeromatic++ executable"; Types: full compact
 Name: "aeromatic/samples"; Description: "Aeromatic++ samples"; Types: full
 Name: "devfiles"; Description: "JSBSim development files (headers and C++ library)"; Types: full
-Name: "devfiles\matlab"; Description: "JSBSim files to build an interface to Matlab"; Types: full
+Name: "devfiles\matlab"; Description: "Files to build a JSBSim S-Function for Matlab"; Types: full
 
 [Files]
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.exe"; DestDir: "{app}"; Components: JSBSim
+Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; Components: JSBSim devfiles
 Source: "${CMAKE_BINARY_DIR}\utils\aeromatic++\aeromatic.exe"; DestDir: "{app}\aeromatic++"; Components: aeromatic
 Source: "${CMAKE_BINARY_DIR}\msvcp*.dll"; DestDir: "{app}"; Components: JSBSim aeromatic
 Source: "${CMAKE_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
@@ -35,3 +36,6 @@ Source: "${CMAKE_SOURCE_DIR}\src\*.hxx"; DestDir: "{app}\include"; Flags: recurs
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.cpp"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_SOURCE_DIR}\matlab\readme.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab
