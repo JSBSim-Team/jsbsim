@@ -3,7 +3,7 @@ set -e -x
 cd /io/build
 
 export PYTHON_MIN_VERSION=3,6
-export PYTHON_MAX_VERSION=3,10
+export PYTHON_MAX_VERSION=3,11
 
 # Compile C++ code
 for PYBIN in /opt/python/*/bin; do
@@ -37,7 +37,7 @@ done
 # Install packages and test
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
-    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info <= (${PYTHON_MAX_VERSION})))" | grep -q 'True'; then
+    if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info < (${PYTHON_MAX_VERSION})))" | grep -q 'True'; then
         "${PYBIN}/pip" install jsbsim --no-index -f dist
         "${PYBIN}/python" -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
         "${PYBIN}/JSBSim" --root=../.. --script=scripts/c1721.xml
