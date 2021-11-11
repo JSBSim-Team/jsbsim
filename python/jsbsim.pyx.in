@@ -23,7 +23,11 @@
 import errno
 import os
 import platform
+import site
 import sys
+
+from distutils.dist import Distribution
+from distutils.command.install import install
 
 import numpy
 
@@ -32,7 +36,20 @@ __version__='${PROJECT_VERSION}'
 
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
-    return os.path.join(sys.prefix, 'share', '${PROJECT_NAME}')
+
+    # Runs a dummy install to capture the installation parameters.
+    cmd = install(Distribution())
+    cmd.ensure_finalized()
+
+    # Test the following paths for JSBSim default root dir:
+    # * `sys.prefix` and `sys.exec_prefix` are for virtual envs (pip & conda)
+    # * `site.USER_BASE` is for pip install --user ...
+    # * `cmd.install_data` is for system-wide installation.
+    for path in (cmd.install_data, site.USER_BASE, sys.prefix, sys.exec_prefix):
+        root_dir = os.path.join(path, 'share', '${PROJECT_NAME}')
+        if os.path.isdir(root_dir):
+            return root_dir
+    raise IOError("Can't find the default root directory")
 
 
 def _append_xml(name):
@@ -315,11 +332,7 @@ cdef class FGFDMExec(FGJSBBase):
                 raise IOError("Can't find root directory: {0}".format(root_dir))
             self.set_root_dir(root_dir)
         else:
-            default_root_dir = get_default_root_dir()
-            if os.path.isdir(default_root_dir):
-                self.set_root_dir(default_root_dir)
-            else:
-                raise IOError("Can't find the default root directory: {0}".format(default_root_dir))
+            self.set_root_dir(get_default_root_dir())
 
     def __dealloc__(self):
         del self.thisptr
