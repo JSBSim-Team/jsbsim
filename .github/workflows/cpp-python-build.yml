@@ -145,7 +145,23 @@ jobs:
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Test default root package detection
+        run: |
+          # Test global installation
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
+          # Test --user installation
+          pip install --user jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          # Test virtual environment installation
+          python -m venv test_venv
+          source test_venv/bin/activate
+          pip install numpy
+          pip install jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          deactivate
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
         with:
@@ -524,6 +540,15 @@ jobs:
         run: |
           pip install jsbsim --no-index -f build/python/dist
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Test default root package detection
+        run: |
+          # Test global installation
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          # Test --user installation
+          pip install --user jsbsim --no-index -f build/python/dist
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
       - name: Upload Python Wheel for Release
         uses: actions/upload-artifact@v2
         with:
