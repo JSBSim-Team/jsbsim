@@ -6,9 +6,30 @@ env:
   release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
 
 jobs:
-  Linux:
+  XML-validation:
     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+    name: XML validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxml2-utils
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Validate scripts files
+        run: |
+          for filename in scripts/*.xml; do
+            [ -e "$filename" ] || continue
+            [ "$filename" != "scripts/kml_output.xml" ] || continue
+            [ "$filename" != "scripts/plotfile.xml" ] || continue
+            [ "$filename" != "scripts/unitconversions.xml" ] || continue
+            xmllint --noout --schema JSBSimScript.xsd $filename
+          done
+
+  Linux:
     name: C/C++ build (Linux)
+    needs: XML-validation
     strategy:
       matrix:
         os: [ubuntu-20.04]
@@ -122,6 +143,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & Configure Doxygen
         run: |
+          sudo apt-get update
           sudo apt-get install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
@@ -210,8 +232,8 @@ jobs:
           path: build/matlab/JSBSim_SFunction.mex*
 
   Windows-MinGW32:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: C/C++ build (MinGW32)
+    needs: XML-validation
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.10
@@ -253,8 +275,8 @@ jobs:
           path: build/Testing/Temporary
 
   Windows-MSVC:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: C/C++ build (MSVC)
+    needs: XML-validation
     runs-on: windows-latest
     steps:
       - name: Set up Python 3.7
@@ -382,8 +404,8 @@ jobs:
             build\python\setup.py
 
   MacOSX:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: C/C++ build (MacOSX)
+    needs: XML-validation
     strategy:
       matrix:
         os: [ macos-10.15, ]
@@ -691,7 +713,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Ubuntu packages
-        run: sudo apt-get install doxygen graphviz cxxtest lcov
+        run: |
+          sudo apt-get update
+          sudo apt-get install doxygen graphviz cxxtest lcov
       - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
