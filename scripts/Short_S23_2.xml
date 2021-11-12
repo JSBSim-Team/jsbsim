@@ -165,7 +165,7 @@
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>
    <!-- set name="sperry-autopilot/roll-speed-valve-cmd-norm" value="0.0"/-->
-   <!-- Set the reference values. --> 
+   <!-- Set the reference values. -->
    <set name="sperry-autopilot/roll-reference-deg" value="0.0"/>
    <!-- Enable the AP. -->
    <set name="sperry-autopilot/enabled-cmd-norm" value="1.0"/>
@@ -173,7 +173,7 @@
   </event>
 
 
-  <event name="Time Notify" type="FG_DELTA" persistent="true">
+  <event name="Time Notify" persistent="true">
    <description>Output message at 5 seconds intervals</description>
    <condition>
      simulation/sim-time-sec GE simulation/notify-time-trigger

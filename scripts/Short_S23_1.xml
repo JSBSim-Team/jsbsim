@@ -380,7 +380,7 @@
    <set name="simulation/rpm-check-time-trigger" value="135"/>
   </event>
 
-  <event name="Reduce throttle" type="FG_DELTA" persistent="true">
+  <event name="Reduce throttle" persistent="true">
    <description>Check engine RPM at 1 seconds intervals</description>
    <condition>
     simulation/sim-time-sec GE simulation/rpm-check-time-trigger
@@ -471,7 +471,7 @@
    <set name="fcs/mixture-cmd-norm[3]" value="0.5"/>
   </event>
 
-  <event name="Time Notify" type="FG_DELTA" persistent="true">
+  <event name="Time Notify" persistent="true">
    <description>Output message at 5 seconds intervals</description>
    <condition>
     simulation/sim-time-sec GE simulation/notify-time-trigger

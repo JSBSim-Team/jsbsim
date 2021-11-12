@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
-<runscript 
-       name="AH-1S flight test" 
+<runscript
+       name="AH-1S flight test"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
 
   <description>
 
-     Runs some performance tests on the model. The tests are selected via 
+     Runs some performance tests on the model. The tests are selected via
      simulation/test-variant:
 
        0) syntax check - nothing happens
@@ -30,7 +30,7 @@
     <property value="3.14159"> ap/afcs/psi-trim-rad </property>
     <property value="0.0"> propulsion/tank[0]/contents-lbs </property>
     <property value="0.0"> propulsion/tank[1]/contents-lbs </property>
-    
+
     <!-- vehicle setup: ensure defaults -->
     <property value="1.0"> aero/setup/downwash-enable </property>
     <property value="0.05"> aero/setup/Nr_limiter </property>
@@ -67,10 +67,10 @@
       </notify>
     </event>
 
-    <!-- 
+    <!--
          Example for using 'x-rpm-dict', make sure to disable the RPM governor above.
       -->
-    <!-- 
+    <!--
     <event name="Set RPM">
       <condition> simulation/sim-time-sec  ge  1 </condition>
       <set name="fcs/collective-cmd-norm" value="0.0"/>
@@ -83,7 +83,7 @@
     <event name="Raise collective">
       <condition>
         simulation/test-variant gt 0
-        simulation/sim-time-sec ge 10 
+        simulation/sim-time-sec ge 10
       </condition>
       <set name="fcs/collective-cmd-norm" value="0.35" action="FG_RAMP" tc="3.0"/>
       <set name="fcs/rudder-cmd-norm" value="0.35" action="FG_RAMP" tc="3.0"/>
@@ -108,7 +108,7 @@
     <event name="Lift off">
       <condition>
         simulation/test-variant gt 0
-        simulation/sim-time-sec ge 15 
+        simulation/sim-time-sec ge 15
       </condition>
       <set name="fcs/collective-cmd-norm" value="0.615" action="FG_RAMP" tc="10.0"/>
       <set name="fcs/elevator-cmd-norm" value="-0.18" action="FG_RAMP" tc="20.0"/>
@@ -138,11 +138,11 @@
     <event name="Hover around at approx 75ft hagl (OGE)">
       <condition>
         simulation/test-variant gt 0
-        position/h-agl-ft ge 50 
+        position/h-agl-ft ge 50
       </condition>
       <set name="fcs/collective-cmd-norm" value="0.615" action="FG_RAMP" tc="5.0"/>
-      <set name="fcs/elevator-cmd-norm" value="-0.1558" tvalue="-0.222788" action="FG_RAMP" tc="5.0"/>
-      <set name="fcs/aileron-cmd-norm" value="0.19095" tvalue="0.242343" action="FG_RAMP" tc="5.0"/>
+      <set name="fcs/elevator-cmd-norm" value="-0.1558" action="FG_RAMP" tc="5.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.19095" action="FG_RAMP" tc="5.0"/>
       <set name="fcs/rudder-cmd-norm" value="0.39" action="FG_RAMP" tc="3.0"/>
       <notify/>
     </event>
@@ -150,7 +150,7 @@
     <event name="Avoid rising over 100ft hagl">
       <condition>
         simulation/test-variant gt 0
-        position/h-agl-ft ge 90 
+        position/h-agl-ft ge 90
         simulation/sim-time-sec lt 120
       </condition>
       <set name="fcs/collective-cmd-norm" value="0.6007" action="FG_RAMP" tc="5.0"/>
@@ -162,7 +162,7 @@
 
     <!-- Raise attention when watching in FlightGear  -->
     <event name="20 seconds before fly off">
-      <condition> 
+      <condition>
          simulation/test-variant gt 0
          simulation/sim-time-sec ge 100
       </condition>
@@ -183,7 +183,7 @@
     <!-- =========== test-variant eq 1 (max speed) =========== -->
 
     <event name="1: fly off">
-      <condition> 
+      <condition>
          simulation/test-variant eq 1
          simulation/sim-time-sec ge 120
       </condition>
@@ -211,7 +211,7 @@
     </event>
 
     <event name="1: Trying max speed at 5000 ft">
-      <condition> 
+      <condition>
          simulation/test-variant eq 1
          simulation/sim-time-sec ge 120
          velocities/vc-kts ge 75
@@ -256,7 +256,7 @@
          -->
 
     <event name="2: Switch to trim table based control">
-      <condition> 
+      <condition>
          simulation/test-variant eq 2
          simulation/sim-time-sec ge 120
       </condition>
@@ -284,7 +284,7 @@
     </event>
 
     <event name="2: Climb to 5000ft sl (with approx 1800 ft/min)">
-      <condition> 
+      <condition>
          simulation/test-variant eq 2
          simulation/sim-time-sec ge 180
       </condition>
@@ -296,7 +296,7 @@
     </event>
 
     <event name="2: Slowly fly away">
-      <condition> 
+      <condition>
          simulation/test-variant eq 2
          simulation/sim-time-sec ge 300
          position/h-sl-ft ge 5000
@@ -309,7 +309,7 @@
     </event>
 
     <event name="2: Avoid high speed">
-      <condition> 
+      <condition>
          simulation/test-variant eq 2
          simulation/sim-time-sec ge 300
          position/h-sl-ft ge 5000
@@ -327,10 +327,10 @@
           Descending in autorotation comes pretty close to real
           flight data, but scripted landing is rather a painful
           task.
-          
-          This test is orientated on the maximum glide distance 
+
+          This test is orientated on the maximum glide distance
           condition shown in the 'Climb-descent chart' in the
-          AH-1S Operator's Manual (TM 55-1520-234-10, A.D. 1976, 
+          AH-1S Operator's Manual (TM 55-1520-234-10, A.D. 1976,
           or the similar chart found the Hefley paper /HE88/. )
 
           HE88: Heffley, Robert K., Mnich, Marc A.,
@@ -340,7 +340,7 @@
         -->
 
     <event name="3: reach 90kts at 5000ft sl">
-      <condition> 
+      <condition>
          simulation/test-variant eq 3
          simulation/sim-time-sec ge 120
       </condition>
@@ -358,7 +358,7 @@
     </event>
 
     <event name="3: keep 90kts">
-      <condition> 
+      <condition>
          velocities/vc-kts ge 85
          simulation/test-variant eq 3
          simulation/sim-time-sec ge 120
@@ -405,7 +405,7 @@
     <event name="3: try a flare - ok, this will hurt!">
       <condition>
          simulation/test-variant eq 3
-         simulation/sim-time-sec ge 240 
+         simulation/sim-time-sec ge 240
          position/h-agl-ft lt 190
       </condition>
       <set name="fcs/collective-cmd-norm" value="0.45" action="FG_RAMP" tc="20.0"/>
@@ -426,7 +426,7 @@
     <event name="3: try to level (or at least: avoid hitting with the rear bumper)">
       <condition>
          simulation/test-variant eq 3
-         simulation/sim-time-sec ge 240 
+         simulation/sim-time-sec ge 240
          position/h-agl-ft lt 40
       </condition>
       <set name="fcs/elevator-cmd-norm" value="-0.2" action="FG_RAMP" tc="12.0"/>
@@ -446,7 +446,7 @@
       <condition>
          position/h-agl-ft lt 9.0
          simulation/test-variant eq 3
-         simulation/sim-time-sec ge 240 
+         simulation/sim-time-sec ge 240
       </condition>
       <set name="simulation/terminate" value="0"/>
       <notify>
@@ -467,7 +467,7 @@
       <condition>
          position/h-agl-ft lt 9
          simulation/test-variant eq 3
-         simulation/sim-time-sec ge 240 
+         simulation/sim-time-sec ge 240
       </condition>
       <set name="simulation/terminate" value="1"/>
       <delay> 10 </delay>
@@ -490,7 +490,7 @@
           bell-torque-sensor output.
         -->
     <event name="4: Climb w/o exceeding engine limits (56/50 PSI)">
-      <condition> 
+      <condition>
          simulation/test-variant eq 4
          simulation/sim-time-sec ge 120
       </condition>
@@ -507,7 +507,7 @@
     </event>
 
     <event name="4: Passing max height from operators manual (assuming 8500lbs grossweight)">
-      <condition> 
+      <condition>
          simulation/test-variant eq 4
          simulation/sim-time-sec ge 120
          position/h-sl-ft ge 13000
