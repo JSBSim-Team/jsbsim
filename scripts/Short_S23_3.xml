@@ -15,7 +15,7 @@
 
       "The maximum speed in level flight at 5 500 ft. was 172 knots."
       ([Cassidy:2004:FE], page 160)
-      
+
       "Maximum engine speed - all out - was 2600 rev. per min. with
       +2 1/2 lb. sq. in. for 5 minutes in level flight."
       ([Cassidy:2004:FE], page 167)
@@ -150,7 +150,7 @@
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>
    <!-- set name="sperry-autopilot/roll-speed-valve-cmd-norm" value="0.0"/-->
-   <!-- Set the reference values. --> 
+   <!-- Set the reference values. -->
    <set name="sperry-autopilot/roll-reference-deg" value="0.0"/>
    <!-- Enable the AP. -->
    <set name="sperry-autopilot/enabled-cmd-norm" value="1.0"/>
@@ -158,7 +158,7 @@
   </event>
 
 
-  <event name="Time Notify" type="FG_DELTA" persistent="true">
+  <event name="Time Notify" persistent="true">
    <description>Output message at 5 seconds intervals</description>
    <condition>
      simulation/sim-time-sec GE simulation/notify-time-trigger

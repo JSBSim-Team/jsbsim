@@ -31,7 +31,7 @@
     <property>mooring/total-distance-ft</property>
    </notify>
    <!-- Weigh-off. -->
-   <set name="inertia/pointmass-weight-lbs[0]" value="2500.0"/>  
+   <set name="inertia/pointmass-weight-lbs[0]" value="2500.0"/>
   </event>
 
   <event name="Initialize 2">
@@ -69,7 +69,7 @@
     <property>mooring/total-distance-ft</property>
    </notify>
    <!-- Connect the mooring. -->
-   <set name="mooring/wire-connected" value="1.0"/>  
+   <set name="mooring/wire-connected" value="1.0"/>
   </event>
 
   <event name="Strong wind from north">
@@ -85,10 +85,10 @@
    </notify>
    <!-- Ramp up the wind. -->
    <set name="atmosphere/wind-east-fps" value="30.0"
-        action="FG_RAMP" tc ="30.0"/>  
+        action="FG_RAMP" tc ="30.0"/>
   </event>
 
-  <event name="Time Notify" type="FG_DELTA" persistent="true">
+  <event name="Time Notify" persistent="true">
    <description>Output message at 10 second intervals</description>
    <notify>
     <property>static-condition/net-lift-lbs</property>
