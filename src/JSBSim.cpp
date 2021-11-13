@@ -349,6 +349,7 @@ int real_main(int argc, char* argv[])
   FDMExec->SetAircraftPath(SGPath("aircraft"));
   FDMExec->SetEnginePath(SGPath("engine"));
   FDMExec->SetSystemsPath(SGPath("systems"));
+  FDMExec->SetOutputPath(SGPath("."));
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 

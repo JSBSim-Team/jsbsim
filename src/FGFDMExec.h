@@ -321,6 +321,14 @@ public:
     return true;
   }
   
+  /** Sets the directory where the output files will be written.
+      @param path path to the directory under which the output files will be
+      written. */
+  bool SetOutputPath(const SGPath& path) {
+    OutputPath = GetFullPath(path);
+    return true;
+  }
+
   /// @name Top-level executive State and Model retrieval mechanism
   ///@{
   /// Returns the FGAtmosphere pointer.
@@ -364,13 +372,15 @@ public:
   ///@}
 
   /// Retrieves the engine path.
-  const SGPath& GetEnginePath(void)    {return EnginePath;}
+  const SGPath& GetEnginePath(void) { return EnginePath; }
   /// Retrieves the aircraft path.
-  const SGPath& GetAircraftPath(void)  {return AircraftPath;}
+  const SGPath& GetAircraftPath(void) { return AircraftPath; }
   /// Retrieves the systems path.
-  const SGPath& GetSystemsPath(void)   {return SystemsPath;}
+  const SGPath& GetSystemsPath(void) { return SystemsPath; }
   /// Retrieves the full aircraft path name.
-  const SGPath& GetFullAircraftPath(void) {return FullAircraftPath;}
+  const SGPath& GetFullAircraftPath(void) { return FullAircraftPath; }
+  /// Retrieves the path to the output files.
+  const SGPath& GetOutputPath(void) { return OutputPath; }
 
   /** Retrieves the value of a property.
       @param property the name of the property
@@ -600,6 +610,7 @@ private:
   SGPath FullAircraftPath;
   SGPath EnginePath;
   SGPath SystemsPath;
+  SGPath OutputPath;
   std::string CFGVersion;
   std::string Release;
   SGPath RootDir;

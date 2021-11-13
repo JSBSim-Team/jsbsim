@@ -148,10 +148,12 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         bool SetEnginePath(const c_SGPath& path)
         bool SetAircraftPath(const c_SGPath& path)
         bool SetSystemsPath(const c_SGPath& path)
+        bool SetOutputPath(const c_SGPath& path)
         void SetRootDir(const c_SGPath& path)
         const c_SGPath& GetEnginePath()
         const c_SGPath& GetAircraftPath()
         const c_SGPath& GetSystemsPath()
+        const c_SGPath& GetOutputPath()
         const c_SGPath& GetRootDir()
         const c_SGPath& GetFullAircraftPath()
         double GetPropertyValue(string property) except +convertJSBSimToPyExc
