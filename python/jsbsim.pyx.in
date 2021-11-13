@@ -572,9 +572,14 @@ cdef class FGFDMExec(FGJSBBase):
             if not os.path.isdir(root_dir):
                 raise IOError("Can't find root directory: {0}".format(root_dir))
             self.set_root_dir(root_dir)
+            self.set_output_path(".")
         else:
             self.set_root_dir(get_default_root_dir())
             self.set_output_path(os.getcwd())
+
+        self.set_engine_path("engine")
+        self.set_aircraft_path("aircraft")
+        self.set_systems_path("systems")
 
     def __dealloc__(self):
         del self.thisptr
@@ -653,12 +658,6 @@ cdef class FGFDMExec(FGJSBBase):
     def set_root_dir(self, path):
         """@Dox(JSBSim::FGFDMExec::SetRootDir)"""
         self.thisptr.SetRootDir(c_SGPath(path.encode(), NULL))
-
-        # this is a hack to fix a bug in JSBSim
-        self.set_engine_path("engine")
-        self.set_aircraft_path("aircraft")
-        self.set_systems_path("systems")
-        self.set_output_path("")
 
     def get_engine_path(self):
         """@Dox(JSBSim::FGFDMExec::GetEnginePath)"""
