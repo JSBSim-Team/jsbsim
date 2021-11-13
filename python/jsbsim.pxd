@@ -34,7 +34,7 @@ cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
 cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
     cdef cppclass c_FGLinearization "JSBSim::FGLinearization":
         c_FGLinearization(c_FGFDMExec* fdme)
-        
+
         void WriteScicoslab() const
         void WriteScicoslab(string& path) const
 
@@ -182,10 +182,12 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         bool SetEnginePath(const c_SGPath& path)
         bool SetAircraftPath(const c_SGPath& path)
         bool SetSystemsPath(const c_SGPath& path)
+        bool SetOutputPath(const c_SGPath& path)
         void SetRootDir(const c_SGPath& path)
         const c_SGPath& GetEnginePath()
         const c_SGPath& GetAircraftPath()
         const c_SGPath& GetSystemsPath()
+        const c_SGPath& GetOutputPath()
         const c_SGPath& GetRootDir()
         const c_SGPath& GetFullAircraftPath()
         double GetPropertyValue(string property) except +convertJSBSimToPyExc

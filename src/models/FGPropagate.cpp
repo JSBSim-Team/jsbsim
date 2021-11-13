@@ -738,7 +738,7 @@ void FGPropagate::WriteStateFile(int num)
 
   if (num == 0) return;
 
-  SGPath path = FDMExec->GetFullAircraftPath();
+  SGPath path = FDMExec->GetOutputPath();
 
   if (path.isNull()) path = SGPath("initfile.");
   else               path.append("initfile.");

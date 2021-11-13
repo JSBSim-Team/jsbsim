@@ -574,6 +574,7 @@ cdef class FGFDMExec(FGJSBBase):
             self.set_root_dir(root_dir)
         else:
             self.set_root_dir(get_default_root_dir())
+            self.set_output_path(os.getcwd())
 
     def __dealloc__(self):
         del self.thisptr
@@ -584,11 +585,13 @@ cdef class FGFDMExec(FGJSBBase):
             "aircraft path\t:\t{1}\n" \
             "engine path\t:\t{2}\n" \
             "systems path\t:\t{3}\n" \
+            "output path\t:\t{4}\n" \
                 .format(
                 self.get_root_dir(),
                 self.get_aircraft_path(),
                 self.get_engine_path(),
-                self.get_systems_path())
+                self.get_systems_path(),
+                self.get_output_path())
 
     def __getitem__(self, key):
         _key = key.strip()
@@ -643,6 +646,10 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::SetSystemsPath) """
         return self.thisptr.SetSystemsPath(c_SGPath(path.encode(), NULL))
 
+    def set_output_path(self, path):
+        """@Dox(JSBSim::FGFDMExec::SetOutputPath) """
+        return self.thisptr.SetOutputPath(c_SGPath(path.encode(), NULL))
+
     def set_root_dir(self, path):
         """@Dox(JSBSim::FGFDMExec::SetRootDir)"""
         self.thisptr.SetRootDir(c_SGPath(path.encode(), NULL))
@@ -651,6 +658,7 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_engine_path("engine")
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
+        self.set_output_path("")
 
     def get_engine_path(self):
         """@Dox(JSBSim::FGFDMExec::GetEnginePath)"""
@@ -663,6 +671,10 @@ cdef class FGFDMExec(FGJSBBase):
     def get_systems_path(self):
         """@Dox(JSBSim::FGFDMExec::GetSystemsPath)"""
         return self.thisptr.GetSystemsPath().utf8Str().decode('utf-8')
+
+    def get_output_path(self):
+        """@Dox(JSBSim::FGFDMExec::GetOutputPath)"""
+        return self.thisptr.GetOutputPath().utf8Str().decode('utf-8')
 
     def get_full_aircraft_path(self):
         """@Dox(JSBSim::FGFDMExec::GetFullAircraftPath)"""

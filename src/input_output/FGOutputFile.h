@@ -100,7 +100,7 @@ public:
       the next call to SetStartNewOutput().
       @param name new name */
   void SetOutputName(const std::string& fname) override {
-    Name = (FDMExec->GetRootDir()/fname).utf8Str();
+    Name = (FDMExec->GetOutputPath()/fname).utf8Str();
     runID_postfix = -1;
     Filename = SGPath();
   }
