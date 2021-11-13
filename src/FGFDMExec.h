@@ -194,7 +194,7 @@ class FGFDMExec : public FGJSBBase
       mated = true;
       internal = false;
     }
-    
+
     void Run(void) {exec->Run();}
     void AssignState(FGPropagate* source_prop) {
       exec->GetPropagate()->SetVState(source_prop->GetVState());
@@ -283,47 +283,60 @@ public:
       @return true if successful*/
   bool LoadModel(const std::string& model, bool addModelToPath = true);
 
-  /** Loads a script
+  /** Load a script
       @param Script The full path name and file name for the script to be loaded.
-      @param deltaT The simulation integration step size, if given.  If no value is supplied
-                    then 0.0 is used and the value is expected to be supplied in
-                    the script file itself.
-      @param initfile The initialization file that will override the initialization file
-                      specified in the script file. If no file name is given on the command line,
-                      the file specified in the script will be used. If an initialization file 
-                      is not given in either place, an error will result.
+      @param deltaT The simulation integration step size, if given.  If no value
+                    is supplied then 0.0 is used and the value is expected to be
+                    supplied in the script file itself.
+      @param initfile The initialization file that will override the
+                      initialization file specified in the script file. If no
+                      file name is given on the command line, the file specified
+                      in the script will be used. If an initialization file is
+                      not given in either place, an error will result.
       @return true if successfully loads; false otherwise. */
   bool LoadScript(const SGPath& Script, double deltaT=0.0,
                   const SGPath& initfile=SGPath());
 
-  /** Sets the path to the engine config file directories.
-      @param path path to the directory under which engine config
-      files are kept, for instance "engine"  */
+  /** Set the path to the engine config file directories.
+      Relative paths are taken from the root directory.
+      @param path path to the directory under which engine config files are
+                  kept, for instance "engine".
+      @see SetRootDir
+      @see GetEnginePath */
   bool SetEnginePath(const SGPath& path) {
     EnginePath = GetFullPath(path);
     return true;
   }
 
-  /** Sets the path to the aircraft config file directories.
-      @param path path to the aircraft directory. For instance:
-      "aircraft". Under aircraft, then, would be directories for various
-      modeled aircraft such as C172/, x15/, etc.  */
+  /** Set the path to the aircraft config file directories.
+      Under this path, then, would be directories for various modeled aircraft
+      such as C172/, x15/, etc.
+      Relative paths are taken from the root directory.
+      @param path path to the aircraft directory, for instance "aircraft".
+      @see SetRootDir
+      @see GetAircraftPath */
   bool SetAircraftPath(const SGPath& path) {
     AircraftPath = GetFullPath(path);
     return true;
   }
-  
-  /** Sets the path to the systems config file directories.
-      @param path path to the directory under which systems config
-      files are kept, for instance "systems"  */
+
+  /** Set the path to the systems config file directories.
+      Relative paths are taken from the root directory.
+      @param path path to the directory under which systems config files are
+                  kept, for instance "systems"
+      @see SetRootDir
+      @see GetSystemsPath */
   bool SetSystemsPath(const SGPath& path) {
     SystemsPath = GetFullPath(path);
     return true;
   }
-  
-  /** Sets the directory where the output files will be written.
+
+  /** Set the directory where the output files will be written.
+      Relative paths are taken from the root directory.
       @param path path to the directory under which the output files will be
-      written. */
+                  written.
+      @see SetRootDir
+      @see GetOutputPath */
   bool SetOutputPath(const SGPath& path) {
     OutputPath = GetFullPath(path);
     return true;
@@ -545,13 +558,23 @@ public:
       @param delta_t the time step in seconds.     */
   void Setdt(double delta_t) { dT = delta_t; }
 
-  /** Sets the root directory where JSBSim starts looking for its system
-      directories.
-      @param rootDir the string containing the root directory. */
+  /** Set the root directory that is used to obtain absolute paths from
+      relative paths.
+      Aircraft, engine, systems and output paths are not updated by this
+      method. You must call each methods (SetAircraftPath(), SetEnginePath(),
+      etc.) individually if you need to update these paths as well.
+      @param rootDir the path to the root directory.
+      @see GetRootDir
+      @see SetAircraftPath
+      @see SetEnginePath
+      @see SetSystemsPath
+      @see SetOutputPath
+       */
   void SetRootDir(const SGPath& rootDir) {RootDir = rootDir;}
 
-  /** Retrieves the Root Directory.
-      @return the string representing the root (base) JSBSim directory. */
+  /** Retrieve the Root Directory.
+      @return the path to the root (base) JSBSim directory.
+      @see SetRootDir */
   const SGPath& GetRootDir(void) const {return RootDir;}
 
   /** Increments the simulation time if not in Holding mode. The Frame counter
