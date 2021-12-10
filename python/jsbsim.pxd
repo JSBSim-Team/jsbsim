@@ -22,8 +22,10 @@ from libcpp cimport bool
 from libcpp.string cimport string
 from libcpp.memory cimport shared_ptr
 from libcpp.vector cimport vector
+from cpython.ref cimport PyObject
 
 cdef extern from "ExceptionManagement.h":
+    cdef PyObject* trimfailure_error
     cdef void convertJSBSimToPyExc()
 
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
