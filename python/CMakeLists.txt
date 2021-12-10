@@ -117,7 +117,7 @@ set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
 # setup.py build_ext is called with --force because dependencies and time stamps
 # are managed by CMake so we don't want setup.py to check them as well.
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
-  DEPENDS ${SETUP_PY} ${JSBSIM_CXX} $<TARGET_FILE:libJSBSim>
+  DEPENDS ${SETUP_PY} ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
                                            $<IF:$<BOOL:${MINGW}>,--compiler,> $<IF:$<BOOL:${MINGW}>,mingw32,>
