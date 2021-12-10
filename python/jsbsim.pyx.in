@@ -34,6 +34,12 @@ import numpy
 __version__='${PROJECT_VERSION}'
 
 
+class TrimFailureError(RuntimeError):
+    pass
+
+trimfailure_error = <PyObject*>TrimFailureError
+
+
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
 

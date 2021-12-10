@@ -1165,7 +1165,7 @@ void FGFDMExec::DoTrim(int mode)
     trim.Report();
 
   if (!success)
-    throw("Trim Failed");
+    throw TrimFailureException("Trim Failed");
 
   trim_completed = 1;
 }

@@ -43,6 +43,7 @@ INCLUDES
 
 #include <memory>
 #include <random>
+#include <stdexcept>
 
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
@@ -71,6 +72,11 @@ class FGInput;
 class FGPropulsion;
 class FGMassBalance;
 class FGTrim;
+
+class TrimFailureException : public std::runtime_error {
+  public:
+    TrimFailureException(const std::string& msg) : std::runtime_error(msg) {}
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
