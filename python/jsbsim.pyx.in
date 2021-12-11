@@ -44,8 +44,14 @@ class MatrixError(RuntimeError):
     pass
 
 
+class TableError(RuntimeError):
+    """Exception class for table errors."""
+    pass
+
+
 trimfailure_error = <PyObject*>TrimFailureError
 matrix_error = <PyObject*>MatrixError
+table_error = <PyObject*>TableError
 
 
 def get_default_root_dir():

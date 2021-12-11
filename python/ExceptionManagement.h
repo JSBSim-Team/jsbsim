@@ -20,9 +20,11 @@
 #include "fpectlmodule.h"
 #include "FGFDMExec.h"
 #include "math/FGMatrix33.h"
+#include "math/FGTable.h"
 
 PyObject* trimfailure_error;
 PyObject* matrix_error;
+PyObject* table_error;
 
 void convertJSBSimToPyExc()
 {
@@ -41,6 +43,9 @@ void convertJSBSimToPyExc()
   }
   catch (const JSBSim::MatrixException& e) {
     PyErr_SetString(matrix_error, e.what());
+  }
+  catch (const JSBSim::TableException& e) {
+    PyErr_SetString(table_error, e.what());
   }
   catch (const JSBSim::FloatingPointException& e) {
     PyErr_SetString(e.getPyExc(), e.what());

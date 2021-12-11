@@ -20,8 +20,10 @@
 
 import math
 import numpy as np
+import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
+from jsbsim import TableError
 
 
 class TestFunctions(JSBSimTestCase):
@@ -314,6 +316,19 @@ class TestFunctions(JSBSimTestCase):
         fdm['test/gamma'] = gamma
         self.CheckMatrix(fdm, Mc*Mb*Ma, 'bf_to_wf')
         self.CheckMatrix(fdm, (Mc*Mb*Ma).T, 'wf_to_bf')
+
+    def test_table_exception(self):
+        tripod = FlightModel(self, 'tripod')
+        function_file = self.sandbox.path_to_jsbsim_file('tests/function.xml')
+        tree = et.parse(function_file)
+        root = tree.getroot()
+        table_tag = root.find('./channel/fcs_function/function/table')
+        table_tag.attrib['type'] = 'qsdfghjkl'
+        function_file = self.sandbox('function.xml')
+        tree.write(function_file)
+        tripod.include_system_test_file(function_file)
+        with self.assertRaises(TableError):
+            tripod.start()
 
 
 RunTest(TestFunctions)
