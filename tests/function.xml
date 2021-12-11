@@ -235,5 +235,17 @@
         <urandom/>
       </function>
     </fcs_function>
+    <fcs_function name="test/table">
+      <function>
+        <table>
+          <independentVar>test/input</independentVar>
+          <tableData>
+            0.0 0.0
+            1.0 1.0
+            2.0 -1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
   </channel>
 </system>

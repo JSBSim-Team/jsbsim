@@ -21,12 +21,14 @@
 #include "FGFDMExec.h"
 #include "GeographicLib/Constants.hpp"
 #include "math/FGMatrix33.h"
+#include "math/FGTable.h"
 
 // Pointers to Python exception classes.
 // Their initialization take place in jsbsim.pyx
 PyObject* trimfailure_error;
 PyObject* geographic_error;
 PyObject* matrix_error;
+PyObject* table_error;
 
 void convertJSBSimToPyExc()
 {
@@ -48,6 +50,9 @@ void convertJSBSimToPyExc()
   }
   catch (const JSBSim::MatrixException& e) {
     PyErr_SetString(matrix_error, e.what());
+  }
+  catch (const JSBSim::TableException& e) {
+    PyErr_SetString(table_error, e.what());
   }
   catch (const JSBSim::FloatingPointException& e) {
     PyErr_SetString(e.getPyExc(), e.what());

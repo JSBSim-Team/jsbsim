@@ -28,6 +28,7 @@ cdef extern from "ExceptionManagement.h":
     cdef PyObject* trimfailure_error
     cdef PyObject* geographic_error
     cdef PyObject* matrix_error
+    cdef PyObject* table_error
     cdef void convertJSBSimToPyExc()
 
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
