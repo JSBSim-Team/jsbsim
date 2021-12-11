@@ -26,7 +26,6 @@
 #include "models/propulsion/FGEngine.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGTurboProp.h"
-#include <stdexcept>
 #include <fstream>
 #include <cstdlib>
 
