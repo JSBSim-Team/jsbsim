@@ -39,7 +39,13 @@ __version__='${PROJECT_VERSION}'
 class TrimFailureError(RuntimeError):
     pass
 
+
+class GeographicError(RuntimeError):
+    pass
+
+
 trimfailure_error = <PyObject*>TrimFailureError
+geographic_error = <PyObject*>GeographicError
 
 
 def get_default_root_dir():

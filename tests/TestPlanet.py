@@ -18,7 +18,10 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import xml.etree.ElementTree as et
+
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
+from jsbsim import GeographicError
 
 
 class TestPlanet(JSBSimTestCase):
@@ -40,5 +43,34 @@ class TestPlanet(JSBSimTestCase):
 
         self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1736000, 1.0)
 
+    def test_planet_geographic_error1(self):
+        # Check that a negative equatorial radius raises an exception
+        tripod = FlightModel(self, 'tripod')
+        moon_file = self.sandbox.path_to_jsbsim_file('tests/moon.xml')
+        tree = et.parse(moon_file)
+        root = tree.getroot()
+        radius_tag = root.find('equatorial_radius')
+        radius = float(radius_tag.text)
+        radius_tag.text = str(-radius)
+        moon_file = self.sandbox('moon.xml')
+        tree.write(moon_file)
+        tripod.include_planet_test_file(moon_file)
+        with self.assertRaises(GeographicError):
+            self.fdm = tripod.start()
+
+    def test_planet_geographic_error2(self):
+        # Check that a negative polar radius raises an exception
+        tripod = FlightModel(self, 'tripod')
+        moon_file = self.sandbox.path_to_jsbsim_file('tests/moon.xml')
+        tree = et.parse(moon_file)
+        root = tree.getroot()
+        radius_tag = root.find('polar_radius')
+        radius = float(radius_tag.text)
+        radius_tag.text = str(-radius)
+        moon_file = self.sandbox('moon.xml')
+        tree.write(moon_file)
+        tripod.include_planet_test_file(moon_file)
+        with self.assertRaises(GeographicError):
+            self.fdm = tripod.start()
 
 RunTest(TestPlanet)

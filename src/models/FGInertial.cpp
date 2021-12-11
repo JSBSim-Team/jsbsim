@@ -37,6 +37,7 @@ INCLUDES
 
 #include "FGInertial.h"
 #include "input_output/FGXMLElement.h"
+#include "GeographicLib/Geodesic.hpp"
 
 using namespace std;
 
@@ -100,6 +101,11 @@ bool FGInertial::Load(Element* el)
     b = el->FindElementValueAsNumberConvertTo("semiminor_axis", "FT");
   else if (el->FindElement("polar_radius"))
     b = el->FindElementValueAsNumberConvertTo("polar_radius", "FT");
+  // Trigger GeographicLib exceptions if the equatorial or polar radii are
+  // ill-defined.
+  // This intercepts the exception before being thrown by a destructor.
+  GeographicLib::Geodesic geod(a, 1.-b/a);
+
   if (el->FindElement("rotation_rate")) {
     double RotationRate = el->FindElementValueAsNumberConvertTo("rotation_rate", "RAD/SEC");
     vOmegaPlanet = {0., 0., RotationRate};

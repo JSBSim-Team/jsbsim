@@ -19,8 +19,12 @@
 #include <string>
 #include "fpectl/fpectlmodule.h"
 #include "FGFDMExec.h"
+#include "GeographicLib/Constants.hpp"
 
+// Pointers to Python exception classes.
+// Their initialization take place in jsbsim.pyx
 PyObject* trimfailure_error;
+PyObject* geographic_error;
 
 void convertJSBSimToPyExc()
 {
@@ -36,6 +40,9 @@ void convertJSBSimToPyExc()
   }
   catch (const JSBSim::TrimFailureException& e) {
     PyErr_SetString(trimfailure_error, e.what());
+  }
+  catch (const GeographicLib::GeographicErr& e) {
+    PyErr_SetString(geographic_error, e.what());
   }
   catch (const JSBSim::FloatingPointException& e) {
     PyErr_SetString(e.getPyExc(), e.what());

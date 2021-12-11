@@ -26,6 +26,7 @@ from cpython.ref cimport PyObject
 
 cdef extern from "ExceptionManagement.h":
     cdef PyObject* trimfailure_error
+    cdef PyObject* geographic_error
     cdef void convertJSBSimToPyExc()
 
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
@@ -169,7 +170,7 @@ cdef extern from "FGJSBBase.h" namespace "JSBSim":
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec" (c_FGJSBBase):
         c_FGFDMExec(c_FGPropertyManager* root, unsigned int* fdmctr)
-        void Unbind()
+        void Unbind() except +convertJSBSimToPyExc
         bool Run() except +convertJSBSimToPyExc
         bool RunIC() except +convertJSBSimToPyExc
         bool LoadModel(string model,
@@ -195,12 +196,12 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         double GetPropertyValue(string property) except +convertJSBSimToPyExc
         void SetPropertyValue(string property, double value) except +convertJSBSimToPyExc
         string GetModelName()
-        bool SetOutputDirectives(const c_SGPath& fname) except +
+        bool SetOutputDirectives(const c_SGPath& fname) except +convertJSBSimToPyExc
         #void ForceOutput(int idx=0)
         void SetLoggingRate(double rate)
         bool SetOutputFileName(int n, string fname)
         string GetOutputFileName(int n)
-        void DoTrim(int mode) except +
+        void DoTrim(int mode) except +convertJSBSimToPyExc
         void DisableOutput()
         void EnableOutput()
         void Hold()
