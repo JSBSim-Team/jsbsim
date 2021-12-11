@@ -42,8 +42,8 @@ INCLUDES
 
 #include <string>
 #include <iosfwd>
-#include <stdexcept>
 
+#include "FGJSBBase.h"
 #include "FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,10 +65,10 @@ CLASS DOCUMENTATION
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class MatrixException : public std::runtime_error
+class MatrixException : public JSBBaseException
 {
 public:
-  MatrixException(const std::string& msg) : std::runtime_error{msg} { }
+  MatrixException(const std::string& msg) : JSBBaseException{msg} { }
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
