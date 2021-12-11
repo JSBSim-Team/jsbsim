@@ -35,9 +35,17 @@ __version__='${PROJECT_VERSION}'
 
 
 class TrimFailureError(RuntimeError):
+    """Exception class for trim failures."""
     pass
 
+
+class MatrixError(RuntimeError):
+    """Exception class for matrix errors."""
+    pass
+
+
 trimfailure_error = <PyObject*>TrimFailureError
+matrix_error = <PyObject*>MatrixError
 
 
 def get_default_root_dir():
