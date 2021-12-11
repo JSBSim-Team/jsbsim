@@ -42,6 +42,7 @@ INCLUDES
 #include <queue>
 #include <string>
 #include <cmath>
+#include <stdexcept>
 
 #include "input_output/string_utilities.h"
 
@@ -54,6 +55,11 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class JSBBaseException : public std::runtime_error {
+  public:
+    JSBBaseException(const std::string& msg) : std::runtime_error(msg) {}
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION

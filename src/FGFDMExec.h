@@ -43,7 +43,6 @@ INCLUDES
 
 #include <memory>
 #include <random>
-#include <stdexcept>
 
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
@@ -72,9 +71,9 @@ class FGInput;
 class FGPropulsion;
 class FGMassBalance;
 
-class TrimFailureException : public std::runtime_error {
+class TrimFailureException : public JSBBaseException {
   public:
-    TrimFailureException(const std::string& msg) : std::runtime_error(msg) {}
+    TrimFailureException(const std::string& msg) : JSBBaseException(msg) {}
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
