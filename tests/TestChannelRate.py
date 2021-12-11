@@ -47,11 +47,10 @@ class TestChannelRate(JSBSimTestCase):
         self.assertEqual(fdm['simulation/dt'], fdm['tests/rate-1-dt'])
         self.assertEqual(fdm['simulation/dt']*4, fdm['tests/rate-4-dt'])
 
-        try:
+        # Trigger the trimming and check that it fails (i.e. it raises an
+        # exception TrimFailureError)
+        with self.assertRaises(TrimFailureError):
             fdm['simulation/do_simple_trim'] = 1
-        except TrimFailureError:
-            # The trim cannot succeed: ignore trim failures.
-            pass
 
         while fdm['simulation/sim-time-sec'] < 40:
             self.assertEqual(fdm['simulation/frame'], fdm['tests/rate-1'])

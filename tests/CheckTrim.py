@@ -43,11 +43,10 @@ class CheckTrim(JSBSimTestCase):
         self.assertEqual(fdm['propulsion/engine[0]/thrust-lbs'], 0.0)
         self.assertEqual(fdm['propulsion/engine[1]/thrust-lbs'], 0.0)
 
-        try:
+        # Trigger the trimming and check that it fails (i.e. it raises an
+        # exception TrimFailureError)
+        with self.assertRaises(TrimFailureError):
             fdm['simulation/do_simple_trim'] = 1
-        except TrimFailureError:
-            # The trim cannot succeed: ignore trim failures.
-            pass
 
         # Check that the trim did not ignite the SRBs
         self.assertEqual(fdm['propulsion/engine[0]/thrust-lbs'], 0.0)
