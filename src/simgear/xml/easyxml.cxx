@@ -24,6 +24,8 @@ INCLUDES
 #include <fstream>
 #include <iostream>
 
+#include "FGJSBBase.h"
+
 using std::istream;
 using std::string;
 using std::cerr;
@@ -264,32 +266,36 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
   while (!input.eof()) {
 
     if (!input.good()) {
+      std::stringstream s;
+      s << "Problem reading input file " << path << endl;
       visitor.setParser(0);
       XML_ParserFree(parser);
-      cerr << "Problem reading input file " << path << endl;
-      exit(-1);
+      cerr << endl << s.str() << endl;
+      throw JSBSim::JSBBaseException(s.str());
     }
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
-      cerr << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
-           << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser))
-           << endl;
+      std::stringstream s;
+      s << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
+        << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser));
+      cerr << endl << s.str() << endl;
       visitor.setParser(0);
       XML_ParserFree(parser);
-      exit(-1);
+      throw JSBSim::JSBBaseException(s.str());
     }
 
   }
 
 // Verify end of document.
   if (!XML_Parse(parser, buf, 0, true)) {
-    cerr << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
-         << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser))
-         << endl;
+    std::stringstream s;
+    s << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
+      << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser));
+    cerr << endl << s.str() << endl;
     visitor.setParser(0);
     XML_ParserFree(parser);
-    exit(-1);
+    throw JSBSim::JSBBaseException(s.str());
   }
 
   visitor.setParser(0);
