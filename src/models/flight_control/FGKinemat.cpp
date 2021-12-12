@@ -52,34 +52,29 @@ CLASS IMPLEMENTATION
 FGKinemat::FGKinemat(FGFCS* fcs, Element* element)
   : FGFCSComponent(fcs, element)
 {
-  Element *traverse_element, *setting_element;
-  double tmpDetent;
-  double tmpTime;
-
   CheckInputNodes(1, 1, element);
-
-  Detents.clear();
-  TransitionTimes.clear();
 
   Output = 0;
   DoScale = true;
 
   if (element->FindElement("noscale")) DoScale = false;
 
-  traverse_element = element->FindElement("traverse");
-  setting_element = traverse_element->FindElement("setting");
+  Element* traverse_element = element->FindElement("traverse");
+  Element* setting_element = traverse_element->FindElement("setting");
   while (setting_element) {
-    tmpDetent = setting_element->FindElementValueAsNumber("position");
-    tmpTime = setting_element->FindElementValueAsNumber("time");
+    double tmpDetent = setting_element->FindElementValueAsNumber("position");
+    double tmpTime = setting_element->FindElementValueAsNumber("time");
     Detents.push_back(tmpDetent);
     TransitionTimes.push_back(tmpTime);
     setting_element = traverse_element->FindNextElement("setting");
   }
 
   if (Detents.size() <= 1) {
-    cerr << "Kinematic component " << Name
-         << " must have more than 1 setting element" << endl;
-    exit(-1);
+    stringstream s;
+    s << "Kinematic component " << Name
+      << " must have more than 1 setting element";
+    cerr << element->ReadFrom() << endl << s.str() << endl;
+    throw JSBBaseException(s.str());
   }
 
   bind(element);

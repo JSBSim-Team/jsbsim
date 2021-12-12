@@ -808,7 +808,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
         }
         geodAlt = z/sinGeodLat-N*(1-e2);
       }
-      
+
       double longitude = position.GetLongitude();
       position.SetPositionGeodetic(longitude, geodLatitude, geodAlt);
     }
@@ -1013,13 +1013,17 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
 
   // Make sure that the document is valid
   if (!document) {
-    cerr << "File: " << init_file_name << " could not be read." << endl;
-    exit(-1);
+    stringstream s;
+    s << "File: " << init_file_name << " could not be read.";
+    cerr << s.str() << endl;
+    throw JSBBaseException(s.str());
   }
 
   if (document->GetName() != string("initialize")) {
-    cerr << "File: " << init_file_name << " is not a reset file." << endl;
-    exit(-1);
+    stringstream s;
+    s << "File: " << init_file_name << " is not a reset file.";
+    cerr << s.str() << endl;
+    throw JSBBaseException(s.str());
   }
 
   double version = HUGE_VAL;
@@ -1031,8 +1035,9 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   if (version == HUGE_VAL) {
     result = Load_v1(document); // Default to the old version
   } else if (version >= 3.0) {
-    cerr << "Only initialization file formats 1 and 2 are currently supported" << endl;
-    exit (-1);
+    const string s("Only initialization file formats 1 and 2 are currently supported");
+    cerr << document->ReadFrom() << endl << s << endl;
+    throw JSBBaseException(s);
   } else if (version >= 2.0) {
     result = Load_v2(document);
   } else if (version >= 1.0) {

@@ -229,9 +229,13 @@ bool FGAerodynamics::Run(bool Holding)
     vForcesAtCG = Ts2b*vFnativeAtCG;
     break;
   default:
-    cerr << endl << "  A proper axis type has NOT been selected. Check "
-         << "your aerodynamics definition." << endl;
-    exit(-1);
+    {
+      stringstream s;
+      s << "  A proper axis type has NOT been selected. Check "
+        << "your aerodynamics definition.";
+      cerr << endl << s.str() << endl;
+      throw JSBBaseException(s.str());
+    }
   }
   // Calculate aerodynamic reference point shift, if any. The shift takes place
   // in the structual axis. That is, if the shift is positive, it is towards the
@@ -257,7 +261,7 @@ bool FGAerodynamics::Run(bool Holding)
       vMomentsMRC(axis_ctr+1) += (*f)->GetValue();
     }
   }
-  
+
   // Transform moments to bodyXYZ if the moments are specified in stability or
   // wind axes
   vMomentsMRCBodyXYZ.InitMatrix();
@@ -272,13 +276,17 @@ bool FGAerodynamics::Run(bool Holding)
     vMomentsMRCBodyXYZ = in.Tw2b*vMomentsMRC;
     break;
   default:
-    cerr << endl << "  A proper axis type has NOT been selected. Check "
-         << "your aerodynamics definition." << endl;
-    exit(-1);
+    {
+      stringstream s;
+      s << "  A proper axis type has NOT been selected. Check "
+        << "your aerodynamics definition.";
+      cerr << endl << s.str() << endl;
+      throw JSBBaseException(s.str());
+    }
   }
 
   vMoments = vMomentsMRCBodyXYZ + vDXYZcg*vForces; // M = r X F
-  
+
   // Now add the "at CG" values to base forces - after the moments have been
   // transferred.
   vForces += vForcesAtCG;
@@ -310,7 +318,7 @@ bool FGAerodynamics::Run(bool Holding)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector3 FGAerodynamics::GetForcesInStabilityAxes(void) const
-{ 
+{
   FGColumnVector3 vFs = Tb2s*vForces;
   // Need sign flips since drag is positive and lift is positive in stability axes
   vFs(eDrag) *= -1; vFs(eLift) *= -1;
@@ -403,15 +411,15 @@ bool FGAerodynamics::Load(Element *document)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
 // This private class function checks to verify consistency in the choice of
-// aerodynamic axes used in the config file. One set of LIFT|DRAG|SIDE, or 
+// aerodynamic axes used in the config file. One set of LIFT|DRAG|SIDE, or
 // X|Y|Z, or AXIAL|NORMAL|SIDE must be chosen; mixed system axes are not allowed.
-// Note that if the "SIDE" axis specifier is entered first in a config file, 
+// Note that if the "SIDE" axis specifier is entered first in a config file,
 // a warning message will be given IF the AXIAL|NORMAL specifiers are also given.
 // This is OK, and the warning is due to the SIDE specifier used for both
 // the Lift/Drag and Axial/Normal axis systems.
-// Alternatively the axis name 'X|Y|Z or ROLL|PITCH|YAW' can be specified in 
+// Alternatively the axis name 'X|Y|Z or ROLL|PITCH|YAW' can be specified in
 // conjunction with a frame 'BODY|STABILITY|WIND', for example:
-// <axis name="X" frame="STABILITY"/> 
+// <axis name="X" frame="STABILITY"/>
 
 void FGAerodynamics::DetermineAxisSystem(Element* document)
 {
@@ -447,10 +455,12 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
              << " aircraft config file. (NORMAL AXIAL)" << endl;
       }
     } else { // error
-      cerr << endl << axis_element->ReadFrom()
-           << endl << "  An unknown axis type, " << axis << " has been specified"
-           << " in the aircraft configuration file." << endl;
-      exit(-1);
+      stringstream s;
+      s << axis_element->ReadFrom()
+        << endl << "  An unknown axis type, " << axis << " has been specified"
+        << " in the aircraft configuration file.";
+      cerr << endl << s.str() << endl;
+      throw JSBBaseException(s.str());
     }
     axis_element = document->FindNextElement("axis");
   }
@@ -495,8 +505,10 @@ void FGAerodynamics::ProcessAxesNameAndFrame(eAxisType& axisType, const string& 
                    << " aircraft config file." << validNames << " - WIND" << endl;
   }
   else {
-    cerr << endl << " Unknown axis frame type of - " << frame << endl;
-    exit(-1);
+    stringstream s;
+    s << " Unknown axis frame type of - " << frame;
+    cerr << endl << s.str() << endl;
+    throw JSBBaseException(s.str());
   }
 }
 
@@ -596,7 +608,7 @@ void FGAerodynamics::bind(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
-// Build transformation matrices for transforming from stability axes to 
+// Build transformation matrices for transforming from stability axes to
 // body axes and to wind axes. Where "a" is alpha and "B" is beta:
 //
 // The transform from body to stability axes is:

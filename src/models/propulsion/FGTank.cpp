@@ -193,10 +193,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     switch (grainType) {
       case gtCYLINDRICAL:
         if (Radius <= InnerRadius) {
-          cerr << element_Grain->ReadFrom()
-               << "The bore diameter should be smaller than the total grain diameter!"
-               << endl;
-          exit(-1);
+          const string s("The bore diameter should be smaller than the total grain diameter!");
+          cerr << element_Grain->ReadFrom() << endl << s << endl;
+          throw JSBBaseException(s);
         }
         Volume = M_PI * Length * (Radius*Radius - InnerRadius*InnerRadius); // cubic inches
         break;
@@ -207,10 +206,11 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         Volume = 1;  // Volume is irrelevant for the FUNCTION type, but it can't be zero!
         break;
       case gtUNKNOWN:
-        cerr << el->ReadFrom()
-             << "Unknown grain type found in this rocket engine definition."
-             << endl;
-        exit(-1);
+        {
+          const string s("Unknown grain type found in this rocket engine definition.");
+          cerr << el->ReadFrom() << endl << s << endl;
+          throw JSBBaseException(s);
+        }
     }
     Density = (Capacity*lbtoslug)/Volume; // slugs/in^3
   }
@@ -221,7 +221,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
 
   // A named fuel type will override a previous density value
-  if (!strFuelName.empty()) Density = ProcessFuelName(strFuelName); 
+  if (!strFuelName.empty()) Density = ProcessFuelName(strFuelName);
 
   bind(PropertyManager);
 
@@ -375,8 +375,9 @@ void FGTank::CalculateInertias(void)
     } else if (Contents <= 0.0) {
       Volume = 0;
     } else {
-      cerr << endl << "  Solid propellant grain density is zero!" << endl << endl;
-      exit(-1);
+      const string s("  Solid propellant grain density is zero!");
+      cerr << endl << s << endl;
+      throw JSBBaseException(s);
     }
 
     switch (grainType) {
@@ -399,9 +400,11 @@ void FGTank::CalculateInertias(void)
       Izz = function_izz->GetValue()*izz_unit;
       break;
     default:
-      cerr << "Unknown grain type found." << endl;
-      exit(-1);
-      break;
+      {
+        const string s("Unknown grain type found.");
+        cerr << s << endl;
+        throw JSBBaseException(s);
+      }
     }
 
   } else { // assume liquid propellant: shrinking snowball
@@ -415,7 +418,7 @@ void FGTank::CalculateInertias(void)
 
 double FGTank::ProcessFuelName(const std::string& name)
 {
-   if      (name == "AVGAS")    return 6.02; 
+   if      (name == "AVGAS")    return 6.02;
    else if (name == "JET-A")    return 6.74;
    else if (name == "JET-A1")   return 6.74;
    else if (name == "JET-B")    return 6.48;
@@ -442,7 +445,7 @@ double FGTank::ProcessFuelName(const std::string& name)
    else if (name == "AVCAT")    return 6.81;
    else {
      cerr << "Unknown fuel type specified: "<< name << endl;
-   } 
+   }
 
    return 6.6;
 }
