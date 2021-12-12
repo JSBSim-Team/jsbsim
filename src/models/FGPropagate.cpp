@@ -1028,16 +1028,22 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) { // State sanity checking
       if (fabs(VState.vPQR.Magnitude()) > 1000.0) {
-        cerr << endl << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude() << endl;
-        exit(-1);
+        stringstream s;
+        s << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude();
+        cerr << endl << s.str() << endl;
+        throw JSBBaseException(s.str());
       }
       if (fabs(VState.vUVW.Magnitude()) > 1.0e10) {
-        cerr << endl << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude() << endl;
-        exit(-1);
+        stringstream s;
+        s << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude();
+        cerr << endl << s.str() << endl;
+        throw JSBBaseException(s.str());
       }
       if (fabs(GetDistanceAGL()) > 1e10) {
-        cerr << endl << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL() << endl;
-        exit(-1);
+        stringstream s;
+        s << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL();
+        cerr << endl << s.str() << endl;
+        throw JSBBaseException(s.str());
       }
     }
   }

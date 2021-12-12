@@ -117,7 +117,7 @@ static FGMatrix33 ReadInertiaMatrix(Element* document)
 
   // Transform the inertia products from the structural frame to the body frame
   // and create the inertia matrix.
-  if (document->GetAttributeValue("negated_crossproduct_inertia") == string("false")) 
+  if (document->GetAttributeValue("negated_crossproduct_inertia") == string("false"))
     return FGMatrix33( bixx,  bixy, -bixz,
                        bixy,  biyy,  biyz,
                       -bixz,  biyz,  bizz );
@@ -268,9 +268,11 @@ void FGMassBalance::AddPointMass(Element* el)
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
-    cerr << el->ReadFrom() << "Pointmass " << pointmass_name
-         << " has no location." << endl;
-    exit(-1);
+    stringstream s;
+    s << el->ReadFrom() << "Pointmass " << pointmass_name
+         << " has no location.";
+    cerr << endl << s.str() << endl;
+    throw JSBBaseException(s.str());
   }
 
   double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
@@ -449,11 +451,11 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  cout << endl << fgblue << highint 
+  cout << endl << fgblue << highint
        << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
        << reset << endl;
   cout << "                                  " << underon << "    Weight    CG-X    CG-Y"
-       << "    CG-Z         Ixx         Iyy         Izz" 
+       << "    CG-Z         Ixx         Iyy         Izz"
        << "         Ixy         Ixz         Iyz" << underoff << endl;
   cout.precision(1);
   cout << highint << setw(34) << left << "    Base Vehicle " << normint
@@ -469,13 +471,13 @@ void FGMassBalance::GetMassPropertiesReport(int i)
          << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
          << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
          << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
-         << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;         
+         << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;
   }
 
   cout << FDMExec->GetPropulsionTankReport();
 
   cout << "    " << underon << setw(136) << " " << underoff << endl;
-  cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight 
+  cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight
        << setw(8) << vXYZcg(eX)
        << setw(8) << vXYZcg(eY)
        << setw(8) << vXYZcg(eZ)

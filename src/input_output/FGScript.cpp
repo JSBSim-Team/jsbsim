@@ -150,7 +150,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
 
   // Make sure that the desired time is reached and executed.
   EndTime += 0.99*FDMExec->GetDeltaT();
-  
+
   // read aircraft and initialization files
 
   element = document->FindElement("use");
@@ -193,7 +193,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   while (element) {
     if (!FDMExec->GetInput()->Load(element))
       return false;
- 
+
     element = document->FindNextElement("input");
   }
 
@@ -206,7 +206,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   while (element) {
     if (!FDMExec->GetOutput()->Load(element, scriptDir))
       return false;
- 
+
     element = document->FindNextElement("output");
   }
 
@@ -297,7 +297,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
         else
           newEvent->NotifyProperties.push_back(new FGPropertyValue(notifyPropertyName, PropertyManager,
                                                                    notify_property_element));
-        
+
         string caption_attribute = notify_property_element->GetAttributeValue("caption");
         if (caption_attribute.empty()) {
           newEvent->DisplayString.push_back(notifyPropertyName);
@@ -498,7 +498,7 @@ bool FGScript::RunScript(void)
         } else  {
           cout << endl << underon
                << highint << thisEvent.Name << normint << underoff
-               << " (Event " << event_ctr << ")" 
+               << " (Event " << event_ctr << ")"
                << " executed at time: " << highint << currentTime << normint
                << endl;
         }
@@ -575,7 +575,7 @@ void FGScript::Debug(int from)
              << " = " << node->getDoubleValue()
              << endl;
       }
-      
+
       if (LocalProperties.empty()) cout << endl;
 
       for (unsigned i=0; i<Events.size(); i++) {
@@ -600,37 +600,37 @@ void FGScript::Debug(int from)
           if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
             if (Events[i].SetParam[j] == 0) {
               if (Events[i].SetParamName[j].empty()) {
-              cerr << fgred << highint << endl
-                   << "  An attempt has been made to access a non-existent property" << endl
-                   << "  in this event. Please check the property names used, spelling, etc."
-                   << reset << endl;
-              exit(-1);
+                stringstream s;
+                s << "  An attempt has been made to access a non-existent property" << endl
+                  << "  in this event. Please check the property names used, spelling, etc.";
+                cerr << fgred << highint << endl << s.str() << reset << endl;
+                throw JSBBaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]
                      << " to function value (Late Bound)";
-            }
+              }
             } else {
-            cout << endl << "      set "
-                 << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
-                 << " to function value";
+              cout << endl << "      set "
+                   << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
+                   << " to function value";
             }
           } else {
             if (Events[i].SetParam[j] == 0) {
               if (Events[i].SetParamName[j].empty()) {
-              cerr << fgred << highint << endl
-                   << "  An attempt has been made to access a non-existent property" << endl
-                   << "  in this event. Please check the property names used, spelling, etc."
-                   << reset << endl;
-              exit(-1);
+                stringstream s;
+                s << "  An attempt has been made to access a non-existent property" << endl
+                  << "  in this event. Please check the property names used, spelling, etc.";
+                cerr << fgred << highint << endl << s.str() << reset << endl;
+                throw JSBBaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]
                      << " to function value (Late Bound)";
-            }
+              }
             } else {
-            cout << endl << "      set "
-                 << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
-                 << " to " << Events[i].SetValue[j];
-          }
+              cout << endl << "      set "
+                   << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
+                   << " to " << Events[i].SetValue[j];
+            }
           }
 
           switch (Events[i].Type[j]) {

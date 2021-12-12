@@ -86,8 +86,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    cerr << "Fatal Error: No location found for this gas cell." << endl;
-    exit(-1);
+    const string s("Fatal Error: No location found for this gas cell.");
+    cerr << el->ReadFrom() << endl << s << endl;
+    throw JSBBaseException(s);
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -126,7 +127,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
       MaxVolume = M_PI * Yradius * Zradius * Xwidth;
     } else {
       cerr << "Warning: Unsupported gas cell shape." << endl;
-      MaxVolume = 
+      MaxVolume =
         (4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
          M_PI * Yradius * Zradius * Xwidth +
          M_PI * Xradius * Zradius * Ywidth +
@@ -137,8 +138,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    cerr << "Fatal Error: Gas cell shape must be given." << endl;
-    exit(-1);
+    const string s("Fatal Error: Gas cell shape must be given.");
+    cerr << el->ReadFrom() << endl << s << endl;
+    throw JSBBaseException(s);
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -146,12 +148,12 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   }
   if (el->FindElement("fullness")) {
     const double Fullness = el->FindElementValueAsNumber("fullness");
-    if (0 <= Fullness) { 
-      Volume = Fullness * MaxVolume; 
+    if (0 <= Fullness) {
+      Volume = Fullness * MaxVolume;
     } else {
       cerr << "Warning: Invalid initial gas cell fullness value." << endl;
     }
-  }  
+  }
   if (el->FindElement("valve_coefficient")) {
     ValveCoefficient =
       el->FindElementValueAsNumberConvertTo("valve_coefficient",
@@ -171,7 +173,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   if (Volume != 0.0) {
     // Calculate initial gas content.
     Contents = Pressure * Volume / (R * Temperature);
-    
+
     // Clip to max allowed value.
     const double IdealPressure = Contents * R * Temperature / MaxVolume;
     if (IdealPressure > Pressure + MaxOverpressure) {
@@ -263,7 +265,7 @@ void FGGasCell::Calculate(double dt)
   const size_t no_ballonets = Ballonet.size();
 
   //-- Read ballonet state --
-  // NOTE: This model might need a more proper integration technique. 
+  // NOTE: This model might need a more proper integration technique.
   double BallonetsVolume = 0.0;
   double BallonetsHeatFlow = 0.0;
   for (i = 0; i < no_ballonets; i++) {
@@ -282,7 +284,7 @@ void FGGasCell::Calculate(double dt)
       dU += HeatTransferCoeff[i]->GetValue();
     }
     // Don't include dt when accounting for adiabatic expansion/contraction.
-    // The rate of adiabatic cooling looks about right: ~5.4 Rankine/1000ft. 
+    // The rate of adiabatic cooling looks about right: ~5.4 Rankine/1000ft.
     if (Contents > 0) {
       Temperature +=
         (dU * dt - Pressure * dVolumeIdeal - BallonetsHeatFlow) /
@@ -354,7 +356,7 @@ void FGGasCell::Calculate(double dt)
   //-- Current buoyancy --
   // The buoyancy is computed using the atmospheres local density.
   Buoyancy = Volume * AirDensity * g;
-  
+
   // Note: This is gross buoyancy. The weight of the gas itself and
   // any ballonets is not deducted here as the effects of the gas mass
   // is handled by FGMassBalance.
@@ -372,7 +374,7 @@ void FGGasCell::Calculate(double dt)
     // Ellipsoid volume.
     Ixx = (1.0 / 5.0) * mass * (Yradius*Yradius + Zradius*Zradius);
     Iyy = (1.0 / 5.0) * mass * (Xradius*Xradius + Zradius*Zradius);
-    Izz = (1.0 / 5.0) * mass * (Xradius*Xradius + Yradius*Yradius);     
+    Izz = (1.0 / 5.0) * mass * (Xradius*Xradius + Yradius*Yradius);
   } else if  ((Xradius == 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
               (Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
     // Cylindrical volume (might not be valid with an elliptical cross-section).
@@ -407,7 +409,7 @@ void FGGasCell::Calculate(double dt)
     // Add the mass, moment and inertia of any ballonets.
     for (i = 0; i < no_ballonets; i++) {
       Mass += Ballonet[i]->GetMass();
-       
+
       // Add ballonet moments due to mass (in the structural frame).
       gasCellM(eX) +=
         Ballonet[i]->GetXYZ(eX) * Ballonet[i]->GetMass()*slugtolb;
@@ -415,7 +417,7 @@ void FGGasCell::Calculate(double dt)
         Ballonet[i]->GetXYZ(eY) * Ballonet[i]->GetMass()*slugtolb;
       gasCellM(eZ) +=
         Ballonet[i]->GetXYZ(eZ) * Ballonet[i]->GetMass()*slugtolb;
-      
+
       gasCellJ += Ballonet[i]->GetInertia();
     }
   }
@@ -451,9 +453,9 @@ void FGGasCell::Debug(int from)
       cout << "      Cell location (X, Y, Z) (in.): " << vXYZ(eX) << ", " <<
         vXYZ(eY) << ", " << vXYZ(eZ) << endl;
       cout << "      Maximum volume: " << MaxVolume << " ft3" << endl;
-      cout << "      Relief valve release pressure: " << MaxOverpressure << 
+      cout << "      Relief valve release pressure: " << MaxOverpressure <<
         " lbs/ft2" << endl;
-      cout << "      Manual valve coefficient: " << ValveCoefficient << 
+      cout << "      Manual valve coefficient: " << ValveCoefficient <<
         " ft4*sec/slug" << endl;
       cout << "      Initial temperature: " << Temperature << " Rankine" <<
         endl;
@@ -471,7 +473,7 @@ void FGGasCell::Debug(int from)
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
-  if (debug_lvl & 8 ) { // Runtime state variables    
+  if (debug_lvl & 8 ) { // Runtime state variables
       cout << "      " << type << " cell holds " << Contents << " mol " << endl;
       cout << "      Temperature: " << Temperature << " Rankine" << endl;
       cout << "      Pressure: " << Pressure << " lbs/ft2" << endl;
@@ -517,8 +519,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    cerr << "Fatal Error: No location found for this ballonet." << endl;
-    exit(-1);
+    const string s("Fatal Error: No location found for this ballonet.");
+    cerr << el->ReadFrom() << endl << s << endl;
+    throw JSBBaseException(s);
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -557,7 +560,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
       MaxVolume = M_PI * Yradius * Zradius * Xwidth;
     } else {
       cerr << "Warning: Unsupported ballonet shape." << endl;
-      MaxVolume = 
+      MaxVolume =
         (4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
          M_PI * Yradius * Zradius * Xwidth +
          M_PI * Xradius * Zradius * Ywidth +
@@ -568,8 +571,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    cerr << "Fatal Error: Ballonet shape must be given." << endl;
-    exit(-1);
+    const string s("Fatal Error: Ballonet shape must be given.");
+    cerr << el->ReadFrom() << endl << s << endl;
+    throw JSBBaseException(s);
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -577,12 +581,12 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   }
   if (el->FindElement("fullness")) {
     const double Fullness = el->FindElementValueAsNumber("fullness");
-    if (0 <= Fullness) { 
-      Volume = Fullness * MaxVolume; 
+    if (0 <= Fullness) {
+      Volume = Fullness * MaxVolume;
     } else {
       cerr << "Warning: Invalid initial ballonet fullness value." << endl;
     }
-  }  
+  }
   if (el->FindElement("valve_coefficient")) {
     ValveCoefficient =
       el->FindElementValueAsNumberConvertTo("valve_coefficient",
@@ -600,7 +604,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   if (Volume != 0.0) {
     // Calculate initial air content.
     Contents = Pressure * Volume / (R * Temperature);
-    
+
     // Clip to max allowed value.
     const double IdealPressure = Contents * R * Temperature / MaxVolume;
     if (IdealPressure > Pressure + MaxOverpressure) {
@@ -746,7 +750,7 @@ void FGBallonet::Calculate(double dt)
     // Ellipsoid volume.
     Ixx = (1.0 / 5.0) * mass * (Yradius*Yradius + Zradius*Zradius);
     Iyy = (1.0 / 5.0) * mass * (Xradius*Xradius + Zradius*Zradius);
-    Izz = (1.0 / 5.0) * mass * (Xradius*Xradius + Yradius*Yradius);     
+    Izz = (1.0 / 5.0) * mass * (Xradius*Xradius + Yradius*Yradius);
   } else if  ((Xradius == 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
               (Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
     // Cylindrical volume (might not be valid with an elliptical cross-section).
@@ -798,9 +802,9 @@ void FGBallonet::Debug(int from)
       cout << "        Location (X, Y, Z) (in.): " << vXYZ(eX) << ", " <<
         vXYZ(eY) << ", " << vXYZ(eZ) << endl;
       cout << "        Maximum volume: " << MaxVolume << " ft3" << endl;
-      cout << "        Relief valve release pressure: " << MaxOverpressure << 
+      cout << "        Relief valve release pressure: " << MaxOverpressure <<
         " lbs/ft2" << endl;
-      cout << "        Relief valve coefficient: " << ValveCoefficient << 
+      cout << "        Relief valve coefficient: " << ValveCoefficient <<
         " ft4*sec/slug" << endl;
       cout << "        Initial temperature: " << Temperature << " Rankine" <<
         endl;
@@ -818,7 +822,7 @@ void FGBallonet::Debug(int from)
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
-  if (debug_lvl & 8 ) { // Runtime state variables    
+  if (debug_lvl & 8 ) { // Runtime state variables
       cout << "        Ballonet holds " << Contents <<
         " mol air" << endl;
       cout << "        Temperature: " << Temperature << " Rankine" << endl;

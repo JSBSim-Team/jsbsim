@@ -140,9 +140,14 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   // this is to catch errors in binding member functions to the property tree.
   try {
     Allocate();
-  } catch (const string& msg ) {
-    cout << "Caught error: " << msg << endl;
-    exit(1);
+  }
+  catch (const string& msg) {
+    cerr << endl << "Caught error: " << msg << endl;
+    throw;
+  }
+  catch (const JSBBaseException& e) {
+    cout << endl << "Caught error: " << e.what() << endl;
+    throw;
   }
 
   trim_status = false;
@@ -1163,8 +1168,10 @@ bool FGFDMExec::ReadChild(Element* el)
   if (location) {
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
-    cerr << endl << highint << fgred << "  No location was found for this child object!" << reset << endl;
-    exit(-1);
+    const string s("  No location was found for this child object!");
+    cerr << location->ReadFrom() << endl << highint << fgred
+         << s << reset << endl;
+    throw JSBBaseException(s);
   }
 
   Element* orientation = el->FindElement("orient");
