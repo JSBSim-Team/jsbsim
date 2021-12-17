@@ -179,18 +179,18 @@ bool FGWaypoint::Run(void )
   source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (fabs(target_latitude_rad) > M_PI/2.0) {
-	cerr << endl;
+    cerr << endl;
     cerr << "Target latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
-	cerr << "(is longitude being mistakenly supplied?)" << endl;
-	cerr << endl;
+    cerr << "(is longitude being mistakenly supplied?)" << endl;
+    cerr << endl;
     throw("Waypoint target latitude exceeded 90 degrees.");
   }
 
   if (fabs(source_latitude_rad) > M_PI/2.0) {
-	cerr << endl;
+    cerr << endl;
     cerr << "Source latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
-	cerr << "(is longitude being mistakenly supplied?)" << endl;
-	cerr << endl;
+    cerr << "(is longitude being mistakenly supplied?)" << endl;
+    cerr << endl;
     throw("Source latitude exceeded 90 degrees.");
   }
 
