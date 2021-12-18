@@ -23,7 +23,7 @@ cd python
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info < (${PYTHON_MAX_VERSION})))" | grep -q 'True'; then
-        "${PYBIN}/pip" install cython numpy
+        "${PYBIN}/pip" install 'cython<=0.29.25' numpy
         "${PYBIN}/cython" --cplus jsbsim.pyx -o jsbsim.cxx
         "${PYBIN}/python" setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
     fi
