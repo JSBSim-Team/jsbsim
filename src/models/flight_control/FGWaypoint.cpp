@@ -182,7 +182,24 @@ bool FGWaypoint::Run(void )
   double target_longitude_rad = target_longitude->GetValue() * target_longitude_unit;
   source.SetPosition(source_longitude_rad, source_latitude_rad, radius);
 
+  if (fabs(target_latitude_rad) > M_PI/2.0) {
+    cerr << endl;
+    cerr << "Target latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
+    cerr << "(is longitude being mistakenly supplied?)" << endl;
+    cerr << endl;
+    throw("Waypoint target latitude exceeded 90 degrees.");
+  }
+
+  if (fabs(source_latitude_rad) > M_PI/2.0) {
+    cerr << endl;
+    cerr << "Source latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
+    cerr << "(is longitude being mistakenly supplied?)" << endl;
+    cerr << endl;
+    throw("Source latitude exceeded 90 degrees.");
+  }
+
   if (WaypointType == eHeading) {     // Calculate Heading
+
     double heading_to_waypoint_rad = source.GetHeadingTo(target_longitude_rad,
                                                          target_latitude_rad);
 
@@ -190,11 +207,12 @@ bool FGWaypoint::Run(void )
     else               Output = heading_to_waypoint_rad;
 
   } else {                            // Calculate Distance
+
     double wp_distance = source.GetDistanceTo(target_longitude_rad,
                                               target_latitude_rad);
-
     if (eUnit == eMeters) Output = FeetToMeters(wp_distance);
     else                  Output = wp_distance;
+
   }
 
   Clip();
