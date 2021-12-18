@@ -317,8 +317,6 @@ private:
   FGPropertyManager* const PropertyManager;
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
-
-  std::string mkPropertyName(Element* el, const std::string& Prefix);
   void Debug(int from);
 };
 }

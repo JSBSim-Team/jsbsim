@@ -890,10 +890,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
 FGFunction::~FGFunction()
 {
-  if (pNode && pNode->isTied()) {
-    string pName = pNode->GetFullyQualifiedName();
-    PropertyManager->Untie(pName);
-  }
+  if (pNode && pNode->isTied())
+    PropertyManager->Untie(pNode);
 
   Debug(1);
 }

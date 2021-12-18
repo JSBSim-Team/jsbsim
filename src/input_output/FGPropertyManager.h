@@ -413,8 +413,20 @@ class FGPropertyManager
      *
      * Classes should use this function to release control of any
      * properties they are managing.
+     *
+     * @param name The property name to untie (full path).
      */
     void Untie (const std::string &name);
+
+    /**
+     * Untie a property from an external data source.
+     *
+     * Classes should use this function to release control of any
+     * properties they are managing.
+     *
+     * @param property A pointer to the property to untie.
+     */
+    void Untie (SGPropertyNode* property);
 
     /**
      * Unbind all properties bound by this manager to an external data source.
