@@ -55,8 +55,6 @@ FGTable::FGTable(int NRows)
   Type = tt1D;
   colCounter = 0;
   rowCounter = 1;
-  nTables = 0;
-
   Data = Allocate();
   Debug(0);
   lastRowIndex=lastColumnIndex=2;
@@ -70,8 +68,6 @@ FGTable::FGTable(int NRows, int NCols)
   Type = tt2D;
   colCounter = 1;
   rowCounter = 0;
-  nTables = 0;
-
   Data = Allocate();
   Debug(0);
   lastRowIndex=lastColumnIndex=2;
@@ -80,15 +76,13 @@ FGTable::FGTable(int NRows, int NCols)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTable::FGTable(const FGTable& t)
+  : PropertyManager(t.PropertyManager)
 {
   Type = t.Type;
   colCounter = t.colCounter;
   rowCounter = t.rowCounter;
-  tableCounter = t.tableCounter;
   nRows = t.nRows;
   nCols = t.nCols;
-  nTables = t.nTables;
-  dimension = t.dimension;
   internal = t.internal;
   Name = t.Name;
   lookupProperty[0] = t.lookupProperty[0];
@@ -104,7 +98,6 @@ FGTable::FGTable(const FGTable& t)
   }
   lastRowIndex = t.lastRowIndex;
   lastColumnIndex = t.lastColumnIndex;
-  lastTableIndex = t.lastTableIndex;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,8 +128,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   string operation_types = "function, product, sum, difference, quotient,"
                            "pow, abs, sin, cos, asin, acos, tan, atan, table";
 
-  nTables = 0;
-
   // Is this an internal lookup table?
 
   internal = false;
@@ -165,7 +156,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // is part of a 3D table, in which case its independentVar property indexes
   // will be set by a call from the owning table during creation
 
-  dimension = 0;
+  unsigned int dimension = 0;
 
   Element* axisElement = el->FindElement("independentVar");
   if (axisElement) {
@@ -284,8 +275,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     *this << buf;
     break;
   case 3:
-    nTables = el->GetNumElements("tableData");
-    nRows = nTables;
+    nRows = el->GetNumElements("tableData");
     nCols = 1;
     Type = tt3D;
     colCounter = 1;
@@ -293,9 +283,8 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     lastRowIndex = lastColumnIndex = 2;
 
     Data = Allocate(); // this data array will contain the keys for the associated tables
-    Tables.reserve(nTables); // necessary?
     tableData = el->FindElement("tableData");
-    for (i=0; i<nTables; i++) {
+    for (i=0; i<nRows; i++) {
       Tables.push_back(new FGTable(PropertyManager, tableData));
       Data[i+1][1] = tableData->GetAttributeValueAsNumber("breakPoint");
       Tables[i]->lookupProperty[eRow] = lookupProperty[eRow];
@@ -321,10 +310,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   // check breakpoints, if applicable
   if (dimension > 2) {
-    for (b=2; b<=nTables; ++b) {
+    for (b=2; b<=Tables.size(); ++b) {
       if (Data[b][1] <= Data[b-1][1]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint 
+                  << fgred << highint
                   << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
                   << "  in breakpoint " << b;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
@@ -340,7 +329,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     for (c=2; c<=nCols; ++c) {
       if (Data[0][c] <= Data[0][c-1]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint 
+                  << fgred << highint
                   << "  FGTable: column lookup is not monotonically increasing" << endl
                   << "  in column " << c;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
@@ -356,7 +345,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     for (r=2; r<=nRows; ++r) {
       if (Data[r][0]<=Data[r-1][0]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint 
+                  << fgred << highint
                   << "  FGTable: row lookup is not monotonically increasing" << endl
                   << "  in row " << r;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
@@ -399,10 +388,7 @@ FGTable::~FGTable()
       PropertyManager->Untie(node);
   }
 
-  if (nTables > 0) {
-    for (unsigned int i=0; i<nTables; i++) delete Tables[i];
-    Tables.clear();
-  }
+  for (auto t: Tables) delete t;
   for (unsigned int r=0; r<=nRows; r++) delete[] Data[r];
   delete[] Data;
 
@@ -597,14 +583,6 @@ FGTable& FGTable::operator<<(const double n)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable& FGTable::operator<<(const int n)
-{
-  *this << (double)n;
-  return *this;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGTable::Print(void)
 {
   int startRow=0;
@@ -613,11 +591,7 @@ void FGTable::Print(void)
   if (Type == tt1D || Type == tt3D) startRow = 1;
   if (Type == tt3D) startCol = 1;
 
-#if defined (sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-  unsigned long flags = cout.setf(ios::fixed);
-#else
   ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream
-#endif
 
   switch(Type) {
     case tt1D:
@@ -629,7 +603,7 @@ void FGTable::Print(void)
     case tt3D:
       cout << "    3 dimensional table with " << nRows << " rows, "
                                           << nCols << " columns "
-                                          << nTables << " tables." << endl;
+                                          << Tables.size() << " tables." << endl;
       break;
   }
   cout.precision(4);
