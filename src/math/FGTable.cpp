@@ -393,8 +393,10 @@ FGTable::~FGTable()
   // Untie the bound property so that it makes no further reference to this
   // instance of FGTable after the destruction is completed.
   if (!Name.empty() && !internal) {
-    string tmp = mkPropertyName(nullptr, "");
-    PropertyManager->Untie(tmp);
+    string tmp = PropertyManager->mkPropertyName(Name, false);
+    FGPropertyNode* node = PropertyManager->GetNode(tmp);
+    if (node && node->isTied())
+      PropertyManager->Untie(node);
   }
 
   if (nTables > 0) {
@@ -651,33 +653,26 @@ void FGTable::Print(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGTable::mkPropertyName(Element* el, const std::string& Prefix)
-{
-  if (!Prefix.empty()) {
-    if (is_number(Prefix)) {
-      if (Name.find("#") != string::npos) { // if "#" is found
-        Name = replace(Name, "#", Prefix);
-      } else {
-        cerr << el->ReadFrom()
-              << "Malformed table name with number: " << Prefix
-              << " and property name: " << Name
-              << " but no \"#\" sign for substitution." << endl;
-      }
-    } else {
-      Name = Prefix + "/" + Name;
-    }
-  }
-
-  return PropertyManager->mkPropertyName(Name, false);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGTable::bind(Element* el, const string& Prefix)
 {
   typedef double (FGTable::*PMF)(void) const;
+
   if ( !Name.empty() && !internal) {
-    string tmp = mkPropertyName(el, Prefix);
+    if (!Prefix.empty()) {
+      if (is_number(Prefix)) {
+        if (Name.find("#") != string::npos) { // if "#" is found
+          Name = replace(Name, "#", Prefix);
+        } else {
+          cerr << el->ReadFrom()
+                << "Malformed table name with number: " << Prefix
+                << " and property name: " << Name
+                << " but no \"#\" sign for substitution." << endl;
+        }
+      } else {
+        Name = Prefix + "/" + Name;
+      }
+    }
+    string tmp = PropertyManager->mkPropertyName(Name, false);
 
     if (PropertyManager->HasNode(tmp)) {
       FGPropertyNode* _property = PropertyManager->GetNode(tmp);
@@ -687,7 +682,8 @@ void FGTable::bind(Element* el, const string& Prefix)
         throw("Failed to bind the property to an existing already tied node.");
       }
     }
-    PropertyManager->Tie( tmp, this, (PMF)&FGTable::GetValue);
+
+    PropertyManager->Tie(tmp, this, (PMF)&FGTable::GetValue);
   }
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

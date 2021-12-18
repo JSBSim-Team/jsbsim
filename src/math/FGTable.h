@@ -318,8 +318,6 @@ private:
   double** Allocate(void);
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
-
-  std::string mkPropertyName(Element* el, const std::string& Prefix);
   void Debug(int from);
 };
 }
