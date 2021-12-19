@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  File:     electric_eqv.xml
+  Author:   Matt Vacanti
+
+-->
+
+<!--Baseline Hexacopter Flight Configuration-->
+<electric_engine name="electric_eqv">
+  <power unit="WATTS"> 525 </power>
+</electric_engine>
+
+
+<!--Baseline Throttle Ramp Configuration
+<electric_engine name="electric_eqv">
+  <power unit="WATTS"> 701.7036 </power>
+</electric_engine>
+ -->

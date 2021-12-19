@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<electric_engine name="E-Flite Power25">
+  <power unit="WATTS"> 600 </power>
+</electric_engine>

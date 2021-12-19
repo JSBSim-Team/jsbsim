@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<electric_engine name="Typhoon HET 700-68 1200Kv - UMN Test">
+  <power unit="WATTS"> 4500 </power> <!-- Above Rated Power of 3000 -->
+</electric_engine>
