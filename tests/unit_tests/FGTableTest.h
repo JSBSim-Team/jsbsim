@@ -144,6 +144,29 @@ public:
     TS_ASSERT_EQUALS(t_2x1.GetElement(1,1), -1.0);
     TS_ASSERT_EQUALS(t_2x1.GetElement(2,0), 2.0);
     TS_ASSERT_EQUALS(t_2x1.GetElement(2,1), 1.5);
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm2 = readFromXML("<dummy>"
+                                  "  <table name=\"test2\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "      1.0  1.0\n"
+                                  "      2.0  0.5\n"
+                                  "      4.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    el_table = elm2->FindElement("table");
+
+    FGTable t_3x1(pm, el_table);
+    TS_ASSERT_EQUALS(t_3x1.GetNumRows(), 3);
+    TS_ASSERT_EQUALS(t_3x1.GetName(), std::string("test2"));
+    TS_ASSERT_EQUALS(t_3x1.GetElement(1,0), 1.0);
+    TS_ASSERT_EQUALS(t_3x1.GetElement(1,1), 1.0);
+    TS_ASSERT_EQUALS(t_3x1.GetElement(2,0), 2.0);
+    TS_ASSERT_EQUALS(t_3x1.GetElement(2,1), 0.5);
+    TS_ASSERT_EQUALS(t_3x1.GetElement(3,0), 4.0);
+    TS_ASSERT_EQUALS(t_3x1.GetElement(3,1), 0.5);
   }
 
   void testLoadIndepVarFromXML() {
@@ -254,6 +277,24 @@ public:
     x->setDoubleValue(1.5);
     TS_ASSERT_EQUALS(t_2x1.GetValue(), 0.25);
     TS_ASSERT_EQUALS(output->getDoubleValue(), 0.25);
+  }
+
+  void testMonoticallyIncreasingRows() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test2\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "      1.0  1.0\n"
+                                  "      1.0  0.5\n"
+                                  "      2.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element *el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_3x1(pm, el_table), TableException&);
   }
 };
 
@@ -544,6 +585,35 @@ public:
     TS_ASSERT_EQUALS(t_2x2(2,0), 4.0);
     TS_ASSERT_EQUALS(t_2x2(2,1), -1.0);
     TS_ASSERT_EQUALS(t_2x2(2,2), 0.5);
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm2 = readFromXML("<dummy>"
+                                  "  <table name=\"test2\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      1.0   1.0 -2.0\n"
+                                  "      2.0   1.0  0.5\n"
+                                  "      4.0   0.5  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    el_table = elm2->FindElement("table");
+
+    FGTable t_3x2(pm, el_table);
+    TS_ASSERT_EQUALS(t_3x2.GetNumRows(), 3);
+    TS_ASSERT_EQUALS(t_3x2.GetName(), std::string("test2"));
+    TS_ASSERT_EQUALS(t_3x2(0,1), 0.0);
+    TS_ASSERT_EQUALS(t_3x2(0,2), 1.0);
+    TS_ASSERT_EQUALS(t_3x2(1,0), 1.0);
+    TS_ASSERT_EQUALS(t_3x2(1,1), 1.0);
+    TS_ASSERT_EQUALS(t_3x2(1,2), -2.0);
+    TS_ASSERT_EQUALS(t_3x2(2,0), 2.0);
+    TS_ASSERT_EQUALS(t_3x2(2,1), 1.0);
+    TS_ASSERT_EQUALS(t_3x2(2,2), 0.5);
+    TS_ASSERT_EQUALS(t_3x2(3,0), 4.0);
+    TS_ASSERT_EQUALS(t_3x2(3,1), 0.5);
+    TS_ASSERT_EQUALS(t_3x2(3,2), 0.5);
   }
 
   void testLoadIndepVarFromXML() {
@@ -747,6 +817,43 @@ public:
     row->setDoubleValue(3.0);
     TS_ASSERT_EQUALS(t_2x2.GetValue(), 0.125);
     TS_ASSERT_EQUALS(output->getDoubleValue(), 0.125);
+  }
+
+  void testMonoticallyIncreasingRows() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      2.0   2.5 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_3x2(pm, el_table), TableException&);
+  }
+
+  void testMonoticallyIncreasingColumns() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "            0.0  1.0 1.0\n"
+                                  "      2.0   3.0 -2.0 1.0\n"
+                                  "      4.0  -1.0  0.5 0.75\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x3(pm, el_table), TableException&);
   }
 };
 
