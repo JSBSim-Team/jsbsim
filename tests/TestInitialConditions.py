@@ -23,7 +23,7 @@
 import os, math, shutil
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest
+from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest, CreateFDM
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
@@ -351,5 +351,14 @@ class TestInitialConditions(JSBSimTestCase):
             [x for x in vars if x['tag'] == 'theta' and abs(x['value'] - 90.0) <= 1E-8]):
             return True
         return False
+
+    # Regression test for the bug reported by @fernandafenelon and fixed by
+    # Sean McLeod in #545.
+    def testClimbRateSetting(self):
+        fdm = CreateFDM(self.sandbox)
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
+                                                            'c1722.xml'))
+        fdm['ic/gamma-deg'] = 4
+        self.assertAlmostEqual(fdm['ic/gamma-deg'], 4)
 
 RunTest(TestInitialConditions)
