@@ -56,6 +56,9 @@ compiler = new_compiler(compiler=compiler_name)
 if compiler.compiler_type == 'unix':
     cpp_compile_flags = ['-std=c++11']
     cpp_link_flags = []
+elif compiler.compiler_type == 'mingw32':
+    cpp_compile_flags = ['-std=c++11', '-D_hypot=hypot']
+    cpp_link_flags = []
 elif compiler.compiler_type == 'msvc':
     # These flags are equivalent to a RelWithDebInfo configuration.
     # Since the module fpectl is not supposed to be used in production, these

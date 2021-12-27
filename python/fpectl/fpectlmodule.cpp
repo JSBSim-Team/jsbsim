@@ -75,7 +75,7 @@
 #include <signal.h>
 #include <iostream>
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 #  include <float.h>
 static unsigned int fp_flags = 0;
 #elif (defined(__GNUC__) || defined(__clang__)) && !defined(sgi)
@@ -139,7 +139,7 @@ static void sigfpe_handler(int signo)
 
 static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 {
-#ifdef _MSC_VER
+#ifdef _WIN32
   _clearfp();
   fp_flags = _controlfp(_controlfp(0, 0) & ~(_EM_INVALID | _EM_ZERODIVIDE | _EM_OVERFLOW),
                         _MCW_EM);
@@ -164,7 +164,7 @@ static PyObject *turnon_sigfpe(PyObject *self, PyObject *args)
 
 static PyObject *turnoff_sigfpe(PyObject *self, PyObject *args)
 {
-#ifdef _MSC_VER
+#ifdef _WIN32
   _controlfp(fp_flags, _MCW_EM);
 
 #elif defined(__clang__)

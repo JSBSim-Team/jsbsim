@@ -140,6 +140,10 @@ if compiler.compiler_type == 'unix':
     cpp_compile_flag = ['-std=c++14']
     cpp_link_flags = []
     link_libraries = [${JSBSIM_LINK_LIBRARIES}]
+elif compiler.compiler_type == 'mingw32':
+    cpp_compile_flag = ['-std=c++14']
+    cpp_link_flags = ['-Wl,-Bstatic', '-lpthread']
+    link_libraries = ['wsock32', 'ws2_32']
 elif compiler.compiler_type == 'msvc':
     if args.config in ('Debug', 'RelWithDebInfo'):
         # These flags are equivalent to a RelWithDebInfo configuration.

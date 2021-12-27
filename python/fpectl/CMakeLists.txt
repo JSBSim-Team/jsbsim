@@ -23,7 +23,7 @@ else()
 
   add_custom_command(OUTPUT ${FPECTL_PYTHON_MODULE}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.h ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp ${CMAKE_SOURCE_DIR}/python/ExceptionManagement.h
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests
+    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests $<IF:$<BOOL:${MINGW}>,--compiler,> $<IF:$<BOOL:${MINGW}>,mingw32,>
     COMMENT "Building fpectl module...")
 
   add_custom_target(fpectl ALL DEPENDS ${FPECTL_PYTHON_MODULE})
