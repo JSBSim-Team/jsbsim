@@ -92,6 +92,7 @@ private:
   double CurrentRequired;
   double EnginePower;
   double DeltaTorque;
+  double  deceleration_time = 0.5;
   void Debug(int from);
 };
 }
