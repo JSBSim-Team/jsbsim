@@ -23,7 +23,9 @@
 import os, math, shutil
 import xml.etree.ElementTree as et
 import pandas as pd
-from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest, CreateFDM
+from JSBSim_utils import append_xml, ExecuteUntil, JSBSimTestCase, RunTest, CopyAircraftDef
+
+import fpectl
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
@@ -45,7 +47,7 @@ class TestInitialConditions(JSBSimTestCase):
         IC_file = append_xml(use_tag.attrib['initialize'])
         IC_tree = et.parse(os.path.join(path_to_jsbsim_aircrafts, IC_file))
 
-        return (tree, IC_tree)
+        return tree, IC_tree, IC_file
 
     def test_initial_conditions_v1(self):
         prop_output_to_CSV = ['velocities/vc-kts']
@@ -107,7 +109,7 @@ class TestInitialConditions(JSBSimTestCase):
 
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            (tree, IC_tree) = self.getElementTrees(s)
+            tree, IC_tree, _ = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 1.0 of init files
@@ -257,7 +259,7 @@ class TestInitialConditions(JSBSimTestCase):
     def test_geod_position_from_init_file_v2(self):
         for s in self.script_list(('ZLT-NT-moored-1.xml',
                                    '737_cruise_steady_turn_simplex.xml')):
-            (tree, IC_tree) = self.getElementTrees(s)
+            tree, IC_tree, _ = self.getElementTrees(s)
             IC_root = IC_tree.getroot()
 
             # Only testing version 2.0 of init files
@@ -355,10 +357,89 @@ class TestInitialConditions(JSBSimTestCase):
     # Regression test for the bug reported by @fernandafenelon and fixed by
     # Sean McLeod in #545.
     def testClimbRateSetting(self):
-        fdm = CreateFDM(self.sandbox)
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
-                                                            'c1722.xml'))
+        fdm = self.create_fdm()
+        self.load_script('c1722.xml')
         fdm['ic/gamma-deg'] = 4
         self.assertAlmostEqual(fdm['ic/gamma-deg'], 4)
+
+    # Regression test for the bug reported in issue #553
+    # Improper usage of the local frame rotation rate leads to FPEs.
+    def testNorthPoleInitialization(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts/ball.xml')
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
+        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
+        # Alter the initial conditions XML file to force the initial latitude
+        # to 90 degrees.
+        _, IC_tree, IC_file = self.getElementTrees(script_path)
+        IC_root = IC_tree.getroot()
+        lat_tag = IC_root.find('latitude')
+        lat_tag.text = '90.0'
+        IC_tree.write(os.path.join('aircraft', aircraft_name, IC_file))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+
+        fpectl.turnon_sigfpe()
+        self.load_script('ball.xml')
+        fdm.run_ic()
+        self.assertAlmostEqual(fdm['ic/lat-gc-deg'], 90.)
+
+        while fdm['simulation/sim-time-sec'] < 1.:
+            fdm.run()
+        fpectl.turnoff_sigfpe()
+
+    # Another regression test for issue #553
+    #
+    # This tests verifies that, for a given polar orbit, the initial values for
+    # the vehicle rotational rates P, Q, R do not depend on the position at
+    # which the vehicle was initialized.
+    # First reference : close to the North Pole heading East
+    # Second reference : above the Equator heading North
+    def testIndependenceOfInitialLocation(self):
+        script_path = self.sandbox.path_to_jsbsim_file('scripts/ball.xml')
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
+        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
+        # Alter the initial conditions XML file to force the initial latitude
+        # to 90 degrees.
+        _, IC_tree, IC_file = self.getElementTrees(script_path)
+        IC_root = IC_tree.getroot()
+        lat_tag = IC_root.find('latitude')
+        psi_tag = IC_root.find('psi')
+        alt_tag = IC_root.find('altitude')
+        psi_tag.text = '90.0'  # Heading East
+        lat_tag.text = '89.9'  # Above the North Pole
+        h0 = float(alt_tag.text)
+        IC_tree.write(os.path.join('aircraft', aircraft_name, IC_file))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        self.load_script('ball.xml')
+        fdm.run_ic()
+
+        p = fdm['ic/p-rad_sec']
+        q = fdm['ic/q-rad_sec']
+        r = fdm['ic/r-rad_sec']
+
+        self.delete_fdm()
+
+        # Since the equatorial radius is 70159 ft larger than the polar radius
+        # we need to decrease the altitude by the same amount in order to
+        # initialize the vehicle at the same radius.
+        alt_tag.text = str(h0-70159)
+        psi_tag.text = '0.0'  # Heading North
+        lat_tag.text = '0.0'  # Above equator
+        # Longitude at which the polar orbit tested above would cross the equator
+        lon_tag = IC_root.find('longitude')
+        lon_tag.text = '90.0'
+        IC_tree.write(os.path.join('aircraft', aircraft_name, IC_file))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path('aircraft')
+        self.load_script('ball.xml')
+        fdm.run_ic()
+
+        self.assertAlmostEqual(fdm['ic/p-rad_sec'], p)
+        self.assertAlmostEqual(fdm['ic/q-rad_sec'], q)
+        self.assertAlmostEqual(fdm['ic/r-rad_sec'], r)
 
 RunTest(TestInitialConditions)
