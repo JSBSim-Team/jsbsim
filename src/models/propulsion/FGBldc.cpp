@@ -1,9 +1,11 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGBldc.cpp
- Author:       Matt Vacanti
+ Original Author:         Matt Vacanti
+ Corrections and updates: Paolo Becchi
  Date started: 11/08/2020
- Purpose:      This module models an electric motor
+ Corrected   : 26/12/2021
+ Purpose:      This module models an DLDC electric motor
 
  --------- Copyright (C) 2020  Matt Vacanti -------------
 
@@ -49,10 +51,9 @@ FGBldc::FGBldc(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine:
   PowerWatts = 745.7;
   hptowatts = 745.7;
 
-// this property is not necessary is computed using other properties
+// this property is not necessary since is computed using other properties
 //  if (el->FindElement("maxcurrent"))
 //    MaxCurrent= el->FindElementValueAsNumber("maxcurrent");
-// end of modification
 
   if (el->FindElement("maxvolts"))
     MaxVolts= el->FindElementValueAsNumber("maxvolts");
@@ -63,14 +64,16 @@ FGBldc::FGBldc(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine:
   if (el->FindElement("torqueconstant"))
     TorqueConstant= el->FindElementValueAsNumber("torqueconstant");
   
-  //
-  // added coilresistance and noloadcurrent properties
-  //
+  
+  // added coilresistance and noload current properties
+  
   if (el->FindElement("coilresistance"))
       coilResistance = el->FindElementValueAsNumber("coilresistance");
   if (el->FindElement("noloadcurrent"))
       noLoadCurrent = el->FindElementValueAsNumber("noloadcurrent");
-  //MaxCurrent is calculated no input is necessary
+  if (el->FindElement("decelerationTime"))
+      deceleration_time = el->FindElementValueAsNumber("decelerationTime");
+ 
   MaxCurrent = MaxVolts / coilResistance + noLoadCurrent;
   // end of additions
 
@@ -110,52 +113,40 @@ void FGBldc::Calculate(void)
 
   CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
 
-  // total current required must include no load current i0
+// total current required must include no load current i0
   CurrentRequired = CurrentRequired + noLoadCurrent;
-  // end of addition
-
+ 
   V = MaxVolts * in.ThrottlePos[EngineNumber];
   
-  // CommandedRPM = V* VelocityConstant; this line has been modified since
-  // Commanded RPM is given by the commanded voltage less delta voltage due to internal losses multiplied by velocity costant
+// Commanded RPM = (input voltage - currentRequired * coil resistance) * velocity costant
     CommandedRPM = (V - CurrentRequired * coilResistance) * VelocityConstant;
-  // end of modification
+ 
   
     DeltaRPM = round((CommandedRPM - RPM));
 
 
-  //MaxTorque = (TorqueConstant * MaxCurrent) / VelocityConstant; this line has been modified since
-  // MaxTorque = maxcurrent* torqueconstant/velocityconstant is only at 0 RPM and linearly go to 0 at max RPM
-  // therefore    MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
-  MaxTorque = MaxCurrent / VelocityConstant * TorqueConstant * (1 - RPM / (MaxVolts* VelocityConstant));
-  //end of modification
-
-  TorqueAvailable = MaxTorque - TorqueRequired;
-  DeltaTorque = (((DeltaRPM/60)*(2.0 * M_PI))/(max(0.00001, in.TotalDeltaT))) * ((FGPropeller*)Thruster)->GetIxx();
-  //DeltaTorque = (((DeltaRPM / 60) * (2.0 * M_PI)) /  in.TotalDeltaT) * ((FGPropeller*)Thruster)->GetIxx();
- /*
- if (DeltaRPM >= 0){
-    TargetTorque = min(abs(DeltaTorque), TorqueAvailable) + TorqueRequired;
-  } else {
-    TargetTorque = TorqueRequired -abs(DeltaTorque);
-  }
- */
-  if (DeltaRPM >= 0) {
+//     Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
+//     MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
+    MaxTorque = MaxCurrent / VelocityConstant * TorqueConstant * (1 - RPM / (MaxVolts* VelocityConstant));
+  
+    TorqueAvailable = MaxTorque - TorqueRequired;
+    DeltaTorque = (((DeltaRPM/60)*(2.0 * M_PI))/(max(0.00001, in.TotalDeltaT))) * ((FGPropeller*)Thruster)->GetIxx();
+ 
+//      compute acceleration and deceleration phases:
+//     Acceleration is due to the max delta torque available and is limited to the inertial forces
+    if (DeltaRPM >= 0) {
       TargetTorque = min(DeltaTorque, TorqueAvailable) + TorqueRequired;
-  }
-  else {
-  //     TargetTorque = min(abs(DeltaTorque), TorqueRequired) * -1;
-      TargetTorque = TorqueRequired  - abs(DeltaTorque)*abs(DeltaRPM)/max(RPM,0.001);
-      TargetTorque =  TorqueRequired*(CommandedRPM / max(RPM,0.01))* (CommandedRPM / max(RPM, 0.01));
-   }
+    } else {
+//    Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
+      TargetTorque = TorqueRequired  - min(abs(DeltaTorque)/(max(deceleration_time,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/coilResistance);
+    }
 
-  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;
- // EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * MaxTorque) / 60;
-  HP = EnginePower / 550;
-  LoadThrusterInputs();
-  Thruster->Calculate(EnginePower);
+    EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;
+    HP = EnginePower / 550;
+    LoadThrusterInputs();
+    Thruster->Calculate(EnginePower);
 
-  RunPostFunctions();
+    RunPostFunctions();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
