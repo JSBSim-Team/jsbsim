@@ -7,4 +7,5 @@
   <coilresistance>0.117</coilresistance>
   <noloadcurrent>0.45</noloadcurrent>
   <maxvolts> 14.63 </maxvolts>
+  <decelerationTime> 2.0 </decelerationTime>
 </bldc_engine>
