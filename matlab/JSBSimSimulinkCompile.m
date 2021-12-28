@@ -1,8 +1,10 @@
 disp('Compiling S-function from JSBSim...');
 % For Linux: 
 mex -v -R2017b CXXFLAGS='$CXXFLAGS -std=c++14' ./matlab/JSBSim_SFunction.cpp ./matlab/JSBSimInterface.cpp -I./src -L./src/.libs -lJSBSim
-% For Windows: 
+% For Windows MSVC: 
 %mex -v -R2017b COMPFLAGS='$COMPFLAGS' ./matlab/JSBSim_SFunction.cpp ./matlab/JSBSimInterface.cpp -I".\out\install\x64-Release\include\JSBSim" -L".\out\install\x64-Release\lib" -lJSBSim  wsock32.lib ws2_32.lib
+% For Windows MinGW
+%mex -v -R2017b CXXFLAGS='$CXXFLAGS -std=c++14' COMPFLAGS='$COMPFLAGS' ./matlab/JSBSim_SFunction.cpp ./matlab/JSBSimInterface.cpp -I".\out\install\x64-Release\include\JSBSim" -L".\out\install\x64-Release\lib" -lJSBSim -L"/path/to/mingw/lib" -lwsock32 -lws2_32
 disp('Finished.')
 
 % -v verbose 

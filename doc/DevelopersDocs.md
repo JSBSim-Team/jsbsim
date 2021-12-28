@@ -104,6 +104,42 @@ From Visual Studio, you can open the project file `JSBSim.vcxproj` to open a pro
 
 For more detailed instructions on using Visual Studio project files and CMake via Visual Studio to build JSBSim take a look at the following documentation link - [Building using Visual Studio](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/quickstart-building-using-visualstudio/).
 
+### Building with MinGW toolset
+
+With the help of cmake, you can build JSBSim under Windows using MinGW toolset. The whole configuration and building command is
+as simple as that in unix bash:
+
+```bash
+> cd jsbsim-code
+> mkdir build
+> cd build
+> cmake ..
+> mingw32-make
+```
+
+#### Building python module with MinGW toolset
+If cython executable is installed in your PATH enviroment or provided to cmake command, the python module will be built as well. 
+Usually, there is nothing special with MinGW toolset. But if you get `cannot find -lmsvcrt140`, you may need to modify your cygwinccompiler.py, 
+which is in distutils folder (In anaconda, it should be `Anaconda3\lib\distutils\cygwinccompiler.py`)
+
+```python
+    elif int(msc_ver) >= 1900:
+        # VS2015 / MSVC 14.0
+        # return ['msvcr140']
+        return ['vcruntime140']
+```
+
+And then copy `vcruntime140.dll` to `/path/to/mingw-w64/lib`. This problem is due to msvc runtime library naming convention broken after VS2015. See [here](https://stackoverflow.com/questions/52943590/cython-missing-msvcr140-dll).
+
+#### Building matlab mex file with MinGW toolset
+To compile matlab mex file, gcc major version needs to be greater than 8 to support c++14 language features. The official matlab support MinGW-w64 
+version is 6.3, so you have to set your own MinGW toolset environment: 
+* Download a newer MinGW-w64 toolset in your local machine
+* Set `MW_MINGW64_LOC` environment variable in your local machine or in matlab command shell
+* Run matlab command `mex -setup` to set up toolset
+
+After setting up your Mingw-w64 toolset in matlab, you can build the JSBSim mex file running `JSBSimSimulinkCompile.m`.
+
 ## Testing JSBSim
 
 JSBSim comes with a test suite to automatically check that the build is correct. This test suite is located in the `tests` directory and is coded in Python so you need to [build the Python module of JSBSim](#building-the-python-module-of-jsbsim) first.

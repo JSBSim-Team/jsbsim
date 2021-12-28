@@ -141,8 +141,8 @@ if compiler.compiler_type == 'unix':
     cpp_link_flags = []
     link_libraries = [${JSBSIM_LINK_LIBRARIES}]
 elif compiler.compiler_type == 'mingw32':
-    cpp_compile_flag = ['-std=c++14']
-    cpp_link_flags = ['-Wl,-Bstatic', '-lpthread']
+    cpp_compile_flag = ['-std=c++14', '-D_hypot=hypot']
+    cpp_link_flags = ['-Wl,-Bstatic']
     link_libraries = ['wsock32', 'ws2_32']
 elif compiler.compiler_type == 'msvc':
     if args.config in ('Debug', 'RelWithDebInfo'):
