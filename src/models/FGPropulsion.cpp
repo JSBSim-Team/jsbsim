@@ -56,6 +56,8 @@ INCLUDES
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
 #include "input_output/FGModelLoader.h"
+#include "models/propulsion/FGBldc.h"
+
 
 using namespace std;
 
@@ -392,12 +394,17 @@ bool FGPropulsion::Load(Element* el)
         Element *element = engine_element->FindElement("turboprop_engine");
         Engines.push_back(make_shared<FGTurboProp>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("rocket_engine")) {
-        Element *element = engine_element->FindElement("rocket_engine");
-        Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));
+        Element *element = engine_element->FindElement("rocket_engine");        Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("electric_engine")) {
         Element *element = engine_element->FindElement("electric_engine");
         Engines.push_back(make_shared<FGElectric>(FDMExec, element, numEngines, in));
-      } else {
+      } else if (engine_element->FindElement("bldc_engine")) {
+        //  HaveBldcEngine = true;
+        //  if (!IsBound) bind();
+          Element* element = engine_element->FindElement("bldc_engine");
+          Engines.push_back(make_shared<FGBldc>(FDMExec, element, numEngines, in));
+      }
+      else {
         cerr << engine_element->ReadFrom() << " Unknown engine type" << endl;
         return false;
       }
