@@ -1,4 +1,5 @@
 set(SOURCES FGElectric.cpp
+	    FGBldc.cpp
             FGEngine.cpp
             FGForce.cpp
             FGNozzle.cpp
@@ -13,6 +14,7 @@ set(SOURCES FGElectric.cpp
             FGRotor.cpp)
 
 set(HEADERS FGElectric.h
+	    FGBldc.h	
             FGEngine.h
             FGForce.h
             FGNozzle.h

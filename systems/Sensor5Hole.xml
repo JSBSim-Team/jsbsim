@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<system name="Sensor - 5Hole Probe">
+    <function name="sensor/fiveHole/time_us">
+        <product>
+            <property>simulation/sim-time-sec</property>
+            <value>1000000.0</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presStatic_true_Pa">
+        <product>
+            <property>atmosphere/P-psf</property>
+            <value>47.88026</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presTip_true_Pa">
+        <product>
+            <property>aero/qbar-psf</property>
+            <value>47.88026</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/temp_true_C">
+        <product>
+            <sum>
+                <property>atmosphere/T-R</property>
+                <value>-491.67</value>
+            </sum>
+            <value>0.5555555555555556</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presAlphaBot_true_Pa">
+        <product>
+            <property>aero/alpha-deg</property>
+            <property>aero/qbar-psf</property>
+            <value>47.88026</value>
+            <value>0.0435</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presAlphaTop_true_Pa">
+        <product>
+            <property>aero/alpha-deg</property>
+            <property>aero/qbar-psf</property>
+            <value>47.88026</value>
+            <value>-0.0435</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presBetaRight_true_Pa">
+        <product>
+            <property>aero/beta-deg</property>
+            <property>aero/qbar-psf</property>
+            <value>47.88026</value>
+            <value>0.0435</value>
+        </product>
+    </function>
+    <function name="sensor/fiveHole/presBetaLeft_true_Pa">
+        <product>
+            <property>aero/beta-deg</property>
+            <property>aero/qbar-psf</property>
+            <value>47.88026</value>
+            <value>-0.0435</value>
+        </product>
+    </function>
+    <channel name="5Hole Error Models">
+        <sensor name="presStatic_Pa">
+            <input>sensor/fiveHole/presStatic_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presStatic_Pa</output>
+        </sensor>
+        <sensor name="presTip_Pa">
+            <input>sensor/fiveHole/presTip_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presTip_Pa</output>
+        </sensor>
+        <sensor name="presAlphaBot_Pa">
+            <input>sensor/fiveHole/presAlphaBot_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presAlphaBot_Pa</output>
+        </sensor>
+        <sensor name="presAlphaTop_Pa">
+            <input>sensor/fiveHole/presAlphaTop_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presAlphaTop_Pa</output>
+        </sensor>
+        <sensor name="presBetaRight_Pa">
+            <input>sensor/fiveHole/presBetaRight_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presBetaRight_Pa</output>
+        </sensor>
+        <sensor name="presBetaLeft_Pa">
+            <input>sensor/fiveHole/presBetaLeft_true_Pa</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/presBetaLeft_Pa</output>
+        </sensor>
+        <sensor name="temp_C">
+            <input>sensor/fiveHole/temp_true_C</input>
+            <lag>0</lag>
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+            <drift_rate>0</drift_rate>
+            <gain>1</gain>
+            <bias>0</bias>
+            <delay>0</delay>
+            <output>sensor/fiveHole/temp_C</output>
+        </sensor>
+    </channel>
+</system>
