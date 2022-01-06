@@ -71,17 +71,6 @@ CLASS DOCUMENTATION
     <h3>Configuration File Format:</h3>
 @code
         <engine file="{string}">
-            <location unit="{IN | M}">
-                <x> {number} </x>
-                <y> {number} </y>
-                <z> {number} </z>
-            </location>
-            <!-- optional orientation definition -->
-            <orient unit="{RAD | DEG}">
-                <roll>  {number} </roll>
-                <pitch> {number} </pitch>
-                <yaw> {number} </yaw>
-            </orient>
             <feed> {integer} </feed>
             ... optional more feed tank index numbers ... 
             <thruster file="{string}">
@@ -183,9 +172,6 @@ public:
 
   virtual double GetThrust(void) const;
     
-  /// Sets engine placement information
-  virtual void SetPlacement(const FGColumnVector3& location, const FGColumnVector3& orientation);
-
   /** The fuel need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
@@ -216,9 +202,6 @@ protected:
   std::string Name;
   const int   EngineNumber;
   EngineType Type;
-  double X, Y, Z;
-  double EnginePitch;
-  double EngineYaw;
   double SLFuelFlowMax;
   double MaxThrottle;
   double MinThrottle;
