@@ -419,16 +419,6 @@ std::string Propulsion::fdm()
     for (unsigned i=0; i<no_engines; ++i)
     {
         file << "   <engine file=\"" << _engine_name << "\">" << std::endl;
-        file << "    <location unit=\"IN\">" << std::endl;
-        file << "      <x> " << std::setw(8) << _eng_loc[i][X] << " </x>" << std::endl;
-        file << "      <y> " << std::setw(8) << _eng_loc[i][Y] << " </y>" << std::endl;
-        file << "      <z> " << std::setw(8) << _eng_loc[i][Z] << " </z>" << std::endl;
-        file << "    </location>" << std::endl;
-        file << "    <orient unit=\"DEG\">" << std::endl;
-        file << "      <pitch> " << std::setw(8) << _eng_orient[i][PITCH] << " </pitch>" << std::endl;
-        file << "       <roll> " << std::setw(8) << _eng_orient[i][ROLL] << " </roll>" << std::endl;
-        file << "        <yaw> " << std::setw(8) << _eng_orient[i][YAW] << " </yaw>" << std::endl;
-        file << "    </orient>" << std::endl;
         file << "    <feed> " << i << " </feed>" << std::endl;
         file << std::endl;
         file << "    <thruster file=\"" << get_thruster() << "\">" << std::endl;
