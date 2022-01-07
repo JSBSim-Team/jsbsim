@@ -188,11 +188,15 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 
   // If engine location and/or orientation is supplied issue a warning since they
   // are ignored. What counts is the location and orientation of the thruster.
-  if (parent_element->FindElement("location"))
-    cerr << "Engine location ignored, only thruster location is used." << endl;
+  local_element = parent_element->FindElement("location");
+  if (local_element)
+    cerr << local_element->ReadFrom()
+         << "Engine location ignored, only thruster location is used." << endl;
 
-  if (parent_element->FindElement("orient"))
-    cerr << "Engine orientation ignored, only thruster orientation is used." << endl;
+  local_element = parent_element->FindElement("orient");
+  if (local_element)
+    cerr << local_element->ReadFrom()
+         << "Engine orientation ignored, only thruster orientation is used." << endl;
 
   // Load thruster
   local_element = parent_element->FindElement("thruster");
