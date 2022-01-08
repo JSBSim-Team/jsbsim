@@ -323,7 +323,7 @@
     <ClCompile Include="src\math\FGStateSpace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\models\propulsion\FGBldc.cpp">
+    <ClCompile Include="src\models\propulsion\FGBrushLessDCMotor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -676,7 +676,7 @@
     <ClInclude Include="src\math\FGStateSpace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\models\propulsion\FGBldc.h">
+    <ClInclude Include="src\models\propulsion\FGBrushLessDCMotor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

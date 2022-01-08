@@ -1,23 +1,38 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGBldc.h
- Author:       Matt Vacanti
- Date started: 11/08/2020
+ Header:       FGBrussLessDCMotor.h
+ Author:       Paolo Becchi
+ Date started: 1-1-2022
 
- ----- Copyright (C) 2020  Matt Vacanti (mdvacanti@gmail.com) --------------
+ ----- Copyright (C) 2022  Paolo Becchi (pbecchi@aerobusiness.it) --------------
+  This program is free software; you can redistribute it and/or modify it under
+  the terms of the GNU Lesser General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your option) any
+  later version.
 
-UPDATE LICENSE
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+  details.
+
+  You should have received a copy of the GNU Lesser General Public License along
+  with this program; if not, write to the Free Software Foundation, Inc., 59
+  Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+  Further information about the GNU Lesser General Public License can also be
+  found on the world wide web at http://www.gnu.org
+
 
 HISTORY
 --------------------------------------------------------------------------------
-11/08/2020 MDV  Created
+1/01/2022 MDV  Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGBLDC_H
-#define FGBLDC_H
+#ifndef FGBrushLessDCMotor_H
+#define FGBrushLessDCMotor_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -50,49 +65,45 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGBldc : public FGEngine
+class FGBrushLessDCMotor : public FGEngine
 {
 public:
   /// Constructor
-  FGBldc(FGFDMExec* exec, Element *el, int engine_number, FGEngine::Inputs& input);
+  FGBrushLessDCMotor(FGFDMExec* exec, Element *el, int engine_number, FGEngine::Inputs& input);
   /// Destructor
-  ~FGBldc();
+  ~FGBrushLessDCMotor();
 
   void Calculate(void);
   double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
   double GetCurrentRequired(void) {return CurrentRequired;}
   double getRPM(void) {return RPM;}
+  double CalcFuelNeed(void);
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
 
 private:
 
-  double CalcFuelNeed(void);
-
-  //double BrakeHorsePower;
-
   // constants
   double hptowatts;
-  double noLoadCurrent;
-  double coilResistance;
+  double noLoadCurrent;      // 0 torque current [A]
+  double coilResistance;     // internal resistance [Ohm]
   double PowerWatts;         // maximum engine power
-  double MaxCurrent;         // maximum current
-  double MaxVolts;
-  double VelocityConstant;
-  double TorqueConstant;
+  double MaxCurrent;         // maximum current [A]
+  double MaxVolts;           // max voltage available from battery [V]
+  double VelocityConstant;   //.speed constant of brusless DC motors [RPM/V]
+  double TorqueConstant=6.1217;
   double RPM;                // revolutions per minute
   double HP;                 // engine output, in horsepower
-  double V;                  // speed control commanded voltage
-  double CommandedRPM;       // desired RPM set by voltage
+  double V;                  // speed control commanded voltage 
+  double DeltaRPM;           // desired RPM set by voltage
   double MaxTorque;          // maximum available torque from motor
-  double DeltaRPM;
-  double TorqueAvailable;
-  double TargetTorque;
-  double TorqueRequired;
-  double CurrentRequired;
-  double EnginePower;
-  double DeltaTorque;
-  double  deceleration_time = 0.5;
+  double TorqueAvailable;    //.torque available at set voltage
+  double TargetTorque;       // torque applied to propeller
+  double TorqueRequired;     // propeller torque at current RPM
+  double CurrentRequired;    // current required at current RPM
+  double EnginePower;        // power in pounds *feet
+  double InertiaTorque;      // acceleration torque due to rotating inertia
+  double DecelerationFactor = 1; //factor to increase deceleration time
   void Debug(int from);
 };
 }
