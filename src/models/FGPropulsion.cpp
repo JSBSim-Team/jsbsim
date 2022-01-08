@@ -394,7 +394,8 @@ bool FGPropulsion::Load(Element* el)
         Element *element = engine_element->FindElement("turboprop_engine");
         Engines.push_back(make_shared<FGTurboProp>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("rocket_engine")) {
-        Element *element = engine_element->FindElement("rocket_engine");        Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));
+        Element *element = engine_element->FindElement("rocket_engine");        
+        Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("electric_engine")) {
         Element *element = engine_element->FindElement("electric_engine");
         Engines.push_back(make_shared<FGElectric>(FDMExec, element, numEngines, in));

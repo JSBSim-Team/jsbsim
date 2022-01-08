@@ -7,7 +7,7 @@
  Corrected   : 26/12/2021
  Purpose:      This module models an DLDC electric motor
 
- --------- Copyright (C) 2020  Matt Vacanti -------------
+ --------- Copyright (C) 2020  Matt Vacanti / Paolo Becchi-------------
 
 UPDATE LICENSE
 
