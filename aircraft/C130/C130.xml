@@ -112,16 +112,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="t56">
-            <location unit="IN">
-                <x> 586.5 </x>
-                <y> -265 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
@@ -137,16 +127,6 @@
             </thruster>
         </engine>
         <engine file="t56">
-            <location unit="IN">
-                <x> 586.5 </x>
-                <y> -265 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
@@ -162,16 +142,6 @@
             </thruster>
         </engine>
         <engine file="t56">
-            <location unit="IN">
-                <x> 586.5 </x>
-                <y> 265 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>2</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
@@ -187,16 +157,6 @@
             </thruster>
         </engine>
         <engine file="t56">
-            <location unit="IN">
-                <x> 586.5 </x>
-                <y> 265 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>3</feed>
             <thruster file="t56_prop">
                 <location unit="IN">

@@ -123,11 +123,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="CFM56">
-            <location unit="IN">
-                <x>  540 </x>
-                <y> -193 </y>
-                <z>  -40 </z>
-            </location>
             <feed>0</feed>
             <feed>2</feed>
             <thruster file="direct">
@@ -144,11 +139,6 @@
             </thruster>
         </engine>
         <engine file="CFM56">
-            <location unit="IN">
-                <x> 540 </x>
-                <y> 193 </y>
-                <z> -40 </z>
-            </location>
             <feed>1</feed>
             <feed>2</feed>
             <thruster file="direct">

@@ -202,16 +202,6 @@
   <propulsion>
 
    <engine file="Tay-620">
-    <location unit="IN">
-      <x>  893.52 </x>
-      <y> -101.65 </y>
-      <z>   43.53 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>
     <thruster file="direct">
      <location unit="IN">
@@ -228,16 +218,6 @@
   </engine>
 
    <engine file="Tay-620">
-    <location unit="IN">
-      <x>  893.52 </x>
-      <y>  101.65 </y>
-      <z>   43.53 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>1</feed>
     <thruster file="direct">
      <location unit="IN">

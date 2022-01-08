@@ -395,16 +395,6 @@ Hal V. Engel hvengel@astound.net
 
     <propulsion>
         <engine file="Packard-V-1650-7">
-            <location unit="IN">
-                <x> 36 </x>
-                <y> 0 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> -4.0 </roll>
-                <pitch> 2.5 </pitch>
-                <yaw> -6.0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>1</feed>
             <feed>2</feed>

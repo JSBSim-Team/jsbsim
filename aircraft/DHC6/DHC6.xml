@@ -164,16 +164,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="PT6A-27">
-            <location unit="IN">
-                <x> 142.4 </x>
-                <y> -109.3 </y>
-                <z> -2.88 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>1</feed>
             <thruster file="Propeller">
@@ -190,16 +180,6 @@
             </thruster>
         </engine>
         <engine file="PT6A-27">
-            <location unit="IN">
-                <x> 142.4 </x>
-                <y> 109.3 </y>
-                <z> -2.88 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <feed>0</feed>
             <thruster file="Propeller">

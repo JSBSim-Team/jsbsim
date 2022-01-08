@@ -109,16 +109,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="engIO470D">
-            <location unit="IN">
-                <x> 36 </x>
-                <y> 0 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="prop_75in2f">
                 <location unit="IN">

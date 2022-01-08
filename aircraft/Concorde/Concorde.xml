@@ -980,16 +980,6 @@
         <property>fcs/intake-subsonic-pos</property>
 
         <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> -249.4000 </y>
-                <z> -52.0000 </z>                                                      <!-- aeromatic -40 -->
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
             <feed>13</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1005,16 +995,6 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> -184.5000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
             <feed>14</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1030,16 +1010,6 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> 184.5000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
             <feed>15</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1055,16 +1025,6 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> 249.4000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
             <feed>16</feed>
             <thruster file="direct">
                 <location unit="IN">
