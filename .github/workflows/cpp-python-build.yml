@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: Linux-${{ runner.name }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
+          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
           path: |
             build/Testing/Temporary/*.log
             build/tests/*-build.log
@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: env.release == 'true' && env.static_link == 'true'
         with:
-          name: Linux-${{ runner.name }}.binaries
+          name: Linux-${{ matrix.os }}.binaries
           path: build/*.deb
 
   ManyLinux-Wheels:
@@ -175,10 +175,19 @@ jobs:
 
   Matlab-SFunction:
     name: Matlab S-Function
-    needs: [ Linux, MacOSX ]
+    needs: [ Linux, MacOSX, Windows-MSVC ]
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        matlab_version: [ R2020b, R2021a ]
+        exclude:
+        - os: macos-latest
+          matlab_version: R2021a
+        - os: ubuntu-latest
+          matlab_version: R2021a
+        - os: windows-latest
+          matlab_version: R2020b
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
@@ -186,36 +195,50 @@ jobs:
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v1.1.0
         with:
-          release: R2020b
+          release: ${{ matrix.matlab_version }}
       - name: Configure JSBSim
         run: |
-          mkdir build && cd build
-          cmake -DCMAKE_C_FLAGS_DEBUG="-g -Wall" -DCMAKE_CXX_FLAGS_DEBUG="-g -Wall" -DCMAKE_BUILD_TYPE=Debug -DBUILD_MATLAB_SFUNCTION=ON ..
+          mkdir build
+          cd build
+          cmake -DBUILD_MATLAB_SFUNCTION=ON ..
       - name: Build JSBSim S-Function
         working-directory: build
-        run: cmake --build . --target JSBSim_SFunction -- -j2
+        run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction
       - name: Prepare Tests
         working-directory: matlab
-        # The script will be run from the directory 'matlab' so we need to link
+        # The script will be run from the directory 'matlab' so we need to copy
         # the folders that will be used by JSBSim
         run: |
-          ln -s ../aircraft aircraft
-          ln -s ../engine engine
-          ln -s ../systems systems
-          ln -s ../scripts scripts
+          cp -R ../aircraft .
+          cp -R ../engine .
+          cp -R ../systems .
+          cp -R ../scripts .
       - name: Force Matlab using the system libstdc++ rather than its own (Linux)
           # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
         if: runner.os == 'Linux'
         run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
-      - name: Run Tests
+      - name: Run Tests (Linux & MacOSX)
+        if: runner.os != 'Windows'
         uses: matlab-actions/run-command@v1
         with:
           command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
-      - name: Upload Files for Release
+      - name: Run Tests (Windows)
+        if: runner.os == 'Windows'
+        uses: matlab-actions/run-command@v1
+        with:
+          command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
+      - name: Upload Files for Release (Linux & MacOSX)
+        if: runner.os != 'Windows'
         uses: actions/upload-artifact@v2
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: build/matlab/JSBSim_SFunction.mex*
+      - name: Upload Files for Release (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: Matlab-SFunction-${{ runner.os }}.binaries
+          path: build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
 
   Windows-MinGW32:
     name: C/C++ build (MinGW32)
