@@ -45,99 +45,92 @@ CLASS IMPLEMENTATION
 FGBldc::FGBldc(FGFDMExec* exec, Element *el, int engine_number, struct FGEngine::Inputs& input)
   : FGEngine(engine_number, input)
 {
-  Load(exec,el);
+      Load(exec,el);
 
-  Type = etElectric;
-  PowerWatts = 745.7;
-  hptowatts = 745.7;
+      Type = etElectric;
+      PowerWatts = 745.7;
+      hptowatts = 745.7;
 
-// this property is not necessary since is computed using other properties
-//  if (el->FindElement("maxcurrent"))
-//    MaxCurrent= el->FindElementValueAsNumber("maxcurrent");
+    // this property is not necessary since is computed using other properties
+    // if (el->FindElement("maxcurrent"))
+    // MaxCurrent= el->FindElementValueAsNumber("maxcurrent");
 
-  if (el->FindElement("maxvolts"))
-    MaxVolts= el->FindElementValueAsNumber("maxvolts");
+      if (el->FindElement("maxvolts"))
+        MaxVolts= el->FindElementValueAsNumber("maxvolts");
 
-  if (el->FindElement("velocityconstant"))
-    VelocityConstant= el->FindElementValueAsNumber("velocityconstant");
+      if (el->FindElement("velocityconstant"))
+        VelocityConstant= el->FindElementValueAsNumber("velocityconstant");
 
-  if (el->FindElement("torqueconstant"))
-    TorqueConstant= el->FindElementValueAsNumber("torqueconstant");
+      if (el->FindElement("torqueconstant"))
+        TorqueConstant= el->FindElementValueAsNumber("torqueconstant");
   
-  
-  // added coilresistance and noload current properties
-  
-  if (el->FindElement("coilresistance"))
-      coilResistance = el->FindElementValueAsNumber("coilresistance");
-  if (el->FindElement("noloadcurrent"))
-      noLoadCurrent = el->FindElementValueAsNumber("noloadcurrent");
-  if (el->FindElement("decelerationTime"))
-      deceleration_time = el->FindElementValueAsNumber("decelerationTime");
+      if (el->FindElement("coilresistance"))
+          coilResistance = el->FindElementValueAsNumber("coilresistance");
+      if (el->FindElement("noloadcurrent"))
+          noLoadCurrent = el->FindElementValueAsNumber("noloadcurrent");
+      if (el->FindElement("decelerationTime"))
+          deceleration_time = el->FindElementValueAsNumber("decelerationTime");
  
-  MaxCurrent = MaxVolts / coilResistance + noLoadCurrent;
-  // end of additions
+      MaxCurrent = MaxVolts / coilResistance + noLoadCurrent;
 
-  PowerWatts = MaxCurrent * MaxVolts;
+      PowerWatts = MaxCurrent * MaxVolts;
 
-  string base_property_name = CreateIndexedPropertyName("propulsion/engine",
-                                                        EngineNumber);
-  exec->GetPropertyManager()->Tie(base_property_name + "/power-hp", &HP);
+      string base_property_name = CreateIndexedPropertyName("propulsion/engine",
+                                                            EngineNumber);
+      exec->GetPropertyManager()->Tie(base_property_name + "/power-hp", &HP);
 
-  exec->GetPropertyManager()->Tie(base_property_name + "/current-a", &CurrentRequired);
+      exec->GetPropertyManager()->Tie(base_property_name + "/current-a", &CurrentRequired);
 
-  Debug(0); // Call Debug() routine from constructor if needed
+      Debug(0); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGBldc::~FGBldc()
-{
-  Debug(1); // Call Debug() routine from constructor if needed
+    {
+      Debug(1); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGBldc::Calculate(void)
 {
-  RunPreFunctions();
+    RunPreFunctions();
 
-  if (Thruster->GetType() == FGThruster::ttPropeller) {
-    ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
-    ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
-  }
+    if (Thruster->GetType() == FGThruster::ttPropeller) {
+        ((FGPropeller*)Thruster)->SetAdvance(in.PropAdvance[EngineNumber]);
+        ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
+    }
 
-  RPM = Thruster->GetRPM();
-  //TODO Add gear ratio / transmission support.
+    RPM = Thruster->GetRPM();
+    TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque());
 
-  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque());
+    CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
 
-  CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
-
-// total current required must include no load current i0
-  CurrentRequired = CurrentRequired + noLoadCurrent;
+//  total current required must include no load current i0
+    CurrentRequired = CurrentRequired + noLoadCurrent;
  
-  V = MaxVolts * in.ThrottlePos[EngineNumber];
+    V = MaxVolts * in.ThrottlePos[EngineNumber];
   
-// Commanded RPM = (input voltage - currentRequired * coil resistance) * velocity costant
+//  Commanded RPM = (input voltage - currentRequired * coil resistance) * velocity costant
     CommandedRPM = (V - CurrentRequired * coilResistance) * VelocityConstant;
- 
-  
     DeltaRPM = round((CommandedRPM - RPM));
 
+//  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
+//  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
 
-//     Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
-//     MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
     MaxTorque = MaxCurrent / VelocityConstant * TorqueConstant * (1 - RPM / (MaxVolts* VelocityConstant));
-  
+
     TorqueAvailable = MaxTorque - TorqueRequired;
     DeltaTorque = (((DeltaRPM/60)*(2.0 * M_PI))/(max(0.00001, in.TotalDeltaT))) * ((FGPropeller*)Thruster)->GetIxx();
  
-//      compute acceleration and deceleration phases:
-//     Acceleration is due to the max delta torque available and is limited to the inertial forces
+//  compute acceleration and deceleration phases:
+//  Acceleration is due to the max delta torque available and is limited to the inertial forces
+
     if (DeltaRPM >= 0) {
       TargetTorque = min(DeltaTorque, TorqueAvailable) + TorqueRequired;
     } else {
-//    Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
+//  Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
       TargetTorque = TorqueRequired  - min(abs(DeltaTorque)/(max(deceleration_time,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/coilResistance);
     }
 
