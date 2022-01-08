@@ -116,16 +116,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="GE-CF6-80C2-B1F">
-            <location unit="IN">
-                <x> 1356 </x>
-                <y> -820 </y>
-                <z> -97 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -141,16 +131,6 @@
             </thruster>
         </engine>
         <engine file="GE-CF6-80C2-B1F">
-            <location unit="IN">
-                <x> 996 </x>
-                <y> -460 </y>
-                <z> -121 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -166,16 +146,6 @@
             </thruster>
         </engine>
         <engine file="GE-CF6-80C2-B1F">
-            <location unit="IN">
-                <x> 996 </x>
-                <y> 460 </y>
-                <z> -121 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>2</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -191,16 +161,6 @@
             </thruster>
         </engine>
         <engine file="GE-CF6-80C2-B1F">
-            <location unit="IN">
-                <x> 1356 </x>
-                <y> 820 </y>
-                <z> -97 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>3</feed>
             <thruster file="direct">
                 <location unit="IN">

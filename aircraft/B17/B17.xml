@@ -162,11 +162,6 @@
   <propulsion>
 
     <engine file="R-1820-97"> <!-- Engine 0 (left outboard) -->
-      <location unit="FT">
-        <x>  10.1 </x>
-        <y> -21.6 </y>
-        <z>  -0.4 </z>
-      </location>
       <feed>0</feed>
       <feed>1</feed>
       <feed>2</feed>
@@ -188,11 +183,6 @@
     </engine>
 
     <engine file="R-1820-97"> <!-- Engine 1 (left inboard) -->
-      <location unit="FT">
-        <x>  8.6 </x>
-        <y> -10.0 </y>
-        <z> -0.7 </z>
-      </location>
       <feed>5</feed>
       <feed>6</feed>
       <feed>7</feed>
@@ -214,11 +204,6 @@
     </engine>
 
     <engine file="R-1820-97"> <!-- Engine 2 (right inboard) -->
-      <location unit="FT">
-        <x>  8.6 </x>
-        <y> 10.0 </y>
-        <z> -0.7 </z>
-      </location>
       <feed>12</feed>
       <feed>13</feed>
       <feed>15</feed>
@@ -240,11 +225,6 @@
     </engine>
 
     <engine file="R-1820-97"> <!-- Engine 3 (right outboard) -->
-      <location unit="FT">
-        <x> 10.1 </x>
-        <y> 21.6 </y>
-        <z> -0.4 </z>
-      </location>
       <feed>14</feed>
       <feed>19</feed>
       <feed>20</feed>
