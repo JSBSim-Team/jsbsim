@@ -119,16 +119,6 @@
  <propulsion>
 
    <engine file="Continental A-65-8">
-    <location unit="IN">
-      <x>   -56.30 </x>
-      <y>     0.00 </y>
-      <z>   -25.98 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch>     0.00 </pitch>
-       <roll>     0.00 </roll>
-        <yaw>     0.00 </yaw>
-    </orient>
     <feed> 0 </feed>
 
     <thruster file="CM7445 MCCauley">

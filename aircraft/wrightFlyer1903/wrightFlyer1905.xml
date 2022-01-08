@@ -322,16 +322,6 @@
  <propulsion>
 
    <engine file="wright1905_engine">
-    <location unit="IN">
-      <x>  -4.9 </x>
-      <y> -19.5 </y>
-      <z> -27.6 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>
     <thruster file="wright1903_propellers">
      <sense> 1 </sense>

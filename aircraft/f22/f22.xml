@@ -124,16 +124,6 @@
 
     <propulsion>
         <engine file="F119-PW-1">
-            <location unit="IN">
-                <x> 684.131 </x>
-                <y> -20 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>1</feed>
             <thruster file="direct">
@@ -150,16 +140,6 @@
             </thruster>
         </engine>
         <engine file="F119-PW-1">
-            <location unit="IN">
-                <x> 684.131 </x>
-                <y> 20 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>1</feed>
             <thruster file="direct">

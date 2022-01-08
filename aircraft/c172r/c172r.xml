@@ -178,16 +178,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="engIO360C">
-            <location unit="IN">
-                <x> -19.7 </x>
-                <y> 0 </y>
-                <z> 26.6 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>1</feed>
             <thruster file="prop_Clark_Y7570">

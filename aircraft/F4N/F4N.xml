@@ -212,16 +212,6 @@
   <propulsion>
 
    <engine file="J79-GE-11A">
-    <location unit="IN">
-      <x> 190 </x>
-      <y> -20.00 </y>
-      <z>   0.00 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>
     <thruster file="direct">
      <location unit="IN">
@@ -238,16 +228,6 @@
   </engine>
 
    <engine file="J79-GE-11A">
-    <location unit="IN">
-      <x> 190 </x>
-      <y>  20.00 </y>
-      <z>   0.00 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>  0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>0</feed>
     <thruster file="direct">
      <location unit="IN">

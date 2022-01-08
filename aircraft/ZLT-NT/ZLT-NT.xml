@@ -544,16 +544,6 @@
   -->
   <!-- Left engine -->
   <engine file="engIO360C">
-   <location unit="M">
-    <x> 26.4 </x>
-    <y> -6.6 </y>
-    <z> -3.4 </z>
-   </location>
-   <orient unit="DEG">
-    <roll>  0.0 </roll>
-    <pitch> 0.0 </pitch>
-    <yaw>   0.0 </yaw>
-   </orient>
    <feed>0</feed>
    <thruster file="propHO-V373-D">
     <location unit="M">
@@ -570,16 +560,6 @@
   </engine>
   <!-- Right engine -->
   <engine file="engIO360C">
-   <location unit="M">
-    <x> 26.4 </x>
-    <y>  6.6 </y>
-    <z> -3.4 </z>
-   </location>
-   <orient unit="DEG">
-    <roll>  0.0 </roll>
-    <pitch> 0.0 </pitch>
-    <yaw>   0.0 </yaw>
-   </orient>
    <feed>1</feed>
    <thruster file="propHO-V373-D">
     <location unit="M">
@@ -596,16 +576,6 @@
   </engine>
   <!-- Aft engine -->
   <engine file="engIO360C">
-   <location unit="M">
-    <x> 73.0 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <orient unit="DEG">
-    <roll>  0.0 </roll>
-    <pitch> 0.0 </pitch>
-    <yaw>   0.0 </yaw>
-   </orient>
    <feed>2</feed>
    <thruster file="propHO-V373-D">
     <location unit="M">
@@ -623,16 +593,6 @@
 
   <!-- Aft auxilliary engine -->
   <engine file="electric147kW">
-   <location unit="M">
-    <x> 73.64 </x>
-    <y>  0.0  </y>
-    <z>  0.0  </z>
-   </location>
-   <orient unit="DEG">
-    <roll>  0.0 </roll>
-    <pitch> 0.0 </pitch>
-    <yaw>   0.0 </yaw>
-   </orient>
    <thruster file="prop_Clark_Y7570">
     <location unit="M">
      <x> 73.64 </x>

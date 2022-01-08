@@ -247,16 +247,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="CFM56_5">
-            <location unit="IN">
-                <x> 540 </x>
-                <y> -200 </y>
-                <z> -45 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -272,16 +262,6 @@
             </thruster>
         </engine>
         <engine file="CFM56_5">
-            <location unit="IN">
-                <x> 540 </x>
-                <y> 200 </y>
-                <z> -45 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <thruster file="direct">
                 <location unit="IN">
