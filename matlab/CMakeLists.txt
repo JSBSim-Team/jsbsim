@@ -1,5 +1,7 @@
 find_package(Matlab)
 
+set(CMAKE_CXX_STANDARD 14)
+
 if(Matlab_FOUND)
   matlab_add_mex(NAME JSBSim_SFunction SRC JSBSim_SFunction.cpp JSBSimInterface.cpp
                  LINK_TO libJSBSim)
