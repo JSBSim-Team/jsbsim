@@ -1258,8 +1258,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="description" type="xs:string" minOccurs="0"/>
-        <xs:element ref="location" minOccurs="0"/>
-        <xs:element ref="orient" minOccurs="0" />
         <xs:element maxOccurs="unbounded" ref="feed" />
         <xs:element ref="thruster" />
       </xs:sequence>
