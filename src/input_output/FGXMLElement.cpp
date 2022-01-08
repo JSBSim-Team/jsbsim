@@ -244,6 +244,10 @@ Element::Element(const string& nm)
     // Gravitational
     convert["FT3/SEC2"]["FT3/SEC2"] = 1.0;
     convert["M3/SEC2"]["M3/SEC2"] = 1.0;
+    //Electrical
+    convert["VOLTS"]["VOLTS"] = 1.0;
+    convert["OHMS"]["OHMS"] = 1.0;
+    convert["AMPS"]["AMPS"] = 1.0;
   }
 }
 
