@@ -73,7 +73,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Build JSBSim
         working-directory: build
         run: make -j2
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
+          name: Linux-${{ runner.name }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
           path: |
             build/Testing/Temporary/*.log
             build/tests/*-build.log
@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: env.release == 'true' && env.static_link == 'true'
         with:
-          name: Linux-${{ matrix.os }}.binaries
+          name: Linux-${{ runner.name }}.binaries
           path: build/*.deb
 
   ManyLinux-Wheels:
@@ -370,7 +370,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: steps.BuildInstaller.outcome == 'success'
         with:
-          name: windows-latest.binaries
+          name: ${{ runner.os }}.binaries
           path: |
             build\Output\*.exe
             build\src\RelWithDebInfo\JSBSim.lib
@@ -380,10 +380,7 @@ jobs:
   MacOSX:
     name: C/C++ build (MacOSX)
     needs: XML-validation
-    strategy:
-      matrix:
-        os: [ macos-10.15, ]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     steps:
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
@@ -399,7 +396,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
         if: env.release == 'true'
         run: |
@@ -430,7 +427,7 @@ jobs:
         working-directory: build
         run: ctest -j2 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
-        if: env.release == 'true' && matrix.os == 'macos-10.15'
+        if: env.release == 'true'
         working-directory: build/python
         run: python setup.py sdist
 
@@ -448,7 +445,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: env.release == 'true'
         with:
-          name: ${{ matrix.os }}.binaries
+          name: ${{ runner.os }}.binaries
           path: |
             build/src/libJSBSim.a
             build/python/jsbsim.cxx
@@ -478,7 +475,7 @@ jobs:
       - name: Download source package
         uses: actions/download-artifact@v2
         with:
-          name: macos-10.15.binaries
+          name: macOS.binaries
       - name: Build Python module from sources (Linux & MacOSX)
         if: runner.os != 'Windows'
         run: pip install python/dist/*.tar.gz -vv
@@ -520,16 +517,16 @@ jobs:
       - name: Download binary files
         uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.os }}.binaries
+          name: ${{ runner.os }}.binaries
           path: build
       - name: Build wheel package for Windows
-        if: startsWith(matrix.os, 'windows-')
+        if: runner.os == 'Windows'
         working-directory: build/python
         run: |
           pip install -U pywin32
           python setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
       - name: Build wheel package for MacOSX
-        if: startsWith(matrix.os, 'macos-')
+        if: runner.os == 'macOS'
         working-directory: build/python
         run: python setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
       - name: Test wheel package
@@ -548,7 +545,7 @@ jobs:
       - name: Upload Python Wheel for Release
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.os }}-Python${{ matrix.python-version}}.binaries
+          name: ${{ runner.os }}-Python${{ matrix.python-version}}.binaries
           path: |
             build/python/dist/*.whl
 
