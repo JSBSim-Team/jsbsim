@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="fdm_config">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="fileheader">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="author" type="xs:string" />
+              <xs:element name="filecreationdate" type="xs:string" />
+              <xs:element name="version" type="xs:string" />
+              <xs:element name="description" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="metrics">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="wingarea">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="wingspan">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="chord">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="htailarea">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="htailarm">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="vtailarea">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="vtailarm">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:unsignedByte">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element maxOccurs="unbounded" name="location">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="x" type="xs:decimal" />
+                    <xs:element name="y" type="xs:unsignedByte" />
+                    <xs:element name="z" type="xs:unsignedByte" />
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="unit" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="mass_balance">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ixx">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="iyy">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="izz">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="ixy">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:unsignedByte">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="ixz">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:unsignedByte">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="iyz">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:unsignedByte">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="emptywt">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:unsignedByte">
+                      <xs:attribute name="unit" type="xs:string" use="required" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="location">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="x" type="xs:decimal" />
+                    <xs:element name="y" type="xs:unsignedByte" />
+                    <xs:element name="z" type="xs:unsignedByte" />
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="unit" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ground_reactions">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="contact">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="location">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="x" type="xs:decimal" />
+                          <xs:element name="y" type="xs:decimal" />
+                          <xs:element name="z" type="xs:decimal" />
+                        </xs:sequence>
+                        <xs:attribute name="unit" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="static_friction" type="xs:decimal" />
+                    <xs:element name="dynamic_friction" type="xs:decimal" />
+                    <xs:element name="rolling_friction" type="xs:decimal" />
+                    <xs:element name="spring_coeff">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:unsignedByte">
+                            <xs:attribute name="unit" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="damping_coeff">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:unsignedByte">
+                            <xs:attribute name="unit" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="max_steer">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:decimal">
+                            <xs:attribute name="unit" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="brake_group" type="xs:string" />
+                    <xs:element name="retractable" type="xs:unsignedByte" />
+                  </xs:sequence>
+                  <xs:attribute name="type" type="xs:string" use="required" />
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="propulsion">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="engine">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="location">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="x" type="xs:unsignedByte" />
+                          <xs:element name="y" type="xs:unsignedByte" />
+                          <xs:element name="z" type="xs:unsignedByte" />
+                        </xs:sequence>
+                        <xs:attribute name="unit" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="orient">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="roll" type="xs:decimal" />
+                          <xs:element name="pitch" type="xs:unsignedByte" />
+                          <xs:element name="yaw" type="xs:unsignedByte" />
+                        </xs:sequence>
+                        <xs:attribute name="unit" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="feed" type="xs:unsignedByte" />
+                    <xs:element name="thruster">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="location">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="x" type="xs:unsignedByte" />
+                                <xs:element name="y" type="xs:unsignedByte" />
+                                <xs:element name="z" type="xs:unsignedByte" />
+                              </xs:sequence>
+                              <xs:attribute name="unit" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="orient">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="roll" type="xs:decimal" />
+                                <xs:element name="pitch" type="xs:decimal" />
+                                <xs:element name="yaw" type="xs:decimal" />
+                              </xs:sequence>
+                              <xs:attribute name="unit" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="p_factor" type="xs:decimal" />
+                        </xs:sequence>
+                        <xs:attribute name="file" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="file" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="tank">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="location">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="x" type="xs:decimal" />
+                          <xs:element name="y" type="xs:unsignedByte" />
+                          <xs:element name="z" type="xs:decimal" />
+                        </xs:sequence>
+                        <xs:attribute name="unit" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="capacity">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:decimal">
+                            <xs:attribute name="unit" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="contents">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:decimal">
+                            <xs:attribute name="unit" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="type" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="flight_control">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="channel">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:choice maxOccurs="unbounded">
+                      <xs:element name="summer">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="input" type="xs:string" />
+                            <xs:element name="clipto">
+                              <xs:complexType>
+                                <xs:sequence>
+                                  <xs:element name="min" type="xs:byte" />
+                                  <xs:element name="max" type="xs:unsignedByte" />
+                                </xs:sequence>
+                              </xs:complexType>
+                            </xs:element>
+                          </xs:sequence>
+                          <xs:attribute name="name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element maxOccurs="unbounded" name="aerosurface_scale">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element name="input" type="xs:string" />
+                            <xs:element minOccurs="0" name="domain">
+                              <xs:complexType>
+                                <xs:sequence>
+                                  <xs:element name="min" type="xs:decimal" />
+                                  <xs:element name="max" type="xs:decimal" />
+                                </xs:sequence>
+                              </xs:complexType>
+                            </xs:element>
+                            <xs:element name="range">
+                              <xs:complexType>
+                                <xs:sequence>
+                                  <xs:element name="min" type="xs:decimal" />
+                                  <xs:element name="max" type="xs:decimal" />
+                                </xs:sequence>
+                              </xs:complexType>
+                            </xs:element>
+                            <xs:element name="output" type="xs:string" />
+                          </xs:sequence>
+                          <xs:attribute name="name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:choice>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="aerodynamics">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="axis">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="function">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="description" type="xs:string" />
+                          <xs:element name="product">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element maxOccurs="unbounded" name="property" type="xs:string" />
+                                <xs:element minOccurs="0" name="value" type="xs:decimal" />
+                                <xs:element minOccurs="0" name="table">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="independentVar" type="xs:string" />
+                                      <xs:element name="tableData" type="xs:string" />
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="version" type="xs:decimal" use="required" />
+      <xs:attribute name="release" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
