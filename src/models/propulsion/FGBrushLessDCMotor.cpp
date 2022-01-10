@@ -71,7 +71,12 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
 
 
   if (el->FindElement("maxvolts"))
-    MaxVolts = el->FindElementValueAsNumber("maxvolts");
+    MaxVolts = el->FindElementValueAsNumberConvertTo("maxvolts", "VOLTS");
+  else {
+    cerr << el->ReadFrom()
+         << "<maxvolts> is a mandatory parameter" << endl;
+    throw JSBBaseException("Missing parameter");
+  }
 
   if (el->FindElement("velocityconstant"))
     VelocityConstant = el->FindElementValueAsNumber("velocityconstant");
