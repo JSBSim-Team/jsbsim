@@ -75,6 +75,11 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
 
   if (el->FindElement("velocityconstant"))
     VelocityConstant = el->FindElementValueAsNumber("velocityconstant");
+  else {
+    cerr << el->ReadFrom()
+         << "<velocityconstant> is a mandatory parameter" << endl;
+    throw JSBBaseException("Missing parameter");
+  }
 
   if (el->FindElement("coilresistance"))
     CoilResistance = el->FindElementValueAsNumber("coilresistance");
