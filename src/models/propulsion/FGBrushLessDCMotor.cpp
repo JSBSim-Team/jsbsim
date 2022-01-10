@@ -36,7 +36,7 @@ I0 no load current
 
 HISTORY
 --------------------------------------------------------------------------------
-1/01/2022  MDV  Created
+1/01/2022    Created
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,9 +69,6 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   PowerWatts = 745.7;
   hptowatts = 745.7;
 
-  // this property is not necessary since is computed using other properties
-  // if (el->FindElement("maxcurrent"))
-  // MaxCurrent= el->FindElementValueAsNumber("maxcurrent");
 
   if (el->FindElement("maxvolts"))
     MaxVolts = el->FindElementValueAsNumber("maxvolts");
@@ -79,17 +76,14 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   if (el->FindElement("velocityconstant"))
     VelocityConstant = el->FindElementValueAsNumber("velocityconstant");
 
-//  if (el->FindElement("torqueconstant"))
-//    TorqueConstant = el->FindElementValueAsNumber("torqueconstant");
-
   if (el->FindElement("coilresistance"))
-    coilResistance = el->FindElementValueAsNumber("coilresistance");
+    CoilResistance = el->FindElementValueAsNumber("coilresistance");
   if (el->FindElement("noloadcurrent"))
-    noLoadCurrent = el->FindElementValueAsNumber("noloadcurrent");
+    NoLoadCurrent = el->FindElementValueAsNumber("noloadcurrent");
   if (el->FindElement("deceleration_factor"))
     DecelerationFactor = el->FindElementValueAsNumber("deceleration_factor");
 
-  MaxCurrent = MaxVolts / coilResistance + noLoadCurrent;
+  MaxCurrent = MaxVolts / CoilResistance + NoLoadCurrent;
 
   PowerWatts = MaxCurrent * MaxVolts;
 
@@ -127,12 +121,12 @@ void FGBrushLessDCMotor::Calculate(void)
   CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
 
   //  total current required must include no load current i0
-  CurrentRequired = CurrentRequired + noLoadCurrent;
+  CurrentRequired = CurrentRequired + NoLoadCurrent;
  
   V = MaxVolts * in.ThrottlePos[EngineNumber];
   
   //  Delta RPM = (input voltage - currentRequired * coil resistance) * velocity costant
-  DeltaRPM = round((V - CurrentRequired * coilResistance) * VelocityConstant);
+  DeltaRPM = round((V - CurrentRequired * CoilResistance) * VelocityConstant);
 
   //  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
   //  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
@@ -146,10 +140,10 @@ void FGBrushLessDCMotor::Calculate(void)
   //  Acceleration is due to the max delta torque available and is limited to the inertial forces
 
   if (DeltaRPM >= 0) {
-      TargetTorque = min(InertiaTorque, TorqueAvailable) + TorqueRequired;
+    TargetTorque = min(InertiaTorque, TorqueAvailable) + TorqueRequired;
   } else {
   //  Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
-      TargetTorque = TorqueRequired - min(abs(InertiaTorque)/(max(DecelerationFactor,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/coilResistance);
+    TargetTorque = TorqueRequired - min(abs(InertiaTorque)/(max(DecelerationFactor,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/CoilResistance);
   }
 
   EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;   //units [#*ft/s]

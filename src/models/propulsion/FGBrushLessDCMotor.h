@@ -85,8 +85,8 @@ private:
 
   // constants
   double hptowatts;
-  double noLoadCurrent;      // 0 torque current [A]
-  double coilResistance;     // internal resistance [Ohm]
+  double NoLoadCurrent;      // 0 torque current [A]
+  double CoilResistance;     // internal resistance [Ohm]
   double PowerWatts;         // maximum engine power
   double MaxCurrent;         // maximum current [A]
   double MaxVolts;           // max voltage available from battery [V]
