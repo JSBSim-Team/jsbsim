@@ -82,7 +82,12 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   }
 
   if (el->FindElement("coilresistance"))
-    CoilResistance = el->FindElementValueAsNumber("coilresistance");
+    CoilResistance = el->FindElementValueAsNumberConvertTo("coilresistance", "OHMS");
+  else {
+    cerr << el->ReadFrom()
+         << "<coilresistance> is a mandatory parameter" << endl;
+    throw JSBBaseException("Missing parameter");
+  }
   if (el->FindElement("noloadcurrent"))
     NoLoadCurrent = el->FindElementValueAsNumberConvertTo("noloadcurrent", "AMPERES");
   else {
