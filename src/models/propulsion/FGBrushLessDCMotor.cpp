@@ -173,12 +173,6 @@ void FGBrushLessDCMotor::Calculate(void)
   RunPostFunctions();
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGBrushLessDCMotor::CalcFuelNeed(void)
-{
-return 0;
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
