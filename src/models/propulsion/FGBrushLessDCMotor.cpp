@@ -92,6 +92,10 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   }
   if (el->FindElement("deceleration_factor"))
     DecelerationFactor = el->FindElementValueAsNumber("deceleration_factor");
+  else {
+    cout << el->ReadFrom()
+         << "Using default value " << DecelerationFactor << " for <deceleration_factor>" << endl;
+  }
 
   MaxCurrent = MaxVolts / CoilResistance + NoLoadCurrent;
 
