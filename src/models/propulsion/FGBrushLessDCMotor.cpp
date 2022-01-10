@@ -5,7 +5,7 @@
  1st release   1/1/2022
  Purpose:      This module models an BLDC electric motor
 
-  ------------- Copyright (C) 1999  Paolo Becchi (pbecchi@aerobusinees.it) -------------
+  ------------- Copyright (C) 2022  Paolo Becchi (pbecchi@aerobusinees.it) -------------
 
   This program is free software; you can redistribute it and/or modify it under
   the terms of the GNU Lesser General Public License as published by the Free
@@ -29,7 +29,7 @@ FUNCTIONAL DESCRIPTION
 Following code represent a new BrushLess DC motor to be used as alternative 
 to basic electric motor. 
 BLDC motor code is based on basic "3 constant motor equations"
-It require 3 basic phisical motor properties:
+It require 3 basic physical motor properties:
 Kv speed motor constant
 Rm internal coil resistance
 I0 no load current
@@ -165,12 +165,12 @@ return 0;
 
 string FGBrushLessDCMotor::GetEngineLabels(const string& delimiter)
 {
-std::ostringstream buf;
+  std::ostringstream buf;
 
-buf << Name << " HP (engine " << EngineNumber << ")" << delimiter
+  buf << Name << " HP (engine " << EngineNumber << ")" << delimiter
     << Thruster->GetThrusterLabels(EngineNumber, delimiter);
 
-return buf.str();
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
