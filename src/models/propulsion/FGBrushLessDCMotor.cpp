@@ -30,9 +30,9 @@ Following code represent a new BrushLess DC motor to be used as alternative
 to basic electric motor. 
 BLDC motor code is based on basic "3 constant motor equations"
 It require 3 basic physical motor properties:
-Kv speed motor constant
-Rm internal coil resistance
-I0 no load current
+Kv speed motor constant      [RPM/Volt]
+Rm internal coil resistance  [Ohms]
+I0 no load current           [Amperes]
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -66,8 +66,7 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   Load(exec, el);
 
   Type = etElectric;
-  PowerWatts = 745.7;
-  hptowatts = 745.7;
+
 
 
   if (el->FindElement("maxvolts"))
@@ -87,11 +86,11 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
 
   PowerWatts = MaxCurrent * MaxVolts;
 
-  string base_property_name = CreateIndexedPropertyName("propulsion/engine",
-    EngineNumber);
+  string base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+
   exec->GetPropertyManager()->Tie(base_property_name + "/power-hp", &HP);
 
-  exec->GetPropertyManager()->Tie(base_property_name + "/current-a", &CurrentRequired);
+  exec->GetPropertyManager()->Tie(base_property_name + "/current-amperes", &CurrentRequired);
 
   Debug(0); // Call Debug() routine from constructor if needed
 }
@@ -147,7 +146,7 @@ void FGBrushLessDCMotor::Calculate(void)
   }
 
   EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;   //units [#*ft/s]
-  HP = EnginePower / 550; // units[HP]
+  HP = EnginePower /hptowatts*NMtoftpound;                             // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
 

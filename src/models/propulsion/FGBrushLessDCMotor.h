@@ -51,15 +51,31 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models an electric brushless DC motor or more appropriately permanent magnet
-    synchronous motor.
-    FGElectric models an electric motor based on the configuration file
-    \<power> parameter.  The throttle controls motor output linearly from
-    zero to \<power>.  This power value (converted internally to horsepower)
-    is then used by FGPropeller to apply torque to the propeller.  At present
-    there is no battery model available, so this motor does not consume any
-    energy.  There is no internal friction.
-    @author David Culp
+    synchronous motor. as alternative to basic electric motor. 
+BLDC motor code is based on basic "3 constant motor equations"
+It require 3 basic physical motor properties (available from manufactures):
+Kv speed motor constant      [RPM/Volt]
+Rm internal coil resistance  [Ohms]
+I0 no load current           [Amperes]
+additional inputs :
+maxvolts                     nominal voltage  from battery
+deceleration factor..........braking deceleration factor representing aproximate time to stop the rotor
+Input format :
+  <brushless_dc_motor>
+    <maxvolts units="VOLTS">         {number} </maxvolts>
+    <velocityconstant units="RPM/V"> {number} </velocityconstant>
+    <coilresistance units="OHMS">    {number} </coilresistance>
+    <noloadcurrent units="AMPERES">  {number} </noloadcurrent>
+    <decelerationfactor>            .{number} </decelerationfactor>
+  </brushless_dc_motor>
+
   */
+
+  // conversion factors
+  constexpr double NMtoftpound = 1.3558;
+  constexpr double hptowatts = 745.7;
+  constexpr double TorqueConstant = 60 / (2 * M_PI * NMtoftpound);
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -83,15 +99,14 @@ public:
 
 private:
 
-  // constants
-  double hptowatts;
+  // constants 
+
   double NoLoadCurrent;      // 0 torque current [A]
   double CoilResistance;     // internal resistance [Ohm]
   double PowerWatts;         // maximum engine power
   double MaxCurrent;         // maximum current [A]
   double MaxVolts;           // max voltage available from battery [V]
   double VelocityConstant;   //.speed constant of brusless DC motors [RPM/V]
-  double TorqueConstant=6.1217;
   double RPM;                // revolutions per minute
   double HP;                 // engine output, in horsepower
   double V;                  // speed control commanded voltage 
