@@ -93,7 +93,7 @@ public:
   double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
   double GetCurrentRequired(void) {return CurrentRequired;}
   double getRPM(void) {return RPM;}
-  double CalcFuelNeed(void);
+  double CalcFuelNeed(void) { return 0.; }
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
 

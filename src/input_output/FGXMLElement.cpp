@@ -247,7 +247,7 @@ Element::Element(const string& nm)
     // Electrical
     convert["VOLTS"]["VOLTS"] = 1.0;
     convert["OHMS"]["OHMS"] = 1.0;
-    convert["AMPS"]["AMPS"] = 1.0;
+    convert["AMPERES"]["AMPERES"] = 1.0;
   }
 }
 
