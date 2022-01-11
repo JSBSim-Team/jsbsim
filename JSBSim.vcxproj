@@ -252,6 +252,7 @@
     <ClInclude Include="src\models\flight_control\FGDistributor.h" />
     <ClInclude Include="src\models\flight_control\FGLinearActuator.h" />
     <ClInclude Include="src\models\flight_control\FGWaypoint.h" />
+    <ClInclude Include="src\models\propulsion\FGBrushLessDCMotor.h" />
     <ClInclude Include="src\models\propulsion\FGTransmission.h" />
     <ClInclude Include="src\simgear\xml\ascii.h" />
     <ClInclude Include="src\simgear\xml\asciitab.h" />
@@ -371,6 +372,7 @@
     <ClCompile Include="src\models\flight_control\FGDistributor.cpp" />
     <ClCompile Include="src\models\flight_control\FGLinearActuator.cpp" />
     <ClCompile Include="src\models\flight_control\FGWaypoint.cpp" />
+    <ClCompile Include="src\models\propulsion\FGBrushLessDCMotor.cpp" />
     <ClCompile Include="src\models\propulsion\FGTransmission.cpp" />
     <ClCompile Include="src\simgear\magvar\coremag.cxx" />
     <ClCompile Include="src\simgear\xml\easyxml.cxx" />
