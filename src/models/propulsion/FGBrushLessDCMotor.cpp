@@ -34,6 +34,9 @@ Kv speed motor constant      [RPM/Volt]
 Rm internal coil resistance  [Ohms]
 I0 no load current           [Amperes]
 
+REFERENCE:
+http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
+
 HISTORY
 --------------------------------------------------------------------------------
 1/01/2022    Created
@@ -149,7 +152,7 @@ void FGBrushLessDCMotor::Calculate(void)
   V = MaxVolts * in.ThrottlePos[EngineNumber];
   
   //  Delta RPM = (input voltage - currentRequired * coil resistance) * velocity costant
-  DeltaRPM = round((V - CurrentRequired * CoilResistance) * VelocityConstant);
+  DeltaRPM = (V - CurrentRequired * CoilResistance) * VelocityConstant-RPM;
 
   //  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
   //  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
@@ -169,7 +172,7 @@ void FGBrushLessDCMotor::Calculate(void)
     TargetTorque = TorqueRequired - min(abs(InertiaTorque)/(max(DecelerationFactor,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/CoilResistance);
   }
 
-  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;   //units [#*ft/s]
+  EnginePower = ((2 * M_PI) * RPM * TargetTorque) / 60;   //units [#*ft/s]
   HP = EnginePower /hptowatts*NMtoftpound;                             // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
