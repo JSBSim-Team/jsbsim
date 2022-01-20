@@ -129,16 +129,6 @@
 
   <propulsion>
     <engine file="Polini_THOR80">
-    <location unit="IN">
-      <x>     4.00 </x>
-      <y>     0.00 </y>
-      <z>  -330.00 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch>     0.00 </pitch>
-       <roll>     0.00 </roll>
-        <yaw>     0.00 </yaw>
-    </orient>
     <feed> 0 </feed>
 
     <thruster file="DT_Propeller">

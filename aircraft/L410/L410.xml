@@ -113,16 +113,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="engtm601">
-            <location unit="IN">
-                <x>203.0</x>
-                <y>-105</y>
-                <z>35.0</z>
-            </location>
-            <orient unit="DEG">
-                <roll>0</roll>
-                <pitch>0</pitch>
-                <yaw>0</yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="vrtule2">
                 <location unit="IN">
@@ -140,16 +130,6 @@
             </thruster>
         </engine>
         <engine file="engtm601">
-            <location unit="IN">
-                <x>203.0</x>
-                <y>105</y>
-                <z>35.0</z>
-            </location>
-            <orient unit="DEG">
-                <roll>0</roll>
-                <pitch>0</pitch>
-                <yaw>0</yaw>
-            </orient>
             <feed>1</feed>
             <thruster file="vrtule2">
                 <location unit="IN">

@@ -521,7 +521,7 @@ public:
   {
     const FGMatrix33& Tb2l = orientation.GetTInv();
     FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-    return _vt_NED(eW);
+    return -_vt_NED(eW);
   }
 
   /** Gets the initial body velocity

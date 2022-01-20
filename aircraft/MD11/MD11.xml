@@ -109,16 +109,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="CF6-80C2">
-            <location unit="IN">
-                <x> 1325.48 </x>
-                <y> -339 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -134,16 +124,6 @@
             </thruster>
         </engine>
         <engine file="CF6-80C2">
-            <location unit="IN">
-                <x> 140.83 </x>
-                <y> 0 </y>
-                <z> 60 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -159,16 +139,6 @@
             </thruster>
         </engine>
         <engine file="CF6-80C2">
-            <location unit="IN">
-                <x> 1325.48 </x>
-                <y> 339 </y>
-                <z> -40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>2</feed>
             <thruster file="direct">
                 <location unit="IN">

@@ -182,16 +182,6 @@
   <propulsion>
     <!-- should become avco_lycoming_t53 turbo-shaft engine -->
     <engine file="electric_1500hp"> 
-      <location unit="IN">
-        <x>   220.0 </x>
-        <y>     0.0 </y>
-        <z>    80.0 </z>
-      </location>
-      <orient unit="DEG">
-        <roll>   0.0 </roll>
-        <pitch>  0.0 </pitch>
-        <yaw>    0.0 </yaw>
-      </orient>
       <feed>0</feed>
       <feed>1</feed>
       <thruster file="ah1s_rotor">
@@ -210,16 +200,6 @@
     </engine>
     <!-- dummy-engine, used for linkage -->
     <engine file="electric_1hp_dummy">
-      <location unit="IN">
-        <x>   220.0 </x>
-        <y>     0.0 </y>
-        <z>    80.0 </z>
-      </location>
-      <orient unit="DEG">
-        <roll>   0.0 </roll>
-        <pitch>  0.0 </pitch>
-        <yaw>    0.0 </yaw>
-      </orient>
       <feed>0</feed>
       <feed>1</feed>
       <thruster file="ah1s_tail_rotor">

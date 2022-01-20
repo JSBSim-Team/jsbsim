@@ -578,16 +578,6 @@ for the rudder to contribute very much to yaw stability.
 
     <propulsion>
         <engine file="Clerget9B">
-            <location unit="IN">
-                <x> 10 </x>
-                <y> 0 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="CamelProp">
                 <!--OK, the docs say that sense =1 for CW propeller as seen

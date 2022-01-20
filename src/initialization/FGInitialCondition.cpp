@@ -1188,15 +1188,7 @@ bool FGInitialCondition::Load_v1(Element* document)
   if (document->FindElement("trim"))
     SetTrimRequest(document->FindElementValue("trim"));
 
-  // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
-  // This is the rotation rate of the "Local" frame, expressed in the local frame.
-  const FGMatrix33& Tl2b = orientation.GetT();
-  double radInv = 1.0 / position.GetRadius();
-  FGColumnVector3 vOmegaLocal = {radInv*vUVW_NED(eEast),
-                                 -radInv*vUVW_NED(eNorth),
-                                 -radInv*vUVW_NED(eEast)*tan(position.GetLatitude())};
-
-  vPQR_body = Tl2b * vOmegaLocal;
+  vPQR_body.InitMatrix();
 
   return result;
 }
@@ -1409,19 +1401,12 @@ bool FGInitialCondition::Load_v2(Element* document)
   // - Body
 
   Element* attrate_el = document->FindElement("attitude_rate");
-  const FGMatrix33& Tl2b = orientation.GetT();
-
-  // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
-  // This is the rotation rate of the "Local" frame, expressed in the local frame.
-  double radInv = 1.0 / position.GetRadius();
-  FGColumnVector3 vOmegaLocal = { radInv*vUVW_NED(eEast),
-                                  -radInv*vUVW_NED(eNorth),
-                                  -radInv*vUVW_NED(eEast)*tan(position.GetLatitude())};
 
   if (attrate_el) {
 
     string frame = attrate_el->GetAttributeValue("frame");
     frame = to_lower(frame);
+    const FGMatrix33& Tl2b = orientation.GetT();
     FGColumnVector3 vAttRate = attrate_el->FindElementTripletConvertTo("RAD/SEC");
 
     if (frame == "eci") {
@@ -1430,6 +1415,12 @@ bool FGInitialCondition::Load_v2(Element* document)
     } else if (frame == "ecef") {
       vPQR_body = Tl2b * position.GetTec2l() * vAttRate;
     } else if (frame == "local") {
+      // Refer to Stevens and Lewis, 1.5-14a, pg. 49.
+      // This is the rotation rate of the "Local" frame, expressed in the local frame.
+      double radInv = 1.0 / position.GetRadius();
+      FGColumnVector3 vOmegaLocal = {radInv*vUVW_NED(eEast),
+                                    -radInv*vUVW_NED(eNorth),
+                                    -radInv*vUVW_NED(eEast)*tan(position.GetLatitude())};
       vPQR_body = Tl2b * (vAttRate + vOmegaLocal);
     } else if (frame == "body") {
       vPQR_body = vAttRate;
@@ -1440,11 +1431,11 @@ bool FGInitialCondition::Load_v2(Element* document)
       result = false;
 
     } else if (frame.empty()) {
-      vPQR_body = Tl2b * vOmegaLocal;
+      vPQR_body.InitMatrix();
     }
 
   } else { // Body frame attitude rate assumed 0 relative to local.
-      vPQR_body = Tl2b * vOmegaLocal;
+      vPQR_body.InitMatrix();
   }
 
   return result;
