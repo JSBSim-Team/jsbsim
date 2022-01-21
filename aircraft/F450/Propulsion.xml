@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+
+<propulsion>
+  <engine file="DJI_E305" name="front right">
+    <thruster file="DJI_9450">
+      <location unit="M">
+        <x>-0.1651</x>
+        <y>0.1651</y>
+        <z>0.025</z>
+      </location>
+      <orient unit="DEG">
+        <roll>0</roll>
+        <pitch>90</pitch>
+        <yaw>0</yaw>
+      </orient>
+      <sense>1.0</sense>
+      <p_factor>0.0</p_factor>
+    </thruster>
+  </engine>
+
+  <engine file="DJI_E305" name="aft left">
+    <thruster file="DJI_9450">
+      <location unit="M">
+        <x>0.1651</x>
+        <y>-0.1651</y>
+        <z>0.025</z>
+      </location>
+      <orient unit="DEG">
+        <roll>0</roll>
+        <pitch>90</pitch>
+        <yaw>0</yaw>
+      </orient>
+      <sense>1.0</sense>
+      <p_factor>0.0</p_factor>
+    </thruster>
+  </engine>
+
+  <engine file="DJI_E305" name="front left">
+    <thruster file="DJI_9450">
+      <location unit="M">
+        <x>-0.1651</x>
+        <y>-0.1651</y>
+        <z>0.025</z>
+      </location>
+      <orient unit="DEG">
+        <roll>0</roll>
+        <pitch>90</pitch>
+        <yaw>0</yaw>
+      </orient>
+      <sense>-1.0</sense>
+      <p_factor>0.0</p_factor>
+    </thruster>
+  </engine>
+
+  <engine file="DJI_E305" name="aft right">
+    <thruster file="DJI_9450">
+      <location unit="M">
+        <x>0.1651</x>
+        <y>0.1651</y>
+        <z>0.025</z>
+      </location>
+      <orient unit="DEG">
+        <roll>0</roll>
+        <pitch>90</pitch>
+        <yaw>0</yaw>
+      </orient>
+      <sense>-1.0</sense>
+      <p_factor>0.0</p_factor>
+    </thruster>
+  </engine>
+</propulsion>
