@@ -33,6 +33,7 @@ It require 3 basic physical motor properties:
 Kv speed motor constant      [RPM/Volt]
 Rm internal coil resistance  [Ohms]
 I0 no load current           [Amperes]
+
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
 

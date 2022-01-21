@@ -109,16 +109,6 @@
     </ground_reactions>
     <propulsion>
         <engine file="T76">
-            <location unit="IN">
-                <x> 190 </x>
-                <y> -80 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -134,16 +124,6 @@
             </thruster>
         </engine>
         <engine file="T76">
-            <location unit="IN">
-                <x> 190 </x>
-                <y> 80 </y>
-                <z> 0 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <thruster file="direct">
                 <location unit="IN">

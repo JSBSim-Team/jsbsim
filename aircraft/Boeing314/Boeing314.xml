@@ -472,16 +472,6 @@
          1 tank feeds 1 engine, plus floor and sponson (left or right).
         </documentation>
         <engine file="WrightGR-2600">
-            <location unit="IN">
-                <x> 254.4 </x>                                                    <!-- aeromatic 636 -->
-                <y> -364.8 </y>                                                   <!-- aeromatic -304 -->
-                <z> 40 </z>                                                       <!-- aeromatic -40 -->
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>0</feed>
             <feed>4</feed>
             <feed>5</feed>
@@ -499,16 +489,6 @@
             </thruster>
         </engine>
         <engine file="WrightGR-2600">
-            <location unit="IN">
-                <x> 254.4 </x>
-                <y> -182.4 </y>                                                   <!-- aeromatic -304 -->
-                <z> 40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>1</feed>
             <feed>4</feed>
             <feed>5</feed>
@@ -526,16 +506,6 @@
             </thruster>
         </engine>
         <engine file="WrightGR-2600">
-            <location unit="IN">
-                <x> 254.4 </x>
-                <y> 182.4 </y>
-                <z> 40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>2</feed>
             <feed>4</feed>
             <feed>6</feed>
@@ -553,16 +523,6 @@
             </thruster>
         </engine>
         <engine file="WrightGR-2600">
-            <location unit="IN">
-                <x> 254.4 </x>
-                <y> 364.8 </y>
-                <z> 40 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0 </pitch>
-                <yaw> 0 </yaw>
-            </orient>
             <feed>3</feed>
             <feed>4</feed>
             <feed>6</feed>

@@ -236,8 +236,16 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   }
 
   for (i=0; i<tableData->GetNumDataLines(); i++) {
-    buf << tableData->GetDataLine(i) << string(" ");
+    string line = tableData->GetDataLine(i);
+    if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos) {
+      cerr << " In file " << tableData->GetFileName() << endl
+           << "   Illegal character found in line "
+           << tableData->GetLineNumber() + i + 1 << ": " << endl << line << endl;
+      throw TableException("Illegal character");
+    }
+    buf << line << " ";
   }
+
   switch (dimension) {
   case 1:
     nRows = tableData->GetNumDataLines();

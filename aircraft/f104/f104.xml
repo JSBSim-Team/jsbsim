@@ -216,16 +216,6 @@
  <propulsion>
 
    <engine file="J79-GE-11A">
-    <location unit="IN">
-      <x>342.06</x>
-      <y>0.00</y>
-      <z>-23.29</z>
-    </location>
-    <orient unit="DEG">
-      <pitch>0.0</pitch>
-      <roll>0.0</roll>
-      <yaw>0.0</yaw>
-    </orient>
     <feed>0</feed>
     <feed>1</feed>
     <feed>2</feed>

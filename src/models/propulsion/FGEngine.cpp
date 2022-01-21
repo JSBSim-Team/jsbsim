@@ -56,8 +56,6 @@ FGEngine::FGEngine(int engine_number, struct Inputs& input)
   : in(input), EngineNumber(engine_number)
 {
   Type = etUnknown;
-  X = Y = Z = 0.0;
-  EnginePitch = EngineYaw = 0.0;
   SLFuelFlowMax = 0.0;
   FuelExpended = 0.0;
   MaxThrottle = 1.0;
@@ -109,18 +107,6 @@ unsigned int FGEngine::GetSourceTank(unsigned int i) const
   } else {
     throw("No such source tank is available for this engine");
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGEngine::SetPlacement(const FGColumnVector3& location,
-                            const FGColumnVector3& orientation)
-{
-  X = location(eX);
-  Y = location(eY);
-  Z = location(eZ);
-  EnginePitch = orientation(ePitch);
-  EngineYaw = orientation (eYaw);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,19 +186,17 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   // Call ModelFunctions loader
   FGModelFunctions::Load(engine_element, exec, to_string((int)EngineNumber));
 
-// Find and set engine location
-
+  // If engine location and/or orientation is supplied issue a warning since they
+  // are ignored. What counts is the location and orientation of the thruster.
   local_element = parent_element->FindElement("location");
-  if (local_element)  location = local_element->FindElementTripletConvertTo("IN");
-//  else      cerr << "No engine location found for this engine." << endl;
-// Jon: The engine location is not important - the nozzle location is.
+  if (local_element)
+    cerr << local_element->ReadFrom()
+         << "Engine location ignored, only thruster location is used." << endl;
 
   local_element = parent_element->FindElement("orient");
-  if (local_element)  orientation = local_element->FindElementTripletConvertTo("RAD");
-//  else          cerr << "No engine orientation found for this engine." << endl;
-// Jon: The engine orientation has a default and is not normally used.
-
-  SetPlacement(location, orientation);
+  if (local_element)
+    cerr << local_element->ReadFrom()
+         << "Engine orientation ignored, only thruster orientation is used." << endl;
 
   // Load thruster
   local_element = parent_element->FindElement("thruster");

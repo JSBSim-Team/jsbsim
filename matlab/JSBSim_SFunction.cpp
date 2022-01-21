@@ -125,7 +125,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "simstruc.h"
 #include "mex.h"
-#include "mclcppclass.h"
 #include "matrix.h"
 #include <iostream>
 #include <string>
