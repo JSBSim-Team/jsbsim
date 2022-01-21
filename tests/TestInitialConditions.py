@@ -29,7 +29,7 @@ import fpectl
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
-convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781}
+convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781, 'M/S': 3.2808399}
 convtodeg = {'DEG': 1.0, 'RAD': 57.295779513082320876798154814105}
 convtokts = {'KTS': 1.0, 'FT/SEC': 1.0/1.68781, 'M/S': 3.2808399/1.68781}
 
