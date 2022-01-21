@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+<system name="Effectors">
+  <channel name="Electronic Speed Conrollers">
+    <actuator name="Front Right">
+      <input>fcs/cmdEscFR_nd</input>
+      <clipto>
+        <min>0.0</min>
+        <max>1.0</max>
+      </clipto>
+      <output>fcs/throttle-cmd-norm[0]</output>
+    </actuator>
+
+    <actuator name="Aft Left">
+      <input>fcs/cmdEscAL_nd</input>
+      <clipto>
+        <min>0.0</min>
+        <max>1.0</max>
+      </clipto>
+      <output>fcs/throttle-cmd-norm[1]</output>
+    </actuator>
+
+    <actuator name="Front Left">
+      <input>fcs/cmdEscFL_nd</input>
+      <clipto>
+        <min>0.0</min>
+        <max>1.0</max>
+      </clipto>
+      <output>fcs/throttle-cmd-norm[2]</output>
+    </actuator>
+
+    <actuator name="Aft Right">
+      <input>fcs/cmdEscAR_nd</input>
+      <clipto>
+        <min>0.0</min>
+        <max>1.0</max>
+      </clipto>
+      <output>fcs/throttle-cmd-norm[3]</output>
+    </actuator>
+  </channel>
+</system>
