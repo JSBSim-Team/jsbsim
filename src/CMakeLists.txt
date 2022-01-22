@@ -4,20 +4,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # Define some commons compile flags.                                           #
 ################################################################################
 
-if(MSVC)
-  # CMake requires to specify flags with -D even for Windows. The transformation
-  # to /D is made by CMake.
-  add_definitions(-D_USE_MATH_DEFINES -DNOMINMAX)
-endif()
-
-if(MINGW)
-  # Need to force _WIN32_WINNT to a quite recent value for FGfdmSocket to compile due
-  # to the usage of the flags AI_ADDRCONFIG and AI_V4MAPPED
-  # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
-  add_definitions(-D_WIN32_WINNT=0x600) # Windows Vista/Windows Server 2008
-endif()
-
 set(CMAKE_CXX_STANDARD 14)
+# MSVC specific compile definitions
+set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #
@@ -50,7 +39,8 @@ elseif(DEFINED ENV{GITHUB_RUN_NUMBER})
   set(VERSION_MESSAGE " [GitHub build $ENV{GITHUB_RUN_NUMBER}/commit $ENV{GITHUB_SHA}]")
 endif()
 
-add_definitions(-DJSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
+# Compile definitions common to all platforms
+set(COMPILE_DEFINITIONS JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 
 set(STATIC_LIBNAME_SUFFIX)
 if(MSVC AND BUILD_SHARED_LIBS)
@@ -71,6 +61,8 @@ if(EXPAT_FOUND)
   else()
     set(JSBSIM_LINK_LIBRARIES ${EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
   endif()
+else()
+  list(APPEND COMPILE_DEFINITIONS HAVE_EXPAT_CONFIG_H)
 endif()
 
 set(HEADERS FGFDMExec.h
@@ -95,6 +87,21 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Simgear>
   $<TARGET_OBJECTS:GeographicLib>
   )
+
+set(JSBSIM_COMPILE_DEFINITIONS ${COMPILE_DEFINITIONS} PARENT_SCOPE)
+set(JSBSIM_MSVC_COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS} PARENT_SCOPE)
+
+if(MSVC)
+  foreach(COMPILE_DEF ${MSVC_COMPILE_DEFINITIONS})
+    target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
+    target_compile_definitions(Misc PUBLIC ${COMPILE_DEF})
+  endforeach(COMPILE_DEF)
+endif(MSVC)
+
+foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
+  target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
+  target_compile_definitions(Xml PUBLIC ${COMPILE_DEF})
+endforeach(COMPILE_DEF)
 
 set_target_properties (libJSBSim PROPERTIES
                                  OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
