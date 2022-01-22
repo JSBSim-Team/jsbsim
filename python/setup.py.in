@@ -1,6 +1,6 @@
 # This script has been automatically built from ${CMAKE_SOURCE_DIR}/python/setup.py.in
 #
-# Copyright (c) 2014-2021 Bertrand Coconnier
+# Copyright (c) 2014-2022 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -105,7 +105,7 @@ class BuildC_CxxExtension(build_ext):
                 setattr(self.compiler, attr, value)
         return build_ext.build_extension(self, ext)
 
-# Process the path to the JSBSim library.
+# Get the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
 # Intercept the --config option that we set for msbuild
@@ -162,12 +162,11 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in ['_USE_MATH_DEFINES', 'NOMINMAX', ${JSBSIM_FLAGS}]]
+        compile_flags = ['/D'+flag for flag in '${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}'.split(';')]
         if sys.version_info < (3,9):
             compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
     else:
-        compile_flags = ['-D'+flag for flag in [${JSBSIM_FLAGS}]]
-
+        compile_flags = ['-D'+flag for flag in '${JSBSIM_COMPILE_DEFINITIONS}'.split(';')]
 
     ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
                    'libraries': link_libraries,

@@ -2,7 +2,6 @@ set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
 if(NOT EXPAT_FOUND)
-  add_definitions("-DHAVE_EXPAT_CONFIG_H")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
   list(APPEND SOURCES xmlparse.c
