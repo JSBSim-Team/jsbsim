@@ -26,7 +26,7 @@ from setuptools.command.install_lib import install_lib
 from distutils import log
 from distutils.ccompiler import new_compiler
 from distutils.unixccompiler import UnixCCompiler
-from distutils.dist import Distribution
+from setuptools.dist import Distribution
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -241,7 +241,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     scripts=['JSBSim'],
-    install_requires=['numpy'],
+    install_requires=['numpy', 'setuptools'],
     ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.6",
     data_files=data_files,

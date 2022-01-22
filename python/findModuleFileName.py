@@ -1,7 +1,8 @@
 import sys
-from distutils.dist import Distribution
-from distutils.extension import Extension
-from distutils.command.build_ext import build_ext
+
+from setuptools.command.build_ext import build_ext
+from setuptools.dist import Distribution
+from setuptools.extension import Extension
 
 ext = Extension(sys.argv[1], [])
 name = build_ext(Distribution()).get_ext_filename(ext.name)
