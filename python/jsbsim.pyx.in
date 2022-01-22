@@ -26,8 +26,8 @@ import platform
 import site
 import sys
 
-from distutils.dist import Distribution
-from distutils.command.install import install
+from setuptools.dist import Distribution
+from setuptools.command.install import install
 
 import numpy
 
