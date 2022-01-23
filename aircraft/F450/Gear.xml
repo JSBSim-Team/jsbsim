@@ -7,9 +7,12 @@
 			<y> 0.0 </y>
 			<z> -0.1524 </z>
 		</location>
-		<static_friction>0.8</static_friction>
-		<dynamic_friction>0.5</dynamic_friction>
-		<rolling_friction>0.02</rolling_friction>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
 		<spring_coeff unit="N/M"> 3000 </spring_coeff>
 		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
 	</contact>
@@ -20,9 +23,12 @@
 			<y> -0.1016 </y>
 			<z> -0.1524 </z>
 		</location>
-		<static_friction>0.8</static_friction>
-		<dynamic_friction>0.5</dynamic_friction>
-		<rolling_friction>0.02</rolling_friction>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
 		<spring_coeff unit="N/M"> 3000 </spring_coeff>
 		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
 	</contact>
@@ -33,9 +39,12 @@
 			<y> 0.1016 </y>
 			<z> -0.1524 </z>
 		</location>
-		<static_friction>0.8</static_friction>
-		<dynamic_friction>0.5</dynamic_friction>
-		<rolling_friction>0.02</rolling_friction>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
 		<spring_coeff unit="N/M"> 3000 </spring_coeff>
 		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
 	</contact>
