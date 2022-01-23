@@ -244,6 +244,44 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
+
+    # Build the Windows installer
+      - name: Checkout JSBSim logos
+        if: env.release == 'true' && runner.os == 'Windows'
+        id: InstallLogos
+        uses: actions/checkout@v2
+        with:
+          repository: JSBSim-Team/jsbsim-logo
+          path: jsbsim-logo
+      - name: Build JSBSim installer for Windows
+        if: steps.InstallLogos.outcome == 'success'
+        id: BuildInstaller
+        working-directory: build
+        run: |
+          cmake --build . --config RelWithDebInfo --target JSBSim aeromatic
+          # Relocate the logos for the wizard installer
+          mkdir logos
+          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+          mkdir small
+          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+          # Relocate the executables for the installer
+          cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp src\RelWithDebInfo\JSBSim.lib src\.
+          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+          # Get the MSVC C++ DLL
+          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
+          foreach($path in $Paths -split ';') {
+            if (Test-Path $path) {
+              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
+              if ($File) {
+                cp $File.FullName .
+                break;
+              }
+            }
+          }
+          # Compile the installer with Inno Setup
+          iscc JSBSim.iss
+
       - name: Upload Files for Release (Linux & MacOSX)
         if: runner.os != 'Windows'
         uses: actions/upload-artifact@v2
@@ -251,11 +289,13 @@ jobs:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: build/matlab/JSBSim_SFunction.mex*
       - name: Upload Files for Release (Windows)
-        if: runner.os == 'Windows'
+        if: steps.BuildInstaller.outcome == 'success'
         uses: actions/upload-artifact@v2
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
-          path: build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
+          path: |
+            build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
+            build\Output\*.exe
 
   Windows-MinGW32:
     name: C/C++ build (MinGW32)
@@ -382,49 +422,12 @@ jobs:
             build/Testing/Temporary/*.log
             build/tests/*-build.log
 
-    # Build the Windows installer
-      - name: Checkout JSBSim logos
-        if: env.release == 'true'
-        id: InstallLogos
-        uses: actions/checkout@v2
-        with:
-          repository: JSBSim-Team/jsbsim-logo
-          path: jsbsim-logo
-      - name: Build JSBSim installer for Windows
-        if: steps.InstallLogos.outcome == 'success'
-        id: BuildInstaller
-        working-directory: build
-        run: |
-          # Relocate the logos for the wizard installer
-          mkdir logos
-          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
-          mkdir small
-          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
-          # Relocate the executables for the installer
-          cp src\RelWithDebInfo\JSBSim.exe src\.
-          cp src\RelWithDebInfo\JSBSim.lib src\.
-          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
-          # Get the MSVC C++ DLL
-          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
-          foreach($path in $Paths -split ';') {
-            if (Test-Path $path) {
-              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
-              if ($File) {
-                cp $File.FullName .
-                break;
-              }
-            }
-          }
-          # Compile the installer with Inno Setup
-          iscc JSBSim.iss
-
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: steps.BuildInstaller.outcome == 'success'
+        if: env.release == 'true'
         with:
           name: ${{ runner.os }}.binaries
           path: |
-            build\Output\*.exe
             build\src\RelWithDebInfo\JSBSim.lib
             build\python\jsbsim.cxx
             build\python\setup.py
@@ -602,7 +605,7 @@ jobs:
             build/python/dist/*.whl
 
   Rolling-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Matlab-SFunction]
     name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -632,7 +635,7 @@ jobs:
             dist/*.deb
 
   Stable-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Matlab-SFunction]
     name: Deploy Stable Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
