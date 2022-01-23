@@ -36,7 +36,6 @@ find_package(PkgConfig)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
-get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
 
 ################################################################################
 # Documentation                                                                #
@@ -123,6 +122,7 @@ endif(CXXTEST_FOUND)
 
 if (PKG_CONFIG_FOUND)
   if (NOT BUILD_SHARED_LIBS)
+    get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
     foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
       set(JSBSIM_PKG_CONFIG_LINK_LIBRARIES "${JSBSIM_PKG_CONFIG_LINK_LIBRARIES} -l${_LIB}")
     endforeach(_LIB)

@@ -12,19 +12,11 @@ set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
 # Init the list of libraries that JSBSim links with                            #
 ################################################################################
 
-if(WIN32 AND (MSVC OR MINGW))
-  # not applicable to cygwin
-  if(MSVC)
-    set(JSBSIM_LINK_LIBRARIES "wsock32.lib" "ws2_32.lib")
-  else()
-    set(JSBSIM_LINK_LIBRARIES "-lwsock32 -lws2_32")
-  endif(MSVC)
-elseif(UNIX)
-  # not applicable to cygwin
-  set(JSBSIM_LINK_LIBRARIES "m")
-else()
-  set(JSBSIM_LINK_LIBRARIES)
-endif()
+# MSVC and MINGW linked libraries
+set(WINDOWS_LINK_LIBRARIES wsock32 ws2_32)
+# Unix linked libraries
+set(UNIX_LINK_LIBRARIES m)
+
 
 ################################################################################
 # Build and install libraries                                                  #
@@ -53,17 +45,6 @@ add_subdirectory(math)
 add_subdirectory(models)
 add_subdirectory(simgear)
 
-if(EXPAT_FOUND)
-  include_directories(${EXPAT_INCLUDE_DIRS})
-  if (PKG_CONFIG_FOUND)
-    set(JSBSIM_LINK_LIBRARIES ${PC_EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
-  else()
-    set(JSBSIM_LINK_LIBRARIES ${EXPAT_LIBRARIES} ${JSBSIM_LINK_LIBRARIES})
-  endif()
-else()
-  list(APPEND COMPILE_DEFINITIONS HAVE_EXPAT_CONFIG_H)
-endif()
-
 set(HEADERS FGFDMExec.h
             FGJSBBase.h)
 set(SOURCES FGFDMExec.cpp
@@ -86,6 +67,20 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Simgear>
   )
 
+if(EXPAT_FOUND)
+  include_directories(${EXPAT_INCLUDE_DIRS})
+  if (PKG_CONFIG_FOUND)
+    target_link_libraries(libJSBSim ${PC_EXPAT_LIBRARIES})
+    set(ALL_LINK_LIBRARIES ${PC_EXPAT_LIBRARIES})
+  else()
+    target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
+    set(ALL_LINK_LIBRARIES ${EXPAT_LIBRARIES})
+  endif()
+else()
+  list(APPEND COMPILE_DEFINITIONS HAVE_EXPAT_CONFIG_H)
+endif()
+
+# Manage compile definitions
 set(JSBSIM_COMPILE_DEFINITIONS ${COMPILE_DEFINITIONS} PARENT_SCOPE)
 set(JSBSIM_MSVC_COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS} PARENT_SCOPE)
 
@@ -106,7 +101,20 @@ set_target_properties (libJSBSim PROPERTIES
                                  VERSION ${LIBRARY_VERSION}
                                  TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(libJSBSim ${JSBSIM_LINK_LIBRARIES})
+# Manage link libraries
+set(JSBSIM_LINK_LIBRARIES ${ALL_LINK_LIBRARIES} PARENT_SCOPE)
+set(JSBSIM_WINDOWS_LINK_LIBRARIES ${WINDOWS_LINK_LIBRARIES} PARENT_SCOPE)
+set(JSBSIM_UNIX_LINK_LIBRARIES ${UNIX_LINK_LIBRARIES} PARENT_SCOPE)
+
+if(WIN32 AND (MSVC OR MINGW))
+  foreach(LINK_LIBRARY ${WINDOWS_LINK_LIBRARIES})
+    target_link_libraries(libJSBSim ${LINK_LIBRARY})
+  endforeach()
+elseif(UNIX)
+  foreach(LINK_LIBRARY ${UNIX_LINK_LIBRARIES})
+    target_link_libraries(libJSBSim ${LINK_LIBRARY})
+  endforeach()
+endif()
 
 if(BUILD_SHARED_LIBS)
   set_target_properties (libJSBSim PROPERTIES
