@@ -5,7 +5,7 @@
   name="F450 Takeoff Test.">
 
   <use aircraft="F450" initialize="initGrnd"/>
-  <run start="0.0" end="30.0" dt="0.005">
+  <run start="0.0" end="30.0" dt="0.002">
 
     <property> fcs/ScasEngage </property>
     <property value="0"> simulation/notify-time-trigger </property>
@@ -29,13 +29,13 @@
 
     <event name="Motor Launch">
       <condition> simulation/sim-time-sec ge 1 </condition>
-      <set name="fcs/cmdHeave_nd" value="0.53"/>
+      <set name="fcs/cmdHeave_nd" value="0.5"/>
     </event>
 
     <event name="Motor Hover">
       <condition> simulation/sim-time-sec ge 2 </condition>
       <set name="fcs/ScasEngage" value="1"/>
-      <set name="fcs/cmdHeave_nd" value="0.5"/>
+      <set name="fcs/cmdHeave_nd" value="0.49"/>
     </event>
     <!--
     <event name="Wind and Turbulence">
