@@ -33,9 +33,12 @@ It require 3 basic physical motor properties:
 Kv speed motor constant      [RPM/Volt]
 Rm internal coil resistance  [Ohms]
 I0 no load current           [Amperes]
+<<<<<<< HEAD
 
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
+=======
+>>>>>>> parent of 2a98044c (ERROR in PR corrected)
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -152,7 +155,7 @@ void FGBrushLessDCMotor::Calculate(void)
   V = MaxVolts * in.ThrottlePos[EngineNumber];
   
   //  Delta RPM = (input voltage - currentRequired * coil resistance) * velocity costant
-  DeltaRPM = (V - CurrentRequired * CoilResistance) * VelocityConstant-RPM;
+  DeltaRPM = ((V - CurrentRequired * CoilResistance) * VelocityConstant-RPM);
 
   //  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
   //  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
@@ -168,11 +171,13 @@ void FGBrushLessDCMotor::Calculate(void)
   if (DeltaRPM >= 0) {
     TargetTorque = min(InertiaTorque, TorqueAvailable) + TorqueRequired;
   } else {
+
   //  Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
-    TargetTorque = TorqueRequired - min(abs(InertiaTorque)/(max(DecelerationFactor,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/CoilResistance);
+    TargetTorque = TorqueRequired - abs(InertiaTorque) * max(DecelerationFactor, 0.01)* (max(0.00001, in.TotalDeltaT));
+
   }
 
-  EnginePower = ((2 * M_PI) * RPM * TargetTorque) / 60;   //units [#*ft/s]
+  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;   //units [#*ft/s]
   HP = EnginePower /hptowatts*NMtoftpound;                             // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
@@ -232,9 +237,12 @@ void FGBrushLessDCMotor::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
-      cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      Power Watts: "         << PowerWatts << endl;
-
+      cout << "\n    Engine Name:        " << Name << endl;
+      cout << "      Power Watts:        " << PowerWatts << endl;
+      cout << "      Speed Factor:       " << VelocityConstant << endl;
+      cout << "      Coil Resistance:    " << CoilResistance << endl;
+      cout << "      NoLoad Current:     " << NoLoadCurrent << endl;
+      cout << "      Deceleration Fact.: " << DecelerationFactor << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
