@@ -83,18 +83,9 @@ endforeach(OBJECT)
 foreach(_FILE ${SOURCE_FILES})
   get_filename_component(FILE_EXTENSION ${_FILE} EXT)
   if((NOT ${FILE_EXTENSION} STREQUAL ".h") AND (NOT ${FILE_EXTENSION} STREQUAL ".hxx") AND (NOT ${FILE_EXTENSION} STREQUAL ".hpp"))
-    string(APPEND JSBSIM_SOURCE_FILES "'${_FILE}',")
+    list(APPEND JSBSIM_SOURCE_FILES ${_FILE})
   endif()
 endforeach(_FILE)
-
-foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
-  string(REGEX MATCH "(^[A-Za-z0-9_]+).lib" LIBNAME ${_LIB})
-  if (LIBNAME STREQUAL "")
-    string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
-  else()
-    string(APPEND JSBSIM_LINK_LIBRARIES "'${CMAKE_MATCH_1}',")
-  endif()
-endforeach(_LIB)
 
 # BUILD_ROOT_PATH is used by setup.py to determine if the library has already
 # been built.

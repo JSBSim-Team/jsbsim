@@ -136,10 +136,12 @@ if args.config:
     else:
         raise ArgumentError(None, 'option --config not recognized.')
 
+convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(';') if item!='']
+
 if compiler.compiler_type == 'unix':
     cpp_compile_flag = ['-std=c++14']
     cpp_link_flags = []
-    link_libraries = [${JSBSIM_LINK_LIBRARIES}]
+    link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_UNIX_LINK_LIBRARIES}')
 elif compiler.compiler_type == 'msvc':
     if args.config in ('Debug', 'RelWithDebInfo'):
         # These flags are equivalent to a RelWithDebInfo configuration.
@@ -150,11 +152,11 @@ elif compiler.compiler_type == 'msvc':
     else:
         cpp_compile_flag = []
         cpp_link_flags = []
-    link_libraries = ['wsock32', 'ws2_32']
+    link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_WINDOWS_LINK_LIBRARIES}')
 else:
     cpp_compile_flag = []
     cpp_link_flags = []
-    link_libraries = [${JSBSIM_LINK_LIBRARIES}]
+    link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES}')
 
 # Check if the library exists and build the Python module accordingly.
 if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
@@ -173,13 +175,13 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in '${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}'.split(';')]
+        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}')]
         if sys.version_info < (3,9):
             compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
     else:
-        compile_flags = ['-D'+flag for flag in '${JSBSIM_COMPILE_DEFINITIONS}'.split(';')]
+        compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS}')]
 
-    ext_kwargs = { 'sources': ['jsbsim.pyx', ${JSBSIM_SOURCE_FILES}],
+    ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
                    'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
