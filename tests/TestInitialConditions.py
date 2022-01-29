@@ -29,7 +29,7 @@ import fpectl
 
 # Values copied from FGJSBBase.cpp and FGXMLElement.cpp
 convtoft = {'FT': 1.0, 'M': 3.2808399, 'IN': 1.0/12.0}
-convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781}
+convtofps = {'FT/SEC': 1.0, 'KTS': 1.68781, 'M/S': 3.2808399}
 convtodeg = {'DEG': 1.0, 'RAD': 57.295779513082320876798154814105}
 convtokts = {'KTS': 1.0, 'FT/SEC': 1.0/1.68781, 'M/S': 3.2808399/1.68781}
 
@@ -162,6 +162,15 @@ class TestInitialConditions(JSBSimTestCase):
             if var_tag is None:
                 var['value'] = 0.0
                 continue
+            elif var_tag.tag == 'latitude':
+                if 'type' in var_tag.attrib and var_tag.attrib['type'] in ('geod', 'geodetic'):
+                    var['ic_prop'] = 'ic/lat-geod-deg'
+                    var['prop'] = 'position/lat-geod-deg'
+                    var['CSV_header'] = 'Latitude Geodetic (deg)'
+                else:
+                    var['ic_prop'] = 'ic/lat-gc-deg'
+                    var['prop'] = 'position/lat-gc-deg'
+                    var['CSV_header'] = 'Latitude (deg)'
 
             var['value'] = float(var_tag.text)
             if 'unit' in var_tag.attrib:
@@ -230,8 +239,8 @@ class TestInitialConditions(JSBSimTestCase):
             self.assertAlmostEqual(value, csv_value, delta=1E-7,
                                    msg="In {}: {} should be {} but found {}".format(f, var['tag'], value, csv_value))
 
-    def GetVariables(self, lat_tag):
-        vars = [{'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
+    def GetVariables(self):
+        return [{'tag': 'longitude', 'unit': convtodeg, 'default_unit': 'RAD',
                  'ic_prop': 'ic/long-gc-deg', 'prop': 'position/long-gc-deg',
                  'CSV_header': 'Longitude (deg)'},
                 {'tag': 'altitudeAGL', 'unit': convtoft, 'default_unit': 'FT',
@@ -239,22 +248,11 @@ class TestInitialConditions(JSBSimTestCase):
                  'CSV_header': 'Altitude AGL (ft)'},
                 {'tag': 'altitudeMSL', 'unit': convtoft, 'default_unit': 'FT',
                  'ic_prop': 'ic/h-sl-ft', 'prop': 'position/h-sl-ft',
-                 'CSV_header': 'Altitude ASL (ft)'}]
-
-        if lat_tag is None:
-            lat_vars = []
-        elif 'type' not in lat_tag.attrib or lat_tag.attrib['type'][:4] != "geod":
-            lat_vars = [{'tag': 'latitude', 'unit': convtodeg,
-                         'default_unit': 'RAD', 'ic_prop': 'ic/lat-gc-deg',
-                         'prop': 'position/lat-gc-deg',
-                         'CSV_header': 'Latitude (deg)'}]
-        else:
-            lat_vars = [{'tag': 'latitude', 'unit': convtodeg,
-                         'default_unit': 'RAD', 'ic_prop': 'ic/lat-geod-deg',
-                         'prop': 'position/lat-geod-deg',
-                         'CSV_header': 'Latitude Geodetic (deg)'}]
-
-        return lat_vars+vars
+                 'CSV_header': 'Altitude ASL (ft)'},
+                {'tag': 'latitude', 'unit': convtodeg,
+                  'default_unit': 'RAD', 'ic_prop': 'ic/lat-geod-deg',
+                  'prop': 'position/lat-geod-deg',
+                  'CSV_header': 'Latitude Geodetic (deg)'}]
 
     def test_geod_position_from_init_file_v2(self):
         for s in self.script_list(('ZLT-NT-moored-1.xml',
@@ -267,10 +265,9 @@ class TestInitialConditions(JSBSimTestCase):
                 continue
 
             position_tag = IC_root.find('position')
-            lat_tag = position_tag.find('latitude')
 
             f, fdm = self.LoadScript(tree, s)
-            self.CheckICValues(self.GetVariables(lat_tag), 'script %s' % (f,),
+            self.CheckICValues(self.GetVariables(), 'script %s' % (f,),
                                fdm, position_tag)
 
     def test_initial_latitude(self):
@@ -319,7 +316,7 @@ class TestInitialConditions(JSBSimTestCase):
                     fdm.load_ic('IC.xml', False)
                     fdm.run_ic()
 
-                    self.CheckICValues(self.GetVariables(latitude_tag),
+                    self.CheckICValues(self.GetVariables(),
                                        'IC%d' % (i,), fdm, position_tag)
 
     def test_set_initial_geodetic_latitude(self):

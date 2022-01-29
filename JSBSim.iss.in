@@ -35,7 +35,7 @@ Source: "${CMAKE_SOURCE_DIR}\src\*.h"; DestDir: "{app}\include"; Flags: recurses
 Source: "${CMAKE_SOURCE_DIR}\src\*.hxx"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.cpp"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_BINARY_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\readme.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab

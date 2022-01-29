@@ -1294,9 +1294,6 @@ void CableControls::_get_CLaw(std::vector<float>& CLaw, Aeromatic::_lift_device_
     // taper ratio
     float TR = wing.taper;
 
-    // max thickness
-    float MT = 0.25f * wing.chord_mean;
-
     // Required to calculate CLalpha_wing
     float MC, TRC = (1.0f - TR)/(1.0f + TR);
     float PAR = PI*AR;
