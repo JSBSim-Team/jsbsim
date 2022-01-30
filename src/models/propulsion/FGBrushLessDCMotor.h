@@ -59,14 +59,13 @@ Rm internal coil resistance  [Ohms]
 I0 no load current           [Amperes]
 additional inputs :
 maxvolts                     nominal voltage  from battery
-deceleration factor..........braking deceleration factor representing aproximate time to stop the rotor
+
 Input format :
   <brushless_dc_motor>
     <maxvolts units="VOLTS">         {number} </maxvolts>
     <velocityconstant units="RPM/V"> {number} </velocityconstant>
     <coilresistance units="OHMS">    {number} </coilresistance>
     <noloadcurrent units="AMPERES">  {number} </noloadcurrent>
-    <decelerationfactor>            .{number} </decelerationfactor>
   </brushless_dc_motor>
 
   */
@@ -110,15 +109,9 @@ private:
   double RPM;                // revolutions per minute
   double HP;                 // engine output, in horsepower
   double V;                  // speed control commanded voltage 
-  double DeltaRPM;           // desired RPM set by voltage
-  double MaxTorque;          // maximum available torque from motor
-  double TorqueAvailable;    //.torque available at set voltage
   double TargetTorque;       // torque applied to propeller
-  double TorqueRequired;     // propeller torque at current RPM
   double CurrentRequired;    // current required at current RPM
   double EnginePower;        // power in pounds *feet
-  double InertiaTorque;      // acceleration torque due to rotating inertia
-  double DecelerationFactor = 1; //factor to increase deceleration time
   void Debug(int from);
 };
 }
