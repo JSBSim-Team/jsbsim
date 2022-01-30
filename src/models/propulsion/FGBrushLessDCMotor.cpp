@@ -143,8 +143,6 @@ void FGBrushLessDCMotor::Calculate(void)
 
   RPM = Thruster->GetRPM();
 
-  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque());           //units [#*ft]
-
 
   V = MaxVolts * in.ThrottlePos[EngineNumber];
 
