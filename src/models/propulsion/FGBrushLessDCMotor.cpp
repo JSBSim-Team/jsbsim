@@ -145,44 +145,27 @@ void FGBrushLessDCMotor::Calculate(void)
   }
 
   RPM = Thruster->GetRPM();
-  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque()); //units [#*ft]
 
-  CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
+  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque());           //units [#*ft]
 
-  //  total current required must include no load current i0
-  CurrentRequired = CurrentRequired + NoLoadCurrent;
- 
+
   V = MaxVolts * in.ThrottlePos[EngineNumber];
-  
-  //  Delta RPM = (input voltage - currentRequired * coil resistance) * velocity costant
-  DeltaRPM = ((V - CurrentRequired * CoilResistance) * VelocityConstant-RPM);
 
-  //  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
-  //  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
+  double Current = (V - RPM / VelocityConstant) / CoilResistance;        // Equation (4) from Drela's document
 
-  MaxTorque = MaxCurrent / VelocityConstant * TorqueConstant * (1 - RPM / (MaxVolts* VelocityConstant));
+  if (Current >= 0)
+    TargetTorque = (Current - NoLoadCurrent) / VelocityConstant * TorqueConstant;    // Assuming Kv == Kq
+  else
+    TargetTorque = (Current + NoLoadCurrent) / VelocityConstant * TorqueConstant; // Assuming Kv == Kq
 
-  TorqueAvailable = MaxTorque - TorqueRequired;
-  InertiaTorque = (((DeltaRPM/60)*(2.0 * M_PI))/(max(0.00001, in.TotalDeltaT))) * ((FGPropeller*)Thruster)->GetIxx();
- 
-  //  compute acceleration and deceleration phases:
-  //  Acceleration is due to the max delta torque available and is limited to the inertial forces
 
-  if (DeltaRPM >= 0) {
-    TargetTorque = min(InertiaTorque, TorqueAvailable) + TorqueRequired;
-  } else {
-
-  //  Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
-    TargetTorque = TorqueRequired - abs(InertiaTorque) * max(DecelerationFactor, 0.01)* (max(0.00001, in.TotalDeltaT));
-
-  }
-
-  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;   //units [#*ft/s]
-  HP = EnginePower /hptowatts*NMtoftpound;                             // units[HP]
+  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;              //units [#*ft/s]
+  HP = EnginePower / hptowatts * NMtoftpound;                                      // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
 
   RunPostFunctions();
+
 }
 
 
