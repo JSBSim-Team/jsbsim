@@ -36,6 +36,7 @@ I0 no load current           [Amperes]
 
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
+=======
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -102,12 +103,6 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
          << "<noloadcurrent> is a mandatory parameter" << endl;
     throw JSBBaseException("Missing parameter");
   }
-  if (el->FindElement("deceleration_factor"))
-    DecelerationFactor = el->FindElementValueAsNumber("deceleration_factor");
-  else {
-    cout << el->ReadFrom()
-         << "Using default value " << DecelerationFactor << " for <deceleration_factor>" << endl;
-  }
 
   MaxCurrent = MaxVolts / CoilResistance + NoLoadCurrent;
 
@@ -143,25 +138,29 @@ void FGBrushLessDCMotor::Calculate(void)
 
   RPM = Thruster->GetRPM();
 
-  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque());           //units [#*ft]
-
  
+
   V = MaxVolts * in.ThrottlePos[EngineNumber];
 
-  double Current = (V - RPM / VelocityConstant) / CoilResistance;        // Equation (4) from Drela's document
+  CurrentRequired = (V - RPM / VelocityConstant) / CoilResistance;        // Equation (4) from Drela's document
+  
+// compute torque from current with Kq=1/Kv considering NoLoadCurrent deadband
 
-  if (Current>=0) 
-  TargetTorque = (Current - NoLoadCurrent) / VelocityConstant*TorqueConstant;    // Assuming Kv == Kq
-  else
-  TargetTorque = (Current + NoLoadCurrent) / VelocityConstant * TorqueConstant; // Assuming Kv == Kq
+  TargetTorque = 0;
 
- 
-  EnginePower = ((2 * M_PI) * max(RPM,0.001) * TargetTorque) / 60;              //units [#*ft/s]
-  HP = EnginePower /hptowatts*NMtoftpound;                                      // units[HP]
+  if (CurrentRequired >= NoLoadCurrent)
+    TargetTorque = (CurrentRequired - NoLoadCurrent) / VelocityConstant * TorqueConstant;    // torque [# ft]
+  if (CurrentRequired<=-NoLoadCurrent)
+    TargetTorque = (CurrentRequired + NoLoadCurrent) / VelocityConstant * TorqueConstant;   //  current is negative
+
+
+  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;               //units [#*ft/s]
+  HP = EnginePower / hptowatts * NMtoftpound;                                      // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
 
   RunPostFunctions();
+
 }
 
 
@@ -216,9 +215,11 @@ void FGBrushLessDCMotor::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
-      cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      Power Watts: "         << PowerWatts << endl;
-
+      cout << "\n    Engine Name:        " << Name << endl;
+      cout << "      Power Watts:        " << PowerWatts << endl;
+      cout << "      Speed Factor:       " << VelocityConstant << endl;
+      cout << "      Coil Resistance:    " << CoilResistance << endl;
+      cout << "      NoLoad Current:     " << NoLoadCurrent << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

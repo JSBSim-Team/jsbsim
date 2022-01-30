@@ -38,7 +38,6 @@ endif(MSVC)
 cmake_policy(SET CMP0051 NEW)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
-get_directory_property(FLAGS_LIST DIRECTORY ${libJSBSim_DIRECTORY} COMPILE_DEFINITIONS)
 file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 
 file(COPY ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -60,7 +59,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/engine DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/dat
 file(COPY ${CMAKE_SOURCE_DIR}/systems DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
 file(COPY ${CMAKE_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
 
-# Copy each source file and collect the compile flags specified by add_definitions()
+# Copy each source file
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   string(SUBSTRING ${OBJECT} 0 17 HEADER)
   if (${HEADER} STREQUAL "$<TARGET_OBJECTS:")
@@ -69,8 +68,6 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
     string(SUBSTRING ${OBJECT} 17 ${TARGET_LENGTH} TARGET)
     get_target_property(TARGET_SOURCE_FILES ${TARGET} SOURCES)
     get_target_property(TARGET_SOURCE_DIRECTORY ${TARGET} TARGET_DIRECTORY)
-    get_directory_property(FLAGS DIRECTORY ${TARGET_SOURCE_DIRECTORY} COMPILE_DEFINITIONS)
-    list(APPEND FLAGS_LIST ${FLAGS})
     file(RELATIVE_PATH TARGET_PATH ${CMAKE_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
     file(MAKE_DIRECTORY ${TARGET_PATH})
     foreach(_FILE ${TARGET_SOURCE_FILES})
@@ -86,25 +83,12 @@ endforeach(OBJECT)
 foreach(_FILE ${SOURCE_FILES})
   get_filename_component(FILE_EXTENSION ${_FILE} EXT)
   if((NOT ${FILE_EXTENSION} STREQUAL ".h") AND (NOT ${FILE_EXTENSION} STREQUAL ".hxx") AND (NOT ${FILE_EXTENSION} STREQUAL ".hpp"))
-    string(APPEND JSBSIM_SOURCE_FILES "'${_FILE}',")
+    list(APPEND JSBSIM_SOURCE_FILES ${_FILE})
   endif()
 endforeach(_FILE)
 
-foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
-  string(REGEX MATCH "(^[A-Za-z0-9_]+).lib" LIBNAME ${_LIB})
-  if (LIBNAME STREQUAL "")
-    string(APPEND JSBSIM_LINK_LIBRARIES "'${_LIB}',")
-  else()
-    string(APPEND JSBSIM_LINK_LIBRARIES "'${CMAKE_MATCH_1}',")
-  endif()
-endforeach(_LIB)
-
-# Clean up the compile flags list
-list(REMOVE_DUPLICATES FLAGS_LIST)
-foreach(FLAG ${FLAGS_LIST})
-  string(APPEND JSBSIM_FLAGS "'${FLAG}',")
-endforeach()
-
+# BUILD_ROOT_PATH is used by setup.py to determine if the library has already
+# been built.
 file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
 set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
@@ -118,8 +102,8 @@ set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
-                                           $<IF:$<BOOL:${USING_MSBUILD}>,--config,> $<IF:$<BOOL:${USING_MSBUILD}>,$<CONFIG>,>
-                                           $<IF:$<BOOL:${MINGW}>,--compiler,> $<IF:$<BOOL:${MINGW}>,mingw32,>
+                                           $<$<BOOL:${USING_MSBUILD}>:--config> $<$<BOOL:${USING_MSBUILD}>:$<CONFIG>>
+                                           $<$<BOOL:${MINGW}>:--compiler> $<$<BOOL:${MINGW}>:mingw32>
   COMMENT "Building Python module...")
 
 add_subdirectory(fpectl)

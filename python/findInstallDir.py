@@ -1,6 +1,8 @@
-import sys, os
-from distutils.dist import Distribution
-from distutils.command.install import install
+import os
+import sys
+
+from setuptools.command.install import install
+from setuptools.dist import Distribution
 
 cmd = install(Distribution())
 cmd.ensure_finalized()
