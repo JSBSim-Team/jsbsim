@@ -36,6 +36,7 @@ I0 no load current           [Amperes]
 
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
+=======
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -102,12 +103,6 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
          << "<noloadcurrent> is a mandatory parameter" << endl;
     throw JSBBaseException("Missing parameter");
   }
-  if (el->FindElement("deceleration_factor"))
-    DecelerationFactor = el->FindElementValueAsNumber("deceleration_factor");
-  else {
-    cout << el->ReadFrom()
-         << "Using default value " << DecelerationFactor << " for <deceleration_factor>" << endl;
-  }
 
   MaxCurrent = MaxVolts / CoilResistance + NoLoadCurrent;
 
@@ -142,42 +137,30 @@ void FGBrushLessDCMotor::Calculate(void)
   }
 
   RPM = Thruster->GetRPM();
-  TorqueRequired = abs(((FGPropeller*)Thruster)->GetTorque()); //units [#*ft]
 
-  CurrentRequired = (TorqueRequired * VelocityConstant) / TorqueConstant;
-
-  //  total current required must include no load current i0
-  CurrentRequired = CurrentRequired + NoLoadCurrent;
  
+
   V = MaxVolts * in.ThrottlePos[EngineNumber];
+
+  CurrentRequired = (V - RPM / VelocityConstant) / CoilResistance;        // Equation (4) from Drela's document
   
-  //  Delta RPM = (input voltage - currentRequired * coil resistance) * velocity costant
-  DeltaRPM = (V - CurrentRequired * CoilResistance) * VelocityConstant-RPM;
+// compute torque from current with Kq=1/Kv considering NoLoadCurrent deadband
 
-  //  Torque is MaxTorque (stall torque) at 0 RPM and linearly go to 0 at max RPM (MaxVolts*VelocityCostant)
-  //  MaxTorque = MaxCurrent*torqueconstant/velocityconstant*(1-RPM/maxRPM)
+  TargetTorque = 0;
 
-  MaxTorque = MaxCurrent / VelocityConstant * TorqueConstant * (1 - RPM / (MaxVolts* VelocityConstant));
+  if (CurrentRequired >= NoLoadCurrent)
+    TargetTorque = (CurrentRequired - NoLoadCurrent) / VelocityConstant * TorqueConstant;    // torque [# ft]
+  if (CurrentRequired<=-NoLoadCurrent)
+    TargetTorque = (CurrentRequired + NoLoadCurrent) / VelocityConstant * TorqueConstant;   //  current is negative
 
-  TorqueAvailable = MaxTorque - TorqueRequired;
-  InertiaTorque = (((DeltaRPM/60)*(2.0 * M_PI))/(max(0.00001, in.TotalDeltaT))) * ((FGPropeller*)Thruster)->GetIxx();
- 
-  //  compute acceleration and deceleration phases:
-  //  Acceleration is due to the max delta torque available and is limited to the inertial forces
 
-  if (DeltaRPM >= 0) {
-    TargetTorque = min(InertiaTorque, TorqueAvailable) + TorqueRequired;
-  } else {
-  //  Deceleration is due to braking force given by the ESC and set by parameter deceleration_time 
-    TargetTorque = TorqueRequired - min(abs(InertiaTorque)/(max(DecelerationFactor,0.01)*30),RPM*TorqueConstant/VelocityConstant/VelocityConstant/CoilResistance);
-  }
-
-  EnginePower = ((2 * M_PI) * RPM * TargetTorque) / 60;   //units [#*ft/s]
-  HP = EnginePower /hptowatts*NMtoftpound;                             // units[HP]
+  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;               //units [#*ft/s]
+  HP = EnginePower / hptowatts * NMtoftpound;                                      // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
 
   RunPostFunctions();
+
 }
 
 
@@ -232,9 +215,11 @@ void FGBrushLessDCMotor::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
-      cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      Power Watts: "         << PowerWatts << endl;
-
+      cout << "\n    Engine Name:        " << Name << endl;
+      cout << "      Power Watts:        " << PowerWatts << endl;
+      cout << "      Speed Factor:       " << VelocityConstant << endl;
+      cout << "      Coil Resistance:    " << CoilResistance << endl;
+      cout << "      NoLoad Current:     " << NoLoadCurrent << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
