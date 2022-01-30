@@ -36,8 +36,6 @@ I0 no load current           [Amperes]
 
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
-=======
->>>>>>> parent of 2a98044c (ERROR in PR corrected)
 
 HISTORY
 --------------------------------------------------------------------------------
