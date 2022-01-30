@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+  <sim>
+    <description>DJI F450</description>
+    <author>Paolo Becchi</author>
+    <aircraft-version>1.0</aircraft-version>
+    <variant-of>F450</variant-of>
+
+
+    <flight-model>jsb</flight-model>
+    <aero>F450</aero>
+    <fuel-fraction>1.0</fuel-fraction>
+
+    <sound>
+      <path>Aircraft/Generic/generic-sound.xml</path>
+    </sound>
+
+    <panel>
+      <visibility archive="n">false</visibility>
+    </panel>
+
+    <hud>
+      <visibility n="1">true</visibility>
+      <enable3d n="1">true</enable3d>
+      <path n="2">Huds/NTPS.xml</path>
+      <visibility n="2">true</visibility>
+      <enable3d n="2">true</enable3d>
+      <color>
+        <transparent type="bool">true</transparent>
+        <antialiased type="bool">true</antialiased>
+        <brightness type="float">0.85</brightness>
+        <alpha type="float">0.85</alpha>
+      </color>
+      <palette>
+        <color n="0">
+          <red type="float">0.38</red>
+          <green type="float">1.0</green>
+          <blue type="float">0.22</blue>
+        </color>
+        <color n="1">
+          <red type="float">1.0</red>
+          <green type="float">0.0</green>
+          <blue type="float">0.0</blue>
+        </color>
+      </palette>
+    </hud>
+
+    <view>
+      <internal archive="y">true</internal>
+      <config>
+       <x-offset-m archive="y">0.0</x-offset-m>
+       <y-offset-m archive="y">0.0</y-offset-m>
+       <z-offset-m archive="y">-0.2</z-offset-m>
+       <pitch-offset-deg>0</pitch-offset-deg>
+      </config>
+    </view>
+
+    <view n="101">
+      <name>Trail View</name>
+      <enabled type="bool" userarchive="y">true</enabled>
+      <type>lookfrom</type>
+      <internal type="bool">false</internal>
+      <config>
+        <from-model type="bool">true</from-model>
+        <from-model-idx type="int">0</from-model-idx>
+        <ground-level-nearplane-m type="double">0.0f</ground-level-nearplane-m>
+        <default-field-of-view-deg type="double">55.0</default-field-of-view-deg>
+      </config>
+    </view>
+  </sim>
+
+  <controls>
+    <flight>
+      <aileron-trim>0.00</aileron-trim>
+      <elevator-trim>0.00</elevator-trim>
+      <rudder-trim>0.00</rudder-trim>
+    </flight>
+    <smoke alias="/sim/multiplay/generic/int[0]"/>
+    <trajectory-markers alias="/sim/multiplay/generic/int[1]"/>
+  </controls>
+
+</PropertyList>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+  File:     E-max-BL2205.xml
+  Author:   Paolo becchi
+-->
+
+
+<!-- Validation Configuration 2 -->
+<brushless_dc_motor name="E-max-BL2205">
+ <velocityconstant> 1880 </velocityconstant>
+ <coilresistance>0.08</coilresistance>
+ <noloadcurrent>1.8</noloadcurrent>
+ <maxvolts> 9.9 </maxvolts>
+ <deceleration_factor> 2.0 </deceleration_factor>
+</bldc_engine>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<initialize name="UMore Park Ground">
+  <vt unit="M/S">         0.0       </vt>
+  <latitude type="geodetic" unit="DEG">   44.725801 </latitude>
+  <longitude unit="DEG"> -93.075866 </longitude>
+  <altitude unit="M">     285.2111       </altitude>
+  <elevation unit="M">    285.2111       </elevation>
+  <psi unit="DEG">        90.0      </psi>
+</initialize>

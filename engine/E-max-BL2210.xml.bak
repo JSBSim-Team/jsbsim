@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+  File:     APCBldc.xml
+  Author:   Matt Vacanti
+-->
+<!-- Validation Configuration 1
+<bldc_engine name="E-max-BL2210">
+ <velocityconstant> 1970 </velocityconstant>
+ <torqueconstant> 6.1217 </torqueconstant>
+ <maxcurrent> 16.5 </maxcurrent>
+ <maxvolts> 7.4 </maxvolts>
+</bldc_engine>
+ -->
+<!-- Validation Configuration 2 -->
+<brushless_dc_motor name="E-max-BL2210">
+ <velocityconstant> 1970 </velocityconstant>
+ <torqueconstant> 6.1217 </torqueconstant>
+ <maxcurrent> 15 </maxcurrent>
+ <maxvolts> 6.9 </maxvolts>
+</bldc_engine>
+
