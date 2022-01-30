@@ -26,8 +26,8 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-Following code represent a new BrushLess DC motor to be used as alternative 
-to basic electric motor. 
+Following code represent a new BrushLess DC motor to be used as alternative
+to basic electric motor.
 BLDC motor code is based on basic "3 constant motor equations"
 It require 3 basic physical motor properties:
 Kv speed motor constant      [RPM/Volt]
@@ -36,12 +36,10 @@ I0 no load current           [Amperes]
 
 REFERENCE:
 http://web.mit.edu/drela/Public/web/qprop/motor1_theory.pdf
-=======
 
 HISTORY
 --------------------------------------------------------------------------------
 1/01/2022    Created
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -71,8 +69,6 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
 
   Type = etElectric;
 
-
-
   if (el->FindElement("maxvolts"))
     MaxVolts = el->FindElementValueAsNumberConvertTo("maxvolts", "VOLTS");
   else {
@@ -82,7 +78,7 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   }
 
   if (el->FindElement("velocityconstant"))
-    VelocityConstant = el->FindElementValueAsNumber("velocityconstant");
+    Kv = el->FindElementValueAsNumber("velocityconstant");
   else {
     cerr << el->ReadFrom()
          << "<velocityconstant> is a mandatory parameter" << endl;
@@ -97,22 +93,21 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
     throw JSBBaseException("Missing parameter");
   }
   if (el->FindElement("noloadcurrent"))
-    NoLoadCurrent = el->FindElementValueAsNumberConvertTo("noloadcurrent", "AMPERES");
+    ZeroTorqueCurrent = el->FindElementValueAsNumberConvertTo("noloadcurrent", "AMPERES");
   else {
     cerr << el->ReadFrom()
          << "<noloadcurrent> is a mandatory parameter" << endl;
     throw JSBBaseException("Missing parameter");
   }
 
-  MaxCurrent = MaxVolts / CoilResistance + NoLoadCurrent;
+  double MaxCurrent = MaxVolts / CoilResistance + ZeroTorqueCurrent;
 
   PowerWatts = MaxCurrent * MaxVolts;
 
   string base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
-
-  exec->GetPropertyManager()->Tie(base_property_name + "/power-hp", &HP);
-
-  exec->GetPropertyManager()->Tie(base_property_name + "/current-amperes", &CurrentRequired);
+  auto pm = exec->GetPropertyManager();
+  pm->Tie(base_property_name + "/power-hp", &HP);
+  pm->Tie(base_property_name + "/current-amperes", &Current);
 
   Debug(0); // Call Debug() routine from constructor if needed
 }
@@ -123,7 +118,6 @@ FGBrushLessDCMotor::~FGBrushLessDCMotor()
 {
   Debug(1); // Call Debug() routine from constructor if needed
 }
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -136,33 +130,31 @@ void FGBrushLessDCMotor::Calculate(void)
     ((FGPropeller*)Thruster)->SetFeather(in.PropFeather[EngineNumber]);
   }
 
-  RPM = Thruster->GetRPM();
+  double RPM = Thruster->GetRPM();
+  double V = MaxVolts * in.ThrottlePos[EngineNumber];
 
- 
+  Current = (V - RPM / Kv) / CoilResistance; // Equation (4) from Drela's document
 
-  V = MaxVolts * in.ThrottlePos[EngineNumber];
+  // Compute torque from current with Kq=1/Kv considering NoLoadCurrent deadband
+  // The "zero torque current" is by definition the current necessary for the
+  // motor to overcome internal friction : it is always resisting the torque and
+  // consequently has an opposite to the current.
 
-  CurrentRequired = (V - RPM / VelocityConstant) / CoilResistance;        // Equation (4) from Drela's document
-  
-// compute torque from current with Kq=1/Kv considering NoLoadCurrent deadband
+  double Torque = 0;
 
-  TargetTorque = 0;
+  if (Current >= ZeroTorqueCurrent)
+    Torque = (Current - ZeroTorqueCurrent) / Kv * WattperRPMtoftpound;
+  if (Current<=-ZeroTorqueCurrent)
+    Torque = (Current + ZeroTorqueCurrent) / Kv * WattperRPMtoftpound;
 
-  if (CurrentRequired >= NoLoadCurrent)
-    TargetTorque = (CurrentRequired - NoLoadCurrent) / VelocityConstant * TorqueConstant;    // torque [# ft]
-  if (CurrentRequired<=-NoLoadCurrent)
-    TargetTorque = (CurrentRequired + NoLoadCurrent) / VelocityConstant * TorqueConstant;   //  current is negative
-
-
-  EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * TargetTorque) / 60;               //units [#*ft/s]
-  HP = EnginePower / hptowatts * NMtoftpound;                                      // units[HP]
+  // EnginePower must be non zero when accelerating from RPM == 0.0
+  double EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * Torque) / 60;  //units [#*ft/s]
+  HP = EnginePower / hptowatts * NMtoftpound;  // units[HP]
   LoadThrusterInputs();
   Thruster->Calculate(EnginePower);
 
   RunPostFunctions();
-
 }
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -217,9 +209,9 @@ void FGBrushLessDCMotor::Debug(int from)
 
       cout << "\n    Engine Name:        " << Name << endl;
       cout << "      Power Watts:        " << PowerWatts << endl;
-      cout << "      Speed Factor:       " << VelocityConstant << endl;
+      cout << "      Speed Factor:       " << Kv << endl;
       cout << "      Coil Resistance:    " << CoilResistance << endl;
-      cout << "      NoLoad Current:     " << NoLoadCurrent << endl;
+      cout << "      NoLoad Current:     " << ZeroTorqueCurrent << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

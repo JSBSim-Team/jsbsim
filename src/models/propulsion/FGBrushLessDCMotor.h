@@ -22,7 +22,6 @@
   Further information about the GNU Lesser General Public License can also be
   found on the world wide web at http://www.gnu.org
 
-
 HISTORY
 --------------------------------------------------------------------------------
 1/01/2022   Created
@@ -51,7 +50,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models an electric brushless DC motor or more appropriately permanent magnet
-    synchronous motor. as alternative to basic electric motor. 
+    synchronous motor. as alternative to basic electric motor.
 BLDC motor code is based on basic "3 constant motor equations"
 It require 3 basic physical motor properties (available from manufactures):
 Kv speed motor constant      [RPM/Volt]
@@ -70,11 +69,10 @@ Input format :
 
   */
 
-  // conversion factors
-  constexpr double NMtoftpound = 1.3558;
-  constexpr double hptowatts = 745.7;
-  constexpr double TorqueConstant = 60 / (2 * M_PI * NMtoftpound);
-
+// conversion factors
+constexpr double NMtoftpound = 1.3558;
+constexpr double hptowatts = 745.7;
+constexpr double WattperRPMtoftpound = 60 / (2 * M_PI * NMtoftpound);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -90,28 +88,18 @@ public:
 
   void Calculate(void);
   double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
-  double GetCurrentRequired(void) {return CurrentRequired;}
-  double getRPM(void) {return RPM;}
   double CalcFuelNeed(void) { return 0.; }
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
 
 private:
-
-  // constants 
-
-  double NoLoadCurrent;      // 0 torque current [A]
-  double CoilResistance;     // internal resistance [Ohm]
-  double PowerWatts;         // maximum engine power
-  double MaxCurrent;         // maximum current [A]
-  double MaxVolts;           // max voltage available from battery [V]
-  double VelocityConstant;   //.speed constant of brusless DC motors [RPM/V]
-  double RPM;                // revolutions per minute
-  double HP;                 // engine output, in horsepower
-  double V;                  // speed control commanded voltage 
-  double TargetTorque;       // torque applied to propeller
-  double CurrentRequired;    // current required at current RPM
-  double EnginePower;        // power in pounds *feet
+  double ZeroTorqueCurrent; // Zero torque current [A]
+  double CoilResistance;    // Internal resistance [Ohm]
+  double PowerWatts;        // Maximum engine power
+  double MaxVolts;          // Max voltage available from battery [V]
+  double Kv;                // Speed constant of brusless DC motors [RPM/V]
+  double HP;                // Engine output, in horsepower
+  double Current;           // Current [A]
   void Debug(int from);
 };
 }
