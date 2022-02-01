@@ -198,7 +198,7 @@ void FGGain::Debug(int from)
       cout << "      GAIN: " << Gain->GetName() << endl;
 
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getName() << endl;
+        cout << "      OUTPUT: " << node->getNameString() << endl;
 
       if (Type == "AEROSURFACE_SCALE") {
         cout << "      In/Out Mapping:" << endl;

@@ -334,7 +334,7 @@ void FGSensor::Debug(int from)
         }
       }
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getName() << endl;
+        cout << "      OUTPUT: " << node->getNameString() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

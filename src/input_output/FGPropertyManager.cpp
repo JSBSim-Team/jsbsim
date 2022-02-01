@@ -111,16 +111,9 @@ bool FGPropertyNode::HasNode (const string &path)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyNode::GetName( void ) const
-{
-  return string( getName() );
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 string FGPropertyNode::GetPrintableName( void ) const
 {
-  string temp_string(getName());
+  string temp_string(getNameString());
   size_t initial_location=0;
   size_t found_location;
 
@@ -317,7 +310,7 @@ void FGPropertyManager::Untie(const string &name)
 
 void FGPropertyManager::Untie(SGPropertyNode *property)
 {
-  const char *name = property->getName();
+  const string& name = property->getNameString();
 
   assert(property->isTied());
 

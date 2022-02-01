@@ -328,7 +328,7 @@ find_child (Itr begin, Itr end, int index, const PropertyList& nodes)
 #if PROPS_STANDALONE
   for (size_t i = 0; i < nNodes; i++) {
     SGPropertyNode * node = nodes[i];
-    if (node->getIndex() == index && compare_strings(node->getName(), begin))
+    if (node->getIndex() == index && compare_strings(node->getNameString().c_str(), begin))
       return i;
   }
 #else
@@ -356,7 +356,7 @@ find_last_child (const char * name, const PropertyList& nodes)
 
   for (size_t i = 0; i < nNodes; i++) {
     SGPropertyNode * node = nodes[i];
-    if (compare_strings(node->getName(), name))
+    if (compare_strings(node->getNameString().c_str(), name))
     {
       int idx = node->getIndex();
       if (idx > index) index = idx;
@@ -1186,7 +1186,7 @@ SGPropertyNode::getChildren (const char * name) const
   size_t max = _children.size();
 
   for (size_t i = 0; i < max; i++)
-    if (compare_strings(_children[i]->getName(), name))
+    if (compare_strings(_children[i]->getNameString().c_str(), name))
       children.push_back(_children[i]);
 
   sort(children.begin(), children.end(), CompareIndices());
@@ -1241,7 +1241,7 @@ SGPropertyNode::removeChildren(const char * name)
   PropertyList children;
 
   for (int pos = static_cast<int>(_children.size() - 1); pos >= 0; pos--)
-    if (compare_strings(_children[pos]->getName(), name))
+    if (compare_strings(_children[pos]->getNameString().c_str(), name))
       children.push_back(removeChild(pos));
 
   sort(children.begin(), children.end(), CompareIndices());

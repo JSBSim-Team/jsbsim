@@ -817,12 +817,6 @@ public:
    */
     bool hasValue () const { return (_type != simgear::props::NONE); }
 
-
-  /**
-   * Get the node's simple (XML) name.
-   */
-  const char * getName () const { return _name.c_str(); }
-
   /**
    * Get the node's simple name as a string.
    */
