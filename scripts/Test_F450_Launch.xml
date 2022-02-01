@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+  name="F450 Takeoff Test.">
+
+  <use aircraft="F450" initialize="initGrnd"/>
+  <run start="0.0" end="30.0" dt="0.002">
+
+    <property> fcs/ScasEngage </property>
+    <property value="0"> simulation/notify-time-trigger </property>
+
+    <event name="Motor Idle">
+      <condition> simulation/frame le 1 </condition>
+      <set name="fcs/throttle-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.0"/>
+    </event>
+
+    <event name="Trim">
+      <condition> simulation/frame gt 1 </condition>
+      <set name="simulation/do_simple_trim" value="2"/>
+      <!-- <set name="simulation/jsbsim-debug" value="2"/> -->
+      <notify>
+        <property>position/h-agl-ft</property>
+      </notify>
+    </event>
+
+    <event name="Motor Launch">
+      <condition> simulation/sim-time-sec ge 1 </condition>
+      <set name="fcs/cmdHeave_nd" value="0.5"/>
+    </event>
+
+    <event name="Motor Hover">
+      <condition> simulation/sim-time-sec ge 2 </condition>
+      <set name="fcs/ScasEngage" value="1"/>
+      <set name="fcs/cmdHeave_nd" value="0.49"/>
+    </event>
+    <!--
+    <event name="Wind and Turbulence">
+      <condition>simulation/sim-time-sec ge 4 </condition>
+      <set name="atmosphere/wind-north-fps" value="0.0"/>
+      <set name="atmosphere/wind-east-fps" value="0.0"/>
+      <set name="atmosphere/wind-down-fps" value="0.0"/> -->
+      <!-- <set name="atmosphere/turb-type" value="4"/>
+      <set name="atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps" value="2"/>
+      <set name="atmosphere/psiw-rad" value="0"/>
+      <set name="atmosphere/turbulence/milspec/severity" value="3"/> 
+    </event> -->
+
+    <!-- <event name="Roll Step">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="fcs/aileron-cmd-norm" value="1.0"/>
+    </event> -->
+
+    <event name="Roll Doublet">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="fcs/aileron-cmd-norm" value="1.0"/>
+    </event>
+    <event name="Roll Doublet">
+      <condition> simulation/sim-time-sec ge 11 </condition>
+      <set name="fcs/aileron-cmd-norm" value="-1.0"/>
+    </event>
+    <event name="Roll Doublet">
+      <condition> simulation/sim-time-sec ge 12 </condition>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+    </event>
+
+    <!-- <event name="Pitch Doublet">
+      <condition> simulation/sim-time-sec ge 10 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.5"/>
+    </event>
+    <event name="Pitch Doublet">
+      <condition> simulation/sim-time-sec ge 11 </condition>
+      <set name="fcs/elevator-cmd-norm" value="-0.5"/>
+    </event>
+    <event name="Pitch Doublet">
+      <condition> simulation/sim-time-sec ge 12 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+    </event> -->
+
+    <event name="Yaw Doublet">
+      <condition> simulation/sim-time-sec ge 20 </condition>
+      <set name="fcs/rudder-cmd-norm" value="0.5"/>
+    </event>
+    <event name="Yaw Doublet">
+      <condition> simulation/sim-time-sec ge 22 </condition>
+      <set name="fcs/rudder-cmd-norm" value="-0.5"/>
+    </event>
+    <event name="Yaw Doublet">
+      <condition> simulation/sim-time-sec ge 24 </condition>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+    </event>
+
+    <event name="Repeating Notify" persistent="true">
+      <description>Output message at 1 second intervals</description>
+      <notify>
+        <property> fcs/ScasEngage </property>
+
+        <property>fcs/throttle-cmd-norm</property>
+        <property>fcs/throttle-cmd-norm[1]</property>
+        <property>fcs/throttle-cmd-norm[2]</property>
+        <property>fcs/throttle-cmd-norm[3]</property>
+        
+        <property>propulsion/engine[0]/propeller-rpm</property>
+        <property>propulsion/engine[1]/propeller-rpm</property>
+        <property>propulsion/engine[2]/propeller-rpm</property>
+        <property>propulsion/engine[3]/propeller-rpm</property>
+
+        <property>propulsion/engine[0]/thrust-lbs</property>
+        <property>propulsion/engine[1]/thrust-lbs</property>
+        <property>propulsion/engine[2]/thrust-lbs</property>
+        <property>propulsion/engine[3]/thrust-lbs</property>
+        
+        <property>position/h-agl-ft</property>
+        <property>velocities/vc-kts</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+      </notify>
+      <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="1" type="FG_DELTA"/>
+    </event>
+  </run>
+
+<!-- <output file="OutputFgfs.xml"></output>
+     <output file="OutputLog.xml"></output>-->
+
+  <output name="quad_log.csv" type="CSV" rate="250">
+        <property>position/h-agl-ft</property>
+        <property>velocities/vc-kts</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+
+    <property>propulsion/engine[0]/propeller-rpm</property>
+    <property>propulsion/engine[0]/thrust-lbs</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>propulsion/engine[1]/propeller-rpm</property>
+    <property>propulsion/engine[1]/thrust-lbs</property>
+    <property>propulsion/engine[1]/power-hp</property>
+    <property>propulsion/engine[2]/propeller-rpm</property>
+    <property>propulsion/engine[2]/thrust-lbs</property>
+    <property>propulsion/engine[2]/power-hp</property>
+    <property>propulsion/engine[3]/propeller-rpm</property>
+    <property>propulsion/engine[3]/thrust-lbs</property>
+    <property>propulsion/engine[3]/power-hp</property>
+
+
+  </output>
+
+
+</runscript>

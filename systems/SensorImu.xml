@@ -1,0 +1,532 @@
+<?xml version="1.0" ?>
+
+<system name="Sensor - IMU">
+
+    <function name="sensor/imu/time_us">
+
+        <product>
+
+            <property>simulation/sim-time-sec</property>
+
+            <value>1000000.0</value>
+
+        </product>
+
+    </function>
+
+    <channel name="Temp Accelerometers">
+
+        <accelerometer name="AccelX">
+
+            <axis>X</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <output>sensor/imu/accelX_true_fps2</output>
+
+        </accelerometer>
+
+        <accelerometer name="AccelY">
+
+            <axis>Y</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <output>sensor/imu/accelY_true_fps2</output>
+
+        </accelerometer>
+
+        <accelerometer name="AccelZ">
+
+            <axis>Z</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <output>sensor/imu/accelZ_true_fps2</output>
+
+        </accelerometer>
+
+    </channel>
+
+    <function name="sensor/imu/accelX_true_mps2">
+
+        <product>
+
+            <property>sensor/imu/accelX_true_fps2</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/imu/accelY_true_mps2">
+
+        <product>
+
+            <property>sensor/imu/accelY_true_fps2</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/imu/accelZ_true_mps2">
+
+        <product>
+
+            <property>sensor/imu/accelZ_true_fps2</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/imu/temp_true_C">
+
+        <product>
+
+            <sum>
+
+                <property>atmosphere/T-R</property>
+
+                <value>-491.67</value>
+
+            </sum>
+
+            <value>0.5555555555555556</value>
+
+        </product>
+
+    </function>
+
+
+    <channel name="Temperature Error Model">
+        <sensor name="temp_C">
+
+            <input>sensor/imu/temp_true_C</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/temp_C</output>
+
+        </sensor>
+
+    </channel>
+
+    <channel name="Accelerometer Error Model">
+
+        <sensor name="AccelX">
+
+            <input>sensor/imu/accelX_true_mps2</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/accelX_mps2</output>
+
+        </sensor>
+
+        <sensor name="AccelY">
+
+            <input>sensor/imu/accelY_true_mps2</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/accelY_mps2</output>
+
+        </sensor>
+
+        <sensor name="AccelZ">
+
+            <input>sensor/imu/accelZ_true_mps2</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/accelZ_mps2</output>
+
+        </sensor>
+
+    </channel>
+
+    <channel name="Gyros">
+
+        <gyro name="GyroX">
+
+            <axis>X</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/gyroX_rps</output>
+
+        </gyro>
+
+        <gyro name="GyroY">
+
+            <axis>Y</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/gyroY_rps</output>
+
+        </gyro>
+
+        <gyro name="GyroZ">
+
+            <axis>Z</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/gyroZ_rps</output>
+
+        </gyro>
+
+    </channel>
+
+    <channel name="Magnetometers">
+
+        <magnetometer name="MagX">
+
+            <axis>X</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/magX_nT</output>
+
+        </magnetometer>
+
+        <magnetometer name="MagY">
+
+            <axis>Y</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/magY_nT</output>
+
+        </magnetometer>
+
+        <magnetometer name="MagZ">
+
+            <axis>Z</axis>
+
+            <location unit="M">
+
+                <x>0</x>
+
+                <y>0</y>
+
+                <z>0</z>
+
+            </location>
+
+            <orientation unit="DEG">
+
+                <roll>0</roll>
+
+                <pitch>0</pitch>
+
+                <yaw>0</yaw>
+
+            </orientation>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/imu/magZ_nT</output>
+
+        </magnetometer>
+
+    </channel>
+
+    <function name="sensor/imu/magX_uT">
+
+        <product>
+
+            <property>sensor/imu/magX_nT</property>
+
+            <value>0.001</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/imu/magY_uT">
+
+        <product>
+
+            <property>sensor/imu/magY_nT</property>
+
+            <value>0.001</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/imu/magZ_uT">
+
+        <product>
+
+            <property>sensor/imu/magZ_nT</property>
+
+            <value>0.001</value>
+
+        </product>
+
+    </function>
+
+</system>
+

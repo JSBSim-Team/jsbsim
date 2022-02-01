@@ -1,0 +1,202 @@
+<?xml version="1.0" ?>
+
+<system name="Sensor - GPS">
+
+    <function name="sensor/gps/time_us">
+
+        <product>
+
+            <property>simulation/sim-time-sec</property>
+
+            <value>1000000.0</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/gps/lat_true_rad">
+
+        <property>position/lat-geod-rad</property>
+
+    </function>
+
+    <function name="sensor/gps/long_true_rad">
+
+        <property>position/long-gc-rad</property>
+
+    </function>
+
+    <function name="sensor/gps/alt_true_m">
+
+        <product>
+
+            <property>position/h-sl-ft</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/gps/vNorth_true_mps">
+
+        <product>
+
+            <property>velocities/v-north-fps</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/gps/vEast_true_mps">
+
+        <product>
+
+            <property>velocities/v-east-fps</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/gps/vDown_true_mps">
+
+        <product>
+
+            <property>velocities/v-down-fps</property>
+
+            <value>0.3048</value>
+
+        </product>
+
+    </function>
+
+    <channel name="GPS Error Models">
+
+        <sensor name="lat_rad">
+
+            <input>sensor/gps/lat_true_rad</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/lat_rad</output>
+
+        </sensor>
+
+        <sensor name="long_rad">
+
+            <input>sensor/gps/long_true_rad</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/long_rad</output>
+
+        </sensor>
+
+        <sensor name="alt_m">
+
+            <input>sensor/gps/alt_true_m</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/alt_m</output>
+
+        </sensor>
+
+        <sensor name="vNorth_mps">
+
+            <input>sensor/gps/vNorth_true_mps</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/vNorth_mps</output>
+
+        </sensor>
+
+        <sensor name="vEast_mps">
+
+            <input>sensor/gps/vEast_true_mps</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/vEast_mps</output>
+
+        </sensor>
+
+        <sensor name="vDown_mps">
+
+            <input>sensor/gps/vDown_true_mps</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/gps/vDown_mps</output>
+
+        </sensor>
+
+    </channel>
+
+</system>
+

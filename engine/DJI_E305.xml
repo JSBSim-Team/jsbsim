@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!--bldc_engine name="DJI E305"-->
+  <brushless_dc_motor name="DJI E305">
+  <velocityconstant> 960 </velocityconstant>
+  <coilresistance>0.117</coilresistance>
+  <noloadcurrent>0.45</noloadcurrent>
+  <maxvolts> 14.63 </maxvolts>
+</brushless_dc_motor>

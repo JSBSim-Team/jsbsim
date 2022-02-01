@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+
+<system name="Sensor - Barometer">
+
+    <function name="sensor/baro/time_us">
+
+        <product>
+
+            <property>simulation/sim-time-sec</property>
+
+            <value>1000000.0</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/baro/presStatic_true_Pa">
+
+        <product>
+
+            <property>atmosphere/P-psf</property>
+
+            <value>47.88026</value>
+
+        </product>
+
+    </function>
+
+    <function name="sensor/baro/temp_true_C">
+
+        <product>
+
+            <sum>
+
+                <property>atmosphere/T-R</property>
+
+                <value>-491.67</value>
+
+            </sum>
+
+            <value>0.5555555555555556</value>
+
+        </product>
+
+    </function>
+
+
+    <channel name="Barometer Error Models">
+
+        <sensor name="presStatic_Pa">
+
+            <input>sensor/baro/presStatic_true_Pa</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/baro/presStatic_Pa</output>
+
+        </sensor>
+
+
+        <sensor name="temp_C">
+
+            <input>sensor/baro/temp_true_C</input>
+
+            <lag>0</lag>
+
+            <noise distribution="GAUSSIAN" variation="ABSOLUTE">0.0</noise>
+
+            <drift_rate>0</drift_rate>
+
+            <gain>1</gain>
+
+            <bias>0</bias>
+
+            <delay>0</delay>
+
+            <output>sensor/baro/temp_C</output>
+
+        </sensor>
+
+    </channel>
+
+</system>
+

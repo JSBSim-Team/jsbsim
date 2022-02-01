@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<ground_reactions>
+	<!-- This is a fake point, JSBSim struggles with a 4-point ground trim -->
+	<contact name="Front_Center" type="BOGEY"> 
+		<location unit="M">
+			<x> -0.1016 </x>
+			<y> 0.0 </y>
+			<z> -0.1524 </z>
+		</location>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
+		<spring_coeff unit="N/M"> 3000 </spring_coeff>
+		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+	</contact>
+
+	<contact name="Aft_Left" type="BOGEY">
+		<location unit="M">
+			<x> 0.1016 </x>
+			<y> -0.1016 </y>
+			<z> -0.1524 </z>
+		</location>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
+		<spring_coeff unit="N/M"> 3000 </spring_coeff>
+		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+	</contact>
+
+	<contact name="Aft_Right" type="BOGEY">
+		<location unit="M">
+			<x> 0.1016 </x>
+			<y> 0.1016 </y>
+			<z> -0.1524 </z>
+		</location>
+		<static_friction>0.8</static_friction>
+
+		<dynamic_friction>0.5</dynamic_friction>
+
+		<rolling_friction>0.02</rolling_friction>
+
+		<spring_coeff unit="N/M"> 3000 </spring_coeff>
+		<damping_coeff unit="N/M/SEC"> 100 </damping_coeff>
+	</contact>
+</ground_reactions>
