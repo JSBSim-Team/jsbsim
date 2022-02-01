@@ -185,7 +185,7 @@ void FGKinemat::Debug(int from)
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
       for (auto node: OutputNodes)
-          cout << "      OUTPUT: " << node->getName() << endl;
+          cout << "      OUTPUT: " << node->getNameString() << endl;
       if (!DoScale) cout << "      NOSCALE" << endl;
     }
   }

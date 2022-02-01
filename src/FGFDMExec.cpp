@@ -998,7 +998,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 
   for (int i=0; i<pcs->node->nChildren(); i++) {
     string access="";
-    pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
+    pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getNameString();
     int node_idx = pcs->node->getChild(i)->getIndex();
     if (node_idx != 0) {
       pcsNew->base_string = CreateIndexedPropertyName(pcsNew->base_string, node_idx);

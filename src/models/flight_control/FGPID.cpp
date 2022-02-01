@@ -239,7 +239,7 @@ void FGPID::Debug(int from)
       cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
 
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getName() << endl;
+        cout << "      OUTPUT: " << node->getNameString() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

@@ -97,7 +97,7 @@ class FGPropertyNode : public SGPropertyNode
     /**
      * Get the name of a node
      */
-    std::string GetName( void ) const;
+    const std::string& GetName( void ) const { return getNameString(); }
 
     /**
      * Get the name of a node without underscores, etc.
