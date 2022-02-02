@@ -108,6 +108,7 @@ protected:
   unsigned int SockPort;
   FGfdmSocket::ProtocolType SockProtocol;
   FGfdmSocket* socket;
+  int precision;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

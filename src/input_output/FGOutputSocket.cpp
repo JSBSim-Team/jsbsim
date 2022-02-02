@@ -121,6 +121,12 @@ bool FGOutputSocket::Load(Element* el)
                 el->GetAttributeValue("protocol") + "/" +
                 el->GetAttributeValue("port"));
 
+  // Check if output precision for doubles has been specified, default to 7 if not
+  if(el->HasAttribute("precision"))
+    precision = (int)el->GetAttributeValueAsNumber("precision");
+  else
+    precision = 7;
+
   return true;
 }
 
@@ -130,7 +136,7 @@ bool FGOutputSocket::InitModel(void)
 {
   if (FGOutputType::InitModel()) {
     delete socket;
-    socket = new FGfdmSocket(SockName, SockPort, SockProtocol);
+    socket = new FGfdmSocket(SockName, SockPort, SockProtocol, precision);
 
     if (socket == 0) return false;
     if (!socket->GetConnectStatus()) return false;
