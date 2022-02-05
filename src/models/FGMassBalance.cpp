@@ -272,7 +272,7 @@ void FGMassBalance::AddPointMass(Element* el)
     s << el->ReadFrom() << "Pointmass " << pointmass_name
          << " has no location.";
     cerr << endl << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
 
   double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");

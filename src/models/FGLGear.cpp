@@ -184,7 +184,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     stringstream s;
     s << "No location given for contact " << name;
     cerr << endl << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
   SetTransformType(FGForce::tCustom);
 

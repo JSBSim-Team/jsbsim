@@ -271,7 +271,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
       visitor.setParser(0);
       XML_ParserFree(parser);
       cerr << endl << s.str() << endl;
-      throw JSBSim::JSBBaseException(s.str());
+      throw JSBSim::BaseException(s.str());
     }
 
     input.read(buf,16384);
@@ -282,7 +282,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
       cerr << endl << s.str() << endl;
       visitor.setParser(0);
       XML_ParserFree(parser);
-      throw JSBSim::JSBBaseException(s.str());
+      throw JSBSim::BaseException(s.str());
     }
 
   }
@@ -295,7 +295,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
     cerr << endl << s.str() << endl;
     visitor.setParser(0);
     XML_ParserFree(parser);
-    throw JSBSim::JSBBaseException(s.str());
+    throw JSBSim::BaseException(s.str());
   }
 
   visitor.setParser(0);

@@ -65,10 +65,10 @@ CLASS DOCUMENTATION
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class MatrixException : public JSBBaseException
+class MatrixException : public BaseException
 {
 public:
-  MatrixException(const std::string& msg) : JSBBaseException{msg} { }
+  MatrixException(const std::string& msg) : BaseException{msg} { }
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -149,7 +149,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
     cerr << endl << "Caught error: " << msg << endl;
     throw;
   }
-  catch (const JSBBaseException& e) {
+  catch (const BaseException& e) {
     cout << endl << "Caught error: " << e.what() << endl;
     throw;
   }
@@ -1101,7 +1101,7 @@ bool FGFDMExec::ReadChild(Element* el)
     const string s("  No location was found for this child object!");
     cerr << location->ReadFrom() << endl << highint << fgred
          << s << reset << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
 
   Element* orientation = el->FindElement("orient");

@@ -971,19 +971,19 @@ void FGPropagate::Debug(int from)
         stringstream s;
         s << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude();
         cerr << endl << s.str() << endl;
-        throw JSBBaseException(s.str());
+        throw BaseException(s.str());
       }
       if (fabs(VState.vUVW.Magnitude()) > 1.0e10) {
         stringstream s;
         s << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude();
         cerr << endl << s.str() << endl;
-        throw JSBBaseException(s.str());
+        throw BaseException(s.str());
       }
       if (fabs(GetDistanceAGL()) > 1e10) {
         stringstream s;
         s << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL();
         cerr << endl << s.str() << endl;
-        throw JSBBaseException(s.str());
+        throw BaseException(s.str());
       }
     }
   }

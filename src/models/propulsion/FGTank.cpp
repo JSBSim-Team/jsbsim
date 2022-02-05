@@ -195,7 +195,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         if (Radius <= InnerRadius) {
           const string s("The bore diameter should be smaller than the total grain diameter!");
           cerr << element_Grain->ReadFrom() << endl << s << endl;
-          throw JSBBaseException(s);
+          throw BaseException(s);
         }
         Volume = M_PI * Length * (Radius*Radius - InnerRadius*InnerRadius); // cubic inches
         break;
@@ -209,7 +209,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         {
           const string s("Unknown grain type found in this rocket engine definition.");
           cerr << el->ReadFrom() << endl << s << endl;
-          throw JSBBaseException(s);
+          throw BaseException(s);
         }
     }
     Density = (Capacity*lbtoslug)/Volume; // slugs/in^3
@@ -377,7 +377,7 @@ void FGTank::CalculateInertias(void)
     } else {
       const string s("  Solid propellant grain density is zero!");
       cerr << endl << s << endl;
-      throw JSBBaseException(s);
+      throw BaseException(s);
     }
 
     switch (grainType) {
@@ -403,7 +403,7 @@ void FGTank::CalculateInertias(void)
       {
         const string s("Unknown grain type found.");
         cerr << s << endl;
-        throw JSBBaseException(s);
+        throw BaseException(s);
       }
     }
 

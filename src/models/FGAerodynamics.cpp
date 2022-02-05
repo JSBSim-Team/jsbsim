@@ -234,7 +234,7 @@ bool FGAerodynamics::Run(bool Holding)
       s << "  A proper axis type has NOT been selected. Check "
         << "your aerodynamics definition.";
       cerr << endl << s.str() << endl;
-      throw JSBBaseException(s.str());
+      throw BaseException(s.str());
     }
   }
   // Calculate aerodynamic reference point shift, if any. The shift takes place
@@ -281,7 +281,7 @@ bool FGAerodynamics::Run(bool Holding)
       s << "  A proper axis type has NOT been selected. Check "
         << "your aerodynamics definition.";
       cerr << endl << s.str() << endl;
-      throw JSBBaseException(s.str());
+      throw BaseException(s.str());
     }
   }
 
@@ -460,7 +460,7 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
         << endl << "  An unknown axis type, " << axis << " has been specified"
         << " in the aircraft configuration file.";
       cerr << endl << s.str() << endl;
-      throw JSBBaseException(s.str());
+      throw BaseException(s.str());
     }
     axis_element = document->FindNextElement("axis");
   }
@@ -508,7 +508,7 @@ void FGAerodynamics::ProcessAxesNameAndFrame(eAxisType& axisType, const string& 
     stringstream s;
     s << " Unknown axis frame type of - " << frame;
     cerr << endl << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
 }
 

@@ -1016,14 +1016,14 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
     stringstream s;
     s << "File: " << init_file_name << " could not be read.";
     cerr << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
 
   if (document->GetName() != string("initialize")) {
     stringstream s;
     s << "File: " << init_file_name << " is not a reset file.";
     cerr << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
 
   double version = HUGE_VAL;
@@ -1037,7 +1037,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   } else if (version >= 3.0) {
     const string s("Only initialization file formats 1 and 2 are currently supported");
     cerr << document->ReadFrom() << endl << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   } else if (version >= 2.0) {
     result = Load_v2(document);
   } else if (version >= 1.0) {

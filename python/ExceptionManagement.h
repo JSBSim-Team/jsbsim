@@ -24,7 +24,7 @@
 
 // Pointers to Python exception classes.
 // Their initialization take place in jsbsim.pyx
-PyObject* jsbbase_error;
+PyObject* base_error;
 PyObject* trimfailure_error;
 PyObject* matrix_error;
 PyObject* table_error;
@@ -44,8 +44,8 @@ void convertJSBSimToPyExc()
   catch (const JSBSim::TableException& e) {
     PyErr_SetString(table_error, e.what());
   }
-  catch (const JSBSim::JSBBaseException& e) {
-    PyErr_SetString(jsbbase_error, e.what());
+  catch (const JSBSim::BaseException& e) {
+    PyErr_SetString(base_error, e.what());
   }
   catch (const JSBSim::FloatingPointException& e) {
     PyErr_SetString(e.getPyExc(), e.what());
