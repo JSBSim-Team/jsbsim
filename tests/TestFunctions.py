@@ -23,7 +23,7 @@ import numpy as np
 import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
-from jsbsim import TableError
+from jsbsim import BaseError
 
 
 class TestFunctions(JSBSimTestCase):
@@ -327,7 +327,7 @@ class TestFunctions(JSBSimTestCase):
         function_file = self.sandbox('function.xml')
         tree.write(function_file)
         tripod.include_system_test_file(function_file)
-        with self.assertRaises(TableError):
+        with self.assertRaises(BaseError):
             tripod.start()
 
 

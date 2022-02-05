@@ -42,9 +42,6 @@ void convertJSBSimToPyExc()
   catch (const GeographicLib::GeographicErr& e) {
     PyErr_SetString(geographic_error, e.what());
   }
-  catch (const JSBSim::TableException& e) {
-    PyErr_SetString(table_error, e.what());
-  }
   catch (const JSBSim::BaseException& e) {
     PyErr_SetString(base_error, e.what());
   }
