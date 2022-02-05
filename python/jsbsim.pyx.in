@@ -44,14 +44,8 @@ class TrimFailureError(BaseError):
     pass
 
 
-class TableError(BaseError):
-    """Exception class for table errors."""
-    pass
-
-
 base_error = <PyObject*>BaseError
 trimfailure_error = <PyObject*>TrimFailureError
-table_error = <PyObject*>TableError
 
 
 def get_default_root_dir():

@@ -37,9 +37,6 @@ void convertJSBSimToPyExc()
   catch (const JSBSim::TrimFailureException& e) {
     PyErr_SetString(trimfailure_error, e.what());
   }
-  catch (const JSBSim::TableException& e) {
-    PyErr_SetString(table_error, e.what());
-  }
   catch (const JSBSim::BaseException& e) {
     PyErr_SetString(base_error, e.what());
   }

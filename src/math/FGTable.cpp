@@ -158,7 +158,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     std::cerr << el->ReadFrom()
               <<"  An unknown table type attribute is listed: " << call_type
               << endl;
-    throw TableException("Unknown table type.");
+    throw BaseException("Unknown table type.");
   }
 
   // Determine and store the lookup properties for this table unless this table
@@ -199,7 +199,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       } else if (lookup_axis == string("table")) {
         lookupProperty[eTable] = node;
       } else if (!lookup_axis.empty()) {
-        throw TableException("Lookup table axis specification not understood: " + lookup_axis);
+        throw BaseException("Lookup table axis specification not understood: " + lookup_axis);
       } else { // assumed single dimension table; row lookup
         lookupProperty[eRow] = node;
       }
@@ -232,7 +232,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       std::cerr << el->ReadFrom()
                 << "No independentVars found, and table is not marked as internal,"
                 << " nor is it a 3D table." << endl;
-      throw TableException("No independent variable found for table.");
+      throw BaseException("No independent variable found for table.");
     }
   }
   // end lookup property code
@@ -250,7 +250,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       cerr << " In file " << tableData->GetFileName() << endl
            << "   Illegal character found in line "
            << tableData->GetLineNumber() + i + 1 << ": " << endl << line << endl;
-      throw TableException("Illegal character");
+      throw BaseException("Illegal character");
     }
     buf << line << " ";
   }
@@ -275,12 +275,12 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
       if (nCols < 2) {
         std::cerr << tableData->ReadFrom()
                   << "Not enough columns in table data" << endl;
-        throw TableException("Not enough columns in table data.");
+        throw BaseException("Not enough columns in table data.");
       }
     } else {
       std::cerr << tableData->ReadFrom()
                 << "Not enough rows in table data" << endl;
-      throw TableException("Not enough rows in the table data.");
+      throw BaseException("Not enough rows in the table data.");
     }
 
     Type = tt2D;
@@ -338,7 +338,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
                   << "  " << Data[b][1] << "<=" << Data[b-1][1] << endl;
-        throw TableException("Breakpoint lookup is not monotonically increasing");
+        throw BaseException("Breakpoint lookup is not monotonically increasing");
       }
     }
   }
@@ -354,7 +354,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
                   << "  " << Data[0][c] << "<=" << Data[0][c-1] << endl;
-        throw TableException("FGTable: column lookup is not monotonically increasing");
+        throw BaseException("FGTable: column lookup is not monotonically increasing");
       }
     }
   }
@@ -370,7 +370,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
                   << "  " << Data[r][0] << "<=" << Data[r-1][0] << endl;
-        throw TableException("FGTable: row lookup is not monotonically increasing");
+        throw BaseException("FGTable: row lookup is not monotonically increasing");
       }
     }
   }

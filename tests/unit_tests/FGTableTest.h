@@ -295,7 +295,7 @@ public:
                                   "</dummy>");
     Element *el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_3x1(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_3x1(pm.get(), el_table), BaseException&);
   }
 };
 
@@ -836,7 +836,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_3x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_3x2(pm.get(), el_table), BaseException&);
   }
 
   void testMonoticallyIncreasingColumns() {
@@ -854,7 +854,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x3(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x3(pm.get(), el_table), BaseException&);
   }
 };
 
@@ -1019,7 +1019,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), BaseException&);
   }
 
   void testLookupError() {
@@ -1039,7 +1039,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), BaseException&);
   }
 
   void testIncompleteDefinition() {
@@ -1056,7 +1056,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), BaseException&);
   }
 
   void testNotEnoughColumns() {
@@ -1076,7 +1076,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), BaseException&);
   }
 
   void testNotEnoughRows() {
@@ -1095,7 +1095,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), BaseException&);
   }
 
   void testRowsNotIncreasing() {
@@ -1112,7 +1112,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x1(pm.get(), el_table), BaseException&);
   }
 
   void testColumnsNotIncreasing() {
@@ -1132,7 +1132,7 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x2(pm.get(), el_table), BaseException&);
   }
 
   void testBreakpointsNotIncreasing() {
@@ -1158,6 +1158,6 @@ public:
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
-    TS_ASSERT_THROWS(FGTable t_2x2x2(pm.get(), el_table), TableException&);
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm.get(), el_table), BaseException&);
   }
 };
