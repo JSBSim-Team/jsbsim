@@ -233,10 +233,10 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 DECLARATION: TableException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class TableException : public JSBBaseException
+class TableException : public BaseException
 {
 public:
-  TableException(const std::string& msg) : JSBBaseException{msg} { }
+  TableException(const std::string& msg) : BaseException{msg} { }
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

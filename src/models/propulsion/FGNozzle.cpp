@@ -59,7 +59,7 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
   else {
     const string s("Fatal Error: Nozzle exit area must be given in nozzle config file.");
     cerr << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
 
   Thrust = 0;

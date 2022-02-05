@@ -56,9 +56,9 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class JSBBaseException : public std::runtime_error {
+class BaseException : public std::runtime_error {
   public:
-    JSBBaseException(const std::string& msg) : std::runtime_error(msg) {}
+    BaseException(const std::string& msg) : std::runtime_error(msg) {}
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,7 +269,7 @@ public:
   static double PitotTotalPressure(double mach, double p);
 
   /** Compute the Mach number from the differential pressure (qc) and the
-  *   static pressure. Based on the formulas in the US Air Force Aircraft 
+  *   static pressure. Based on the formulas in the US Air Force Aircraft
   *   Performance Flight Testing Manual (AFFTC-TIH-99-01).
   *   @param qc    The differential/impact pressure
   *   @param p     Pressure in psf
@@ -277,7 +277,7 @@ public:
   static double MachFromImpactPressure(double qc, double p);
 
   /** Calculate the calibrated airspeed from the Mach number. Based on the
-  *   formulas in the US Air Force Aircraft Performance Flight Testing 
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
   *   Manual (AFFTC-TIH-99-01).
   *   @param mach  The Mach number
   *   @param p     Pressure in psf
@@ -286,7 +286,7 @@ public:
   static double VcalibratedFromMach(double mach, double p);
 
   /** Calculate the Mach number from the calibrated airspeed.Based on the
-  *   formulas in the US Air Force Aircraft Performance Flight Testing 
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
   *   Manual (AFFTC-TIH-99-01).
   *   @param vcas  The calibrated airspeed (CAS) in ft/s
   *   @param p     Pressure in psf
@@ -327,13 +327,13 @@ public:
   static bool EqualToRoundoff(double a, float b) {
     return EqualToRoundoff((float)a, b);
   }
-  
+
   /** Constrain a value between a minimum and a maximum value.
   */
   static constexpr double Constrain(double min, double value, double max) {
     return value<min?(min):(value>max?(max):(value));
   }
-  
+
   static constexpr double sign(double num) {return num>=0.0?1.0:-1.0;}
 
   static double GaussianRandomNumber(void);

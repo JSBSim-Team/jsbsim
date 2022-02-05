@@ -74,7 +74,7 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   else {
     cerr << el->ReadFrom()
          << "<maxvolts> is a mandatory parameter" << endl;
-    throw JSBBaseException("Missing parameter");
+    throw BaseException("Missing parameter");
   }
 
   if (el->FindElement("velocityconstant"))
@@ -82,7 +82,7 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   else {
     cerr << el->ReadFrom()
          << "<velocityconstant> is a mandatory parameter" << endl;
-    throw JSBBaseException("Missing parameter");
+    throw BaseException("Missing parameter");
   }
 
   if (el->FindElement("coilresistance"))
@@ -90,14 +90,14 @@ FGBrushLessDCMotor::FGBrushLessDCMotor(FGFDMExec* exec, Element* el, int engine_
   else {
     cerr << el->ReadFrom()
          << "<coilresistance> is a mandatory parameter" << endl;
-    throw JSBBaseException("Missing parameter");
+    throw BaseException("Missing parameter");
   }
   if (el->FindElement("noloadcurrent"))
     ZeroTorqueCurrent = el->FindElementValueAsNumberConvertTo("noloadcurrent", "AMPERES");
   else {
     cerr << el->ReadFrom()
          << "<noloadcurrent> is a mandatory parameter" << endl;
-    throw JSBBaseException("Missing parameter");
+    throw BaseException("Missing parameter");
   }
 
   double MaxCurrent = MaxVolts / CoilResistance + ZeroTorqueCurrent;

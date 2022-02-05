@@ -108,7 +108,7 @@ const FGMatrix33& FGForce::Transform(void) const
     {
       const string s("Unrecognized tranform requested from FGForce::Transform()");
       cout << s << endl;
-      throw JSBBaseException(s);
+      throw BaseException(s);
     }
   }
 }

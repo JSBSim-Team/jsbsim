@@ -88,7 +88,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   } else {
     const string s("Fatal Error: No location found for this gas cell.");
     cerr << el->ReadFrom() << endl << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -140,7 +140,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   } else {
     const string s("Fatal Error: Gas cell shape must be given.");
     cerr << el->ReadFrom() << endl << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -521,7 +521,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   } else {
     const string s("Fatal Error: No location found for this ballonet.");
     cerr << el->ReadFrom() << endl << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -573,7 +573,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   } else {
     const string s("Fatal Error: Ballonet shape must be given.");
     cerr << el->ReadFrom() << endl << s << endl;
-    throw JSBBaseException(s);
+    throw BaseException(s);
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",

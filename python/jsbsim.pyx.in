@@ -36,32 +36,32 @@ import numpy
 __version__='${PROJECT_VERSION}'
 
 
-class JSBBaseError(RuntimeError):
+class BaseError(RuntimeError):
     """JSBSim base exception class."""
     pass
 
 
-class TrimFailureError(JSBBaseError):
+class TrimFailureError(BaseError):
     """Exception class for trim failures."""
     pass
 
 
-class GeographicError(JSBBaseError):
+class GeographicError(BaseError):
     """Exception class for geographic computation errors."""
     pass
 
 
-class MatrixError(JSBBaseError):
+class MatrixError(BaseError):
     """Exception class for matrix errors."""
     pass
 
 
-class TableError(JSBBaseError):
+class TableError(BaseError):
     """Exception class for table errors."""
     pass
 
 
-jsbbase_error = <PyObject*>JSBBaseError
+base_error = <PyObject*>BaseError
 trimfailure_error = <PyObject*>TrimFailureError
 geographic_error = <PyObject*>GeographicError
 matrix_error = <PyObject*>MatrixError

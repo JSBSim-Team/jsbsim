@@ -74,7 +74,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element)
     s << "Kinematic component " << Name
       << " must have more than 1 setting element";
     cerr << element->ReadFrom() << endl << s.str() << endl;
-    throw JSBBaseException(s.str());
+    throw BaseException(s.str());
   }
 
   bind(element, fcs->GetPropertyManager().get());

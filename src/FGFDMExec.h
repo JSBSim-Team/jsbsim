@@ -71,9 +71,9 @@ class FGInput;
 class FGPropulsion;
 class FGMassBalance;
 
-class TrimFailureException : public JSBBaseException {
+class TrimFailureException : public BaseException {
   public:
-    TrimFailureException(const std::string& msg) : JSBBaseException(msg) {}
+    TrimFailureException(const std::string& msg) : BaseException(msg) {}
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -604,7 +604,7 @@ void FGScript::Debug(int from)
                 s << "  An attempt has been made to access a non-existent property" << endl
                   << "  in this event. Please check the property names used, spelling, etc.";
                 cerr << fgred << highint << endl << s.str() << reset << endl;
-                throw JSBBaseException(s.str());
+                throw BaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]
                      << " to function value (Late Bound)";
@@ -621,7 +621,7 @@ void FGScript::Debug(int from)
                 s << "  An attempt has been made to access a non-existent property" << endl
                   << "  in this event. Please check the property names used, spelling, etc.";
                 cerr << fgred << highint << endl << s.str() << reset << endl;
-                throw JSBBaseException(s.str());
+                throw BaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]
                      << " to function value (Late Bound)";
