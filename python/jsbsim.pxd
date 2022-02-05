@@ -25,7 +25,6 @@ from cpython.ref cimport PyObject
 cdef extern from "ExceptionManagement.h":
     cdef PyObject* base_error
     cdef PyObject* trimfailure_error
-    cdef PyObject* matrix_error
     cdef PyObject* table_error
     cdef void convertJSBSimToPyExc()
 

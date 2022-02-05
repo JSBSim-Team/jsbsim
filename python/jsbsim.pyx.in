@@ -44,11 +44,6 @@ class TrimFailureError(BaseError):
     pass
 
 
-class MatrixError(BaseError):
-    """Exception class for matrix errors."""
-    pass
-
-
 class TableError(BaseError):
     """Exception class for table errors."""
     pass
@@ -56,7 +51,6 @@ class TableError(BaseError):
 
 base_error = <PyObject*>BaseError
 trimfailure_error = <PyObject*>TrimFailureError
-matrix_error = <PyObject*>MatrixError
 table_error = <PyObject*>TableError
 
 

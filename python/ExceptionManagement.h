@@ -26,7 +26,6 @@
 // Their initialization take place in jsbsim.pyx
 PyObject* base_error;
 PyObject* trimfailure_error;
-PyObject* matrix_error;
 PyObject* table_error;
 
 void convertJSBSimToPyExc()
@@ -37,9 +36,6 @@ void convertJSBSimToPyExc()
   }
   catch (const JSBSim::TrimFailureException& e) {
     PyErr_SetString(trimfailure_error, e.what());
-  }
-  catch (const JSBSim::MatrixException& e) {
-    PyErr_SetString(matrix_error, e.what());
   }
   catch (const JSBSim::TableException& e) {
     PyErr_SetString(table_error, e.what());
