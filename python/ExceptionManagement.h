@@ -28,7 +28,6 @@
 PyObject* base_error;
 PyObject* trimfailure_error;
 PyObject* geographic_error;
-PyObject* matrix_error;
 PyObject* table_error;
 
 void convertJSBSimToPyExc()
@@ -42,9 +41,6 @@ void convertJSBSimToPyExc()
   }
   catch (const GeographicLib::GeographicErr& e) {
     PyErr_SetString(geographic_error, e.what());
-  }
-  catch (const JSBSim::MatrixException& e) {
-    PyErr_SetString(matrix_error, e.what());
   }
   catch (const JSBSim::TableException& e) {
     PyErr_SetString(table_error, e.what());

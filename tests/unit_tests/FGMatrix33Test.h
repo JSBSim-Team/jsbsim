@@ -307,23 +307,6 @@ public:
     TS_ASSERT_EQUALS(m(3,3), 9.0);
   }
 
-  // This test throws an exception so it cannot be merged with other cases
-  void DivideByZero1() {
-    const JSBSim::FGMatrix33 m(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-    JSBSim::FGMatrix33 m_res = m / 0.0;
-  }
-
-  // This test throws an exception so it cannot be merged with other cases
-  void DivideByZero2() {
-    JSBSim::FGMatrix33 m(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
-    m /= 0.0;
-  }
-
-  void testDivideByZero() {
-    TS_ASSERT_THROWS(DivideByZero1(), JSBSim::MatrixException&);
-    TS_ASSERT_THROWS(DivideByZero2(), JSBSim::MatrixException&);
-  }
-
   void testInputOutput() {
     std::ostringstream os, os_ref;
     JSBSim::FGMatrix33 m;
