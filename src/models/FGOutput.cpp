@@ -173,8 +173,13 @@ bool FGOutput::SetDirectivesFile(const SGPath& fname)
 {
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);
-  bool result = Load(document);
+  if (!document) {
+    stringstream s;
+    s << "Could not read directive file: " << fname;
+    throw BaseException(s.str());
+  }
 
+  bool result = Load(document);
   if (!result)
     cerr << endl << "Aircraft output element has problems in file " << fname << endl;
 

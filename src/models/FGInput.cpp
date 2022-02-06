@@ -43,7 +43,7 @@ INCLUDES
 #include "input_output/FGUDPInputSocket.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGModelLoader.h"
- 
+
 using namespace std;
 
 namespace JSBSim {
@@ -84,7 +84,7 @@ bool FGInput::Load(Element* el)
   Element* element = ModelLoader.Open(el);
 
   if (!element) return false;
-  
+
   FGModel::PreLoad(element, FDMExec);
 
   size_t idx = InputTypes.size();
@@ -152,6 +152,11 @@ bool FGInput::SetDirectivesFile(const SGPath& fname)
 {
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);
+  if (!document) {
+    stringstream s;
+    s << "Could not read directive file: " << fname;
+    throw BaseException(s.str());
+  }
   bool result = Load(document);
 
   if (!result)
