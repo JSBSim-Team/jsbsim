@@ -305,7 +305,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void readXML (const string &path, XMLVisitor &visitor)
+void readXML(const string &path, XMLVisitor &visitor)
 {
   ifstream input(path.c_str());
   if (input.good()) {
@@ -314,11 +314,12 @@ void readXML (const string &path, XMLVisitor &visitor)
     } catch (...) {
       input.close();
       cerr << "Failed to open file " << path << endl;
-      abort();
+      throw;
     }
   } else {
-    cerr << "Failed to open file " << path << endl;
-    abort();
+    std::stringstream s;
+    s << "Failed to open file " << path;
+    throw JSBSim::BaseException(s.str());
   }
   input.close();
 }
