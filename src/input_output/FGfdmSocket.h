@@ -70,10 +70,8 @@ CLASS DECLARATION
 class FGfdmSocket : public FGJSBBase
 {
 public:
-  FGfdmSocket(const std::string& address, int port)
-    : FGfdmSocket(address, port, ptTCP) {}
-  FGfdmSocket(const std::string&, int, int);
-  FGfdmSocket(int, int);
+  FGfdmSocket(const std::string& address, int port, int protocol, int precision = 7);
+  FGfdmSocket(int port, int protocol, int precision = 7);
   ~FGfdmSocket();
   void Send(void);
   void Send(const char *data, int length);
@@ -104,6 +102,7 @@ private:
   struct sockaddr_in scktName;
   struct hostent *host;
   std::ostringstream buffer;
+  int precision;
   bool connected;
   void Debug(int from);
 };
