@@ -81,12 +81,13 @@ static bool LoadWinSockDLL(int debug_lvl)
 }
 #endif
 
-FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
+FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int precision)
 {
   sckt = sckt_in = 0;
   Protocol = (ProtocolType)protocol;
   connected = false;
   struct addrinfo *addr = nullptr;
+  this->precision = precision;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL(debug_lvl)) return;
@@ -150,12 +151,13 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // assumes TCP or UDP socket on localhost, for inbound datagrams
-FGfdmSocket::FGfdmSocket(int port, int protocol)
+FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 {
   sckt = -1;
   connected = false;
   Protocol = (ProtocolType)protocol;
   string ProtocolName;
+  this->precision = precision;
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
   if (!LoadWinSockDLL(debug_lvl)) return;
@@ -338,7 +340,7 @@ void FGfdmSocket::Append(const char* item)
 void FGfdmSocket::Append(double item)
 {
   if (buffer.tellp() > 0) buffer << ',';
-  buffer << std::setw(12) << std::setprecision(7) << item;
+  buffer << std::setw(12) << std::setprecision(precision) << item;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
