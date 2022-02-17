@@ -420,6 +420,33 @@ bool FGAerodynamics::Load(Element *document)
 // Alternatively the axis name 'X|Y|Z or ROLL|PITCH|YAW' can be specified in
 // conjunction with a frame 'BODY|STABILITY|WIND', for example:
 // <axis name="X" frame="STABILITY"/>
+//
+// In summary, possible combinations:
+//
+// FORCES
+//    Body
+//       <axis name="AXIAL|SIDE|NORMAL" />
+//       <axis name="X|Y|Z" />
+//       <axis name="X|Y|Z" frame="BODY" />
+//
+//    Wind
+//       <axis name="DRAG|SIDE|LIFT" / >
+//       <axis name="X|Y|Z" frame="WIND" / >
+//
+//    Stability
+//       <axis name="X|Y|Z" frame="STABILITY" />
+//
+// MOMENTS
+//    Body
+//       <axis name="ROLL|PITCH|YAW" />
+//       <axis name="ROLL|PITCH|YAW" frame="BODY" / >
+//
+//    Wind
+//       <axis name="ROLL|PITCH|YAW" frame="WIND" />
+//
+//    Stability
+//       <axis name="ROLL|PITCH|YAW" frame="STABILITY" />
+//
 
 void FGAerodynamics::DetermineAxisSystem(Element* document)
 {
