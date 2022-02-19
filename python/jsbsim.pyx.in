@@ -1,7 +1,7 @@
 # PyJSBSim a JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
-# Copyright (c) 2014-2021 Bertrand Coconnier
+# Copyright (c) 2014-2022 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -26,9 +26,6 @@ import platform
 import site
 import sys
 
-from setuptools.dist import Distribution
-from setuptools.command.install import install
-
 import numpy
 
 __version__='${PROJECT_VERSION}'
@@ -51,15 +48,11 @@ trimfailure_error = <PyObject*>TrimFailureError
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
 
-    # Runs a dummy install to capture the installation parameters.
-    cmd = install(Distribution())
-    cmd.ensure_finalized()
-
     # Test the following paths for JSBSim default root dir:
     # * `sys.prefix` and `sys.exec_prefix` are for virtual envs (pip & conda)
     # * `site.USER_BASE` is for pip install --user ...
     # * `cmd.install_data` is for system-wide installation.
-    for path in (cmd.install_data, site.USER_BASE, sys.prefix, sys.exec_prefix):
+    for path in (site.USER_BASE, sys.prefix, sys.exec_prefix):
         root_dir = os.path.join(path, 'share', '${PROJECT_NAME}')
         if os.path.isdir(root_dir):
             return root_dir
