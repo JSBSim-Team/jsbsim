@@ -242,7 +242,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     scripts=['JSBSim'],
-    install_requires=['numpy', 'setuptools'],
+    install_requires=['numpy'],
     ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.7",
     data_files=data_files,
