@@ -328,10 +328,10 @@ jobs:
     needs: XML-validation
     runs-on: windows-latest
     steps:
-      - name: Set up Python 3.6
+      - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
-          python-version: '3.6'
+          python-version: '3.7'
       - name: Install Python packages
         run: pip install -U cython numpy pandas scipy wheel pywin32
       - name: Checkout JSBSim
