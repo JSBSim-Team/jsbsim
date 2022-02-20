@@ -162,16 +162,19 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       string lookup_axis = axisElement->GetAttributeValue("lookup");
       if (lookup_axis == string("row")) {
         lookupProperty[eRow] = node;
+        dimension = std::max(dimension, 1u);
       } else if (lookup_axis == string("column")) {
         lookupProperty[eColumn] = node;
+        dimension = std::max(dimension, 2u);
       } else if (lookup_axis == string("table")) {
         lookupProperty[eTable] = node;
+        dimension = std::max(dimension, 3u);
       } else if (!lookup_axis.empty()) {
         throw BaseException("Lookup table axis specification not understood: " + lookup_axis);
       } else { // assumed single dimension table; row lookup
         lookupProperty[eRow] = node;
+        dimension = std::max(dimension, 1u);
       }
-      dimension++;
       axisElement = el->FindNextElement("independentVar");
     }
 
@@ -222,6 +225,37 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     std::cerr << el->ReadFrom()
               << "FGTable: <tableData> elements are missing" << endl;
     throw BaseException("FGTable: <tableData> elements are missing");
+  }
+
+  // Check that the lookup axes match the declared dimension of the table.
+  if (!internal && brkpt_string.empty()) {
+    switch (dimension) {
+    case 3u:
+      if (!lookupProperty[eTable]) {
+        std::cerr << el->ReadFrom()
+                  << "FGTable: missing lookup axis \"table\"";
+        throw BaseException("FGTable: missing lookup axis \"table\"");
+      }
+      // Don't break as we want to investigate the other lookup axes as well.
+    case 2u:
+      if (!lookupProperty[eColumn]) {
+        std::cerr << el->ReadFrom()
+                  << "FGTable: missing lookup axis \"column\"";
+        throw BaseException("FGTable: missing lookup axis \"column\"");
+      }
+      // Don't break as we want to investigate the last lookup axes as well.
+    case 1u:
+      if (!lookupProperty[eRow]) {
+        std::cerr << el->ReadFrom()
+                  << "FGTable: missing lookup axis \"row\"";
+        throw BaseException("FGTable: missing lookup axis \"row\"");
+      }
+      break;
+    default:
+      std::cerr << el->ReadFrom() << endl << "No dimension given" << endl;
+      throw BaseException("FGTable: dimensionless table");
+      break;
+    }
   }
 
   stringstream buf;

@@ -1068,7 +1068,7 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
-  void testIncompleteDefinition() {
+  void test1DMissingLookupAxis() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -1083,6 +1083,63 @@ public:
     Element* el_table = elm->FindElement("table");
 
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test2DMissingColumnLookupAxis1() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar>x</independentVar>"
+                                  "    <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
+  }
+
+  void test2DMissingColumnLookupAxis2() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
+  }
+
+  void test2DMissingRowLookupAxis() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
   void test2DMissingData() {
@@ -1105,9 +1162,9 @@ public:
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
-                                  "  <table name=\"test2\">"
-                                  "    <independentVar>x</independentVar>"
-                                  "    <independentVar lookup=\"wrong\">y</independentVar>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
                                   "    <tableData>"
                                   "            0.0\n"
                                   "      2.0   3.0\n"
@@ -1125,9 +1182,9 @@ public:
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
-                                  "  <table name=\"test2\">"
-                                  "    <independentVar>x</independentVar>"
-                                  "    <independentVar lookup=\"wrong\">y</independentVar>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
                                   "    <tableData>"
                                   "            0.0 1.0\n"
                                   "      2.0   3.0 4.0\n"
@@ -1180,9 +1237,9 @@ public:
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
-                                  "  <table name=\"test2\">"
-                                  "    <independentVar>x</independentVar>"
-                                  "    <independentVar lookup=\"wrong\">y</independentVar>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
                                   "    <tableData>"
                                   "            1.0  0.0\n"
                                   "      2.0   3.0 -2.0\n"
@@ -1200,7 +1257,7 @@ public:
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
-                                  "  <table name=\"test2\">"
+                                  "  <table name=\"test\">"
                                   "    <independentVar lookup=\"row\">x</independentVar>"
                                   "    <independentVar lookup=\"column\">y</independentVar>"
                                   "    <independentVar lookup=\"table\">z</independentVar>"
@@ -1210,6 +1267,81 @@ public:
                                   "      4.0  -1.0  0.5\n"
                                   "    </tableData>"
                                   "    <tableData breakPoint=\"0.5\">"
+                                  "            0.5  1.5\n"
+                                  "      2.5   3.5 -2.5\n"
+                                  "      4.5  -1.5  1.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DMissingRowLookupAxis() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"2.0\">"
+                                  "            0.5  1.5\n"
+                                  "      2.5   3.5 -2.5\n"
+                                  "      4.5  -1.5  1.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DMissingColumnLookupAxis() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"2.0\">"
+                                  "            0.5  1.5\n"
+                                  "      2.5   3.5 -2.5\n"
+                                  "      4.5  -1.5  1.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DMissingTableLookupAxis() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"2.0\">"
                                   "            0.5  1.5\n"
                                   "      2.5   3.5 -2.5\n"
                                   "      4.5  -1.5  1.0\n"
