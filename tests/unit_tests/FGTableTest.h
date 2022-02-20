@@ -1021,12 +1021,12 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
-  void testLookupError() {
+  void testLookupNameError() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
-                                  "  <table name=\"test2\">"
+                                  "  <table name=\"test\">"
                                   "    <independentVar>x</independentVar>"
                                   "    <independentVar lookup=\"wrong\">y</independentVar>"
                                   "    <tableData>"
@@ -1039,6 +1039,33 @@ public:
     Element* el_table = elm->FindElement("table");
 
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
+  }
+
+  void test1DInternalMissingTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test1DMissingTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "    <independentVar>x</independentVar>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
   void testIncompleteDefinition() {
@@ -1056,6 +1083,21 @@ public:
     Element* el_table = elm->FindElement("table");
 
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test2DMissingData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
   void testNotEnoughColumns() {
@@ -1172,6 +1214,22 @@ public:
                                   "      2.5   3.5 -2.5\n"
                                   "      4.5  -1.5  1.0\n"
                                   "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DMissingData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
                                   "  </table>"
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");

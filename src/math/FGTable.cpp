@@ -183,12 +183,15 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       dimension = 3; // this is a 3D table
     } else {
       tableData = el->FindElement("tableData");
-      string test_line = tableData->GetDataLine(1);  // examine second line in table for dimension
-      if (FindNumColumns(test_line) == 2) dimension = 1;    // 1D table
-      else if (FindNumColumns(test_line) > 2) dimension = 2; // 2D table
-      else {
-        std::cerr << tableData->ReadFrom()
-                  << "Invalid number of columns in table" << endl;
+      if (tableData) {
+        string test_line = tableData->GetDataLine(1);  // examine second line in table for dimension
+        if (FindNumColumns(test_line) == 2) dimension = 1;    // 1D table
+        else if (FindNumColumns(test_line) > 2) dimension = 2; // 2D table
+        else {
+          std::cerr << tableData->ReadFrom()
+                    << "Invalid number of columns in table" << endl;
+          throw BaseException("Invalid number of columns in table");
+        }
       }
     }
 
@@ -206,10 +209,19 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // end lookup property code
 
   if (brkpt_string.empty()) {                  // Not a 3D table "table element"
+    // Force the dimension to 3 if there are several instances of <tableData>.
+    // This is needed for sanity checks.
+    if (el->GetNumElements("tableData") > 1) dimension = 3;
     tableData = el->FindElement("tableData");
   } else {                                     // This is a table in a 3D table
     tableData = el;
     dimension = 2;                             // Currently, infers 2D table
+  }
+
+  if (!tableData) {
+    std::cerr << el->ReadFrom()
+              << "FGTable: <tableData> elements are missing" << endl;
+    throw BaseException("FGTable: <tableData> elements are missing");
   }
 
   stringstream buf;
