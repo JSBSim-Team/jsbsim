@@ -125,26 +125,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   stringstream buf;
   string brkpt_string;
   Element *tableData = nullptr;
-  string operation_types = "function, product, sum, difference, quotient,"
-                           "pow, abs, sin, cos, asin, acos, tan, atan, table";
 
   // Is this an internal lookup table?
 
   internal = false;
   Name = el->GetAttributeValue("name"); // Allow this table to be named with a property
   string call_type = el->GetAttributeValue("type");
-  if (call_type == string("internal")) {
-    Element* parent_element = el->GetParent();
-    string parent_type = parent_element->GetName();
-    if (operation_types.find(parent_type) == string::npos) {
-      internal = true;
-    } else {
-      // internal table is a child element of a restricted type
-      std::cerr << el->ReadFrom()
-                << "  An internal table cannot be nested within another type,"
-                << " such as a function. The 'internal' keyword of table "
-                << Name << "is ignored." << endl;
-    }
+  if (call_type == "internal") {
+    internal = true;
   } else if (!call_type.empty()) {
     std::cerr << el->ReadFrom()
               <<"  An unknown table type attribute is listed: " << call_type
