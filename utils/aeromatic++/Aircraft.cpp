@@ -903,6 +903,34 @@ Aeromatic::write_XML()
 }
 
 bool
+Aeromatic::write_fgfs()
+{
+    std::string fname = _dir + "/" + std::string(_name) + "-set.xml";
+
+    std::ofstream file;
+    file.open(fname.c_str());
+    if (file.fail() || file.bad())
+    {
+        file.close();
+        return false;
+    }
+
+    file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+    file << std::endl;
+    file << "<PropertyList>" << std::endl;
+    file << "  <sim>" << std::endl;
+    file << "    <flight-model>jsb</flight-model>" << std::endl;
+    file << "    <aero>" << std::string(_name) << "</aero>" << std::endl;
+    file << "  </sim>" << std::endl;
+    file << "</PropertyList>" << std::endl; 
+
+
+    file.close();
+
+    return true;
+}
+
+bool
 Aeromatic::write_JSON()
 {
     std::string fname = _dir + "/" + std::string(_name) + ".json";

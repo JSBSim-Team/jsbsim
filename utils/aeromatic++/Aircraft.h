@@ -532,6 +532,7 @@ public:
     }
 
     bool fdm() override;
+    bool write_fgfs();
     bool write_XML();
     bool write_JSON();
 
