@@ -300,7 +300,7 @@ private:
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   FGPropertyValue_ptr lookupProperty[3];
   std::vector<double> Data;
-  std::vector <FGTable*> Tables;
+  std::vector<std::unique_ptr<FGTable>> Tables;
   unsigned int nRows, nCols;
   std::string Name;
   void bind(Element* el, const std::string& Prefix);

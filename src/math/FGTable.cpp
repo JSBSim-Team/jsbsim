@@ -85,7 +85,11 @@ FGTable::FGTable(const FGTable& t)
   lookupProperty[1] = t.lookupProperty[1];
   lookupProperty[2] = t.lookupProperty[2];
 
-  Tables = t.Tables;
+  // Deep copy of t.Tables
+  Tables.reserve(t.Tables.size());
+  for(const auto &t: t.Tables)
+    Tables.push_back(std::make_unique<FGTable>(*t));
+
   Data = t.Data;
 }
 
@@ -261,7 +265,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
     tableData = el->FindElement("tableData");
     while (tableData) {
-      Tables.push_back(new FGTable(PropertyManager, tableData));
+      Tables.push_back(std::make_unique<FGTable>(PropertyManager, tableData));
       Data.push_back(tableData->GetAttributeValueAsNumber("breakPoint"));
       Tables.back()->lookupProperty[eRow] = lookupProperty[eRow];
       Tables.back()->lookupProperty[eColumn] = lookupProperty[eColumn];
@@ -349,8 +353,6 @@ FGTable::~FGTable()
     if (node && node->isTied())
       PropertyManager->Untie(node);
   }
-
-  for (auto t: Tables) delete t;
 
   Debug(1);
 }
