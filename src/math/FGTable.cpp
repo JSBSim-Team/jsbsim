@@ -401,10 +401,12 @@ double FGTable::GetValue(double key) const
   unsigned int r = 2;
   while (Data[2*r] < key) r++;
 
-  double Span = Data[2*r] - Data[2*r-2];
-  double Factor = (key - Data[2*r-2]) / Span;
+  double x0 = Data[2*r-2];
+  double Span = Data[2*r] - x0;
+  double Factor = (key - x0) / Span;
 
-  return Factor*Data[2*r+1] + (1.0-Factor)*Data[2*r-1];
+  double y0 = Data[2*r-1];
+  return Factor*(Data[2*r+1] - y0) + y0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,14 +415,15 @@ double FGTable::GetValue(double rowKey, double colKey) const
 {
   unsigned int c = 2;
   while(Data[c] < colKey && c < nCols) c++;
-  double Span = Data[c] - Data[c-1];
-  double cFactor = Constrain(0.0, (colKey - Data[c-1]) / Span, 1.0);
+  double x0 = Data[c-1];
+  double Span = Data[c] - x0;
+  double cFactor = Constrain(0.0, (colKey - x0) / Span, 1.0);
 
   unsigned int r = 2;
   while(Data[r*(nCols+1)] < rowKey && r < nRows) r++;
-  Span = Data[r*(nCols+1)] - Data[(r-1)*(nCols+1)];
-  double rFactor = Constrain(0.0, (rowKey - Data[(r-1)*(nCols+1)]) / Span,
-                             1.0);
+  x0 = Data[(r-1)*(nCols+1)];
+  Span = Data[r*(nCols+1)] - x0;
+  double rFactor = Constrain(0.0, (rowKey - x0) / Span, 1.0);
   double col1temp = rFactor*Data[r*(nCols+1)+c-1]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c-1];
   double col2temp = rFactor*Data[r*(nCols+1)+c]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c];
 
@@ -443,11 +446,12 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
   unsigned int r = 2;
   while (Data[r] < tableKey) r++;
 
-  double Span = Data[r] - Data[r-1];
-  double Factor = (tableKey - Data[r-1]) / Span;
+  double x0 = Data[r-1];
+  double Span = Data[r] - x0;
+  double Factor = (tableKey - x0) / Span;
 
-  return Factor*(Tables[r-1]->GetValue(rowKey, colKey) - Tables[r-2]->GetValue(rowKey, colKey))
-        + Tables[r-2]->GetValue(rowKey, colKey);
+  double y0 = Tables[r-2]->GetValue(rowKey, colKey);
+  return Factor*(Tables[r-1]->GetValue(rowKey, colKey) - y0) + y0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
