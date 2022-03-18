@@ -304,8 +304,6 @@ private:
   std::vector<double> Data;
   std::vector <FGTable*> Tables;
   unsigned int nRows, nCols;
-  int colCounter, rowCounter;
-  mutable int lastRowIndex, lastColumnIndex;
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
   void Debug(int from);
