@@ -36,6 +36,7 @@ JSB  1/9/00          Created
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <limits>
 #include <assert.h>
 
 #include "FGTable.h"
@@ -53,6 +54,9 @@ FGTable::FGTable(int NRows)
   : nRows(NRows), nCols(1), PropertyManager(nullptr)
 {
   Type = tt1D;
+  // Fill unused elements with NaNs to detect illegal access.
+  Data.push_back(std::numeric_limits<double>::quiet_NaN());
+  Data.push_back(std::numeric_limits<double>::quiet_NaN());
   Debug(0);
 }
 
@@ -62,6 +66,8 @@ FGTable::FGTable(int NRows, int NCols)
   : nRows(NRows), nCols(NCols), PropertyManager(nullptr)
 {
   Type = tt2D;
+  // Fill unused elements with NaNs to detect illegal access.
+  Data.push_back(std::numeric_limits<double>::quiet_NaN());
   Debug(0);
 }
 
@@ -220,6 +226,9 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     nRows = tableData->GetNumDataLines();
     nCols = 1;
     Type = tt1D;
+    // Fill unused elements with NaNs to detect illegal access.
+    Data.push_back(std::numeric_limits<double>::quiet_NaN());
+    Data.push_back(std::numeric_limits<double>::quiet_NaN());
     *this << buf;
     break;
   case 2:
@@ -239,12 +248,16 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     }
 
     Type = tt2D;
+    // Fill unused elements with NaNs to detect illegal access.
+    Data.push_back(std::numeric_limits<double>::quiet_NaN());
     *this << buf;
     break;
   case 3:
     nRows = el->GetNumElements("tableData");
     nCols = 1;
     Type = tt3D;
+    // Fill unused elements with NaNs to detect illegal access.
+    Data.push_back(std::numeric_limits<double>::quiet_NaN());
 
     tableData = el->FindElement("tableData");
     while (tableData) {
@@ -272,8 +285,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     nameel=nameel->GetParent();
 
   // check breakpoints, if applicable
-  if (dimension > 2) {
-    for (unsigned int b=1; b<Tables.size(); ++b) {
+  if (Type == tt3D) {
+    for (unsigned int b=2; b<=Tables.size(); ++b) {
       if (Data[b] <= Data[b-1]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
@@ -288,8 +301,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
   }
 
   // check columns, if applicable
-  if (nCols > 1) {
-    for (unsigned int c=1; c<nCols; ++c) {
+  if (Type == tt2D) {
+    for (unsigned int c=2; c<=nCols; ++c) {
       if (Data[c] <= Data[c-1]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
@@ -304,17 +317,16 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
   }
 
   // check rows
-  if (dimension < 3) { // in 3D tables, check only rows of subtables
-    unsigned int shift = Type == tt2D ? 1 : 0;
-    for (unsigned int r=Type == tt2D ? 2 : 1; r<nRows; ++r) {
-      if (Data[r*(nCols+1)-shift]<=Data[(r-1)*(nCols+1)-shift]) {
+  if (Type != tt3D) { // in 3D tables, check only rows of subtables
+    for (unsigned int r=2; r<=nRows; ++r) {
+      if (Data[r*(nCols+1)]<=Data[(r-1)*(nCols+1)]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
                   << "  FGTable: row lookup is not monotonically increasing" << endl
                   << "  in row " << r;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
-                  << "  " << Data[r*(nCols+1)-shift] << "<=" << Data[(r-1)*(nCols+1)-shift] << endl;
+                  << "  " << Data[r*(nCols+1)] << "<=" << Data[(r-1)*(nCols+1)] << endl;
         throw BaseException("FGTable: row lookup is not monotonically increasing");
       }
     }
@@ -377,39 +389,38 @@ double FGTable::GetValue(double key) const
 {
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
-  if( key <= Data[0] )
-    return Data[1];
-  else if ( key >= Data[2*nRows-2] )
-    return Data[2*nRows-1];
+  if (key <= Data[2])
+    return Data[3];
+  else if (key >= Data[2*nRows])
+    return Data[2*nRows+1];
 
   // Search for the right breakpoint.
   // This is a linear search, the algorithm is O(n).
-  unsigned int r = 1;
+  unsigned int r = 2;
   while (Data[2*r] < key) r++;
 
   double Span = Data[2*r] - Data[2*r-2];
   double Factor = (key - Data[2*r-2]) / Span;
 
-  return Factor*(Data[2*r+1] - Data[2*r-1]) + Data[2*r-1];
+  return Factor*Data[2*r+1] + (1.0-Factor)*Data[2*r-1];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGTable::GetValue(double rowKey, double colKey) const
 {
-  unsigned int c = 1;
-  while(Data[c] < colKey && c+1 < nCols) c++;
+  unsigned int c = 2;
+  while(Data[c] < colKey && c < nCols) c++;
   double Span = Data[c] - Data[c-1];
   double cFactor = Constrain(0.0, (colKey - Data[c-1]) / Span, 1.0);
 
-  unsigned int r = 1;
-  while(Data[r*(nCols+1)+nCols] < rowKey && r+1 < nRows) r++;
-  Span = Data[r*(nCols+1)+nCols] - Data[(r-1)*(nCols+1)+nCols];
-  double rFactor = Constrain(0.0, (rowKey - Data[(r-1)*(nCols+1)+nCols]) / Span,
+  unsigned int r = 2;
+  while(Data[r*(nCols+1)] < rowKey && r < nRows) r++;
+  Span = Data[r*(nCols+1)] - Data[(r-1)*(nCols+1)];
+  double rFactor = Constrain(0.0, (rowKey - Data[(r-1)*(nCols+1)]) / Span,
                              1.0);
-  c += nCols;
-  double col1temp = rFactor*(Data[r*(nCols+1)+c]-Data[(r-1)*(nCols+1)+c])+Data[(r-1)*(nCols+1)+c];
-  double col2temp = rFactor*(Data[r*(nCols+1)+c+1]-Data[(r-1)*(nCols+1)+c+1])+Data[(r-1)*(nCols+1)+c+1];
+  double col1temp = rFactor*Data[r*(nCols+1)+c-1]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c-1];
+  double col2temp = rFactor*Data[r*(nCols+1)+c]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c];
 
   return cFactor*(col2temp-col1temp)+col1temp;
 }
@@ -420,21 +431,21 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
-  if(tableKey <= Data[0])
+  if(tableKey <= Data[1])
     return Tables[0]->GetValue(rowKey, colKey);
-  else if (tableKey >= Data[nRows-1])
+  else if (tableKey >= Data[nRows])
     return Tables[nRows-1]->GetValue(rowKey, colKey);
 
   // Search for the right breakpoint.
   // This is a linear search, the algorithm is O(n).
-  unsigned int r = 1;
+  unsigned int r = 2;
   while (Data[r] < tableKey) r++;
 
   double Span = Data[r] - Data[r-1];
   double Factor = (tableKey - Data[r-1]) / Span;
 
-  return Factor*(Tables[r]->GetValue(rowKey, colKey) - Tables[r-1]->GetValue(rowKey, colKey))
-        + Tables[r-1]->GetValue(rowKey, colKey);
+  return Factor*(Tables[r-1]->GetValue(rowKey, colKey) - Tables[r-2]->GetValue(rowKey, colKey))
+        + Tables[r-2]->GetValue(rowKey, colKey);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,13 +475,8 @@ FGTable& FGTable::operator<<(const double x)
 
 void FGTable::Print(void)
 {
-  int startRow=0;
-  int startCol=0;
-
-  if (Type == tt1D || Type == tt3D) startRow = 1;
-  if (Type == tt3D) startCol = 1;
-
   ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream
+  cout.precision(4);
 
   switch(Type) {
     case tt1D:
@@ -484,16 +490,20 @@ void FGTable::Print(void)
                                           << Tables.size() << " tables." << endl;
       break;
   }
-  cout.precision(4);
-  unsigned int p = 0;
+  unsigned int startCol=1, startRow=1;
+  unsigned int p = 1;
+
+  if (Type == tt1D) {
+    startCol = 0;
+    p = 2;
+  }
+  if (Type == tt2D) startRow = 0;
 
   for (unsigned int r=startRow; r<=nRows; r++) {
     cout << "\t";
     if (Type == tt2D) {
-      if (r == 0) {
-        startCol = 1;
+      if (r == startRow)
         cout << "\t";
-      }
       else
         startCol = 0;
     }

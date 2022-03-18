@@ -274,9 +274,7 @@ public:
   FGTable& operator<<(const double x);
 
   double GetElement(unsigned int r, unsigned int c) const {
-    if (Type == tt3D) c -= r;
-    if (Type == tt1D || Type == tt3D) r--;
-    if (Type == tt2D) c--;
+    if (Type == tt3D) return Data[r];
     return Data[r*(nCols+1)+c];
   }
 
