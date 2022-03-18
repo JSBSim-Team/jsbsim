@@ -302,8 +302,6 @@ private:
   std::vector<double> Data;
   std::vector <FGTable*> Tables;
   unsigned int nRows, nCols;
-  int colCounter, rowCounter;
-  mutable int lastRowIndex, lastColumnIndex;
   FGPropertyManager* const PropertyManager;
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
