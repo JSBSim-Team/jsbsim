@@ -271,7 +271,7 @@ public:
        */
 
   void operator<<(std::istream&);
-  FGTable& operator<<(const double n);
+  FGTable& operator<<(const double x);
 
   inline double GetElement(int r, int c) const {return Data[r][c];}
 
