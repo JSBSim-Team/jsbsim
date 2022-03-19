@@ -187,13 +187,41 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     } else {
       tableData = el->FindElement("tableData");
       if (tableData) {
-        string test_line = tableData->GetDataLine(1);  // examine second line in table for dimension
-        if (FindNumColumns(test_line) == 2) dimension = 1;    // 1D table
-        else if (FindNumColumns(test_line) > 2) dimension = 2; // 2D table
+        unsigned int nLines = tableData->GetNumDataLines();
+        unsigned int nColumns = FindNumColumns(tableData->GetDataLine(0));
+        if (nLines > 1) {
+          unsigned int nColumns1 = FindNumColumns(tableData->GetDataLine(1));
+          if (nColumns1 == nColumns + 1) {
+            dimension = 2;
+            nColumns = nColumns1;
+          }
+          else
+            dimension = 1;
+
+          // Check that every line (but the header line) has the same number of
+          // columns.
+          for(unsigned int i=1; i<nLines; ++i) {
+            if (FindNumColumns(tableData->GetDataLine(i)) != nColumns) {
+              std::cerr << tableData->ReadFrom()
+                        << "Invalid number of columns in line "
+                        << tableData->GetLineNumber()+i << endl;
+              throw BaseException("Invalid number of columns in table");
+            }
+          }
+        }
         else {
+          if (nLines == 0) {
+            std::cerr << tableData->ReadFrom()
+                      << "<tableData> is empty." << endl;
+            throw BaseException("<tableData> is empty.");
+          }
+          dimension = 1;
+        }
+
+        if (dimension == 1 && nColumns != 2) {
           std::cerr << tableData->ReadFrom()
-                    << "Invalid number of columns in table" << endl;
-          throw BaseException("Invalid number of columns in table");
+                    << "Too many columns for a 1D table" << endl;
+          throw BaseException("Too many columns for a 1D table");
         }
       }
     }
@@ -283,20 +311,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     break;
   case 2:
     nRows = tableData->GetNumDataLines()-1;
-
-    if (nRows >= 2) {
-      nCols = FindNumColumns(tableData->GetDataLine(0));
-      if (nCols < 2) {
-        std::cerr << tableData->ReadFrom()
-                  << "Not enough columns in table data" << endl;
-        throw BaseException("Not enough columns in table data.");
-      }
-    } else {
-      std::cerr << tableData->ReadFrom()
-                << "Not enough rows in table data" << endl;
-      throw BaseException("Not enough rows in the table data.");
-    }
-
+    nCols = FindNumColumns(tableData->GetDataLine(0));
     Type = tt2D;
     // Fill unused elements with NaNs to detect illegal access.
     Data.push_back(std::numeric_limits<double>::quiet_NaN());
