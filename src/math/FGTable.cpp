@@ -122,7 +122,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 {
   unsigned int i;
 
-  stringstream buf;
   string brkpt_string;
   Element *tableData = nullptr;
 
@@ -206,8 +205,8 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   } else {
     brkpt_string = el->GetAttributeValue("breakPoint");
     if (brkpt_string.empty()) {
-     // no independentVars found, and table is not marked as internal, nor is it
-     // a 3D table
+      // no independentVars found, and table is not marked as internal, nor is it
+      // a 3D table
       std::cerr << el->ReadFrom()
                 << "No independentVars found, and table is not marked as internal,"
                 << " nor is it a 3D table." << endl;
@@ -222,6 +221,8 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     tableData = el;
     dimension = 2;                             // Currently, infers 2D table
   }
+
+  stringstream buf;
 
   for (i=0; i<tableData->GetNumDataLines(); i++) {
     string line = tableData->GetDataLine(i);
@@ -242,7 +243,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     colCounter = 0;
     rowCounter = 1;
     Data = Allocate();
-    Debug(0);
     lastRowIndex = lastColumnIndex = 2;
     *this << buf;
     break;
@@ -288,12 +288,13 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       tableData = el->FindNextElement("tableData");
     }
 
-    Debug(0);
     break;
   default:
     cout << "No dimension given" << endl;
     break;
   }
+
+  Debug(0);
 
   // Sanity checks: lookup indices must be increasing monotonically
   unsigned int r,c,b;
@@ -395,15 +396,10 @@ FGTable::~FGTable()
 
 double FGTable::GetValue(void) const
 {
-  double temp = 0;
-  double temp2 = 0;
-
   switch (Type) {
   case tt1D:
     assert(lookupProperty[eRow]);
-    temp = lookupProperty[eRow]->getDoubleValue();
-    temp2 = GetValue(temp);
-    return temp2;
+    return GetValue(lookupProperty[eRow]->getDoubleValue());
   case tt2D:
     assert(lookupProperty[eRow]);
     assert(lookupProperty[eColumn]);
@@ -418,7 +414,7 @@ double FGTable::GetValue(void) const
                     lookupProperty[eTable]->getDoubleValue());
   default:
     cerr << "Attempted to GetValue() for invalid/unknown table type" << endl;
-    throw(string("Attempted to GetValue() for invalid/unknown table type"));
+    throw BaseException("Attempted to GetValue() for invalid/unknown table type");
   }
 }
 
@@ -565,9 +561,9 @@ void FGTable::operator<<(istream& in_stream)
 
 // Put some error handling in here if trying to access out of range row, col.
 
-FGTable& FGTable::operator<<(const double n)
+FGTable& FGTable::operator<<(const double x)
 {
-  Data[rowCounter][colCounter] = n;
+  Data[rowCounter][colCounter] = x;
   if (colCounter == (int)nCols) {
     colCounter = 0;
     rowCounter++;
@@ -597,19 +593,18 @@ void FGTable::Print(void)
       cout << "    2 dimensional table with " << nRows << " rows, " << nCols << " columns." << endl;
       break;
     case tt3D:
-      cout << "    3 dimensional table with " << nRows << " rows, "
-                                          << nCols << " columns "
+      cout << "    3 dimensional table with " << nRows << " breakpoints, "
                                           << Tables.size() << " tables." << endl;
       break;
   }
   cout.precision(4);
   for (unsigned int r=startRow; r<=nRows; r++) {
-    cout << "	";
+    cout << "\t";
     for (unsigned int c=startCol; c<=nCols; c++) {
       if (r == 0 && c == 0) {
-        cout << "	";
+        cout << "\t";
       } else {
-        cout << Data[r][c] << "	";
+        cout << Data[r][c] << "\t";
         if (Type == tt3D) {
           cout << endl;
           Tables[r-1]->Print();
@@ -649,7 +644,7 @@ void FGTable::bind(Element* el, const string& Prefix)
       if (_property->isTied()) {
         cerr << el->ReadFrom()
              << "Property " << tmp << " has already been successfully bound (late)." << endl;
-        throw("Failed to bind the property to an existing already tied node.");
+        throw BaseException("Failed to bind the property to an existing already tied node.");
       }
     }
 
@@ -680,9 +675,7 @@ void FGTable::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    if (from == 0) { // Constructor
-
-    }
+    if (from == 0) { } // Constructor
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     if (from == 0) cout << "Instantiated: FGTable" << endl;
