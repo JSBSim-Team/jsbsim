@@ -505,13 +505,21 @@ double FGTable::GetValue(double key) const
 
 double FGTable::GetValue(double rowKey, double colKey) const
 {
+  if (nCols == 1) return GetValue(rowKey);
+
   assert(Data.size() == (nCols+1)*(nRows+1));
+
   unsigned int c = 2;
   while(Data[c] < colKey && c < nCols) c++;
   double x0 = Data[c-1];
   double Span = Data[c] - x0;
   assert(Span > 0.0);
   double cFactor = Constrain(0.0, (colKey - x0) / Span, 1.0);
+
+  if (nRows == 1) {
+    double y0 = Data[(nCols+1)+c-1];
+    return cFactor*(Data[(nCols+1)+c] - y0) + y0;
+  }
 
   unsigned int r = 2;
   while(Data[r*(nCols+1)] < rowKey && r < nRows) r++;

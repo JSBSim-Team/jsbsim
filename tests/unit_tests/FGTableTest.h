@@ -429,22 +429,54 @@ public:
     FGTable t_1x1(1,1);
     t_1x1 << 0.0
           << 1.0 << 2.0;
-    // SEGFAULT: Need to fix FGTable
-    // TS_ASSERT_EQUALS(t_1x1.GetValue(0.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(0.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(1.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(2.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(0.0, 0.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(1.0, 0.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(2.0, 0.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(0.0, 1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(1.0, 1.0), 2.0);
+    TS_ASSERT_EQUALS(t_1x1.GetValue(2.0, 1.0), 2.0);
 
     FGTable t_2x1(2,1);
     t_2x1 << 0.0
           << 1.0 << 2.0
           << 3.0 << -1.0;
-    // SEGFAULT: Need to fix FGTable
-    // TS_ASSERT_EQUALS(t_2x1.GetValue(0.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(0.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(1.0, -1.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(2.0, -1.0), 0.5);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(3.0, -1.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(4.0, -1.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(0.0, 0.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(1.0, 0.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(2.0, 0.0), 0.5);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(3.0, 0.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(4.0, 0.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(0.0, 1.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(1.0, 1.0), 2.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(2.0, 1.0), 0.5);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(3.0, 1.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x1.GetValue(4.0, 1.0), -1.0);
 
     FGTable t_1x2(1,2);
     t_1x2 << 0.0 << 1.0
           << 2.0 << 3.0 << -1.0;
-    // SEGFAULT: Need to fix FGTable
-    // TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, -1.0), 3.0);
-    // TS_ASSERT_EQUALS(t_1x2.GetValue(0.5, 2.0), 1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, -1.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, 0.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, 0.5), 1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, 1.0), -1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(1.0, 2.0), -1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(2.0, -1.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(2.0, 0.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(2.0, 0.5), 1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(2.0, 1.0), -1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(2.0, 2.0), -1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(3.0, -1.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(3.0, 0.0), 3.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(3.0, 0.5), 1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(3.0, 1.0), -1.0);
+    TS_ASSERT_EQUALS(t_1x2.GetValue(3.0, 2.0), -1.0);
 
     FGTable t_2x2(2,2);
     t_2x2 << 0.0 << 1.0
