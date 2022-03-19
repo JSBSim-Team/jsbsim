@@ -293,7 +293,7 @@ public:
 private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
-  bool internal;
+  bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   FGPropertyValue_ptr lookupProperty[3];
   double** Data;
