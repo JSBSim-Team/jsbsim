@@ -499,11 +499,24 @@ void FGTable::operator<<(istream& in_stream)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Put some error handling in here if trying to access out of range row, col.
-
 FGTable& FGTable::operator<<(const double x)
 {
   Data.push_back(x);
+
+  // Check column is monotically increasing
+  size_t n = Data.size();
+  if (Type == tt2D && nCols > 1 && n >= 3 && n <= nCols+1) {
+    if (Data.at(n-1) <= Data.at(n-2))
+      throw BaseException("FGTable: column lookup is not monotonically increasing");
+  }
+
+  // Check row is monotically increasing
+  size_t row = (n-1) / (nCols+1);
+  if (row >=2 && row*(nCols+1) == n-1) {
+    if (Data.at(row*(nCols+1)) <= Data.at((row-1)*(nCols+1)))
+      throw BaseException("FGTable: row lookup is not monotonically increasing");
+  }
+
   return *this;
 }
 

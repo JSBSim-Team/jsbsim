@@ -245,7 +245,7 @@ public:
     x->setDoubleValue(1.5);
     TS_ASSERT_EQUALS(t_2x1.GetValue(), 0.25);
     TS_ASSERT_EQUALS(output->getDoubleValue(), 0.25);
-}
+  }
 
   void testLoadWithStringPrefix() {
     auto pm = make_shared<FGPropertyManager>();
@@ -1097,7 +1097,26 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
-  void testRowsNotIncreasing() {
+  void test1DRowsNotIncreasing() {
+    FGTable t(2);
+    t << 1.0 << -1.0;
+    TS_ASSERT_THROWS(t << 1.0, BaseException&);
+  }
+
+  void test2DColumnsNotIncreasing() {
+    FGTable t(2,2);
+    t << 1.0;
+    TS_ASSERT_THROWS(t << 0.9, BaseException&);
+  }
+
+  void test2DRowsNotIncreasing() {
+    FGTable t(2,2);
+    t << 1.0 << 2.0
+      << 1.0 << -1.0 << -2.5;
+    TS_ASSERT_THROWS(t << 0.9, BaseException&);
+  }
+
+  void testXMLRowsNotIncreasing() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -1114,7 +1133,7 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
-  void testColumnsNotIncreasing() {
+  void testXMLColumnsNotIncreasing() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
