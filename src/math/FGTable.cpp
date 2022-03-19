@@ -127,7 +127,6 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 
   // Is this an internal lookup table?
 
-  internal = false;
   Name = el->GetAttributeValue("name"); // Allow this table to be named with a property
   string call_type = el->GetAttributeValue("type");
   if (call_type == "internal") {
@@ -396,6 +395,8 @@ FGTable::~FGTable()
 
 double FGTable::GetValue(void) const
 {
+  assert(!internal);
+
   switch (Type) {
   case tt1D:
     assert(lookupProperty[eRow]);

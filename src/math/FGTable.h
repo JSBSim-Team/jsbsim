@@ -292,7 +292,7 @@ public:
 private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
-  bool internal;
+  bool internal = false;
   FGPropertyValue_ptr lookupProperty[3];
   double** Data;
   std::vector <FGTable*> Tables;
