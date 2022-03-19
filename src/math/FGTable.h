@@ -305,6 +305,7 @@ private:
   FGPropertyManager* const PropertyManager;
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
+  void missingData(Element *el, unsigned int expected_size, size_t actual_size);
   void Debug(int from);
 };
 }
