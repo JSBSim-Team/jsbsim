@@ -274,7 +274,12 @@ public:
   void operator<<(std::istream&);
   FGTable& operator<<(const double x);
 
-  inline double GetElement(int r, int c) const {return Data[r][c];}
+  double GetElement(unsigned int r, unsigned int c) const {
+    if (Type == tt3D) c -= r;
+    if (Type == tt1D || Type == tt3D) r--;
+    if (Type == tt2D) c--;
+    return Data[r*(nCols+1)+c];
+  }
 
   double operator()(unsigned int r, unsigned int c) const
   { return GetElement(r, c); }
@@ -296,12 +301,11 @@ private:
   bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   FGPropertyValue_ptr lookupProperty[3];
-  double** Data;
+  std::vector<double> Data;
   std::vector <FGTable*> Tables;
   unsigned int nRows, nCols;
   int colCounter, rowCounter;
   mutable int lastRowIndex, lastColumnIndex;
-  double** Allocate(void);
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
   void Debug(int from);

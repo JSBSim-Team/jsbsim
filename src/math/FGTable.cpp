@@ -55,7 +55,6 @@ FGTable::FGTable(int NRows)
   Type = tt1D;
   colCounter = 0;
   rowCounter = 1;
-  Data = Allocate();
   Debug(0);
   lastRowIndex=lastColumnIndex=2;
 }
@@ -68,7 +67,6 @@ FGTable::FGTable(int NRows, int NCols)
   Type = tt2D;
   colCounter = 1;
   rowCounter = 0;
-  Data = Allocate();
   Debug(0);
   lastRowIndex=lastColumnIndex=2;
 }
@@ -90,12 +88,7 @@ FGTable::FGTable(const FGTable& t)
   lookupProperty[2] = t.lookupProperty[2];
 
   Tables = t.Tables;
-  Data = Allocate();
-  for (unsigned int r=0; r<=nRows; r++) {
-    for (unsigned int c=0; c<=nCols; c++) {
-      Data[r][c] = t.Data[r][c];
-    }
-  }
+  Data = t.Data;
   lastRowIndex = t.lastRowIndex;
   lastColumnIndex = t.lastColumnIndex;
 }
@@ -120,8 +113,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
                  const std::string& Prefix)
   : PropertyManager(pm)
 {
-  unsigned int i;
-
   string brkpt_string;
   Element *tableData = nullptr;
 
@@ -223,7 +214,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   stringstream buf;
 
-  for (i=0; i<tableData->GetNumDataLines(); i++) {
+  for (unsigned int i=0; i<tableData->GetNumDataLines(); i++) {
     string line = tableData->GetDataLine(i);
     if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos) {
       cerr << " In file " << tableData->GetFileName() << endl
@@ -241,7 +232,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     Type = tt1D;
     colCounter = 0;
     rowCounter = 1;
-    Data = Allocate();
     lastRowIndex = lastColumnIndex = 2;
     *this << buf;
     break;
@@ -265,7 +255,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     colCounter = 1;
     rowCounter = 0;
 
-    Data = Allocate();
     lastRowIndex = lastColumnIndex = 2;
     *this << buf;
     break;
@@ -277,13 +266,12 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     rowCounter = 1;
     lastRowIndex = lastColumnIndex = 2;
 
-    Data = Allocate(); // this data array will contain the keys for the associated tables
     tableData = el->FindElement("tableData");
-    for (i=0; i<nRows; i++) {
+    while (tableData) {
       Tables.push_back(new FGTable(PropertyManager, tableData));
-      Data[i+1][1] = tableData->GetAttributeValueAsNumber("breakPoint");
-      Tables[i]->lookupProperty[eRow] = lookupProperty[eRow];
-      Tables[i]->lookupProperty[eColumn] = lookupProperty[eColumn];
+      Data.push_back(tableData->GetAttributeValueAsNumber("breakPoint"));
+      Tables.back()->lookupProperty[eRow] = lookupProperty[eRow];
+      Tables.back()->lookupProperty[eColumn] = lookupProperty[eColumn];
       tableData = el->FindNextElement("tableData");
     }
 
@@ -296,7 +284,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   Debug(0);
 
   // Sanity checks: lookup indices must be increasing monotonically
-  unsigned int r,c,b;
 
   // find next xml element containing a name attribute
   // to indicate where the error occured
@@ -306,31 +293,31 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   // check breakpoints, if applicable
   if (dimension > 2) {
-    for (b=2; b<=Tables.size(); ++b) {
-      if (Data[b][1] <= Data[b-1][1]) {
+    for (unsigned int b=1; b<Tables.size(); ++b) {
+      if (Data[b] <= Data[b-1]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
                   << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
                   << "  in breakpoint " << b;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
-                  << "  " << Data[b][1] << "<=" << Data[b-1][1] << endl;
+                  << "  " << Data[b] << "<=" << Data[b-1] << endl;
         throw BaseException("Breakpoint lookup is not monotonically increasing");
       }
     }
   }
 
   // check columns, if applicable
-  if (dimension > 1) {
-    for (c=2; c<=nCols; ++c) {
-      if (Data[0][c] <= Data[0][c-1]) {
+  if (nCols > 1) {
+    for (unsigned int c=1; c<nCols; ++c) {
+      if (Data[c] <= Data[c-1]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
                   << "  FGTable: column lookup is not monotonically increasing" << endl
                   << "  in column " << c;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
-                  << "  " << Data[0][c] << "<=" << Data[0][c-1] << endl;
+                  << "  " << Data[c] << "<=" << Data[c-1] << endl;
         throw BaseException("FGTable: column lookup is not monotonically increasing");
       }
     }
@@ -338,15 +325,16 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   // check rows
   if (dimension < 3) { // in 3D tables, check only rows of subtables
-    for (r=2; r<=nRows; ++r) {
-      if (Data[r][0]<=Data[r-1][0]) {
+    unsigned int shift = Type == tt2D ? 1 : 0;
+    for (unsigned int r=Type == tt2D ? 2 : 1; r<nRows; ++r) {
+      if (Data[r*(nCols+1)-shift]<=Data[(r-1)*(nCols+1)-shift]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
                   << "  FGTable: row lookup is not monotonically increasing" << endl
                   << "  in row " << r;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
         std::cerr << ":" << reset << endl
-                  << "  " << Data[r][0] << "<=" << Data[r-1][0] << endl;
+                  << "  " << Data[r*(nCols+1)-shift] << "<=" << Data[(r-1)*(nCols+1)-shift] << endl;
         throw BaseException("FGTable: row lookup is not monotonically increasing");
       }
     }
@@ -355,20 +343,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   bind(el, Prefix);
 
   if (debug_lvl & 1) Print();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double** FGTable::Allocate(void)
-{
-  Data = new double*[nRows+1];
-  for (unsigned int r=0; r<=nRows; r++) {
-    Data[r] = new double[nCols+1];
-    for (unsigned int c=0; c<=nCols; c++) {
-      Data[r][c] = 0.0;
-    }
-  }
-  return Data;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -385,8 +359,6 @@ FGTable::~FGTable()
   }
 
   for (auto t: Tables) delete t;
-  for (unsigned int r=0; r<=nRows; r++) delete[] Data[r];
-  delete[] Data;
 
   Debug(1);
 }
@@ -423,138 +395,78 @@ double FGTable::GetValue(void) const
 
 double FGTable::GetValue(double key) const
 {
-  double Factor, Value, Span;
-  unsigned int r = lastRowIndex;
+  // If the key is off the end (or before the beginning) of the table, just
+  // return the boundary-table value, do not extrapolate.
+  if( key <= Data[0] )
+    return Data[1];
+  else if ( key >= Data[2*nRows-2] )
+    return Data[2*nRows-1];
 
-  //if the key is off the end of the table, just return the
-  //end-of-table value, do not extrapolate
-  if( key <= Data[1][0] ) {
-    lastRowIndex=2;
-    //cout << "Key underneath table: " << key << endl;
-    return Data[1][1];
-  } else if ( key >= Data[nRows][0] ) {
-    lastRowIndex=nRows;
-    //cout << "Key over table: " << key << endl;
-    return Data[nRows][1];
-  }
+  // Search for the right breakpoint.
+  // This is a linear search, the algorithm is O(n).
+  unsigned int r = 1;
+  while (Data[2*r] < key) r++;
 
-  // the key is somewhere in the middle, search for the right breakpoint
-  // The search is particularly efficient if
-  // the correct breakpoint has not changed since last frame or
-  // has only changed very little
+  double Span = Data[2*r] - Data[2*r-2];
+  double Factor = (key - Data[2*r-2]) / Span;
 
-  while (r > 2     && Data[r-1][0] > key) { r--; }
-  while (r < nRows && Data[r][0]   < key) { r++; }
-
-  lastRowIndex=r;
-  // make sure denominator below does not go to zero.
-
-  Span = Data[r][0] - Data[r-1][0];
-  if (Span != 0.0) {
-    Factor = (key - Data[r-1][0]) / Span;
-    if (Factor > 1.0) Factor = 1.0;
-  } else {
-    Factor = 1.0;
-  }
-
-  Value = Factor*(Data[r][1] - Data[r-1][1]) + Data[r-1][1];
-
-  return Value;
+  return Factor*(Data[2*r+1] - Data[2*r-1]) + Data[2*r-1];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGTable::GetValue(double rowKey, double colKey) const
 {
-  double rFactor, cFactor, col1temp, col2temp, Value;
-  unsigned int r = lastRowIndex;
-  unsigned int c = lastColumnIndex;
+  unsigned int c = 1;
+  while(Data[c] < colKey && c+1 < nCols) c++;
+  double Span = Data[c] - Data[c-1];
+  double cFactor = Constrain(0.0, (colKey - Data[c-1]) / Span, 1.0);
 
-  while(r > 2     && Data[r-1][0] > rowKey) { r--; }
-  while(r < nRows && Data[r]  [0] < rowKey) { r++; }
+  unsigned int r = 1;
+  while(Data[r*(nCols+1)+nCols] < rowKey && r+1 < nRows) r++;
+  Span = Data[r*(nCols+1)+nCols] - Data[(r-1)*(nCols+1)+nCols];
+  double rFactor = Constrain(0.0, (rowKey - Data[(r-1)*(nCols+1)+nCols]) / Span,
+                             1.0);
+  c += nCols;
+  double col1temp = rFactor*(Data[r*(nCols+1)+c]-Data[(r-1)*(nCols+1)+c])+Data[(r-1)*(nCols+1)+c];
+  double col2temp = rFactor*(Data[r*(nCols+1)+c+1]-Data[(r-1)*(nCols+1)+c+1])+Data[(r-1)*(nCols+1)+c+1];
 
-  while(c > 2     && Data[0][c-1] > colKey) { c--; }
-  while(c < nCols && Data[0][c]   < colKey) { c++; }
-
-  lastRowIndex=r;
-  lastColumnIndex=c;
-
-  rFactor = (rowKey - Data[r-1][0]) / (Data[r][0] - Data[r-1][0]);
-  cFactor = (colKey - Data[0][c-1]) / (Data[0][c] - Data[0][c-1]);
-
-  if (rFactor > 1.0) rFactor = 1.0;
-  else if (rFactor < 0.0) rFactor = 0.0;
-
-  if (cFactor > 1.0) cFactor = 1.0;
-  else if (cFactor < 0.0) cFactor = 0.0;
-
-  col1temp = rFactor*(Data[r][c-1] - Data[r-1][c-1]) + Data[r-1][c-1];
-  col2temp = rFactor*(Data[r][c] - Data[r-1][c]) + Data[r-1][c];
-
-  Value = col1temp + cFactor*(col2temp - col1temp);
-
-  return Value;
+  return cFactor*(col2temp-col1temp)+col1temp;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
-  double Factor, Value, Span;
-  unsigned int r = lastRowIndex;
-
-  //if the key is off the end  (or before the beginning) of the table,
-  // just return the boundary-table value, do not extrapolate
-
-  if( tableKey <= Data[1][1] ) {
-    lastRowIndex=2;
+  // If the key is off the end (or before the beginning) of the table, just
+  // return the boundary-table value, do not extrapolate.
+  if(tableKey <= Data[0])
     return Tables[0]->GetValue(rowKey, colKey);
-  } else if ( tableKey >= Data[nRows][1] ) {
-    lastRowIndex=nRows;
+  else if (tableKey >= Data[nRows-1])
     return Tables[nRows-1]->GetValue(rowKey, colKey);
-  }
 
-  // the key is somewhere in the middle, search for the right breakpoint
-  // The search is particularly efficient if
-  // the correct breakpoint has not changed since last frame or
-  // has only changed very little
+  // Search for the right breakpoint.
+  // This is a linear search, the algorithm is O(n).
+  unsigned int r = 1;
+  while (Data[r] < tableKey) r++;
 
-  while(r > 2     && Data[r-1][1] > tableKey) { r--; }
-  while(r < nRows && Data[r]  [1] < tableKey) { r++; }
+  double Span = Data[r] - Data[r-1];
+  double Factor = (tableKey - Data[r-1]) / Span;
 
-  lastRowIndex=r;
-  // make sure denominator below does not go to zero.
-
-  Span = Data[r][1] - Data[r-1][1];
-  if (Span != 0.0) {
-    Factor = (tableKey - Data[r-1][1]) / Span;
-    if (Factor > 1.0) Factor = 1.0;
-  } else {
-    Factor = 1.0;
-  }
-
-  Value = Factor*(Tables[r-1]->GetValue(rowKey, colKey) - Tables[r-2]->GetValue(rowKey, colKey))
-                              + Tables[r-2]->GetValue(rowKey, colKey);
-
-  return Value;
+  return Factor*(Tables[r]->GetValue(rowKey, colKey) - Tables[r-1]->GetValue(rowKey, colKey))
+        + Tables[r-1]->GetValue(rowKey, colKey);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTable::operator<<(istream& in_stream)
 {
-  int startRow=0;
-  int startCol=0;
+  double x;
 
-// In 1D table, no pseudo-row of column-headers (i.e. keys):
-  if (Type == tt1D) startRow = 1;
-
-  for (unsigned int r=startRow; r<=nRows; r++) {
-    for (unsigned int c=startCol; c<=nCols; c++) {
-      if (r != 0 || c != 0) {
-        in_stream >> Data[r][c];
-      }
-    }
+  in_stream >> x;
+  while(in_stream) {
+    Data.push_back(x);
+    in_stream >> x;
   }
 }
 
@@ -564,13 +476,7 @@ void FGTable::operator<<(istream& in_stream)
 
 FGTable& FGTable::operator<<(const double x)
 {
-  Data[rowCounter][colCounter] = x;
-  if (colCounter == (int)nCols) {
-    colCounter = 0;
-    rowCounter++;
-  } else {
-    colCounter++;
-  }
+  Data.push_back(x);
   return *this;
 }
 
@@ -599,17 +505,24 @@ void FGTable::Print(void)
       break;
   }
   cout.precision(4);
+  unsigned int p = 0;
+
   for (unsigned int r=startRow; r<=nRows; r++) {
     cout << "\t";
-    for (unsigned int c=startCol; c<=nCols; c++) {
-      if (r == 0 && c == 0) {
+    if (Type == tt2D) {
+      if (r == 0) {
+        startCol = 1;
         cout << "\t";
-      } else {
-        cout << Data[r][c] << "\t";
-        if (Type == tt3D) {
-          cout << endl;
-          Tables[r-1]->Print();
-        }
+      }
+      else
+        startCol = 0;
+    }
+
+    for (unsigned int c=startCol; c<=nCols; c++) {
+      cout << Data[p++] << "\t";
+      if (Type == tt3D) {
+        cout << endl;
+        Tables[r-1]->Print();
       }
     }
     cout << endl;
