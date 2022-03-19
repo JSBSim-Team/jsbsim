@@ -336,9 +336,39 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     }
   }
 
+  // Check the table has been entirely populated.
+  switch (Type) {
+  case tt1D:
+    if (Data.size() != 2*nRows+2) missingData(el, 2*nRows, Data.size()-2);
+    break;
+  case tt2D:
+    if (Data.size() != (nRows+1)*(nCols+1))
+      missingData(el, (nRows+1)*(nCols+1)-1, Data.size()-1);
+    break;
+  case tt3D:
+    if (Data.size() != nRows+1) missingData(el, nRows, Data.size()-1);
+    break;
+  default:
+    break;
+  }
+
   bind(el, Prefix);
 
   if (debug_lvl & 1) Print();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTable::missingData(Element *el, unsigned int expected_size, size_t actual_size)
+{
+  std::cerr << el->ReadFrom()
+            << fgred << highint
+            << "  FGTable: Missing data";
+  if (!Name.empty()) std::cerr << " in table " << Name;
+  std::cerr << ":" << reset << endl
+            << "  Expecting " << expected_size << " elements while "
+            << actual_size << " elements were provided." << endl;
+  throw BaseException("FGTable: missing data");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
