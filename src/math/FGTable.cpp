@@ -320,7 +320,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
     break;
   default:
-    cout << "No dimension given" << endl;
+    assert(false); // Should never be called
     break;
   }
 
@@ -435,6 +435,19 @@ FGTable::~FGTable()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGTable::GetElement(unsigned int r, unsigned int c) const
+{
+  assert(r <= nRows && c <= nCols);
+  if (Type == tt3D) {
+    assert(Data.size() == nRows+1);
+    return Data[r];
+  }
+  assert(Data.size() == (nCols+1)*(nRows+1));
+  return Data[r*(nCols+1)+c];
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double FGTable::GetValue(void) const
 {
   assert(!internal);
@@ -465,6 +478,7 @@ double FGTable::GetValue(void) const
 
 double FGTable::GetValue(double key) const
 {
+  assert(Data.size() == 2*nRows+2);
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
   if (key <= Data[2])
@@ -479,7 +493,9 @@ double FGTable::GetValue(double key) const
 
   double x0 = Data[2*r-2];
   double Span = Data[2*r] - x0;
+  assert(Span > 0.0);
   double Factor = (key - x0) / Span;
+  assert(Factor >= 0.0 && Factor <= 1.0);
 
   double y0 = Data[2*r-1];
   return Factor*(Data[2*r+1] - y0) + y0;
@@ -489,16 +505,19 @@ double FGTable::GetValue(double key) const
 
 double FGTable::GetValue(double rowKey, double colKey) const
 {
+  assert(Data.size() == (nCols+1)*(nRows+1));
   unsigned int c = 2;
   while(Data[c] < colKey && c < nCols) c++;
   double x0 = Data[c-1];
   double Span = Data[c] - x0;
+  assert(Span > 0.0);
   double cFactor = Constrain(0.0, (colKey - x0) / Span, 1.0);
 
   unsigned int r = 2;
   while(Data[r*(nCols+1)] < rowKey && r < nRows) r++;
   x0 = Data[(r-1)*(nCols+1)];
   Span = Data[r*(nCols+1)] - x0;
+  assert(Span > 0.0);
   double rFactor = Constrain(0.0, (rowKey - x0) / Span, 1.0);
   double col1temp = rFactor*Data[r*(nCols+1)+c-1]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c-1];
   double col2temp = rFactor*Data[r*(nCols+1)+c]+(1.0-rFactor)*Data[(r-1)*(nCols+1)+c];
@@ -510,6 +529,7 @@ double FGTable::GetValue(double rowKey, double colKey) const
 
 double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
+  assert(Data.size() == nRows+1);
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
   if(tableKey <= Data[1])
@@ -524,7 +544,9 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 
   double x0 = Data[r-1];
   double Span = Data[r] - x0;
+  assert(Span > 0.0);
   double Factor = (tableKey - x0) / Span;
+  assert(Factor >= 0.0 && Factor <= 1.0);
 
   double y0 = Tables[r-2]->GetValue(rowKey, colKey);
   return Factor*(Tables[r-1]->GetValue(rowKey, colKey) - y0) + y0;
@@ -535,6 +557,7 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 void FGTable::operator<<(istream& in_stream)
 {
   double x;
+  assert(Type != tt3D);
 
   in_stream >> x;
   while(in_stream) {
@@ -547,6 +570,7 @@ void FGTable::operator<<(istream& in_stream)
 
 FGTable& FGTable::operator<<(const double x)
 {
+  assert(Type != tt3D);
   Data.push_back(x);
 
   // Check column is monotically increasing

@@ -274,11 +274,7 @@ public:
   void operator<<(std::istream&);
   FGTable& operator<<(const double x);
 
-  double GetElement(unsigned int r, unsigned int c) const {
-    if (Type == tt3D) return Data[r];
-    return Data[r*(nCols+1)+c];
-  }
-
+  double GetElement(unsigned int r, unsigned int c) const;
   double operator()(unsigned int r, unsigned int c) const
   { return GetElement(r, c); }
 
