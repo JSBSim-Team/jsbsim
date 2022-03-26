@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+
 #include "FGParameter.h"
 #include "math/FGPropertyValue.h"
 
@@ -298,7 +300,7 @@ private:
   bool internal = false;
   FGPropertyValue_ptr lookupProperty[3];
   std::vector<double> Data;
-  std::vector <FGTable*> Tables;
+  std::vector<std::unique_ptr<FGTable>> Tables;
   unsigned int nRows, nCols;
   FGPropertyManager* const PropertyManager;
   std::string Name;
