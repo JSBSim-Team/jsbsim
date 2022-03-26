@@ -16,17 +16,21 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys, argparse
-
+import argparse
+import os
+import sys
 from argparse import ArgumentError
-from setuptools import setup
-from setuptools.extension import Extension
-from setuptools.command.build_ext import build_ext
-from setuptools.command.install_lib import install_lib
 from distutils import log
 from distutils.ccompiler import new_compiler
 from distutils.unixccompiler import UnixCCompiler
+
+from pkg_resources import parse_version
+from setuptools import setup
+from setuptools import __version__ as setuptools_version
+from setuptools.command.build_ext import build_ext
+from setuptools.command.install_lib import install_lib
 from setuptools.dist import Distribution
+from setuptools.extension import Extension
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -138,6 +142,7 @@ if args.config:
 
 convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(';') if item!='']
 
+# `cpp_compile_flag` is used for C++ compilation only (see class `C_CxxCompiler`)
 if compiler.compiler_type == 'unix':
     cpp_compile_flag = ['-std=c++14']
     cpp_link_flags = []
@@ -176,7 +181,8 @@ else:
     # the sources.
     if compiler.compiler_type == 'msvc':
         compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}')]
-        if sys.version_info < (3,9):
+        # Old version of setuptools require to prepend double quotes with double antislashes.
+        if sys.version_info < (3,9) and parse_version(setuptools_version) < parse_version('60.0'):
             compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
     else:
         compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS}')]
