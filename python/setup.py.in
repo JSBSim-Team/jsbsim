@@ -173,12 +173,12 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}')]
-        # Old version of setuptools require to prepend double quotes with double antislashes.
+        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
+        # Old versions of setuptools require to prepend double quotes with double antislashes.
         if sys.version_info < (3,9) and parse_version(setuptools_version) < parse_version('60.0'):
             compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
     else:
-        compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS}')]
+        compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
     ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
                    'libraries': link_libraries,
