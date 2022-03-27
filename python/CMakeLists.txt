@@ -48,7 +48,7 @@ configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
 configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
                ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_ns.c COPYONLY)
 
-foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h")
+foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h" "pyproject.toml")
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${_FILE} COPYONLY)
 endforeach()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim COPYONLY)
