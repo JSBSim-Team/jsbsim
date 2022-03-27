@@ -383,7 +383,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 
   // check rows
   if (Type != tt3D) { // in 3D tables, check only rows of subtables
-    for (unsigned int r=2; r<=nRows; ++r) {
+    for (size_t r=2; r<=nRows; ++r) {
       if (Data[r*(nCols+1)]<=Data[(r-1)*(nCols+1)]) {
         std::cerr << el->ReadFrom()
                   << fgred << highint
@@ -403,7 +403,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     if (Data.size() != 2*nRows+2) missingData(el, 2*nRows, Data.size()-2);
     break;
   case tt2D:
-    if (Data.size() != (nRows+1)*(nCols+1))
+    if (Data.size() != static_cast<size_t>(nRows+1)*(nCols+1))
       missingData(el, (nRows+1)*(nCols+1)-1, Data.size()-1);
     break;
   case tt3D:
@@ -536,7 +536,7 @@ double FGTable::GetValue(double rowKey, double colKey) const
     return cFactor*(Data[(nCols+1)+c] - y0) + y0;
   }
 
-  unsigned int r = 2;
+  size_t r = 2;
   while(Data[r*(nCols+1)] < rowKey && r < nRows) r++;
   x0 = Data[(r-1)*(nCols+1)];
   Span = Data[r*(nCols+1)] - x0;
