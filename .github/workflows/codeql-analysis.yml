@@ -7,7 +7,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [master]
+    branches: [master, release/v1.1]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [master]
@@ -18,7 +18,7 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
 
     strategy:
       fail-fast: false
