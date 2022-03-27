@@ -49,7 +49,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml)
 
 foreach(_FILE "MANIFEST.in" "jsbsim.pxd" "ExceptionManagement.h"
-              "fpectl/fpectlmodule.h" "JSBSim.py")
+              "fpectl/fpectlmodule.h" "JSBSim.py" "pyproject.toml")
   file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endforeach()
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
