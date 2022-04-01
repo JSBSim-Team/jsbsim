@@ -276,7 +276,7 @@ struct FFlightControlCommands
 		DebugMessage += TEXT("Flight Control Commands :"); DebugMessage += LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("  Basics : Elevator %.3f   Aileron    %.3f  Rudder  %.3f  YawTrim %.3f PitchTrim %.3f  RollTrim %.3f"), Elevator, Aileron, Rudder, YawTrim, PitchTrim, RollTrim) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("  Brakes : Left     %.3f   Right      %.3f  Center  %.3f  Parking %.3f"), LeftBrake, RightBrake, CenterBrake, ParkingBrake) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Wheels : Steer    %.3f   GearDown   %.3f  Center  %.3f  Parking %.3f"), Steer, GearDown) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("  Wheels : Steer    %.3f   GearDown   %.3f"), Steer, GearDown) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("  Wings  : Flap     %.3f   SpeedBrake %.3f  Spoiler %.3f"), Flap, SpeedBrake, Spoiler, ParkingBrake) + LINE_TERMINATOR;
 
 		return DebugMessage;

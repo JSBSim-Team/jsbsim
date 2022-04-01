@@ -268,23 +268,23 @@ protected:
 	// JSBSim Objects	
 	JSBSim::FGFDMExec* Exec = nullptr;
 	
-	JSBSim::FGAtmosphere* Atmosphere = nullptr;
-	JSBSim::FGWinds* Winds = nullptr;
-	JSBSim::FGFCS* FCS = nullptr;
-	JSBSim::FGMassBalance* MassBalance = nullptr;
-	JSBSim::FGPropulsion* Propulsion = nullptr;
+	std::shared_ptr<JSBSim::FGAtmosphere> Atmosphere = nullptr;
+	std::shared_ptr<JSBSim::FGWinds> Winds = nullptr;
+	std::shared_ptr<JSBSim::FGFCS> FCS = nullptr;
+	std::shared_ptr<JSBSim::FGMassBalance> MassBalance = nullptr;
+	std::shared_ptr<JSBSim::FGPropulsion> Propulsion = nullptr;
 	
-	JSBSim::FGAircraft* Aircraft = nullptr;
-	JSBSim::FGPropagate* Propagate = nullptr;
-	JSBSim::FGAuxiliary* Auxiliary = nullptr;
-	JSBSim::FGInertial* Inertial = nullptr;
-	JSBSim::FGAerodynamics* Aerodynamics = nullptr;
+	std::shared_ptr<JSBSim::FGAircraft> Aircraft = nullptr;
+	std::shared_ptr<JSBSim::FGPropagate> Propagate = nullptr;
+	std::shared_ptr<JSBSim::FGAuxiliary> Auxiliary = nullptr;
+	std::shared_ptr<JSBSim::FGInertial> Inertial = nullptr;
+	std::shared_ptr<JSBSim::FGAerodynamics> Aerodynamics = nullptr;
 
-	JSBSim::FGGroundReactions* GroundReactions = nullptr;
-	JSBSim::FGAccelerations* Accelerations = nullptr;
+	std::shared_ptr<JSBSim::FGGroundReactions> GroundReactions = nullptr;
+	std::shared_ptr<JSBSim::FGAccelerations> Accelerations = nullptr;
 	
-	JSBSim::FGPropertyManager* PropertyManager = nullptr; // TODO ?? virer ?
-	JSBSim::FGInitialCondition* IC = nullptr;
+	std::shared_ptr<JSBSim::FGPropertyManager> PropertyManager = nullptr; // TODO ?? virer ?
+	std::shared_ptr<JSBSim::FGInitialCondition> IC = nullptr;
 
 	FTransform StructuralToActor;
 	FTransform BodyToActor;

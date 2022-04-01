@@ -469,8 +469,8 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 		int32 EngineCount = EngineCommands.Num();
 		for (int32 i = 0; i < EngineCount; i++)
 		{
-			EngineCommands[i].Throttle = 1.0;
-			EngineCommands[i].Mixture = 1.0;
+			EngineCommands[i].Throttle = 0.0;
+			EngineCommands[i].Mixture = 0.0;
 			EngineCommands[i].Running = true;
 		}
 		// Get Engines States
@@ -560,7 +560,7 @@ void UJSBSimMovementComponent::CopyToJSBSim()
 	FCS->SetDsbCmd(Commands.SpeedBrake);
 	FCS->SetDspCmd(Commands.Spoiler);
 
-
+	  
 	// Gears and Brake controls
 
 	double parking_brake = Commands.ParkingBrake;
@@ -574,10 +574,10 @@ void UJSBSimMovementComponent::CopyToJSBSim()
 	FCS->SetRBrake(FMath::Max(right_brake, parking_brake));
 	FCS->SetCBrake(0.0);
 
-	FCS->SetGearCmd(Commands.GearDown);
+	FCS->SetGearCmd(Commands.GearDown); 
 
 
-	ApplyEnginesCommands();
+	ApplyEnginesCommands(); 
 
 	
 
@@ -790,7 +790,7 @@ void UJSBSimMovementComponent::InitGearDefaultProperties()
 
 		for (unsigned int i = 0; i < GearsCount; i++)
 		{
-			JSBSim::FGLGear* Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
+			std::shared_ptr<JSBSim::FGLGear> Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
 
 			Gears[i].NormalizedPosition = Gear->GetGearUnitPos();
 			Gears[i].IsBogey = Gear->IsBogey();
@@ -825,7 +825,7 @@ void UJSBSimMovementComponent::CopyGearPropertiesFromJSBSim()
 {
 	for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++)
 	{
-		JSBSim::FGLGear* Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
+		std::shared_ptr<JSBSim::FGLGear> Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
 		if ((int32)i < Gears.Num())
 		{
 			Gears[i].NormalizedPosition = Gear->GetGearUnitPos();
@@ -857,7 +857,7 @@ void UJSBSimMovementComponent::InitTankDefaultProperties()
 		//Tanks.SetNum(TanksCount);
 		for (unsigned int i = 0; i < TanksCount; i++)
 		{
-			JSBSim::FGTank* Tank = Propulsion->GetTank(i); // TODO - Test indices
+			std::shared_ptr<JSBSim::FGTank> Tank = Propulsion->GetTank(i); // TODO - Test indices
 
 			Tanks[i].FuelDensityPoundsPerGallon = Tank->GetDensity();
 			Tanks[i].ContentGallons = Tank->GetContentsGallons();
@@ -873,7 +873,7 @@ void UJSBSimMovementComponent::CopyTankPropertiesToJSBSim()
 	// TODO - Update Tanks
 	for (unsigned i = 0; i < Propulsion->GetNumTanks(); i++)
 	{
-		JSBSim::FGTank* tank = Propulsion->GetTank(i);
+		std::shared_ptr<JSBSim::FGTank> tank = Propulsion->GetTank(i);
 
 		if ((int32)i < Tanks.Num())
 		{
@@ -897,7 +897,7 @@ void UJSBSimMovementComponent::CopyTankPropertiesFromJSBSim()
 	FuelFreeze = Propulsion->GetFuelFreeze();
 	for (unsigned int i = 0; i < Propulsion->GetNumTanks(); i++)
 	{
-		JSBSim::FGTank* Tank = Propulsion->GetTank(i);
+		std::shared_ptr<JSBSim::FGTank> Tank = Propulsion->GetTank(i);
 
 		if ((int32)i < Tanks.Num())
 		{
@@ -966,7 +966,7 @@ void UJSBSimMovementComponent::ApplyEnginesCommands()
 		FCS->SetFeatherCmd(i, EngineCommand.PropellerFeather);
 
 		// Common FGEngine code block
-		JSBSim::FGEngine* CommonEngine = Propulsion->GetEngine(i);
+		std::shared_ptr < JSBSim::FGEngine> CommonEngine = Propulsion->GetEngine(i);
 		CommonEngine->SetStarter(EngineCommand.Starter);
 		CommonEngine->SetRunning(EngineCommand.Running);
 
@@ -975,14 +975,14 @@ void UJSBSimMovementComponent::ApplyEnginesCommands()
 		case JSBSim::FGEngine::etPiston:
 		{
 			// FGPiston code block
-			JSBSim::FGPiston* PistonEngine = (JSBSim::FGPiston*)Propulsion->GetEngine(i);
+			std::shared_ptr < JSBSim::FGPiston> PistonEngine = std::static_pointer_cast<JSBSim::FGPiston>(Propulsion->GetEngine(i));
 			PistonEngine->SetMagnetos(EngineCommand.Magnetos);
 			break;
 		}
 		case JSBSim::FGEngine::etTurbine:
 		{
 			// FGTurbine code block
-			JSBSim::FGTurbine* TurbineEngine = (JSBSim::FGTurbine*)Propulsion->GetEngine(i);
+			std::shared_ptr < JSBSim::FGTurbine> TurbineEngine = std::static_pointer_cast<JSBSim::FGTurbine>(Propulsion->GetEngine(i));
 			TurbineEngine->SetReverse(EngineCommand.Reverse);
 			TurbineEngine->SetCutoff(EngineCommand.CutOff);
 			TurbineEngine->SetIgnition(EngineCommand.Ignition);
@@ -999,7 +999,7 @@ void UJSBSimMovementComponent::ApplyEnginesCommands()
 		case JSBSim::FGEngine::etTurboprop:
 		{
 			// FGTurboProp code block
-			JSBSim::FGTurboProp* TurboPropEngine = (JSBSim::FGTurboProp*)Propulsion->GetEngine(i);
+			std::shared_ptr < JSBSim::FGTurboProp> TurboPropEngine = std::static_pointer_cast<JSBSim::FGTurboProp>(Propulsion->GetEngine(i));
 			TurboPropEngine->SetReverse(EngineCommand.Reverse);
 			TurboPropEngine->SetCutoff(EngineCommand.CutOff);
 			TurboPropEngine->SetGeneratorPower(EngineCommand.GeneratorPower);
@@ -1019,7 +1019,7 @@ void UJSBSimMovementComponent::GetEnginesStates()
 	int32 EngineCount = EngineStates.Num();
 	for (int32 i = 0; i < EngineCount; i++)
 	{
-		JSBSim::FGEngine* Engine = Propulsion->GetEngine(i);
+		std::shared_ptr < JSBSim::FGEngine> Engine = Propulsion->GetEngine(i);
 
 		EngineStates[i].EngineType = (EEngineType) Engine->GetType();
 		EngineStates[i].Starter = Engine->GetStarter();
@@ -1041,7 +1041,7 @@ void UJSBSimMovementComponent::GetEnginesStates()
 		{
 			// TODO
 			// FGTurbine code block
-			JSBSim::FGTurbine* TurbineEngine = (JSBSim::FGTurbine*)Engine;
+			std::shared_ptr < JSBSim::FGTurbine> TurbineEngine = std::static_pointer_cast<JSBSim::FGTurbine>(Engine);
 			EngineStates[i].N1 = TurbineEngine->GetN1();
 			EngineStates[i].N2 = TurbineEngine->GetN2();
 			EngineStates[i].Augmentation = TurbineEngine->GetAugmentation();

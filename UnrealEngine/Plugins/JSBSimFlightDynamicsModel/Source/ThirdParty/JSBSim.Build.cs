@@ -14,7 +14,7 @@ public class JSBSim : ModuleRules
 
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
-			String LibFolderName = "Lib"
+			string LibFolderName = "Lib";
 
 			// When working in debug mode, try to use the Debug version of JSBSim
 			if (Target.Configuration == UnrealTargetConfiguration.Debug)
@@ -24,7 +24,7 @@ public class JSBSim : ModuleRules
 				if (Directory.Exists(DebugLibsPath))
 				{
 					System.Console.WriteLine(string.Format("Found Debug libraries for JSBSim in {0}", DebugLibsPath));
-					LibName += "Debug";
+					LibFolderName += "Debug";
 				}
 			}
 
