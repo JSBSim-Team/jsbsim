@@ -101,7 +101,7 @@ cdef class FGPropertyManager:
     cdef c_FGPropertyManager *thisptr
     cdef bool thisptr_owner
 
-    def __cinit__(self, new_instance=False):
+    def __cinit__(self, new_instance=False, *args, **kwargs):
         if new_instance:
             self.thisptr = new c_FGPropertyManager()
             if self.thisptr is NULL:
@@ -258,7 +258,7 @@ cdef class FGJSBBase:
 
     cdef c_FGJSBBase *baseptr
 
-    def __cinit__(self):
+    def __cinit__(self, *args, **kwargs):
         if type(self) is FGJSBBase:
             self.baseptr = new c_FGJSBBase()
 
@@ -322,7 +322,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
 
-    def __cinit__(self, root_dir, FGPropertyManager pm_root=None):
+    def __cinit__(self, root_dir, FGPropertyManager pm_root=None, *args, **kwargs):
         cdef c_FGPropertyManager* root
 
         if pm_root:
