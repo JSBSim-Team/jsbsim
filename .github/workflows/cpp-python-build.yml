@@ -429,7 +429,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build\src\RelWithDebInfo\JSBSim.lib
-            build\python\jsbsim.cxx
             build\python\setup.py
 
   MacOSX:
@@ -484,7 +483,9 @@ jobs:
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build/python
-        run: python -m build --sdist
+        run: |
+          rm -f jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          python -m build --sdist
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -503,7 +504,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build/src/libJSBSim.a
-            build/python/jsbsim.cxx
             build/python/setup.py
             build/python/dist/*.tar.gz
 

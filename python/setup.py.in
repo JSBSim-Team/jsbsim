@@ -168,7 +168,12 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
                                                                'JSBSim'):
     # OK, the JSBSim library has already been compiled so let's use it to build
     # the Python module.
-    ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
+    if os.path.exists('${JSBSIM_CXX}'):
+        source_file = '${JSBSIM_CXX}'
+    else:
+        source_file = 'jsbsim.pyx'
+
+    ext_kwargs = { 'sources': [source_file],
                    'include_dirs': ['src'],
                    'libraries': ['JSBSim'] + link_libraries,
                    'library_dirs': [library_path],
@@ -192,8 +197,7 @@ else:
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
     # List of required modules to build the JSBSim module from the sources.
-    setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension,},
-                    'setup_requires': ["setuptools>=24.2", "cython>=0.25"]}
+    setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension}}
 
 # Prepare the list of XML data files (aircraft, engines, ...)
 
