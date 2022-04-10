@@ -1,6 +1,6 @@
 ---
-name: Report an issue
-about: Report a bug or request a new feature
+name: Report a bug or request a new feature
+about: Do not submit support requests here.
 title: ''
 labels: ''
 assignees: ''
