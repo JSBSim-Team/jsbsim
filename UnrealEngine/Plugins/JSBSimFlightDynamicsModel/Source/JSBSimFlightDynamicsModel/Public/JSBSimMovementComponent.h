@@ -185,8 +185,7 @@ public:
 
 
 	// Gear Properties 
-
-	UPROPERTY(BlueprintReadOnly,  Editfixedsize, EditAnywhere, Category = "Model|Gears")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Editfixedsize, Category = "Model|Gears", meta=(TitleProperty = "{Name} Bogey = {IsBogey}"))
 	TArray<struct FGear> Gears;
 
 	// Engine Properties 

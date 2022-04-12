@@ -57,10 +57,10 @@ struct FGear
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		double NormalizedPosition = 1;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		bool IsFrontBogey = false;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		bool IsRearBogey = false;
 
 

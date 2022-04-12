@@ -47,7 +47,7 @@ UJSBSimMovementComponent::UJSBSimMovementComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// Add a stream redirector in order to output JSBSim debug info to Log
-	std::cout.rdbuf(&Stream);
+	// std::cout.rdbuf(&Stream);
 }
 
 
