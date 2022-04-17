@@ -74,7 +74,7 @@
     <switch name="guidance/selected_target_heading">
       <default value="guidance/wp-heading-rad"/>
       <test value="guidance/specified-heading-rad">
-        guidance/heading-selector-switch eq &specifiedHeading;
+        guidance/heading-selector-switch eq 1
       </test>
     </switch>
 

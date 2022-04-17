@@ -22,7 +22,7 @@
 -->
 <system name="Sperry A-2 automatic pilot">
 
- <documentation>
+ <description>
   This system models a Sperry A-2 automatic pilot system.
 
   For each channel a pneumatic mechanism is activated when there is a
@@ -40,7 +40,7 @@
   - The available oil pressure probably affects the maximum rate of change
     for the actuator.
   - The JSBSim actuator component in each channel is probably redundant.
- </documentation>
+ </description>
 
  <!-- Interface properties -->
 
