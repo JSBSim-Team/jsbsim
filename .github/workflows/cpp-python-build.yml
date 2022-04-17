@@ -26,6 +26,12 @@ jobs:
             [ "$filename" != "scripts/unitconversions.xml" ] || continue
             xmllint --noout --schema JSBSimScript.xsd $filename
           done
+      - name: Validate systems files
+        run: |
+          for filename in systems/*.xml; do
+              [ -e "$filename" ] || continue
+              xmllint --noout --schema JSBSimSystem.xsd $filename
+          done
 
   Linux:
     name: C/C++ build (Linux)
