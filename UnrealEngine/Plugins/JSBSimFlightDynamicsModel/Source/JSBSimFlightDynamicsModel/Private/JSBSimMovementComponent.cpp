@@ -171,7 +171,7 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 				FVector EngineLocation = CGWorldPosition - CGOffsetWorld;
 
 
-				
+				AircraftState.ForwardHorizontal = ENUTransform.TransformVector(ECEFForwardHorizontal);
 
 				// Apply to actor			
 				Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
@@ -639,6 +639,12 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	ECEFLocation = FVector(LocationVRP(1), LocationVRP(2), LocationVRP(3)) * FEET_TO_METER;
 	
 	
+	// Get Aircraft forward vector in local (ECEF tangent) space. 
+	// TODO - IDK if for the horizon indicator I should use the forward vector or the aircraft speed. 
+	// Maybe the aircraft speed would include some kind of lateral slip ---> May one expert fix it if needed...
+	JSBSim::FGColumnVector3 ForwardLocal = Propagate->GetTb2l() * JSBSim::FGColumnVector3(1,0,0);
+	ECEFForwardHorizontal = FVector(ForwardLocal(2), -ForwardLocal(1), 0);
+	
 	// Compute Instant speed in FPS
 	// AVIRER - C'est juste pour voir si notre vitesse UE est correcte vs celle reportee par JSBSim
 	if (GetWorld())
@@ -665,6 +671,8 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	AircraftState.AltitudeASLFt = Propagate->GetAltitudeASL();
 	AircraftState.HeadingDeg = LocalEulerAngles.Yaw;
 	AircraftState.StallWarning = Aerodynamics->GetStallWarn();
+	AircraftState.AltitudeRateFtps = Propagate->Gethdot();
+
 
 	TotalVelocityfps = Auxiliary->GetVt();
 	

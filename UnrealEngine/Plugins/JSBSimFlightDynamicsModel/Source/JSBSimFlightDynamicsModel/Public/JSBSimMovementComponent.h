@@ -323,6 +323,7 @@ private:
 	AActor* Parent = nullptr;
 
 	FVector ECEFLocation;
+	FVector ECEFForwardHorizontal;
 	FRotator LocalEulerAngles;
 
 	/////////// JSBSim Private methods

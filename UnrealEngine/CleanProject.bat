@@ -1,5 +1,5 @@
 
-
+rd /s /q .vs
 rd /s /q Saved
 rd /s /q Binaries
 rd /s /q Build

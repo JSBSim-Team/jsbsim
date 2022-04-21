@@ -322,6 +322,11 @@ struct FAircraftState
 	double HeadingDeg = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double StallWarning = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double AltitudeRateFtps = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	FVector ForwardHorizontal = FVector::ZeroVector;
+	
 
 	FString GetDebugMessage()
 	{
