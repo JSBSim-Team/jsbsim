@@ -12,6 +12,8 @@
 #define FEET_TO_CENTIMETER 30.48
 #define INCH_TO_CENTIMETER 2.54
 
+#define FEET_PER_SEC_TO_KNOT 0.592484
+#define KNOT_TO_FEET_PER_SEC 1.68781
 
 USTRUCT(BlueprintType)
 struct FTank
@@ -295,20 +297,31 @@ struct FAircraftState
 	}
 
 	// Articulated Parts State in degrees
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double ElevatorPosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double LeftAileronPosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double RightAileronPosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double RudderPosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double FlapPosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double SpeedBrakePosition;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Articulations")
-	double SpoilersPosition;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double ElevatorPosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double LeftAileronPosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double RightAileronPosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double RudderPosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double FlapPosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double SpeedBrakePosition = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
+	double SpoilersPosition = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double CalibratedAirSpeedKts = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double GroundSpeedKts = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double AltitudeASLFt = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double HeadingDeg = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double StallWarning = 0;
 
 	FString GetDebugMessage()
 	{
@@ -317,6 +330,7 @@ struct FAircraftState
 		DebugMessage += FString::Printf(TEXT("  Elevator %f Left Aileron %f  Right Aileron %f"), ElevatorPosition, LeftAileronPosition, RightAileronPosition) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("  Rudder   %f "), RudderPosition) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("  Flap     %f SpeedBrake   %f  Spoilers      %f"), FlapPosition, SpeedBrakePosition, SpoilersPosition) + LINE_TERMINATOR;
+
 
 		return DebugMessage;
 	}

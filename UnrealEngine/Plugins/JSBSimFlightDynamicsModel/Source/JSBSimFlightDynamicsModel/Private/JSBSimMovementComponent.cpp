@@ -207,7 +207,7 @@ double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FV
 	FVector LineCheckStart = StartEngineLocation + 200 * Up; // slightly above the starting point
 	
 	// AltitudeASL is in meters... 
-	FVector LineCheckEnd = StartEngineLocation - (AltitudeASL + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; // Estimate raycast length - Altitude + 5% of ellipsoid in case of negative altitudes
+	FVector LineCheckEnd = StartEngineLocation - (AircraftState.AltitudeASLFt * FEET_TO_METER + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; // Estimate raycast length - Altitude + 5% of ellipsoid in case of negative altitudes
 	FHitResult HitResult = FHitResult();
 
 	static const FName LineTraceSingleName(TEXT("AGLevelLineTrace"));
@@ -657,18 +657,17 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	LocalEulerAngles.Pitch = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::eTht));
 	LocalEulerAngles.Roll = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePhi));
 	
-
 	//UE_LOG(LogJSBSim, Display, TEXT("State : Lat %f - Long %f - Alt %f    Bank %f  Pitch %f  Heading %f"), Latitude, Longitude, Altitude, Bank, Pitch, Heading);
 
 
-	GroundSpeed = Auxiliary->GetVground();
+	AircraftState.GroundSpeedKts = Auxiliary->GetVground() * FEET_PER_SEC_TO_KNOT;
+	AircraftState.CalibratedAirSpeedKts = Auxiliary->GetVcalibratedKTS();
+	AircraftState.AltitudeASLFt = Propagate->GetAltitudeASL();
+	AircraftState.HeadingDeg = LocalEulerAngles.Yaw;
+	AircraftState.StallWarning = Aerodynamics->GetStallWarn();
+
 	TotalVelocityfps = Auxiliary->GetVt();
-	AltitudeASL = Propagate->GetAltitudeASLmeters();
-		
-
-	//UE_LOG(LogJSBSim, Display, TEXT("State : Vt %f - GroundSpeed %f - AltitudeASL %f"), Vt, GroundSpeed, AltitudeASL);
-
-	StallWarning = Aerodynamics->GetStallWarn();
+	
 
 	// Update Moving part state
 	AircraftState.ElevatorPosition = FCS->GetDePos(JSBSim::ofDeg);
@@ -1100,8 +1099,6 @@ void UJSBSimMovementComponent::LogInitialization()
 		UE_LOG(LogJSBSim, Display, TEXT("  Indicated Airspeed: %f knots"), Auxiliary->GetVcalibratedKTS());
 		break;
 	}
-
-	StallWarning = 0;
 	
 	// Angles
 	UE_LOG(LogJSBSim, Display, TEXT("  Bank: %f, Pitch: %f, True Heading: %f"), 
@@ -1180,10 +1177,10 @@ void UJSBSimMovementComponent::DrawDebugMessage()
 	DebugMessage += FString::Printf(TEXT("  Lat %f  Long %f "), Propagate->GetLatitudeDeg(), Propagate->GetLongitudeDeg()) + LINE_TERMINATOR;
 
 	DebugMessage += FString::Printf(TEXT("  Heading %f Pitch %f Roll %f"), LocalEulerAngles.Yaw, LocalEulerAngles.Pitch, LocalEulerAngles.Roll) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  GroundSpeed %f fps, InstantSpeed %f mps, JSBSimDt %f WorldDt %f SimTime %.2f WorldTime %.2f TickTime %.3f ms"), GroundSpeed, InstantSpeedFPS, Exec->GetDeltaT(), GetWorld()->GetDeltaSeconds(), Exec->GetSimTime(), GetWorld()->TimeSeconds, TickTime) + LINE_TERMINATOR;
+	DebugMessage += FString::Printf(TEXT("  GroundSpeed %f fps, InstantSpeed %f mps, JSBSimDt %f WorldDt %f SimTime %.2f WorldTime %.2f TickTime %.3f ms"), AircraftState.GroundSpeedKts, InstantSpeedFPS, Exec->GetDeltaT(), GetWorld()->GetDeltaSeconds(), Exec->GetSimTime(), GetWorld()->TimeSeconds, TickTime) + LINE_TERMINATOR;
 	DebugMessage += FString::Printf(TEXT("  Speed NED %s"), *VelocityNEDfps.ToString()) + LINE_TERMINATOR;
 	DebugMessage += FString::Printf(TEXT("  Euler Rate %s"), *EulerRates.ToString()) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  Altitude %f"), AltitudeASL) + LINE_TERMINATOR;
+	DebugMessage += FString::Printf(TEXT("  AltitudeASL %f Ft"), AircraftState.AltitudeASLFt) + LINE_TERMINATOR;
 
 	JSBSim::FGColumnVector3 BodyLocation = MassBalance->StructuralToBody(JSBSim::FGColumnVector3()) * FEET_TO_METER * 100.0;
 	

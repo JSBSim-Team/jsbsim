@@ -207,11 +207,7 @@ public:
 	// Output State
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
 		bool Crashed = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		double StallWarning = 0;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		double GroundSpeed;
+	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
 		FVector VelocityNEDfps;
@@ -219,8 +215,7 @@ public:
 		FVector EulerRates;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
 		double TotalVelocityfps;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		double AltitudeASL;
+	
 
 
 
