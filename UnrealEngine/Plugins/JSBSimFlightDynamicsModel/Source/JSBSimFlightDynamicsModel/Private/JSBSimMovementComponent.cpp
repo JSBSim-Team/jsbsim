@@ -559,28 +559,14 @@ void UJSBSimMovementComponent::CopyToJSBSim()
 	FCS->SetDfCmd(Commands.Flap);
 	FCS->SetDsbCmd(Commands.SpeedBrake);
 	FCS->SetDspCmd(Commands.Spoiler);
-
 	  
 	// Gears and Brake controls
-
-	double parking_brake = Commands.ParkingBrake;
-	double left_brake = Commands.LeftBrake;
-	double right_brake = Commands.RightBrake;
-	/*if (ab_brake_engaged->getBoolValue()) {
-		left_brake = ab_brake_left_pct->getDoubleValue();
-		right_brake = ab_brake_right_pct->getDoubleValue();
-	}*/
-	FCS->SetLBrake(FMath::Max(left_brake, parking_brake));
-	FCS->SetRBrake(FMath::Max(right_brake, parking_brake));
-	FCS->SetCBrake(0.0);
-
+	FCS->SetLBrake(FMath::Max(Commands.LeftBrake, Commands.ParkingBrake));
+	FCS->SetRBrake(FMath::Max(Commands.RightBrake, Commands.ParkingBrake));
+	FCS->SetCBrake(FMath::Max(Commands.CenterBrake, Commands.ParkingBrake));
 	FCS->SetGearCmd(Commands.GearDown); 
 
-
 	ApplyEnginesCommands(); 
-
-	
-
 
 	// TODO - Update atmosphere
 	
