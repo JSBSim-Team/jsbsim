@@ -155,7 +155,7 @@ struct FEngineCommand
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
-		DebugMessage += FString::Printf(TEXT("      Starter %d Running %d Throttle %f Mixture %f CutOff %d"), Starter, Running, Throttle, Mixture, CutOff) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("      Starter %d Mixture %.2f Running %d CutOff %d  ---- Throttle %f  "), Starter, Mixture, Running, CutOff, Throttle ) + LINE_TERMINATOR;
 		return DebugMessage;
 	}
 
@@ -214,7 +214,7 @@ struct FEngineState
 
 		if (EngineType == EEngineType::Turbine)
 		{
-			DebugMessage += FString::Printf(TEXT("      N1 %f N2 %f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
+			DebugMessage += FString::Printf(TEXT("      N1 %.2f N2 %.2f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
 		}
 		
 		return DebugMessage;
