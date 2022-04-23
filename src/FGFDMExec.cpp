@@ -1099,7 +1099,7 @@ bool FGFDMExec::ReadChild(Element* el)
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
     const string s("  No location was found for this child object!");
-    cerr << location->ReadFrom() << endl << highint << fgred
+    cerr << el->ReadFrom() << endl << highint << fgred
          << s << reset << endl;
     throw BaseException(s);
   }
