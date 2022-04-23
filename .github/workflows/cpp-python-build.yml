@@ -62,7 +62,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel valgrindci
+        run: pip install -U cython numpy pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
@@ -356,7 +356,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32
+        run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data & Doxygen
@@ -447,7 +447,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy build
+        run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data
