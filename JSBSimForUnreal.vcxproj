@@ -90,6 +90,12 @@
 robocopy $(SolutionDir)src UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include *.h *.hxx /E
 echo supresses errors 1, 2, and 4 which are not really errors.
 set/A errlev="%ERRORLEVEL% &amp;amp; 24"
+
+echo Copy Aircrafts, Engines and Systems in the plugin resources folder
+robocopy $(SolutionDir)aircraft UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\aircraft /E
+robocopy $(SolutionDir)engine UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\engine /E
+robocopy $(SolutionDir)systems UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems /E
+
 exit/B %errlev%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -139,6 +145,12 @@ exit/B %errlev%</Command>
 robocopy $(SolutionDir)src UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include *.h *.hxx /E
 echo supresses errors 1, 2, and 4 which are not really errors.
 set/A errlev="%ERRORLEVEL% &amp;amp; 24"
+
+echo Copy Aircrafts, Engines and Systems in the plugin resources folder
+robocopy $(SolutionDir)aircraft UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\aircraft /E
+robocopy $(SolutionDir)engine UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\engine /E
+robocopy $(SolutionDir)systems UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems /E
+
 exit/B %errlev%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
