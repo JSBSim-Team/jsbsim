@@ -5,9 +5,13 @@
 #include "JSBSimModule.h"
 
 #pragma warning( push )
-#pragma warning( disable : 4263 )
-#pragma warning( disable : 4264 )
-#pragma warning( disable : 4005 )
+
+// UE treats warning as errors. JSBSim has some warnings in its include files, so if we don't catch them inside this push/pop pragma, we won't be able to build...
+
+#pragma warning( disable : 4263 ) // FGOutputType.h(151): warning C4263: 'bool JSBSim::FGOutputType::Run(void)': member function does not override any base class virtual member function
+#pragma warning( disable : 4264 ) // FGOutputType.h(215): warning C4264: 'bool JSBSim::FGModel::Run(bool)': no override available for virtual member function from base 'JSBSim::FGModel'; function is hidden --- And others
+#pragma warning( disable : 4005 ) // compiler.h(58): warning C4005: 'DEPRECATED': macro redefinition with UE_5.0\Engine\Source\Runtime\Core\Public\Windows\WindowsPlatformCompilerPreSetup.h(55): note: see previous definition of 'DEPRECATED'
+#pragma warning( disable : 4458 ) // FGXMLElement.h(369): error C4458: declaration of 'name' hides class member
 
 #include "FGFDMExec.h"
 #include "math/FGLocation.h"
@@ -126,7 +130,7 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	if (AircraftLoaded)
 	{
-		if (Crashed)
+		if (AircraftState.Crashed)
 		{
 			// TODO - Send event
 			UE_LOG(LogJSBSim, Display, TEXT("Aircraft crashed..."));
@@ -153,8 +157,8 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 			if (Parent)
 			{
 				// Computes Rotation in engine frame
-				FTransform ENUTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(ECEFLocation);
-				FRotator LocalUERotation(LocalEulerAngles);
+				FTransform ENUTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(AircraftState.ECEFLocation);
+				FRotator LocalUERotation(AircraftState.LocalEulerAngles);
 				LocalUERotation.Yaw = LocalUERotation.Yaw - 90.0; // JSBSim heading is aero heading (0 at north). We have to remove 90 because in UE, 0 is pointing east. 
 				FQuat EngineRotationQuat = ENUTransform.TransformRotation(LocalUERotation.Quaternion());
 				
@@ -166,12 +170,12 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 				// Computes Location in engine frame
 				FVector CGWorldPosition;
-				GeoReferencingSystem->ECEFToEngine(ECEFLocation, CGWorldPosition);
+				GeoReferencingSystem->ECEFToEngine(AircraftState.ECEFLocation, CGWorldPosition);
 
 				FVector EngineLocation = CGWorldPosition - CGOffsetWorld;
 
 
-				AircraftState.ForwardHorizontal = ENUTransform.TransformVector(ECEFForwardHorizontal);
+				AircraftState.UEForwardHorizontal = ENUTransform.TransformVector(ECEFForwardHorizontal);
 
 				// Apply to actor			
 				Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
@@ -614,54 +618,14 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	// Collect JSBSim data
 	Propagate->DumpState();
 	
-	VelocityNEDfps.Set(Propagate->GetVel(JSBSim::FGJSBBase::eNorth), Propagate->GetVel(JSBSim::FGJSBBase::eEast), -Propagate->GetVel(JSBSim::FGJSBBase::eDown));
-	EulerRates.Set(Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePhi), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::eTht), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePsi));
+	// Keep Former Location in ECEF
+	FVector FormerECEFLocation = AircraftState.ECEFLocation;
 
-
-	// Location in ECEF
-	FVector FormerECEFLocation = ECEFLocation;
-
-	JSBSim::FGLocation LocationVRP = Propagate->GetLocation();
-	ECEFLocation = FVector(LocationVRP(1), LocationVRP(2), LocationVRP(3)) * FEET_TO_METER;
-	
-	
 	// Get Aircraft forward vector in local (ECEF tangent) space. 
 	// TODO - IDK if for the horizon indicator I should use the forward vector or the aircraft speed. 
 	// Maybe the aircraft speed would include some kind of lateral slip ---> May one expert fix it if needed...
-	JSBSim::FGColumnVector3 ForwardLocal = Propagate->GetTb2l() * JSBSim::FGColumnVector3(1,0,0);
+	JSBSim::FGColumnVector3 ForwardLocal = Propagate->GetTb2l() * JSBSim::FGColumnVector3(1, 0, 0);
 	ECEFForwardHorizontal = FVector(ForwardLocal(2), -ForwardLocal(1), 0);
-	
-	// Compute Instant speed in FPS
-	// AVIRER - C'est juste pour voir si notre vitesse UE est correcte vs celle reportee par JSBSim
-	if (GetWorld())
-	{
-		FVector DeltaLocation = ECEFLocation - FormerECEFLocation;
-		InstantSpeedFPS = DeltaLocation.Size() / GetWorld()->GetDeltaSeconds() * METER_TO_FEET;
-	}
-	else
-	{
-		InstantSpeedFPS = 0;
-	}
-	
-
-	// TODO - Passer en World Frame / Round Planet... 
-	LocalEulerAngles.Yaw = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePsi)); 
-	LocalEulerAngles.Pitch = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::eTht));
-	LocalEulerAngles.Roll = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePhi));
-	
-	//UE_LOG(LogJSBSim, Display, TEXT("State : Lat %f - Long %f - Alt %f    Bank %f  Pitch %f  Heading %f"), Latitude, Longitude, Altitude, Bank, Pitch, Heading);
-
-
-	AircraftState.GroundSpeedKts = Auxiliary->GetVground() * FEET_PER_SEC_TO_KNOT;
-	AircraftState.CalibratedAirSpeedKts = Auxiliary->GetVcalibratedKTS();
-	AircraftState.AltitudeASLFt = Propagate->GetAltitudeASL();
-	AircraftState.HeadingDeg = LocalEulerAngles.Yaw;
-	AircraftState.StallWarning = Aerodynamics->GetStallWarn();
-	AircraftState.AltitudeRateFtps = Propagate->Gethdot();
-
-
-	TotalVelocityfps = Auxiliary->GetVt();
-	
 
 	// Update Moving part state
 	AircraftState.ElevatorPosition = FCS->GetDePos(JSBSim::ofDeg);
@@ -671,24 +635,37 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	AircraftState.FlapPosition = FCS->GetDfPos(JSBSim::ofDeg);
 	AircraftState.SpeedBrakePosition = FCS->GetDsbPos(JSBSim::ofDeg);
 	AircraftState.SpoilersPosition = FCS->GetDspPos(JSBSim::ofDeg);
-	//tailhook_pos_pct->setDoubleValue(FCS->GetTailhookPos());
-	//wing_fold_pos_pct->setDoubleValue(FCS->GetWingFoldPos());
 
+	// Speed
+	AircraftState.CalibratedAirSpeedKts = Auxiliary->GetVcalibratedKTS();
+	AircraftState.GroundSpeedKts = Auxiliary->GetVground() * FEET_PER_SEC_TO_KNOT;
+	AircraftState.TotalVelocityKts = Auxiliary->GetVt() * FEET_PER_SEC_TO_KNOT;
+	AircraftState.VelocityNEDfps.Set(Propagate->GetVel(JSBSim::FGJSBBase::eNorth), Propagate->GetVel(JSBSim::FGJSBBase::eEast), -Propagate->GetVel(JSBSim::FGJSBBase::eDown));
+	AircraftState.AltitudeASLFt = Propagate->GetAltitudeASL();
+	AircraftState.AltitudeRateFtps = Propagate->Gethdot();;
+	AircraftState.StallWarning = Aerodynamics->GetStallWarn();
 
+	// Transformation
+	JSBSim::FGLocation LocationVRP = Propagate->GetLocation(); // TODO - Checker absolument!! 
+	AircraftState.ECEFLocation = FVector(LocationVRP(1), LocationVRP(2), LocationVRP(3)) * FEET_TO_METER;
+	AircraftState.Latitude = LocationVRP.GetGeodLatitudeDeg();
+	AircraftState.Longitude = LocationVRP.GetLongitudeDeg();
+	AircraftState.LocalEulerAngles.Yaw = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePsi));
+	AircraftState.LocalEulerAngles.Pitch = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::eTht));
+	AircraftState.LocalEulerAngles.Roll = FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePhi));
+	AircraftState.EulerRates.Set(Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePhi), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::eTht), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePsi));
+	AircraftState.AltitudeAGLFt = Propagate->GetDistanceAGL();
+	// force a sim crashed if crashed (altitude AGL < 0)
+	if (AircraftState.AltitudeAGLFt < -10.0) {
+		Exec->SuspendIntegration();
+		AircraftState.Crashed = true;
+	}
+	
 	// Copy the fuel levels from JSBSim if fuel
 	// freeze not enabled.
-
 	CopyTankPropertiesFromJSBSim();
 	CopyGearPropertiesFromJSBSim();
 	GetEnginesStates();
-
-
-	// force a sim crashed if crashed (altitude AGL < 0)
-	if (Propagate->GetDistanceAGL() < -10.0) {
-		Exec->SuspendIntegration();
-		Crashed = true;
-	}
-
 }
 
 /////////// JSBSim Private methods
@@ -788,7 +765,7 @@ void UJSBSimMovementComponent::InitGearDefaultProperties()
 			Gears[i].NormalizedPosition = Gear->GetGearUnitPos();
 			Gears[i].IsBogey = Gear->IsBogey();
 			Gears[i].HasWeightOnWheel = Gear->GetWOW();
-			Gears[i].WheelRollLinearVelocity_mps = Gear->GetWheelRollVel() * FEET_TO_METER;
+			Gears[i].WheelRollLinearVelocityMetersPerSec = Gear->GetWheelRollVel() * FEET_TO_METER;
 			Gears[i].IsUp = Gear->GetGearUnitUp();
 			Gears[i].IsDown = Gear->GetGearUnitDown();
 			Gears[i].Name = FString(Gear->GetName().c_str());
@@ -824,7 +801,7 @@ void UJSBSimMovementComponent::CopyGearPropertiesFromJSBSim()
 			Gears[i].NormalizedPosition = Gear->GetGearUnitPos();
 			Gears[i].IsBogey = Gear->IsBogey();
 			Gears[i].HasWeightOnWheel = Gear->GetWOW();
-			Gears[i].WheelRollLinearVelocity_mps = Gear->GetWheelRollVel() * FEET_TO_METER;
+			Gears[i].WheelRollLinearVelocityMetersPerSec = Gear->GetWheelRollVel() * FEET_TO_METER;
 			Gears[i].IsUp = Gear->GetGearUnitUp();
 			Gears[i].IsDown = Gear->GetGearUnitDown();
 
@@ -1114,74 +1091,45 @@ void UJSBSimMovementComponent::DrawDebugMessage()
 	// Inputs
 	DebugMessage += Commands.GetDebugMessage();
 
-	DebugMessage += LINE_TERMINATOR;
-	DebugMessage += TEXT("Outputs :"); DebugMessage += LINE_TERMINATOR;
-
-	// Engines // TODO - Iterate over UE objects and not JSBSim ones to make sur it's Ok in UE side
-	DebugMessage += LINE_TERMINATOR;
+	// Engines 
 	int32 NumEngines = EngineCommands.Num();
-	DebugMessage += FString::Printf(TEXT("Engines (%d) : "), NumEngines) + LINE_TERMINATOR;
+	// Commands
+	DebugMessage += LINE_TERMINATOR;
+	DebugMessage += FString::Printf(TEXT("Engines Commands (%d) : "), NumEngines) + LINE_TERMINATOR;
 	for (int32 i = 0; i < NumEngines; i++)
 	{
-		DebugMessage += FString::Printf(TEXT("  #%d - Command :"), i) + LINE_TERMINATOR;
-		DebugMessage += EngineCommands[i].GetDebugMessage();
-		DebugMessage += FString::Printf(TEXT("  #%d - State :"), i) + LINE_TERMINATOR;
-		DebugMessage += EngineStates[i].GetDebugMessage();
+		DebugMessage += FString::Printf(TEXT("    #%d    "), i) + EngineCommands[i].GetDebugMessage();
+	}
+	// States
+	DebugMessage += LINE_TERMINATOR;
+	DebugMessage += FString::Printf(TEXT("Engines States (%d) : "), NumEngines) + LINE_TERMINATOR;
+	for (int32 i = 0; i < NumEngines; i++)
+	{
+		DebugMessage += FString::Printf(TEXT("    #%d    "), i) + EngineStates[i].GetDebugMessage();
 	}
 
-	// Tanks // TODO - Iterate over UE objects and not JSBSim ones to make sur it's Ok in UE side
+	// Tanks
 	DebugMessage += LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("Tanks (%d) : "), Propulsion->GetNumTanks()) + LINE_TERMINATOR;
-	uint8 TankIndex = 0;
-	for (FTank Tank : Tanks)
+	int32 NumTanks = Tanks.Num();
+	DebugMessage += FString::Printf(TEXT("Tanks (%d) : "), NumTanks) + LINE_TERMINATOR;
+	for (int32 i = 0; i < NumTanks; i++)
 	{
-		TankIndex++;
-		DebugMessage += FString::Printf(TEXT("  #%d - Content %.2f / %.2f gal [%.1f %%], Temp %.1f C, Density %.2f ppg"), TankIndex, Tank.ContentGallons, Tank.CapacityGallons, Tank.FillPercentage, Tank.TemperatureCelcius, Tank.FuelDensityPoundsPerGallon) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("    #%d    "), i) + Tanks[i].GetDebugMessage();
 	}
 
-	// GEAR
+	// Gears
 	DebugMessage += LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("Landing Gears (%d) : "), GroundReactions->GetNumGearUnits()) + LINE_TERMINATOR;
-	
-	/*for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++)
+	int32 NumGears = Gears.Num();
+	DebugMessage += FString::Printf(TEXT("Landing Gears (%d) : "), NumGears) + LINE_TERMINATOR;
+	for (int32 i = 0; i < NumTanks; i++)
 	{
-		JSBSim::FGLGear* Gear = GroundReactions->GetGearUnit(i);
-		if (Gear->IsBogey())
+		if (Gears[i].IsBogey)
 		{
-			DebugMessage += FString::Printf(TEXT("  #%d - Up %d Down %d WOW %d / Position %.2f Compression %.2f"), i, Gear->GetGearUnitUp(), Gear->GetGearUnitDown(), Gear->GetWOW(), Gear->GetGearUnitPos(), Gear->GetCompLen()) + LINE_TERMINATOR;
-
-		}
-	}*/
-	uint8 GearIndex = 0;
-	for (FGear Gear : Gears)
-	{
-		GearIndex++;
-		if (Gear.IsBogey)
-		{
-			DebugMessage += FString::Printf(TEXT("  #%d - Up %d Down %d WOW %d / Position %.2f WheelVel %.2f Force %.2f"), GearIndex, Gear.IsUp, Gear.IsDown, Gear.HasWeightOnWheel, Gear.NormalizedPosition, Gear.WheelRollLinearVelocity_mps, Gear.Force.Size()) + LINE_TERMINATOR;
+			DebugMessage += FString::Printf(TEXT("    #%d    "), i) + Gears[i].GetDebugMessage();
 		}
 	}
-	
 
 	// State 
-	DebugMessage += LINE_TERMINATOR;
-	DebugMessage += TEXT("State :"); DebugMessage += LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  X %f  Y %f  Z %f"), ECEFLocation.X, ECEFLocation.Y, ECEFLocation.Z) + LINE_TERMINATOR;
-
-	DebugMessage += FString::Printf(TEXT("  Lat %f  Long %f "), Propagate->GetLatitudeDeg(), Propagate->GetLongitudeDeg()) + LINE_TERMINATOR;
-
-	DebugMessage += FString::Printf(TEXT("  Heading %f Pitch %f Roll %f"), LocalEulerAngles.Yaw, LocalEulerAngles.Pitch, LocalEulerAngles.Roll) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  GroundSpeed %f fps, InstantSpeed %f mps, JSBSimDt %f WorldDt %f SimTime %.2f WorldTime %.2f TickTime %.3f ms"), AircraftState.GroundSpeedKts, InstantSpeedFPS, Exec->GetDeltaT(), GetWorld()->GetDeltaSeconds(), Exec->GetSimTime(), GetWorld()->TimeSeconds, TickTime) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  Speed NED %s"), *VelocityNEDfps.ToString()) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  Euler Rate %s"), *EulerRates.ToString()) + LINE_TERMINATOR;
-	DebugMessage += FString::Printf(TEXT("  AltitudeASL %f Ft"), AircraftState.AltitudeASLFt) + LINE_TERMINATOR;
-
-	JSBSim::FGColumnVector3 BodyLocation = MassBalance->StructuralToBody(JSBSim::FGColumnVector3()) * FEET_TO_METER * 100.0;
-	
-
-	DebugMessage += FString::Printf(TEXT("  Structural to Body %.4f %.4f %.4f"), BodyLocation(1), BodyLocation(2), BodyLocation(3)) + LINE_TERMINATOR;
-
-
 	DebugMessage += LINE_TERMINATOR;
 	DebugMessage += AircraftState.GetDebugMessage();
 

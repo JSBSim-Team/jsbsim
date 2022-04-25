@@ -42,6 +42,13 @@ struct FTank
 		double TemperatureCelcius = 0;
 
 	// Possible Other Functions - Fill, Drain... 
+
+	FString GetDebugMessage()
+	{
+		FString DebugMessage;
+		DebugMessage += FString::Printf(TEXT("      Content %.2f / %.2f gal [%.1f %%], Temp %.1f C, Density %.2f ppg"), ContentGallons, CapacityGallons, FillPercentage, TemperatureCelcius, FuelDensityPoundsPerGallon) + LINE_TERMINATOR;
+		return DebugMessage;
+	}
 };
 
 USTRUCT(BlueprintType)
@@ -57,41 +64,52 @@ struct FGear
 	 * 1 = Down, 0 = up
 	*/
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		double NormalizedPosition = 1;
+	double NormalizedPosition = 1;
+
+    UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	bool IsFrontBogey = false;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		bool IsFrontBogey = false;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		bool IsRearBogey = false;
+	bool IsRearBogey = false;
 
 
 	// Basic Properties - Non Editable
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		FString Name = "";
+	FString Name = "";
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		bool IsBogey = false;
+	bool IsBogey = false;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		bool HasWeightOnWheel = false;
+	bool HasWeightOnWheel = false;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		double WheelRollLinearVelocity_mps = 0.0f;
+	double WheelRollLinearVelocityMetersPerSec = 0.0f;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		bool IsUp = false;
+	bool IsUp = false;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		bool IsDown = true;
+	bool IsDown = true;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		FVector RelativeLocation = FVector(FVector::ZeroVector);
+	FVector RelativeLocation = FVector(FVector::ZeroVector);
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-		FVector Force = FVector(FVector::ZeroVector);
+	FVector Force = FVector(FVector::ZeroVector);
 
 	// Possible Other Functions - Steering, Compression... 
+
+	FString GetDebugMessage()
+	{
+		FString DebugMessage;
+		FString UpDownState("I"); 
+		if (NormalizedPosition == 0) UpDownState = FString("U");
+		if (NormalizedPosition == 1) UpDownState = FString("D");
+		DebugMessage += FString::Printf(TEXT("      NormPosition %.2f [%s]    WOW %d    RollLinVel %.1f    Force %.1f"), NormalizedPosition, *UpDownState, HasWeightOnWheel, WheelRollLinearVelocityMetersPerSec, Force.Length()) + LINE_TERMINATOR;
+		return DebugMessage;
+	}
+
 };
 
 UENUM(BlueprintType)
@@ -155,7 +173,7 @@ struct FEngineCommand
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
-		DebugMessage += FString::Printf(TEXT("      Starter %d Mixture %.2f Running %d CutOff %d  ---- Throttle %f  "), Starter, Mixture, Running, CutOff, Throttle ) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("      Starter %d    Mixture %.2f    Running %d    CutOff %d  ---- Throttle %f  "), Starter, Mixture, Running, CutOff, Throttle ) + LINE_TERMINATOR;
 		return DebugMessage;
 	}
 
@@ -170,7 +188,6 @@ struct FEngineState
 	FEngineState()
 	{
 	}
-	
 
 	// Type
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -185,8 +202,6 @@ struct FEngineState
 	double Thrust = 0;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	double EngineRPM = 0;
-
-	
 	
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	double N1 = 0; // Turbine
@@ -210,11 +225,11 @@ struct FEngineState
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
-		DebugMessage += FString::Printf(TEXT("      Starter %d Ignition %d Running %d EngineRPM %f Thrust %f  "), Starter, Ignition, Running, EngineRPM, Thrust) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("      Starter %d Ignition %d Running %d EngineRPM %.1f Thrust %.1f  "), Starter, Ignition, Running, EngineRPM, Thrust) + LINE_TERMINATOR;
 
 		if (EngineType == EEngineType::Turbine)
 		{
-			DebugMessage += FString::Printf(TEXT("      N1 %.2f N2 %.2f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
+			DebugMessage += FString::Printf(TEXT("                  N1 %.2f N2 %.2f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
 		}
 		
 		return DebugMessage;
@@ -267,19 +282,15 @@ struct FFlightControlCommands
 		double SpeedBrake;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
 		double Spoiler;
-	
-
-
-
 
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
 		DebugMessage += TEXT("Flight Control Commands :"); DebugMessage += LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Basics : Elevator %.3f   Aileron    %.3f  Rudder  %.3f  YawTrim %.3f PitchTrim %.3f  RollTrim %.3f"), Elevator, Aileron, Rudder, YawTrim, PitchTrim, RollTrim) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Brakes : Left     %.3f   Right      %.3f  Center  %.3f  Parking %.3f"), LeftBrake, RightBrake, CenterBrake, ParkingBrake) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Wheels : Steer    %.3f   GearDown   %.3f"), Steer, GearDown) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Wings  : Flap     %.3f   SpeedBrake %.3f  Spoiler %.3f"), Flap, SpeedBrake, Spoiler, ParkingBrake) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Flight : Elevator %.3f   Aileron    %.3f  Rudder  %.3f  YawTrim %.3f PitchTrim %.3f  RollTrim %.3f"), Elevator, Aileron, Rudder, YawTrim, PitchTrim, RollTrim) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Brakes : Left     %.3f   Right      %.3f  Center  %.3f  Parking %.3f"), LeftBrake, RightBrake, CenterBrake, ParkingBrake) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Wheels : Steer    %.3f   GearDown   %.3f"), Steer, GearDown) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Wings  : Flap     %.3f   SpeedBrake %.3f  Spoiler %.3f"), Flap, SpeedBrake, Spoiler, ParkingBrake) + LINE_TERMINATOR;
 
 		return DebugMessage;
 	}
@@ -312,29 +323,54 @@ struct FAircraftState
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Articulations")
 	double SpoilersPosition = 0;
 
+
+	// Speed
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double CalibratedAirSpeedKts = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double GroundSpeedKts = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	double TotalVelocityKts;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
+	FVector VelocityNEDfps;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double AltitudeASLFt = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
-	double HeadingDeg = 0;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
-	double StallWarning = 0;
+	double AltitudeAGLFt = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double AltitudeRateFtps = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
-	FVector ForwardHorizontal = FVector::ZeroVector;
+	double StallWarning = 0;
 	
+	
+	// Transformation
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	FVector ECEFLocation = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	double Latitude = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	double Longitude = 0; 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	FRotator LocalEulerAngles;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	FVector EulerRates;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
+	FVector UEForwardHorizontal = FVector::ZeroVector;
+	
+	// Misc
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Misc")
+	bool Crashed = false;
 
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
 		DebugMessage += TEXT("Aircraft State :"); DebugMessage += LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Elevator %f Left Aileron %f  Right Aileron %f"), ElevatorPosition, LeftAileronPosition, RightAileronPosition) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Rudder   %f "), RudderPosition) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("  Flap     %f SpeedBrake   %f  Spoilers      %f"), FlapPosition, SpeedBrakePosition, SpoilersPosition) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Elevator %.2f     Left Aileron %.2f     Right Aileron %.2f     Rudder   %.2f     (Degree)"), ElevatorPosition, LeftAileronPosition, RightAileronPosition) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Flap     %.2f     SpeedBrake   %.2f     Spoilers      %.2f"), FlapPosition, SpeedBrakePosition, SpoilersPosition) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        CAS      %.2f (kt)     GroundSpeed %.2f (kt)     VelocityNED %s (ft/s)"), CalibratedAirSpeedKts, GroundSpeedKts, *VelocityNEDfps.ToString()) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        AltitudeASL %.2f (ft)     AltitudeAGL %.2f (ft)     AltitudeRateFtps %.2f (ft/s)     StallWarning %d"), AltitudeASLFt, AltitudeAGLFt, AltitudeRateFtps, StallWarning) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        ECEFLocation %s      Latitude %.3f      Longitude %.3f"), *ECEFLocation.ToString(), Latitude, Longitude) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Yaw %.5f (%.5f)      Pitch %.5f (%.5f)     Roll %.5f (%.5f) (Degrees) "), LocalEulerAngles.Yaw, EulerRates.X, LocalEulerAngles.Pitch, EulerRates.Y, LocalEulerAngles.Roll, EulerRates.Z) + LINE_TERMINATOR;
 
 
 		return DebugMessage;

@@ -82,7 +82,7 @@ public:
 	 * Display the reference points and debug text at runtime. 
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Model")
-	bool DrawDebug = true;	// TODO - Use the stats system for internal state? 
+	bool DrawDebug = true;
 
 
 	/**
@@ -124,7 +124,7 @@ public:
 	 * Engine state at start
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Conditions|Aircraft")
-	bool bStartWithEngineRunning = true; // TODO - Tester false et effectuer la procedure de démarrage
+	bool bStartWithEngineRunning = true;
 	
 	/**
 	 * Flaps Normalized Position on play [0..1]
@@ -146,13 +146,13 @@ public:
 	 * Wind Heading Degrees
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Conditions|Atmosphere", meta = (UIMin = "1", UIMax = "360", ClampMin = "1", ClampMax = "360"))
-		int32 WindHeading = 90;
+		int32 WindHeading = 0;
 
 	/**
 	* Wind Intensity knots
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Conditions|Atmosphere", meta = (UIMin = "0", UIMax = "100", ClampMin = "0", ClampMax = "1000"))
-		double WindIntensityKts = 15;
+		double WindIntensityKts = 0;
 
 	/**
 	 * If false, the atmosphere model will be the one from JSBSim. 
@@ -172,7 +172,7 @@ public:
 	*/
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Initial Conditions|Atmosphere", meta = (EditCondition = "ControlFDMAtmosphere", UIMin = "0", ClampMin = "0"))
 	double PressureSeaLevelhPa = 1013.25;
-	// TODO - Other ATM properties in a dedicated structure... 
+	// TODO - Other ATM properties, maybe in a dedicated structure... 
 
 
 	// Tanks Properties 
@@ -183,55 +183,28 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Model|Tanks")
 	bool FuelFreeze = false;
 
-
 	// Gear Properties 
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Editfixedsize, Category = "Model|Gears", meta=(TitleProperty = "{Name} Bogey = {IsBogey}"))
 	TArray<struct FGear> Gears;
 
 	// Engine Properties 
 	
-	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Tanks")
+	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
 	TArray<struct FEngineCommand> EngineCommands;
-	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Tanks")
+	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
 	TArray<struct FEngineState> EngineStates;
 
-	// Commands and State
+	// Flight Control Commands and State
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
 	FFlightControlCommands Commands;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "State")
 	FAircraftState AircraftState;
-	
-
-	// Output State
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		bool Crashed = false;
-	
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		FVector VelocityNEDfps;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		FVector EulerRates;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		double TotalVelocityfps;
-	
 
 
-
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Output|Aircraft")
-		double InstantSpeedFPS;
-
-
-
-	
-	
-
-	// TODO - Per-engine commands ?? 
-	
-	
-	
+    // Functions
 
 	// Returns the full Aircraft name as set in the JSBSim definition file
 	FString GetAircraftScreenName() const;
@@ -239,15 +212,12 @@ public:
 	UFUNCTION(CallInEditor, DisplayName ="Reset Initial Conditions")
 	void LoadAircraft(bool ResetToDefaultSettings = true);
 
-
-
+    double GetAGLevel(const FVector& ECEFLocation, FVector& ECEFContactPoint, FVector& Normal);
 
 	// ActorComponent overridables
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 	void BeginDestroy() override;
 
-	double GetAGLevel(const FVector& ECEFLocation, FVector& ECEFContactPoint, FVector& Normal);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -255,11 +225,10 @@ protected:
 	UPROPERTY()
 	AGeoReferencingSystem* GeoReferencingSystem;
 
-
 	void OnRegister() override;
 
 protected:
-	// JSBSim Objects	
+	// JSBSim Objects - TODO - Hide in an JSBSimInternals Structure to allow adding a public dependency without requiring JSBSim Includes
 	JSBSim::FGFDMExec* Exec = nullptr;
 	
 	std::shared_ptr<JSBSim::FGAtmosphere> Atmosphere = nullptr;
@@ -284,8 +253,7 @@ protected:
 	FTransform BodyToActor;
 
 	bool JSBSimInitialized = false;
-
-	bool TrimNeeded = true; // TODO ? Does false make sense ? we need to Trim the state based on the ICs... 
+    bool TrimNeeded = true; // TODO ? Does false make sense ? we need to Trim the state based on the ICs... 
 	bool Trimmed = false;
 	bool AircraftLoaded = false;
 	
@@ -321,10 +289,7 @@ protected:
 
 private:
 	AActor* Parent = nullptr;
-
-	FVector ECEFLocation;
-	FVector ECEFForwardHorizontal;
-	FRotator LocalEulerAngles;
+  	FVector ECEFForwardHorizontal;
 
 	/////////// JSBSim Private methods
 	void DoTrim();
