@@ -21,7 +21,7 @@
 -->
 <system name="added-mass">
 
- <documentation>
+ <description>
   This system computes forces and moments due to added/virtual mass.
   The model is based on
   [Max M. Munk, "Aerodynamic forces on airship hulls", NACA report 184, 1924]
@@ -123,7 +123,7 @@
      </direction>
     </force>
 
- </documentation>
+ </description>
 
  <channel name="startup">
 

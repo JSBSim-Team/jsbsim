@@ -23,8 +23,7 @@ cd python
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info >= (${PYTHON_MIN_VERSION})))" | grep -q 'True'; then
-        "${PYBIN}/pip" install 'cython!=0.29.26' build  # Exclude Cython version 0.29.26 as it fails building for PyPy38
-        "${PYBIN}/cython" --cplus jsbsim.pyx -o jsbsim.cxx
+        "${PYBIN}/pip" install build
         "${PYBIN}/python" -m build --wheel --config-setting=--build-number=$GITHUB_RUN_NUMBER
     fi
 done

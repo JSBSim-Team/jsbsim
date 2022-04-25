@@ -26,6 +26,12 @@ jobs:
             [ "$filename" != "scripts/unitconversions.xml" ] || continue
             xmllint --noout --schema JSBSimScript.xsd $filename
           done
+      - name: Validate systems files
+        run: |
+          for filename in systems/*.xml; do
+              [ -e "$filename" ] || continue
+              xmllint --noout --schema JSBSimSystem.xsd $filename
+          done
 
   Linux:
     name: C/C++ build (Linux)
@@ -56,7 +62,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel valgrindci
+        run: pip install -U cython numpy pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
@@ -350,7 +356,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32
+        run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data & Doxygen
@@ -429,7 +435,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build\src\RelWithDebInfo\JSBSim.lib
-            build\python\jsbsim.cxx
             build\python\setup.py
 
   MacOSX:
@@ -442,7 +447,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy build
+        run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data
@@ -484,7 +489,9 @@ jobs:
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build/python
-        run: python -m build --sdist
+        run: |
+          rm -f jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          python -m build --sdist
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -503,7 +510,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build/src/libJSBSim.a
-            build/python/jsbsim.cxx
             build/python/setup.py
             build/python/dist/*.tar.gz
 

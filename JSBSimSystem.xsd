@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:include schemaLocation="JSBSimCommon.xsd"/>
+
   <!-- The systems definition -->
   <xs:element name="system">
     <xs:annotation>
       <xs:documentation>
-            The system definition can be present any number of times in an aircraft definition. This
-            section is used to define an arbitrary system, such as navigation, guidance, or control 
-            avionics, electrical systems, etc. The system, autopilot, and flight_control sections of a
-            configuration file are all built the same way, using channel elements that contain strings
-            of component definitions.
-        </xs:documentation>
+        The system definition can be present any number of times in an aircraft
+        definition. This section is used to define an arbitrary system, such as
+        navigation, guidance, or control avionics, electrical systems, etc. The
+        system, autopilot, and flight_control sections of a configuration file
+        are all built the same way, using channel elements that contain strings
+        of component definitions.
+      </xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
-        <xs:element name="property">
-          <xs:complexType>
-            <xs:simpleContent>
-              <xs:extension base="xs:string">
-                <xs:attribute name="value" use="optional" type="xs:double"/>
-              </xs:extension>
-            </xs:simpleContent>
-          </xs:complexType>
-        </xs:element>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel"/>
-      </xs:choice>
-      <xs:attribute name="name" use="optional" type="xs:string"/>
-      <xs:attribute name="file" use="optional" type="xs:string"/>
+      <xs:sequence>
+        <xs:element name="description" minOccurs="0" maxOccurs="1"/>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="property" type="property-with-value"/>
+          <xs:element ref="channel"/>
+          <xs:element ref="function"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="name" use="optional" type="xs:token"/>
+      <xs:attribute name="file" use="optional" type="xs:token"/>
     </xs:complexType>
   </xs:element>
 
@@ -35,25 +33,33 @@
 
   <xs:element name="channel">
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
-        <xs:element ref="actuator"/>
-        <xs:element ref="aerosurface_scale"/>
-        <xs:element ref="integrator"/>
-        <xs:element ref="kinematic"/>
-        <xs:element ref="lag_filter"/>
-        <xs:element ref="lead_lag_filter"/>
-        <xs:element ref="pid"/>
-        <xs:element ref="pure_gain"/>
-        <xs:element ref="scheduled_gain"/>
-        <xs:element ref="second_order_filter"/>
-        <xs:element ref="sensor"/>
-        <xs:element ref="summer"/>
-        <xs:element ref="switch"/>
-        <xs:element ref="washout_filter"/>
-        <xs:element ref="deadband"/>
-        <xs:element ref="fcs_function"/>
-      </xs:choice>
+      <xs:sequence>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="accelerometer" type="sensor-with-location"/>
+          <xs:element ref="actuator"/>
+          <xs:element ref="aerosurface_scale"/>
+          <xs:element ref="angle"/>
+          <xs:element ref="deadband"/>
+          <xs:element ref="fcs_function"/>
+          <xs:element ref="gyro"/>
+          <xs:element ref="integrator"/>
+          <xs:element ref="kinematic"/>
+          <xs:element ref="lag_filter"/>
+          <xs:element ref="lead_lag_filter"/>
+          <xs:element name="magnetometer" type="sensor-with-location"/>
+          <xs:element ref="pid"/>
+          <xs:element ref="pure_gain"/>
+          <xs:element ref="scheduled_gain"/>
+          <xs:element ref="second_order_filter"/>
+          <xs:element ref="sensor"/>
+          <xs:element ref="summer"/>
+          <xs:element ref="switch"/>
+          <xs:element ref="washout_filter"/>
+          <xs:element ref="waypoint_distance"/>
+          <xs:element ref="waypoint_heading"/>
+        </xs:choice>
+      </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string">
         <xs:annotation><xs:documentation>
           The name for a channel is simply a brief, descriptive, name. The name
@@ -70,15 +76,89 @@
     </xs:complexType>
   </xs:element>
 
+  <!-- Sensors -->
+  <xs:simpleType name="axis">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[xX]|[yY]|[zZ]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="orientation">
+    <xs:all>
+      <xs:element name="pitch" type="xs:decimal"/>
+      <xs:element name="roll" type="xs:decimal"/>
+      <xs:element name="yaw" type="xs:decimal"/>
+    </xs:all>
+    <xs:attribute name="unit" type="angleUnit"/>
+  </xs:complexType>
+
+  <xs:complexType name="sensor-with-location">
+    <xs:all>
+      <xs:element name="location" minOccurs="1">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="x" type="xs:decimal"/>
+            <xs:element name="y" type="xs:decimal"/>
+            <xs:element name="z" type="xs:decimal"/>
+          </xs:all>
+          <xs:attribute name="unit" type="distanceUnit"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="axis" type="axis" minOccurs="1"/>
+      <xs:element name="orientation" type="orientation" minOccurs="0"/>
+      <xs:element ref="quantization" minOccurs="0"/>
+      <xs:element name="bias" type="xs:float" minOccurs="0"/>
+      <xs:element name="gain" type="xs:float" minOccurs="0"/>
+      <xs:element name="drift_rate" type="xs:float" minOccurs="0"/>
+      <xs:element name="lag" type="xs:float" minOccurs="0"/>
+      <xs:element ref="noise" minOccurs="0"/>
+      <xs:element name="delay" type="xs:float" minOccurs="0"/>
+      <xs:element name="output" type="property-name"/>
+    </xs:all>
+    <xs:attribute name="name" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Gyro -->
+
+  <xs:element name="gyro">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="axis" type="axis"/>
+        <xs:element name="orientation" type="orientation"/>
+        <xs:element ref="quantization" minOccurs="0"/>
+        <xs:element name="bias" type="xs:float" minOccurs="0"/>
+        <xs:element name="gain" type="xs:float" minOccurs="0"/>
+        <xs:element name="drift_rate" type="xs:float" minOccurs="0"/>
+        <xs:element name="lag" type="xs:float" minOccurs="0"/>
+        <xs:element ref="noise" minOccurs="0"/>
+        <xs:element name="delay" type="xs:float" minOccurs="0"/>
+        <xs:element name="output" type="property-name"/>
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Angle -->
+  <xs:element name="angle">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="source_angle" type="angleProperty"/>
+        <xs:element name="target_angle" type="angleProperty"/>
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="unit" type="angleUnit"/>
+    </xs:complexType>
+  </xs:element>
+
   <!-- Lag filter -->
 
   <xs:element name="lag_filter">
     <xs:complexType>
       <xs:all>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="c1" type="xs:double"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" type="xs:string" minOccurs="0"/>
       </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
@@ -90,7 +170,7 @@
   <xs:element name="summer">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" maxOccurs="unbounded"/>
         <xs:element name="bias" type="xs:float" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
@@ -113,7 +193,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
         <xs:element ref="range" minOccurs="1" maxOccurs="1"/>
@@ -134,7 +214,7 @@
   <xs:element name="kinematic">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="traverse"/>
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
@@ -164,7 +244,7 @@
   <xs:element name="lead_lag_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
         <xs:element name="c1" type="xs:double"/>
         <xs:element name="c2" type="xs:double" minOccurs="0"/>
@@ -182,7 +262,7 @@
   <xs:element name="washout_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
         <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
@@ -197,7 +277,7 @@
   <xs:element name="integrator">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
         <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
         <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
@@ -213,7 +293,7 @@
   <xs:element name="pid">
     <xs:complexType>
       <xs:all>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="kp" type="xs:string" minOccurs="0">
           <xs:annotation><xs:documentation>Specifies the proportional constant value or property.</xs:documentation></xs:annotation>
@@ -232,7 +312,7 @@
                       <xs:enumeration value="ab3"><xs:annotation><xs:documentation>Specifies an Adams-Bashforth third order integrator.</xs:documentation></xs:annotation></xs:enumeration>
                     </xs:restriction>
                   </xs:simpleType>
-                </xs:attribute>                
+                </xs:attribute>
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
@@ -274,7 +354,7 @@
           </xs:annotation>
         </xs:element>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="type" use="optional">
@@ -294,13 +374,13 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  
+
   <!-- Second order filter -->
 
   <xs:element name="second_order_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="c1" type="xs:double"/>
         <xs:element name="c2" type="xs:double"/>
@@ -320,7 +400,7 @@
   <xs:element name="pure_gain">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="gain" type="xs:string">
           <xs:annotation>
@@ -339,7 +419,7 @@
   <xs:element name="scheduled_gain">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element ref="table"/>
         <xs:element name="gain" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -359,10 +439,10 @@
   <xs:element name="switch">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="0"/>
         <xs:element ref="default" minOccurs="0"/>
-        <xs:element ref="test" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="test" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
@@ -374,17 +454,19 @@
 
   <xs:element name="sensor">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
-        <xs:element name="input" type="xs:string" maxOccurs="1"/>
-        <xs:element name="lag" type="xs:float" maxOccurs="1"/>
-        <xs:element ref="noise" maxOccurs="1"/>
-        <xs:element ref="quantization" maxOccurs="1"/>
-        <xs:element name="drift_rate" type="xs:float" maxOccurs="1"/>
-        <xs:element name="bias" type="xs:float" maxOccurs="1"/>
-        <xs:element ref="clipto" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="description" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
+        <xs:element ref="quantization"/>
+        <xs:element name="bias" type="xs:float"/>
+        <xs:element name="gain" type="xs:float"/>
+        <xs:element name="drift_rate" type="xs:float"/>
+        <xs:element name="lag" type="xs:float"/>
+        <xs:element ref="noise"/>
+        <xs:element name="delay"/>
+        <xs:element ref="clipto"/>
+        <xs:element name="output"/>
+      </xs:choice>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
@@ -401,10 +483,10 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" minOccurs="1" type="xs:string"/>
         <xs:element name="lag" type="xs:float" minOccurs="0"/>
-        <xs:element name="rate_limit" minOccurs="0" maxOccurs="2">
+        <xs:element name="rate_limit" minOccurs="0" maxOccurs="1">
           <xs:annotation><xs:documentation>
             The rate limit can be specified as a numeric value or as a property.
             Further, an "incr" or "decr" sense attribute to specify which
@@ -418,7 +500,7 @@
                     The sense attribute determines which direction the rate
                     limit applies to. If no sense is given, the rate limit
                     applies to both directions equally. If "incr" is specified
-                    then the rate limit applies only to the rate of increase. 
+                    then the rate limit applies only to the rate of increase.
                     If "decr" is specified, then the rate limit applies only to
                     a decreasing rate. The decreasing rate limit - if given - is
                     assumed to be negative - no negative sign is required.
@@ -438,7 +520,7 @@
         <xs:element name="deadband_width" type="xs:float" minOccurs="0"/>
         <xs:element name="hysteresis_width" type="xs:float" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
       </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -449,9 +531,9 @@
   <xs:element name="deadband">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
-        <xs:element name="width" type="xs:float"/>
+        <xs:element name="width" minOccurs="1"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
       </xs:sequence>
@@ -463,16 +545,71 @@
   <xs:element name="fcs_function">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="0"/>
         <xs:element ref="function"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="optional" type="xs:string"/>
     </xs:complexType>
 
   </xs:element>
+
+  <xs:element name="waypoint_distance">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="waypoint_input">
+          <xs:attribute name="unit" type="distanceUnit"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="waypoint_heading">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="waypoint_input">
+          <xs:attribute name="unit" type="angleUnit"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="waypoint_input">
+    <xs:all>
+      <xs:element name="target_latitude" minOccurs="1" type="angleProperty"/>
+      <xs:element name="target_longitude" minOccurs="1" type="angleProperty"/>
+      <xs:element name="source_latitude" minOccurs="1" type="angleProperty"/>
+      <xs:element name="source_longitude" minOccurs="1" type="angleProperty"/>
+    </xs:all>
+    <xs:attribute name="name" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="angleProperty">
+    <xs:simpleContent>
+      <xs:extension base="property-name">
+        <xs:attribute name="unit" type="angleUnit"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="angleUnit">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="DEG"/>
+      <xs:enumeration value="RAD"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="distanceUnit">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="FT"/>
+      <xs:enumeration value="IN"/>
+      <xs:enumeration value="KM"/>
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="CM"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <!--
 
@@ -489,7 +626,7 @@
       <xs:element ref="width"/>
     </xs:sequence>
   </xs:group>
- 
+
 -->
   <xs:element name="test">
     <xs:complexType>
@@ -510,7 +647,7 @@
   </xs:element>
   <xs:element name="width" type="PositiveNumber">
     <xs:annotation>
-      <xs:documentation>The width value specifies the width of the deadband - i.e. 
+      <xs:documentation>The width value specifies the width of the deadband - i.e.
         the total span about zero where the input will be mapped to zero output.</xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -518,7 +655,7 @@
   <xs:element name="noise">
     <xs:annotation>
       <xs:documentation>
-        The noise can be entered as a percentage of the signal, or as an absolute value.        
+        The noise can be entered as a percentage of the signal, or as an absolute value.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -526,9 +663,17 @@
         <xs:extension base="xs:float">
           <xs:attribute name="variation">
             <xs:simpleType>
-              <xs:restriction base="xs:string">
+              <xs:restriction base="xs:token">
                 <xs:enumeration value="PERCENT"/>
                 <xs:enumeration value="ABSOLUTE"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="distribution">
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="UNIFORM"/>
+                <xs:enumeration value="GAUSSIAN"/>
               </xs:restriction>
             </xs:simpleType>
           </xs:attribute>
@@ -556,8 +701,8 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:double" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="max" type="xs:double" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="min" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="max" minOccurs="0" maxOccurs="1"/>
       </xs:all>
     </xs:complexType>
   </xs:element>
@@ -613,593 +758,9 @@
     </xs:complexType>
   </xs:element>
 
-  <!-- Functions -->
-  <xs:group name="func_group">
-    <xs:choice>
-      <xs:element ref="table"/>
-      <xs:element ref="product"/>
-      <xs:element ref="difference"/>
-      <xs:element ref="sum"/>
-      <xs:element ref="quotient"/>
-      <xs:element ref="pow"/>
-      <xs:element ref="sqrt"/>
-      <xs:element ref="abs"/>
-      <xs:element ref="sin"/>
-      <xs:element ref="cos"/>
-      <xs:element ref="tan"/>
-      <xs:element ref="asin"/>
-      <xs:element ref="acos"/>
-      <xs:element ref="atan"/>
-      <xs:element ref="atan2"/>
-      <xs:element ref="min"/>
-      <xs:element ref="max"/>
-      <xs:element ref="avg"/>
-      <xs:element ref="fraction"/>
-      <xs:element ref="integer"/>
-      <xs:element ref="mod"/>
-      <xs:element name="random"/>
-      <xs:element name="urandom"/>
-      <xs:element name="pi"/>
-      <xs:element ref="toradians"/>
-      <xs:element ref="todegrees"/>
-      <xs:element ref="lt"/>
-      <xs:element ref="le"/>
-      <xs:element ref="gt"/>
-      <xs:element ref="ge"/>
-      <xs:element ref="eq"/>
-      <xs:element ref="nq"/>
-      <xs:element ref="and"/>
-      <xs:element ref="or"/>
-      <xs:element ref="not"/>
-      <xs:element ref="ifthen"/>
-      <xs:element name="switch"> <!-- Switch element has to go here to disambiguate from FCS switch component -->
-        <xs:annotation><xs:documentation>
-          Uses the integer value of the first immediate child element as an
-          index to select one of the subsequent immediate child elements to
-          return the value of.
-        </xs:documentation></xs:annotation>
-        <xs:complexType>
-          <xs:choice minOccurs="3" maxOccurs="unbounded">
-            <xs:group ref="func_group"/>
-            <xs:element ref="value"/>
-            <xs:element ref="property"/>
-            <xs:element name="v"/>
-            <xs:element name="p"/>
-          </xs:choice>
-        </xs:complexType>
-      </xs:element>
-    </xs:choice>
-  </xs:group>
-  <xs:element name="function">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="description" minOccurs="0" maxOccurs="1"/>
-        <xs:group ref="func_group"/>
-      </xs:sequence>
-      <xs:attribute name="name" use="optional"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="product">
-    <xs:annotation><xs:documentation>
-      Multiplies together the values of all immediate child elements.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="difference">
-    <xs:annotation><xs:documentation>
-      Subtracts from the value of the first immediate child element the values of all subsequent immediate child elements. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="sum">
-    <xs:annotation><xs:documentation>
-      Sums the values of all immediate child elements.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="quotient">
-    <xs:annotation><xs:documentation>
-      Divides the value of the first immediate child element by the value of the second immediate child element.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="abs">
-    <xs:annotation><xs:documentation>
-      Returns the absolute value of the immediate child element. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="sqrt">
-    <xs:annotation><xs:documentation>
-      Returns the square root of the value of the immediate child element.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="toradians">
-    <xs:annotation><xs:documentation>
-      Converts the argument presumed to be expressed in degrees to radians by
-      multiplying the value of the immediate child element by pi/180.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="todegrees">
-    <xs:annotation><xs:documentation>
-      Converts the argument presumed to be expressed in radians to degrees by
-      multiplying the value of the immediate child element by 180/pi.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="pow">
-    <xs:annotation><xs:documentation>
-      Raises the value of the first immediate child element to the power of the
-      value of the second immediate child element.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="sin">
-    <xs:annotation><xs:documentation>
-      Calculates the sine of the value of the immediate child element (the
-      argument is expected to be in radians). 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="cos">
-    <xs:annotation><xs:documentation>
-      Calculates the cosine of the value of the immediate child element (the
-      argument is expected to be in radians). 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="tan">
-    <xs:annotation><xs:documentation>
-      Calculates the tangent of the value of the immediate child element (the
-      argument is expected to be in radians). 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="asin">
-    <xs:annotation><xs:documentation>
-      Calculates the arcsine (inverse sine) of the value of the immediate child
-      element. The value provided should be in the range from -1 to +1. The
-      value returned will be expressed in radians, and will be in the range
-      from -pi/2 to +pi/2.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="acos">
-    <xs:annotation><xs:documentation>
-      Calculates the arccosine (inverse cosine) of the value of the immediate
-      child element. The value provided should be in the range from -1 to +1.
-      The value returned will be expressed in radians, and will be in the range
-      from 0 to pi.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="atan">
-    <xs:annotation><xs:documentation>
-      Calculates the inverse tangent of the value of the immediate child
-      element. The value returned will be expressed in radians, and will be in
-      the range from -pi/2 to +pi/2.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="atan2">
-    <xs:annotation><xs:documentation>
-      Calculates the inverse tangent of the value of the immediate child
-      elements, Y/X (in that order). It even works for X values near zero.
-      The value returned will be expressed in radians, and in the range
-      -pi to +pi.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="min">
-    <xs:annotation><xs:documentation>
-      Returns the smallest value from all the immediate child elements.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="max">
-    <xs:annotation><xs:documentation>
-      Returns the largest value from all the immediate child elements.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="avg">
-    <xs:annotation><xs:documentation>
-      Returns the average value of all the immediate child elements. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="fraction">
-    <xs:annotation><xs:documentation>
-      Returns the fractional part of the value of the immediate child element .
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice>
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="integer">
-    <xs:annotation><xs:documentation>
-      Returns the integer part of the value of the immediate child element. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice>
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="value" type="xs:double"/>
-  <xs:element name="mod">
-    <xs:annotation><xs:documentation>
-      Returns the remainder from the integer division of the value of the first
-      immediate child element by the second immediate child element, X/Y
-      (X modulo Y). The value returned is the value X-I*Y, for the largest
-      integer I such that if Y is nonzero, the result has the same sign as X
-      and magnitude less than the magnitude of Y. For instance, the expression
-      "5 mod 2" would evaluate to 1 because 5 divided by 2 leaves a quotient of
-      2 and a remainder of 1, while "9 mod 3" would evaluate to 0 because the
-      division of 9 by 3 has a quotient of 3 and leaves a remainder of 0.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="lt">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is less
-      than the value of the second immediate child element, returns 0
-      otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="le">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is less
-      than or equal to the value of the second immediate child element,
-      returns 0 otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="gt">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is greater
-      than the value of the second immediate child element, returns 0
-      otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="ge">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is greater
-      than or equal to the value of the second immediate child element,
-      returns 0 otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="eq">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is equal to
-      the value of the second immediate child element, returns 0 otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="nq">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the value of the first immediate child element is not
-      equal to the value of the second immediate child element, returns 0
-      otherwise. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="and">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if the values of the immediate child elements are all 1,
-      returns 0 otherwise. Values provided are expected to be either 1 or 0
-      within machine precision.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="or">
-    <xs:annotation><xs:documentation>
-      Returns a 1 if any of the values of the immediate child elements are 1,
-      returns 0 otherwise. Values provided are expected to be either 1 or 0
-      within machine precision.
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="not">
-    <xs:annotation><xs:documentation>
-      Returns the inverse of the value of the supplied immediate child element
-      (e.g., returns 1 if supplied a 0). 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="1" maxOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="ifthen">
-    <xs:annotation><xs:documentation>
-      If the value of the first immediate child element is 1, then the value of
-      the second immediate child element is returned, otherwise the value of
-      the third child element is returned. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="3" maxOccurs="3">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="interpolate1d">
-    <xs:annotation><xs:documentation>
-      Returns the result from a 1-dimensional interpolation of the supplied
-      values, with the value of the first immediate child element representing
-      the lookup value into the table, and the following pairs of values
-      representing the independent and dependent values. The first provided
-      child element is expected to be a property. The interpolation does not
-      extrapolate, but holds the highest value if the provided lookup value
-      goes outside of the provided range. 
-    </xs:documentation></xs:annotation>
-    <xs:complexType>
-      <xs:choice minOccurs="5" maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
-        <xs:element name="v"/>
-        <xs:element name="p"/>
-      </xs:choice>
-    </xs:complexType>
-  </xs:element>
-  
   <xs:simpleType name="PositiveNumber">
     <xs:restriction base="xs:double">
       <xs:minInclusive value="0"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:element name="property" type="xs:string"/>
-  <xs:element name="description" type="xs:string">
-    <xs:annotation>
-      <xs:documentation>A simple text description of the item.</xs:documentation>
-    </xs:annotation>
-  </xs:element>
 </xs:schema>

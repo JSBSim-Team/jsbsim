@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!--<?xml-stylesheet type="text/xsl" href="XMLToDoc.xsl"?>-->
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:annotation><xs:documentation>
     This schema specifies the format that a JSBSim (www.jsbsim.org) script must
     take to be valid. The JSBSim scripting language provides for specification
@@ -13,6 +12,8 @@
     when an event is reached.
   </xs:documentation></xs:annotation>
 
+  <xs:include schemaLocation="JSBSimCommon.xsd"/>
+
   <xs:element name="runscript">
     <xs:annotation><xs:documentation>
       The "runscript" element is the top-level containing XML element. It may
@@ -23,8 +24,8 @@
         <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="use" maxOccurs="1">
           <xs:complexType>
-            <xs:attribute name="aircraft" type="xs:string" use="required"/>
-            <xs:attribute name="initialize" type="xs:string" use="required"/>
+            <xs:attribute name="aircraft" type="xs:token" use="required"/>
+            <xs:attribute name="initialize" type="xs:token" use="required"/>
           </xs:complexType>
         </xs:element>
         <xs:element ref="run" maxOccurs="1"/>
@@ -46,47 +47,30 @@
               <xs:element name="coefficients" type="ON-OFF" minOccurs="0"/>
               <xs:element name="property" type="property-with-caption" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="name" type="xs:token" use="required"/>
             <xs:attribute name="type" use="required">
               <xs:annotation><xs:documentation>
                 The format in which the data output will be issued.
               </xs:documentation></xs:annotation>
               <xs:simpleType>
-                <xs:restriction base="xs:string">
-                  <xs:pattern value="CSV|TABULAR|SOCKET|FLIGHTGEAR|TERMINAL|NONE"/>
+                <xs:restriction base="xs:token">
+                  <xs:enumeration value="CSV"/>
+                  <xs:enumeration value="TABULAR"/>
+                  <xs:enumeration value="SOCKET"/>
+                  <xs:enumeration value="FLIGHTGEAR"/>
+                  <xs:enumeration value="TERMINAL"/>
+                  <xs:enumeration value="NONE"/>
                 </xs:restriction>
               </xs:simpleType>
             </xs:attribute>
             <xs:attribute name="rate" type="xs:decimal" use="required"/>
-            <xs:attribute name="file" type="xs:string" use="optional"/>
+            <xs:attribute name="file" type="xs:token" use="optional"/>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:token" use="required"/>
     </xs:complexType>
   </xs:element>
-
-  <xs:simpleType name="ON-OFF">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="collapse"/>
-      <xs:pattern value="ON|OFF"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:complexType name="property">
-    <xs:annotation><xs:documentation>
-      A "property" is a JSBSim simulation parameter that represents any of a
-      number of things, from engine throttle settings, to aircraft rotation
-      rates, to the simulation time. To see a list of properties that are
-      available for an individual aircraft, one can provide the "--catalog"
-      option to the JSBSim standalone program.
-    </xs:documentation></xs:annotation>
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="apply" type="xs:string"/>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
 
   <xs:complexType name="property-with-caption">
     <xs:simpleContent>
@@ -107,7 +91,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
           <xs:annotation><xs:documentation>
             A property element placed within the run element (in a sort of
@@ -116,8 +100,7 @@
           </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:simpleContent>
-              <xs:extension base="property">
-                <xs:attribute name="value" type="xs:decimal" default="0.0"/>
+              <xs:extension base="property-with-value">
                 <xs:attribute name="persistent" type="xs:boolean"/>
               </xs:extension>
             </xs:simpleContent>
@@ -153,7 +136,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:choice maxOccurs="unbounded">
           <xs:element ref="condition" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="set" maxOccurs="unbounded" minOccurs="0"/>
@@ -167,7 +150,7 @@
           </xs:element>
         </xs:choice>
       </xs:sequence>
-      <xs:attribute name="name" type="xs:string" use="optional"/>
+      <xs:attribute name="name" type="xs:token" use="optional"/>
       <xs:attribute name="persistent" type="xs:boolean" use="optional" default="false">
         <xs:annotation><xs:documentation>
           If an event is marked persistent, the event will be executed anytime
@@ -210,13 +193,7 @@
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="test" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="logic" default="AND">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="AND|OR"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
+      <xs:attribute name="logic" type="AND-OR" default="AND"/>
     </xs:complexType>
   </xs:element>
 
@@ -230,10 +207,16 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="description" type="xs:string" minOccurs="0"/>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
         <xs:element name="property" type="property-with-caption"/>
       </xs:sequence>
-      <xs:attribute name="format" type="xs:string" use="optional"/>
+      <xs:attribute name="format" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="kml"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
 
@@ -250,15 +233,20 @@
       <xs:all minOccurs="0">
         <xs:element minOccurs="0" ref="function"/>
       </xs:all>
-      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:token" use="required"/>
       <xs:attribute name="action" use="optional" default="FG_STEP">
         <xs:annotation><xs:documentation>
           The action specifies how the new value should be reached from the old
           value. The choices are: step, ramp, exponential approach.
         </xs:documentation></xs:annotation>
         <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="FG_RAMP|FG_STEP|FG_EXP|ramp|step|exp"></xs:pattern>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="FG_RAMP"/>
+            <xs:enumeration value="FG_STEP"/>
+            <xs:enumeration value="FG_EXP"/>
+            <xs:enumeration value="ramp"/>
+            <xs:enumeration value="step"/>
+            <xs:enumeration value="exp"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -266,8 +254,13 @@
       <xs:attribute name="tc" type="xs:double" use="optional"/>
       <xs:attribute name="type" use="optional" default="FG_VALUE">
         <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="FG_DELTA|FG_VALUE|FG_BOOL|delta|value|bool"/>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="FG_DELTA"/>
+            <xs:enumeration value="FG_VALUE"/>
+            <xs:enumeration value="FG_BOOL"/>
+            <xs:enumeration value="delta"/>
+            <xs:enumeration value="value"/>
+            <xs:enumeration value="bool"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
@@ -279,77 +272,7 @@
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
         <xs:element ref="test"/>
       </xs:sequence>
-      <xs:attribute name="logic" default="AND">
-        <xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:pattern value="AND|OR"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:attribute>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:complexType name="single-argument">
-    <xs:sequence>
-      <xs:group ref="func_group"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="two-arguments">
-    <xs:sequence>
-      <xs:group ref="func_group" minOccurs="2" maxOccurs="2"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="multiple-arguments">
-    <xs:sequence>
-      <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <!-- Functions -->
-  <xs:group name="func_group">
-    <xs:choice>
-      <xs:element ref="table" />
-      <xs:element name="product" type="multiple-arguments"/>
-      <xs:element name="difference" type="two-arguments"/>
-      <xs:element name="sum" type="multiple-arguments"/>
-      <xs:element name="quotient" type="two-arguments"/>
-      <xs:element name="pow" type="two-arguments"/>
-      <xs:element name="abs" type="single-argument"/>
-      <xs:element name="sin" type="single-argument"/>
-      <xs:element name="cos" type="single-argument"/>
-      <xs:element name="tan" type="single-argument"/>
-      <xs:element name="asin" type="single-argument"/>
-      <xs:element name="acos" type="single-argument"/>
-      <xs:element name="atan" type="single-argument"/>
-      <xs:element name="atan2" type="two-arguments"/>
-      <xs:element name="min" type="multiple-arguments"/>
-      <xs:element name="max" type="multiple-arguments"/>
-      <xs:element name="avg" type="multiple-arguments"/>
-      <xs:element name="fraction" type="single-argument"/>
-      <xs:element name="integer" type="single-argument"/>
-      <xs:element name="mod" type="two-arguments"/>
-      <xs:element name="switch" type="multiple-arguments"/>
-      <xs:element name="random"/>
-      <xs:element name="value" type="xs:decimal"/>
-      <xs:element name="property" type="property"/>
-      <xs:element name="v" type="xs:decimal"/>
-      <xs:element name="p" type="property"/>
-    </xs:choice>
-  </xs:group>
-
-  <xs:element name="function">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="description" minOccurs="0">
-          <xs:annotation><xs:documentation>
-            A description of the function.
-          </xs:documentation></xs:annotation>
-        </xs:element>
-        <xs:group ref="func_group" />
-      </xs:sequence>
-      <xs:attribute name="name" use="optional" />
+      <xs:attribute name="logic" type="AND-OR" default="AND"/>
     </xs:complexType>
   </xs:element>
 
@@ -359,12 +282,12 @@
         <xs:element maxOccurs="unbounded" ref="independentVar" />
         <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="name" use="optional" type="xs:string" />
+      <xs:attribute name="name" use="optional" type="xs:token" />
     </xs:complexType>
   </xs:element>
   <xs:element name="independentVar">
     <xs:complexType mixed="true">
-      <xs:attribute name="lookup" type="xs:string" />
+      <xs:attribute name="lookup" type="xs:token" />
     </xs:complexType>
   </xs:element>
   <xs:element name="tableData">
