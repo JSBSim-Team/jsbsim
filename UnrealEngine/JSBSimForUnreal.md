@@ -26,6 +26,13 @@
 |Rudder - Left| NUM 0|
 |Rudder - Right|NUM ENTER|
 |Center Aileron & Rudder |NUM 5|
+||
+|Aileron Trim - Left| CTRL-LEFT |
+|Aileron Trim - Right|CTRL-RIGHT|
+|Elevator Trim - Up| CTRL-DOWN|
+|Elevator Trim - Down|CTRL-UP|
+|Rudder Trim - Left| CTRL-NUM-7|
+|Rudder Trim - Right|CTRL-NUM-9|
 |
 |All Brakes | NUM . |
 |Left Brakes | NUM * |
