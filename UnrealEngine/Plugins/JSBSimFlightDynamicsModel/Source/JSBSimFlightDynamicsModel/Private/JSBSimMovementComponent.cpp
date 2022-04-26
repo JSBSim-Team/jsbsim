@@ -258,7 +258,6 @@ double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FV
 void UJSBSimMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	Parent = GetOwner();
 
 	if (!GeoReferencingSystem)
@@ -270,7 +269,6 @@ void UJSBSimMovementComponent::BeginPlay()
 			UE_LOG(LogJSBSim, Error, TEXT("Impossible to use a UJSBSimMovementComponent without a GeoReferencingSystem."));
 		}
 	}
-
 	if (Parent)
 	{
 		Parent->GetRootComponent()->SetMobility(EComponentMobility::Movable);
@@ -424,7 +422,9 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 
 	// Aircraft State
 	// Flaps position
+    Commands.Flap = FlapPositionAtStart;
 	FCS->SetDfPos(ofNorm, FlapPositionAtStart);
+
 	// Gear position
 	if (bStartWithGearDown)
 	{
