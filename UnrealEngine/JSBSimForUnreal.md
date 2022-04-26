@@ -48,6 +48,7 @@
 |-|-|
 |Toggle Pilot/Orbit Camera | TAB |
 |Toggle FDM Debug Infos | D |
+|Toggle Aircraft Trails | T |
 |
 |Orbit Camera Up/Dowm | RightMouseButton + Mouse Up/Down |
 |Orbit Camera Left/Right | RightMouseButton + Mouse Left/Right|
