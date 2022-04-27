@@ -66,14 +66,20 @@ struct FGear
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	double NormalizedPosition = 1;
 
+    /*
+    * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations 
+    */
     UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsFrontBogey = false;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+    /*
+    * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations
+    */
+    UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsRearBogey = false;
 
 
-	// Basic Properties - Non Editable
+	// Basic Properties from JSBSim - Read Only
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FString Name = "";
 
@@ -132,11 +138,16 @@ struct FEngineCommand
 	}
 
 	// Common Engine Commands
+
+    /* Normalized [0..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	double Throttle = 0.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	double Mixture = 0.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	
+    UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool Starter = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool Running = false;
@@ -246,42 +257,60 @@ struct FFlightControlCommands
 	}
 
 	// Basics
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Aileron;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Elevator;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Rudder;
 
+    /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double YawTrim;
+	double Aileron;
+    /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double PitchTrim;
+	double Elevator;
+     /* Normalized [-1..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+	double Rudder;
+
+    /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double RollTrim;
+	double YawTrim;
+    /* Normalized [-1..1] value expected */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+	double PitchTrim;
+    /* Normalized [-1..1] value expected */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+	double RollTrim;
 
 	// Wheels
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Steer; // == Rudder??
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double LeftBrake;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double RightBrake;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double CenterBrake;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double ParkingBrake;
-	// 0 for up, 1 for down.
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double GearDown = 1;
+
+    /* Normalized [-1..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double Steer; // == Rudder??
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double LeftBrake;
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double RightBrake;
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double CenterBrake;
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double ParkingBrake;
+    // 0 for up, 1 for down.
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double GearDown = 1;
 
 	// Wings
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Flap;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double SpeedBrake;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-		double Spoiler;
+
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double Flap;
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double SpeedBrake;
+    /* Normalized [0..1] value expected */
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+    double Spoiler;
 
 	FString GetDebugMessage()
 	{

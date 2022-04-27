@@ -13,8 +13,6 @@ UEGroundCallback::~UEGroundCallback()
 {
 }
 
-
-
 double UEGroundCallback::GetAGLevel(const FGLocation& location, FGLocation& contact, FGColumnVector3& normal, FGColumnVector3& vel, FGColumnVector3& angularVel) const
 {
 	vel.InitMatrix();

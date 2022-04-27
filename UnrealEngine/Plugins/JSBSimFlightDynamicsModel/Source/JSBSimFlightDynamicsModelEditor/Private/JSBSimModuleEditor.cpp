@@ -6,10 +6,6 @@
 #include "JSBSimMovementCompVisualizer.h"
 #include "JSBSimMovementComponent.h"
 
-//#include "Core.h"
-//#include "Modules/ModuleManager.h"
-
-
 #define LOCTEXT_NAMESPACE "FJSBSimModuleEditor"
 
 
@@ -17,11 +13,11 @@ void FJSBSimModuleEditor::StartupModule()
 {
 	if (GUnrealEd)
 	{
+        // Register the FJSBSimMovementCompVisualizer to help setting up JSBSim
+        
 		// Make a new instance of the visualizer
 		TSharedPtr<FComponentVisualizer> Visualizer = MakeShareable(new FJSBSimMovementCompVisualizer);
-
-
-		// Register it to our specific component class
+    	// Register it to our specific component class
 		GUnrealEd->RegisterComponentVisualizer(UJSBSimMovementComponent::StaticClass()->GetFName(), Visualizer);
 		Visualizer->OnRegister();
 	}

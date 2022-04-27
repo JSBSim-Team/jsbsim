@@ -32,22 +32,8 @@ namespace JSBSim {
 	class FGGroundReactions;
 }
 
+// UE Forward Declarations
 class AGeoReferencingSystem;
-// TODOUE5 - Passer les floats en double
-
-
-
-
-
-
-class LStream : public std::stringbuf {
-protected:
-	int sync() {
-		UE_LOG(LogJSBSim, Log, TEXT("%s"), *FString(str().c_str()));
-		str("");
-		return std::stringbuf::sync();
-	}
-};
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -206,12 +192,16 @@ public:
 
     // Functions
 
-	// Returns the full Aircraft name as set in the JSBSim definition file
+	/* Returns the full Aircraft name as set in the JSBSim definition file */ 
 	FString GetAircraftScreenName() const;
-	
+
+    /* This function is used in different contexts : 
+    *  - When the used changed the Aircraft Model string - In that case, we call it with ResetToDefaultSettings to rebuild Engine, Tanks and Gears UE structures from the new aircraft
+    *  - On begin play, in that case, we don't touch the UE structures because the user can have overriden some properties. */
 	UFUNCTION(CallInEditor, DisplayName ="Reset Initial Conditions")
 	void LoadAircraft(bool ResetToDefaultSettings = true);
 
+    /* Query the ground for a contact point and normal - JSBSims uses a lot this function to query contacts */
     double GetAGLevel(const FVector& ECEFLocation, FVector& ECEFContactPoint, FVector& Normal);
 
 	// ActorComponent overridables
@@ -321,9 +311,6 @@ private:
 	*/
 	void DrawDebugMessage();
 	void DrawDebugObjects();
-	
-
-	LStream Stream;
 
 	/////////// In-Editor Specific
 

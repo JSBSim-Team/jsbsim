@@ -15,7 +15,6 @@ public:
 	~FJSBSimMovementCompVisualizer();
 
 	void DrawVisualization(const UActorComponent* Component, const FSceneView* View, FPrimitiveDrawInterface* PDI) override;
-
 	void DrawVisualizationHUD(const UActorComponent* Component, const FViewport* Viewport, const FSceneView* View, FCanvas* Canvas) override;
 
 private: 
@@ -24,6 +23,4 @@ private:
 	FVector CGWorldLocation;
 	FVector EPWorldLocation;
 	FVector VRPWorldLocation;
-
-
 };

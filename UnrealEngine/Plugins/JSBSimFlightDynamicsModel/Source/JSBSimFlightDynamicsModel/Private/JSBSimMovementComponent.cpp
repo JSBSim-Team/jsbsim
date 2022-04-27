@@ -43,6 +43,17 @@
 #include "Components/ActorComponent.h"
 
 
+// Utility class and static member to redirect cout to UE_LOG - see in UJSBSimMovementComponent::UJSBSimMovementComponent()
+class LStream : public std::stringbuf {
+protected:
+  int sync() {
+    UE_LOG(LogJSBSim, Log, TEXT("%s"), *FString(str().c_str()));
+    str("");
+    return std::stringbuf::sync();
+  }
+};
+LStream Stream;
+
 
 ////// Constructor
 UJSBSimMovementComponent::UJSBSimMovementComponent()
@@ -50,7 +61,7 @@ UJSBSimMovementComponent::UJSBSimMovementComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// Add a stream redirector in order to output JSBSim debug info to Log
+	// Uncomment to Add a stream redirector in order to output JSBSim debug info to Log
 	// std::cout.rdbuf(&Stream);
 }
 
@@ -69,7 +80,7 @@ FString UJSBSimMovementComponent::GetAircraftScreenName() const
 
 void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
 {
-	UE_LOG(LogJSBSim, Display, TEXT("UJSBSimMovementComponent::LoadAircraft '0x%.8X' - %s"), this, *AircraftModel);
+	UE_LOG(LogJSBSim, Display, TEXT("UJSBSimMovementComponent::LoadAircraft %s"), *AircraftModel);
 
 	// It seems like we can only load the model once after having been initialized - So we have to Reinit JSBSim when changing the model.
 	DeInitializeJSBSim();
@@ -95,23 +106,9 @@ void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
 
 	UpdateLocalTransforms();
 
+    // The Aircraft model has changed - Reset the Tank and Gear properties that can have been overriden by the user. 
 	if (ResetToDefaultSettings)
 	{
-		// Do basic sanity checks 
-		int EnginesCount = Propulsion->GetNumEngines();
-		//UE_LOG(LogJSBSim, Display, TEXT("Number of engines : %d"), EnginesCount);
-
-
-
-		// Initialize initial conditions
-		// init_gear(); TODO - Why ?
-
-		// TODO - Here - Consider the initial values of some variables in our actor. If they are set, they will override the config defaults. If not, we'll use the config default. 
-		// 	For Each Tank
-		//		- Fuel density-ppg 
-		//		- Fuel level-lbs 
-		//		- Capacity-gal_us - Readonly in BP-Editor
-
 		InitTankDefaultProperties();
 		InitGearDefaultProperties();
 	}
@@ -119,7 +116,63 @@ void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
 	InitEnginesCommandAndStates();
 }
 
+double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FVector& ECEFContactPoint, FVector& ECEFNormal)
+{
+  if (!GeoReferencingSystem || !GetWorld())
+  {
+    return 0.0;
+  }
 
+  // Get local Up vector at the query ECEF Location
+  FTransform TangentTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(StartECEFLocation);
+  FVector Up = TangentTransform.TransformVector(FVector::ZAxisVector);
+
+  // Compute the raycast Origin point
+  FVector StartEngineLocation;
+  GeoReferencingSystem->ECEFToEngine(StartECEFLocation, StartEngineLocation);
+  FVector LineCheckStart = StartEngineLocation + 200 * Up; // slightly above the starting point
+
+  // Compute the raycast end point
+  // Estimate raycast length - Altitude + 5% of ellipsoid radius in case of negative altitudes
+  FVector LineCheckEnd = StartEngineLocation - (AircraftState.AltitudeASLFt * FEET_TO_METER + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; 
+
+  // Prepare collision query  
+  FHitResult HitResult = FHitResult();
+  static const FName LineTraceSingleName(TEXT("AGLevelLineTrace"));
+  FCollisionQueryParams CollisionParams(LineTraceSingleName);
+  CollisionParams.bTraceComplex = true;
+  CollisionParams.AddIgnoredActor(Parent);
+
+  FCollisionObjectQueryParams ObjectParams = FCollisionObjectQueryParams(ECC_WorldStatic);
+  ObjectParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+  ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
+  ObjectParams.AddObjectTypesToQuery(ECC_Visibility);
+
+  //DrawDebugLine(GetWorld(), LineCheckStart, LineCheckEnd , FColor::Blue, false, -1, 0, 3);
+
+  // Do Query
+  double HAT = 0.0;
+  if (GetWorld()->LineTraceSingleByObjectType(HitResult, LineCheckStart, LineCheckEnd, ObjectParams, CollisionParams))
+  {
+    //DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.ImpactNormal*100.0, FColor::Orange, false, -1, 0, 3);
+
+    FVector DirectionToImpact = HitResult.ImpactPoint - StartEngineLocation;
+    HAT = FVector::Dist(StartEngineLocation, HitResult.ImpactPoint) / 100.0 * -FMath::Sign(DirectionToImpact.Dot(Up)); // JSBSim expect a signed distance. Consider that! 
+    GeoReferencingSystem->EngineToECEF(HitResult.ImpactPoint, ECEFContactPoint);
+
+    // Georeferencing don't provide tools to transform a direction, or access the worldToECEF Matrix - Do it by hand
+    FVector ECEFNormalEnd;
+    GeoReferencingSystem->EngineToECEF(HitResult.ImpactPoint + HitResult.ImpactNormal * 100.0, ECEFNormalEnd);
+    ECEFNormal = ECEFNormalEnd - ECEFContactPoint;
+    ECEFNormal.Normalize();
+  }
+  else
+  {
+    ECEFContactPoint = FVector();
+    ECEFNormal = FVector::ZAxisVector;
+  }
+  return HAT;
+}
 
 ////// ActorComponent overridables
 void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -137,23 +190,32 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		}
 		else
 		{
-			// TODO - if paused ?? 
+            // TODO - Stepping JSBSim model with a potentially variable step might be a bad idea. 
+            // Maybe step the model with a fixed step in another thread
+			Exec->Setdt(DeltaTime); 
 
-			// not needed - update ground cache. 
-			Exec->Setdt(DeltaTime); // TODO Check with low framerate? integration step vs clock time step... 
 
-
+            // Send Commands and State to JSBSim
 			CopyToJSBSim();
-			Exec->Run();
-			UpdateLocalTransforms(); // TODO Est-ce obligé à chaque tick ? 
+
+            // Step model
+			Exec->Run(); 
+			
+            // The CG location in the reference frame can vary over time, for instance when tanks get empty... 
+            // Theoretically, we should update the local transforms. But maybe it's overkill to do it each frame...
+            UpdateLocalTransforms(); 
+
+            // Get the results from JSBSim
 			CopyFromJSBSim();
 
+            // Basic debugging string and symbols
 			if (DrawDebug)
 			{
 				DrawDebugMessage();
 				DrawDebugObjects();
 			}
 
+            // Transform the aircraft coordinates from ECEF Frame to UE Frame, using the georeferencing plugin.
 			if (Parent)
 			{
 				// Computes Rotation in engine frame
@@ -166,100 +228,41 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 				EngineRotationQuat.ToMatrix(EngineRotation);
 				FVector CGOffsetWorld = EngineRotation.TransformPosition(CGLocalPosition);
 
-				
-
 				// Computes Location in engine frame
 				FVector CGWorldPosition;
 				GeoReferencingSystem->ECEFToEngine(AircraftState.ECEFLocation, CGWorldPosition);
-
 				FVector EngineLocation = CGWorldPosition - CGOffsetWorld;
 
-
+                // Update the ForwardHorizontal vector used for the PFD
 				AircraftState.UEForwardHorizontal = ENUTransform.TransformVector(ECEFForwardHorizontal);
 
-				// Apply to actor			
+				// Apply the transform to the Parent actor			
 				Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
 			}
 		}
 	}
 
+    // Get some stats - TODO - Use the UE Stats system
 	double End = FPlatformTime::Seconds();
-
-	TickTime = (End - Start) * 1000.0;
+    TickTime = (End - Start) * 1000.0;
 }
 
 void UJSBSimMovementComponent::BeginDestroy()
 {
 	Super::BeginDestroy();
+
+    // Make sure we destroy JSBSim too
 	DeInitializeJSBSim();
-}
-
-double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FVector& ECEFContactPoint, FVector& ECEFNormal)
-{
-	if (!GeoReferencingSystem || !GetWorld())
-	{
-		return 0.0;
-	}
-
-
-	FTransform TangentTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(StartECEFLocation);
-	FVector Up = TangentTransform.TransformVector(FVector::ZAxisVector);
-
-	// Update HAT each step if not found previously, or scheduled by the threshold exceeded. 
-	FVector StartEngineLocation;
-	GeoReferencingSystem->ECEFToEngine(StartECEFLocation, StartEngineLocation);
-	FVector LineCheckStart = StartEngineLocation + 200 * Up; // slightly above the starting point
-	
-	// AltitudeASL is in meters... 
-	FVector LineCheckEnd = StartEngineLocation - (AircraftState.AltitudeASLFt * FEET_TO_METER + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; // Estimate raycast length - Altitude + 5% of ellipsoid in case of negative altitudes
-	FHitResult HitResult = FHitResult();
-
-	static const FName LineTraceSingleName(TEXT("AGLevelLineTrace"));
-	FCollisionQueryParams CollisionParams(LineTraceSingleName);
-	CollisionParams.bTraceComplex = true;
-	CollisionParams.AddIgnoredActor(Parent);
-
-	FCollisionObjectQueryParams ObjectParams = FCollisionObjectQueryParams(ECC_WorldStatic);
-	ObjectParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
-	ObjectParams.AddObjectTypesToQuery(ECC_Visibility);
-
-	//DrawDebugLine(GetWorld(), LineCheckStart, LineCheckEnd , FColor::Blue, false, -1, 0, 3);
-
-	double HAT = 0.0;
-	if (GetWorld()->LineTraceSingleByObjectType(HitResult, LineCheckStart, LineCheckEnd, ObjectParams, CollisionParams))
-	{
-		//DrawDebugLine(GetWorld(), HitResult.ImpactPoint, HitResult.ImpactPoint + HitResult.ImpactNormal*100.0, FColor::Orange, false, -1, 0, 3);
-
-
-		FVector DirectionToImpact = HitResult.ImpactPoint - StartEngineLocation;
-		HAT = FVector::Dist(StartEngineLocation, HitResult.ImpactPoint) / 100.0 * -FMath::Sign(DirectionToImpact.Dot(Up)); // JSBSim expect a signed distance. Consider that! 
-		
-		
-		
-
-		GeoReferencingSystem->EngineToECEF(HitResult.ImpactPoint, ECEFContactPoint);
-
-		// Georeferencing don't provide tools to transform a direction, or access the worldToECEF Matrix - Do it by hand
-		FVector ECEFNormalEnd;
-		GeoReferencingSystem->EngineToECEF(HitResult.ImpactPoint + HitResult.ImpactNormal*100.0, ECEFNormalEnd);
-		ECEFNormal = ECEFNormalEnd - ECEFContactPoint;
-		ECEFNormal.Normalize();
-
-	}
-	else
-	{
-		ECEFContactPoint = FVector();
-		ECEFNormal = FVector::ZAxisVector;
-	}
-	return HAT;
 }
 
 void UJSBSimMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+    // Init local variables from Level Objects
 	Parent = GetOwner();
 
+    // A GeoReferencingSystem Actor is mandatory! 
 	if (!GeoReferencingSystem)
 	{
 		GeoReferencingSystem = AGeoReferencingSystem::GetGeoReferencingSystem(GetWorld());
@@ -269,21 +272,19 @@ void UJSBSimMovementComponent::BeginPlay()
 			UE_LOG(LogJSBSim, Error, TEXT("Impossible to use a UJSBSimMovementComponent without a GeoReferencingSystem."));
 		}
 	}
+
 	if (Parent)
 	{
 		Parent->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-
-		// TODO - Verifier si c'est bien necessaire sur un play. ça a ptet ete fait dans PostInitProperties
-		LoadAircraft(false);
+		LoadAircraft(false); // Start with a Fresh JSBSim object, but potentially with overridden properties
 		PrepareJSBSim();
 	}
-	
 }
-
 
 void UJSBSimMovementComponent::OnRegister()
 {
 	Super::OnRegister();
+
 	if (!GeoReferencingSystem)
 	{
 		GeoReferencingSystem = AGeoReferencingSystem::GetGeoReferencingSystem(GetWorld());
@@ -301,7 +302,7 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 {
 	if (!JSBSimInitialized)
 	{
-		// ...
+		// Construct the JSBSim FDM
 		Exec = new JSBSim::FGFDMExec();
 
 		// Get pointers to main components
@@ -320,16 +321,15 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		Accelerations = Exec->GetAccelerations();
 		IC = Exec->GetIC();
 
-		// TODO - Global Settings somewhere ? 
-
+        // Initialize the Models location, relatively to this plugin
 
 		// Get the base directory of this plugin
 		FString BaseDir = IPluginManager::Get().FindPlugin("JSBSimFlightDynamicsModel")->GetBaseDir();
 		// Add on the relative location of the third party dll and load it
 		FString RootDirRelative = FPaths::Combine(*BaseDir, TEXT("Resources/JSBSim"));
 		const FString& RootDir = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*RootDirRelative);
+		UE_LOG(LogJSBSim, Display, TEXT("Initializing JSBSimFlightDynamicsModel using Data in '%s'"), *RootDir);
 
-		UE_LOG(LogJSBSim, Display, TEXT("Initializing JSBSimFlightDynamicsModel using Data in '%s' - '0x%.8X'"), *RootDir, this);
 		// Set data paths...
 		FString AircraftPath(TEXT("aircraft"));
 		FString EnginePath(TEXT("engine"));
@@ -342,11 +342,8 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		// Prepare Initial Conditions
 		TrimNeeded = true;
 
-		//Exec->Setdt(0.016); // TODO -- Useful ? what is the meaning ? maybe just the substepping step. 
 		// Base setup done so far. The other part of initial setup will be done on begin play, in InitJSBSim. 
-
-
-		JSBSimInitialized = true;
+        JSBSimInitialized = true;
 	}
 }
 
@@ -354,11 +351,14 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 {
 	UE_LOG(LogJSBSim, Display, TEXT("PrepareJSBSim - Setting Initial Conditiond and computing initial state"));
 
-	// We need the Aircraft to be loaded first
+	// The Aircraft should have been loaded first
 	if (!AircraftLoaded)
 	{
 		return;
 	}
+
+    // Reset the current Aircraft State
+    AircraftState.Reset();
 
 	// First, consider the aircraft Transform in UE to define the Location and Orientation in JSBSim
 	FGeographicCoordinates GeographicCoordinates;
@@ -377,9 +377,6 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 		IC->SetLongitudeDegIC(GeographicCoordinates.Longitude); 
 		IC->SetGeodLatitudeDegIC(GeographicCoordinates.Latitude);
 		IC->SetAltitudeASLFtIC(GeographicCoordinates.Altitude * METER_TO_FEET);
-		//IC->SetAltitudeASLFtIC(GeographicCoordinates.Altitude * METER_TO_FEET);
-		//IC->SetLatitudeDegIC(GeographicCoordinates.Latitude);
-		//IC->SetLongitudeDegIC(GeographicCoordinates.Longitude);
 		IC->SetPhiDegIC(PsiThetaPhi.Roll);
 		IC->SetPsiDegIC(PsiThetaPhi.Yaw + 90);
 		IC->SetThetaDegIC(PsiThetaPhi.Pitch);
@@ -394,11 +391,6 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 	Commands.YawTrim = FCS->GetYawTrimCmd();
 	Commands.RollTrim = FCS->GetRollTrimCmd();
 	// TODO - Others commands ?
-	// ThrottleCommand = FCS->GetThrottleCmd(0); // TODO - For each Engine
-
-	// Reset the current Aircraft State
-	AircraftState.Reset();
-
 
 	// Atmosphere
 	if (ControlFDMAtmosphere)
@@ -435,41 +427,15 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 		FCS->SetGearPos(0.0);
 	}
 
-	// Tanks / Fuel
-	
-
-
-	// Engines - Starter / Running
-	// Foreach Engine 
-	//	- Set RPM (rpm/gearRatio) 
-
-	// To set in UE because it's not in the config files
-	// 	- FuelFreeze
-	//	- Stall Warning
-	//  - BOOL ControlFDMAtmosphere
-	//		- Temperature
-	//		- Pressure
-	//		- PressureSL
-	//		- altitude ? 
-	//		- ground_wind
-	//		- turbulence_gain
-	//		- turbulence_rate
-	//		- turbulence_model
-	//		- wind_from_north
-	//		- wind_from_east
-	//		- wind_from_down
-	
-
+    // Run IC to pre-initialize the JSBSim Initial Conditions for the model
 	CopyToJSBSim();
 	Exec->RunIC();
 	UpdateLocalTransforms();
 
 	if (bStartWithEngineRunning)
 	{
-		
 		Propulsion->InitRunning(-1);
 
-		// TODO - Take the state of the engine as Commands... 
 		int32 EngineCount = EngineCommands.Num();
 		for (int32 i = 0; i < EngineCount; i++)
 		{
@@ -477,14 +443,7 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 			EngineCommands[i].Mixture = 0.0;
 			EngineCommands[i].Running = true;
 		}
-		// Get Engines States
-		/*for (unsigned int i = 0; i < Propulsion->GetNumEngines(); i++) {
-			FGPiston* eng = (FGPiston*)Propulsion->GetEngine(i);
-			globals->get_controls()->set_magnetos(i, eng->GetMagnetos());
-			globals->get_controls()->set_mixture(i, FCS->GetMixtureCmd(i));
-		}*/
 	}
-
 
 	if (TrimNeeded)
 	{
@@ -511,20 +470,15 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 		TrimNeeded = false;
 	}
 
-
+    // Aircraft Trim done - Get result state
 	CopyFromJSBSim();
-
-	
-
-	//LogInitialization();
-
 }
 
 void UJSBSimMovementComponent::DeInitializeJSBSim()
 {
 	if (JSBSimInitialized)
 	{
-		UE_LOG(LogJSBSim, Display, TEXT("DeInitializeJSBSim - '0x%.8X'"), this);
+		UE_LOG(LogJSBSim, Display, TEXT("DeInitializeJSBSim"));
 
 		if (Exec)
 		{
@@ -573,46 +527,43 @@ void UJSBSimMovementComponent::CopyToJSBSim()
 	ApplyEnginesCommands(); 
 
 	// TODO - Update atmosphere
-	
-	//Atmosphere->SetTemperature(temperature->getDoubleValue(), get_Altitude(), FGAtmosphere::eCelsius);
-	//Atmosphere->SetPressureSL(FGAtmosphere::eInchesHg, pressureSL->getDoubleValue());
+/*	Atmosphere->SetTemperature(temperature->getDoubleValue(), get_Altitude(), FGAtmosphere::eCelsius);
+	Atmosphere->SetPressureSL(FGAtmosphere::eInchesHg, pressureSL->getDoubleValue());
 
-	//Winds->SetTurbType((FGWinds::tType)TURBULENCE_TYPE_NAMES[turbulence_model->getStringValue()]);
-	//switch (Winds->GetTurbType()) {
-	//case FGWinds::ttStandard:
-	//case FGWinds::ttCulp: {
-	//	double tmp = turbulence_gain->getDoubleValue();
-	//	Winds->SetTurbGain(tmp * tmp * 100.0);
-	//	Winds->SetTurbRate(turbulence_rate->getDoubleValue());
-	//	break;
-	//}
-	//case FGWinds::ttMilspec:
-	//case FGWinds::ttTustin: {
-	//	// milspec turbulence: 3=light, 4=moderate, 6=severe turbulence
-	//	// turbulence_gain normalized: 0: none, 1/3: light, 2/3: moderate, 3/3: severe
-	//	double tmp = turbulence_gain->getDoubleValue();
-	//	Winds->SetProbabilityOfExceedence(
-	//		SGMiscd::roundToInt(TurbulenceSeverityTable.GetValue(tmp))
-	//	);
-	//	Winds->SetWindspeed20ft(ground_wind->getDoubleValue());
-	//	break;
-	//}
+	Winds->SetTurbType((FGWinds::tType)TURBULENCE_TYPE_NAMES[turbulence_model->getStringValue()]);
+	switch (Winds->GetTurbType()) {
+	case FGWinds::ttStandard:
+	case FGWinds::ttCulp: {
+		double tmp = turbulence_gain->getDoubleValue();
+		Winds->SetTurbGain(tmp * tmp * 100.0);
+		Winds->SetTurbRate(turbulence_rate->getDoubleValue());
+		break;
+	}
+	case FGWinds::ttMilspec:
+	case FGWinds::ttTustin: {
+		// milspec turbulence: 3=light, 4=moderate, 6=severe turbulence
+		// turbulence_gain normalized: 0: none, 1/3: light, 2/3: moderate, 3/3: severe
+		double tmp = turbulence_gain->getDoubleValue();
+		Winds->SetProbabilityOfExceedence(
+			SGMiscd::roundToInt(TurbulenceSeverityTable.GetValue(tmp))
+		);
+		Winds->SetWindspeed20ft(ground_wind->getDoubleValue());
+		break;
+	}
 
-	//default:
-	//	break;
-	//}
+	default:
+		break;
+	}
 
-	//Winds->SetWindNED(-wind_from_north->getDoubleValue(),
-	//	-wind_from_east->getDoubleValue(),
-	//	-wind_from_down->getDoubleValue());
-	////    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
-	////                  << get_V_north_airmass() << ", "
-	////                  << get_V_east_airmass()  << ", "
-	////                  << get_V_down_airmass() );
+	Winds->SetWindNED(-wind_from_north->getDoubleValue(),
+		-wind_from_east->getDoubleValue(),
+		-wind_from_down->getDoubleValue()); 
+*/
 
 	CopyTankPropertiesToJSBSim();
 	CopyGearPropertiesToJSBSim();
 }
+
 void UJSBSimMovementComponent::CopyFromJSBSim()
 {
 	// Collect JSBSim data
@@ -646,7 +597,7 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	AircraftState.StallWarning = Aerodynamics->GetStallWarn();
 
 	// Transformation
-	JSBSim::FGLocation LocationVRP = Propagate->GetLocation(); // TODO - Checker absolument!! 
+	JSBSim::FGLocation LocationVRP = Propagate->GetLocation();
 	AircraftState.ECEFLocation = FVector(LocationVRP(1), LocationVRP(2), LocationVRP(3)) * FEET_TO_METER;
 	AircraftState.Latitude = LocationVRP.GetGeodLatitudeDeg();
 	AircraftState.Longitude = LocationVRP.GetLongitudeDeg();
@@ -656,7 +607,7 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	AircraftState.EulerRates.Set(Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePhi), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::eTht), Auxiliary->GetEulerRates(JSBSim::FGJSBBase::ePsi));
 	AircraftState.AltitudeAGLFt = Propagate->GetDistanceAGL();
 	// force a sim crashed if crashed (altitude AGL < 0)
-	if (AircraftState.AltitudeAGLFt < -10.0) {
+	if (AircraftState.AltitudeAGLFt < -10.0 || AircraftState.AltitudeASLFt < -10.0) {
 		Exec->SuspendIntegration();
 		AircraftState.Crashed = true;
 	}
@@ -685,31 +636,20 @@ void UJSBSimMovementComponent::DoTrim()
 	{
 		Trim->Report();
 		Trim->TrimStats();
+
+        UE_LOG(LogJSBSim, Error, TEXT("Trim Failed!!!"));
 	}
 	else 
 	{
 		Trimmed = true;
 	}
-
 	delete Trim;
-
 
 	Commands.PitchTrim = FCS->GetPitchTrimCmd();
 	Commands.Aileron = FCS->GetDaCmd();
-	Commands.Rudder = -FCS->GetDrCmd(); // TODO Pourquoi "-" ??
+	Commands.Rudder = -FCS->GetDrCmd(); // TODO - Why this minus sign? Is it from FlightGear logic ?
 
-
-	// Why globals ? 
-	/*globals->get_controls()->set_elevator_trim(FCS->GetPitchTrimCmd());
-	globals->get_controls()->set_elevator(FCS->GetDeCmd());
-	for (unsigned i = 0; i < Propulsion->GetNumEngines(); i++)
-		globals->get_controls()->set_throttle(i, FCS->GetThrottleCmd(i));
-
-	globals->get_controls()->set_aileron(FCS->GetDaCmd());
-	globals->get_controls()->set_rudder(-FCS->GetDrCmd());*/
-
-	//UE_LOG(LogJSBSim, Display, TEXT("Trim Complete - PitchTrim = %f, Throttle = %f, Aileron = %f, Rudder = %f"), PitchTrimCommand, ThrottleCommand, AileronCommand, RudderCommand);
-
+	UE_LOG(LogJSBSim, Display, TEXT("Trim Complete"));
 }
 
 void UJSBSimMovementComponent::UpdateLocalTransforms()
@@ -721,7 +661,6 @@ void UJSBSimMovementComponent::UpdateLocalTransforms()
 	StructuralToActorMatrix.SetAxis(2, FVector(0, 0, 1));
 	StructuralToActorMatrix.SetOrigin(StructuralFrameOrigin);
 	StructuralToActor.SetFromMatrix(StructuralToActorMatrix);
-
 
 	// Get Gravity Center
 	JSBSim::FGColumnVector3 CGLocationStructural = MassBalance->StructuralToBody(JSBSim::FGColumnVector3()) * FEET_TO_CENTIMETER;
@@ -735,7 +674,6 @@ void UJSBSimMovementComponent::UpdateLocalTransforms()
 	BodyToActorMatrix.SetOrigin(CGLocalPosition);
 	BodyToActor.SetFromMatrix(BodyToActorMatrix);
 
-
 	// Eye Position
 	JSBSim::FGColumnVector3 EPLocationStructural = Aircraft->GetXYZep() * INCH_TO_CENTIMETER;
 	EPLocalPosition = StructuralToActor.TransformPosition(FVector(EPLocationStructural(1), EPLocationStructural(2), EPLocationStructural(3)));
@@ -743,16 +681,12 @@ void UJSBSimMovementComponent::UpdateLocalTransforms()
 	// Visual Reference Position
 	JSBSim::FGColumnVector3 VRPLocationStructural = Aircraft->GetXYZvrp() * INCH_TO_CENTIMETER;
 	VRPLocalPosition = StructuralToActor.TransformPosition(FVector(VRPLocationStructural(1), VRPLocationStructural(2), VRPLocationStructural(3)));
-
-
-
 }
 
 // Gears
 void UJSBSimMovementComponent::InitGearDefaultProperties()
 {
 	uint32 GearsCount = GroundReactions->GetNumGearUnits();
-	//UE_LOG(LogJSBSim, Display, TEXT("Number of Gears : %d"), GearsCount);
 	Gears.Empty();
 	if (GearsCount > 0)
 	{
@@ -775,27 +709,15 @@ void UJSBSimMovementComponent::InitGearDefaultProperties()
 
 void UJSBSimMovementComponent::CopyGearPropertiesToJSBSim()
 {
-	// TODO - Update Gears ? Ex : Etat initial Up/Down
-	// Not sure it can be done...
-
-	//uint32 GearsCount = GroundReactions->GetNumGearUnits();
-	//if (GearsCount > 0)
-	//{
-	//	for (unsigned int i = 0; i < GearsCount; i++)
-	//	{
-	//		JSBSim::FGLGear* Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
-
-	//		Gear->SetPosition() = Gears[i].NormalizedPosition;
-	//	}
-	//}
+	// TODO - What can be changed from the default values? 
+    // Maybe the initial extension, but not sure it can be done...
 }
-	
 
 void UJSBSimMovementComponent::CopyGearPropertiesFromJSBSim()
 {
 	for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++)
 	{
-		std::shared_ptr<JSBSim::FGLGear> Gear = GroundReactions->GetGearUnit(i); // TODO - Test indices
+		std::shared_ptr<JSBSim::FGLGear> Gear = GroundReactions->GetGearUnit(i);
 		if ((int32)i < Gears.Num())
 		{
 			Gears[i].NormalizedPosition = Gear->GetGearUnitPos();
@@ -817,17 +739,15 @@ void UJSBSimMovementComponent::CopyGearPropertiesFromJSBSim()
 // Tanks
 void UJSBSimMovementComponent::InitTankDefaultProperties()
 {
-	// Set initial fuel levels if provided.
+	// Set initial fuel levels if overridden by the user.
 	uint32 TanksCount = Propulsion->GetNumTanks();
-	//UE_LOG(LogJSBSim, Display, TEXT("Number of Tanks : %d"), TanksCount);
 	Tanks.Empty();
 	if (TanksCount > 0)
 	{
 		Tanks.AddZeroed(TanksCount);
-		//Tanks.SetNum(TanksCount);
 		for (unsigned int i = 0; i < TanksCount; i++)
 		{
-			std::shared_ptr<JSBSim::FGTank> Tank = Propulsion->GetTank(i); // TODO - Test indices
+			std::shared_ptr<JSBSim::FGTank> Tank = Propulsion->GetTank(i);
 
 			Tanks[i].FuelDensityPoundsPerGallon = Tank->GetDensity();
 			Tanks[i].ContentGallons = Tank->GetContentsGallons();
@@ -840,7 +760,6 @@ void UJSBSimMovementComponent::InitTankDefaultProperties()
 
 void UJSBSimMovementComponent::CopyTankPropertiesToJSBSim()
 {
-	// TODO - Update Tanks
 	for (unsigned i = 0; i < Propulsion->GetNumTanks(); i++)
 	{
 		std::shared_ptr<JSBSim::FGTank> tank = Propulsion->GetTank(i);
@@ -848,7 +767,6 @@ void UJSBSimMovementComponent::CopyTankPropertiesToJSBSim()
 		if ((int32)i < Tanks.Num())
 		{
 			FTank UETank = Tanks[i];
-
 			double fuelDensity = UETank.FuelDensityPoundsPerGallon;
 
 			if (fuelDensity < 0.1)
@@ -858,7 +776,6 @@ void UJSBSimMovementComponent::CopyTankPropertiesToJSBSim()
 			tank->SetDensity(fuelDensity);
 			tank->SetContentsGallons(UETank.ContentGallons);
 		}
-
 	}
 }
 
@@ -876,28 +793,12 @@ void UJSBSimMovementComponent::CopyTankPropertiesFromJSBSim()
 			Tanks[i].CapacityGallons = Tank->GetCapacityGallons();
 			Tanks[i].FillPercentage = Tank->GetPctFull();
 			Tanks[i].TemperatureCelcius = Tank->GetTemperature_degC();
-
-
-			//double contents = tank->GetContents();
-			//double temp = tank->GetTemperature_degC();
-			//double fuelDensity = tank->GetDensity();
-
-			//if (fuelDensity < 0.1)
-			//	fuelDensity = 6.0; // Use average fuel value
-
-			//node->setDoubleValue("density-ppg", fuelDensity);
-			//node->setDoubleValue("level-lbs", contents);
-			//if (temp != -9999.0) node->setDoubleValue("temperature_degC", temp);
-
-			//node->setDoubleValue("arm-in", tank->GetXYZ(FGJSBBase::eX));
 		}
 	}
-
 }
 
 
 // Engines
-
 void UJSBSimMovementComponent::InitEnginesCommandAndStates()
 {
 	EngineCommands.Empty();
@@ -912,9 +813,6 @@ void UJSBSimMovementComponent::InitEnginesCommandAndStates()
 
 		// Apply default properties
 		// TODO - Not sure there are to apply. it will be done by command/states
-		//for (unsigned int i = 0; i < EngineCount; i++)
-		//{
-		//}
 	}
 }
 
@@ -981,7 +879,6 @@ void UJSBSimMovementComponent::ApplyEnginesCommands()
 		}
 	}
 }
-
 
 void UJSBSimMovementComponent::GetEnginesStates()
 {
@@ -1051,7 +948,6 @@ void UJSBSimMovementComponent::LogInitialization()
 {
 	UE_LOG(LogJSBSim, Display, TEXT("Initialized JSB Sim with : "));
 
-
 	// Speed
 	switch (IC->GetSpeedSet())
 	{
@@ -1078,29 +974,27 @@ void UJSBSimMovementComponent::LogInitialization()
 		FMath::RadiansToDegrees(Propagate->GetEuler(JSBSim::FGJSBBase::ePsi)));
 
 	// Lat/Long
-	UE_LOG(LogJSBSim, Display, TEXT("  Latitude: %f, Longitude: %f deg, Altitude: %f feet"), Propagate->GetLocation().GetLatitudeDeg(),	Propagate->GetLocation().GetLongitudeDeg(),	Propagate->GetAltitudeASL());
-
+	UE_LOG(LogJSBSim, Display, TEXT("  Latitude: %f, Longitude: %f deg, Altitude: %f feet"), Propagate->GetLocation().GetGeodLatitudeDeg(),	Propagate->GetLocation().GetLongitudeDeg(),	Propagate->GetAltitudeASL());
 }
+
 void UJSBSimMovementComponent::DrawDebugMessage()
 {
-	FVector2D TextScale = FVector2D::UnitVector;
-
-	// Build message
+	// Build message string before displaying it at once
 	FString DebugMessage;
 
-	// Inputs
+	// Commands
 	DebugMessage += Commands.GetDebugMessage();
 
 	// Engines 
 	int32 NumEngines = EngineCommands.Num();
-	// Commands
+	// Engine Commands
 	DebugMessage += LINE_TERMINATOR;
 	DebugMessage += FString::Printf(TEXT("Engines Commands (%d) : "), NumEngines) + LINE_TERMINATOR;
 	for (int32 i = 0; i < NumEngines; i++)
 	{
 		DebugMessage += FString::Printf(TEXT("    #%d    "), i) + EngineCommands[i].GetDebugMessage();
 	}
-	// States
+	// Engine States
 	DebugMessage += LINE_TERMINATOR;
 	DebugMessage += FString::Printf(TEXT("Engines States (%d) : "), NumEngines) + LINE_TERMINATOR;
 	for (int32 i = 0; i < NumEngines; i++)
@@ -1129,11 +1023,12 @@ void UJSBSimMovementComponent::DrawDebugMessage()
 		}
 	}
 
-	// State 
+	// Aircraft State 
 	DebugMessage += LINE_TERMINATOR;
 	DebugMessage += AircraftState.GetDebugMessage();
 
 	// Draw
+    FVector2D TextScale = FVector2D::UnitVector;
 	GEngine->AddOnScreenDebugMessage(1, 0, FColor::Green, *DebugMessage, false, TextScale);
 }
 
@@ -1185,6 +1080,7 @@ void UJSBSimMovementComponent::DrawDebugObjects()
 
 /////////// In-Editor Specific
 #if WITH_EDITOR
+
 void UJSBSimMovementComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	static const FName NAME_AircraftModel = GET_MEMBER_NAME_CHECKED(UJSBSimMovementComponent, AircraftModel);

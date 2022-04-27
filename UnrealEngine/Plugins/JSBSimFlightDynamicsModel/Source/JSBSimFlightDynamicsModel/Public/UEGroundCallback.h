@@ -22,7 +22,9 @@ using namespace JSBSim;
 class UJSBSimMovementComponent;
 
 /**
- * 
+ * JSBSim derived class called for ground queries. 
+ * We'll delegate the ground queries to the UJSBSimMovementComponent because this one belongs to an Actor which has access to the world for doing the requests.
+ * Using static GWorld is not recommended because there are different editor/runtime worlds depending on context... 
  */
 class JSBSIMFLIGHTDYNAMICSMODEL_API UEGroundCallback : public JSBSim::FGGroundCallback
 {

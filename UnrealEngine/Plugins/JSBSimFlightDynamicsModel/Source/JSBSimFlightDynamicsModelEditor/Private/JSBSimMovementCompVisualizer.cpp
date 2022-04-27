@@ -38,7 +38,6 @@ void FJSBSimMovementCompVisualizer::DrawVisualization(const UActorComponent* Com
 	const UJSBSimMovementComponent* MovementComponent = Cast<UJSBSimMovementComponent>(Component);
 	AActor* Owner = Component->GetOwner();
 
-
 	// Make sure we are ready to visualize this component
 	if (!MovementComponent->IsReadyForCompVisualizer)
 	{
@@ -75,34 +74,12 @@ void FJSBSimMovementCompVisualizer::DrawVisualization(const UActorComponent* Com
 		// Visual Reference Point
 		PDI->DrawPoint(VRPWorldLocation, FLinearColor::Blue, 10, SDPG_World);
 		 
-
 		for (FGear Gear : MovementComponent->Gears)
 		{
 			FVector GearWorldLocation = Owner->GetTransform().TransformPosition(Gear.RelativeLocation);
 			PDI->DrawPoint(GearWorldLocation, FLinearColor::Red, 5, SDPG_World);
 		}
-		
-		//for (int i = 0; i < MovementComponent->GroundReactions->GetNumGearUnits(); i++)
-		//{
-		//	JSBSim::FGLGear* Gear = MovementComponent->GroundReactions->GetGearUnit(i);
-		//	if (Gear->IsBogey())
-		//	{
-		//		JSBSim::FGColumnVector3 BodyLocation = Gear->GetLocation(); // 
-		//		double XOffset = BodyLocation(1);
-		//		double YOffset = BodyLocation(2);
-		//		double ZOffset = BodyLocation(3);
-
-		//		FVector LocalPosition = MovementComponent->StructuralToActor.TransformPosition(FVector(XOffset, YOffset, ZOffset) * INCH_TO_CENTIMETER);
-		//		FVector GearWorldPosition = MovementComponent->GetOwner()->GetTransform().TransformPosition(LocalPosition);
-
-		//		FMatrix Matrix(FMatrix::Identity);
-		//		Matrix.SetOrigin(GearWorldPosition);
-
-		//		PDI->DrawPoint(GearWorldPosition, FLinearColor::Red, 10, SDPG_World);
-		//	}
-		//}
 	}
-
 }
 
 void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* Component, const FViewport* Viewport, const FSceneView* View, FCanvas* Canvas)
@@ -119,7 +96,7 @@ void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* 
 		Canvas->DrawShadowedString(PixelLocation.X, PixelLocation.Y, *AircraftName, GEngine->GetSmallFont(), FLinearColor::Blue);
 	}
 
-
+    // Reference points names
 	if (View->ScreenToPixel(View->WorldToScreen(CGWorldLocation), PixelLocation))
 	{
 		Canvas->DrawShadowedString(PixelLocation.X, PixelLocation.Y, TEXT("CG"), GEngine->GetSmallFont(), FLinearColor::Yellow);
@@ -135,6 +112,7 @@ void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* 
 		Canvas->DrawShadowedString(PixelLocation.X, PixelLocation.Y, TEXT("VRP"), GEngine->GetSmallFont(), FLinearColor::Gray);
 	}
 
+    // Gear names
 	for (FGear Gear : MovementComponent->Gears)
 	{
 		FVector GearWorldLocation = Owner->GetTransform().TransformPosition(Gear.RelativeLocation);
@@ -143,5 +121,4 @@ void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* 
 			Canvas->DrawShadowedString(PixelLocation.X, PixelLocation.Y, *(Gear.Name), GEngine->GetSmallFont(), FLinearColor::Red);
 		}
 	}
-
 }
