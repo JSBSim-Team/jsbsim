@@ -18,7 +18,7 @@
 USTRUCT(BlueprintType)
 struct FTank
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	FTank()
 	{
@@ -54,7 +54,7 @@ struct FTank
 USTRUCT(BlueprintType)
 struct FGear
 {
-	GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 
 	FGear()
 	{
@@ -131,7 +131,7 @@ enum class EEngineType : uint8 {
 USTRUCT(BlueprintType)
 struct FEngineCommand
 {
-	GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 
 	FEngineCommand()
 	{
@@ -194,7 +194,7 @@ struct FEngineCommand
 USTRUCT(BlueprintType)
 struct FEngineState
 {
-	GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 
 	FEngineState()
 	{
@@ -202,7 +202,7 @@ struct FEngineState
 
 	// Type
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	EEngineType EngineType;
+	EEngineType EngineType = EEngineType::Turbine;
 
 	// Common Engine States
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -250,7 +250,7 @@ struct FEngineState
 USTRUCT(BlueprintType)
 struct FFlightControlCommands
 {
-	GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 
 	FFlightControlCommands()
 	{
@@ -260,41 +260,41 @@ struct FFlightControlCommands
 
     /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double Aileron;
+	double Aileron = 0;
     /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double Elevator;
+	double Elevator = 0;
      /* Normalized [-1..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double Rudder;
+	double Rudder = 0;
 
     /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double YawTrim;
+	double YawTrim = 0;
     /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double PitchTrim;
+	double PitchTrim = 0;
     /* Normalized [-1..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-	double RollTrim;
+	double RollTrim = 0;
 
 	// Wheels
 
     /* Normalized [-1..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double Steer; // == Rudder??
+    double Steer = 0; // == Rudder??
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double LeftBrake;
+    double LeftBrake = 0;
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double RightBrake;
+    double RightBrake = 0;
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double CenterBrake;
+    double CenterBrake = 0;
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double ParkingBrake;
+    double ParkingBrake = 0;
     // 0 for up, 1 for down.
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
@@ -304,13 +304,13 @@ struct FFlightControlCommands
 
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double Flap;
+    double Flap = 0;
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double SpeedBrake;
+    double SpeedBrake = 0;
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
-    double Spoiler;
+    double Spoiler = 0;
 
 	FString GetDebugMessage()
 	{
@@ -330,7 +330,7 @@ struct FFlightControlCommands
 USTRUCT(BlueprintType)
 struct FAircraftState
 {
-	GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 
 	FAircraftState()
 	{
@@ -359,9 +359,9 @@ struct FAircraftState
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double GroundSpeedKts = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
-	double TotalVelocityKts;
+	double TotalVelocityKts = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
-	FVector VelocityNEDfps;
+	FVector VelocityNEDfps = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double AltitudeASLFt = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
@@ -380,9 +380,9 @@ struct FAircraftState
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	double Longitude = 0; 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
-	FRotator LocalEulerAngles;
+	FRotator LocalEulerAngles = FRotator::ZeroRotator;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
-	FVector EulerRates;
+	FVector EulerRates = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	FVector UEForwardHorizontal = FVector::ZeroVector;
 	
