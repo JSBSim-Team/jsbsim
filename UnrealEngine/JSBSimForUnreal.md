@@ -44,7 +44,14 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
 	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
 	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
  
-**3. Build/Open the Unreal Project**
+**3. [Optional] - Download HD resources**
+ In order to keep the JSBSim repository lightweight, this application contains low quality resources. 
+ If you would like to use better looking content, you can download HD textures and non-flat terrain here: 
+ [High Definition content pack (330 MB)](https://epicgames.box.com/s/93mupzix8qieu51v209ockq68heuxgwj)
+ 
+ Simply extract this archive and copy/paste the content folder into the one of UEReferenceApp, overriding the existing files. 
+ 
+**4. Build/Open the Unreal Project**
 
 **Option 1** : Simply double click on the `UnrealEngine\UEReferenceApp.uproject` file.
 It will open a popup complaining about missing modules (UEReferenceApp, JSBSimFlightDynamicsModel, JSBSimFlightDynamicsModelEditor). 
