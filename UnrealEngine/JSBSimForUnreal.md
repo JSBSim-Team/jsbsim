@@ -1,4 +1,73 @@
-﻿# JSBSim for Unreal
+﻿# JSBSim for Unreal - UEReferenceApp
+
+## Introduction
+Welcome to the UE Reference Application for JSBSim. 
+
+This application has initially be created by the Simulation Team at Epic Games in the context of "Antoinette Project"
+This project was made to illustrate that Unreal Engine 5 with its double precision and graphic capabilities could be used for serious flight simulations. 
+For that purpose, we wrote a plugin for UE5 wrapping around the JSBSim Flight Dynamic model to leverage its capabilities and fly and Aircraft inside an Unreal Engine environment. 
+
+We decided to share this sample with the community as an open source project, hosted on JSBSim's Github. 
+This reference application is voluntarily simple to make sure it's easy to understand. 
+
+But we are sure that the aviation community will like it and take inspiration from it. We hope that some aviation geeks will fork it and create wonderful flight sims from this starting point! 
+
+Enjoy, and Simulation for the win! 
+
+## Building the application 
+
+ **1. Install Unreal Engine 5.x**
+ 
+The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
+For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
+
+*Note:* In order to build C++ plugins for Unreal, you'll need at least Visual Studio 2019 v16.4.3 toolchain (14.24.28315) and Windows 10 SDK (10.0.18362.0). (Visual Studio Community can also be used)
+
+It is also recommended to set up Visual Studio for Unreal using the following procedures
+[https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
+[https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
+
+**2. Build JSBSim as Static libraries and stage Model files**
+
+Unreal Engine requires that one plugin contains all its needed files in its sub-folders. 
+This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the wrapper around JSBSim.
+In some of these subfolders, one has to place 
+ - The JSBSim libraries, compiled as static libs  
+ - The aircrafts/engine/systems definition files.
+
+When the UE application will be packaged, the resources will be copied along with the executable, and the application linked against the static libs transparently.
+
+To make this process easier, there is a new solution named JSBSimForUnreal.sln at the root of JSBSim repo. 
+
+ - Simply open and build this solution with VS2019, in Release, (and in Debug if you want too, but this is not mandatory)
+ - It will take care of making a clean build, and copy all needed files at the right location
+	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
+	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
+ 
+**3. Build/Open the Unreal Project**
+
+**Option 1** : Simply double click on the `UnrealEngine\UEReferenceApp.uproject` file.
+It will open a popup complaining about missing modules (UEReferenceApp, JSBSimFlightDynamicsModel, JSBSimFlightDynamicsModelEditor). 
+Answer Yes, and the build will be triggered as a background task. 
+
+Once done, the UE Editor will open. If you get an error message, build manually using Option 2 below. 
+
+**Option 2** : Generate a project solution, and build it using Visual Studio. 
+Right click on the  `UnrealEngine\UEReferenceApp.uproject` 
+A contextual menu will appear. Select "Generate Visual Studio project files"
+After a short time, a new solution file `UEReferenceApp.sln` will appear beside the uproject file. 
+Open it, and "Build Startup project" from the UnrealVS Extension bar. 
+
+Note that this Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
+
+## Learning more about Unreal Engine
+You can find many free learning resources on Unreal Engine Developper Community portal : 
+[Getting Started](https://dev.epicgames.com/community/getting-started)
+[Library of Learning Courses](https://dev.epicgames.com/community/learning)
+
+Still in the context of "Antoinette Project" we wrote a more advanced tutorial to leverage these developments in an even better looking application. You can find a very complete description here: 
+https://dev.epicgames.com/community/learning/tutorials/mmL/a-diy-flight-simulator-tutorial
+
 
 ## Key Mappings
 ### Flight Commands
@@ -41,8 +110,6 @@
 |
 |Toggle Gear Up/Down | G |
 
-
-
 ### Application
 |Command|Shortcut|
 |-|-|
@@ -64,8 +131,10 @@
 |Time of day - Noon Preset| HOME|
 |Time of day - Dusk Preset| PAGE UP|
 
+## Notes...
 
-This sample is kept simple and minimal to be easy to understand. One could add many ore details as needed! 
-There are two different ways to access to flight model data
- - Interior View - A very basic Primary flight display displays the most important values
- - The FDM Debug Infos - Deeper command/state values
+ - As you'll see in the aircraft animation blueprint comments, we used an aircraft model from the UE Marketplace which bones were not really well aligned with the rotation axes of moving parts. While it could (had has been) solved by using 1D Blend Space, a better way to do it would have to align the bones correctly, and just drive the locations by angles. But it would have required the aircraft 3D model sources that we did not have. 
+ - The JSMSim model is stepped with the frame time delta time. If you have a fixed frame rate, there should not be an issue, but it would probably be better to step the model in a separate thread to have a really fixed step whatever the rendering framerate. 
+ - The aircraft lights have been made only for illustration purpose. The cone angle logic is approximate and the blinking frequencies/patterns are not the real ones. (We don't want to freak out the purists ;-) )
+ - The Primary Flight Display is very simple too. A pitch indicator would help too... 
+ - The terrain is a sample terrain. One might use other terrain sources, as long as the georeferencing is correct! 
