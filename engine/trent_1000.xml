@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<turbine_engine name="trent_1000">
+  <milthrust> 66500 	</milthrust>
+  <bypassratio>     11	</bypassratio>
+  <tsfc>            0.27 	</tsfc>
+  <bleed>           0.04	</bleed>
+  <idlen1>         30.0 	</idlen1>
+  <idlen2>         60.0 	</idlen2>
+  <maxn1>         100.0 	</maxn1>
+  <maxn2>         100.0 	</maxn2>
+  <augmented>         0 	</augmented>
+  <injected>          0 	</injected>
+
+  <function name="IdleThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000     0     10000   20000   30000   40000   50000   60000
+     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.1467  0
+     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342  0
+     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203  0
+     0.6  0.0     0.0     0.0     0.0     0.0276  0.0718  0.1073  0
+     0.8  0.0     0.0     0.0     0.0     0.0474  0.0868  0.0900  0
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0552  0.0800  0
+    </tableData>
+   </table>
+  </function>
+
+  <function name="MilThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+          -10000       0   10000   20000   30000   40000   50000   60000
+     0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490  0
+     0.2   1.1710  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430  0
+     0.4   1.1500  0.9210  0.6920  0.5060  0.3570  0.2330  0.1450  0
+     0.6   1.1810  0.9510  0.7210  0.5320  0.3780  0.2480  0.1540  0
+     0.8   1.2580  0.9000  0.7020  0.5220  0.3770  0.2750  0.1700  0
+     1.0   1.3690  1.1000  0.8510  0.6410  0.4550  0.3050  0.1960  0
+     1.2   1.4850  1.2300  0.9750  0.7440  0.5450  0.3640  0.2250  0
+     1.4   1.5941  1.3400  1.0860  0.8450  0.6280  0.4240  0.2630  0
+    </tableData>
+   </table>
+  </function>
+
+</turbine_engine>
+
