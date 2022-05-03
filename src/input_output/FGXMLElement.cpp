@@ -244,10 +244,6 @@ Element::Element(const string& nm)
     // Gravitational
     convert["FT3/SEC2"]["FT3/SEC2"] = 1.0;
     convert["M3/SEC2"]["M3/SEC2"] = 1.0;
-    // Electrical
-    convert["VOLTS"]["VOLTS"] = 1.0;
-    convert["OHMS"]["OHMS"] = 1.0;
-    convert["AMPERES"]["AMPERES"] = 1.0;
   }
 }
 
@@ -336,7 +332,7 @@ Element* Element::GetNextElement(void)
 
 string Element::GetDataLine(unsigned int i)
 {
-  if (!data_lines.empty()) return data_lines[i];
+  if (data_lines.size() > 0) return data_lines[i];
   else return string("");
 }
 
@@ -356,7 +352,7 @@ double Element::GetDataAsNumber(void)
     }
 
     return number;
-  } else if (data_lines.empty()) {
+  } else if (data_lines.size() == 0) {
     std::stringstream s;
     s << ReadFrom() << "Expected numeric value, but got no data";
     cerr << s.str() << endl;
@@ -544,6 +540,45 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   value = DisperseValue(element, value, supplied_units, target_units);
 
   return value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double Element::FindElementConversionValue(const string& el, const string& target_units)
+{
+  Element* element = FindElement(el);
+
+  if (!element) {
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get non-existent element " << el;
+    cerr << s.str() << endl;
+    throw length_error(s.str());
+  }
+
+  string supplied_units = element->GetAttributeValue("unit");
+  double conversion_value = 1.0;
+
+  if (!supplied_units.empty()) {
+    if (convert.find(supplied_units) == convert.end()) {
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" does not exist (typo?).";
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
+    }
+
+    if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" cannot be converted to " << target_units;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
+    }
+
+    conversion_value = convert[supplied_units][target_units];
+  }
+
+  return conversion_value;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
