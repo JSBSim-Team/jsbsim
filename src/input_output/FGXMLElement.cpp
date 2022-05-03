@@ -244,6 +244,10 @@ Element::Element(const string& nm)
     // Gravitational
     convert["FT3/SEC2"]["FT3/SEC2"] = 1.0;
     convert["M3/SEC2"]["M3/SEC2"] = 1.0;
+    // Electrical
+    convert["VOLTS"]["VOLTS"] = 1.0;
+    convert["OHMS"]["OHMS"] = 1.0;
+    convert["AMPERES"]["AMPERES"] = 1.0;
   }
 }
 
@@ -332,7 +336,7 @@ Element* Element::GetNextElement(void)
 
 string Element::GetDataLine(unsigned int i)
 {
-  if (data_lines.size() > 0) return data_lines[i];
+  if (!data_lines.empty()) return data_lines[i];
   else return string("");
 }
 
@@ -352,7 +356,7 @@ double Element::GetDataAsNumber(void)
     }
 
     return number;
-  } else if (data_lines.size() == 0) {
+  } else if (data_lines.empty()) {
     std::stringstream s;
     s << ReadFrom() << "Expected numeric value, but got no data";
     cerr << s.str() << endl;
