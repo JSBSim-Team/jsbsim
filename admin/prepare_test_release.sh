@@ -10,3 +10,6 @@ sed -ri "s/(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/\1$1\3/g" CMakeLists.txt
 # Test commit to TestPyPI
 sed -ri "s/secrets.PYPI/secrets.TESTPYPI/g" .github/workflows/cpp-python-build.yml
 sed -ri "s/upload dist/upload --repository testpypi dist/g" .github/workflows/cpp-python-build.yml
+
+# Trigger a CodeQL review
+sed -ri "s/branches:\s\[master\]/branches: \[master, release\/v1.1\]/g" .github/workflows/codeql-analysis.yml

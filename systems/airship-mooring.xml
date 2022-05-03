@@ -22,7 +22,7 @@
 -->
 <system name="airship-mooring">
 
- <documentation>
+ <description>
   This system models a mast mooring system with a mooring cone connection
   and a mooring wire. The mooring cone MUST be located at the aircraft's
   visual reference point (VRP).
@@ -90,7 +90,7 @@
        mooring/longitude-deg
        mooring/altitude-ft
 
- </documentation>
+ </description>
 
  <!-- INTERFACE PROPERTIES -->
 

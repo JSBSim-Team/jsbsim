@@ -1,0 +1,13 @@
+#################
+## Unreal Engine
+#################
+Plugins/JSBSimFlightDynamicsModel/Binaries
+Plugins/JSBSimFlightDynamicsModel/Intermediate
+Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim
+Binaries
+DerivedDataCache
+Intermediate
+Saved
+Windows
+UEReferenceApp.sln

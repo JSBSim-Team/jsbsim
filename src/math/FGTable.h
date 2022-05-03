@@ -272,10 +272,9 @@ public:
        */
 
   void operator<<(std::istream&);
-  FGTable& operator<<(const double n);
+  FGTable& operator<<(const double x);
 
-  inline double GetElement(int r, int c) const {return Data[r][c];}
-
+  double GetElement(unsigned int r, unsigned int c) const;
   double operator()(unsigned int r, unsigned int c) const
   { return GetElement(r, c); }
 
@@ -293,17 +292,15 @@ public:
 private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
-  bool internal;
+  bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   FGPropertyValue_ptr lookupProperty[3];
-  double** Data;
-  std::vector <FGTable*> Tables;
+  std::vector<double> Data;
+  std::vector<std::unique_ptr<FGTable>> Tables;
   unsigned int nRows, nCols;
-  int colCounter, rowCounter;
-  mutable int lastRowIndex, lastColumnIndex;
-  double** Allocate(void);
   std::string Name;
   void bind(Element* el, const std::string& Prefix);
+  void missingData(Element *el, unsigned int expected_size, size_t actual_size);
   void Debug(int from);
 };
 }

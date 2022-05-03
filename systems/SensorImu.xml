@@ -250,16 +250,6 @@
 
             <axis>X</axis>
 
-            <location unit="M">
-
-                <x>0</x>
-
-                <y>0</y>
-
-                <z>0</z>
-
-            </location>
-
             <orientation unit="DEG">
 
                 <roll>0</roll>
@@ -290,16 +280,6 @@
 
             <axis>Y</axis>
 
-            <location unit="M">
-
-                <x>0</x>
-
-                <y>0</y>
-
-                <z>0</z>
-
-            </location>
-
             <orientation unit="DEG">
 
                 <roll>0</roll>
@@ -329,16 +309,6 @@
         <gyro name="GyroZ">
 
             <axis>Z</axis>
-
-            <location unit="M">
-
-                <x>0</x>
-
-                <y>0</y>
-
-                <z>0</z>
-
-            </location>
 
             <orientation unit="DEG">
 
