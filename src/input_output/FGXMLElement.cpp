@@ -548,6 +548,45 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double Element::FindElementConversionValue(const string& el, const string& target_units)
+{
+  Element* element = FindElement(el);
+
+  if (!element) {
+    std::stringstream s;
+    s << ReadFrom() << "Attempting to get non-existent element " << el;
+    cerr << s.str() << endl;
+    throw length_error(s.str());
+  }
+
+  string supplied_units = element->GetAttributeValue("unit");
+  double conversion_value = 1.0;
+
+  if (!supplied_units.empty()) {
+    if (convert.find(supplied_units) == convert.end()) {
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" does not exist (typo?).";
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
+    }
+
+    if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
+      std::stringstream s;
+      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
+        << "\" cannot be converted to " << target_units;
+      cerr << s.str() << endl;
+      throw invalid_argument(s.str());
+    }
+
+    conversion_value = convert[supplied_units][target_units];
+  }
+
+  return conversion_value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double Element::FindElementValueAsNumberConvertFromTo( const string& el,
                                                        const string& supplied_units,
                                                        const string& target_units)

@@ -169,9 +169,13 @@ public:
 
   double GetIsp(void) const {return Isp;}
 
+  int GetOperationMode(void) const {return OpMode;}
+
   void SetMixtureRatio(double mix) {MxR = mix;}
 
   void SetIsp(double isp) {Isp = isp;}
+
+  void SetOperationMode(int mode) {OpMode = mode;}
 
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
@@ -227,8 +231,16 @@ private:
   double PropellantFlowRate;
   bool Flameout;
   double BuildupTime;
+
+  int OpMode;
+
+  double PropFlowConversion;
+
   FGTable* ThrustTable;
   FGFunction* isp_function;
+  FGFunction* propflow_function;
+  FGFunction* mxr_function;
+  
   FGFDMExec* FDMExec;
 
   void Debug(int from);

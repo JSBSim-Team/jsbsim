@@ -300,6 +300,8 @@ public:
               or HUGE_VAL if the data is missing. */
   double FindElementValueAsNumberConvertTo(const std::string& el, const std::string& target_units);
 
+  double FindElementConversionValue(const std::string& el, const std::string& target_units);
+
   /** Searches for the named element and converts and returns the data belonging to it.
       This function allows the data belonging to a named element to be returned
       as a double. If no element is found, HUGE_VAL is returned. If no
