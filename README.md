@@ -27,6 +27,8 @@ Features include:
   * Atmosphere modeled according to the [International Standard Atmosphere (1976)](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf).
 * Configurable data output formats to screen, file, socket, or any combination of those.
 * A [Python](https://www.python.org) module which provides the exact same features than the C++ library
+* A [Matlab](https://www.mathworks.com/products/matlab.html) S-Function to interface JSBSim with [Simulink](https://fr.mathworks.com/products/simulink.html).
+* An [Unreal Engine plugin](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/JSBSimForUnreal.md) to build a connection between the flight dynamics model from jsbsim and the entire virtual environment provided by [Unreal engine](https://www.unrealengine.com).
 
 In 2015, [the NASA performed some verification check cases on 7 flight dynamics software **including JSBSim**](https://nescacademy.nasa.gov/flightsim) (the other 6 being NASA in-house software). The results showed that the 7 simulation tools *"were good enough to indicate agreement between a majority of simulation tools for all cases published. Most of the remaining differences are explained and could be reduced with further effort."*
 
@@ -35,6 +37,7 @@ In 2015, [the NASA performed some verification check cases on 7 flight dynamics 
 JSBSim is used in a range of projects among which:
 
 * Flight simulation: [FlightGear](http://www.flightgear.org), [OutTerra](https://www.outerra.com/wfeatures.html), [Skybolt Engine](https://github.com/Piraxus/Skybolt)
+* [A DIY Flight Simulator Tutorial](https://dev.epicgames.com/community/learning/tutorials/mmL/a-diy-flight-simulator-tutorial) using the Unreal Engine.
 * SITL (Software In The Loop) Drone Autopilot testing : [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://dev.px4.io/master/en/simulation/jsbsim.html), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
 * Machine Learning Aircraft control: [gym-jsbsim](https://github.com/galleon/gym-jsbsim)
 * [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news-events/2019-10-21) where one of the AI went undefeated in five rounds of mock air combat against an Air Force fighter (see the [video on YouTube](https://www.youtube.com/watch?v=IOJhgC1ksNU)).
