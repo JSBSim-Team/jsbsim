@@ -1,6 +1,6 @@
 # Setup script for the fpectl module.
 #
-# Copyright (c) 2014-2020 Bertrand Coconnier
+# Copyright (c) 2014-2022 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,12 +16,13 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys
+import logging
+import os
+import sys
 
 from setuptools import setup
 from setuptools.extension import Extension
 from setuptools.command.build_ext import build_ext
-from distutils import log
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -29,7 +30,7 @@ class QuietBuild(build_ext):
     def run(self):
         if "VERBOSE" not in os.environ:
             name = self.extensions[0].name
-            log.info("building '{}' extension".format(name))
+            logging.info("building '{}' extension".format(name))
 
             self.oldstdout = os.dup(sys.stdout.fileno())
             self.devnull = open(os.path.join(self.build_lib, name+'-build.log'), 'w')
@@ -40,6 +41,9 @@ class QuietBuild(build_ext):
         if "VERBOSE" not in os.environ:
             os.dup2(self.oldstdout, sys.stdout.fileno())
             self.devnull.close()
+
+# Initialize the default logger to custom settings.
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 setup(
     name="fpectl",
