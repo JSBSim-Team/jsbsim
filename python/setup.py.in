@@ -107,6 +107,9 @@ class BuildC_CxxExtension(build_ext):
                 setattr(self.compiler, attr, value)
         return build_ext.build_extension(self, ext)
 
+# Initialize the default logger to custom settings.
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 # Get the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
