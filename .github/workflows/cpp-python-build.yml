@@ -686,13 +686,14 @@ jobs:
           export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
           # Determine the branch name
           export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
           # Commit the change to CMakeLists.txt
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout $BRANCH_NAME
-          git commit -m "Bump version" CMakeLists.txt README.md
+          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md
           git push origin $BRANCH_NAME
 
       # Bump stable version of the `master` branch
@@ -708,7 +709,8 @@ jobs:
           export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
-          git commit -m "Bump stable release version" README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          git commit -m "Bump stable release version" README.md matlab/README.md
           git push origin master
 
   Documentation:
