@@ -23,7 +23,7 @@ Features include:
 JSBSim also includes the following bindings:
 
 * A [Python](https://www.python.org) module which provides the exact same features than the C++ library
-* A [Matlab](https://www.mathworks.com/products/matlab.html) S-Function to interface JSBSim with [Simulink](https://fr.mathworks.com/products/simulink.html).
+* A [Matlab S-Function](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab) that interfaces JSBSim with [MATLAB Simulink](https://fr.mathworks.com/products/simulink.html).
 * An [Unreal Engine plugin](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/) to build a connection between the flight dynamics model from JSBSim and the entire virtual environment provided by [Unreal engine](https://www.unrealengine.com).
 
 <p align="center">
@@ -57,7 +57,7 @@ A Windows installer `JSBSim-1.1.11-setup.exe` is available in the [release secti
 
 Both executables are console line commands.
 
-The Windows installer also contains the files needed to build the JSBSim Matlab S-Function (see issue [#491](https://github.com/JSBSim-Team/jsbsim/issues/491) for more details about using JSBSim in Matlab).
+The Windows installer also contains the files needed to build the JSBSim Matlab S-Function (see [our MATLAB README](matlab/README.md) for more details about using JSBSim in Matlab).
 
 ### Ubuntu Linux
 
