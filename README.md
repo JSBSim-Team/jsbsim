@@ -25,7 +25,7 @@ JSBSim also includes the following bindings:
 
 * A [Python](https://www.python.org) module which provides the exact same features than the C++ library
 * A [Matlab](https://www.mathworks.com/products/matlab.html) S-Function to interface JSBSim with [Simulink](https://fr.mathworks.com/products/simulink.html).
-* An [Unreal Engine plugin](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/) to build a connection between the flight dynamics model from jsbsim and the entire virtual environment provided by [Unreal engine](https://www.unrealengine.com).
+* An [Unreal Engine plugin](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/) to build a connection between the flight dynamics model from JSBSim and the entire virtual environment provided by [Unreal engine](https://www.unrealengine.com).
 
 <p align="center">
 <img src="UnrealEngine/UEReferenceApp.png">
@@ -185,38 +185,6 @@ print(jsbsim.get_default_root_dir())
 ```
 
 A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
-
-## Frequently Asked Questions
-
-### How can I interface JSBSim with FlightGear ?
-
-**Q:** I would like to visualize the aircraft model in [FlightGear](https://flightgear.org) while running the FDM with the JSBSim executable. How do I proceed ?
-
-**A:** We are assuming that FlightGear is installed on your platform. If it is not, please follow the instructions on the [FlightGear website](https://home.flightgear.org/download/main-program).
-
-You will need to launch separately FlightGear and JSBSim from a console. In the example below, you will execute the script [ShortS23_2.xml](scripts/Short_S23_2.xml) so you might need to install the [FlightGear model of the Short Empire aircraft](https://wiki.flightgear.org/Short_Empire). This is optional however as any aircraft can be used for visualization even if it does not match the aircraft of the JSBSim FDM model.
-
-First, run FlightGear and tell it that the flight dynamics will be provided thru a socket by an external program. It is assumed that the executable of FlightGear is `fgfs` (see the FlightGear docs for [details on the parameters of `--native-fdm`](https://wiki.flightgear.org/Property_Tree/Sockets#Native_Socket) argument).
-
-```bash
-> fgfs --fdm=null --native-fdm=socket,in,60,,5550,udp --aircraft=Short_Empire --airport=SP01
-```
-
-Once FlightGear is launched, you will see the aircraft standing still.
-
-![FlightGear is launched](doc/JSB2FG_interface_1.png)
-
-Now we will run JSBSim and tell it that it must send the flight dynamics data to FlightGear through a socket
-
-```bash
-> JSBSim scripts/Short_S23_2.xml data_output/flightgear.xml --realtime --nice
-```
-
-The parameters describing the protocol are detailed in [`data_output/flightgear.xml`](data_output/flightgear.xml). The flag `--realtime` requests JSBSim to execute in real time. Otherwise JSBSim will run as fast as it can and the flight will look like it is played fast forward. The flag `--nice` tells JSBSim to use as few CPU power as possible. This is an optional flag but since we requested `--realtime`, JSBSim will spend a considerable amount of time idling, waiting for the next frame in FlightGear.
-
-At the this stage, the two executables are interacting and FlightGear produces the visualization of the flight dynamics simulated by JSBSim.
-
-![FlightGear/JSBSim interface running](doc/JSB2FG_interface_2.png)
 
 # Contact
 
