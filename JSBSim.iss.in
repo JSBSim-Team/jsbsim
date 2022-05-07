@@ -38,4 +38,4 @@ Source: "${CMAKE_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: d
 Source: "${CMAKE_BINARY_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\readme.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_SOURCE_DIR}\matlab\README.md"; DestDir: "{app}\matlab"; Components: devfiles\matlab
