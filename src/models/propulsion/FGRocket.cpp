@@ -76,7 +76,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   TotalIspVariation = 0.0;
   VacThrust = 0.0;
   Flameout = false;
-  OpMode = 0;
+  OpMode = -1;
   PropFlowConversion = 1.0;
 
   // Defaults
@@ -193,8 +193,9 @@ void FGRocket::Calculate(void)
 
   RunPreFunctions();
 
-  PropellantFlowRate = (FuelExpended + OxidizerExpended)/in.TotalDeltaT;
+  PropellantFlowRate = (FuelExpended + OxidizerExpended) / in.TotalDeltaT;
   TotalPropellantExpended += FuelExpended + OxidizerExpended;
+
   // If Isp has been specified as a function, override the value of Isp to that,
   // otherwise assume a constant value is given.
   if (isp_function) Isp = isp_function->GetValue();
@@ -256,7 +257,7 @@ void FGRocket::Calculate(void)
 double FGRocket::CalcFuelNeed(void)
 {
   if (ThrustTable != 0L) {          // Thrust table given - infers solid fuel
-    FuelFlowRate = VacThrust/Isp;   // This calculates wdot (weight flow rate in lbs/sec)
+    FuelFlowRate = VacThrust / Isp; // This calculates wdot (weight flow rate in lbs/sec)
     FuelFlowRate /= (1 + TotalIspVariation);
   } else {
     if (propflow_function) {

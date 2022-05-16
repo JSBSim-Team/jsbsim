@@ -169,13 +169,13 @@ public:
 
   double GetIsp(void) const {return Isp;}
 
-  int GetOperationMode(void) const {return OpMode;}
+  double GetOperationMode(void) const {return OpMode;}
 
   void SetMixtureRatio(double mix) {MxR = mix;}
 
   void SetIsp(double isp) {Isp = isp;}
 
-  void SetOperationMode(int mode) {OpMode = mode;}
+  void SetOperationMode(double mode) {OpMode = std::round(mode);}
 
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
