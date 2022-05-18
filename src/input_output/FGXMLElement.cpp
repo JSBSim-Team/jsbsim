@@ -63,19 +63,27 @@ Element::Element(const string& nm)
     convert["FT"]["M"] = 1.0/convert["M"]["FT"];
     convert["CM"]["FT"] = 0.032808399;
     convert["FT"]["CM"] = 1.0/convert["CM"]["FT"];
+    convert["MM"]["FT"] = 0.0032808399;
+    convert["FT"]["MM"] = 1.0/convert["MM"]["FT"];
     convert["KM"]["FT"] = 3280.8399;
     convert["FT"]["KM"] = 1.0/convert["KM"]["FT"];
     convert["FT"]["IN"] = 12.0;
     convert["IN"]["FT"] = 1.0/convert["FT"]["IN"];
     convert["IN"]["M"] = convert["IN"]["FT"] * convert["FT"]["M"];
     convert["M"]["IN"] = convert["M"]["FT"] * convert["FT"]["IN"];
+    convert["IN"]["MM"] = convert["IN"]["FT"] * convert["FT"]["MM"];
+    convert["MM"]["IN"] = convert["MM"]["FT"] * convert["FT"]["IN"];
     // Area
     convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
     convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
     convert["CM2"]["FT2"] = convert["CM"]["FT"]*convert["CM"]["FT"];
     convert["FT2"]["CM2"] = 1.0/convert["CM2"]["FT2"];
+    convert["MM2"]["FT2"] = convert["MM"]["FT"]*convert["MM"]["FT"];
+    convert["FT2"]["MM2"] = 1.0/convert["MM2"]["FT2"];
     convert["M2"]["IN2"] = convert["M"]["IN"]*convert["M"]["IN"];
     convert["IN2"]["M2"] = 1.0/convert["M2"]["IN2"];
+    convert["MM2"]["IN2"] = convert["MM"]["IN"]*convert["MM"]["IN"];
+    convert["IN2"]["MM2"] = 1.0/convert["MM2"]["IN2"];
     convert["FT2"]["IN2"] = 144.0;
     convert["IN2"]["FT2"] = 1.0/convert["FT2"]["IN2"];
     // Volume
@@ -171,11 +179,13 @@ Element::Element(const string& nm)
 
     // Length
     convert["M"]["M"] = 1.00;
+    convert["MM"]["MM"] = 1.00;
     convert["KM"]["KM"] = 1.00;
     convert["FT"]["FT"] = 1.00;
     convert["IN"]["IN"] = 1.00;
     // Area
     convert["M2"]["M2"] = 1.00;
+    convert["MM2"]["MM2"] = 1.00;
     convert["FT2"]["FT2"] = 1.00;
     // Volume
     convert["IN3"]["IN3"] = 1.00;
