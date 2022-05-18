@@ -234,6 +234,8 @@ private:
 
   int OpMode;
 
+  enum {eModeOff = -1, eModeMonoProp, eModeBiProp};
+
   double PropFlowConversion;
 
   FGTable* ThrustTable;

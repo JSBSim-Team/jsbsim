@@ -267,7 +267,12 @@ double FGRocket::CalcFuelNeed(void)
 
     if (mxr_function) MxR = mxr_function->GetValue();
 
-    SLFuelFlowMax = PropFlowMax / (1 + MxR);
+    if (OpMode == eModeMonoProp) {
+      SLFuelFlowMax = 0.0;
+    } else {
+      SLFuelFlowMax = PropFlowMax / (1 + MxR);
+    }
+
     FuelFlowRate = SLFuelFlowMax * PctPower;
   }
 
