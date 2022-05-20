@@ -29,7 +29,8 @@ current directory is the root of the `jsbsim/` source code.
 /path/to/jsbsim
 ```
 
-Then, we must copy some files into the build.
+Then, we must copy some files into the build. These are necessary for the
+S-Function to operate.
 
 ```
 > cp -r aircraft build/src/aircraft
@@ -53,6 +54,11 @@ copy the following files into the build source:
 
 You can now follow the test instructions below in order to ensure it is in
 working condition.
+
+Once you have the S-Function compiled, you just need `aircraft/` and `engine/`
+alongside the compiled `JSBSim_SFunction.mexmaci64` in order for it to work.
+You also nede to be sure that the script in the S-Function parameter is in
+the correct location.
 
 ## Build instructions for the Windows platform
 
