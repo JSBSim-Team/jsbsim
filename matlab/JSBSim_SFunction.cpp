@@ -162,16 +162,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Initial conditions for the control commands
 #define INITIAL_CTRL_CMD_PARAM  2
-#define SIZE_INITIAL_CRTL_CMD   8
+#define SIZE_INITIAL_CRTL_CMD   10
 
-#define throttle                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[0]
-#define aileron                 mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[1]
-#define elevator                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[2]
-#define rudder                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[3]
-#define mixture                 mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[4]
-#define runset                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[5]
-#define flaps                   mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[6]
-#define gear                    mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[7]
+#define throttle1               mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[0]
+#define throttle2               mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[1]
+#define aileron                 mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[2]
+#define elevator                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[3]
+#define rudder                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[4]
+#define mixture1                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[5]
+#define mixture2                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[6]
+#define runset                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[7]
+#define flaps                   mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[8]
+#define gear                    mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[9]
 
 // Simulation discrete time step
 #define TIME_STEP_PARAM         3
@@ -199,7 +201,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define NUM_INPUTS              1
 
 #define CTRL_CMD_INPUT          0
-#define SIZE_CTRL_CMD_INPUT     8
+#define SIZE_CTRL_CMD_INPUT     SIZE_INITIAL_CRTL_CMD
 
 // The output
 #define NUM_OUTPUTS             4
@@ -208,7 +210,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define SIZE_STATES_OUTPUT      12
 
 #define CTRL_CMD_OUTPUT         1
-#define SIZE_CTRL_CMD_OUTPUT    9
+#define SIZE_CTRL_CMD_OUTPUT    10
 
 #define PROPULSION_OUTPUT       2
 #define SIZE_PROPULSION_OUTPUT  48
@@ -426,21 +428,25 @@ static void mdlInitializeConditions(SimStruct *S)
 */
 static void mdlStart(SimStruct *S)
 {
-    // TODO: We may want to generalize this.
-    real_T *x2 = ssGetRealDiscStates(S);
+    JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
 
-    x2[0] = u_fps;
-    x2[1] = v_fps;
-    x2[2] = w_fps;
-    x2[3] = p_radsec;
-    x2[4] = q_radsec;
-    x2[5] = r_radsec;
-    x2[6] = h_sl_ft;
-    x2[7] = long_gc_deg;
-    x2[8] = lat_gc_deg;
-    x2[9] = phi_rad;
-    x2[10] = theta_rad;
-    x2[11] = psi_rad;
+    // TODO: We may want to generalize this.
+    // real_T *x2 = ssGetRealDiscStates(S);
+
+    // JII->Copy_States_From_JSBSim(x2);
+
+    // x2[0] = u_fps;
+    // x2[1] = v_fps;
+    // x2[2] = w_fps;
+    // x2[3] = p_radsec;
+    // x2[4] = q_radsec;
+    // x2[5] = r_radsec;
+    // x2[6] = h_sl_ft;
+    // x2[7] = long_gc_deg;
+    // x2[8] = lat_gc_deg;
+    // x2[9] = phi_rad;
+    // x2[10] = theta_rad;
+    // x2[11] = psi_rad;
     //x[12] = alpha_rad;
     //x[13] = beta_rad;
 }
@@ -527,14 +533,16 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     real_T *discStates = ssGetRealDiscStates(S);
 
     InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S,CTRL_CMD_INPUT);
-    throttle = *ctrlCmdInput[0];
-    aileron = *ctrlCmdInput[1];
-    elevator = *ctrlCmdInput[2];
-    rudder = *ctrlCmdInput[3];
-    mixture = *ctrlCmdInput[4];
-    runset = *ctrlCmdInput[5];
-    flaps = *ctrlCmdInput[6];
-    gear = *ctrlCmdInput[7];
+    throttle1 = *ctrlCmdInput[0];
+    throttle2 = *ctrlCmdInput[1];
+    aileron = *ctrlCmdInput[2];
+    elevator = *ctrlCmdInput[3];
+    rudder = *ctrlCmdInput[4];
+    mixture1 = *ctrlCmdInput[5];
+    mixture2 = *ctrlCmdInput[6];
+    runset = *ctrlCmdInput[7];
+    flaps = *ctrlCmdInput[8];
+    gear = *ctrlCmdInput[9];
 
     // These point to the output 
     double *dWorkCtrlCmdIn = (double *) ssGetDWork(S,0);
@@ -548,11 +556,11 @@ static void mdlUpdate(SimStruct *S, int_T tid)
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
     }
     
-    double ctrl_vec[8] = {throttle, aileron, elevator, rudder, mixture, runset, flaps, gear};
+    double ctrl_vec[SIZE_CTRL_CMD_INPUT] = {throttle1, throttle2, aileron, elevator, rudder, mixture1, mixture2, runset, flaps, gear};
 
-    if (!script_bool){         
-        JII->Copy_Controls_To_JSBSim(ctrl_vec);
-    }    
+    // if (!script_bool){         
+    JII->Copy_Controls_To_JSBSim(ctrl_vec);
+    // }    
 
     JII->Update();    
     

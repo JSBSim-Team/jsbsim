@@ -47,26 +47,29 @@ JSBSimInterface::JSBSimInterface(void)
 	ic = new FGInitialCondition(fdmExec);
 	//verbosityLevel = JSBSimInterface::eSilent;
 }
+
 JSBSimInterface::JSBSimInterface(double dt)
 {
-  _ac_model_loaded = false;
+	_ac_model_loaded = false;
 	fdmExec = new FGFDMExec;
-  fdmExec->Setdt(dt);
-  mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
-  propagate = fdmExec->GetPropagate().get();
-  accel = fdmExec->GetAccelerations().get();
-  auxiliary = fdmExec->GetAuxiliary().get();
-  aerodynamics = fdmExec->GetAerodynamics().get();
-  propulsion = fdmExec->GetPropulsion().get();
-  fcs = fdmExec->GetFCS().get();
-  ic = new FGInitialCondition(fdmExec);
-  //verbosityLevel = JSBSimInterface::eSilent;
+	fdmExec->Setdt(dt);
+	mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
+	propagate = fdmExec->GetPropagate().get();
+	accel = fdmExec->GetAccelerations().get();
+	auxiliary = fdmExec->GetAuxiliary().get();
+	aerodynamics = fdmExec->GetAerodynamics().get();
+	propulsion = fdmExec->GetPropulsion().get();
+	fcs = fdmExec->GetFCS().get();
+	ic = new FGInitialCondition(fdmExec);
+	//verbosityLevel = JSBSimInterface::eSilent;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JSBSimInterface::~JSBSimInterface(void)
 {
     delete fdmExec;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Open(const string& acName)
 {
@@ -106,6 +109,7 @@ bool JSBSimInterface::Open(const string& acName)
 
   return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Open(const mxArray *prhs)
 {
@@ -119,6 +123,7 @@ bool JSBSimInterface::Open(const mxArray *prhs)
     return Open(acName);
 
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::ResetToInitialCondition()
 {
@@ -130,6 +135,7 @@ bool JSBSimInterface::ResetToInitialCondition()
   mexPrintf("Aircraft states are reset to IC\n");
   return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 {
@@ -153,6 +159,7 @@ bool JSBSimInterface::GetPropertyValue(const mxArray *prhs1, double& value)
 	}
 	return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs2)
 {
@@ -177,6 +184,7 @@ bool JSBSimInterface::SetPropertyValue(const mxArray *prhs1, const mxArray *prhs
 	}
 	return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::SetPropertyValue(const string& prop, const double value)
 {
@@ -185,12 +193,14 @@ bool JSBSimInterface::SetPropertyValue(const string& prop, const double value)
 		*mxGetPr(p2) = value;
 		return SetPropertyValue(p1,p2);
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::GetPropertyValue(const string& prop, double& value)
 {
 		mxArray *p1 = mxCreateString(prop.c_str());
 		return GetPropertyValue(p1,value);
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 {
@@ -365,6 +375,7 @@ bool JSBSimInterface::EasySetValue(const string& prop, const double value)
 	}
 	return false;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 double JSBSimInterface::EasyGetValue(const string& prop, double& value)
 {
@@ -515,6 +526,7 @@ double JSBSimInterface::EasyGetValue(const string& prop, double& value)
   }
   return false;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::QueryJSBSimProperty(const string& prop)
 {
@@ -526,6 +538,7 @@ bool JSBSimInterface::QueryJSBSimProperty(const string& prop)
 	}
 	return false;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::PrintCatalog()
 {
@@ -535,14 +548,14 @@ void JSBSimInterface::PrintCatalog()
         mexPrintf("%s\n",catalog[i].c_str());
     mexPrintf("-- end of catalog\n");
 }
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::Update()
 {
+
     fdmExec->Run();
-    
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::LoadIC(SGPath ResetName)
 {
@@ -554,122 +567,44 @@ void JSBSimInterface::LoadIC(SGPath ResetName)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void JSBSimInterface::RunIC()
-{
-    fdmExec->RunIC();        
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
-    // throttle, aileron, elevator, rudder, mixture, runset, flap, gear
     // TODO: error handling if controls is not correct size. 
-    if(!fdmExec) return false; 
-    /*
-     if(SetPropertyValue("fcs/throttle-cmd-norm", controls[0])){
-         mexPrintf("1\n");
-     }
-     if(SetPropertyValue("aileron-cmd-norm", controls[1])){
-         mexPrintf("2\n");
-     }
-     if(SetPropertyValue("elevator-cmd-norm", controls[2])){
-         mexPrintf("3\n");
-     }
-     if(SetPropertyValue("rudder-cmd-norm", controls[3])){
-         mexPrintf("4\n");
-     }
-     if(SetPropertyValue("fcs/mixture-cmd-norm", controls[4])){
-         mexPrintf("5\n");
-     }
-     if(SetPropertyValue("set-running", controls[5])){
-         mexPrintf("6\n");
-     }
-     if(SetPropertyValue("fcs/flap-cmd-norm", controls[6])){
-         mexPrintf("7\n");
-     }
-     if(SetPropertyValue("gear/gear-cmd-norm", controls[7])){
-         mexPrintf("8\n");
-     }   */  
-    
-     SetPropertyValue("fcs/throttle-cmd-norm", controls[0]);
-     fcs->SetDaCmd(controls[1]);
-     fcs->SetDeCmd(controls[2]);
-     fcs->SetDrCmd(controls[3]);
-     SetPropertyValue("fcs/mixture-cmd-norm", controls[4]);
-     SetPropertyValue("set-running", controls[5]);
-     fcs->SetDfCmd(controls[6]);
-     SetPropertyValue("gear/gear-cmd-norm", controls[7]); 
-     
-     return true; 
-}
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::Copy_Init_To_JSBSim(double init_values[]){
-    if(!fdmExec) return false; 
-    
-    /*
-     if(SetPropertyValue("u-fps", init_values[0])) {
-         mexPrintf("1");
-     }
-     if(SetPropertyValue("v-fps", init_values[1])){
-         mexPrintf("2");
-     }         
-     if(SetPropertyValue("w-fps", init_values[2])){
-         mexPrintf("3");
-     }         
-     if(SetPropertyValue("p-rad_sec", init_values[3])){
-         mexPrintf("4");
-     }         
-     if(SetPropertyValue("q-rad_sec", init_values[4])){
-         mexPrintf("5");
-     }         
-     if(SetPropertyValue("r-rad_sec", init_values[5])){
-         mexPrintf("6");
-     }         
-     if(SetPropertyValue("h-sl-ft", init_values[6])){
-         mexPrintf("7");
-     }         
-     if(SetPropertyValue("long-gc-deg", init_values[7])){
-         mexPrintf("8");
-     }         
-     if(SetPropertyValue("lat-gc-deg", init_values[8])){
-         mexPrintf("9");
-     }         
-     if(SetPropertyValue("phi-rad", init_values[9])){
-         mexPrintf("10");
-     }         
-     if(SetPropertyValue("lat-gc-deg", init_values[10])){
-         mexPrintf("11");
-     } */        
+    if(!fdmExec) return false;
 
-     SetPropertyValue("u-fps", init_values[0]);
-     SetPropertyValue("v-fps", init_values[1]);
-     SetPropertyValue("w-fps", init_values[2]);
-     SetPropertyValue("p-rad_sec", init_values[3]);
-     SetPropertyValue("q-rad_sec", init_values[4]);
-     SetPropertyValue("r-rad_sec", init_values[5]);
-     SetPropertyValue("h-sl-ft", init_values[6]);
-     SetPropertyValue("long-gc-deg", init_values[7]);
-     SetPropertyValue("lat-gc-deg", init_values[8]); 
-     SetPropertyValue("phi-rad", init_values[9]); 
-     SetPropertyValue("lat-gc-deg", init_values[10]); 
-     
-     fdmExec->RunIC();
+    fcs->SetThrottleCmd(0, controls[0]);
+	fcs->SetThrottleCmd(1, controls[1]);
+
+    fcs->SetDaCmd(controls[2]);
+    fcs->SetDeCmd(controls[3]);
+    fcs->SetDrCmd(controls[4]);
+
+	fcs->SetMixtureCmd(0, controls[5]);
+	fcs->SetMixtureCmd(0, controls[6]);
+
+    SetPropertyValue("set-running", controls[7]);
+
+    fcs->SetDfCmd(controls[8]);
+	fcs->SetGearCmd(controls[9]);
+
     return true; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGPath& initfile){
     
-    fdmExec->SetAircraftPath (SGPath("aircraft")); // remove argument (rootDir + "aircraft")    
+    fdmExec->SetAircraftPath (SGPath("aircraft"));    
     fdmExec->SetEnginePath   (SGPath("engine"));
     fdmExec->SetSystemsPath  (SGPath("systems"));
     
     if(!fdmExec->LoadScript(script, delta_t, initfile)){
-        mexPrintf("Could not open a script \n"); 
-        return false;
+
+        mexErrMsgTxt("Could not open a script.\n"); 
     }
+
     fdmExec->RunIC();
     return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_States_From_JSBSim(double *state_array){
     // [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg phi-rad theta-rad psi-rad]
@@ -680,21 +615,25 @@ bool JSBSimInterface::Copy_States_From_JSBSim(double *state_array){
     state_array[1] = propagate->GetUVW(2); 
     state_array[2] = propagate->GetUVW(3); 
     
+	// propagate->GetUVWdot(1,2,3)
+
     state_array[3] = propagate->GetPQR(1);
     state_array[4] = propagate->GetPQR(2);
     state_array[5] = propagate->GetPQR(3);
     
-    state_array[6] = propagate->GetAltitudeASLmeters();
+	// propagate->GetPQRdot(1,2,3)
+
+    state_array[6] = propagate->GetAltitudeASL();
     state_array[7] = propagate->GetLongitudeDeg();
     state_array[8] = propagate->GetLatitudeDeg();
     
-    FGColumnVector3 euler = propagate->GetVState().qAttitudeLocal.GetEuler();
-    state_array[9] = euler.Entry(1);
-    state_array[10] = euler.Entry(2);
-    state_array[11] = euler.Entry(3);
+    state_array[9] = propagate->GetEulerDeg(1);
+    state_array[10] = propagate->GetEulerDeg(2);
+    state_array[11] = propagate->GetEulerDeg(3);
     
     return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Pilot_From_JSBSim(double *state_array){
     // [N alpha alphadot beta betadot vc-fps vc-kts vt-fps vg-fps mach climb-rate qdyn-psf]
@@ -703,10 +642,11 @@ bool JSBSimInterface::Copy_Pilot_From_JSBSim(double *state_array){
     
     state_array[0] = auxiliary->GetNlf(); // Normal load factor  
     
-    state_array[1] = auxiliary->Getalpha(); 
-    state_array[2] = auxiliary->Getadot(); 
-    state_array[3] = auxiliary->Getbeta();
-    state_array[4] = auxiliary->Getbdot();
+    // Pass 1 as the parameters to get in degrees.
+    state_array[1] = auxiliary->Getalpha(1); 
+    state_array[2] = auxiliary->Getadot(1); 
+    state_array[3] = auxiliary->Getbeta(1);
+    state_array[4] = auxiliary->Getbdot(1);
     
     state_array[5] = auxiliary->GetVcalibratedFPS(); //valibrated airspeed, fps
     state_array[6] = auxiliary->GetVcalibratedKTS(); //calibrated airspeed, knots
@@ -720,23 +660,25 @@ bool JSBSimInterface::Copy_Pilot_From_JSBSim(double *state_array){
     state_array[12] = fcs->GetDeCmd(); //elevator cmd norm 
     return true;
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::Copy_Control_From_JSBSim(double *state_array){
     // [thr-pos-norm left-ail-pos-rad right-ail-pos-rad el-pos-rad rud-pos-rad flap-pos-norm ]
     // speedbrake-pos-rad spoiler-pos-rad gear-pos-norm]
     // Possibly add some error handling here? 
     
-    state_array[0] = fcs->GetThrottlePos(0); //should be an input command, NEEDS FIX   
+    state_array[0] = fcs->GetThrottlePos(0);
+    state_array[1] = fcs->GetThrottlePos(1);
+
+    state_array[2] = fcs->GetDaLPos(1); //left aileron 
+    state_array[3] = fcs->GetDaRPos(1); //right aileron
+    state_array[4] = fcs->GetDePos(1); //elevator
+    state_array[5] = fcs->GetDrPos(1); //rudder
+    state_array[6] = fcs->GetDfPos(1); //flaps
+    state_array[7] = fcs->GetDsbPos(1); //speedbrake
+    state_array[8] = fcs->GetDspPos(1); // spoiler
     
-    state_array[1] = fcs->GetDaLPos(); //left aileron 
-    state_array[2] = fcs->GetDaRPos(); //right aileron
-    state_array[3] = fcs->GetDePos(); //elevator
-    state_array[4] = fcs->GetDrPos(); //rudder
-    state_array[5] = fcs->GetDfPos(); //flaps
-    state_array[6] = fcs->GetDsbPos(); //speedbrake
-    state_array[7] = fcs->GetDspPos(); // spoiler
-    
-    state_array[8] = fcs->GetGearPos(); //gear
+    state_array[9] = fcs->GetGearPos(); //gear
     
     
     return true;

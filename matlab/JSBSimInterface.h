@@ -62,7 +62,7 @@ public:
 	bool QueryJSBSimProperty(const std::string& prop);
     /// Copy control inputs to JSBSim 
     bool Copy_Controls_To_JSBSim(double controls[]);
-    bool Copy_Init_To_JSBSim(double init_values[]);
+    // bool Copy_Init_To_JSBSim(double init_values[]);
     bool Copy_States_From_JSBSim(double *state_array);
     bool Copy_Pilot_From_JSBSim(double *state_array);
     bool Copy_Control_From_JSBSim(double *state_array);
@@ -73,7 +73,6 @@ public:
 	void PrintCatalog();
     /// Update the simulation
     void Update();
-    void RunIC();
     void LoadIC(SGPath ResetName);
 
 	bool IsAircraftLoaded(){return _ac_model_loaded;}
