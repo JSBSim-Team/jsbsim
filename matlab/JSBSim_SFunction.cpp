@@ -188,17 +188,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define use_script	            mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[0]
 #define allow_control_of_script	mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[1]
 
+// Control commands to ignore if allow_control_of_script and use_script are both enabled
+#define CTRL_CMD_IGNORE         5
+#define SIZE_CTRL_CMD_IGNORE    SIZE_INITIAL_CRTL_CMD
+
+#define IGNORE_THROTTLE1        mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[0]
+#define IGNORE_THROTTLE2        mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[1]
+#define IGNORE_AILERON          mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[2]
+#define IGNORE_ELEVATOR         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[3]
+#define IGNORE_RUDDER           mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[4]
+#define IGNORE_MIXTURE1         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[5]
+#define IGNORE_MIXTURE2         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[6]
+#define IGNORE_RUNSET           mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[7]
+#define IGNORE_FLAPS            mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[8]
+#define IGNORE_GEAR             mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[9]
+
 // The file path to the script to run
-#define SCRIPT_FILE_PARAM       5
+#define SCRIPT_FILE_PARAM       6
 
 #define script_name             ssGetSFcnParam(S, SCRIPT_FILE_PARAM)
 
 // Initial condition parameters for resetting the aircraft, from aircraft type directory
-#define RESET_FILE_PARAM        6
+#define RESET_FILE_PARAM        7
 
 #define reset_name              ssGetSFcnParam(S, RESET_FILE_PARAM)
 
-#define NUM_PARAMS              7
+#define NUM_PARAMS              8
 
 // The input
 #define NUM_INPUTS              1
@@ -536,16 +551,33 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     real_T *discStates = ssGetRealDiscStates(S);
 
     InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S,CTRL_CMD_INPUT);
-    throttle1 = *ctrlCmdInput[0];
-    throttle2 = *ctrlCmdInput[1];
-    aileron = *ctrlCmdInput[2];
-    elevator = *ctrlCmdInput[3];
-    rudder = *ctrlCmdInput[4];
-    mixture1 = *ctrlCmdInput[5];
-    mixture2 = *ctrlCmdInput[6];
-    runset = *ctrlCmdInput[7];
-    flaps = *ctrlCmdInput[8];
-    gear = *ctrlCmdInput[9];
+    
+    if (use_script && allow_control_of_script) {
+
+        throttle1 = IGNORE_THROTTLE1 ? -2 : *ctrlCmdInput[0];
+        throttle2 = IGNORE_THROTTLE2 ? -2 : *ctrlCmdInput[1];
+        aileron = IGNORE_AILERON ? -2 : *ctrlCmdInput[2];
+        elevator = IGNORE_ELEVATOR ? -2 : *ctrlCmdInput[3];
+        rudder = IGNORE_RUDDER ? -2 : *ctrlCmdInput[4];
+        mixture1 = IGNORE_MIXTURE1 ? -2 : *ctrlCmdInput[5];
+        mixture2 = IGNORE_MIXTURE2 ? -2 : *ctrlCmdInput[6];
+        runset = IGNORE_RUNSET ? -2 : *ctrlCmdInput[7];
+        flaps = IGNORE_FLAPS ? -2 : *ctrlCmdInput[8];
+        gear = IGNORE_GEAR ? -2 : *ctrlCmdInput[9];
+    } else {
+
+        throttle1 = *ctrlCmdInput[0];
+        throttle2 = *ctrlCmdInput[1];
+        aileron = *ctrlCmdInput[2];
+        elevator = *ctrlCmdInput[3];
+        rudder = *ctrlCmdInput[4];
+        mixture1 = *ctrlCmdInput[5];
+        mixture2 = *ctrlCmdInput[6];
+        runset = *ctrlCmdInput[7];
+        flaps = *ctrlCmdInput[8];
+        gear = *ctrlCmdInput[9];
+    }
+    
 
     // These point to the output 
     double *dWorkCtrlCmdIn = (double *) ssGetDWork(S,0);

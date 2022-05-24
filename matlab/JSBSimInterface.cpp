@@ -567,29 +567,49 @@ void JSBSimInterface::LoadIC(SGPath ResetName)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
+bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]) {
     // TODO: error handling if controls is not correct size. 
     if(!fdmExec) return false;
 
-	mexPrintf("throttle0=%d\n", controls[0]);
-
-	if (controls[0] <= 1 && controls[0] >= -1) {
+	if (controls[0] <= 1 && controls[0] >= 0) {
 		fcs->SetThrottleCmd(0, controls[0]);
 	}
-    
-	fcs->SetThrottleCmd(1, controls[1]);
 
-    fcs->SetDaCmd(controls[2]);
-    fcs->SetDeCmd(controls[3]);
-    fcs->SetDrCmd(controls[4]);
+	if (controls[1] <= 1 && controls[1] >= 0) {
+		fcs->SetThrottleCmd(1, controls[1]);
+	}
 
-	fcs->SetMixtureCmd(0, controls[5]);
-	fcs->SetMixtureCmd(0, controls[6]);
+	if (controls[2] <= 1 && controls[2] >= -1) {
+		fcs->SetDaCmd(controls[2]);
+	}
 
-    SetPropertyValue("set-running", controls[7]);
+	if (controls[3] <= 1 && controls[3] >= -1) {
+		fcs->SetDeCmd(controls[3]);
+	}
 
-    fcs->SetDfCmd(controls[8]);
-	fcs->SetGearCmd(controls[9]);
+	if (controls[4] <= 1 && controls[4] >= -1) {
+		fcs->SetDrCmd(controls[4]);
+	}
+
+	if (controls[5] <= 1 && controls[5] >= 0) {
+		fcs->SetMixtureCmd(0, controls[5]);
+	}
+
+	if (controls[6] <= 1 && controls[6] >= 0) {
+		fcs->SetMixtureCmd(1, controls[6]);
+	}
+
+	if (controls[7] <= 1 && controls[7] >= -1) {
+		SetPropertyValue("set-running", controls[7]);
+	}
+
+	if (controls[8] <= 1 && controls[8] >= 0) {
+		fcs->SetDfCmd(controls[8]);
+	}
+
+	if (controls[9] == 1 || controls[9] == 0) {
+		fcs->SetGearCmd(controls[9]);
+	}
 
     return true; 
 }
