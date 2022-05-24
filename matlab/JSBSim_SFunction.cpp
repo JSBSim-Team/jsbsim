@@ -180,10 +180,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define delta_t		            mxGetPr(ssGetSFcnParam(S, TIME_STEP_PARAM))[0]
 
-// Parameter for using the supplied script (1 to use, 0 to not use)
+// Parameter for using the supplied script (1 to use, 0 to not use) and
+// for enabling control input to script (1 to enable, 0 to disable)
 #define USE_SCRIPT_PARAM        4
+#define SIZE_USE_SCRIPT_PARAM   2
 
-#define script_bool	            mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[0]
+#define use_script	            mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[0]
+#define allow_control_of_script	mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[1]
 
 // The file path to the script to run
 #define SCRIPT_FILE_PARAM       5
@@ -379,7 +382,7 @@ static void mdlInitializeConditions(SimStruct *S)
     mexPrintf("Script input: %s \n", script.c_str());
 
     // Check both that script is set to be used and that it works to open the script 
-    if (script_bool && JII->OpenScript(SGPath(script), delta_t, initfile)){
+    if (use_script && JII->OpenScript(SGPath(script), delta_t, initfile)){
         
         mexPrintf("Using Scripts! \n");
     }
@@ -394,7 +397,7 @@ static void mdlInitializeConditions(SimStruct *S)
     reset = std::string(buf2);
     mexPrintf("Reset file: '%s' .\n", reset.c_str());
 
-    if (!script_bool){
+    if (!use_script){
 
         mexPrintf("\nJSBSim S-Function is initializing...\n\n");
         mexPrintf("Note: For Aircraft with integrators in the FCS, please type 'clearSF' to completely reset S-Function.\n\n");
@@ -558,11 +561,11 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     
     double ctrl_vec[SIZE_CTRL_CMD_INPUT] = {throttle1, throttle2, aileron, elevator, rudder, mixture1, mixture2, runset, flaps, gear};
 
-    // if (!script_bool){         
-    JII->Copy_Controls_To_JSBSim(ctrl_vec);
-    // }    
+    if (allow_control_of_script) {         
+        JII->Copy_Controls_To_JSBSim(ctrl_vec);
+    }
 
-    JII->Update();    
+    JII->Update();
     
     JII->Copy_States_From_JSBSim(discStates);
     JII->Copy_Control_From_JSBSim(dWorkCtrlCmdOut);

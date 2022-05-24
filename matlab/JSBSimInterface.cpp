@@ -571,7 +571,12 @@ bool JSBSimInterface::Copy_Controls_To_JSBSim(double controls[]){
     // TODO: error handling if controls is not correct size. 
     if(!fdmExec) return false;
 
-    fcs->SetThrottleCmd(0, controls[0]);
+	mexPrintf("throttle0=%d\n", controls[0]);
+
+	if (controls[0] <= 1 && controls[0] >= -1) {
+		fcs->SetThrottleCmd(0, controls[0]);
+	}
+    
 	fcs->SetThrottleCmd(1, controls[1]);
 
     fcs->SetDaCmd(controls[2]);
