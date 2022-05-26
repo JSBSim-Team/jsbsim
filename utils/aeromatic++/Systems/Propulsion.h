@@ -233,6 +233,10 @@ public:
     float _tank_capacity;
     float _tank_contents;
     float _fuel_weight;
+
+    float _weight;
+    float _diameter;
+    float _length;
 };
 
 } // namespace Aeromatic

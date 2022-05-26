@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Systems/Systems.h>
 #include "types.h"
@@ -88,14 +89,15 @@ public:
     std::string _dir;
     char _path[PARAM_MAX_STRING+1];
     char _name[PARAM_MAX_STRING+1];
-    unsigned _subtype;
-    bool _overwrite;
-    bool _subdir;
+    unsigned _subtype = 0;
+    bool _overwrite = true;
+    bool _subdir = true;
 
 //***** USER INPUTS ************************************
 
-    std::vector<Param*> _general;
-    unsigned _engines;
+    std::vector<std::string> _general_order;
+    std::map<std::string,Param*> _general;
+    unsigned _engines = 0;
 
     /* FCS, Flight Control System */
     std::vector<System*> _systems;
@@ -593,8 +595,11 @@ public:
     }
 
 public:
-    std::vector<Param*> _weight_balance;
-    std::vector<Param*> _geometry;
+    std::vector<std::string> _weight_balance_order;
+    std::map<std::string,Param*> _weight_balance;
+
+    std::vector<std::string> _geometry_order;
+    std::map<std::string,Param*> _geometry;
 
 public:
     std::vector<Aircraft*> _aircraft;

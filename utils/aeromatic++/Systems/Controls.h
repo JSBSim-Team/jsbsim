@@ -188,7 +188,7 @@ public:
         if (_enabled)
         {
             if (_param < _inputs.size()) {
-                rv = _inputs[_param++];
+                rv = _inputs[_inputs_order[_param++]];
             } else {
                 rv = _control[_ctype]->param_next();
             }

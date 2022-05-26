@@ -42,9 +42,8 @@ Thruster::Thruster(Propulsion *p) :
 
 Thruster::~Thruster()
 {
-    std::vector<Param*>::iterator it;
-    for(it = _inputs.begin(); it != _inputs.end(); ++it) {
-        delete *it;
+    for (auto it : _inputs) {
+        delete it.second;
     }
 }
 
@@ -73,10 +72,14 @@ std::string Direct::thruster()
 
 Nozzle::Nozzle(Propulsion *p) : Thruster(p)
 {
+    bool& convert = _propulsion->_aircraft->_metric;
+
     strCopy(_thruster_name, "my_nozzle");
 
-    _inputs.push_back(new Param("Nozzle name", "The name is used for the configuration file name", _thruster_name));
-    _inputs.push_back(new Param("Nozzle diameter", "Nozzle diameter influences the nozzle area and exit pressure", _diameter, _propulsion->_aircraft->_metric, LENGTH));
+    _inputs_order.push_back("nozzleName");
+    _inputs["nozzleName"] = new Param("Nozzle name", "The name is used for the configuration file name", _thruster_name);
+    _inputs_order.push_back("nozzleDiameter");
+    _inputs["nozzleDiameter"] = new Param("Nozzle diameter", "Nozzle diameter influences the nozzle area and exit pressure", _diameter, convert, LENGTH);
 }
 
 std::string Nozzle::thruster()
@@ -106,11 +109,16 @@ std::string Nozzle::thruster()
 #define NUM_ELEMENTS		12
 Propeller::Propeller(Propulsion *p) : Thruster(p)
 {
+    bool& convert = _propulsion->_aircraft->_metric;
+
     strCopy(_thruster_name, "my_propeller");
 
-    _inputs.push_back(new Param("Thruster name", "The name is used for the configuration file name", _thruster_name));
-    _inputs.push_back(new Param("Propeller diameter", "Propeller diameter is critical for a good thrust estimation", _diameter, _propulsion->_aircraft->_metric, LENGTH));
-    _inputs.push_back(new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch angle", _fixed_pitch));
+    _inputs_order.push_back("thrusterName");
+    _inputs["thrusterName"] = new Param("Thruster name", "The name is used for the configuration file name", _thruster_name);
+    _inputs_order.push_back("propellerDiameter");
+    _inputs["propellerDiameter"] = new Param("Propeller diameter", "Propeller diameter is critical for a good thrust estimation", _diameter, convert, LENGTH);
+    _inputs_order.push_back("propellerFixedPitch");
+    _inputs["propellerFixedPitch"] = new Param("Is the propeller fixed pitch?", "Fixed pitch propellers do not have any mechanics to alter the pitch angle", _fixed_pitch);
 }
 
 /**
@@ -139,9 +147,8 @@ Propeller::Propeller(Propulsion *p) : Thruster(p)
  */
 void  Propeller::bladeElement()
 {
-    const float rho =  0.002379;// Standard sea level density (slug/ft3)
-    const float Cf = 0.006f;	// skin Friction Coefficient
-    const float k1 = 0.2f;	// correction factor for airfoil thickness
+    const float Cf = 0.006f;	  // skin Friction Coefficient
+    const float k1 = 0.2f;	  // correction factor for airfoil thickness
 
     float Y = _specific_weight;
     float RPM = _max_rpm;
@@ -225,11 +232,11 @@ void  Propeller::bladeElement()
 
                     // Blade element momentum theory
                     float solidity = B*chord/(PI*R);
-                    DtDr = solidity*PI*rho*V0*V0/(sphi*sphi)*rad*CY;
-                    DqDr = solidity*PI*rho*V0*V0/(sphi*sphi)*rad*rad*CX;
+                    DtDr = solidity*PI*RHO*V0*V0/(sphi*sphi)*rad*CY;
+                    DqDr = solidity*PI*RHO*V0*V0/(sphi*sphi)*rad*rad*CX;
 
-                    tem1 = DtDr/(4.0f*PI*rad*rho*V*V*(1.0f+a));
-                    tem2 = DqDr/(4.0f*PI*rad*rad*rad*rho*V*(1.0f+a)*omega);
+                    tem1 = DtDr/(4.0f*PI*rad*RHO*V*V*(1.0f+a));
+                    tem2 = DqDr/(4.0f*PI*rad*rad*rad*RHO*V*(1.0f+a)*omega);
                     anew = 0.5f*(a+tem1);
                     bnew = 0.5f*(b+tem2);
                     if (fabsf(anew-a) < 1.0e-5f && fabsf(bnew-b) < 1.0e-5f) {
@@ -252,8 +259,8 @@ void  Propeller::bladeElement()
                 _ixx += m*rad*rad;
             }
 
-            float CT = thrust/(rho*n2*D4);
-            float CQ = torque/(rho*n2*D5);
+            float CT = thrust/(RHO*n2*D4);
+            float CQ = torque/(RHO*n2*D5);
             float CP = 2.0f*PI*CQ;
 
             _performance_t entry(J, CT, CP);
@@ -275,9 +282,11 @@ void  Propeller::bladeElement()
 
 void Propeller::set_thruster(float mrpm)
 {
+    bool& convert = _propulsion->_aircraft->_metric;
+
     // find rpm which gives a tip mach of 0.88 (static at sea level)
     _engine_rpm = mrpm;
-    _max_rpm = 18763.0f / _diameter;
+    _max_rpm = 18763.0f / (_diameter * (convert ? METER_TO_FEET : 1.0f));
     _gear_ratio = _MAX(_engine_rpm / _max_rpm, 1.0f);
 
     float n = _max_rpm/60.0f;
@@ -285,19 +294,18 @@ void Propeller::set_thruster(float mrpm)
     float D = _diameter;
     float D4 = D*D*D*D;
     float D5 = D4*D;
-    float rho = 0.002379f;
 
     // power and thrust coefficients at design point
     // for fixed pitch design point is beta=22, J=0.2
     // for variable pitch design point is beta=15, j=0
-    _Cp0 = _propulsion->_power * 550.0f / rho / n2 / D5;
+    _Cp0 = _propulsion->_power * 550.0f / RHO / n2 / D5;
     if (_fixed_pitch == false)
     {
         _Ct0 = _Cp0 * 2.33f;
-        _static_thrust = _Ct0 * rho * n2 * D4;
+        _static_thrust = _Ct0 * RHO * n2 * D4;
     } else {
         _Ct0 = _Cp0 * 2.33f; // 1.4f;
-        _static_thrust = _Ct0 * rho * n2 * D4;
+        _static_thrust = _Ct0 * RHO * n2 * D4;
     }
 
     // estimate the number of blades
@@ -363,8 +371,8 @@ void Propeller::set_thruster(float mrpm)
 
     _max_thrust = _fixed_pitch ? _performance[0].CT
                           : _performance[_performance.size()/_pitch_levels].CT;
-    _max_thrust *= rho * n2 * D4;
-    _max_torque = -rho * _ixx*(2.0f*PI*_max_rpm);
+    _max_thrust *= RHO * n2 * D4;
+    _max_torque = -RHO * _ixx*(2.0f*PI*_max_rpm);
 }
 
 std::string Propeller::lift()
@@ -493,6 +501,7 @@ std::string Propeller::roll()
 std::string Propeller::thruster()
 {
 //  PistonEngine *engine = (PistonEngine*)_engine;
+    bool& convert = _propulsion->_aircraft->_metric;
     std::stringstream file;
 
     file << "<!-- Generated by Aero-Matic v " << AEROMATIC_VERSION_STR << std::endl;
@@ -502,8 +511,8 @@ std::string Propeller::thruster()
     file << "    Inputs:" << std::endl;
     file << "           horsepower: " << _propulsion->_power << std::endl;
     file << "       max engine rpm: " << _engine_rpm << std::endl;
-    file << "   prop diameter (ft): " << _diameter << std::endl;
-    file << "      prop chord (ft): " << _max_chord << std::endl;
+    file << "        prop diameter: " << _diameter << " " << _inputs["propellerDiameter"]->get_unit(false, LENGTH, convert) << std::endl;
+    file << "           prop chord: " << _max_chord << " " << _inputs["propellerDiameter"]->get_unit(false, LENGTH, convert) << std::endl;
     file << "                pitch: " << (_fixed_pitch ? "fixed" : "variable") << " at " << _pitch << " degrees" << std::endl;
     file << std::endl;
     file << "    Outputs:" << std::endl;
@@ -518,7 +527,7 @@ std::string Propeller::thruster()
 
     file << "<propeller version=\"1.01\" name=\"prop\">" << std::endl;
     file << "  <ixx> " << _ixx * _blades << " </ixx>" << std::endl;
-    file << "  <diameter unit=\"IN\"> " << (_diameter * FEET_TO_INCH) << " </diameter>" << std::endl;
+    file << "  <diameter unit=\"" << Param::get_unit(true, LENGTH, convert) << "\"> " << Param::get(_diameter, LENGTH, convert) << " </diameter>" << std::endl;
     file << "  <numblades> " << _blades << " </numblades>" << std::endl;
     file << "  <gearratio> " << _gear_ratio << " </gearratio>" << std::endl;
 //  file << "  <cp_factor> 1.00 </cp_factor>" << std::endl;
