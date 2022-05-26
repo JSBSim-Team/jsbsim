@@ -177,6 +177,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int numOutputs;
 int inputSize;
 
+// Helper function for getting strings from mxArray objects.
+std::string getMxArrayString(const mxArray* mxArrayStr) {
+
+    mwSize strLen = mxGetNumberOfElements(mxArrayStr) + 1;
+    char* strBuf = (char*) malloc(strLen * sizeof(char));
+    mxGetString(mxArrayStr, strBuf, strLen); 
+    std::string str = std::string(strBuf);
+    free(strBuf);
+    return str;
+}
+
 /* Error handling
  * --------------
  *
@@ -255,12 +266,7 @@ static void mdlProcessParameters(SimStruct *S)
     if(ssGetErrorStatus(S) != NULL) return;
 
     // Get the user provided input/output config.
-    char buf[128];
-    mwSize buflen;
-    buflen = mxGetNumberOfElements(io_config_file_name) + 1;
-    mxGetString(io_config_file_name, buf, buflen);
-    std::string io_config_file = "";
-    io_config_file = std::string(buf);
+    std::string io_config_file = getMxArrayString(io_config_file_name);
     mexPrintf("I/O config input: %s \n", io_config_file.c_str());
 
     FGXMLFileRead XMLFileRead;
@@ -353,8 +359,6 @@ static void mdlInitializeSizes(SimStruct *S)
     ssSetOptions(S, 0);
 }
 
-
-
 /* Function: mdlInitializeSampleTimes =========================================
  * Abstract:
  *    This function is used to specify the sample time(s) for your
@@ -363,6 +367,7 @@ static void mdlInitializeSizes(SimStruct *S)
  */
 static void mdlInitializeSampleTimes(SimStruct *S)
 {
+
     ssSetSampleTime(S, 0, delta_t);
     ssSetOffsetTime(S, 0, 0.0);
 }
@@ -383,46 +388,46 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 static void mdlInitializeConditions(SimStruct *S)
 {	
     
+    mexPrintf("\nJSBSim S-Function is initializing...\n\n");
+    
     // Create new JSBSimInterface object and initialize it with delta_t and num_outputs.
     JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs);
     ssGetPWork(S)[0] = (void *) JII;
     
     // Get the user provided input/output config.
-    char buf[128];
-    mwSize buflen;
-    buflen = mxGetNumberOfElements(io_config_file_name) + 1;
-    mxGetString(io_config_file_name, buf, buflen);
-    std::string io_config_file = "";
-    io_config_file = std::string(buf);
+    std::string io_config_file = getMxArrayString(io_config_file_name);
 
     FGXMLFileRead XMLFileRead;
     Element* document = XMLFileRead.LoadXMLDocument(SGPath(io_config_file));
 
+    // Add input properties JSBSim should take in.
     int i;
     std::string prop;
     Element* inputElement = document->FindElement("input");
     Element* propElement = inputElement->FindElement("property");
     for (i = 0; i < inputSize; i++) {
         prop = propElement->GetDataLine();
-        mexPrintf("Adding property to input: %s \n", prop.c_str());
         JII->AddInputPropertyNode(prop);
 
         propElement = inputElement->FindNextElement("property");
     }
 
+    // Add output properties JSBSim will deliver to each output channel.
     int j;
     int outputSize;
     Element* outputsElement = document->FindElement("outputs");
     Element* outputElement = outputsElement->FindElement("output");
     for (i = 0; i < numOutputs; i++) {
         outputSize = outputElement->GetNumElements();
-        mexPrintf("output %d has %d elements \n", i, outputSize);
         propElement = outputElement->FindElement("property");
 
         for (j = 0; j < outputSize; j++) {
             prop = propElement->GetDataLine();
             mexPrintf("Adding property to output %d: %s \n", i, prop.c_str());
-            JII->AddOutputPropertyNode(prop, i);
+            if (!JII->AddOutputPropertyNode(prop, i)) {
+                mexPrintf("Could not add property to output due to output port being out of bounds.\n");
+                return;
+            }
 
             propElement = outputElement->FindNextElement("property");
         }
@@ -432,62 +437,50 @@ static void mdlInitializeConditions(SimStruct *S)
 
     // Check if a script file is given in Simulink.
     // If not, initialize an aircraft
-    // The RunIC() command is run in either OpenScript or Copy_Init_To_JSBSim.
-        
-    // Keep this as null so that we can use the initialization settings from the script.
-    // See bool FGScript::LoadScript(const SGPath&, double, const SGPath&) for details.
-    SGPath initfile;
-    initfile = "";
-    
-    // Get the user provided script.
-    char buf2[128];
-    mwSize buflen2;
-    buflen2 = mxGetNumberOfElements(script_name) + 1;
-    mxGetString(script_name, buf2, buflen2);
-    std::string script = "";
-    script = std::string(buf2);
-    mexPrintf("Script input: %s \n", script.c_str());
+    if (use_script){
 
-    // Check both that script is set to be used and that it works to open the script 
-    if (use_script && JII->OpenScript(SGPath(script), delta_t, initfile)){
-        
+        // Keep initfile as empty so that we can use the initialization settings from the script.
+        // See bool FGScript::LoadScript(const SGPath&, double, const SGPath&) for details.
+        SGPath initfile;
+        initfile = "";
+
+        // Get the user provided script.
+        std::string script = getMxArrayString(script_name);
+        mexPrintf("Script input: %s \n", script.c_str());
+
+        if (!JII->OpenScript(SGPath(script), delta_t, initfile)) {
+            ssSetErrorStatus(S, "Flight script could not be loaded.\n");
+            return;
+        }
         mexPrintf("Using Scripts! \n");
-    }
-    
-    // Get the user provided intialization settings for resetting the aircraft
-    // to a default state.
-    char buf3[128];
-    mwSize buflen3;        
-    buflen3 = mxGetNumberOfElements(reset_name) +1; 
-    mxGetString(reset_name, buf3, buflen3); 
-    std::string reset = "";
-    reset = std::string(buf3);
-    mexPrintf("Reset file: '%s' .\n", reset.c_str());
-
-    if (!use_script){
-
-        mexPrintf("\nJSBSim S-Function is initializing...\n\n");
-        mexPrintf("Note: For Aircraft with integrators in the FCS, please type 'clearSF' to completely reset S-Function.\n\n");
+    } else {
 
         // Open the supplied aircraft file.
-        char buf[128];
-        mwSize buflen;
-        buflen = mxGetNumberOfElements(ac_name) + 1;
-        mxGetString(ac_name, buf, buflen);
-        std::string aircraft = "";
-        aircraft = std::string(buf);
+        std::string aircraft = getMxArrayString(ac_name);
         if (!JII->OpenAircraft(aircraft)){
             ssSetErrorStatus(S, "Aircraft file could not be loaded.\n");
+            return;
         }
-
         mexPrintf("'%s' Aircraft File has been successfully loaded!\n", aircraft.c_str());
-        JII->LoadIC(SGPath(reset));
+
+        // Get the user provided intialization settings for resetting the aircraft
+        // to a default state.
+        std::string reset = getMxArrayString(reset_name);
+        mexPrintf("Reset file: '%s' .\n", reset.c_str());
+        if (!JII->LoadIC(SGPath(reset))) {
+            ssSetErrorStatus(S, "Reset file could not be loaded.\n");
+            return;
+        }
     }
 
+    // Load initial conditions into the output work vectors.
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
         dWorkVector = (double *) ssGetDWork(S,i+1);
-        JII->CopyOutputsFromJSBSim(dWorkVector, i);
+        if (!JII->CopyOutputsFromJSBSim(dWorkVector, i)) {
+            ssSetErrorStatus(S, "Initial conditions could not be loaded into output.\n");
+            return;
+        }
     }
 }
 #endif /* MDL_INITIALIZE_CONDITIONS */
@@ -540,7 +533,10 @@ static void mdlUpdate(SimStruct *S, int_T tid)
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
     }    
     
-    JII->CopyInputControlsToJSBSim(ctrl_vec);
+    if (!JII->CopyInputControlsToJSBSim(ctrl_vec)) {
+        ssSetErrorStatus(S, "Issue copying control inputs to JSBSim.\n");
+        return;
+    }
 
     JII->Update();
     

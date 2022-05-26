@@ -84,54 +84,44 @@ JSBSimInterface::~JSBSimInterface(void)
 bool JSBSimInterface::OpenAircraft(const string& acName)
 {
 
-	if (!fdmExec->GetAircraft()->GetAircraftName().empty()) {
-		return false;
-	}
+	if (!fdmExec->GetAircraft()->GetAircraftName().empty()) return false;
 
     mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");  
-    fdmExec->SetAircraftPath (SGPath("aircraft")); 
-    fdmExec->SetEnginePath   (SGPath("engine"));
-    fdmExec->SetSystemsPath  (SGPath("systems"));
+    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
+    if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
+    if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
 
     mexPrintf("\tLoading aircraft '%s' ...\n",acName.c_str());
 
-    if ( ! fdmExec->LoadModel(SGPath("aircraft"),
-                               SGPath("engine"),
-                               SGPath("systems"),
-                               acName)) {
-      	mexPrintf("\tERROR: JSBSim could not load the aircraft model.\n");
-    	return false;
-    }
+    if ( ! fdmExec->LoadModel(SGPath("aircraft"), SGPath("engine"), SGPath("systems"), acName)) return false;
+
 	_ac_model_loaded = true;
-    mexPrintf("\tModel %s loaded.\n", fdmExec->GetModelName().c_str() );
 
   	return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGPath& initfile){
+bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGPath& initfile)
+{
     
-    fdmExec->SetAircraftPath (SGPath("aircraft"));    
-    fdmExec->SetEnginePath   (SGPath("engine"));
-    fdmExec->SetSystemsPath  (SGPath("systems"));
-    
-    if(!fdmExec->LoadScript(script, delta_t, initfile)){
+    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;  
+    if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
+    if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
 
-        mexErrMsgTxt("Could not open a script.\n"); 
-    }
+    if (!fdmExec->LoadScript(script, delta_t, initfile)) return false;
 
-    fdmExec->RunIC();
+    if (!fdmExec->RunIC()) return false;
+
     return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void JSBSimInterface::LoadIC(SGPath ResetName)
+bool JSBSimInterface::LoadIC(SGPath ResetName)
 {
+
     auto IC = fdmExec->GetIC(); 
-    if(!IC->Load(ResetName)){
-        mexPrintf("Could not load reset file \n");
-    }
-    fdmExec->RunIC();
+    if (!IC->Load(ResetName)) return false;
+    if (!fdmExec->RunIC()) return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +134,7 @@ void JSBSimInterface::Update()
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddInputPropertyNode(std::string property)
 {
+	
 	FGPropertyNode* node = pm->GetNode(property);
 	inputPort.push_back(node);
 	return true;
@@ -152,9 +143,9 @@ bool JSBSimInterface::AddInputPropertyNode(std::string property)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outputPort)
 {
-	if (outputPort >= outputPorts.size()) {
-		mexPrintf("Output port selected is out of bounds.\n");
-	}
+	
+	if (outputPort >= outputPorts.size()) return false;
+
 	FGPropertyNode* node = pm->GetNode(property);
 	outputPorts.at(outputPort).push_back(node);
 	return true;
@@ -187,6 +178,7 @@ bool JSBSimInterface::CopyInputControlsToJSBSim(double controls[]) {
 				break;
 			default:
 				mexErrMsgTxt("Input control is not a supported type.\n");
+				return false;
 		}
 	}
 
@@ -222,6 +214,7 @@ bool JSBSimInterface::CopyOutputsFromJSBSim(double *stateArray, const int output
 				break;
 			default:
 				mexErrMsgTxt("Output is not a supported type.\n");
+				return false;
 		}
 	}
 

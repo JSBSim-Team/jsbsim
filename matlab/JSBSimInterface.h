@@ -51,7 +51,7 @@ public:
 	/// Script handling 
     bool OpenScript(const SGPath& script, double delta_t, const SGPath& initfile);
 
-	void LoadIC(SGPath ResetName);
+	bool LoadIC(SGPath ResetName);
 
 	/// Update the simulation
     void Update();
