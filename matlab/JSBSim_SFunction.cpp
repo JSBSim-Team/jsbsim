@@ -209,6 +209,7 @@ int inputSize;
 #if defined(MDL_CHECK_PARAMETERS)
 static void mdlCheckParameters(SimStruct *S)
 {
+
     if (ssGetSFcnParamsCount(S) != NUM_PARAMS) {
         ssSetErrorStatus(S,"JSBSim S-function must have 6 parameters.");
         return;
@@ -250,6 +251,8 @@ static void mdlCheckParameters(SimStruct *S)
 #if defined(MDL_PROCESS_PARAMETERS)
 static void mdlProcessParameters(SimStruct *S)
 {
+
+    if(ssGetErrorStatus(S) != NULL) return;
 
     // Get the user provided input/output config.
     char buf[128];
@@ -480,44 +483,14 @@ static void mdlInitializeConditions(SimStruct *S)
         mexPrintf("'%s' Aircraft File has been successfully loaded!\n", aircraft.c_str());
         JII->LoadIC(SGPath(reset));
     }
+
+    double *dWorkVector;
+    for (i = 0; i < numOutputs; i++) {
+        dWorkVector = (double *) ssGetDWork(S,i+1);
+        JII->CopyOutputsFromJSBSim(dWorkVector, i);
+    }
 }
 #endif /* MDL_INITIALIZE_CONDITIONS */
-
-
-
-#define MDL_START  /* Change to #undef to remove function */
-#if defined(MDL_START) 
-/* Function: mdlStart =======================================================
-* Abstract:
-*    This function is called once at start of model execution. If you
-*    have states that should be initialized once, this is the place
-*    to do it.
-*/
-static void mdlStart(SimStruct *S)
-{
-    JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
-
-    // TODO: We may want to generalize this.
-    // real_T *x2 = ssGetRealDiscStates(S);
-
-    // JII->Copy_States_From_JSBSim(x2);
-
-    // x2[0] = u_fps;
-    // x2[1] = v_fps;
-    // x2[2] = w_fps;
-    // x2[3] = p_radsec;
-    // x2[4] = q_radsec;
-    // x2[5] = r_radsec;
-    // x2[6] = h_sl_ft;
-    // x2[7] = long_gc_deg;
-    // x2[8] = lat_gc_deg;
-    // x2[9] = phi_rad;
-    // x2[10] = theta_rad;
-    // x2[11] = psi_rad;
-    //x[12] = alpha_rad;
-    //x[13] = beta_rad;
-}
-#endif /*  MDL_START */
 
 #undef MDL_SET_OUTPUT_PORT_WIDTH   /* Change to #undef to remove function */
 #if defined(MDL_SET_OUTPUT_PORT_WIDTH) && defined(MATLAB_MEX_FILE)
