@@ -205,16 +205,51 @@ int inputSize;
  * S-function methods *
  *====================*/
 
-/* Function: mdlInitializeSizes ===============================================
- * Abstract:
- *    The sizes information is used by Simulink to determine the S-function
- *    block's characteristics (number of inputs, outputs, states, etc.).
- */
-static void mdlInitializeSizes(SimStruct *S)
+#define MDL_CHECK_PARAMETERS   /* Change to #undef to remove function */
+#if defined(MDL_CHECK_PARAMETERS)
+static void mdlCheckParameters(SimStruct *S)
 {
-    /* See sfuntmpl_doc.c for more details on the macros below */
-    ssSetNumSFcnParams(S, NUM_PARAMS);  /* Number of expected parameter vectors*/ 
-    if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) return;
+    if (ssGetSFcnParamsCount(S) != NUM_PARAMS) {
+        ssSetErrorStatus(S,"JSBSim S-function must have 6 parameters.");
+        return;
+    }
+    
+    if (!mxIsChar(ac_name)) {
+        ssSetErrorStatus(S, "Parameter 1 to JSBSim S-function must be a string.");
+        return;
+    }
+    
+    if (!mxIsNumeric(ssGetSFcnParam(S, TIME_STEP_PARAM)) || delta_t < 0) {
+        ssSetErrorStatus(S, "Parameter 2 to JSBSim S-function must be a nonnegative number.");
+        return;
+    }
+    
+    if (!mxIsNumeric(ssGetSFcnParam(S, USE_SCRIPT_PARAM)) || !(use_script == 1 || use_script == 0)) {
+        ssSetErrorStatus(S, "Parameter 3 to JSBSim S-function must be either 0 (disabled) or 1 (enabled).");
+        return; 
+    }
+    
+    if (!mxIsChar(script_name)) {
+        ssSetErrorStatus(S, "Parameter 4 to JSBSim S-function must be a string.");
+        return;
+    }
+    
+    if (!mxIsChar(reset_name)) {
+        ssSetErrorStatus(S, "Parameter 5 to JSBSim S-function must be a string.");
+        return;
+    }
+    
+    if (!mxIsChar(io_config_file_name)) {
+        ssSetErrorStatus(S, "Parameter 6 to JSBSim S-function must be a string.");
+        return;
+    }
+}
+#endif /* MDL_CHECK_PARAMETERS */
+
+#define MDL_PROCESS_PARAMETERS   /* Change to #undef to remove function */
+#if defined(MDL_PROCESS_PARAMETERS)
+static void mdlProcessParameters(SimStruct *S)
+{
 
     // Get the user provided input/output config.
     char buf[128];
@@ -230,22 +265,22 @@ static void mdlInitializeSizes(SimStruct *S)
 
     // Make sure that the document is valid
     if (!document) {
-        mexErrMsgTxt("Input/Output configuration file cannot be read.\n");
+        ssSetErrorStatus(S, "Input/Output configuration file cannot be read.\n");
     }
 
     // Check the XML file is a port config file.
     if (document->GetName() != std::string("s_function_config")) {
-        mexErrMsgTxt("XML file is not an Input/Output configuration file.\n");
+        ssSetErrorStatus(S, "XML file is not an Input/Output configuration file.\n");
     }
 
     // Check that there are input and outputs properties.
     Element* inputElement = document->FindElement("input");
     if (!document->FindElement("input")) {
-        mexErrMsgTxt("Please define an <input> property for the I/O config file.\n");
+        ssSetErrorStatus(S, "Please define an <input> property for the I/O config file.\n");
     }
     Element* outputsElement = document->FindElement("outputs");
     if (!document->FindElement("outputs")) {
-        mexErrMsgTxt("Please define an <outputs> property for the I/O config file.\n");
+        ssSetErrorStatus(S, "Please define an <outputs> property for the I/O config file.\n");
     }
 
     // Get necessary sizing data for the input/output ports.
@@ -271,6 +306,26 @@ static void mdlInitializeSizes(SimStruct *S)
         // to set the name.
 
         outputElement = outputsElement->FindNextElement("output");
+    }   
+}
+#endif /* MDL_PROCESS_PARAMETERS */
+
+/* Function: mdlInitializeSizes ===============================================
+ * Abstract:
+ *    The sizes information is used by Simulink to determine the S-function
+ *    block's characteristics (number of inputs, outputs, states, etc.).
+ */
+static void mdlInitializeSizes(SimStruct *S)
+{
+
+    /* See sfuntmpl_doc.c for more details on the macros below */
+    ssSetNumSFcnParams(S, NUM_PARAMS);  /* Number of expected parameter vectors*/ 
+    if (ssGetNumSFcnParams(S) == ssGetSFcnParamsCount(S)) {
+        mdlCheckParameters(S);
+        mdlProcessParameters(S);
+        if(ssGetErrorStatus(S) != NULL) return;
+    } else {
+        return;
     }
 
     // Create the work vectors.
@@ -281,6 +336,7 @@ static void mdlInitializeSizes(SimStruct *S)
     ssSetDWorkDataType(  S, 0, SS_DOUBLE);
 
     // Work vector(s) for output port(s).
+    int i;
     for (i = 0; i < numOutputs; i++) {
         ssSetDWorkWidth(     S, i+1, ssGetOutputPortWidth(S,i));
         ssSetDWorkDataType(  S, i+1, SS_DOUBLE);
@@ -418,7 +474,7 @@ static void mdlInitializeConditions(SimStruct *S)
         std::string aircraft = "";
         aircraft = std::string(buf);
         if (!JII->OpenAircraft(aircraft)){
-            mexErrMsgTxt("Aircraft file could not be loaded.\n");
+            ssSetErrorStatus(S, "Aircraft file could not be loaded.\n");
         }
 
         mexPrintf("'%s' Aircraft File has been successfully loaded!\n", aircraft.c_str());
