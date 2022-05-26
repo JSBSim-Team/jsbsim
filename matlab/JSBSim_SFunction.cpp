@@ -492,27 +492,6 @@ static void mdlInitializeConditions(SimStruct *S)
 }
 #endif /* MDL_INITIALIZE_CONDITIONS */
 
-#undef MDL_SET_OUTPUT_PORT_WIDTH   /* Change to #undef to remove function */
-#if defined(MDL_SET_OUTPUT_PORT_WIDTH) && defined(MATLAB_MEX_FILE)
-  /* Function: mdlSetOutputPortWidth ==========================================
-   * Abstract:
-   *    This method is called with the candidate width for a dynamically
-   *    sized port.  If the proposed width is acceptable, the method should
-   *    go ahead and set the actual port width using ssSetOutputPortWidth.  If
-   *    the size is unacceptable an error should generated via
-   *    ssSetErrorStatus.  Note that any other dynamically sized input or
-   *    output ports whose widths are implicitly defined by virtue of knowing
-   *    the width of the given port can also have their widths set via calls
-   *    to ssSetInputPortWidth or ssSetOutputPortWidth.
-   */
-  static void mdlSetOutputPortWidth(SimStruct *S, int portIndex, int width)
-  {
-	 ssSetOutputPortWidth(S, 2, ssGetDWorkWidth(S,4));
-	 
-
-  } /* end mdlSetOutputPortWidth */
-#endif /* MDL_SET_OUTPUT_PORT_WIDTH */
-
 /* Function: mdlOutputs =======================================================
  * Abstract:
  *    In this function, you compute the outputs of your S-function
