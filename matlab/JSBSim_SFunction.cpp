@@ -130,9 +130,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <vector>
 #include <FGFDMExec.h>
+
+#include "input_output/FGPropertyManager.h"
+#include "input_output/FGXMLParse.h"
+#include "input_output/FGXMLFileRead.h"
+
 #include <models/FGPropagate.h>
 #include <models/FGAuxiliary.h>
 #include <models/FGFCS.h>
+
 #include "JSBSimInterface.h"
 
 // Name of JSBSim aircraft model file to load
@@ -140,112 +146,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define ac_name			        ssGetSFcnParam(S, AIRCRAFT_NAME_PARAM)
 
-// Initial conditions for the aircraft state
-#define INITIAL_STATE_PARAM     1
-#define SIZE_INITIAL_STATES     12
-
-#define u_fps			        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[0]
-#define v_fps			        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[1]
-#define w_fps			        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[2]
-
-#define p_radsec                mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[3]
-#define q_radsec                mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[4]
-#define r_radsec                mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[5]
-
-#define h_sl_ft		            mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[6]
-#define long_gc_deg	            mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[7]
-#define lat_gc_deg		        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[8]
-
-#define phi_rad			        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[9]
-#define theta_rad		        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[10]
-#define psi_rad			        mxGetPr(ssGetSFcnParam(S, INITIAL_STATE_PARAM))[11]
-
-// Initial conditions for the control commands
-#define INITIAL_CTRL_CMD_PARAM  2
-#define SIZE_INITIAL_CRTL_CMD   10
-
-#define throttle1               mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[0]
-#define throttle2               mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[1]
-#define aileron                 mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[2]
-#define elevator                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[3]
-#define rudder                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[4]
-#define mixture1                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[5]
-#define mixture2                mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[6]
-#define runset                  mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[7]
-#define flaps                   mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[8]
-#define gear                    mxGetPr(ssGetSFcnParam(S, INITIAL_CTRL_CMD_PARAM))[9]
-
 // Simulation discrete time step
-#define TIME_STEP_PARAM         3
+#define TIME_STEP_PARAM         1
 
 #define delta_t		            mxGetPr(ssGetSFcnParam(S, TIME_STEP_PARAM))[0]
 
 // Parameter for using the supplied script (1 to use, 0 to not use) and
 // for enabling control input to script (1 to enable, 0 to disable)
-#define USE_SCRIPT_PARAM        4
-#define SIZE_USE_SCRIPT_PARAM   2
+#define USE_SCRIPT_PARAM        2
 
 #define use_script	            mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[0]
-#define allow_control_of_script	mxGetPr(ssGetSFcnParam(S, USE_SCRIPT_PARAM))[1]
-
-// Control commands to ignore if allow_control_of_script and use_script are both enabled
-#define CTRL_CMD_IGNORE         5
-#define SIZE_CTRL_CMD_IGNORE    SIZE_INITIAL_CRTL_CMD
-
-#define IGNORE_THROTTLE1        mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[0]
-#define IGNORE_THROTTLE2        mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[1]
-#define IGNORE_AILERON          mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[2]
-#define IGNORE_ELEVATOR         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[3]
-#define IGNORE_RUDDER           mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[4]
-#define IGNORE_MIXTURE1         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[5]
-#define IGNORE_MIXTURE2         mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[6]
-#define IGNORE_RUNSET           mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[7]
-#define IGNORE_FLAPS            mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[8]
-#define IGNORE_GEAR             mxGetPr(ssGetSFcnParam(S, CTRL_CMD_IGNORE))[9]
 
 // The file path to the script to run
-#define SCRIPT_FILE_PARAM       6
+#define SCRIPT_FILE_PARAM       3
 
 #define script_name             ssGetSFcnParam(S, SCRIPT_FILE_PARAM)
 
 // Initial condition parameters for resetting the aircraft, from aircraft type directory
-#define RESET_FILE_PARAM        7
+#define RESET_FILE_PARAM        4
 
 #define reset_name              ssGetSFcnParam(S, RESET_FILE_PARAM)
 
-#define NUM_PARAMS              8
+// The file path to the input/output configuration for the aircraft.
+#define IO_CONFIG_FILE_PARAM    5
 
-// The input
-#define NUM_INPUTS              1
+#define io_config_file_name     ssGetSFcnParam(S, IO_CONFIG_FILE_PARAM)
 
-#define CTRL_CMD_INPUT          0
-#define SIZE_CTRL_CMD_INPUT     SIZE_INITIAL_CRTL_CMD
+#define NUM_PARAMS              6
 
-// The output
-#define NUM_OUTPUTS             4
-
-#define STATES_OUTPUT           0
-#define SIZE_STATES_OUTPUT      12
-
-#define CTRL_CMD_OUTPUT         1
-#define SIZE_CTRL_CMD_OUTPUT    10
-
-#define PROPULSION_OUTPUT       2
-#define SIZE_PROPULSION_OUTPUT  48
-
-#define AUX_VARS_OUTPUT         3
-#define SIZE_AUX_VARS_OUTPUT    13
-
-// Necessary to create mxArray of initial conditions 
-#define NUMBER_OF_STRUCTS (sizeof(ic)/sizeof(struct init_cond))
-#define NUMBER_OF_FIELDS (sizeof(field_names)/sizeof(*field_names))
-
-
-struct init_cond{
-    const char *name;
-    double value;
-};
-
+int numOutputs;
+int inputSize;
 
 /* Error handling
  * --------------
@@ -282,64 +212,86 @@ struct init_cond{
  */
 static void mdlInitializeSizes(SimStruct *S)
 {
-  /* See sfuntmpl_doc.c for more details on the macros below */
+    /* See sfuntmpl_doc.c for more details on the macros below */
     ssSetNumSFcnParams(S, NUM_PARAMS);  /* Number of expected parameter vectors*/ 
-    if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
-        /* Return if number of expected != number of actual parameters */
-        return;
+    if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) return;
+
+    // Get the user provided input/output config.
+    char buf[128];
+    mwSize buflen;
+    buflen = mxGetNumberOfElements(io_config_file_name) + 1;
+    mxGetString(io_config_file_name, buf, buflen);
+    std::string io_config_file = "";
+    io_config_file = std::string(buf);
+    mexPrintf("I/O config input: %s \n", io_config_file.c_str());
+
+    FGXMLFileRead XMLFileRead;
+    Element* document = XMLFileRead.LoadXMLDocument(SGPath(io_config_file));
+
+    // Make sure that the document is valid
+    if (!document) {
+        mexErrMsgTxt("Input/Output configuration file cannot be read.\n");
     }
 
-    ssSetNumDiscStates(S, SIZE_STATES_OUTPUT);
+    // Check the XML file is a port config file.
+    if (document->GetName() != std::string("s_function_config")) {
+        mexErrMsgTxt("XML file is not an Input/Output configuration file.\n");
+    }
 
-    if (!ssSetNumInputPorts(S, NUM_INPUTS)) return;
-    ssSetInputPortWidth(S, CTRL_CMD_INPUT, SIZE_CTRL_CMD_INPUT);
+    // Check that there are input and outputs properties.
+    Element* inputElement = document->FindElement("input");
+    if (!document->FindElement("input")) {
+        mexErrMsgTxt("Please define an <input> property for the I/O config file.\n");
+    }
+    Element* outputsElement = document->FindElement("outputs");
+    if (!document->FindElement("outputs")) {
+        mexErrMsgTxt("Please define an <outputs> property for the I/O config file.\n");
+    }
 
+    // Get necessary sizing data for the input/output ports.
+    inputSize = inputElement->GetNumElements();
+    numOutputs = outputsElement->GetNumElements();
 
-    if (!ssSetNumOutputPorts(S, NUM_OUTPUTS)) return;
-    ssSetOutputPortWidth(S, STATES_OUTPUT, SIZE_STATES_OUTPUT);
-	ssSetOutputPortWidth(S, CTRL_CMD_OUTPUT, SIZE_CTRL_CMD_OUTPUT);
-	/* Propulsion output piston (per engine) [prop-rpm prop-thrust-lbs mixture fuel-flow-gph advance-ratio power-hp pt-lbs_sqft 
-	 * volumetric-efficiency bsfc-lbs_hphr prop-torque blade-angle prop-pitch]
-	 * Propulsion output turbine (per engine) [thrust-lbs n1 n2 fuel-flow-pph fuel-flow-pps pt-lbs_sqft pitch-rad reverser-rad yaw-rad inject-cmd 
-	 * set-running fuel-dump]
-	 */
-    //TODO: currently not in use, could be defined later 
-	ssSetOutputPortWidth(S, PROPULSION_OUTPUT, SIZE_PROPULSION_OUTPUT);	
-	ssSetOutputPortWidth(S, AUX_VARS_OUTPUT, SIZE_AUX_VARS_OUTPUT);
+    // Configure the input port.
+    if (!ssSetNumInputPorts(S, 1)) return;
+    ssSetInputPortWidth(S, 0, inputSize);
+
+    // Configure the output port(s).
+    if (!ssSetNumOutputPorts(S, numOutputs)) return;
     
-    if(!ssSetNumDWork(   S, 4)) return; //HW change 
+    int i;
+    Element* outputElement = outputsElement->FindElement("output");
+    int outputSize;
+    for (i = 0; i < numOutputs; i++) {
+        outputSize = outputElement->GetNumElements("property");
+        ssSetOutputPortWidth(S, i, outputSize);
+        // Currently no support for setting the name of the output ports.
+        // However, if this feature is supported by MATLAB in the future,
+        // the output port's property of "name" in the XML filecan be used
+        // to set the name.
 
-    ssSetDWorkWidth(     S, 0, ssGetInputPortWidth(S,0));//Work vector for input port
-    ssSetDWorkDataType(  S, 0, SS_DOUBLE); /* use SS_DOUBLE if needed */
+        outputElement = outputsElement->FindNextElement("output");
+    }
 
-    // Work vector for states-- don't need since stored in ssGetRealDiscStates
-    // TODO: may need to add actuator states!
-    // ssSetDWorkWidth(     S, 1, ssGetNumDiscStates(S));
-    // ssSetDWorkDataType(  S, 1, SS_DOUBLE);
+    // Create the work vectors.
+    if(!ssSetNumDWork(   S, 1 + numOutputs)) return; //HW change 
 
-    // // Work vector derivatives-- don't need since stored in ssGetdX
-	// ssSetDWorkWidth(     S, 2, ssGetNumDiscStates(S));
-    // ssSetDWorkDataType(  S, 2, SS_DOUBLE);
+    // Work vector for input port.
+    ssSetDWorkWidth(     S, 0, ssGetInputPortWidth(S,0));
+    ssSetDWorkDataType(  S, 0, SS_DOUBLE);
 
-    // Work vector for flight controls outputs
-	ssSetDWorkWidth(     S, 1, ssGetOutputPortWidth(S,1));
-    ssSetDWorkDataType(  S, 1, SS_DOUBLE);
-
-    // Work vector for propulsion outputs
-	ssSetDWorkWidth(     S, 2, ssGetOutputPortWidth(S,2));
-    ssSetDWorkDataType(  S, 2, SS_DOUBLE);
-
-    // Work vector for auxillary outputs
-	ssSetDWorkWidth(     S, 3, ssGetOutputPortWidth(S,3));
-    ssSetDWorkDataType(  S, 3, SS_DOUBLE);	
-    
-	ssSetNumPWork(S, 1); // reserve element in the pointers vector
-                         // to store a JSBSimInterface
+    // Work vector(s) for output port(s).
+    for (i = 0; i < numOutputs; i++) {
+        ssSetDWorkWidth(     S, i+1, ssGetOutputPortWidth(S,i));
+        ssSetDWorkDataType(  S, i+1, SS_DOUBLE);
+    }
+	
+    // Reserve element in the pointers vector to store the JSBSimInterface.
+	ssSetNumPWork(S, 1);
 
     ssSetNumNonsampledZCs(S, 0);
 
     ssSetOptions(S, 0);
-		
 }
 
 
@@ -371,13 +323,54 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 */
 static void mdlInitializeConditions(SimStruct *S)
 {	
-    /* Create new JSBSimInterface object and initialize it with delta_t and
-        also create a pointer to the JSBSimInterface object so we can access its member
-        functions.
-    */
-    ssGetPWork(S)[0] = (void *) new JSBSimInterface(delta_t);
-    JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
     
+    // Create new JSBSimInterface object and initialize it with delta_t and num_outputs.
+    JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs);
+    ssGetPWork(S)[0] = (void *) JII;
+    
+    // Get the user provided input/output config.
+    char buf[128];
+    mwSize buflen;
+    buflen = mxGetNumberOfElements(io_config_file_name) + 1;
+    mxGetString(io_config_file_name, buf, buflen);
+    std::string io_config_file = "";
+    io_config_file = std::string(buf);
+
+    FGXMLFileRead XMLFileRead;
+    Element* document = XMLFileRead.LoadXMLDocument(SGPath(io_config_file));
+
+    int i;
+    std::string prop;
+    Element* inputElement = document->FindElement("input");
+    Element* propElement = inputElement->FindElement("property");
+    for (i = 0; i < inputSize; i++) {
+        prop = propElement->GetDataLine();
+        mexPrintf("Adding property to input: %s \n", prop.c_str());
+        JII->AddInputPropertyNode(prop);
+
+        propElement = inputElement->FindNextElement("property");
+    }
+
+    int j;
+    int outputSize;
+    Element* outputsElement = document->FindElement("outputs");
+    Element* outputElement = outputsElement->FindElement("output");
+    for (i = 0; i < numOutputs; i++) {
+        outputSize = outputElement->GetNumElements();
+        mexPrintf("output %d has %d elements \n", i, outputSize);
+        propElement = outputElement->FindElement("property");
+
+        for (j = 0; j < outputSize; j++) {
+            prop = propElement->GetDataLine();
+            mexPrintf("Adding property to output %d: %s \n", i, prop.c_str());
+            JII->AddOutputPropertyNode(prop, i);
+
+            propElement = outputElement->FindNextElement("property");
+        }
+
+        outputElement = outputsElement->FindNextElement("output");
+    }
+
     // Check if a script file is given in Simulink.
     // If not, initialize an aircraft
     // The RunIC() command is run in either OpenScript or Copy_Init_To_JSBSim.
@@ -388,12 +381,12 @@ static void mdlInitializeConditions(SimStruct *S)
     initfile = "";
     
     // Get the user provided script.
-    char buf[128];
-    mwSize buflen;
-    buflen = mxGetNumberOfElements(script_name) + 1;
-    mxGetString(script_name, buf, buflen);
+    char buf2[128];
+    mwSize buflen2;
+    buflen2 = mxGetNumberOfElements(script_name) + 1;
+    mxGetString(script_name, buf2, buflen2);
     std::string script = "";
-    script = std::string(buf);
+    script = std::string(buf2);
     mexPrintf("Script input: %s \n", script.c_str());
 
     // Check both that script is set to be used and that it works to open the script 
@@ -404,12 +397,12 @@ static void mdlInitializeConditions(SimStruct *S)
     
     // Get the user provided intialization settings for resetting the aircraft
     // to a default state.
-    char buf2[128];
-    mwSize buflen2;        
-    buflen2 = mxGetNumberOfElements(reset_name) +1; 
-    mxGetString(reset_name, buf2, buflen2); 
+    char buf3[128];
+    mwSize buflen3;        
+    buflen3 = mxGetNumberOfElements(reset_name) +1; 
+    mxGetString(reset_name, buf3, buflen3); 
     std::string reset = "";
-    reset = std::string(buf2);
+    reset = std::string(buf3);
     mexPrintf("Reset file: '%s' .\n", reset.c_str());
 
     if (!use_script){
@@ -424,7 +417,7 @@ static void mdlInitializeConditions(SimStruct *S)
         mxGetString(ac_name, buf, buflen);
         std::string aircraft = "";
         aircraft = std::string(buf);
-        if (!JII->Open(aircraft)){
+        if (!JII->OpenAircraft(aircraft)){
             mexErrMsgTxt("Aircraft file could not be loaded.\n");
         }
 
@@ -499,36 +492,17 @@ static void mdlStart(SimStruct *S)
 static void mdlOutputs(SimStruct *S, int_T tid)
 { 
     
-    // These are vectors with the length of the output port
-    real_T *statesOutput = ssGetOutputPortRealSignal(S, STATES_OUTPUT);
-	real_T *ctrlCmdOutput = ssGetOutputPortRealSignal(S, CTRL_CMD_OUTPUT);
-	real_T *propulsionOutput = ssGetOutputPortRealSignal(S, PROPULSION_OUTPUT);
-	real_T *auxVarsOutput = ssGetOutputPortRealSignal(S, AUX_VARS_OUTPUT);
-    
-    real_T *discStates = ssGetRealDiscStates(S);
-	double *dWorkCtrlCmd = (double *) ssGetDWork(S,1);
-	double *dWorkPropulsion = (double *) ssGetDWork(S,2);
-	double *dWorkAuxVars = (double *) ssGetDWork(S,3);
-    
+    real_T* output;
+    double* dWorkVector;
     int i;
-	for (i = 0; i < ssGetNumDiscStates(S); i++)
-	{
-	    statesOutput[i] = discStates[i]; /* outputs are the states */
-	}
-
-	for (i = 0; i < ssGetDWorkWidth(S,1); i++)
-	{
-		ctrlCmdOutput[i] = dWorkCtrlCmd[i]; // outputs are the flight control outputs 
-	}
-
-	for (i = 0; i < ssGetDWorkWidth(S,2); i++)
-	{
-		propulsionOutput[i] = dWorkPropulsion[i]; // outputs are the propulsion outputs 
-	}
-	for (i = 0; i < ssGetDWorkWidth(S,3); i++)
-	{
-		auxVarsOutput[i] = dWorkAuxVars[i]; // outputs are the calculated pilot/auxillary outputs 
-	}
+    int j;
+    for (i = 0; i < numOutputs; i++) {
+        output = ssGetOutputPortRealSignal(S, i);
+        dWorkVector = (double*) ssGetDWork(S,i+1);
+        for (j = 0; j < ssGetDWorkWidth(S, i+1); j++) {
+            output[j] = dWorkVector[j];
+        }
+    }
 }
 
 #define MDL_UPDATE  /* Change to #undef to remove function */
@@ -546,62 +520,27 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     retrieve state vector, and update sim state vector 
     */
 
-    JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
-    
-    real_T *discStates = ssGetRealDiscStates(S);
+    JSBSimInterface* JII = (JSBSimInterface*) ssGetPWork(S)[0];
 
-    InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S,CTRL_CMD_INPUT);
+    InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S, 0);
     
-    if (use_script && allow_control_of_script) {
-
-        throttle1 = IGNORE_THROTTLE1 ? -2 : *ctrlCmdInput[0];
-        throttle2 = IGNORE_THROTTLE2 ? -2 : *ctrlCmdInput[1];
-        aileron = IGNORE_AILERON ? -2 : *ctrlCmdInput[2];
-        elevator = IGNORE_ELEVATOR ? -2 : *ctrlCmdInput[3];
-        rudder = IGNORE_RUDDER ? -2 : *ctrlCmdInput[4];
-        mixture1 = IGNORE_MIXTURE1 ? -2 : *ctrlCmdInput[5];
-        mixture2 = IGNORE_MIXTURE2 ? -2 : *ctrlCmdInput[6];
-        runset = IGNORE_RUNSET ? -2 : *ctrlCmdInput[7];
-        flaps = IGNORE_FLAPS ? -2 : *ctrlCmdInput[8];
-        gear = IGNORE_GEAR ? -2 : *ctrlCmdInput[9];
-    } else {
-
-        throttle1 = *ctrlCmdInput[0];
-        throttle2 = *ctrlCmdInput[1];
-        aileron = *ctrlCmdInput[2];
-        elevator = *ctrlCmdInput[3];
-        rudder = *ctrlCmdInput[4];
-        mixture1 = *ctrlCmdInput[5];
-        mixture2 = *ctrlCmdInput[6];
-        runset = *ctrlCmdInput[7];
-        flaps = *ctrlCmdInput[8];
-        gear = *ctrlCmdInput[9];
-    }
-    
-
-    // These point to the output 
-    double *dWorkCtrlCmdIn = (double *) ssGetDWork(S,0);
-    double *dWorkCtrlCmdOut = (double *) ssGetDWork(S,1);
-	double *dWorkPropulsion = (double *) ssGetDWork(S,2);
-	double *dWorkAuxVars = (double *) ssGetDWork(S,3);
-    
+    double* dWorkCtrlCmdIn = (double*) ssGetDWork(S, 0);
+    double ctrl_vec[inputSize];
     int i;
-    
-    for (i = 0; i < ssGetDWorkWidth(S,0); i++) {
+    for (i = 0; i < inputSize; i++) {
+        ctrl_vec[i] = (double) *ctrlCmdInput[i];
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
-    }
+    }    
     
-    double ctrl_vec[SIZE_CTRL_CMD_INPUT] = {throttle1, throttle2, aileron, elevator, rudder, mixture1, mixture2, runset, flaps, gear};
-
-    if (allow_control_of_script) {         
-        JII->Copy_Controls_To_JSBSim(ctrl_vec);
-    }
+    JII->CopyInputControlsToJSBSim(ctrl_vec);
 
     JII->Update();
     
-    JII->Copy_States_From_JSBSim(discStates);
-    JII->Copy_Control_From_JSBSim(dWorkCtrlCmdOut);
-    JII->Copy_Pilot_From_JSBSim(dWorkAuxVars);
+    double *dWorkVector;
+    for (i = 0; i < numOutputs; i++) {
+        dWorkVector = (double *) ssGetDWork(S,i+1);
+        JII->CopyOutputsFromJSBSim(dWorkVector, i);
+    }
 }
 #endif /* MDL_UPDATE */
 
