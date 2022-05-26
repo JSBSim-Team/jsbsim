@@ -141,6 +141,17 @@ bool JSBSimInterface::AddInputPropertyNode(std::string property)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
+{
+	
+	if (!(property.substr(0, std::string("atmosphere/").size()) == std::string("atmosphere/"))) return false;
+
+	FGPropertyNode* node = pm->GetNode(property);
+	weatherPort.push_back(node);
+	return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outputPort)
 {
 	

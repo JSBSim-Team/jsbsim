@@ -58,6 +58,7 @@ public:
 
 	/// Dynamic updating of the property nodes for input and output
 	bool AddInputPropertyNode(std::string property);
+	bool AddWeatherPropertyNode(std::string property);
 	bool AddOutputPropertyNode(std::string property, const int outputPort);
 	
 	/// Copy control inputs to JSBSim 
@@ -102,6 +103,7 @@ private:
 
 	std::vector<std::vector<FGPropertyNode*>> outputPorts;
 	std::vector<FGPropertyNode*> inputPort;
+	std::vector<FGPropertyNode*> weatherPort;
 
 	bool _ac_model_loaded;
 

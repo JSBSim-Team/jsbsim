@@ -176,6 +176,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 int numOutputs;
 int inputSize;
+int weatherInputSize;
 
 // Helper function for getting strings from mxArray objects.
 std::string getMxArrayString(const mxArray* mxArrayStr) {
@@ -284,21 +285,32 @@ static void mdlProcessParameters(SimStruct *S)
 
     // Check that there are input and outputs properties.
     Element* inputElement = document->FindElement("input");
-    if (!document->FindElement("input")) {
+    if (!inputElement) {
         ssSetErrorStatus(S, "Please define an <input> property for the I/O config file.\n");
     }
     Element* outputsElement = document->FindElement("outputs");
-    if (!document->FindElement("outputs")) {
+    if (!outputsElement) {
         ssSetErrorStatus(S, "Please define an <outputs> property for the I/O config file.\n");
     }
+
+    // Check if there is atmosphere data for input.
+    Element* weatherElement = document->FindElement("weather");
 
     // Get necessary sizing data for the input/output ports.
     inputSize = inputElement->GetNumElements();
     numOutputs = outputsElement->GetNumElements();
 
     // Configure the input port.
-    if (!ssSetNumInputPorts(S, 1)) return;
-    ssSetInputPortWidth(S, 0, inputSize);
+    if (!weatherElement) {
+        if (!ssSetNumInputPorts(S, 1)) return;
+        ssSetInputPortWidth(S, 0, inputSize);
+    } else {
+        if (!ssSetNumInputPorts(S, 2)) return;
+        ssSetInputPortWidth(S, 0, inputSize);
+
+        weatherInputSize = weatherElement->GetNumElements();
+        ssSetInputPortWidth(S, 1, weatherInputSize);
+    }
 
     // Configure the output port(s).
     if (!ssSetNumOutputPorts(S, numOutputs)) return;
@@ -412,6 +424,22 @@ static void mdlInitializeConditions(SimStruct *S)
         propElement = inputElement->FindNextElement("property");
     }
 
+    // If the weather element exists, add input properties for atmosphere JSBSim should take in.
+    Element* weatherElement = document->FindElement("weather");
+    if (weatherElement) {
+        propElement = weatherElement->FindElement("property");
+        for (i = 0; i < inputSize; i++) {
+            prop = propElement->GetDataLine();
+            if (!JII->AddWeatherPropertyNode(prop)) {
+                ssSetErrorStatus(S, "Could not add property from XML file to weather port.\n
+                    HINT: You can only use properties from \"atmosphere/\" for this port.\n");
+                return;
+            }
+
+            propElement = weatherElement->FindNextElement("property");
+        }
+    }
+
     // Add output properties JSBSim will deliver to each output channel.
     int j;
     int outputSize;
@@ -425,7 +453,7 @@ static void mdlInitializeConditions(SimStruct *S)
             prop = propElement->GetDataLine();
             mexPrintf("Adding property to output %d: %s \n", i, prop.c_str());
             if (!JII->AddOutputPropertyNode(prop, i)) {
-                mexPrintf("Could not add property to output due to output port being out of bounds.\n");
+                ssSetErrorStatus(S, "Could not add property from XML file to output port.\n");
                 return;
             }
 
