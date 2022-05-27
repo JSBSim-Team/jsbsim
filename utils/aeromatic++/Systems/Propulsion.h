@@ -218,7 +218,7 @@ public:
     char _engine_name[PARAM_MAX_STRING+1] = "";
 public:
     std::vector<Engine*> _propulsion;
-    unsigned _ptype = 0;
+    unsigned _ptype = PISTON;
 
     /* engines */
     unsigned _layout = FWD_FUSELAGE;

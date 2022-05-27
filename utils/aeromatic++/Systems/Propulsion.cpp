@@ -381,6 +381,7 @@ std::string Propulsion::comment()
 {
     std::stringstream file;
 
+    _aircraft->_ptype = _ptype;
     unsigned no_engines = _aircraft->_no_engines;
 
     file << "    no. engines:   " << no_engines << std::endl;

@@ -604,6 +604,9 @@ public:
 public:
     std::vector<Aircraft*> _aircraft;
     unsigned _atype = LIGHT;
+    unsigned _ptype = PISTON;
+    unsigned _steering = 0;
+    bool _retractable = false;
 
     bool _system_files = true;
     bool _metric = false;

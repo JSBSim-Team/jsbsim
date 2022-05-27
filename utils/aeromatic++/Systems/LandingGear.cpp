@@ -119,6 +119,8 @@ std::string LandingGear::comment()
 {
     std::stringstream file;
 
+    _aircraft->_retractable = _retractable;
+    _aircraft->_steering = _steering;
     file << "    gear type:     ";
     if (_taildragger) {
        file << "taildragger" << std::endl;

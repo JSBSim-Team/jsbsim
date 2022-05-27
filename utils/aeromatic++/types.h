@@ -49,6 +49,7 @@
 #define AEROMATIC_VERSION_STR   MKSTR(AEROMATIC_MAJOR_VERSION)"." \
                                 MKSTR(AEROMATIC_MINOR_VERSION)"." \
                                 MKSTR(AEROMATIC_MICRO_VERSION)
+#define AEROMATIC_NAME		"AeromatiC++ version " AEROMATIC_VERSION_STR
 
 #define G			32.0f
 #define SPEED_OF_SOUND		1125.0f
@@ -157,8 +158,8 @@ enum ControlsType
 enum EngineType
 {
     PISTON = 0,
-    TURBINE,
     TURBOPROP,
+    TURBINE,
     ROCKET,
     ELECTRIC,
 

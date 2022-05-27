@@ -545,8 +545,6 @@ Aeromatic::write_XML()
 
     std::string fname = _dir + "/" + std::string(_name) + ".xml";
 
-    std::string version = AEROMATIC_VERSION_STR;
-
     if (!_overwrite && overwrite(fname)) {
         std::cout << "File already exists: " << fname << std::endl;
         return false;
@@ -572,7 +570,7 @@ Aeromatic::write_XML()
     file << "   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.xsd\">" << std::endl;
     file << std::endl;
     file << " <fileheader>" << std::endl;
-    file << "  <author> AeromatiC++ version " << version << " </author>" << std::endl;
+    file << "  <author> " << AEROMATIC_NAME << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
     file << "  <version>$Revision: 1.80 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
@@ -949,8 +947,97 @@ Aeromatic::write_fgfs()
     file << std::endl;
     file << "<PropertyList>" << std::endl;
     file << "  <sim>" << std::endl;
+    file << "    <author>" << AEROMATIC_NAME << "</author>"<< std::endl;
     file << "    <flight-model>jsb</flight-model>" << std::endl;
     file << "    <aero>" << std::string(_name) << "</aero>" << std::endl;
+    file << "    <tags>" << std::endl;
+    file << "      <!-- See https://wiki.flightgear.org/Catalog_metadata -->" << std::endl;
+    switch(_atype)
+    {
+    case LIGHT:
+        if (_no_engines) file << "      <tag>ga</tag>" << std::endl;
+        else file << "      <tag>glider</tag" << std::endl;
+        break;
+    case PERFORMANCE:
+        file << "      <tag>aerobatic</tag>" << std::endl;
+        break;
+    case FIGHTER:
+        file << "      <tag>fighter</tag>" << std::endl;
+        break;
+    case JET_TRANSPORT:
+        file << "      <tag>passenger</tag>" << std::endl;
+        break;
+    case PROP_TRANSPORT:
+        file << "      <tag>passenger</tag>" << std::endl;
+        file << "      <tag>propeller</tag>" << std::endl;
+        break;
+//  case BIPLANE:
+    default: break;
+    }
+
+    switch (_wing.shape)
+    {
+    case STRAIGHT:
+    case ELLIPTICAL:
+        break;
+    case DELTA:
+        file << "      <tag>delta</tag>" << std::endl;
+        break;
+    case VARIABLE_SWEEP:
+        file << "      <tag> variable-geometry</tag>" << std::endl;
+        break;
+    default: break;
+    }
+
+    if (_retractable) {
+        file << "      <tag>retractable-gear</tag>" << std::endl;
+    }
+    switch(_steering)
+    {
+    case STEERING:
+        file << "      <tag>tricycle</tag>" << std::endl;
+        break;
+    case CASTERING:
+        file << "      <tag>castering-wheel</tag>" << std::endl;
+        // intentional fallthrough
+    case FIXED:
+        file << "      <tag>tail-dragger</tag>" << std::endl;
+        break;
+    default: break;
+    }
+
+    if (_no_engines)
+    {
+       switch(_no_engines)
+        {
+        case 1: file << "      <tag>single-engine</tag>" << std::endl; break;
+        case 2: file << "      <tag>twin-engine</tag>" << std::endl; break;
+        case 3: file << "      <tag>three-engine</tag>" << std::endl; break;
+        case 4: file << "      <tag>four-engine</tag>" << std::endl; break;
+        default: break;
+        }
+
+        switch(_ptype)
+        {
+        case PISTON:
+            file << "      <tag>piston</tag>" << std::endl;
+            break;
+        case TURBINE:
+            file << "      <tag>jet</tag>" << std::endl;
+            break;
+        case TURBOPROP:
+            file << "      <tag>turboprop</tag>" << std::endl;
+            break;
+        case ROCKET:
+            file << "      <tag>rocket</tag>" << std::endl;
+            break;
+        case ELECTRIC:
+            file << "      <tag>electric</tag>" << std::endl;
+            break;
+        default: break;
+        }
+    }
+    file << "    </tags>" << std::endl;
     file << "  </sim>" << std::endl;
     file << "</PropertyList>" << std::endl; 
 
@@ -964,8 +1051,6 @@ bool
 Aeromatic::write_JSON()
 {
     std::string fname = _dir + "/" + std::string(_name) + ".json";
-
-    std::string version = AEROMATIC_VERSION_STR;
 
     std::ofstream file;
     file.open(fname.c_str());
