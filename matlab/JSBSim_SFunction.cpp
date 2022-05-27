@@ -303,7 +303,7 @@ static void mdlProcessParameters(SimStruct *S)
     numOutputs = outputsElement->GetNumElements();
 
     // Configure the input port.
-    if (useWeather) {
+    if (!useWeather) {
         if (!ssSetNumInputPorts(S, 1)) return;
         ssSetInputPortWidth(S, 0, inputSize);
     } else {
@@ -352,22 +352,22 @@ static void mdlInitializeSizes(SimStruct *S)
     }
 
     // Create the work vectors.
-    if(!ssSetNumDWork(   S, 2 + numOutputs)) return; //HW change 
+    if(!ssSetNumDWork(   S, useWeather ? 2 + numOutputs : 1 + numOutputs)) return; //HW change 
 
     // Work vector for input port.
     ssSetDWorkWidth(     S, 0, ssGetInputPortWidth(S,0));
     ssSetDWorkDataType(  S, 0, SS_DOUBLE);
 
     if (useWeather) {
-        ssSetDWorkWidth(     S, 1, ssGetInputPortWidth(S,1));
-        ssSetDWorkDataType(  S, 1, SS_DOUBLE);
+        ssSetDWorkWidth(     S, numOutputs + 1, ssGetInputPortWidth(S,1));
+        ssSetDWorkDataType(  S, numOutputs + 1, SS_DOUBLE);
     }
 
     // Work vector(s) for output port(s).
     int i;
     for (i = 0; i < numOutputs; i++) {
-        ssSetDWorkWidth(     S, i+2, ssGetOutputPortWidth(S,i));
-        ssSetDWorkDataType(  S, i+2, SS_DOUBLE);
+        ssSetDWorkWidth(     S, i+1, ssGetOutputPortWidth(S,i));
+        ssSetDWorkDataType(  S, i+1, SS_DOUBLE);
     }
 	
     // Reserve element in the pointers vector to store the JSBSimInterface.
@@ -516,7 +516,7 @@ static void mdlInitializeConditions(SimStruct *S)
     // Load initial conditions into the output work vectors.
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
-        dWorkVector = (double *) ssGetDWork(S,i+2);
+        dWorkVector = (double *) ssGetDWork(S,i+1);
         if (!JII->CopyOutputsFromJSBSim(dWorkVector, i)) {
             ssSetErrorStatus(S, "Initial conditions could not be loaded into output.\n");
             return;
@@ -539,8 +539,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     int j;
     for (i = 0; i < numOutputs; i++) {
         output = ssGetOutputPortRealSignal(S, i);
-        dWorkVector = (double*) ssGetDWork(S,i+2);
-        for (j = 0; j < ssGetDWorkWidth(S, i+2); j++) {
+        dWorkVector = (double*) ssGetDWork(S,i+1);
+        for (j = 0; j < ssGetDWorkWidth(S, i+1); j++) {
             output[j] = dWorkVector[j];
         }
     }
@@ -596,7 +596,7 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
-        dWorkVector = (double *) ssGetDWork(S,i+2);
+        dWorkVector = (double *) ssGetDWork(S,i+1);
         JII->CopyOutputsFromJSBSim(dWorkVector, i);
     }
 }
