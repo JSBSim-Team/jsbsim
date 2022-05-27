@@ -177,6 +177,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int numOutputs;
 int inputSize;
 int weatherInputSize;
+bool useWeather;
 
 // Helper function for getting strings from mxArray objects.
 std::string getMxArrayString(const mxArray* mxArrayStr) {
@@ -295,13 +296,14 @@ static void mdlProcessParameters(SimStruct *S)
 
     // Check if there is atmosphere data for input.
     Element* weatherElement = document->FindElement("weather");
+    useWeather = (bool) weatherElement;
 
     // Get necessary sizing data for the input/output ports.
     inputSize = inputElement->GetNumElements();
     numOutputs = outputsElement->GetNumElements();
 
     // Configure the input port.
-    if (!weatherElement) {
+    if (useWeather) {
         if (!ssSetNumInputPorts(S, 1)) return;
         ssSetInputPortWidth(S, 0, inputSize);
     } else {
@@ -350,17 +352,22 @@ static void mdlInitializeSizes(SimStruct *S)
     }
 
     // Create the work vectors.
-    if(!ssSetNumDWork(   S, 1 + numOutputs)) return; //HW change 
+    if(!ssSetNumDWork(   S, 2 + numOutputs)) return; //HW change 
 
     // Work vector for input port.
     ssSetDWorkWidth(     S, 0, ssGetInputPortWidth(S,0));
     ssSetDWorkDataType(  S, 0, SS_DOUBLE);
 
+    if (useWeather) {
+        ssSetDWorkWidth(     S, 1, ssGetInputPortWidth(S,1));
+        ssSetDWorkDataType(  S, 1, SS_DOUBLE);
+    }
+
     // Work vector(s) for output port(s).
     int i;
     for (i = 0; i < numOutputs; i++) {
-        ssSetDWorkWidth(     S, i+1, ssGetOutputPortWidth(S,i));
-        ssSetDWorkDataType(  S, i+1, SS_DOUBLE);
+        ssSetDWorkWidth(     S, i+2, ssGetOutputPortWidth(S,i));
+        ssSetDWorkDataType(  S, i+2, SS_DOUBLE);
     }
 	
     // Reserve element in the pointers vector to store the JSBSimInterface.
@@ -429,8 +436,8 @@ static void mdlInitializeConditions(SimStruct *S)
     }
 
     // If the weather element exists, add input properties for atmosphere JSBSim should take in.
-    Element* weatherElement = document->FindElement("weather");
-    if (weatherElement) {
+    if (useWeather) {
+        Element* weatherElement = document->FindElement("weather");
         propElement = weatherElement->FindElement("property");
         for (i = 0; i < inputSize; i++) {
             prop = propElement->GetDataLine();
@@ -509,7 +516,7 @@ static void mdlInitializeConditions(SimStruct *S)
     // Load initial conditions into the output work vectors.
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
-        dWorkVector = (double *) ssGetDWork(S,i+1);
+        dWorkVector = (double *) ssGetDWork(S,i+2);
         if (!JII->CopyOutputsFromJSBSim(dWorkVector, i)) {
             ssSetErrorStatus(S, "Initial conditions could not be loaded into output.\n");
             return;
@@ -532,8 +539,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     int j;
     for (i = 0; i < numOutputs; i++) {
         output = ssGetOutputPortRealSignal(S, i);
-        dWorkVector = (double*) ssGetDWork(S,i+1);
-        for (j = 0; j < ssGetDWorkWidth(S, i+1); j++) {
+        dWorkVector = (double*) ssGetDWork(S,i+2);
+        for (j = 0; j < ssGetDWorkWidth(S, i+2); j++) {
             output[j] = dWorkVector[j];
         }
     }
@@ -557,25 +564,39 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     JSBSimInterface* JII = (JSBSimInterface*) ssGetPWork(S)[0];
 
     InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S, 0);
-    
     double* dWorkCtrlCmdIn = (double*) ssGetDWork(S, 0);
-    double ctrl_vec[inputSize];
+    double ctrlVec[inputSize];
     int i;
     for (i = 0; i < inputSize; i++) {
-        ctrl_vec[i] = (double) *ctrlCmdInput[i];
+        ctrlVec[i] = (double) *ctrlCmdInput[i];
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
     }    
     
-    if (!JII->CopyInputControlsToJSBSim(ctrl_vec)) {
+    if (!JII->CopyInputControlsToJSBSim(ctrlVec)) {
         ssSetErrorStatus(S, "Issue copying control inputs to JSBSim.\n");
         return;
+    }
+
+    if (useWeather) {
+        InputRealPtrsType weatherInput = ssGetInputPortRealSignalPtrs(S, 1);
+        double* dWorkWeatherIn = (double*) ssGetDWork(S, 1);
+        double weatherVec[weatherInputSize];
+        for (i = 0; i < weatherInputSize; i++) {
+            weatherVec[i] = (double) *weatherInput[i];
+            dWorkWeatherIn[i] = *weatherInput[i];
+        }
+
+        if (!JII->CopyInputWeatherToJSBSim(weatherVec)) {
+            ssSetErrorStatus(S, "Issue copying weather inputs to JSBSim.\n");
+            return;
+        }
     }
 
     JII->Update();
     
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
-        dWorkVector = (double *) ssGetDWork(S,i+1);
+        dWorkVector = (double *) ssGetDWork(S,i+2);
         JII->CopyOutputsFromJSBSim(dWorkVector, i);
     }
 }

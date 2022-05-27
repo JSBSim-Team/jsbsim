@@ -150,7 +150,7 @@ bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
 
 	FGPropertyNode* node = pm->GetNode(property);
 	if (!node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
-	
+
 	weatherPort.push_back(node);
 	return true;
 }
@@ -194,7 +194,39 @@ bool JSBSimInterface::CopyInputControlsToJSBSim(double controls[]) {
 				node->setDoubleValue(controls[i]);
 				break;
 			default:
-				mexErrMsgTxt("Input control is not a supported type.\n");
+				return false;
+		}
+	}
+
+    return true; 
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::CopyInputWeatherToJSBSim(double weather[]) {
+    // TODO: error handling if weather is not correct size. 
+    
+	if (!fdmExec) return false;
+
+	FGPropertyNode* node;
+	for (int i = 0; i < weatherPort.size(); i++) {
+		node = weatherPort.at(i);
+		switch (node->getType()) {
+			case simgear::props::BOOL:
+				node->setBoolValue(weather[i]);
+				break;
+			case simgear::props::INT:
+				node->setIntValue(weather[i]);
+				break;
+			case simgear::props::LONG:
+				node->setLongValue(weather[i]);
+				break;
+			case simgear::props::FLOAT:
+				node->setFloatValue(weather[i]);
+				break;
+			case simgear::props::DOUBLE:
+				node->setDoubleValue(weather[i]);
+				break;
+			default:
 				return false;
 		}
 	}
@@ -230,7 +262,6 @@ bool JSBSimInterface::CopyOutputsFromJSBSim(double *stateArray, const int output
 				stateArray[i] = node->getDoubleValue();
 				break;
 			default:
-				mexErrMsgTxt("Output is not a supported type.\n");
 				return false;
 		}
 	}

@@ -64,6 +64,9 @@ public:
 	/// Copy control inputs to JSBSim 
     bool CopyInputControlsToJSBSim(double controls[]);
 
+	/// Copy weather inputs to JSBSim
+	bool CopyInputWeatherToJSBSim(double weather[]);
+
 	/// Copy the flight state outputs from JSBSim
     bool CopyOutputsFromJSBSim(double *stateArray, const int outputPort);
     
