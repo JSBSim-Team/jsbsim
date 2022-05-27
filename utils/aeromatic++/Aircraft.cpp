@@ -765,8 +765,25 @@ Aeromatic::write_XML()
         file << std::endl;
     }
 
-    file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
+    write_FCS(&file);
+    write_aero(&file);
+    write_extern(&file);
+
     file << std::endl;
+    file << "</fdm_config>" << std::endl;
+
+    file.close();
+
+    return true;
+}
+
+
+//***** Flight Control System *********************************
+bool
+Aeromatic::write_FCS(std::ofstream* file)
+{
+    *file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
+    *file << std::endl;
 
     if (_system_files == false)
     {
@@ -776,24 +793,56 @@ Aeromatic::write_XML()
             {
                 std::string system = systems[i]->system();
                 if (!system.empty()) {
-                    file << system << std::endl;
+                    *file << system << std::endl;
                 }
             }
         }
     }
 
-    file << " </flight_control>"<< std::endl;
-    file << std::endl;
+    *file << " </flight_control>"<< std::endl;
+    *file << std::endl;
+
+    return true;
+}
 
 //***** AERODYNAMICS ******************************************
+bool
+Aeromatic::write_aero(std::ofstream* file)
+{
+    std::ofstream fcs;
 
-    file << " <aerodynamics>" << std::endl;
-    file << std::endl;
+    *file << " <aerodynamics";
+    if (_split)
+    {
+        std::string name = "Systems/Aerodynamics.xml";
+        std::string fname = _dir + "/" + name;
+        *file << " file=\"" << name << "\"/>" << std::endl;
+
+        if (!_overwrite && overwrite(fname)) {
+            std::cout << "File already exists: " << fname << std::endl;
+            return false;
+        }
+
+        fcs.open(fname.c_str());
+        if (fcs.fail() || fcs.bad())
+        {
+            fcs.close();
+            return false;
+        }
+        file = &fcs;
+
+        *file << "<?xml version=\"1.0\"?>" << std::endl << std::endl;;
+        *file << "<aerodynamics>" << std::endl;
+    }
+    else {
+        *file << ">" << std::endl;
+    }
+    *file << std::endl;
 
     // ***** LIFT ******************************************
 
-    file << "  <axis name=\"LIFT\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"LIFT\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -801,18 +850,18 @@ Aeromatic::write_XML()
         {
             std::string lift = systems[i]->lift();
             if (!lift.empty()) {
-                file << lift << std::endl;
+                *file << lift << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** DRAG ******************************************
 
-    file << "  <axis name=\"DRAG\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"DRAG\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -820,18 +869,18 @@ Aeromatic::write_XML()
         {
             std::string drag = systems[i]->drag();
             if (!drag.empty()) {
-               file << drag << std::endl;
+               *file << drag << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** SIDE ******************************************
 
-    file << "  <axis name=\"SIDE\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"SIDE\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -839,18 +888,18 @@ Aeromatic::write_XML()
         {
             std::string side = systems[i]->side();
             if (!side.empty()) {
-                file << side << std::endl;
+                *file << side << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** PITCH *****************************************
 
-    file << "  <axis name=\"PITCH\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"PITCH\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -858,18 +907,18 @@ Aeromatic::write_XML()
         {
             std::string pitch = systems[i]->pitch();
             if (!pitch.empty()) {
-                file << pitch << std::endl;
+                *file << pitch << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** ROLL ******************************************
 
-    file << "  <axis name=\"ROLL\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"ROLL\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -877,18 +926,18 @@ Aeromatic::write_XML()
         {
             std::string roll = systems[i]->roll();
             if (!roll.empty()) {
-                file << roll << std::endl;
+                *file << roll << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** YAW *******************************************
 
-    file << "  <axis name=\"YAW\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"YAW\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -896,18 +945,60 @@ Aeromatic::write_XML()
         {
             std::string yaw = systems[i]->yaw();
             if (!yaw.empty()) {
-                file << yaw << std::endl;
+                *file << yaw << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
-    file << " </aerodynamics>" << std::endl;
-    file << std::endl;
+    if (_split)
+    {
+        *file << "</aerodynamics>" << std::endl;
+        fcs.close();
+    }
+    else
+    {
+        *file << " </aerodynamics>" << std::endl;
+        *file << std::endl;
+    }
 
-    file << " <external_reactions>" << std::endl;
+    return true;
+}
+
+//***** External Reactions ************************************
+bool
+Aeromatic::write_extern(std::ofstream* file)
+{
+    std::ofstream fcs;
+
+    *file << " <external_reactions";
+    if (_split)
+    {
+        std::string name = "Systems/ExternalReactions.xml";
+        std::string fname = _dir + "/" + name;
+        *file << " file=\"" << name << "\"/>" << std::endl;
+
+        if (!_overwrite && overwrite(fname)) {
+            std::cout << "File already exists: " << fname << std::endl;
+            return false;
+        }
+
+        fcs.open(fname.c_str());
+        if (fcs.fail() || fcs.bad())
+        {
+            fcs.close();
+            return false;
+        }
+        file = &fcs;
+
+        *file << "<?xml version=\"1.0\"?>" << std::endl << std::endl;;
+        *file << "<external_reactions>" << std::endl;
+    }
+    else {
+        *file << ">" << std::endl;
+    }
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -915,17 +1006,21 @@ Aeromatic::write_XML()
         {
             std::string force = systems[i]->external_force();
             if (!force.empty()) {
-                file << force << std::endl;
+                *file << force << std::endl;
             }
         }
     }
 
-    file << " </external_reactions>" << std::endl;
-
-    file << std::endl;
-    file << "</fdm_config>" << std::endl;
-
-    file.close();
+    if (_split)
+    {
+        *file << "</external_reactions>" << std::endl;
+        fcs.close();
+    }
+    else
+    {
+        *file << " </external_reactions>" << std::endl;
+        *file << std::endl;
+    }
 
     return true;
 }
@@ -1039,8 +1134,7 @@ Aeromatic::write_fgfs()
     }
     file << "    </tags>" << std::endl;
     file << "  </sim>" << std::endl;
-    file << "</PropertyList>" << std::endl; 
-
+    file << "</PropertyList>" << std::endl;
 
     file.close();
 

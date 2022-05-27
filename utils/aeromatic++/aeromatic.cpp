@@ -117,6 +117,7 @@ void help()
     printf(" -l, --log <file>\t\tLog the output to a log file.\n");
     printf(" -i, --input <file>\t\tRead the input parameters from a log file.\n");
     printf("     --fgfs\t\tAdd FlightGear configuration files.\n");
+    printf("     --split\t\tSplit different sections into separate files.\n");
     printf(" -h, --help\t\t\tprint this message and exit\n");
 
     printf("\nWhen run without any parameters the program will generate an FDM and exit.\n");
@@ -207,6 +208,9 @@ int main(int argc, char *argv[])
         }
         cout << endl;
     }
+
+    bool split = getCommandLineOption(argc, argv, (char*)"--split") != NULL;
+    aeromatic._split = split;
 
     if (aeromatic.fdm())
     {

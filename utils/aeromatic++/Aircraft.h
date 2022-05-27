@@ -535,8 +535,12 @@ public:
 
     bool fdm() override;
     bool write_fgfs();
-    bool write_XML();
     bool write_JSON();
+
+    bool write_XML();
+    bool write_FCS(std::ofstream* file);
+    bool write_aero(std::ofstream* file);
+    bool write_extern(std::ofstream* file);
 
     float get_fuselage_diameter() override {
         return _aircraft[_atype]->get_fuselage_diameter();
@@ -610,6 +614,7 @@ public:
 
     bool _system_files = true;
     bool _metric = false;
+    bool _split = false;
 
     /* performance, weight and balance */
     float _aero_rp[3] = { 0.0f, 0.0f, 0.0f };
