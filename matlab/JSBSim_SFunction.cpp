@@ -419,7 +419,11 @@ static void mdlInitializeConditions(SimStruct *S)
     Element* propElement = inputElement->FindElement("property");
     for (i = 0; i < inputSize; i++) {
         prop = propElement->GetDataLine();
-        JII->AddInputPropertyNode(prop);
+        if (!JII->AddInputPropertyNode(prop)) {
+            ssSetErrorStatus(S, "Could not add property from XML file to input port.\n"
+                    "HINT: You can only use properties that are WRITE-only for this port.\n");
+                return;
+        }
 
         propElement = inputElement->FindNextElement("property");
     }
@@ -431,8 +435,8 @@ static void mdlInitializeConditions(SimStruct *S)
         for (i = 0; i < inputSize; i++) {
             prop = propElement->GetDataLine();
             if (!JII->AddWeatherPropertyNode(prop)) {
-                ssSetErrorStatus(S, "Could not add property from XML file to weather port.\n
-                    HINT: You can only use properties from \"atmosphere/\" for this port.\n");
+                ssSetErrorStatus(S, "Could not add property from XML file to weather port.\n"
+                    "HINT: You can only use properties that are WRITE-only from \"atmosphere/\" for this port.\n");
                 return;
             }
 
@@ -453,7 +457,8 @@ static void mdlInitializeConditions(SimStruct *S)
             prop = propElement->GetDataLine();
             mexPrintf("Adding property to output %d: %s \n", i, prop.c_str());
             if (!JII->AddOutputPropertyNode(prop, i)) {
-                ssSetErrorStatus(S, "Could not add property from XML file to output port.\n");
+                ssSetErrorStatus(S, "Could not add property from XML file to output port.\n"
+                    "HINT: You can only use properties that are READ-only for this port.\n");
                 return;
             }
 
