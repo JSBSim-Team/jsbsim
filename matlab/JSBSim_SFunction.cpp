@@ -462,7 +462,6 @@ static void mdlInitializeConditions(SimStruct *S)
 
         for (j = 0; j < outputSize; j++) {
             prop = propElement->GetDataLine();
-            mexPrintf("Adding property to output %d: %s \n", i, prop.c_str());
             if (!JII->AddOutputPropertyNode(prop, i)) {
                 ssSetErrorStatus(S, "Could not add property from XML file to output port.\n"
                     "HINT: You can only use properties that are READ-only for this port.\n");
@@ -492,7 +491,6 @@ static void mdlInitializeConditions(SimStruct *S)
             ssSetErrorStatus(S, "Flight script could not be loaded.\n");
             return;
         }
-        mexPrintf("Using Scripts! \n");
     } else {
 
         // Open the supplied aircraft file.
