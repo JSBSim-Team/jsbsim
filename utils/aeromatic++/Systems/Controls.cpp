@@ -192,7 +192,7 @@ void CableControls::set(const float* cg_loc)
 
     float Qf = 1.0f;
     float FFf = 1.0f + 60.0f/powf(fr, 3.0f) + fr/400.0f;
-    float Swet_f = PI*Df*Lf*pow(1.0f-2.0f/fr, 0.667f)*(1.0f + 1.0f/(fr*fr));
+    float Swet_f = PI*Df*Lf*powf(1.0f-2.0f/fr, 0.667f)*(1.0f + 1.0f/(fr*fr));
     float CD0f = Cf*FFf*Qf*Swet_f/Sw;
 
     // Main Wing
