@@ -2,10 +2,10 @@
 y
 y
 fokker100
-
+y
 1
 3                             ; Type of aircraft
-251                           ; Stall speed VS1 (clean, no flaps)
+200                           ; Stall speed VS1 (clean, no flaps)
 43090                         ; Maximum takeoff weight
 24593                         ; Empty weight
                               ; Inertia Ixx

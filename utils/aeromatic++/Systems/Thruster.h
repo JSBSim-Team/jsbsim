@@ -61,12 +61,13 @@ public:
     }
 
     virtual Param* param_next() {
-        return (_param < _inputs.size()) ? _inputs[_param++] : 0;
+        return (_param < _inputs.size()) ? _inputs[_inputs_order[_param++]] : 0;
     }
 
 protected:
     char _thruster_name[PARAM_MAX_STRING+1] = "";
-    std::vector<Param*> _inputs;
+    std::vector<std::string> _inputs_order;
+    std::map<std::string,Param*> _inputs;
     unsigned _param = 0;
     Propulsion *_propulsion = nullptr;
 };
@@ -104,6 +105,7 @@ private:
     bool _fixed_pitch = true;
     unsigned _blades = 2;
     float _diameter = 8.0f;
+    float _density_factor = 1.0f;
     float _specific_weight = 172.0f;
     float _engine_rpm = 2700.0f;
     float _max_rpm = 2100.0f;
