@@ -30,13 +30,13 @@ PW125B
 2                             ; Number of engines
 3                             ; Engine layout
 1                             ; Engine type
-2013                          ; Engine power
-33300                         ; Maximum engine rpm
+1864                          ; Engine power
+34200                         ; Maximum engine rpm
 15                            ; Overall pressure ratio
 816                           ; Turbine inlet temperature
 Propeller
 3.659                         ; Propeller diameter
- 
+0
 1                             ; Control system
 
 
