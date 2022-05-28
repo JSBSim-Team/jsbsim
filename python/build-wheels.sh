@@ -23,9 +23,8 @@ cd python
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info >= (${PYTHON_MIN_VERSION})))" | grep -q 'True'; then
-        "${PYBIN}/pip" install 'cython!=0.29.26' numpy  # Exclude Cython version 0.29.26 as it fails building for PyPy38
-        "${PYBIN}/cython" --cplus jsbsim.pyx -o jsbsim.cxx
-        "${PYBIN}/python" setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+        "${PYBIN}/pip" install build
+        "${PYBIN}/python" -m build --wheel --config-setting=--build-number=$GITHUB_RUN_NUMBER
     fi
 done
 
@@ -38,6 +37,7 @@ done
 for PYBIN in /opt/python/*/bin; do
     # Skip deprecated or unsupported versions
     if "${PYBIN}/python" -c "import sys;sys.stdout.write(str(sys.version_info >= (${PYTHON_MIN_VERSION})))" | grep -q 'True'; then
+        "${PYBIN}/pip" install numpy  # Need numpy installed first as we use `--no-index` below
         "${PYBIN}/pip" install jsbsim --no-index -f dist
         "${PYBIN}/python" -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
         "${PYBIN}/JSBSim" --root=../.. --script=scripts/c1721.xml

@@ -367,6 +367,13 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "pi") {
       Parameters.push_back(new FGRealValue(M_PI));
     } else if (operation == "table" || operation == "t") {
+      string call_type = element->GetAttributeValue("type");
+      if (call_type == "internal") {
+        std::cerr << el->ReadFrom()
+                  << "An internal table cannot be nested within a function."
+                  << endl;
+        throw BaseException("An internal table cannot be nested within a function.");
+      }
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
     } else if (operation == "product") {

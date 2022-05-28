@@ -26,6 +26,12 @@ jobs:
             [ "$filename" != "scripts/unitconversions.xml" ] || continue
             xmllint --noout --schema JSBSimScript.xsd $filename
           done
+      - name: Validate systems files
+        run: |
+          for filename in systems/*.xml; do
+              [ -e "$filename" ] || continue
+              xmllint --noout --schema JSBSimSystem.xsd $filename
+          done
 
   Linux:
     name: C/C++ build (Linux)
@@ -56,7 +62,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel valgrindci
+        run: pip install -U cython numpy pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
@@ -350,7 +356,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32
+        run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data & Doxygen
@@ -429,7 +435,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build\src\RelWithDebInfo\JSBSim.lib
-            build\python\jsbsim.cxx
             build\python\setup.py
 
   MacOSX:
@@ -442,7 +447,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel
+        run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Cache CTest cost data
@@ -484,7 +489,9 @@ jobs:
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build/python
-        run: python setup.py sdist
+        run: |
+          rm -f jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          python -m build --sdist
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -503,7 +510,6 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build/src/libJSBSim.a
-            build/python/jsbsim.cxx
             build/python/setup.py
             build/python/dist/*.tar.gz
 
@@ -525,8 +531,6 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Python packages
-        run: pip install -U cython numpy
       - name: Download source package
         uses: actions/download-artifact@v2
         with:
@@ -566,7 +570,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Prepare the build
         run: |
-          pip install -U numpy wheel cython
+          pip install -U build numpy cython
           mkdir build && cd build
           cmake -DBUILD_JULIA_PACKAGE=OFF ..
       - name: Download binary files
@@ -579,11 +583,11 @@ jobs:
         working-directory: build/python
         run: |
           pip install -U pywin32
-          python setup.py bdist_wheel --config RelWithDebInfo --build-number=$Env:GITHUB_RUN_NUMBER
+          python -m build --wheel --config-setting=--config --config-setting=RelWithDebInfo --config-setting=--build-number=$Env:GITHUB_RUN_NUMBER
       - name: Build wheel package for MacOSX
         if: runner.os == 'macOS'
         working-directory: build/python
-        run: python setup.py bdist_wheel --build-number=$GITHUB_RUN_NUMBER
+        run: python -m build --wheel --config-setting=--build-number=$GITHUB_RUN_NUMBER
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f build/python/dist
@@ -708,13 +712,14 @@ jobs:
           export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
           # Determine the branch name
           export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
           # Commit the change to CMakeLists.txt
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout $BRANCH_NAME
-          git commit -m "Bump version" CMakeLists.txt README.md
+          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md
           git push origin $BRANCH_NAME
 
       # Bump stable version of the `master` branch
@@ -730,7 +735,8 @@ jobs:
           export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
-          git commit -m "Bump stable release version" README.md
+          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          git commit -m "Bump stable release version" README.md matlab/README.md
           git push origin master
 
   Documentation:
@@ -747,7 +753,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy sphinx
+        run: pip install -U numpy sphinx
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Configure JSBSim

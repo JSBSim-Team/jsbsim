@@ -7,10 +7,10 @@
    <summer name="Rudder Command Sum">
       <input>fcs/rudder-cmd-norm</input>
       <input>fcs/yaw-trim-cmd-norm</input>
-      <limit>
+      <clipto>
         <min> -1.0 </min>
         <max>  1.0 </max>
-      </limit>
+      </clipto>
    </summer>
 
    <scheduled_gain name="Yaw Damper Rate">
@@ -38,10 +38,10 @@
    <summer name="Yaw Damper Sum">
       <input>fcs/yaw-damper-beta</input>
       <input>fcs/yaw-damper-rate</input>
-      <limit>
+      <clipto>
         <min> -0.1 </min>
         <max>  0.1 </max>
-      </limit>
+      </clipto>
    </summer>
 
    <scheduled_gain name="Yaw Damper Final">
@@ -58,10 +58,10 @@
    <summer name="Rudder Sum">
       <input>fcs/rudder-command-sum</input>
       <input>fcs/yaw-damper-final</input>
-      <limit>
+      <clipto>
         <min> -1 </min>
         <max>  1 </max>
-      </limit>
+      </clipto>
    </summer>
 
    <aerosurface_scale name="Rudder Control">

@@ -18,7 +18,7 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
 
     strategy:
       fail-fast: false

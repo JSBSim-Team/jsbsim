@@ -89,3 +89,16 @@ ipch/
 .idea/*
 # CMake
 cmake-build-*/
+
+
+#################
+## Unreal Engine
+#################
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Binaries
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Intermediate
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim
+UnrealEngine/Binaries
+UnrealEngine/DerivedDataCache
+UnrealEngine/Intermediate
+UnrealEngine/Saved

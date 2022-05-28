@@ -16,17 +16,19 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import os, sys, argparse
-
+import argparse
+import logging
+import os
+import sys
 from argparse import ArgumentError
+from setuptools._distutils.ccompiler import new_compiler
+from setuptools._distutils.unixccompiler import UnixCCompiler
+
 from setuptools import setup
-from setuptools.extension import Extension
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
-from distutils import log
-from distutils.ccompiler import new_compiler
-from distutils.unixccompiler import UnixCCompiler
 from setuptools.dist import Distribution
+from setuptools.extension import Extension
 
 
 # Performs a build which verbosity is driven by VERBOSE
@@ -34,10 +36,10 @@ class QuietBuild(build_ext):
     def run(self):
         if "VERBOSE" not in os.environ:
             name = self.extensions[0].name
-            log.info("building '{}' extension".format(name))
+            logging.info("building '{}' extension".format(name))
 
             if not os.path.exists(self.build_lib):
-                log.info('creating {}'.format(self.build_lib))
+                logging.info('creating {}'.format(self.build_lib))
                 os.makedirs(self.build_lib)
 
             self.oldstdout = os.dup(sys.stdout.fileno())
@@ -68,7 +70,7 @@ class InstallJSBSimModule(install_lib):
                 libpath = os.path.join(d, 'msvcp140.dll')
                 if os.path.exists(libpath):
                     if not os.path.exists(self.install_dir):
-                        log.info('creating {}'.format(self.install_dir))
+                        logging.info('creating {}'.format(self.install_dir))
                         os.makedirs(self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
                                                          'msvcp140.dll'))
@@ -105,6 +107,9 @@ class BuildC_CxxExtension(build_ext):
                 setattr(self.compiler, attr, value)
         return build_ext.build_extension(self, ext)
 
+# Initialize the default logger to custom settings.
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
 # Get the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
@@ -138,6 +143,7 @@ if args.config:
 
 convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(';') if item!='']
 
+# `cpp_compile_flag` is used for C++ compilation only (see class `C_CxxCompiler`)
 if compiler.compiler_type == 'unix':
     cpp_compile_flag = ['-std=c++14']
     cpp_link_flags = []
@@ -163,7 +169,12 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
                                                                'JSBSim'):
     # OK, the JSBSim library has already been compiled so let's use it to build
     # the Python module.
-    ext_kwargs = { 'sources': ['${JSBSIM_CXX}'],
+    if os.path.exists('${JSBSIM_CXX}'):
+        source_file = '${JSBSIM_CXX}'
+    else:
+        source_file = 'jsbsim.pyx'
+
+    ext_kwargs = { 'sources': [source_file],
                    'include_dirs': ['src'],
                    'libraries': ['JSBSim'] + link_libraries,
                    'library_dirs': [library_path],
@@ -175,19 +186,16 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}')]
-        if sys.version_info < (3,9):
-            compile_flags = [flag.replace('"', '\\"') for flag in compile_flags]
+        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
     else:
-        compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS}')]
+        compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
     ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
                    'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
     # List of required modules to build the JSBSim module from the sources.
-    setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension,},
-                    'setup_requires': ["setuptools>=24.2", "cython>=0.25"]}
+    setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension}}
 
 # Prepare the list of XML data files (aircraft, engines, ...)
 

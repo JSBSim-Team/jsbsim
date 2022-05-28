@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!--<?xml-stylesheet type="text/xsl" href="XMLToDoc.xsl"?>-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="ON-OFF">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="ON"/>
+      <xs:enumeration value="OFF"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="AND-OR">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="AND"/>
+      <xs:enumeration value="OR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="property">
+    <xs:annotation><xs:documentation>
+      A "property" is a JSBSim simulation parameter that represents any of a
+      number of things, from engine throttle settings, to aircraft rotation rates,
+      to the simulation time. To see a list of properties that are available for
+      an individual aircraft, one can provide the "--catalog" option to the JSBSim
+      standalone program.
+    </xs:documentation></xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="property-name">
+        <xs:attribute name="apply" type="xs:token"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="property-name">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Za-z//\[_\]0-9/-]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="property-or-value">
+    <xs:union memberTypes="xs:double property-name"/>
+  </xs:simpleType>
+
+  <xs:complexType name="property-with-value">
+    <xs:simpleContent>
+      <xs:extension base="property">
+        <xs:attribute name="value" type="xs:decimal" default="0.0"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Functions -->
+  <xs:complexType name="single-argument">
+    <xs:sequence>
+      <xs:group ref="func_group"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="two-arguments">
+    <xs:sequence>
+      <xs:group ref="func_group" minOccurs="2" maxOccurs="2"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="multiple-arguments">
+    <xs:sequence>
+      <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:group name="func_group">
+    <xs:choice>
+      <xs:element ref="table" />
+      <xs:element name="product" type="multiple-arguments"/>
+      <xs:element name="difference" type="two-arguments"/>
+      <xs:element name="sum" type="multiple-arguments"/>
+      <xs:element name="quotient" type="two-arguments"/>
+      <xs:element name="pow" type="two-arguments"/>
+      <xs:element name="sqrt" type="single-argument"/>
+      <xs:element name="abs" type="single-argument"/>
+      <xs:element name="sin" type="single-argument"/>
+      <xs:element name="cos" type="single-argument"/>
+      <xs:element name="tan" type="single-argument"/>
+      <xs:element name="asin" type="single-argument"/>
+      <xs:element name="acos" type="single-argument"/>
+      <xs:element name="atan" type="single-argument"/>
+      <xs:element name="atan2" type="two-arguments"/>
+      <xs:element name="min" type="multiple-arguments"/>
+      <xs:element name="max" type="multiple-arguments"/>
+      <xs:element name="avg" type="multiple-arguments"/>
+      <xs:element name="fraction" type="single-argument"/>
+      <xs:element name="integer" type="single-argument"/>
+      <xs:element name="mod" type="two-arguments"/>
+      <xs:element name="random"/>
+      <xs:element name="urandom"/>
+      <xs:element name="pi"/>
+      <xs:element name="toradians" type="single-argument"/>
+      <xs:element name="todegrees" type="single-argument"/>
+      <xs:element name="lt" type="two-arguments"/>
+      <xs:element name="le" type="two-arguments"/>
+      <xs:element name="gt" type="two-arguments"/>
+      <xs:element name="ge" type="two-arguments"/>
+      <xs:element name="eq" type="two-arguments"/>
+      <xs:element name="nq" type="two-arguments"/>
+      <xs:element name="and" type="multiple-arguments"/>
+      <xs:element name="or" type="multiple-arguments"/>
+      <xs:element name="not" type="single-argument"/>
+      <xs:element name="ifthen">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:group ref="func_group" minOccurs="3" maxOccurs="3"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="switch">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:group ref="func_group" minOccurs="3" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="value" type="xs:decimal"/>
+      <xs:element name="property" type="property"/>
+      <xs:element name="v" type="xs:decimal"/>
+      <xs:element name="p" type="property"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:element name="function">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
+          <xs:annotation><xs:documentation>
+            A description of the function.
+          </xs:documentation></xs:annotation>
+        </xs:element>
+        <xs:group ref="func_group"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

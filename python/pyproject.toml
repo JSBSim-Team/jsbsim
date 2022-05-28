@@ -1,0 +1,8 @@
+[build-system]
+# Exclude Cython version 0.29.26 as it fails building for PyPy38
+#
+# Requires setuptools >= 60.0.0 to use its local copy of distutils as distutils
+# is deprecated for Python 3.10 and above and will no longer be distributed with
+# Python 3.12 and above.
+requires = ["setuptools>=60.0.0", "cython!=0.29.26"]
+build-backend = "setuptools.build_meta"
