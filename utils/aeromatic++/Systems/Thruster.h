@@ -105,6 +105,7 @@ private:
     bool _fixed_pitch = true;
     unsigned _blades = 2;
     float _diameter = 8.0f;
+    float _density_factor = 1.0f;
     float _specific_weight = 172.0f;
     float _engine_rpm = 2700.0f;
     float _max_rpm = 2100.0f;

@@ -151,6 +151,7 @@ void  Propeller::bladeElement()
     const float k1 = 0.2f;	  // correction factor for airfoil thickness
 
     float Y = _specific_weight;
+    float density = _density_factor;
     float RPM = _max_rpm;
     float D = _diameter;
     float B = _blades;
@@ -202,12 +203,16 @@ void  Propeller::bladeElement()
 
                 float r = rad/xt;
                 float x = 1.0f - r;
-                float chord=_max_chord*(0.55f+0.7f*(pow(r,0.25f)-pow(r,5.0f)));
-                float TC = max_thickness*(1.0f-0.99f*powf(r,0.05f))/chord;
-                float CC = max_camber*(1.0f-0.99f*powf(x,0.05f))/chord;
+
+                float crd = 0.055f + powf(x,0.1f) - powf(x,10.0f);
+                float toc = 0.03f + 1.374f*powf(x,4.0f);
+                float tw = 0.25f + 0.84f*powf(x,1.15f);
+                float chord =_max_chord*crd;
+                float TC = max_thickness*toc/chord;
+                float CC = max_camber*tw;
+
                 float AR = rstep/chord;
                 float PAR = PI*AR;
-
                 float eff = 0.71 + (i*0.23f/NUM_ELEMENTS);
                 float CL0 = 4.0f*PI*CC;
                 float CLa = PAR/(1.0f + sqrtf(1.0f + 0.25f*AR*AR));
@@ -254,14 +259,14 @@ void  Propeller::bladeElement()
                 thrust += DtDr*rstep;
                 torque += DqDr*rstep;
 
-                float V = PI*chord*(chord*TC)*rstep;
+                float V = PI*chord*(chord*TC)*rstep*density;
                 float m = V*Y*LB_TO_SLUGS;
                 _ixx += m*rad*rad;
             }
 
             float CT = thrust/(RHO*n2*D4);
             float CQ = torque/(RHO*n2*D5);
-            float CP = 2.0f*PI*CQ;
+            float CP = PI*CQ;
 
             _performance_t entry(J, CT, CP);
             _performance.push_back(entry);
@@ -282,11 +287,9 @@ void  Propeller::bladeElement()
 
 void Propeller::set_thruster(float mrpm)
 {
-    bool& convert = _propulsion->_aircraft->_metric;
-
     // find rpm which gives a tip mach of 0.88 (static at sea level)
     _engine_rpm = mrpm;
-    _max_rpm = 18763.0f / (_diameter * (convert ? METER_TO_FEET : 1.0f));
+    _max_rpm = 18763.0f / _diameter;
     _gear_ratio = _MAX(_engine_rpm / _max_rpm, 1.0f);
 
     float n = _max_rpm/60.0f;
@@ -309,31 +312,41 @@ void Propeller::set_thruster(float mrpm)
     }
 
     // estimate the number of blades
+printf("power: %f, _static_thrust: %f\n", _propulsion->_power, _static_thrust);
     if (_static_thrust < 100000.0f)
     {
         _blades = 2;
-        if (_static_thrust <  50000.0f) {
+        if (_static_thrust <  50000.0f)
+        {
+            _density_factor = 1.0f;
             _specific_weight = 116.0f;	// wood
-        } else {
+        }
+        else
+        {
+            _density_factor = 0.2f;
             _specific_weight = 172.0f;	// aluminum
         }
     }
-    else if (_static_thrust < 200000.0f)
+    else if (_static_thrust < 175000.0f)
     {
         _blades = 3;
+        _density_factor = 0.2f;
         _specific_weight = 172.0f;	// aluminum
     }
-    else if (_static_thrust < 300000.0f)
+    else if (_static_thrust < 200000.0f)
     {
         _blades = 4;			// aluminum
+        _density_factor = 0.2f;
         _specific_weight = 172.0f;
     }
     else if (_static_thrust < 400000.0f)
     {
         _blades = 6;
+        _density_factor = 0.2f;
         _specific_weight = 172.0f;	// aluminum
     } else {
         _blades = 8;
+        _density_factor = 0.1f;
         _specific_weight = 100.0f;	// carbon fiber
     }
 
