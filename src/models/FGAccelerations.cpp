@@ -353,6 +353,10 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
+  PropertyManager->Tie("accelerations/a-body-x-ft_sec2", this, eX, (PMF)&FGAccelerations::GetBodyAccel);
+  PropertyManager->Tie("accelerations/a-body-y-ft_sec2", this, eY, (PMF)&FGAccelerations::GetBodyAccel);
+  PropertyManager->Tie("accelerations/a-body-z-ft_sec2", this, eZ, (PMF)&FGAccelerations::GetBodyAccel);
+
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
   PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, (PMF)&FGAccelerations::GetWeight);
