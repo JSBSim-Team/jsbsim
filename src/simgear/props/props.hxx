@@ -751,7 +751,7 @@ private:
 /**
  * A node in a property tree.
  */
-class SGPropertyNode : public SGReferenced
+class JSBSIM_API SGPropertyNode : public SGReferenced
 {
 public:
 

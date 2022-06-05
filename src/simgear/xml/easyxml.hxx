@@ -20,11 +20,12 @@ SENTRY
 HEADERS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "../compiler.h"
-
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "../compiler.h"
+#include "JSBSim_API.h"
 
 typedef struct XML_ParserStruct* XML_Parser;
 
@@ -199,7 +200,7 @@ private:
  * for the error callback.
  */
 
-class XMLVisitor
+class JSBSIM_API XMLVisitor
 {
 public:
   /// Constructor
@@ -399,7 +400,7 @@ private:
  * @see XMLVisitor
  */
 
-extern void readXML (std::istream &input, XMLVisitor &visitor,
+void JSBSIM_API readXML (std::istream &input, XMLVisitor &visitor,
                      const std::string &path="");
 
 /** @relates XMLVisitor
@@ -419,6 +420,6 @@ extern void readXML (std::istream &input, XMLVisitor &visitor,
  * is a problem reading the file.
  * @see XMLVisitor
  */
-extern void readXML (const std::string &path, XMLVisitor &visitor);
+void JSBSIM_API readXML (const std::string &path, XMLVisitor &visitor);
 
 #endif // __EASYXML_HXX
