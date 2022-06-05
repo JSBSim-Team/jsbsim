@@ -350,6 +350,9 @@ jobs:
     name: C/C++ build (MSVC)
     needs: XML-validation
     runs-on: windows-latest
+    strategy:
+      matrix:
+        shared_libs: [ON, OFF]
     steps:
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
@@ -407,7 +410,7 @@ jobs:
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=ON -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
       - name: Build JSBSim
         working-directory: build
         run: cmake --build . --config RelWithDebInfo

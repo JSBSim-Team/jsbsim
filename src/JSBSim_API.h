@@ -34,7 +34,7 @@ SENTRY
 #ifndef JSBSIM_API_H
 #define JSBSIM_API_H
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(JSBSIM_STATIC_LINK)
   #ifdef JSBSIM_EXPORT
     #define JSBSIM_API __declspec(dllexport)
   #else
