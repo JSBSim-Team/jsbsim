@@ -28,7 +28,7 @@
 /// the SGSharedPtr class.
 /// For more info see @SGSharedPtr.
 
-class JSBSIM_API SGReferenced {
+class SGReferenced {
 public:
   SGReferenced(void) : _refcount(0u)
   {}

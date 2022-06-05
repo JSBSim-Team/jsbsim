@@ -113,11 +113,11 @@ add_dependencies(PythonJSBSim libJSBSim)
 
 # MSVC needs the DLL to be copied locally for unit tests to run.
 if(MSVC AND BUILD_SHARED_LIBS)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/JSBSim-static.dll
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/tests/JSBSim.dll
                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
                       $<TARGET_FILE:libJSBSim>
                       ${CMAKE_BINARY_DIR}/tests)
-  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/JSBSim-static.dll)
+  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${CMAKE_BINARY_DIR}/tests/JSBSim.dll)
   add_dependencies(CopyJSBSimDLL libJSBSim)
 endif(MSVC AND BUILD_SHARED_LIBS)
 
