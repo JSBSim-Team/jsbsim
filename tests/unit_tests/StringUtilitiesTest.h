@@ -90,5 +90,3 @@ public:
 private:
   std::string empty;
 };
-
-#undef BASE
