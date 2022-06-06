@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGInertial : public FGModel {
+class JSBSIM_API FGInertial : public FGModel {
 
 public:
   explicit FGInertial(FGFDMExec*);

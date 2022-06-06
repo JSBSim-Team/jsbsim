@@ -187,7 +187,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGLGear : protected FGSurface, public FGForce
+class JSBSIM_API FGLGear : protected FGSurface, public FGForce
 {
 public:
   struct Inputs {
@@ -324,7 +324,8 @@ public:
 
 private:
   int GearNumber;
-  static const FGMatrix33 Tb2s, Ts2b;
+  static const FGMatrix33 Tb2s;
+  static const FGMatrix33 Ts2b;
   FGMatrix33 mTGear;
   FGColumnVector3 vLocalGear;
   FGColumnVector3 vWhlVelVec, vGroundWhlVel;     // Velocity of this wheel

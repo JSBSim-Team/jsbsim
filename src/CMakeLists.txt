@@ -34,11 +34,6 @@ endif()
 # Compile definitions common to all platforms
 set(COMPILE_DEFINITIONS JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 
-set(STATIC_LIBNAME_SUFFIX)
-if(MSVC AND BUILD_SHARED_LIBS)
-  set(STATIC_LIBNAME_SUFFIX "static")
-endif()
-
 add_subdirectory(initialization)
 add_subdirectory(input_output)
 add_subdirectory(math)
@@ -46,7 +41,8 @@ add_subdirectory(models)
 add_subdirectory(simgear)
 
 set(HEADERS FGFDMExec.h
-            FGJSBBase.h)
+            FGJSBBase.h
+            JSBSim_API.h)
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
@@ -84,20 +80,46 @@ endif()
 set(JSBSIM_COMPILE_DEFINITIONS ${COMPILE_DEFINITIONS} PARENT_SCOPE)
 set(JSBSIM_MSVC_COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS} PARENT_SCOPE)
 
-if(MSVC)
-  foreach(COMPILE_DEF ${MSVC_COMPILE_DEFINITIONS})
-    target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
-    target_compile_definitions(Misc PUBLIC ${COMPILE_DEF})
-  endforeach(COMPILE_DEF)
-endif(MSVC)
+# Determine the target object list
+get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 
+foreach(OBJECT ${libJSBSim_SOURCE_FILES})
+  string(SUBSTRING ${OBJECT} 0 17 HEADER)
+  if (${HEADER} STREQUAL "$<TARGET_OBJECTS:")
+    string(LENGTH ${OBJECT} OBJECT_LENGTH)
+    math(EXPR TARGET_LENGTH "${OBJECT_LENGTH}-18")
+    string(SUBSTRING ${OBJECT} 17 ${TARGET_LENGTH} TARGET_OBJECT)
+    list(APPEND TARGET_OBJECTS_LIST ${TARGET_OBJECT})
+  endif()
+endforeach(OBJECT)
+
+if(WIN32)
+  if(BUILD_SHARED_LIBS)
+    # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid propagating it
+    # to other targets such as the executable, the Python module and the unit
+    # tests. Otherwise the linking of these targets will fail.
+    target_compile_definitions(libJSBSim PRIVATE JSBSIM_EXPORT)
+    foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
+      target_compile_definitions(${TARGET_OBJECT} PRIVATE JSBSIM_EXPORT)
+    endforeach(TARGET_OBJECT)
+  else()
+    list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_STATIC_LINK)
+  endif(BUILD_SHARED_LIBS)
+
+  list(APPEND COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS})
+endif(WIN32)
+
+# Apply the compilation definitions to all target objects and make them PUBLIC
+# so they propagate to other targets.
 foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
   target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
-  target_compile_definitions(Xml PUBLIC ${COMPILE_DEF})
+  foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
+    target_compile_definitions(${TARGET_OBJECT} PUBLIC ${COMPILE_DEF})
+  endforeach(TARGET_OBJECT)
 endforeach(COMPILE_DEF)
 
 set_target_properties (libJSBSim PROPERTIES
-                                 OUTPUT_NAME JSBSim${STATIC_LIBNAME_SUFFIX}
+                                 OUTPUT_NAME JSBSim
                                  VERSION ${LIBRARY_VERSION}
                                  TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -143,6 +165,22 @@ endif()
 
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
+
+if(MSVC AND BUILD_SHARED_LIBS)
+  # Under Windows, during the linking process, executables must have a
+  # different name than the DLLs to which they will be linked otherwise MSVC
+  # complains with an error LNK1149:
+  # "LINK : fatal error LNK1149: output filename matches input filename"
+  #
+  # To workaround this limitation the target output name is set to
+  # JSBSim-bin.exe which is copied to JSBSim.exe afterwards. That way the
+  # executable name is the same whether it has been statically linked or
+  # dynamically linked. And we still use the legacy name JSBSim.exe
+  set_target_properties(JSBSim PROPERTIES OUTPUT_NAME JSBSim-bin)
+  add_custom_command(TARGET JSBSim POST_BUILD
+                      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:JSBSim>
+                      $<TARGET_FILE_DIR:JSBSim>/JSBSim.exe)
+endif(MSVC AND BUILD_SHARED_LIBS)
 
 install(TARGETS JSBSim RUNTIME DESTINATION bin COMPONENT runtime)
 install(FILES ${HEADERS} DESTINATION include/JSBSim COMPONENT devel)

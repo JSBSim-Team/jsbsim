@@ -120,7 +120,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGTrim : public FGJSBBase
+class JSBSIM_API FGTrim : public FGJSBBase
 {
 private:
 

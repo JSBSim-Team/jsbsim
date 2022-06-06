@@ -42,6 +42,8 @@ INCLUDES
 #include <iosfwd>
 #include <string>
 
+#include "JSBSim_API.h"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -60,7 +62,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGColumnVector3
+class JSBSIM_API FGColumnVector3
 {
 public:
   /** Default initializer.
@@ -271,7 +273,7 @@ inline FGColumnVector3 operator*(double scalar, const FGColumnVector3& A) {
     @param os Stream to write to.
     @param col vector to write.
     Write the vector to a stream.*/
-std::ostream& operator<<(std::ostream& os, const FGColumnVector3& col);
+JSBSIM_API std::ostream& operator<<(std::ostream& os, const FGColumnVector3& col);
 
 } // namespace JSBSim
 

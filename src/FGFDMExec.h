@@ -182,7 +182,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFDMExec : public FGJSBBase
+class JSBSIM_API FGFDMExec : public FGJSBBase
 {
   struct childData {
     FGFDMExec* exec;

@@ -117,9 +117,11 @@ library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument("--config", help="Build mode used by Visual C++",
                     choices=['Debug', 'Release', 'RelWithDebInfo'])
+parser.add_argument("--sharedlibs", default=False, action="store_true",
+                    help="specifies if JSBSim has been built with shared libs")
 args, extra = parser.parse_known_args()
 
-if args.config:
+if args.config or args.sharedlibs:
     # Remove the option from the command line to prevent complaints from
     # distutils
     sys.argv[1:] = extra
@@ -151,6 +153,8 @@ if compiler.compiler_type == 'unix':
 elif compiler.compiler_type == 'msvc':
     cpp_compile_flag = []
     cpp_link_flags = []
+    if not args.sharedlibs:
+        cpp_compile_flag.append('/DJSBSIM_STATIC_LINK')
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_WINDOWS_LINK_LIBRARIES}')
 else:
     cpp_compile_flag = []
@@ -179,7 +183,7 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
+        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS};NDEBUG;JSBSIM_STATIC_LINK')]
     else:
         compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
