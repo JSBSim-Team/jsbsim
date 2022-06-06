@@ -189,7 +189,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGLGear : public FGSurface, public FGForce
+class JSBSIM_API FGLGear : protected FGSurface, public FGForce
 {
 public:
   struct Inputs {
