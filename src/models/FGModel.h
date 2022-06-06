@@ -66,7 +66,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGModel : public FGModelFunctions
+class JSBSIM_API FGModel : public FGModelFunctions
 {
 public:
 

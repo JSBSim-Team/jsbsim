@@ -230,7 +230,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGTable : public FGParameter, public FGJSBBase
+class JSBSIM_API FGTable : public FGParameter, public FGJSBBase
 {
 public:
   /// Destructor
@@ -239,6 +239,11 @@ public:
   /** This is the very important copy constructor.
       @param table a const reference to a table.*/
   FGTable(const FGTable& table);
+  /// Copy assignment constructor.
+  /* MSVC issues an error C2280 if not defined : it is needed by
+     std::unique_ptr<FGTable>.
+     See StackOverflow: https://stackoverflow.com/questions/31264984/c-compiler-error-c2280-attempting-to-reference-a-deleted-function-in-visual */
+  FGTable& operator=(const FGTable&);
 
   /// The constructor for a table
   FGTable (std::shared_ptr<FGPropertyManager> propMan, Element* el,
