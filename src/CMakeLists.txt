@@ -97,21 +97,26 @@ endforeach(OBJECT)
 
 if(WIN32)
   if(BUILD_SHARED_LIBS)
-    list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_EXPORT)
-  else()
-    target_compile_definitions(libJSBSim PUBLIC JSBSIM_STATIC_LINK)
+    # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid propagating it
+    # to other targets such as the executable, the Python module and the unit
+    # tests. Otherwise the linking of these targets will fail.
+    target_compile_definitions(libJSBSim PRIVATE JSBSIM_EXPORT)
     foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
-      target_compile_definitions(${TARGET_OBJECT} PUBLIC JSBSIM_STATIC_LINK)
+      target_compile_definitions(${TARGET_OBJECT} PRIVATE JSBSIM_EXPORT)
     endforeach(TARGET_OBJECT)
+  else()
+    list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_STATIC_LINK)
   endif(BUILD_SHARED_LIBS)
 
   list(APPEND COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS})
 endif(WIN32)
 
+# Apply the compilation definitions to all target objects and make them PUBLIC
+# so they propagate to other targets.
 foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
-  target_compile_definitions(libJSBSim PRIVATE ${COMPILE_DEF})
+  target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
   foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
-    target_compile_definitions(${TARGET_OBJECT} PRIVATE ${COMPILE_DEF})
+    target_compile_definitions(${TARGET_OBJECT} PUBLIC ${COMPILE_DEF})
   endforeach(TARGET_OBJECT)
 endforeach(COMPILE_DEF)
 
