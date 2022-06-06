@@ -21,7 +21,8 @@
 #include <sstream>
 #include <typeinfo>
 
-#include <simgear/compiler.h>
+#include "simgear/compiler.h"
+#include "JSBSim_API.h"
 #if PROPS_STANDALONE
 
 #ifndef SG_LOG

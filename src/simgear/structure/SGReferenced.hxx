@@ -21,8 +21,6 @@
 #ifndef SGReferenced_HXX
 #define SGReferenced_HXX
 
-#include "JSBSim_API.h"
-
 /// Base class for all reference counted SimGear objects
 /// Classes derived from this one are meant to be managed with
 /// the SGSharedPtr class.
