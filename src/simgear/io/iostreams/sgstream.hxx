@@ -30,16 +30,15 @@
 # error This library requires C++
 #endif
 
+#include <simgear/compiler.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
 
-#include "simgear/compiler.h"
-#include "JSBSim_API.h"
-
 class SGPath;
 
-class JSBSIM_API sg_ifstream : public std::ifstream
+class sg_ifstream : public std::ifstream
 {
 public:
     sg_ifstream() {}

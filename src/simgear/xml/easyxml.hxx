@@ -24,7 +24,7 @@ HEADERS
 #include <string>
 #include <vector>
 
-#include "../compiler.h"
+#include "simgear/compiler.h"
 #include "JSBSim_API.h"
 
 typedef struct XML_ParserStruct* XML_Parser;
@@ -200,7 +200,7 @@ private:
  * for the error callback.
  */
 
-class JSBSIM_API XMLVisitor
+class XMLVisitor
 {
 public:
   /// Constructor
