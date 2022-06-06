@@ -95,7 +95,7 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   endif()
 endforeach(OBJECT)
 
-if(MSVC)
+if(WIN32)
   if(BUILD_SHARED_LIBS)
     list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_EXPORT)
   else()
@@ -106,7 +106,7 @@ if(MSVC)
   endif(BUILD_SHARED_LIBS)
 
   list(APPEND COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS})
-endif(MSVC)
+endif(WIN32)
 
 foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
   target_compile_definitions(libJSBSim PRIVATE ${COMPILE_DEF})

@@ -433,7 +433,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true'
+        if: env.release == 'true' && matrix.shared_libs == 'OFF'
         with:
           name: ${{ runner.os }}.binaries
           path: |

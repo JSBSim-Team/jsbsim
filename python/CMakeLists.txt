@@ -112,15 +112,15 @@ add_subdirectory(fpectl)
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
 add_dependencies(PythonJSBSim libJSBSim)
 
-# MSVC needs the DLL to be copied locally for unit tests to run.
-if(MSVC AND BUILD_SHARED_LIBS)
+# Windows needs the DLL to be copied locally for unit tests to run.
+if(WIN32 AND BUILD_SHARED_LIBS)
   add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/tests/JSBSim.dll
                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
                       $<TARGET_FILE:libJSBSim>
                       ${CMAKE_BINARY_DIR}/tests)
   add_custom_target(CopyJSBSimDLL ALL DEPENDS ${CMAKE_BINARY_DIR}/tests/JSBSim.dll)
   add_dependencies(CopyJSBSimDLL libJSBSim)
-endif(MSVC AND BUILD_SHARED_LIBS)
+endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)
