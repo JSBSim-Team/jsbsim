@@ -34,6 +34,16 @@ public class JSBSim : ModuleRules
 			// Link Lib
 			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
 			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.lib"));
+			
+			// Stage DLL along the binaries files
+			string DllFullPath = Path.Combine(LibPath, "JSBSim.dll");
+			if (!File.Exists(DllFullPath))
+            {
+			    string Err = string.Format("JSBSim.dll not found in {0} - Make sure that you have built JSBSimForUnreal.sln first", LibPath);
+                System.Console.WriteLine(Err);
+                throw new BuildException(Err);
+            }
+            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.dll", DllFullPath);
 		}
 	}
 }
