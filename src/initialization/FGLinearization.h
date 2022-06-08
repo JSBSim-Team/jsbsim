@@ -36,7 +36,7 @@ using Vector2D = std::vector<std::vector<T>>;
 
 /** \brief Class used to create linear models from FGFDMExec instances.
  */
-class FGLinearization
+class JSBSIM_API FGLinearization
 {
     Vector2D<double> A,B,C,D;
     std::vector<double> x0, u0, y0;

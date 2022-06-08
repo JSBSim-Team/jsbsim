@@ -25,42 +25,39 @@
  the world wide web at http://www.gnu.org.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SENTRY
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#ifndef FGXMLFILEREAD_HEADER_H
-#define FGXMLFILEREAD_HEADER_H
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGXMLParse.h"
-#include "simgear/misc/sg_path.hxx"
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-FORWARD DECLARATIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+#include "FGXMLFileRead.h"
+#include "simgear/io/iostreams/sgstream.hxx"
 
 namespace JSBSim {
 
-class JSBSIM_API FGXMLFileRead {
-public:
-  FGXMLFileRead(void) {}
-  ~FGXMLFileRead(void) {}
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-  Element* LoadXMLDocument(const SGPath& XML_filename, bool verbose=true)
-  {
-    return LoadXMLDocument(XML_filename, file_parser, verbose);
+Element* FGXMLFileRead::LoadXMLDocument(const SGPath& XML_filename,
+                                        FGXMLParse& fparse, bool verbose)
+{
+  sg_ifstream infile;
+  SGPath filename(XML_filename);
+  if (!filename.isNull()) {
+    if (filename.extension().empty())
+      filename.concat(".xml");
+    infile.open(filename);
+    if ( !infile.is_open()) {
+      if (verbose) std::cerr << "Could not open file: " << filename << std::endl;
+      return 0L;
+    }
+  } else {
+    std::cerr << "No filename given." << std::endl;
+    return 0L;
   }
-
-  Element* LoadXMLDocument(const SGPath& XML_filename, FGXMLParse& fparse,
-                           bool verbose=true);
-
-  void ResetParser(void) {file_parser.reset();}
-
-private:
-  FGXMLParse file_parser;
-};
+  readXML(infile, fparse, filename.utf8Str());
+  Element* document = fparse.GetDocument();
+  infile.close();
+  return document;
 }
-#endif
+
+} // end namespace JSBSim

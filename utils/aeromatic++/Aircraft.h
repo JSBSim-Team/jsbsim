@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <Systems/Systems.h>
 #include "types.h"
@@ -88,14 +89,15 @@ public:
     std::string _dir;
     char _path[PARAM_MAX_STRING+1];
     char _name[PARAM_MAX_STRING+1];
-    unsigned _subtype;
-    bool _overwrite;
-    bool _subdir;
+    unsigned _subtype = 0;
+    bool _overwrite = true;
+    bool _subdir = true;
 
 //***** USER INPUTS ************************************
 
-    std::vector<Param*> _general;
-    unsigned _engines;
+    std::vector<std::string> _general_order;
+    std::map<std::string,Param*> _general;
+    unsigned _engines = 0;
 
     /* FCS, Flight Control System */
     std::vector<System*> _systems;
@@ -532,8 +534,13 @@ public:
     }
 
     bool fdm() override;
-    bool write_XML();
+    bool write_fgfs();
     bool write_JSON();
+
+    bool write_XML();
+    bool write_FCS(std::ofstream* file);
+    bool write_aero(std::ofstream* file);
+    bool write_extern(std::ofstream* file);
 
     float get_fuselage_diameter() override {
         return _aircraft[_atype]->get_fuselage_diameter();
@@ -592,15 +599,22 @@ public:
     }
 
 public:
-    std::vector<Param*> _weight_balance;
-    std::vector<Param*> _geometry;
+    std::vector<std::string> _weight_balance_order;
+    std::map<std::string,Param*> _weight_balance;
+
+    std::vector<std::string> _geometry_order;
+    std::map<std::string,Param*> _geometry;
 
 public:
     std::vector<Aircraft*> _aircraft;
     unsigned _atype = LIGHT;
+    unsigned _ptype = PISTON;
+    unsigned _steering = 0;
+    bool _retractable = false;
 
     bool _system_files = true;
     bool _metric = false;
+    bool _split = false;
 
     /* performance, weight and balance */
     float _aero_rp[3] = { 0.0f, 0.0f, 0.0f };

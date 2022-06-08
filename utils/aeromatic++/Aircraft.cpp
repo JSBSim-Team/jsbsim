@@ -38,10 +38,6 @@ namespace Aeromatic
 {
 
 Aircraft::Aircraft(Aeromatic *p) :
-    _subtype(0),
-    _overwrite(true),
-    _subdir(true),
-    _engines(0),
     _aircraft(p)
 {
                     /* general information */
@@ -51,20 +47,24 @@ Aircraft::Aircraft(Aeromatic *p) :
     std::string dir(getEnv("HOME"));
 #endif
     strCopy(_path, dir);
-    _general.push_back(new Param("Output directory", "Specify the output directory for the configuration files", _path));
+    _general_order.push_back("directory");
+    _general["directory"] = new Param("Output directory", "Specify the output directory for the configuration files", _path);
 
-    _general.push_back(new Param("Create a subdirectory?", "Set to yes to create a new subdirectory with the same name as the aircraft", _subdir));
+    _general_order.push_back("subdirectory");
+    _general["subdirectory"] = new Param("Create a subdirectory?", "Set to yes to create a new subdirectory with the same name as the aircraft", _subdir);
 
-    _general.push_back(new Param("Overwrite?", "Overwrite files that are already present?", _overwrite));
+    _general_order.push_back("overwrite");
+    _general["overwrite"] = new Param("Overwrite?", "Overwrite files that are already present?", _overwrite);
 
     strCopy(_name, "my_aircraft");
-    _general.push_back(new Param("Aircraft name", "This defines the name and filename of the aircraft", _name));
+    _general_order.push_back("aircraftName");
+    _general["aircraftName"] = new Param("Aircraft name", "This defines the name and filename of the aircraft", _name);
 }
 
 Aircraft::~Aircraft()
 {
     for (auto it: _general) {
-        delete it;
+        delete it.second;
     }
     _general.clear();
 
@@ -117,44 +117,67 @@ Aeromatic::Aeromatic() : Aircraft()
     _vtail.flap_ratio = 0.25f;	// rudder
 
     /* general information */
-    _general.push_back(new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files));
+    _general_order.push_back("systemFiles");
+    _general["systemFiles"] = new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files);
     Param* units = new Param("Select a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
-    _general.push_back(units);
+    _general_order.push_back("units");
+    _general["units"] = units;
     units->add_option("English (feet, pounds)");
     units->add_option("Metric (meters, kilograms)");
 
     /* performance, weight and balance */
-    _weight_balance.push_back(new Param("Stall speed VS1 (clean, no flaps)", "The stall speed at maximum takeoff weight", _stall_speed, _metric, SPEED));
-    _weight_balance.push_back(new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT));
-    _weight_balance.push_back(new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Iyy", _estimate, _inertia[Y], _metric, INERTIA));
-    _weight_balance.push_back(new Param("Inertia Izz", _estimate, _inertia[Z], _metric, INERTIA));
+    _weight_balance_order.push_back("stallSpeed");
+    _weight_balance["stallSpeed"] = new Param("Stall speed VS1 (clean, no flaps)", "The stall speed at maximum takeoff weight", _stall_speed, _metric, SPEED);
+    _weight_balance_order.push_back("maxWeight");
+    _weight_balance["maxWeight"] = new Param("Maximum takeoff weight", 0, _max_weight, _metric, WEIGHT);
+    _weight_balance_order.push_back("emptyWeight");
+    _weight_balance["emptyWeight"] = new Param("Empty weight", _estimate, _empty_weight, _metric, WEIGHT);
+    _weight_balance_order.push_back("Ixx");
+    _weight_balance["Ixx"] = new Param("Inertia Ixx", _estimate, _inertia[X], _metric, INERTIA);
+    _weight_balance_order.push_back("Iyy");
+    _weight_balance["Iyy"] = new Param("Inertia Iyy", _estimate, _inertia[Y], _metric, INERTIA);
+    _weight_balance_order.push_back("Izz");
+    _weight_balance["Izz"] = new Param("Inertia Izz", _estimate, _inertia[Z], _metric, INERTIA);
 
     /* geometry */
-    _geometry.push_back(new Param("Length", 0, _length, _metric, LENGTH));
+    _geometry_order.push_back("length");
+    _geometry["length"] = new Param("Length", 0, _length, _metric, LENGTH);
     Param* wingshape = new Param("Select a wing shape", "Wing shapes determaine the lift and drag of the aircraft", _wing.shape);
-    _geometry.push_back(wingshape);
+    _geometry_order.push_back("wingShape");
+    _geometry["wingShape"] = wingshape;
     wingshape->add_option("Straight");
     wingshape->add_option("Elliptical");
     wingshape->add_option("Delta");
 //  wingshape->add_option("Variable sweep");
 
-    _geometry.push_back(new Param("Wing span", 0, _wing.span, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing area", _estimate, _wing.area, _metric, AREA));
-    _geometry.push_back(new Param("Wing aspect ratio", _estimate, _wing.aspect));
-    _geometry.push_back(new Param("Wing taper ratio", _estimate, _wing.taper));
-    _geometry.push_back(new Param("Wing root chord", _estimate, _wing.chord_mean, _metric, LENGTH));
-    _geometry.push_back(new Param("Wing incidence", _estimate, _wing.incidence));
-    _geometry.push_back(new Param("Wing dihedral", _estimate, _wing.dihedral));
-    _geometry.push_back(new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep));
-    _geometry.push_back(new Param("Htail area", _estimate, _htail.area, _metric, AREA));
-    _geometry.push_back(new Param("Htail arm", _estimate, _htail.arm, _metric, LENGTH));
-    _geometry.push_back(new Param("Vtail area", _estimate, _vtail.area, _metric, AREA));
-    _geometry.push_back(new Param("Vtail arm", _estimate, _vtail.arm, _metric, LENGTH));
+    _geometry_order.push_back("wingSpan");
+    _geometry["wingSpan"] = new Param("Wing span", 0, _wing.span, _metric, LENGTH);
+    _geometry_order.push_back("wingArea");
+    _geometry["wingArea"] = new Param("Wing area", _estimate, _wing.area, _metric, AREA);
+    _geometry_order.push_back("wingAspectRatio");
+    _geometry["wingAspectRatio"] = new Param("Wing aspect ratio", _estimate, _wing.aspect);
+    _geometry_order.push_back("wingTaperRatio");
+    _geometry["wingTaperRatio"] = new Param("Wing taper ratio", _estimate, _wing.taper);
+    _geometry_order.push_back("wingChord");
+    _geometry["wingChord"] = new Param("Wing root chord", _estimate, _wing.chord_mean, _metric, LENGTH);
+    _geometry_order.push_back("wingIncidence");
+    _geometry["wingIncidence"] = new Param("Wing incidence", _estimate, _wing.incidence);
+    _geometry_order.push_back("wingDihedral");
+    _geometry["wingDihedral"] = new Param("Wing dihedral", _estimate, _wing.dihedral);
+    _geometry_order.push_back("wingSweep");
+    _geometry["wingSweep"] = new Param("Wing sweep (quarter chord)", _estimate, _wing.sweep);
+    _geometry_order.push_back("htailArea");
+    _geometry["htailArea"] = new Param("Htail area", _estimate, _htail.area, _metric, AREA);
+    _geometry_order.push_back("htailArm");
+    _geometry["htailArm"] = new Param("Htail arm", _estimate, _htail.arm, _metric, LENGTH);
+    _geometry_order.push_back("vtailArea");
+    _geometry["vtailArea"] = new Param("Vtail area", _estimate, _vtail.area, _metric, AREA);
+    _geometry_order.push_back("vtailArm");
+    _geometry["vtailArm"] = new Param("Vtail arm", _estimate, _vtail.arm, _metric, LENGTH);
 
     Param *param = new Param("Type of aircraft", "Select closest aerodynamic type", _atype, MAX_AIRCRAFT);
-    _general.push_back(param);
+    _general_order.push_back("aircraftType");
+    _general["aircraftType"] = param;
 
     _aircraft.push_back(new Light(this));
     param->add_option(_aircraft[0]->get_verbose_description());
@@ -202,12 +225,12 @@ Aeromatic::Aeromatic() : Aircraft()
 Aeromatic::~Aeromatic()
 {
     for (auto it : _weight_balance) {
-        delete it;
+        delete it.second;
     }
     _weight_balance.clear();
 
     for (auto it : _geometry) {
-        delete it;
+        delete it.second;
     }
     _geometry.clear();
 
@@ -301,13 +324,14 @@ bool Aeromatic::fdm()
     if (_wing.thickness == 0)
     {
         // Hofman equation for t/c
-//      float Ws = _stall_weight;
         float Vs = _stall_speed * KNOTS_TO_FPS;
         if (Vs > 0)
         {
             float sweep = _wing.sweep * DEG_TO_RAD;
-            float TC = 0.051f * _wing.area * powf(cosf(sweep), 5.0f)/Vs;
-            _wing.thickness = TC * _wing.chord_mean;
+            float Sw = _wing.area;
+            float CLmax = 2.0f*_empty_weight/(RHO*Sw*Vs*Vs);
+            float TC = 0.051f * Sw * powf(cosf(sweep), 5.0f)/Vs;
+            _wing.thickness = TC * _wing.chord_mean / CLmax;
         }
         else {
             _wing.thickness = 0.15f * _wing.chord_mean;
@@ -369,9 +393,11 @@ bool Aeromatic::fdm()
     if (_vtail.span == 0) {
         _vtail.span = vt_w * _wing.span;
     }
+
     if (_vtail.aspect == 0) {
         _vtail.aspect = 1.7f;	// vt_w * _wing.aspect;
     }
+
     if (_vtail.taper == 0) {
         _vtail.taper = 0.7f;
     }
@@ -519,8 +545,6 @@ Aeromatic::write_XML()
 
     std::string fname = _dir + "/" + std::string(_name) + ".xml";
 
-    std::string version = AEROMATIC_VERSION_STR;
-
     if (!_overwrite && overwrite(fname)) {
         std::cout << "File already exists: " << fname << std::endl;
         return false;
@@ -546,7 +570,7 @@ Aeromatic::write_XML()
     file << "   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.xsd\">" << std::endl;
     file << std::endl;
     file << " <fileheader>" << std::endl;
-    file << "  <author> Aeromatic v " << version << " </author>" << std::endl;
+    file << "  <author> " << AEROMATIC_NAME << " </author>" << std::endl;
     file << "  <filecreationdate> " << str << " </filecreationdate>" << std::endl;
     file << "  <version>$Revision: 1.80 $</version>" << std::endl;
     file << "  <description> Models a " << _name << ". </description>" << std::endl;
@@ -562,26 +586,30 @@ Aeromatic::write_XML()
     file << _aircraft[_atype]->get_verbose_description(_no_engines) << std::endl;
     file << "    stall speed:   ";
     if (_stall_speed > 0.5f) {
-        file << _stall_speed << "kts" << std::endl;
+        file << _weight_balance["stallSpeed"]->get_nice() << std::endl;
     } else {
         file << "unspecified" << std::endl;
     }
-    file << "    max weight:    " << _max_weight << " lb" << std::endl;
-    file << "    length:        " << _length << " ft" << std::endl;
+    file << "    max weight:    " << _weight_balance["maxWeight"]->get_nice() << std::endl;
+    file << "    Fuselage: " << std::endl;
+    file << "     length:        " << _geometry["length"]->get_nice() << std::endl;
+    file << "     diameter:      " <<  Param::get(get_fuselage_diameter(), LENGTH, _metric) << " " << Param::get_unit(false, LENGTH, _metric) << std::endl;
+    file << "     finess ratio:  " << _length/get_fuselage_diameter() << std::endl;
     file << "    wing: " << std::endl;
-    file << "     span:         " << _wing.span << " ft" << std::endl;
+    file << "     span:         " << _geometry["wingSpan"]->get_nice() << std::endl;
     file << "     area:         ";
     if (wingarea_input) {
-        file << _wing.area << " sq-ft" << std::endl;
+        file << _geometry["wingArea"]->get_nice() << std::endl;
     } else {
         file << "unspecified" << std::endl;
     }
-    file << "     mean chord:   " << _wing.chord_mean << " ft" << std::endl;
+    file << "     mean chord:   " << _geometry["wingChord"]->get_nice() << std::endl;
     file << "     aspect ratio: " << _wing.aspect << ":1" << std::endl;
     file << "     taper ratio:  " << _wing.taper << ":1" << std::endl;
     file << "     incidence:    " << _wing.incidence << " degrees" << std::endl;
     file << "     dihedral:     " << _wing.dihedral << " degrees" << std::endl;
     file << "     sweep:        " << _wing.sweep << " degrees" << std::endl;
+    file << "     t/c:          " << 100.0f*_wing.thickness/_wing.chord_mean << " %" << std::endl;
     file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
@@ -595,9 +623,9 @@ Aeromatic::write_XML()
     }
 
     file << "  Outputs:" << std::endl;
-    file << "    wing loading:       " << wing_loading << " lb/sq-ft" << std::endl;
+    file << "    wing loading:       " << Param::get_nice(wing_loading, LOAD, _metric) << std::endl;
     file << "     - thickness ratio: " << (_wing.thickness/_wing.chord_mean)*100 << "%"  << std::endl;
-    file << "    payload:            " << _payload << " lbs" << std::endl;
+    file << "    payload:            " << Param::get_nice(_payload, WEIGHT, _metric) << std::endl;
     file << "    CL-alpha:           " << _CLalpha[0] << " per radian" << std::endl;
     file << "    CL-0:               " << _CL0 << std::endl;
     file << "    CL-max:             " << _CLmax[0] << std::endl;
@@ -611,7 +639,7 @@ Aeromatic::write_XML()
     float L = _CLmax[0]*qbar*_wing.area;
     float n = L/_stall_weight;
     float lfg = G*sqrtf(n*n - 1.0f);
-    file << "    min. turn radius    " << (V*V/lfg) << " ft" << std::endl;
+    file << "    min. turn radius    " << Param::get_nice((V*V/lfg), LENGTH, _metric) << std::endl;
     file << "    max. turn rate:     " << (lfg/V) << " deg/s" << std::endl;
     file << "-->" << std::endl;
     file << std::endl;
@@ -619,25 +647,25 @@ Aeromatic::write_XML()
 //***** METRICS **********************************
 
     file << " <metrics>" << std::endl;
-    file << "   <wingarea  unit=\"FT2\"> " << std::setw(8) << _wing.area << " </wingarea>" << std::endl;
-    file << "   <wingspan  unit=\"FT\" > " << std::setw(8) << _wing.span << " </wingspan>" << std::endl;
+    file << "   <wingarea  unit=\"" << _geometry["wingArea"]->get_unit(true, AREA, _metric) << "\"> " << std::setw(8) << _geometry["wingArea"]->get() << " </wingarea>" << std::endl;
+    file << "   <wingspan  unit=\"" << _geometry["wingSpan"]->get_unit(true, LENGTH, _metric) << "\" > " << std::setw(8) << _geometry["wingSpan"]->get() << " </wingspan>" << std::endl;
     file << "   <wing_incidence unit=\"DEG\"> " << std::setw(2) << _wing.incidence << " </wing_incidence>" << std::endl;
-    file << "   <chord     unit=\"FT\" > " << std::setw(8) << _wing.chord_mean << " </chord>" << std::endl;
-    file << "   <htailarea unit=\"FT2\"> " << std::setw(8) << _htail.area << " </htailarea>" << std::endl;
-    file << "   <htailarm  unit=\"FT\" > " << std::setw(8) << _htail.arm << " </htailarm>" << std::endl;
-    file << "   <vtailarea  unit=\"FT2\">" << std::setw(8) << _vtail.area << " </vtailarea>" << std::endl;
-    file << "   <vtailarm  unit=\"FT\" > " << std::setw(8) << _vtail.arm << " </vtailarm>" << std::endl;
-    file << "   <location name=\"AERORP\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << _aero_rp[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << _aero_rp[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << _aero_rp[Z] << " </z>" << std::endl;
+    file << "   <chord     unit=\"" << _geometry["wingChord"]->get_unit(true, LENGTH, _metric) << "\" > " << std::setw(8) << _geometry["wingChord"]->get() << " </chord>" << std::endl;
+    file << "   <htailarea unit=\"" << _geometry["htailArea"]->get_unit(true, AREA, _metric) << "\"> " << std::setw(8) << _geometry["htailArea"]->get() << " </htailarea>" << std::endl;
+    file << "   <htailarm  unit=\"" << _geometry["htailArm"]->get_unit(true, LENGTH, _metric) << "\" > " << std::setw(8) << _geometry["htailArm"]->get() << " </htailarm>" << std::endl;
+    file << "   <vtailarea  unit=\"" << _geometry["vtailArea"]->get_unit(true, AREA, _metric) << "\">" << std::setw(8) << _geometry["vtailArea"]->get() << " </vtailarea>" << std::endl;
+    file << "   <vtailarm  unit=\"" << _geometry["vtailArm"]->get_unit(true, LENGTH, _metric) << "\" > " << std::setw(8) << _geometry["vtailArm"]->get() << " </vtailarm>" << std::endl;
+    file << "   <location name=\"AERORP\" unit=\"" << Param::get_unit(true, LENGTH, _metric) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(_aero_rp[X]*INCH_TO_FEET, LENGTH, _metric) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(_aero_rp[Y]*INCH_TO_FEET, LENGTH, _metric) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(_aero_rp[Z]*INCH_TO_FEET, LENGTH, _metric) << " </z>" << std::endl;
     file << "   </location>" << std::endl;
-    file << "   <location name=\"EYEPOINT\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << eyept_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << eyept_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << eyept_loc[Z] << " </z>" << std::endl;
+    file << "   <location name=\"EYEPOINT\" unit=\"" << Param::get_unit(true, LENGTH, _metric) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(eyept_loc[X]*INCH_TO_FEET, LENGTH, _metric) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(eyept_loc[Y]*INCH_TO_FEET, LENGTH, _metric) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(eyept_loc[Z]*INCH_TO_FEET, LENGTH, _metric) << " </z>" << std::endl;
     file << "   </location>" << std::endl;
-    file << "   <location name=\"VRP\" unit=\"IN\">" << std::endl;
+    file << "   <location name=\"VRP\" unit=\"" << Param::get_unit(true, LENGTH, _metric) << "\">" << std::endl;
     file << "     <x>     0.0 </x>" << std::endl;
     file << "     <y>     0.0 </y>" << std::endl;
     file << "     <z>     0.0 </z>" << std::endl;
@@ -645,22 +673,22 @@ Aeromatic::write_XML()
     file << " </metrics>"<< std::endl;
     file << std::endl;
     file << " <mass_balance>" << std::endl;
-    file << "   <ixx unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[X] << " </ixx>" << std::endl;
-    file << "   <iyy unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Y] << " </iyy>" << std::endl;
-    file << "   <izz unit=\"SLUG*FT2\">  " << std::setw(8) << _inertia[Z] << " </izz>" << std::endl;
-    file << "   <emptywt unit=\"LBS\" >  " << std::setw(8) << _empty_weight << " </emptywt>" << std::endl;
-    file << "   <location name=\"CG\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << _cg_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
+    file << "   <ixx unit=\"" << Param::get_unit(true, INERTIA, _metric) << "\">  " << std::setw(8) << Param::get(_inertia[X], INERTIA, _metric) << " </ixx>" << std::endl;
+    file << "   <iyy unit=\"" << Param::get_unit(true, INERTIA, _metric) << "\">  " << std::setw(8) << Param::get(_inertia[Y], INERTIA, _metric) << " </iyy>" << std::endl;
+    file << "   <izz unit=\"" << Param::get_unit(true, INERTIA, _metric) << "\">  " << std::setw(8) << Param::get(_inertia[Z], INERTIA, _metric) << " </izz>" << std::endl;
+    file << "   <emptywt unit=\"" << Param::get_unit(true, WEIGHT, _metric) << "\" >  " << std::setw(8) << Param::get(_empty_weight, WEIGHT, _metric) << " </emptywt>" << std::endl;
+    file << "   <location name=\"CG\" unit=\"" << Param::get_unit(true, LENGTH, _metric) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(_cg_loc[X]*INCH_TO_FEET, LENGTH, _metric) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(_cg_loc[Y]*INCH_TO_FEET, LENGTH, _metric) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(_cg_loc[Z]*INCH_TO_FEET, LENGTH, _metric) << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <pointmass name=\"Payload\">" << std::endl;
-    file << "    <description> " << _payload << " LBS should bring model up to entered max weight </description>" << std::endl;
-    file << "    <weight unit=\"LBS\"> " << (_payload* 0.5f) << " </weight>" << std::endl;
-    file << "    <location name=\"POINTMASS\" unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << payload_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << payload_loc[Y] << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << payload_loc[Z] << " </z>" << std::endl;
+    file << "    <description> " << Param::get_nice(_payload, WEIGHT, _metric) << " should bring model up to entered max weight </description>" << std::endl;
+    file << "    <weight unit=\"" << Param::get_unit(true, WEIGHT, _metric) << "\"> " << Param::get((_payload* 0.5f), WEIGHT, _metric) << " </weight>" << std::endl;
+    file << "    <location name=\"POINTMASS\" unit=\"" << Param::get_unit(true, LENGTH, _metric) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(payload_loc[X]*INCH_TO_FEET, LENGTH, _metric) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(payload_loc[Y]*INCH_TO_FEET, LENGTH, _metric) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(payload_loc[Z]*INCH_TO_FEET, LENGTH, _metric) << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "  </pointmass>" << std::endl;
 
@@ -737,8 +765,25 @@ Aeromatic::write_XML()
         file << std::endl;
     }
 
-    file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
+    write_FCS(&file);
+    write_aero(&file);
+    write_extern(&file);
+
     file << std::endl;
+    file << "</fdm_config>" << std::endl;
+
+    file.close();
+
+    return true;
+}
+
+
+//***** Flight Control System *********************************
+bool
+Aeromatic::write_FCS(std::ofstream* file)
+{
+    *file << " <flight_control name=\"FCS: " << _name << "\">" << std::endl;
+    *file << std::endl;
 
     if (_system_files == false)
     {
@@ -748,24 +793,56 @@ Aeromatic::write_XML()
             {
                 std::string system = systems[i]->system();
                 if (!system.empty()) {
-                    file << system << std::endl;
+                    *file << system << std::endl;
                 }
             }
         }
     }
 
-    file << " </flight_control>"<< std::endl;
-    file << std::endl;
+    *file << " </flight_control>"<< std::endl;
+    *file << std::endl;
+
+    return true;
+}
 
 //***** AERODYNAMICS ******************************************
+bool
+Aeromatic::write_aero(std::ofstream* file)
+{
+    std::ofstream fcs;
 
-    file << " <aerodynamics>" << std::endl;
-    file << std::endl;
+    *file << " <aerodynamics";
+    if (_split)
+    {
+        std::string name = "Systems/Aerodynamics.xml";
+        std::string fname = _dir + "/" + name;
+        *file << " file=\"" << name << "\"/>" << std::endl;
+
+        if (!_overwrite && overwrite(fname)) {
+            std::cout << "File already exists: " << fname << std::endl;
+            return false;
+        }
+
+        fcs.open(fname.c_str());
+        if (fcs.fail() || fcs.bad())
+        {
+            fcs.close();
+            return false;
+        }
+        file = &fcs;
+
+        *file << "<?xml version=\"1.0\"?>" << std::endl << std::endl;;
+        *file << "<aerodynamics>" << std::endl;
+    }
+    else {
+        *file << ">" << std::endl;
+    }
+    *file << std::endl;
 
     // ***** LIFT ******************************************
 
-    file << "  <axis name=\"LIFT\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"LIFT\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -773,18 +850,18 @@ Aeromatic::write_XML()
         {
             std::string lift = systems[i]->lift();
             if (!lift.empty()) {
-                file << lift << std::endl;
+                *file << lift << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** DRAG ******************************************
 
-    file << "  <axis name=\"DRAG\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"DRAG\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -792,18 +869,18 @@ Aeromatic::write_XML()
         {
             std::string drag = systems[i]->drag();
             if (!drag.empty()) {
-               file << drag << std::endl;
+               *file << drag << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** SIDE ******************************************
 
-    file << "  <axis name=\"SIDE\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"SIDE\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -811,18 +888,18 @@ Aeromatic::write_XML()
         {
             std::string side = systems[i]->side();
             if (!side.empty()) {
-                file << side << std::endl;
+                *file << side << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** PITCH *****************************************
 
-    file << "  <axis name=\"PITCH\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"PITCH\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -830,18 +907,18 @@ Aeromatic::write_XML()
         {
             std::string pitch = systems[i]->pitch();
             if (!pitch.empty()) {
-                file << pitch << std::endl;
+                *file << pitch << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** ROLL ******************************************
 
-    file << "  <axis name=\"ROLL\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"ROLL\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -849,18 +926,18 @@ Aeromatic::write_XML()
         {
             std::string roll = systems[i]->roll();
             if (!roll.empty()) {
-                file << roll << std::endl;
+                *file << roll << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
     // ***** YAW *******************************************
 
-    file << "  <axis name=\"YAW\">" << std::endl;
-    file << std::endl;
+    *file << "  <axis name=\"YAW\">" << std::endl;
+    *file << std::endl;
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -868,18 +945,60 @@ Aeromatic::write_XML()
         {
             std::string yaw = systems[i]->yaw();
             if (!yaw.empty()) {
-                file << yaw << std::endl;
+                *file << yaw << std::endl;
             }
         }
     }
 
-    file << "  </axis>" << std::endl;
-    file << std::endl;
+    *file << "  </axis>" << std::endl;
+    *file << std::endl;
 
-    file << " </aerodynamics>" << std::endl;
-    file << std::endl;
+    if (_split)
+    {
+        *file << "</aerodynamics>" << std::endl;
+        fcs.close();
+    }
+    else
+    {
+        *file << " </aerodynamics>" << std::endl;
+        *file << std::endl;
+    }
 
-    file << " <external_reactions>" << std::endl;
+    return true;
+}
+
+//***** External Reactions ************************************
+bool
+Aeromatic::write_extern(std::ofstream* file)
+{
+    std::ofstream fcs;
+
+    *file << " <external_reactions";
+    if (_split)
+    {
+        std::string name = "Systems/ExternalReactions.xml";
+        std::string fname = _dir + "/" + name;
+        *file << " file=\"" << name << "\"/>" << std::endl;
+
+        if (!_overwrite && overwrite(fname)) {
+            std::cout << "File already exists: " << fname << std::endl;
+            return false;
+        }
+
+        fcs.open(fname.c_str());
+        if (fcs.fail() || fcs.bad())
+        {
+            fcs.close();
+            return false;
+        }
+        file = &fcs;
+
+        *file << "<?xml version=\"1.0\"?>" << std::endl << std::endl;;
+        *file << "<external_reactions>" << std::endl;
+    }
+    else {
+        *file << ">" << std::endl;
+    }
 
     for (unsigned i=0; i<systems.size(); ++i)
     {
@@ -887,15 +1006,135 @@ Aeromatic::write_XML()
         {
             std::string force = systems[i]->external_force();
             if (!force.empty()) {
-                file << force << std::endl;
+                *file << force << std::endl;
             }
         }
     }
 
-    file << " </external_reactions>" << std::endl;
+    if (_split)
+    {
+        *file << "</external_reactions>" << std::endl;
+        fcs.close();
+    }
+    else
+    {
+        *file << " </external_reactions>" << std::endl;
+        *file << std::endl;
+    }
 
+    return true;
+}
+
+bool
+Aeromatic::write_fgfs()
+{
+    std::string fname = _dir + "/" + std::string(_name) + "-set.xml";
+
+    std::ofstream file;
+    file.open(fname.c_str());
+    if (file.fail() || file.bad())
+    {
+        file.close();
+        return false;
+    }
+
+    file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
     file << std::endl;
-    file << "</fdm_config>" << std::endl;
+    file << "<PropertyList>" << std::endl;
+    file << "  <sim>" << std::endl;
+    file << "    <author>" << AEROMATIC_NAME << "</author>"<< std::endl;
+    file << "    <flight-model>jsb</flight-model>" << std::endl;
+    file << "    <aero>" << std::string(_name) << "</aero>" << std::endl;
+    file << "    <tags>" << std::endl;
+    file << "      <!-- See https://wiki.flightgear.org/Catalog_metadata -->" << std::endl;
+    switch(_atype)
+    {
+    case LIGHT:
+        if (_no_engines) file << "      <tag>ga</tag>" << std::endl;
+        else file << "      <tag>glider</tag" << std::endl;
+        break;
+    case PERFORMANCE:
+        file << "      <tag>aerobatic</tag>" << std::endl;
+        break;
+    case FIGHTER:
+        file << "      <tag>fighter</tag>" << std::endl;
+        break;
+    case JET_TRANSPORT:
+        file << "      <tag>passenger</tag>" << std::endl;
+        break;
+    case PROP_TRANSPORT:
+        file << "      <tag>passenger</tag>" << std::endl;
+        file << "      <tag>propeller</tag>" << std::endl;
+        break;
+//  case BIPLANE:
+    default: break;
+    }
+
+    switch (_wing.shape)
+    {
+    case STRAIGHT:
+    case ELLIPTICAL:
+        break;
+    case DELTA:
+        file << "      <tag>delta</tag>" << std::endl;
+        break;
+    case VARIABLE_SWEEP:
+        file << "      <tag> variable-geometry</tag>" << std::endl;
+        break;
+    default: break;
+    }
+
+    if (_retractable) {
+        file << "      <tag>retractable-gear</tag>" << std::endl;
+    }
+    switch(_steering)
+    {
+    case STEERING:
+        file << "      <tag>tricycle</tag>" << std::endl;
+        break;
+    case CASTERING:
+        file << "      <tag>castering-wheel</tag>" << std::endl;
+        // intentional fallthrough
+    case FIXED:
+        file << "      <tag>tail-dragger</tag>" << std::endl;
+        break;
+    default: break;
+    }
+
+    if (_no_engines)
+    {
+       switch(_no_engines)
+        {
+        case 1: file << "      <tag>single-engine</tag>" << std::endl; break;
+        case 2: file << "      <tag>twin-engine</tag>" << std::endl; break;
+        case 3: file << "      <tag>three-engine</tag>" << std::endl; break;
+        case 4: file << "      <tag>four-engine</tag>" << std::endl; break;
+        default: break;
+        }
+
+        switch(_ptype)
+        {
+        case PISTON:
+            file << "      <tag>piston</tag>" << std::endl;
+            break;
+        case TURBINE:
+            file << "      <tag>jet</tag>" << std::endl;
+            break;
+        case TURBOPROP:
+            file << "      <tag>turboprop</tag>" << std::endl;
+            break;
+        case ROCKET:
+            file << "      <tag>rocket</tag>" << std::endl;
+            break;
+        case ELECTRIC:
+            file << "      <tag>electric</tag>" << std::endl;
+            break;
+        default: break;
+        }
+    }
+    file << "    </tags>" << std::endl;
+    file << "  </sim>" << std::endl;
+    file << "</PropertyList>" << std::endl;
 
     file.close();
 
@@ -906,8 +1145,6 @@ bool
 Aeromatic::write_JSON()
 {
     std::string fname = _dir + "/" + std::string(_name) + ".json";
-
-    std::string version = AEROMATIC_VERSION_STR;
 
     std::ofstream file;
     file.open(fname.c_str());

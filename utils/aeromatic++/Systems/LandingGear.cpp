@@ -38,17 +38,21 @@ LandingGear::LandingGear(Aeromatic *p) : System(p, true),
 {
 
     _description.push_back("Landing Gear");
-    _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
+    _inputs_order.push_back("Landing Gear");
+    _inputs["Landing Gear"] = new Param(_description[0].c_str(), _supported, _enabled);
 
-    _inputs.push_back(new Param("Is landing gear retractable?", 0, _retractable));
+    _inputs_order.push_back("retractable");
+    _inputs["retractable"] = new Param("Is landing gear retractable?", 0, _retractable);
 
     Param *steer = new Param("Nose or tail wheel type", 0, _steering, MAX_STEERING);
-    _inputs.push_back(steer);
+    _inputs_order.push_back("steering");
+    _inputs["steering"] = steer;
     steer->add_option("steering");
     steer->add_option("castering");
     steer->add_option("fixed");
 
-    _inputs.push_back(new Param("Is this a taildragger?", 0, _taildragger));
+    _inputs_order.push_back("taildragger");
+    _inputs["taildragger"] = new Param("Is this a taildragger?", 0, _taildragger);
 }
 
 void LandingGear::set(const float cg_loc[3])
@@ -115,6 +119,8 @@ std::string LandingGear::comment()
 {
     std::stringstream file;
 
+    _aircraft->_retractable = _retractable;
+    _aircraft->_steering = _steering;
     file << "    gear type:     ";
     if (_taildragger) {
        file << "taildragger" << std::endl;
@@ -134,6 +140,7 @@ std::string LandingGear::comment()
 
 std::string LandingGear::fdm()
 {
+    bool& convert = _aircraft->_metric;
     std::stringstream file;
 
     bool glider = (_aircraft->_atype == LIGHT && _aircraft->_engines == 0) ? true : false;
@@ -145,75 +152,75 @@ std::string LandingGear::fdm()
     file << std::endl;
 
     file << "  <contact type=\"BOGEY\" name=\"" << (_taildragger ? "TAIL" : "NOSE") << "\">" << std::endl;
-    file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][X] << " </x>" << std::endl;
-    file << "      <y> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][Y] << " </y>" << std::endl;
-    file << "      <z> " << std::setw(8) << _gear_loc[_taildragger ? TAIL : NOSE][Z] << " </z>" << std::endl;
+    file << "    <location unit=\"" << Param::get_unit(true, LENGTH, convert) << "\">" << std::endl;
+    file << "      <x> " << std::setw(8) << Param::get((_gear_loc[_taildragger ? TAIL : NOSE][X])*INCH_TO_FEET, LENGTH, convert) << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << Param::get((_gear_loc[_taildragger ? TAIL : NOSE][Y])*INCH_TO_FEET, LENGTH, convert) << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << Param::get((_gear_loc[_taildragger ? TAIL : NOSE][Z])*INCH_TO_FEET, LENGTH, convert) << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
     file << "    <rolling_friction> " << _gear_rolling << " </rolling_friction>" << std::endl;
-    file << "    <spring_coeff  unit=\"LBS/FT\">     " << _gear_spring[_taildragger ? TAIL : NOSE] << " </spring_coeff>" << std::endl;
-    file << "    <damping_coeff unit=\"LBS/FT/SEC\"> " << _gear_damp[_taildragger ? TAIL : NOSE] << " </damping_coeff>" << std::endl;
+    file << "    <spring_coeff  unit=\"" << Param::get_unit(true, SPRING, convert) << "\">     " << Param::get(_gear_spring[_taildragger ? TAIL : NOSE], SPRING, convert) << " </spring_coeff>" << std::endl;
+    file << "    <damping_coeff unit=\"" << Param::get_unit(true, DAMPING, convert) << "\"> " << Param::get(_gear_damp[_taildragger ? TAIL : NOSE], DAMPING, convert) << " </damping_coeff>" << std::endl;
     file << "    <max_steer unit=\"DEG\"> " << _gear_max_steer << " </max_steer>" << std::endl;
     file << "    <brake_group> NONE </brake_group>" << std::endl;
     file << "    <retractable> " << _retractable << " </retractable>" << std::endl;
     file << "  </contact>" << std::endl;
     file << std::endl;
     file << "  <contact type=\"BOGEY\" name=\"LEFT_MAIN\">" << std::endl;
-    file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << std::setw(8) << _gear_loc[MAIN][X] << " </x>" << std::endl;
-    file << "      <y> " << std::setw(8) << -_gear_loc[MAIN][Y] << " </y>" << std::endl;
-    file << "      <z> " << std::setw(8) << _gear_loc[MAIN][Z] << " </z>" << std::endl;
+    file << "    <location unit=\"" << Param::get_unit(true, LENGTH, convert) << "\">" << std::endl;
+    file << "      <x> " << std::setw(8) << Param::get(_gear_loc[MAIN][X]*INCH_TO_FEET, LENGTH, convert) << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << Param::get(-_gear_loc[MAIN][Y]*INCH_TO_FEET, LENGTH, convert) << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << Param::get(_gear_loc[MAIN][Z]*INCH_TO_FEET, LENGTH, convert) << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
     file << "    <rolling_friction> " << _gear_rolling << " </rolling_friction>" << std::endl;
-    file << "    <spring_coeff  unit=\"LBS/FT\">     " << _gear_spring[MAIN] << " </spring_coeff>" << std::endl;
-    file << "    <damping_coeff unit=\"LBS/FT/SEC\"> " << _gear_damp[MAIN] << " </damping_coeff>" << std::endl;
+    file << "    <spring_coeff  unit=\"" << Param::get_unit(true, SPRING, convert) << "\">     " << Param::get(_gear_spring[MAIN], SPRING, convert) << " </spring_coeff>" << std::endl;
+    file << "    <damping_coeff unit=\"" << Param::get_unit(true, DAMPING, convert) << "\"> " << Param::get(_gear_damp[MAIN], DAMPING, convert) << " </damping_coeff>" << std::endl;
     file << "    <max_steer unit=\"DEG\">0</max_steer>" << std::endl;
     file << "    <brake_group> " << (glider ? "NONE" : "LEFT") << " </brake_group>" << std::endl;
     file << "    <retractable> " << _retractable << " </retractable>" << std::endl;
     file << "  </contact>" << std::endl;
     file << std::endl;
     file << "  <contact type=\"BOGEY\" name=\"RIGHT_MAIN\">" << std::endl;
-    file << "    <location unit=\"IN\">" << std::endl;
-    file << "      <x> " << std::setw(8) << _gear_loc[MAIN][X] << " </x>" << std::endl;
-    file << "      <y> " << std::setw(8) << _gear_loc[MAIN][Y] << " </y>" << std::endl;
-    file << "      <z> " << std::setw(8) << _gear_loc[MAIN][Z] << " </z>" << std::endl;
+    file << "    <location unit=\"" << Param::get_unit(true, LENGTH, convert) << "\">" << std::endl;
+    file << "      <x> " << std::setw(8) << Param::get(_gear_loc[MAIN][X]*INCH_TO_FEET, LENGTH, convert) << " </x>" << std::endl;
+    file << "      <y> " << std::setw(8) << Param::get(_gear_loc[MAIN][Y]*INCH_TO_FEET, LENGTH, convert) << " </y>" << std::endl;
+    file << "      <z> " << std::setw(8) << Param::get(_gear_loc[MAIN][Z]*INCH_TO_FEET, LENGTH, convert) << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "    <static_friction>  " << _gear_static << " </static_friction>" << std::endl;
     file << "    <dynamic_friction> " << _gear_dynamic << " </dynamic_friction>" << std::endl;
     file << "    <rolling_friction> " << _gear_rolling << " </rolling_friction>" << std::endl;
-    file << "    <spring_coeff  unit=\"LBS/FT\">     " << _gear_spring[MAIN] << " </spring_coeff>" << std::endl;
-    file << "    <damping_coeff unit=\"LBS/FT/SEC\"> " << _gear_damp[MAIN] << " </damping_coeff>" << std::endl;
+    file << "    <spring_coeff  unit=\"" << Param::get_unit(true, SPRING, convert) << "\">     " << Param::get(_gear_spring[MAIN], SPRING, convert) << " </spring_coeff>" << std::endl;
+    file << "    <damping_coeff unit=\"" << Param::get_unit(true, DAMPING, convert) << "\"> " << Param::get(_gear_damp[MAIN], DAMPING, convert) << " </damping_coeff>" << std::endl;
     file << "    <max_steer unit=\"DEG\">0</max_steer>" << std::endl;
     file << "    <brake_group> " << (glider ? "NONE" : "RIGHT") << " </brake_group>" << std::endl;
     file << "    <retractable> " << _retractable << " </retractable>" << std::endl;
     file << "  </contact>" << std::endl;
     file << std::endl;
     file << "  <contact type=\"STRUCTURE\" name=\"LEFT_WING\">" << std::endl;
-    file << "    <location unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << -(_aircraft->_wing.span*FEET_TO_INCH/2) << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
+    file << "    <location unit=\"" << Param::get_unit(true, LENGTH, convert) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(_cg_loc[X]*INCH_TO_FEET, LENGTH, convert) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(-_aircraft->_wing.span/2, LENGTH, convert) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(_cg_loc[Z]*INCH_TO_FEET, LENGTH, convert) << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
     file << "   <dynamic_friction> 1 </dynamic_friction>" << std::endl;
-    file << "   <spring_coeff unit=\"LBS/FT\">      " << _gear_spring[MAIN] << " </spring_coeff>" << std::endl;
-    file << "   <damping_coeff unit=\"LBS/FT/SEC\"> " << _gear_spring[MAIN] << " </damping_coeff>" << std::endl;
+    file << "    <spring_coeff  unit=\"" << Param::get_unit(true, SPRING, convert) << "\">     " << Param::get(_gear_spring[MAIN], SPRING, convert) << " </spring_coeff>" << std::endl;
+    file << "    <damping_coeff unit=\"" << Param::get_unit(true, DAMPING, convert) << "\"> " << Param::get(_gear_damp[MAIN], DAMPING, convert) << " </damping_coeff>" << std::endl;
     file << "  </contact>" << std::endl;
     file << std::endl;
     file << "  <contact type=\"STRUCTURE\" name=\"RIGHT_WING\">" << std::endl;
-    file << "    <location unit=\"IN\">" << std::endl;
-    file << "     <x> " << std::setw(8) << _cg_loc[X] << " </x>" << std::endl;
-    file << "     <y> " << std::setw(8) << (_aircraft->_wing.span*FEET_TO_INCH/2) << " </y>" << std::endl;
-    file << "     <z> " << std::setw(8) << _cg_loc[Z] << " </z>" << std::endl;
+    file << "    <location unit=\"" << Param::get_unit(true, LENGTH, convert) << "\">" << std::endl;
+    file << "     <x> " << std::setw(8) << Param::get(_cg_loc[X]*INCH_TO_FEET, LENGTH, convert) << " </x>" << std::endl;
+    file << "     <y> " << std::setw(8) << Param::get(_aircraft->_wing.span/2, LENGTH, convert) << " </y>" << std::endl;
+    file << "     <z> " << std::setw(8) << Param::get(_cg_loc[Z]*INCH_TO_FEET, LENGTH, convert) << " </z>" << std::endl;
     file << "    </location>" << std::endl;
     file << "   <static_friction>  1 </static_friction>" << std::endl;
     file << "   <dynamic_friction> 1 </dynamic_friction>" << std::endl;
-    file << "   <spring_coeff unit=\"LBS/FT\">      " << _gear_spring[MAIN] << " </spring_coeff>" << std::endl;
-    file << "   <damping_coeff unit=\"LBS/FT/SEC\"> " << _gear_spring[MAIN] << " </damping_coeff>" << std::endl;
+    file << "    <spring_coeff  unit=\"" << Param::get_unit(true, SPRING, convert) << "\">     " << Param::get(_gear_spring[MAIN], SPRING, convert) << " </spring_coeff>" << std::endl;
+    file << "    <damping_coeff unit=\"" << Param::get_unit(true, DAMPING, convert) << "\"> " << Param::get(_gear_damp[MAIN], DAMPING, convert) << " </damping_coeff>" << std::endl;
     file << "  </contact>" << std::endl;
     file << std::endl;
     file << " </ground_reactions>" << std::endl;
