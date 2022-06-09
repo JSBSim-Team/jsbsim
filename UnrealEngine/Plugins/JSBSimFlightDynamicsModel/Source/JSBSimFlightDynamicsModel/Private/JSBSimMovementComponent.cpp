@@ -440,7 +440,8 @@ void UJSBSimMovementComponent::PrepareJSBSim()
 		for (int32 i = 0; i < EngineCount; i++)
 		{
 			EngineCommands[i].Throttle = 0.0;
-			EngineCommands[i].Mixture = 0.0;
+			EngineCommands[i].Mixture = 1.0;
+            EngineCommands[i].Magnetos = EMagnetosMode::Both;
 			EngineCommands[i].Running = true;
 		}
 	}
@@ -858,7 +859,7 @@ void UJSBSimMovementComponent::ApplyEnginesCommands()
 		{
 			// FGPiston code block
 			std::shared_ptr < JSBSim::FGPiston> PistonEngine = std::static_pointer_cast<JSBSim::FGPiston>(Propulsion->GetEngine(i));
-			PistonEngine->SetMagnetos(EngineCommand.Magnetos);
+			PistonEngine->SetMagnetos((int)EngineCommand.Magnetos);
 			break;
 		}
 		case JSBSim::FGEngine::etTurbine:
@@ -913,9 +914,9 @@ void UJSBSimMovementComponent::GetEnginesStates()
 		case JSBSim::FGEngine::etPiston:
 		{
 			// TODO
-			//// FGPiston code block
-			//JSBSim::FGPiston* PistonEngine = (JSBSim::FGPiston*)Propulsion->GetEngine(i);
-			//PistonEngine->SetMagnetos(EngineCommand.Magnetos);
+			// FGPiston code block
+            std::shared_ptr < JSBSim::FGPiston> PistonEngine = std::static_pointer_cast<JSBSim::FGPiston>(Engine);
+            EngineStates[i].Magnetos = (EMagnetosMode) PistonEngine->GetMagnetos();
 			break;
 		}
 		case JSBSim::FGEngine::etTurbine:
