@@ -176,17 +176,17 @@ public:
 
 	// Engine Properties 
 	
-	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
+	UPROPERTY(Transient, BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
 	TArray<struct FEngineCommand> EngineCommands;
-	UPROPERTY(BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
+	UPROPERTY(Transient, BlueprintReadOnly, Editfixedsize, EditAnywhere, Category = "Model|Engines")
 	TArray<struct FEngineState> EngineStates;
 
 	// Flight Control Commands and State
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
+	UPROPERTY(Transient, BlueprintReadWrite, EditAnywhere, Category = "Commands")
 	FFlightControlCommands Commands;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "State")
+	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")
 	FAircraftState AircraftState;
 
 

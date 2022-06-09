@@ -654,6 +654,9 @@ void UJSBSimMovementComponent::DoTrim()
 
 void UJSBSimMovementComponent::UpdateLocalTransforms()
 {
+    if (MassBalance == nullptr || Aircraft == nullptr || GroundReactions == nullptr)
+      return;
+
 	// Structural Frame To Actor Frame
 	FMatrix StructuralToActorMatrix(FMatrix::Identity);
 	StructuralToActorMatrix.SetAxis(0, FVector(-1, 0, 0));
@@ -681,6 +684,17 @@ void UJSBSimMovementComponent::UpdateLocalTransforms()
 	// Visual Reference Position
 	JSBSim::FGColumnVector3 VRPLocationStructural = Aircraft->GetXYZvrp() * INCH_TO_CENTIMETER;
 	VRPLocalPosition = StructuralToActor.TransformPosition(FVector(VRPLocationStructural(1), VRPLocationStructural(2), VRPLocationStructural(3)));
+
+    // Gear Locations
+    for (int i = 0; i < GroundReactions->GetNumGearUnits(); i++)
+    {
+      std::shared_ptr<JSBSim::FGLGear> Gear = GroundReactions->GetGearUnit(i);
+      if ((int32)i < Gears.Num())
+      {
+        JSBSim::FGColumnVector3 GearBodyLocation = Gear->GetBodyLocation() * FEET_TO_CENTIMETER;
+        Gears[i].RelativeLocation = BodyToActor.TransformPosition(FVector(GearBodyLocation(1), GearBodyLocation(2), GearBodyLocation(3)));
+      }
+    }
 }
 
 // Gears
