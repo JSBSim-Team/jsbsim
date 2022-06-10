@@ -28,11 +28,12 @@
 #define _SG_PATH_HXX
 
 #include <sys/types.h>
-
-#include <simgear/compiler.h>
 #include <string>
 #include <ctime>
 #include <vector>
+
+#include "simgear/compiler.h"
+#include "JSBSim_API.h"
 
 #ifdef _MSC_VER
   typedef int mode_t;
@@ -49,7 +50,7 @@ typedef string_list::iterator string_list_iterator;
  * automatically to the proper format.
  */
 
-class SGPath {
+class JSBSIM_API SGPath {
 
 public:
 

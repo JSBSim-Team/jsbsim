@@ -58,7 +58,8 @@ Controls::Controls(Aeromatic *p) : System(p, true)
     _description.push_back("Aircraft control");
 
     Param *controls = new Param("Control system", 0, _ctype, MAX_CONTROL);
-    _inputs.push_back(controls);
+    _inputs_order.push_back("Control system");
+    _inputs["Control system"] = controls;
 
     _control.push_back(new CableControls(p));
     controls->add_option(_control[0]->get_description());
@@ -108,25 +109,24 @@ void CableControls::set(const float* cg_loc)
     float TR = _aircraft->_wing.taper;
 
     float Vt = (Vs > 1.0f) ? (2.8f*Vs) : 202.0f;	// approx. 120kts.
-    float rho = 0.0023769f;
-    float Q = 0.5f*rho*Vt*Vt;
+    float Q = 0.5f*RHO*Vt*Vt;
     float CL = W/Q/Sw;
 
     if (Vs > 0.5f)
     {
         // *** CLmax based on wing geometry and stall speed ***
-        _aircraft->_CLmax[0] = 2.0f*Ws/(rho*Sw*Vs*Vs);
+        _aircraft->_CLmax[0] = 2.0f*Ws/(RHO*Sw*Vs*Vs);
 
         if (_aircraft->_Mcrit == 0)
         {
             // *** Critical Mach based on wing geometry and stall speed ***
-            float TC = _aircraft->_wing.thickness/cbarw;
+            float T_C = _aircraft->_wing.thickness/cbarw;
 
             // Korn  equation
             float CS = cosf(sweep_le);
             float CS2 = CS*CS, CS3 = CS2*CS;
             float Ka = _aircraft->_wing.Ktf;
-            float Mdd = Ka/CS - TC/CS2 - CL/(10.0f*CS3);
+            float Mdd = Ka/CS - T_C/CS2 - CL/(10.0f*CS3);
             _aircraft->_Mcrit = Mdd - 0.1077217345f;
         }
     }
@@ -152,75 +152,82 @@ void CableControls::set(const float* cg_loc)
     float ch = cbarw*sqrtf(Sh/Sw);
 
     // drag
-// http://faculty.dwc.edu/sadraey/Chapter%203.%20Drag%20Force%20and%20its%20Coefficient.pdf
-    float Sv = _aircraft->_vtail.area;
-    float TC = _aircraft->_wing.thickness/cbarw;
-
-    float Re = 150000;
-    float Cf = 1.328f/sqrtf(Re);
-
+// https://www.fzt.haw-hamburg.de/pers/Scholz/HOOU/AircraftDesign_13_Drag.pdf
     float M2, M = 0.01f;
-    float fM = 1.0f - 0.08f*powf(M, 1.45f);
 
-    // Sfus: Fuselage wetted area
-    float D = _aircraft->get_fuselage_diameter();
-    float L = _aircraft->_length;
-    float fLD = 1.0f + 60.0f/powf(L/D, 3.0f) + 0.0025f*(L/D);
-    float Sfus = 0.75f*PI*D*L;
-    float CD0f = Cf*fLD*fM*(Sfus/Sw);
+    float Cf;
+    switch(_aircraft->_atype)
+    {
+    case LIGHT:
+        if (_aircraft->_no_engines == 0) Cf = 0.0030f;
+        else if (_aircraft->_no_engines == 1) Cf = 0.0055f;
+        else Cf = 0.0045f;
+        break;
+    case PROP_TRANSPORT:
+        Cf = 0.0035f;
+        break;
+    case JET_TRANSPORT:
+        Cf = 0.0030f;
+        break;
+    case PERFORMANCE:
+        Cf = 0.0035f;
+        break;
+    case FIGHTER:
+        Cf = 0.0030f;
+        break;
+#if 0
+    case BIPLANE:
+        Cf = 0.0065f;
+        break;
+#endif
+    default:
+        Cf = 0.0030f;
+        break;
+    }
+
+    // Fuselage
+    float Df = _aircraft->get_fuselage_diameter();
+    float Lf = _aircraft->_length;
+    float fr = Lf/Df; // fuselage finess ratio
+
+    float Qf = 1.0f;
+    float FFf = 1.0f + 60.0f/powf(fr, 3.0f) + fr/400.0f;
+    float Swet_f = PI*Df*Lf*powf(1.0f-2.0f/fr, 0.667f)*(1.0f + 1.0f/(fr*fr));
+    float CD0f = Cf*FFf*Qf*Swet_f/Sw;
 
     // Main Wing
-    Cf = 0.2f*Cf + 0.8f*0.455f/powf(logf(Re),2.58f);
-    float CDminw = 0.004f;
-    float fD = powf(CDminw/0.004f, 0.4f);
-    float fTC = 1.0f + 2.7f*TC + 100.0f*powf(TC, 4.0f);
-    float Swing = 2.0f*(1.0f + 0.5f*TC)*bw*cbarw;
-    float CD0w = Cf*fM*fTC*fD*(Swing/Sw);
+    float Qw = 1.0f;
+    float T_Cw = _aircraft->_wing.thickness/cbarw;
+    float FFw = 1.0f + 2.7f*T_Cw + 100.0f*powf(T_Cw, 4.0f);
+    float Swet_w = 2.0f*(1.0f + 0.25f*T_Cw)*bw*cbarw;
+    float CD0w = Cf*FFw*Qw*Swet_w/Sw;
     CD0w *= (1.0f - sinf(sweep));
 
+    // Horizontal tail and vertical tail are aerodynamically clean
+    Cf = 0.0025f;
+
     // Horizontal tail
+    float bh = _aircraft->_htail.span;
     float cbarh = _aircraft->_htail.chord_mean;
-    float TCh = _aircraft->_htail.thickness/cbarh;
-    float CDminh = 0.002f;
-    float fDh = powf(CDminh/0.004f, 0.4f);
-    float fTCh = 1.0f + 2.7f*TCh + 100.0f*powf(TCh, 4.0f);
-    float CD0h = Cf*fM*fTCh*fDh*(Swing/Sw);
-    CD0h *= (1.0f - sinf(_aircraft->_htail.sweep));
+    float T_Ch = _aircraft->_htail.thickness/cbarh;
+
+    float Qh = 1.03f;
+    float FFh = 1.0f + 2.7f*T_Ch + 100.0f*powf(T_Ch, 4.0f);
+    float Swet_h = 2.0f*(1.0f + 0.25f*T_Ch)*bh*cbarw;
+    float CD0h = Cf*FFh*Qh*Swet_h/Sw;
 
     // Vertical tail
     float bv = _aircraft->_vtail.span;
     float cbarv = _aircraft->_vtail.chord_mean;
-    float TCv = _aircraft->_vtail.thickness/cbarv;
-    float CDminv = 0.002f;
-    float fDv = powf(CDminv/0.004f, 0.4f);
-    float fTCv = 1.0f + 2.7f*TCv + 100.0f*powf(TCv, 4.0f);
-    float Svtail = 2.0f*(1.0f + 0.5f*TCv)*bv*cbarv;
-    float CD0v = Cf*fM*fTCv*fDv*(Svtail/Sv);
-    CD0v *= (1.0f - sinf(_aircraft->_vtail.sweep));
+    float T_Cv = _aircraft->_vtail.thickness/cbarv;
 
-    float Kc = 1.05f;
-    switch(_aircraft->_atype)
-    {
-    case LIGHT:
-        if (_aircraft->_no_engines > 0) Kc = 1.3f;
-        break;
-    case PERFORMANCE:
-    case PROP_TRANSPORT:
-        Kc = 1.2f;
-        break;
-    case FIGHTER:
-    case JET_TRANSPORT:
-        Kc = 1.1f;
-        break;
-//  case BIPLANE:
-    default:
-        Kc = 1.5f;
-        break;
-    }
-#if 0
- printf("CD0: %f (%f), Kc: %f, CD0f: %f, CD0w: %f, CD0h: %f, CD0v: %f\n", _aircraft->_CD0, Kc*(CD0f + CD0w + CD0h + CD0v), Kc, CD0f, CD0w, CD0h, CD0v);
-#endif
-    _aircraft->_CD0 = Kc*(CD0f + CD0w + CD0h + CD0v);
+    float Qv = 1.03f;
+    float FFv = 1.0f + 2.7f*T_Cv + 100.0f*powf(T_Cv, 4.0f);
+    float Swet_v = 2.0f*(1.0f + 0.25f*T_Cv)*bv*cbarw;
+    float CD0v = Cf*FFv*Qv*Swet_v/Sw;
+
+    // Sum Drag coefficients
+    _aircraft->_CD0 = CD0f + CD0w + CD0h + CD0v;
 
 
     // lift
@@ -233,6 +240,7 @@ void CableControls::set(const float* cg_loc)
     float iw = ((CL/CLaw[0]) + a0w - alpha);
     float ih = ((CLh/CLah[0]) - (alpha*(1.0f-deda) - E0 + Ee*de));
 
+    float Sv = _aircraft->_vtail.area;
     float lv = _aircraft->_vtail.arm;
     float Vv = Sv*lv/bw/Sw;
 
@@ -260,7 +268,7 @@ void CableControls::set(const float* cg_loc)
 
     float zw = -0.0f; // z-pos. wing: positive down
     float zv = -1.0f; // z-pos. vertical tail:  positive down
-    float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*D)/(bw*bw));
+    float Clbwf = 1.2f*sqrt(AR)*((zw+2.0f*Df)/(bw*bw));
     float Clbvt = -(zv/bw)*CLah[0];
     for (int i=0; i<4; ++i)
     {
@@ -275,22 +283,22 @@ void CableControls::set(const float* cg_loc)
             else	// No stall speed was specified
             {
                 CL = CL0;
-                Vt = sqrtf(W/(0.5f*rho*CL*Sw));
+                Vt = sqrtf(W/(0.5f*RHO*CL*Sw));
             }
             break;
         case 1:
             Vt = 1.1f*Vs;
-            Q = 0.5f*rho*Vs*Vs;
+            Q = 0.5f*RHO*Vs*Vs;
             CL = W/Q/Sw;
             break;
         case 2:
             Vt = 1.5f*Vs;
-            Q = 0.5f*rho*Vt*Vt;
+            Q = 0.5f*RHO*Vt*Vt;
             CL = W/Q/Sw;
             break;
         case 3:
             CL = CL0;
-            Vt = sqrtf(W/(0.5f*rho*CL*Sw));
+            Vt = sqrtf(W/(0.5f*RHO*CL*Sw));
             break;
         }
         _aircraft->_Re.at(i) = (Vt * cbarw)*6372.38970987f; // 1/0.000156927
@@ -344,9 +352,9 @@ void CableControls::set(const float* cg_loc)
         float dcgx = -(cg_loc[X] - _aircraft->_aero_rp[X])*INCH_TO_FEET;
 
         // fuselage component: L = fuselage length, D = fuselage max. diameter.
-        float dwf = L/_aircraft->_aero_rp[X];
+        float dwf = Lf/_aircraft->_aero_rp[X];
         float Kf = 0.033f + 0.538f*dwf + 1.5f*dwf*dwf;
-        float Cmaf = -Kf*D*D*L/Sw/cbarw/CLaw[0];
+        float Cmaf = -Kf*Df*Df*Lf/Sw/cbarw/CLaw[0];
 
         _aircraft->_Cmalpha = CLaw[0]*(dcgx/cbarw) - Vh*CLah[0]*(1.0f-deda) + Cmaf;
         _aircraft->_Cmq = -_aircraft->_CLq*(lh/cbarw);
@@ -371,7 +379,7 @@ void CableControls::set(const float* cg_loc)
 
     // yaw
     float k0 = 0.075f;
-    float k1 = 1.0f+TC;	// correction factor for wing thickness
+    float k1 = 1.0f+T_Cw;	// correction factor for wing thickness
     _aircraft->_Cnbeta = nv*Vv*CLav[0]; // *(1.0f-dsdB);
     _aircraft->_Cnr = -2.0f*nv*Vv*CLav[0]*(lv/bw) - (k0*CL*CL + k1*CD0w);
     _aircraft->_Cndr = -Vv*Cltdr;
@@ -381,10 +389,10 @@ void CableControls::set(const float* cg_loc)
 std::string CableControls::lift()
 {
     float CLalpha, CLa_vortex, CLmax, CL0, CLde, CLq, CLadot;
-    float alpha_CLmax, alpha0, TC;
+    float alpha_CLmax, alpha0, T_C;
     std::stringstream file;
 
-    TC = _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
+    T_C = _aircraft->_wing.thickness/_aircraft->_wing.chord_mean;
     CLalpha = _aircraft->_CLalpha[0];
     CLmax = _aircraft->_CLmax[0];
     CL0 = _aircraft->_CL0;
@@ -422,9 +430,9 @@ std::string CableControls::lift()
     file << "            <independentVar lookup=\"row\">aero/alpha-rad</independentVar>" << std::endl;
     file << "            <tableData>" << std::endl;
     file << "              -1.57  0.0000" << std::endl;
-    file << "              -1.22 " << std::setw(6) << (-0.6428*(1.0f-TC)) << std::endl;
-    file << "              -1.05 " << std::setw(6) << (-0.8660*(1.0f-TC)) << std::endl;
-    file << "              -0.88 " << std::setw(6) << (-1.0f*(1.0f-TC)) << std::endl;
+    file << "              -1.22 " << std::setw(6) << (-0.6428*(1.0f-T_C)) << std::endl;
+    file << "              -1.05 " << std::setw(6) << (-0.8660*(1.0f-T_C)) << std::endl;
+    file << "              -0.88 " << std::setw(6) << (-1.0f*(1.0f-T_C)) << std::endl;
 
     float alpha = alpha0-alpha_CLmax;
     float CL = -(CLmax-(0.6*alpha_CLmax*CLalpha)-CL0);
@@ -446,14 +454,14 @@ std::string CableControls::lift()
                               << CL << std::endl;
 
     alpha = alpha0+alpha_CLmax;
-    CL = (CLmax-(0.6*alpha_CLmax*(CLalpha+CLa_vortex)));
+    CL = 0.4f*alpha_CLmax*(CLalpha+CLa_vortex);
     file << "               " << std::setprecision(2)
                               << alpha << std::setprecision(4) << "  "
                               << CL << std::endl;
 
-    file << "               0.88  " << std::setw(6) << (1.0f*(1.0f+TC)) << std::endl;
-    file << "               1.05  " << std::setw(6) << (0.8660*(1.0f+TC)) << std::endl;
-    file << "               1.22  " << std::setw(6) << (0.6428*(1.0f+TC)) << std::endl;
+    file << "               0.88  " << std::setw(6) << (1.0f*(1.0f+T_C)) << std::endl;
+    file << "               1.05  " << std::setw(6) << (0.8660*(1.0f+T_C)) << std::endl;
+    file << "               1.22  " << std::setw(6) << (0.6428*(1.0f+T_C)) << std::endl;
     file << "               1.57  0.0000" << std::endl;
     file << "            </tableData>" << std::endl;
     file << "          </table>" << std::endl;
@@ -523,7 +531,6 @@ std::string CableControls::drag()
 
     file << std::setprecision(4) << std::fixed << std::showpoint;
     file << "    <!-- CD0 is based on fuselage, wing, horizontal- en vertical tail -->" << std::endl;
-    file << "    <!-- Antennas, struts and wires are not taken into account        -->" << std::endl;
     file << "    <!-- CD for gear (fixed and retractable) is defined below         -->" << std::endl;
     file << "    <function name=\"aero/force/Drag_minimum\">" << std::endl;
     file << "       <description>Minimum drag</description>" << std::endl;
@@ -851,14 +858,14 @@ std::string CableControls::yaw()
         float alpha = -MAX_ALPHA;
         file << std::setw(24) << "";
         for (int i=0; i<2; i++) {
-            file << std::setw(9) << int(_aircraft->_Re[i]);
+            file << std::setw(12) << int(_aircraft->_Re[i]);
         }
         for (int j=0; j<2; ++j)
         {
             file << std::endl << std::setprecision(4) << std::setw(24) << alpha;
             for (int i=0; i<2; i++)
             {
-                file << std::setw(9) << _aircraft->_Cna[j+2*i];
+                file << std::setw(12) << _aircraft->_Cna[j+2*i];
             }
             alpha = MAX_ALPHA;
         }
@@ -1241,7 +1248,7 @@ std::string CableControls::_print_vector(std::vector<float>& C)
         file << "             <independentVar lookup=\"row\">aero/Re</independentVar>" << std::endl;
         file << "             <tableData>" << std::endl;
         for (int i=0; i<4; ++i) {
-            file << std::setw(24) << int(_aircraft->_Re[i]) << std::setw(9) << std::setprecision(4) << C[i] << std::endl;
+            file << std::setw(24) << int(_aircraft->_Re[i]) << std::setw(12) << std::setprecision(4) << C[i] << std::endl;
         }
         file << "             </tableData>" << std::endl;
         file << "           </table>" << std::endl;
@@ -1256,14 +1263,14 @@ std::string CableControls::_print_vector(std::vector<float>& C)
         float alpha = MIN_ALPHA;
         file << std::setw(24) << "";
         for (int i=0; i<4; i++) {
-            file << std::setw(9) << int(_aircraft->_Re[i]);
+            file << std::setw(12) << int(_aircraft->_Re[i]);
         }
         for (int j=0; j<2; ++j)
         {
             file << std::endl << std::setprecision(4) << std::setw(24) << alpha;
             for (int i=0; i<4; i++)
             {
-                file << std::setw(9) << C[j+2*i];
+                file << std::setw(12) << C[j+2*i];
             }
             alpha = MAX_ALPHA;
         }
