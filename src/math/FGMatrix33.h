@@ -66,7 +66,7 @@ CLASS DOCUMENTATION
 DECLARATION: FGMatrix33
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGMatrix33
+class JSBSIM_API FGMatrix33
 {
 public:
 
@@ -453,7 +453,7 @@ inline FGMatrix33 operator*(double scalar, const FGMatrix33& A) {
 
     Write the matrix to a stream.
 */
-std::ostream& operator<<(std::ostream& os, const FGMatrix33& M);
+JSBSIM_API std::ostream& operator<<(std::ostream& os, const FGMatrix33& M);
 
 /** Read matrix from a stream.
 
@@ -462,7 +462,7 @@ std::ostream& operator<<(std::ostream& os, const FGMatrix33& M);
 
     Read matrix from a stream.
 */
-std::istream& operator>>(std::istream& is, FGMatrix33& M);
+JSBSIM_API std::istream& operator>>(std::istream& is, FGMatrix33& M);
 
 } // namespace JSBSim
 #endif

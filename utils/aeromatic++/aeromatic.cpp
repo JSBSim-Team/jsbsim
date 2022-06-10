@@ -116,6 +116,8 @@ void help()
     printf("\nOptions:\n");
     printf(" -l, --log <file>\t\tLog the output to a log file.\n");
     printf(" -i, --input <file>\t\tRead the input parameters from a log file.\n");
+    printf("     --fgfs\t\tAdd FlightGear configuration files.\n");
+    printf("     --split\t\tSplit different sections into separate files.\n");
     printf(" -h, --help\t\t\tprint this message and exit\n");
 
     printf("\nWhen run without any parameters the program will generate an FDM and exit.\n");
@@ -172,28 +174,28 @@ int main(int argc, char *argv[])
     cout << "You can always enter 'h' to get verbose help" << endl << endl;
 
     cout << "** General Information **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._general.size(); ++i) {
-        ask(in, log, aeromatic._general[i]);
+    for (auto it : aeromatic._general_order) {
+        ask(in, log, aeromatic._general[it]);
     }
     cout << endl;
 
     cout << "** Weight and Balance **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._weight_balance.size(); ++i) {
-        ask(in, log, aeromatic._weight_balance[i]);
+    for (auto it : aeromatic._weight_balance_order) {
+        ask(in, log, aeromatic._weight_balance[it]);
     }  
     cout << endl;
 
     cout << "** Geometry **" << endl << endl;
-    for (unsigned i=0; i<aeromatic._geometry.size(); ++i) {
-        ask(in, log, aeromatic._geometry[i]);
+    for (auto it : aeromatic._geometry_order) {
+        ask(in, log, aeromatic._geometry[it]);
     }
     cout << endl;
 
     cout << "** Systems **" << endl << endl;
     const vector<Aeromatic::System*> systems = aeromatic.get_systems();
-    for (unsigned i=0; i<systems.size(); ++i)
+    for (auto it : systems)
     {
-        Aeromatic::System* system = systems[i];
+        Aeromatic::System* system = it;
 
 //      if (system->_inputs.size()) {
 //          cout << "  ** " << system->get_description() << endl << endl;
@@ -207,8 +209,14 @@ int main(int argc, char *argv[])
         cout << endl;
     }
 
+    bool split = getCommandLineOption(argc, argv, (char*)"--split") != NULL;
+    aeromatic._split = split;
+
     if (aeromatic.fdm())
     {
+        if (getCommandLineOption(argc, argv, (char*)"--fgfs") != NULL) {
+            aeromatic.write_fgfs();
+        }
         cout << "We're finished, the files have been written to: " << endl;
         cout << aeromatic._dir;
     }
