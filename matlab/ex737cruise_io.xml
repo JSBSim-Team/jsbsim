@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<s_function_config>
+    <input>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> fcs/aileron-cmd-norm </property>
+        <property> fcs/elevator-cmd-norm </property>
+        <property> fcs/rudder-cmd-norm </property>
+        <property> fcs/mixture-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/set-running </property>
+        <property> fcs/flap-cmd-norm </property>
+        <property> gear/gear-cmd-norm </property>
+    </input>
+    <outputs>
+        <output name="State">
+            <property> velocities/u-fps </property>
+            <property> velocities/v-fps </property>
+            <property> velocities/w-fps </property>
+            <property> velocities/p-rad_sec </property>
+            <property> velocities/q-rad_sec </property>
+            <property> velocities/r-rad_sec </property>
+            <property> position/h-sl-ft </property>
+            <property> position/long-gc-deg </property>
+            <property> position/lat-gc-deg </property>
+            <property> attitude/phi-rad </property>
+            <property> attitude/theta-rad </property>
+            <property> attitude/psi-rad </property>
+        </output>
+        <output name="Control">
+            <property> fcs/throttle-pos-norm[0] </property>
+            <property> fcs/left-aileron-pos-rad </property>
+            <property> fcs/right-aileron-pos-rad </property>
+            <property> fcs/elevator-pos-norm </property>
+            <property> fcs/rudder-pos-norm </property>
+            <property> fcs/flap-pos-norm </property>
+            <property> fcs/speedbrake-pos-norm </property>
+            <property> fcs/spoiler-pos-norm </property>
+            <property> gear/gear-cmd-norm </property>
+        </output>
+        <output name="Pilot">
+            <property> forces/load-factor </property>
+            <property> aero/alpha-rad </property>
+            <property> aero/alphadot-rad_sec </property>
+            <property> aero/beta-rad </property>
+            <property> aero/betadot-rad_sec </property>
+            <property> velocities/vc-fps </property>
+            <property> velocities/vc-kts </property>
+            <property> velocities/vtrue-fps </property>
+            <property> velocities/vg-fps </property>
+            <property> velocities/mach </property>
+            <property> velocities/h-dot-fps </property>
+            <property> aero/qbar-psf </property>
+            <property> fcs/elevator-cmd-norm </property>
+        </output>
+    </outputs>
+    <!--This is an optional parameter-->
+    <!--The only properties in this should be atmosphere related-->
+    <!--
+    <weather>
+        <property> atmosphere/wind-north-fps </property>
+    </weather>
+    -->
+</s_function_config>
