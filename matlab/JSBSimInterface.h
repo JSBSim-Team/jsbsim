@@ -62,10 +62,10 @@ public:
 	bool AddOutputPropertyNode(std::string property, const int outputPort);
 	
 	/// Copy control inputs to JSBSim 
-    bool CopyInputControlsToJSBSim(double controls[]);
+    bool CopyInputControlsToJSBSim(std::vector<double> controls);
 
 	/// Copy weather inputs to JSBSim
-	bool CopyInputWeatherToJSBSim(double weather[]);
+	bool CopyInputWeatherToJSBSim(std::vector<double> weather);
 
 	/// Copy the flight state outputs from JSBSim
     bool CopyOutputsFromJSBSim(double *stateArray, const int outputPort);

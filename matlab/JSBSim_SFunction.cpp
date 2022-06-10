@@ -412,71 +412,10 @@ static void mdlInitializeConditions(SimStruct *S)
     // Create new JSBSimInterface object and initialize it with delta_t and num_outputs.
     JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs);
     ssGetPWork(S)[0] = (void *) JII;
-    
-    // Get the user provided input/output config.
-    std::string io_config_file = getMxArrayString(io_config_file_name);
-
-    FGXMLFileRead XMLFileRead;
-    Element* document = XMLFileRead.LoadXMLDocument(SGPath(io_config_file));
-
-    // Add input properties JSBSim should take in.
-    int i;
-    std::string prop;
-    Element* inputElement = document->FindElement("input");
-    Element* propElement = inputElement->FindElement("property");
-    for (i = 0; i < inputSize; i++) {
-        prop = propElement->GetDataLine();
-        if (!JII->AddInputPropertyNode(prop)) {
-            ssSetErrorStatus(S, "Could not add property from XML file to input port.\n"
-                    "HINT: You can only use properties that are WRITE-only for this port.\n");
-                return;
-        }
-
-        propElement = inputElement->FindNextElement("property");
-    }
-
-    // If the weather element exists, add input properties for atmosphere JSBSim should take in.
-    if (useWeather) {
-        Element* weatherElement = document->FindElement("weather");
-        propElement = weatherElement->FindElement("property");
-        for (i = 0; i < inputSize; i++) {
-            prop = propElement->GetDataLine();
-            if (!JII->AddWeatherPropertyNode(prop)) {
-                ssSetErrorStatus(S, "Could not add property from XML file to weather port.\n"
-                    "HINT: You can only use properties that are WRITE-only from \"atmosphere/\" for this port.\n");
-                return;
-            }
-
-            propElement = weatherElement->FindNextElement("property");
-        }
-    }
-
-    // Add output properties JSBSim will deliver to each output channel.
-    int j;
-    int outputSize;
-    Element* outputsElement = document->FindElement("outputs");
-    Element* outputElement = outputsElement->FindElement("output");
-    for (i = 0; i < numOutputs; i++) {
-        outputSize = outputElement->GetNumElements();
-        propElement = outputElement->FindElement("property");
-
-        for (j = 0; j < outputSize; j++) {
-            prop = propElement->GetDataLine();
-            if (!JII->AddOutputPropertyNode(prop, i)) {
-                ssSetErrorStatus(S, "Could not add property from XML file to output port.\n"
-                    "HINT: You can only use properties that are READ-only for this port.\n");
-                return;
-            }
-
-            propElement = outputElement->FindNextElement("property");
-        }
-
-        outputElement = outputsElement->FindNextElement("output");
-    }
 
     // Check if a script file is given in Simulink.
     // If not, initialize an aircraft
-    if (use_script){
+    if (use_script) {
 
         // Keep initfile as empty so that we can use the initialization settings from the script.
         // See bool FGScript::LoadScript(const SGPath&, double, const SGPath&) for details.
@@ -509,6 +448,67 @@ static void mdlInitializeConditions(SimStruct *S)
             ssSetErrorStatus(S, "Reset file could not be loaded.\n");
             return;
         }
+    }
+    
+    // Get the user provided input/output config.
+    std::string io_config_file = getMxArrayString(io_config_file_name);
+
+    FGXMLFileRead XMLFileRead;
+    Element* document = XMLFileRead.LoadXMLDocument(SGPath(io_config_file));
+
+    // Add input properties JSBSim should take in.
+    int i;
+    std::string prop;
+    Element* inputElement = document->FindElement("input");
+    Element* propElement = inputElement->FindElement("property");
+    for (i = 0; i < inputSize; i++) {
+        prop = propElement->GetDataLine();
+        if (!JII->AddInputPropertyNode(prop)) {
+            ssSetErrorStatus(S, "Could not add property from XML file to input port.\n"
+                    "HINT: You can only use properties that exist and that are WRITE-only for this port.\n");
+                return;
+        }
+
+        propElement = inputElement->FindNextElement("property");
+    }
+
+    // If the weather element exists, add input properties for atmosphere JSBSim should take in.
+    if (useWeather) {
+        Element* weatherElement = document->FindElement("weather");
+        propElement = weatherElement->FindElement("property");
+        for (i = 0; i < inputSize; i++) {
+            prop = propElement->GetDataLine();
+            if (!JII->AddWeatherPropertyNode(prop)) {
+                ssSetErrorStatus(S, "Could not add property from XML file to weather port.\n"
+                    "HINT: You can only use properties that exist and that are WRITE-only from \"atmosphere/\" for this port.\n");
+                return;
+            }
+
+            propElement = weatherElement->FindNextElement("property");
+        }
+    }
+
+    // Add output properties JSBSim will deliver to each output channel.
+    int j;
+    int outputSize;
+    Element* outputsElement = document->FindElement("outputs");
+    Element* outputElement = outputsElement->FindElement("output");
+    for (i = 0; i < numOutputs; i++) {
+        outputSize = outputElement->GetNumElements();
+        propElement = outputElement->FindElement("property");
+
+        for (j = 0; j < outputSize; j++) {
+            prop = propElement->GetDataLine();
+            if (!JII->AddOutputPropertyNode(prop, i)) {
+                ssSetErrorStatus(S, "Could not add property from XML file to output port.\n"
+                    "HINT: You can only use properties that exist and that are READ-only for this port.\n");
+                return;
+            }
+
+            propElement = outputElement->FindNextElement("property");
+        }
+
+        outputElement = outputsElement->FindNextElement("output");
     }
 
     // Load initial conditions into the output work vectors.
@@ -563,12 +563,12 @@ static void mdlUpdate(SimStruct *S, int_T tid)
 
     InputRealPtrsType ctrlCmdInput = ssGetInputPortRealSignalPtrs(S, 0);
     double* dWorkCtrlCmdIn = (double*) ssGetDWork(S, 0);
-    double ctrlVec[inputSize];
+    std::vector<double> ctrlVec(inputSize);
     int i;
     for (i = 0; i < inputSize; i++) {
         ctrlVec[i] = (double) *ctrlCmdInput[i];
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
-    }    
+    }
     
     if (!JII->CopyInputControlsToJSBSim(ctrlVec)) {
         ssSetErrorStatus(S, "Issue copying control inputs to JSBSim.\n");
@@ -578,7 +578,7 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     if (useWeather) {
         InputRealPtrsType weatherInput = ssGetInputPortRealSignalPtrs(S, 1);
         double* dWorkWeatherIn = (double*) ssGetDWork(S, 1);
-        double weatherVec[weatherInputSize];
+        std::vector<double> weatherVec(weatherInputSize);
         for (i = 0; i < weatherInputSize; i++) {
             weatherVec[i] = (double) *weatherInput[i];
             dWorkWeatherIn[i] = *weatherInput[i];
@@ -610,11 +610,11 @@ static void mdlTerminate(SimStruct *S)
 {
 	
 	JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
-    delete JII; 
+    delete JII;
 
 	mexPrintf("\n");
 	mexPrintf("Simulation completed.\n");
-	mexPrintf("Remember to reset the program by typing clearSF in the matlab command window! \n");
+    mexPrintf("Remember to reset the program by typing clearSF in the matlab command window! \n");
 }
 
 /*======================================================*

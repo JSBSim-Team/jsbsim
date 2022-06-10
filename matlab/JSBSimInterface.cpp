@@ -120,8 +120,12 @@ bool JSBSimInterface::LoadIC(SGPath ResetName)
 {
 
     auto IC = fdmExec->GetIC(); 
+	
     if (!IC->Load(ResetName)) return false;
+
     if (!fdmExec->RunIC()) return false;
+
+	return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +140,7 @@ bool JSBSimInterface::AddInputPropertyNode(std::string property)
 {
 
 	FGPropertyNode* node = pm->GetNode(property);
-	if (!node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
+	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
 
 	inputPort.push_back(node);
 	return true;
@@ -149,7 +153,7 @@ bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
 	if (!(property.substr(0, std::string("atmosphere/").size()) == std::string("atmosphere/"))) return false;
 
 	FGPropertyNode* node = pm->GetNode(property);
-	if (!node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
+	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
 
 	weatherPort.push_back(node);
 	return true;
@@ -162,14 +166,14 @@ bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outp
 	if (outputPort >= outputPorts.size()) return false;
 
 	FGPropertyNode* node = pm->GetNode(property);
-	if (!node->getAttribute(FGPropertyNode::Attribute::READ)) return false;
+	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::READ)) return false;
 
 	outputPorts.at(outputPort).push_back(node);
 	return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::CopyInputControlsToJSBSim(double controls[]) {
+bool JSBSimInterface::CopyInputControlsToJSBSim(std::vector<double> controls) {
     // TODO: error handling if controls is not correct size. 
     
 	if (!fdmExec) return false;
@@ -202,7 +206,7 @@ bool JSBSimInterface::CopyInputControlsToJSBSim(double controls[]) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::CopyInputWeatherToJSBSim(double weather[]) {
+bool JSBSimInterface::CopyInputWeatherToJSBSim(std::vector<double> weather) {
     // TODO: error handling if weather is not correct size. 
     
 	if (!fdmExec) return false;
