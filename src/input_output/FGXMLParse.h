@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGXMLParse : public XMLVisitor
+class FGXMLParse : public XMLVisitor
 {
 public:
   FGXMLParse(void) : current_element(nullptr) {}

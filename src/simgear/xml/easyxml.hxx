@@ -20,12 +20,11 @@ SENTRY
 HEADERS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "../compiler.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include "simgear/compiler.h"
-#include "JSBSim_API.h"
 
 typedef struct XML_ParserStruct* XML_Parser;
 
@@ -400,7 +399,7 @@ private:
  * @see XMLVisitor
  */
 
-void JSBSIM_API readXML (std::istream &input, XMLVisitor &visitor,
+extern void readXML (std::istream &input, XMLVisitor &visitor,
                      const std::string &path="");
 
 /** @relates XMLVisitor
@@ -420,6 +419,6 @@ void JSBSIM_API readXML (std::istream &input, XMLVisitor &visitor,
  * is a problem reading the file.
  * @see XMLVisitor
  */
-void JSBSIM_API readXML (const std::string &path, XMLVisitor &visitor);
+extern void readXML (const std::string &path, XMLVisitor &visitor);
 
 #endif // __EASYXML_HXX

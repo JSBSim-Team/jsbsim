@@ -110,7 +110,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGAerodynamics : public FGModel
+class FGAerodynamics : public FGModel
 {
 
 public:

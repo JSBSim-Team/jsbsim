@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGGroundReactions : public FGModel, public FGSurface
+class FGGroundReactions : public FGModel, public FGSurface
 {
 public:
   FGGroundReactions(FGFDMExec*);

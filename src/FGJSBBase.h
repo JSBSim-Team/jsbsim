@@ -44,7 +44,6 @@ INCLUDES
 #include <cmath>
 #include <stdexcept>
 
-#include "JSBSim_API.h"
 #include "input_output/string_utilities.h"
 
 #ifndef M_PI
@@ -57,7 +56,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-class JSBSIM_API BaseException : public std::runtime_error {
+class BaseException : public std::runtime_error {
   public:
     BaseException(const std::string& msg) : std::runtime_error(msg) {}
 };
@@ -76,7 +75,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGJSBBase {
+class FGJSBBase {
 public:
   /// Constructor for FGJSBBase.
   FGJSBBase() {};

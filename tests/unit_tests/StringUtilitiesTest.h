@@ -1,8 +1,6 @@
 #include <string>
 #include <cxxtest/TestSuite.h>
-#define BASE
 #include <input_output/string_utilities.h>
-#undef BASE
 
 class StringUtilitiesTest : public CxxTest::TestSuite
 {

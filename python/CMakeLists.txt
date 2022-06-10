@@ -103,7 +103,6 @@ add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h $<TARGET_FILE:libJSBSim>
   COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
                                            $<$<BOOL:${USING_MSBUILD}>:--config> $<$<BOOL:${USING_MSBUILD}>:$<CONFIG>>
-                                           $<$<BOOL:${BUILD_SHARED_LIBS}>:--sharedlibs>
                                            $<$<BOOL:${MINGW}>:--compiler> $<$<BOOL:${MINGW}>:mingw32>
   COMMENT "Building Python module...")
 
@@ -111,16 +110,6 @@ add_subdirectory(fpectl)
 
 add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
 add_dependencies(PythonJSBSim libJSBSim)
-
-# Windows needs the DLL to be copied locally for unit tests to run.
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/tests/JSBSim.dll
-                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                      $<TARGET_FILE:libJSBSim>
-                      ${CMAKE_BINARY_DIR}/tests)
-  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${CMAKE_BINARY_DIR}/tests/JSBSim.dll)
-  add_dependencies(CopyJSBSimDLL libJSBSim)
-endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)

@@ -218,11 +218,12 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGForce : public FGJSBBase
+class FGForce : public FGJSBBase
 {
 public:
   /// Constructor
   explicit FGForce(FGFDMExec *FDMExec);
+  FGForce(const FGForce& force);
 
   /// Destructor
   virtual ~FGForce();

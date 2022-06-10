@@ -181,7 +181,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGFDMExec : public FGJSBBase
+class FGFDMExec : public FGJSBBase
 {
   struct childData {
     std::unique_ptr<FGFDMExec> exec;

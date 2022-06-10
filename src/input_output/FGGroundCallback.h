@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGGroundCallback
+class FGGroundCallback
 {
 public:
 
@@ -122,7 +122,7 @@ protected:
 // The default sphere earth implementation:
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-class JSBSIM_API FGDefaultGroundCallback : public FGGroundCallback
+class FGDefaultGroundCallback : public FGGroundCallback
 {
 public:
   explicit FGDefaultGroundCallback(double semiMajor, double semiMinor) :

@@ -343,32 +343,22 @@ void FGAccelerations::InitializeDerivatives(void)
 
 void FGAccelerations::bind(void)
 {
-  using PMF = double (FGAccelerations::*)(int) const;
+  typedef double (FGAccelerations::*PMF)(int) const;
 
   PropertyManager->Tie("accelerations/pdot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPQRdot);
   PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRdot);
 
-  PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPQRidot);
-  PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRidot);
-  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRidot);
-
   PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
-
-  PropertyManager->Tie("accelerations/uidot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWidot);
-  PropertyManager->Tie("accelerations/vidot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWidot);
-  PropertyManager->Tie("accelerations/widot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWidot);
 
   PropertyManager->Tie("accelerations/a-body-x-ft_sec2", this, eX, (PMF)&FGAccelerations::GetBodyAccel);
   PropertyManager->Tie("accelerations/a-body-y-ft_sec2", this, eY, (PMF)&FGAccelerations::GetBodyAccel);
   PropertyManager->Tie("accelerations/a-body-z-ft_sec2", this, eZ, (PMF)&FGAccelerations::GetBodyAccel);
 
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
-
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
-  
   PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, (PMF)&FGAccelerations::GetWeight);
   PropertyManager->Tie("forces/fby-weight-lbs", this, eY, (PMF)&FGAccelerations::GetWeight);
   PropertyManager->Tie("forces/fbz-weight-lbs", this, eZ, (PMF)&FGAccelerations::GetWeight);

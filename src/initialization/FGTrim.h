@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGTrim : public FGJSBBase
+class FGTrim : public FGJSBBase
 {
   std::vector<FGTrimAxis> TrimAxes;
   unsigned int Nsub;

@@ -35,8 +35,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
-
-#include "JSBSim_API.h"
 #include "simgear/structure/SGSharedPtr.hxx"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +55,7 @@ CLASS DOCUMENTATION
 DECLARATION: FGParameter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGParameter : public SGReferenced
+class FGParameter : public SGReferenced
 {
 public:
   virtual ~FGParameter(void) {};

@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGPropagate : public FGModel {
+class FGPropagate : public FGModel {
 public:
 
   /** The current vehicle state vector structure contains the translational and

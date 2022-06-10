@@ -223,7 +223,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGInitialCondition : public FGJSBBase
+class FGInitialCondition : public FGJSBBase
 {
 public:
   /// Constructor

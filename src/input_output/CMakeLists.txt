@@ -4,7 +4,6 @@ set(SOURCES FGGroundCallback.cpp
             FGXMLElement.cpp
             FGXMLParse.cpp
             FGfdmSocket.cpp
-            FGXMLFileRead.cpp
             FGOutputType.cpp
             FGOutputFG.cpp
             FGOutputSocket.cpp

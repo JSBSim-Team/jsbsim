@@ -24,7 +24,7 @@ libtool
 ltmain.sh
 missing
 build*
-*.exe
+src/JSBSim*
 src/.libs/
 ./dotest
 *.patch

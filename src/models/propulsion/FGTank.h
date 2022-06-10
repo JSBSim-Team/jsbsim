@@ -199,7 +199,7 @@ be printed to the console if the location is not given
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGTank : public FGJSBBase
+class FGTank : public FGJSBBase
 {
 public:
   /** Constructor.

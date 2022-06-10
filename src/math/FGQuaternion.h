@@ -83,7 +83,7 @@ class FGMatrix33;
   CLASS DECLARATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGQuaternion : public FGJSBBase {
+class FGQuaternion : public FGJSBBase {
 public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
@@ -562,7 +562,7 @@ inline FGQuaternion QExp(const FGColumnVector3& omega) {
     @param os Stream to write to.
     @param q Quaternion to write.
     Write the quaternion to a stream.*/
-JSBSIM_API std::ostream& operator<<(std::ostream& os, const FGQuaternion& q);
+std::ostream& operator<<(std::ostream& os, const FGQuaternion& q);
 
 } // namespace JSBSim
 #endif

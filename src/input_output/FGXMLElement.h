@@ -140,7 +140,7 @@ typedef SGSharedPtr<Element> Element_ptr;
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API Element : public SGReferenced {
+class Element : public SGReferenced {
 public:
   /** Constructor
       @param nm the name of this element (if given)

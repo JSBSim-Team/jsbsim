@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <types.h>
 
@@ -46,7 +47,7 @@ public:
 
     virtual ~System() {
         for (auto it : _inputs) {
-            delete it.second;
+            delete it;
         }
         _inputs.clear();
     }
@@ -82,7 +83,7 @@ public:
     }
 
     virtual Param* param_next() {
-        return ((!_param || _enabled) && (_param < _inputs_order.size())) ? _inputs[_inputs_order[_param++]] : 0;
+        return ((!_param || _enabled) && (_param < _inputs.size())) ? _inputs[_param++] : 0;
     }
 
     bool enabled() {
@@ -95,8 +96,7 @@ public:
     bool _enabled;
 
 protected:
-    std::vector<std::string> _inputs_order;
-    std::map<std::string,Param*> _inputs;
+    std::vector<Param*> _inputs;
     unsigned _param = 0;
     int _subtype = 0;
 
@@ -109,8 +109,7 @@ class Flaps : public System
 public:
     Flaps(Aeromatic *p) : System(p, true) {
         _description.push_back("Flaps");
-        _inputs_order.push_back("Flaps");
-        _inputs["Flaps"] = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Flaps() {}
 
@@ -170,8 +169,7 @@ class ArrestorHook : public System
 public:
     ArrestorHook(Aeromatic *p) : System(p) {
         _description.push_back("Arrestor Hook");
-        _inputs_order.push_back("Arrestor Hook");
-        _inputs["Arrestor Hook"] = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~ArrestorHook() {}
 
@@ -186,10 +184,8 @@ class Spoilers : public System
 public:
     Spoilers(Aeromatic *p) : System(p) {
         _description.push_back("Spoilers");
-        _inputs_order.push_back("Spoilers");
-        _inputs["Spoilers"] = new Param(_description[0].c_str(), _supported, _enabled);
-        _inputs_order.push_back("differentialSpoiler");
-        _inputs["differentialSpoiler"] = new Param("Is the spoiler differential?", "Differential spoilers are used for faster roll rate", _differential);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
+        _inputs.push_back(new Param("Is the spoiler differential?", "Differential spoilers are used for faster roll rate", _differential));
     }
     ~Spoilers() {}
 
@@ -211,8 +207,7 @@ class Speedbrake : public System
 public:
     Speedbrake(Aeromatic *p) : System(p) {
         _description.push_back("Speedbrake");
-        _inputs_order.push_back("Speedbrake");
-        _inputs["Speedbrake"]  = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Speedbrake() {}
 
@@ -230,8 +225,7 @@ class ThrustReverse : public System
 public:
     ThrustReverse(Aeromatic *p) : System(p) {
         _description.push_back("Thrust Reverse");
-        _inputs_order.push_back("Thrust Reverse");
-        _inputs["Thrust Reverse"] = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~ThrustReverse() {}
 
@@ -244,8 +238,7 @@ class Chute : public System
 public:
     Chute(Aeromatic *p) : System(p) {
         _description.push_back("Chute");
-        _inputs_order.push_back("Chute");
-        _inputs["Chute"] = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Chute() {}
 
@@ -282,8 +275,7 @@ class Catapult : public System
 public:
     Catapult(Aeromatic *p) : System(p) {
         _description.push_back("Catapult");
-        _inputs_order.push_back("Catapult");
-        _inputs["Catapult"] = new Param(_description[0].c_str(), _supported, _enabled);
+        _inputs.push_back(new Param(_description[0].c_str(), _supported, _enabled));
     }
     ~Catapult() {}
 
