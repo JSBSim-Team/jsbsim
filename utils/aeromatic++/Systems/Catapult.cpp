@@ -92,10 +92,10 @@ std::string Catapult::external_force()
     std::stringstream file;
 
     file << "  <force name=\"catapult\" frame=\"BODY\">" << std::endl;
-    file << "   <location unit=\"IN\">" << std::endl;
-    file << "    <x> " << (_aircraft->_length * 0.13f * FEET_TO_INCH) << " </x>" << std::endl;
+    file << "   <location unit=\"" << _aircraft->_geometry["length"]->get_unit() << "\">" << std::endl;
+    file << "    <x> " << _aircraft->_geometry["length"]->get(0.13f) << " </x>" << std::endl;
     file << "    <y> 0 </y>" << std::endl;
-    file << "    <z> " << (-(_aircraft->_length * 0.12f) * FEET_TO_INCH) << " </z>" << std::endl;
+    file << "    <z> " << _aircraft->_geometry["length"]->get(-0.12f) << " </z>" << std::endl;
     file << "   </location>" << std::endl;
     file << "   <direction>" << std::endl;
     file << "    <x> 1 </x>" << std::endl;
