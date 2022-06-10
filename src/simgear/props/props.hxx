@@ -21,7 +21,8 @@
 #include <sstream>
 #include <typeinfo>
 
-#include <simgear/compiler.h>
+#include "simgear/compiler.h"
+#include "JSBSim_API.h"
 #if PROPS_STANDALONE
 
 #ifndef SG_LOG
@@ -751,7 +752,7 @@ private:
 /**
  * A node in a property tree.
  */
-class SGPropertyNode : public SGReferenced
+class JSBSIM_API SGPropertyNode : public SGReferenced
 {
 public:
 

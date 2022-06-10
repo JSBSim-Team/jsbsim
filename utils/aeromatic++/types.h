@@ -41,6 +41,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 #define DO_MKSTR(X)		#X
 #define MKSTR(X)		DO_MKSTR(X)
@@ -48,49 +49,58 @@
 #define AEROMATIC_VERSION_STR   MKSTR(AEROMATIC_MAJOR_VERSION)"." \
                                 MKSTR(AEROMATIC_MINOR_VERSION)"." \
                                 MKSTR(AEROMATIC_MICRO_VERSION)
+#define AEROMATIC_NAME		"AeromatiC++ version " AEROMATIC_VERSION_STR
 
 #define G			32.0f
 #define SPEED_OF_SOUND		1125.0f
+#define RHO			0.0023769f
 
 #define PI			3.14159265358979323846f
 #define DEG_TO_RAD		0.01745329251994329547f
 #define RAD_TO_DEG		(1.0f/DEG_TO_RAD)
 
 #define FEET_TO_INCH		12.0f
-#define INCH_TO_FEET		0.08333333f
+#define INCH_TO_FEET		(1.0/FEET_TO_INCH)
 
 #define CUBIC_INCH_TO_LITER	61.02398343f
-#define LITER_TO_CUBINC_INCH	0.016387f
+#define LITER_TO_CUBIC_INCH	(1.0/CUBIC_INCH_TO_LITER)
 
-#define LBS_TO_KG		0.4535f
 #define KG_TO_LBS		2.205f
+#define LBS_TO_KG		(1.0/KG_TO_LBS)
 
-#define LB_TO_SLUGS		0.0310809502f
 #define SLUGS_TO_LB		32.1740486f
+#define LB_TO_SLUGS		(1.0/SLUGS_TO_LB)
 
-#define KG_M2_TO_SLUG_FT2	0.737562142f
-#define SLUG_FT2_TO_KG_M2	1.355817962f
+#define SLUGFT2_TO_KGM2		1.355817962f
+#define KGM2_TO_SLUGFT2		(1.0/SLUGFT2_TO_KGM2)
 
 #define METER_TO_FEET		3.28084f
-#define FEET_TO_METER		0.3048f
+#define FEET_TO_METER		(1.0/METER_TO_FEET)
 
 #define M2_TO_FT2		10.7639104f
-#define FT2_TO_M2		0.09290304f
+#define FT2_TO_M2		(1.0/M@_TO_FT2)
 
 // one horsepower equals 745.69987 Watts 
 #define KW_TO_HP		1.341f
-#define HP_TO_KW		0.7457f
+#define HP_TO_KW		(1.0/KW_TO_HP)
 
-#define KNETWON_TO_LBS		224.808943f
-#define LBS_TO_KNEWTON		0.00444822162f
+#define KNEWTON_TO_LBS		224.808943f
+#define LBS_TO_KNEWTON		(1.0/KNEWTON_TO_LBS)
 
 #define MPH_TO_KNOTS		0.868976242f
 #define KNOTS_TO_MPH		1.15077945f
-#define KMPH_TO_KNOTS		0.539956803f
-#define KNOTS_TO_KMPH		1.852f
+#define KM_H_TO_KNOTS		0.539956803f
+#define KNOTS_TO_KM_H		1.852f
 
 #define KNOTS_TO_FPS		1.68780839895013f
-#define FPS_TO_KNOTS		0.592483801f
+#define FPS_TO_KNOTS		(1.0/KNOTS_TO_FPS)
+
+#define PSF_TO_N_M2		47.88
+#define N_M2_TO_PSF		(1.0/PSF_TO_N_M2)
+
+#define LBS_FT_TO_N_M		14.5939
+#define N_M_TO_LBS_FT		(1.0/LBS_FT_TO_N_M)
+
 
 #define _MAX(a,b)		(((a)>(b)) ? (a) : (b))
 #define _MIN(a,b)		(((a)<(b)) ? (a) : (b))
@@ -148,8 +158,8 @@ enum ControlsType
 enum EngineType
 {
     PISTON = 0,
-    TURBINE,
     TURBOPROP,
+    TURBINE,
     ROCKET,
     ELECTRIC,
 
@@ -203,6 +213,9 @@ enum ParamUnit
     SPEED,
     POWER,
     THRUST,
+    LOAD,
+    SPRING,
+    DAMPING,
 
     MAX_UNITS
 };
@@ -231,7 +244,14 @@ public:
     std::string& help() { return _help; }
 
     void set(std::string& s);
-    std::string get();
+
+    std::string get(float fact=1.0f);
+    std::string get_nice();
+
+    static std::string get(float value, unsigned utype, bool convert=false);
+    static std::string get_unit(bool upper=false, unsigned utype=0, bool convert=false);
+    static std::string get_nice(float value, unsigned utype, bool convert=false, bool upper=false);
+    
 
     enum ParamType get_type() { return ParamType(_ptype); }
     const char* get_units() {
