@@ -41,44 +41,37 @@ using namespace JSBSim;
 class JSBSimInterface
 {
 public:
-  JSBSimInterface(void);
-  JSBSimInterface(double dt);
+  	JSBSimInterface(int numOutputPorts);
+  	JSBSimInterface(double dt, int numOutputPorts);
 	~JSBSimInterface(void);
+
 	/// Open an aircraft model from Matlab
-	bool Open(const mxArray *prhs0);
-	bool Open(const std::string& acName); 
-	/// Get a property from the catalog
-	bool GetPropertyValue(const mxArray *prhs1, double& value);
-    bool GetPropertyValue(const std::string& prop, double& value);
-	/// Set a property in the catalog
-	bool SetPropertyValue(const mxArray *prhs1, const mxArray *prhs2);
-	/// Set a property in the catalog
-	bool SetPropertyValue(const std::string& prop, const double value);
-	/// Enables a number of commonly used settings
-	bool EasySetValue(const std::string& prop, const double value);
-	// Get a commonly used value
-	double EasyGetValue(const std::string& prop, double& value);
-	/// Check if the given string is present in the catalog
-	bool QueryJSBSimProperty(const std::string& prop);
-    /// Copy control inputs to JSBSim 
-    bool Copy_Controls_To_JSBSim(double controls[]);
-    bool Copy_Init_To_JSBSim(double init_values[]);
-    bool Copy_States_From_JSBSim(double *state_array);
-    bool Copy_Pilot_From_JSBSim(double *state_array);
-    bool Copy_Control_From_JSBSim(double *state_array);
-    /// Script handling 
-    //bool OpenScript(const mxArray *prhs);
+	bool OpenAircraft(const std::string& acName);
+
+	/// Script handling 
     bool OpenScript(const SGPath& script, double delta_t, const SGPath& initfile);
-	/// Print the aircraft catalog
-	void PrintCatalog();
-    /// Update the simulation
+
+	bool LoadIC(SGPath ResetName);
+
+	/// Update the simulation
     void Update();
-    void RunIC();
-    void LoadIC(SGPath ResetName);
 
+	/// Dynamic updating of the property nodes for input and output
+	bool AddInputPropertyNode(std::string property);
+	bool AddWeatherPropertyNode(std::string property);
+	bool AddOutputPropertyNode(std::string property, const int outputPort);
+	
+	/// Copy control inputs to JSBSim 
+    bool CopyInputControlsToJSBSim(std::vector<double> controls);
+
+	/// Copy weather inputs to JSBSim
+	bool CopyInputWeatherToJSBSim(std::vector<double> weather);
+
+	/// Copy the flight state outputs from JSBSim
+    bool CopyOutputsFromJSBSim(double *stateArray, const int outputPort);
+    
 	bool IsAircraftLoaded(){return _ac_model_loaded;}
-  bool ResetToInitialCondition(void);
-
+  	
 	// Wrapper functions to the FGFDMExec class
 	bool RunFDMExec() {return fdmExec->Run();}
 
@@ -101,6 +94,7 @@ public:
 
 private:
 	FGFDMExec *fdmExec;
+	FGPropertyManager* pm;
 	FGPropagate *propagate;
 	FGAccelerations *accel;
 	FGAuxiliary *auxiliary;
@@ -109,6 +103,10 @@ private:
 	FGAerodynamics *aerodynamics;
 	FGPropulsion *propulsion;
 	FGFCS *fcs;
+
+	std::vector<std::vector<FGPropertyNode*>> outputPorts;
+	std::vector<FGPropertyNode*> inputPort;
+	std::vector<FGPropertyNode*> weatherPort;
 
 	bool _ac_model_loaded;
 
