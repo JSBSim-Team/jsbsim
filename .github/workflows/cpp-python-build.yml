@@ -341,11 +341,16 @@ jobs:
   Windows-MSVC:
     name: C/C++ build (MSVC)
     needs: XML-validation
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         shared_libs: [ON, OFF]
     steps:
+      - name: MSVC version
+        run: |
+          $MSVC_name = vswhere -property displayName
+          $MSVC_build = vswhere -property catalog_buildVersion
+          Out-File -InputObject $MSVC_name" (build "$MSVC_build")" -NoNewLine MSVC_version.txt
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
@@ -431,6 +436,7 @@ jobs:
           path: |
             build\src\RelWithDebInfo\JSBSim.lib
             build\python\setup.py
+            MSVC_version.txt
 
   MacOSX:
     name: C/C++ build (MacOSX)
@@ -554,7 +560,7 @@ jobs:
         python-version: [3.7, 3.8, 3.9, '3.10']
         # Use macos-10.15 since it generates wheels for Mac OSX 10.14
         # that are also compatible with 11.0.
-        os: [windows-latest, macos-10.15]
+        os: [windows-2019, macos-10.15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python
@@ -670,6 +676,10 @@ jobs:
           pip install jsbsim --no-index -f dist
           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Get MSVC version
+        run : |
+          export MSVC_VERSION=`cat MSVC_version.txt`
+          echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
       - name: GitHub release
         uses: softprops/action-gh-release@v1
         env:
@@ -681,7 +691,7 @@ jobs:
 
             ## Release files
             - Windows 64 bits
-              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer)
+              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
             - Ubuntu Bionic 18.04 and Focal 20.04 - amd64
               - `*.deb` (Debian packages)
             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
@@ -708,6 +718,8 @@ jobs:
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC version
+          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
           # Determine the branch name
           export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
           # Commit the change to CMakeLists.txt
@@ -731,6 +743,8 @@ jobs:
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC version
+          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
           git commit -m "Bump stable release version" README.md matlab/README.md
           git push origin master
 
