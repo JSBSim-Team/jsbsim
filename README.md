@@ -194,7 +194,11 @@ We are also on Facebook: <https://www.facebook.com/jsbsim/>
 
 # Legal Notice
 
-JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
+JSBSim is open source and is licensed under the [LGPL 2.1 license](https://opensource.org/licenses/LGPL-2.1). The license is included in the source code file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING).
+
+The Unreal Engine Reference Application for JSBSim is open source and is licensed under the [MIT license](https://opensource.org/licenses/MIT). The license is included in the source code file [UnrealEngine/LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/LICENSE.txt).
+
+The JSBSim interface with MATLAB including the S-Function is open source and is licensed under the [BSD license](https://opensource.org/licenses/bsd-license.php). The license is included in the source code file [matlab/LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab/LICENSE.txt).
 
 No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
 
