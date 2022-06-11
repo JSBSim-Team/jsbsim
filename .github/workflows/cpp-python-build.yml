@@ -202,14 +202,6 @@ jobs:
     strategy:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
-        matlab_version: [ R2020b, R2021a ]
-        exclude:
-        - os: macos-latest
-          matlab_version: R2022a
-        - os: ubuntu-latest
-          matlab_version: R2022a
-        - os: windows-latest
-          matlab_version: R2022a
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -218,7 +210,7 @@ jobs:
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v1.1.0
         with:
-          release: ${{ matrix.matlab_version }}
+          release: R2022a
       - name: Configure JSBSim
         run: |
           mkdir build
