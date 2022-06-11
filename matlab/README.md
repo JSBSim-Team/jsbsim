@@ -11,7 +11,8 @@ Below are the instructions to build the S-Function from JSBSim Windows installer
 Download the JSBSim source from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.11).
 
 Alternatively, you can clone the source using git:
-```
+
+```bash
 > git clone https://github.com/JSBSim-Team/jsbsim/tree/v1.1.11
 ```
 
@@ -24,7 +25,7 @@ In order to work with the JSBSim MATLAB S-Function block, we must move some
 files into the `build/` directory. From the command line, make sure your
 current directory is the root of the `jsbsim/` source code.
 
-```
+```bash
 > pwd
 /path/to/jsbsim
 ```
@@ -32,7 +33,7 @@ current directory is the root of the `jsbsim/` source code.
 Then, we must copy some files into the build. These are necessary for the
 S-Function to operate.
 
-```
+```bash
 > cp -r aircraft build/src/aircraft
 > cp -r engine build/src/engine
 > cp -r scripts build/src/scripts
@@ -45,7 +46,7 @@ below `For MacOS:` is the only one that is not commented out. In the MATLAB
 command line, run the script. Then, from the root of the source code,
 copy the following files into the build source:
 
-```
+```bash
 > cp matlab/JSBSim_SFunction.mexmaci64 build/src/JSBSim_SFunction.mexmaci64
 > cp matlab/ex737cruise.slx build/src/ex737cruise.slx
 > cp matlab/TestJSBSim.m build/src/TestJSBSim.m
@@ -83,6 +84,8 @@ A Windows installer `JSBSim-1.1.11-setup.exe` is available from [JSBSim release 
 ```
 
 The exact location `<JSBSim root>/` on your system depends on where you choose to install JSBSim.
+
+> **NOTE:** The JSBSim library file located at `lib\JSBSim.lib` has been compiled with Microsoft Visual Studio Enterprise 2022 (build 19.32.31329.0)
 
 ### Prepare MATLAB
 
