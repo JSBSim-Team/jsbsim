@@ -523,19 +523,11 @@ cdef class FGFDMExec(FGJSBBase):
 
     def query_property_catalog(self, check):
         """@Dox(JSBSim::FGFDMExec::QueryPropertyCatalog)"""
-        catalog = (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8').rstrip().split('\n')
-        if len(catalog) == 1 and catalog[0] == "No matches found":
-            return []
-        else:
-            return catalog
+        return (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8')
 
-    def get_property_catalog(self, check):
-        """Retrieves the property catalog as a dictionary."""
-        catalog = {}
-        for item in self.query_property_catalog(check):
-            property_name = item.split(" ")[0]  # remove any (RW) flags
-            catalog[property_name] = self.get_property_value(property_name)
-        return catalog
+    def get_property_catalog(self):
+        """Retrieves the property catalog as a list."""
+        return self.query_property_catalog('').rstrip().split('\n')
 
     def print_property_catalog(self):
         """@Dox(JSBSim::FGFDMExec::PrintPropertyCatalog)"""
