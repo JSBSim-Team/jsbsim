@@ -4,6 +4,62 @@ JSBSim provides an S-Function to interface your flight dynamics model with MATLA
 
 Below are the instructions to build the S-Function from JSBSim Windows installer.
 
+## Build instructions for MacOS
+
+### Download and build JSBSim from source
+
+Download the JSBSim source from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.11).
+
+Alternatively, you can clone the source using git:
+```
+> git clone https://github.com/JSBSim-Team/jsbsim/tree/v1.1.11
+```
+
+Build the source following the instructions in the [JSBSim Manual](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/quickstart-building-the-program/).
+Since we are using MacOS, we must build with CMake.
+
+### Preparation for MATLAB
+
+In order to work with the JSBSim MATLAB S-Function block, we must move some
+files into the `build/` directory. From the command line, make sure your
+current directory is the root of the `jsbsim/` source code.
+
+```
+> pwd
+/path/to/jsbsim
+```
+
+Then, we must copy some files into the build. These are necessary for the
+S-Function to operate.
+
+```
+> cp -r aircraft build/src/aircraft
+> cp -r engine build/src/engine
+> cp -r scripts build/src/scripts
+```
+
+### Compile the S-Function and Move Compiled Files
+
+In `jsbsim/matlab` open `JSBSimSimulinkCompiler.m` and entire that the line
+below `For MacOS:` is the only one that is not commented out. In the MATLAB
+command line, run the script. Then, from the root of the source code,
+copy the following files into the build source:
+
+```
+> cp matlab/JSBSim_SFunction.mexmaci64 build/src/JSBSim_SFunction.mexmaci64
+> cp matlab/ex737cruise.slx build/src/ex737cruise.slx
+> cp matlab/TestJSBSim.m build/src/TestJSBSim.m
+> cp matlab/clearSF.m build/src/clearSF.m
+```
+
+You can now follow the test instructions below in order to ensure it is in
+working condition.
+
+Once you have the S-Function compiled, you just need `aircraft/` and `engine/`
+alongside the compiled `JSBSim_SFunction.mexmaci64` in order for it to work.
+You also nede to be sure that the script in the S-Function parameter is in
+the correct location.
+
 ## Build instructions for the Windows platform
 
 ### Download and install JSBSim
