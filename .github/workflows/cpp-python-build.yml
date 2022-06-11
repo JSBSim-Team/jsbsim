@@ -457,10 +457,10 @@ jobs:
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Build JSBSim
         working-directory: build
-        run: make -j2
+        run: make -j3
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 -E TestInputSocket --output-on-failure
+        run: ctest -j3 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build/python
