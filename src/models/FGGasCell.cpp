@@ -326,7 +326,7 @@ void FGGasCell::Calculate(double dt)
     const double VolumeValved =
       ValveOpen * ValveCoefficient * DeltaPressure * dt;
     Contents =
-      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(1E-8, Contents - Pressure * VolumeValved / (R * Temperature));
   }
 
   //-- Update ballonets. --
