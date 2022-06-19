@@ -21,7 +21,8 @@ if(NOT EXPAT_FOUND)
                       xmlrole.h
                       xmltok.h
                       xmltok_impl.h
-                      expat_config.h)
+                      expat_config.h
+                      siphash.h)
 endif()
 
 add_library(Xml OBJECT ${HEADERS} ${SOURCES})
