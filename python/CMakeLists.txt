@@ -43,9 +43,12 @@ file(RELATIVE_PATH libJSBSim_PATH ${CMAKE_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 file(COPY ${CMAKE_SOURCE_DIR}/README.md DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt)
-configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_impl.c
+
+set(SIMGEAR_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/simgear/xml)
+file(COPY ${SIMGEAR_SOURCE_DIR}/Expat.COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+configure_file(${SIMGEAR_SOURCE_DIR}/xmltok_impl.c
                ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_impl.c COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/src/simgear/xml/xmltok_ns.c
+configure_file(${SIMGEAR_SOURCE_DIR}/xmltok_ns.c
                ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_ns.c COPYONLY)
 
 foreach(_FILE "MANIFEST.in" "ExceptionManagement.h" "fpectl/fpectlmodule.h" "pyproject.toml")

@@ -1,4 +1,5 @@
 include LICENSE.txt
+include Expat.COPYING
 recursive-include . *.h*
 include *.pyx
 include *.pxd
