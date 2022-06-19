@@ -16,12 +16,22 @@
     <event name="Repeating Notify" persistent="true">
       <description>Output message at periodic intervals</description>
       <notify>
-        <property>position/h-agl-ft</property> 
+        <property>position/h-agl-ft</property>
         <property>velocities/vt-fps</property>
         <property>metrics/radius-ft</property>
       </notify>
       <condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+    <event name="Burst">
+      <description>Log the burst event.</description>
+      <notify>
+        <property>position/h-agl-ft</property>
+        <property>velocities/vt-fps</property>
+        <property>metrics/radius-ft</property>
+      </notify>
+      <condition> buoyant_forces/gas-cell/burst ge 0.5 </condition>
     </event>
 
     <event name="Terminate">
@@ -34,6 +44,6 @@
       <notify>
         <property>simulation/sim-time-sec</property>
       </notify>
-    </event> 
+    </event>
   </run>
 </runscript>
