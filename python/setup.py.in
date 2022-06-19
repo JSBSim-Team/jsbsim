@@ -241,7 +241,7 @@ setup(
         "Environment :: Console",
         "Intended Audience :: Science/Research",
         "Intended Audience :: Other Audience",
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
         "Operating System :: Microsoft",
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS :: MacOS X",
