@@ -718,6 +718,9 @@ jobs:
           sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
           sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC project files.
+          sed -ri 's/JSBSIM_VERSION="$PREV_VERSION"/JSBSIM_VERSION="$VERSION"/g' JSBSim.vcxproj
+          sed -ri 's/JSBSIM_VERSION="$PREV_VERSION"/JSBSIM_VERSION="$VERSION"/g' JSBSimForUnreal.vcxproj
           # Update the MSVC version
           sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
           # Determine the branch name
