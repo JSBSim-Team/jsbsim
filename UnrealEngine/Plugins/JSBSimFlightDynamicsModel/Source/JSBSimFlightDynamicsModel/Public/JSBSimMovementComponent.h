@@ -208,6 +208,30 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void BeginDestroy() override;
 
+	/**Gets Catalog of all properties in Property Manger
+  *   -Returns names of all properties that JSBSim created/loaded
+  *   -Currently not very useful other than to see what exists
+  *   -Returns a big list, probably should not call often  */
+	UFUNCTION(BlueprintCallable, DisplayName = "Property Manager Get Catalog")
+    void PropertyManagerNode(TArray<FString> & Catalog);
+
+	/**Command Input & Output from Property Manger
+  *   -Enter name of property, e.g. gear/unit/wheel-speed-fps
+  *   -OutValue of blank/empty means property name does not exist.
+  *   -InValue of blank/empty if you wish to only lookup a property value,
+  *     otherwise you will override the system value!*/
+	UFUNCTION(BlueprintCallable, DisplayName = "Command Console")
+    void CommandConsole(FString Property, FString InValue, FString & OutValue);
+
+	/**Command Inputs & Outputs in Batch to Property Manger
+  *   -Enter name of property, e.g. gear/unit/wheel-speed-fps
+  *   -OutValue of blank/empty means property name does not exist.
+  *   -InValue of blank/empty if you wish to only lookup a property value,
+  *     otherwise you will override the system value! */
+	UFUNCTION(BlueprintCallable, DisplayName = "Command Console Batch")
+    void CommandConsoleBatch(TArray<FString> Property, TArray<FString> InValue, TArray<FString>& OutValue);
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -246,6 +270,9 @@ protected:
     bool TrimNeeded = true; // TODO ? Does false make sense ? we need to Trim the state based on the ICs... 
 	bool Trimmed = false;
 	bool AircraftLoaded = false;
+	float simDtime = 0.f;
+	float remainder = 0.f;
+	int simloops = 0;
 	
 	double TickTime = 0;
 
