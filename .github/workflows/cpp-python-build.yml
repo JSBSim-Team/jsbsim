@@ -298,7 +298,7 @@ jobs:
   Windows-MinGW32:
     name: C/C++ build (MinGW32)
     needs: XML-validation
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Set up Python 3.10
         uses: actions/setup-python@v1
@@ -322,7 +322,7 @@ jobs:
           mkdir build && cd build
           julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
           $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
       - name: Build JSBSim
         working-directory: build
         run: mingw32-make -j2
