@@ -451,14 +451,14 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  cout << endl << fgblue << highint
+  cout << endl << gdata().fgblue << gdata().highint
        << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
-       << reset << endl;
-  cout << "                                  " << underon << "    Weight    CG-X    CG-Y"
+       << gdata().reset << endl;
+  cout << "                                  " << gdata().underon << "    Weight    CG-X    CG-Y"
        << "    CG-Z         Ixx         Iyy         Izz"
-       << "         Ixy         Ixz         Iyz" << underoff << endl;
+       << "         Ixy         Ixz         Iyz" << gdata().underoff << endl;
   cout.precision(1);
-  cout << highint << setw(34) << left << "    Base Vehicle " << normint
+  cout << gdata().highint << setw(34) << left << "    Base Vehicle " << gdata().normint
        << right << setw(10) << EmptyWeight
        << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
        << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
@@ -467,7 +467,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
   for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
-    cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
+    cout << gdata().highint << left << setw(4) << i << setw(30) << pm->GetName() << gdata().normint
          << right << setw(10) << pmweight << setw(8) << pm->GetLocation()(eX)
          << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
          << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
@@ -476,8 +476,8 @@ void FGMassBalance::GetMassPropertiesReport(int i)
 
   cout << FDMExec->GetPropulsionTankReport();
 
-  cout << "    " << underon << setw(136) << " " << underoff << endl;
-  cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight
+  cout << "    " << gdata().underon << setw(136) << " " << gdata().underoff << endl;
+  cout << gdata().highint << left << setw(30) << "    Total: " << right << setw(14) << Weight
        << setw(8) << vXYZcg(eX)
        << setw(8) << vXYZcg(eY)
        << setw(8) << vXYZcg(eZ)
@@ -487,7 +487,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
        << setw(12) << mJ(1,2)
        << setw(12) << mJ(1,3)
        << setw(12) << mJ(2,3)
-       << normint << endl;
+       << gdata().normint << endl;
 
   cout.setf(ios_base::fixed);
 }
@@ -513,6 +513,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
 
 void FGMassBalance::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

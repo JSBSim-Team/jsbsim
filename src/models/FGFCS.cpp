@@ -166,7 +166,7 @@ bool FGFCS::Run(bool Holding)
 
   // Execute system channels in order
   for (i=0; i<SystemChannels.size(); i++) {
-    if (debug_lvl & 4) cout << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
+    if (gdata().debug_lvl & 4) cout << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
     ChannelRate = SystemChannels[i]->GetRate();
     SystemChannels[i]->Execute();
   }
@@ -506,10 +506,10 @@ bool FGFCS::Load(Element* document)
     if (sOnOffProperty.length() > 0) {
       FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {
-        cerr << channel_element->ReadFrom() << highint << fgred
+        cerr << channel_element->ReadFrom() << gdata().highint << gdata().fgred
              << "The On/Off property, " << sOnOffProperty << " specified for channel "
              << channel_element->GetAttributeValue("name") << " is undefined or not "
-             << "understood. The simulation will abort" << reset << endl;
+             << "understood. The simulation will abort" << gdata().reset << endl;
         throw("Bad system definition");
       } else
         newChannel = new FGFCSChannel(this, sChannelName, ChannelRate,
@@ -519,9 +519,9 @@ bool FGFCS::Load(Element* document)
 
     SystemChannels.push_back(newChannel);
 
-    if (debug_lvl > 0)
-      cout << endl << highint << fgblue << "    Channel " 
-         << normint << channel_element->GetAttributeValue("name") << reset << endl;
+    if (gdata().debug_lvl > 0)
+      cout << endl << gdata().highint << gdata().fgblue << "    Channel " 
+         << gdata().normint << channel_element->GetAttributeValue("name") << gdata().reset << endl;
   
     Element* component_element = channel_element->GetElement();
     while (component_element) {
@@ -585,8 +585,8 @@ bool FGFCS::Load(Element* document)
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
       } catch(string& s) {
-        cerr << highint << fgred << endl << "  " << s << endl;
-        cerr << reset << endl;
+        cerr << gdata().highint << gdata().fgred << endl << "  " << s << endl;
+        cerr << gdata().reset << endl;
         return false;
       }
       component_element = channel_element->GetNextElement();
@@ -804,6 +804,7 @@ void FGFCS::bindThrottle(unsigned int num)
 
 void FGFCS::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

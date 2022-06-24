@@ -103,9 +103,9 @@ string FGMatrix33::Dump(const string& delimiter, const string& prefix) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGQuaternion FGMatrix33::GetQuaternion(void) const
+FGQuaternion FGMatrix33::GetQuaternion(CommonData& c) const
 {
-  FGQuaternion Q;
+  FGQuaternion Q(c);
 
   double tempQ[4];
   int idx;

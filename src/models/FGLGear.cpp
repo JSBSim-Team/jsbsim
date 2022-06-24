@@ -170,7 +170,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   while (force_table) {
     string force_type = force_table->GetAttributeValue("name");
     if (force_type == "CORNERING_COEFF") {
-      ForceY_Table = new FGTable(PropertyManager, force_table);
+      ForceY_Table = new FGTable(gdata(), PropertyManager, force_table);
       break;
     } else {
       cerr << "Undefined force table for " << name << " contact point" << endl;
@@ -190,7 +190,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
 
   element = el->FindElement("orientation");
   if (element && (eContactType == ctBOGEY)) {
-    FGQuaternion quatFromEuler(element->FindElementTripletConvertTo("RAD"));
+    FGQuaternion quatFromEuler(gdata(), element->FindElementTripletConvertTo("RAD"));
 
     mTGear = quatFromEuler.GetT();
   }
@@ -286,7 +286,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
 
   if (gearPos > 0.99) { // Gear DOWN
     FGColumnVector3 normal, terrainVel, dummy;
-    FGLocation gearLoc, contact;
+    FGLocation gearLoc(gdata()), contact(gdata());
     FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
 
     vLocalGear = in.Tb2l * vWhlBodyVec; // Get local frame wheel location
@@ -524,6 +524,7 @@ void FGLGear::ReportTakeoffOrLanding(void)
     if (WOW) TakeoffDistanceTraveled += in.Vground * in.TotalDeltaT;
   }
 
+  auto debug_lvl = gdata().debug_lvl;
   if ( ReportEnable
        && in.Vground <= 0.05
        && !LandingReported
@@ -906,6 +907,7 @@ void FGLGear::Debug(int from)
   static const char* sBrakeGroup[] = {"NONE", "LEFT", "RIGHT", "CENTER", "NOSE", "TAIL"};
   static const char* sContactType[] = {"BOGEY", "STRUCTURE" };
 
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

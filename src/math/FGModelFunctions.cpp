@@ -54,7 +54,7 @@ FGModelFunctions::~FGModelFunctions()
   for (auto prefunc: PreFunctions) delete prefunc;
   for (auto postfunc: PostFunctions) delete postfunc;
 
-  if (debug_lvl & 2) cout << "Destroyed:    FGModelFunctions" << endl;
+  if (gdata().debug_lvl & 2) cout << "Destroyed:    FGModelFunctions" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -57,7 +57,8 @@ namespace JSBSim {
 
 //******************************************************************************
 
-FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
+FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
+  : FGJSBBase(FDMExec->gdata()), position(FDMExec->gdata()), orientation(FDMExec->gdata()), fdmex(FDMExec)
 {
   InitializeIC();
 
@@ -101,7 +102,7 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0,
   lastLatitudeSet = setgeoc;
   lastAltitudeSet = setagl;
 
-  orientation = FGQuaternion(phi0, theta0, psi0);
+  orientation = FGQuaternion(gdata(), phi0, theta0, psi0);
   const FGMatrix33& Tb2l = orientation.GetTInv();
 
   vUVW_NED = Tb2l * FGColumnVector3(u0, v0, w0);
@@ -130,7 +131,7 @@ void FGInitialCondition::InitializeIC(void)
 
   position.SetPositionGeodetic(0.0, 0.0, 0.0);
 
-  orientation = FGQuaternion(0.0, 0.0, 0.0);
+  orientation = FGQuaternion(gdata(), 0.0, 0.0, 0.0);
   vUVW_NED.InitMatrix();
   vPQR_body.InitMatrix();
   vt=0;
@@ -370,7 +371,7 @@ void FGInitialCondition::calcThetaBeta(double alfa, const FGColumnVector3& _vt_N
   double sinTheta = (v1xz * v0xz)(eY);
   vOrient(eTht) = asin(sinTheta);
 
-  orientation = FGQuaternion(vOrient);
+  orientation = FGQuaternion(gdata(), vOrient);
 
   const FGMatrix33& Tl2b = orientation.GetT();
   FGColumnVector3 v2 = Talpha * Tl2b * _vt_NED;
@@ -436,7 +437,7 @@ void FGInitialCondition::SetBetaRadIC(double bta)
   double sinTheta = (v2xz * vfxz)(eY);
   vOrient(eTht) = -asin(sinTheta);
 
-  orientation = FGQuaternion(vOrient);
+  orientation = FGQuaternion(gdata(), vOrient);
 }
 
 //******************************************************************************
@@ -452,7 +453,7 @@ void FGInitialCondition::SetEulerAngleRadIC(int idx, double angle)
   FGColumnVector3 vOrient = orientation.GetEuler();
 
   vOrient(idx) = angle;
-  orientation = FGQuaternion(vOrient);
+  orientation = FGQuaternion(gdata(), vOrient);
 
   if ((lastSpeedSet != setned) && (lastSpeedSet != setvg)) {
     const FGMatrix33& newTb2l = orientation.GetTInv();
@@ -663,7 +664,7 @@ double FGInitialCondition::GetAltitudeASLFtIC(void) const
 double FGInitialCondition::GetTerrainElevationFtIC(void) const
 {
   FGColumnVector3 normal, v, w;
-  FGLocation contact;
+  FGLocation contact(const_cast<CommonData&>(gdata()));
   double a = fdmex->GetInertial()->GetSemimajor();
   double b = fdmex->GetInertial()->GetSemiminor();
   contact.SetEllipse(a, b);
@@ -1144,7 +1145,7 @@ bool FGInitialCondition::Load_v1(Element* document)
   if (document->FindElement("psi"))
     vOrient(ePsi) = document->FindElementValueAsNumberConvertTo("psi", "RAD");
 
-  orientation = FGQuaternion(vOrient);
+  orientation = FGQuaternion(gdata(), vOrient);
 
   if (document->FindElement("ubody"))
     SetUBodyFpsIC(document->FindElementValueAsNumberConvertTo("ubody", "FT/SEC"));
@@ -1307,9 +1308,9 @@ bool FGInitialCondition::Load_v2(Element* document)
       //
       // Q_b/l = Q_i/l * Q_b/i
 
-      FGQuaternion QuatI2Body = FGQuaternion(vOrient);
+      FGQuaternion QuatI2Body = FGQuaternion(gdata(), vOrient);
       QuatI2Body.Normalize();
-      FGQuaternion QuatLocal2I = Tec2i * position.GetTl2ec();
+      FGQuaternion QuatLocal2I(gdata(), Tec2i * position.GetTl2ec());
       QuatLocal2I.Normalize();
       orientation = QuatLocal2I * QuatI2Body;
 
@@ -1325,20 +1326,20 @@ bool FGInitialCondition::Load_v2(Element* document)
       //
       // Q_b/l = Q_e/l * Q_b/e
 
-      FGQuaternion QuatEC2Body(vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
+      FGQuaternion QuatEC2Body(gdata(), vOrient); // Store relationship of Body frame wrt ECEF frame, Q_b/e
       QuatEC2Body.Normalize();
-      FGQuaternion QuatLocal2EC = position.GetTl2ec(); // Get Q_e/l from matrix
+      FGQuaternion QuatLocal2EC(gdata(), position.GetTl2ec()); // Get Q_e/l from matrix
       QuatLocal2EC.Normalize();
       orientation = QuatLocal2EC * QuatEC2Body; // Q_b/l = Q_e/l * Q_b/e
 
     } else if (frame == "local") {
 
-      orientation = FGQuaternion(vOrient);
+      orientation = FGQuaternion(gdata(), vOrient);
 
     } else {
 
-      cerr << endl << fgred << "  Orientation frame type: \"" << frame
-           << "\" is not supported!" << reset << endl << endl;
+      cerr << endl << gdata().fgred << "  Orientation frame type: \"" << frame
+           << "\" is not supported!" << gdata().reset << endl << endl;
       result = false;
 
     }
@@ -1377,8 +1378,8 @@ bool FGInitialCondition::Load_v2(Element* document)
       lastSpeedSet = setuvw;
     } else {
 
-      cerr << endl << fgred << "  Velocity frame type: \"" << frame
-           << "\" is not supported!" << reset << endl << endl;
+      cerr << endl << gdata().fgred << "  Velocity frame type: \"" << frame
+           << "\" is not supported!" << gdata().reset << endl << endl;
       result = false;
 
     }
@@ -1425,8 +1426,8 @@ bool FGInitialCondition::Load_v2(Element* document)
       vPQR_body = vAttRate;
     } else if (!frame.empty()) { // misspelling of frame
 
-      cerr << endl << fgred << "  Attitude rate frame type: \"" << frame
-           << "\" is not supported!" << reset << endl << endl;
+      cerr << endl << gdata().fgred << "  Attitude rate frame type: \"" << frame
+           << "\" is not supported!" << gdata().reset << endl << endl;
       result = false;
 
     } else if (frame.empty()) {
@@ -1608,6 +1609,7 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
 
 void FGInitialCondition::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

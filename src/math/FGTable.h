@@ -240,7 +240,7 @@ public:
 
   /** This is the very important copy constructor.
       @param table a const reference to a table.*/
-  FGTable(const FGTable& table);
+  FGTable(CommonData& c, const FGTable& table);
   /// Copy assignment constructor.
   /* MSVC issues an error C2280 if not defined : it is needed by
      std::unique_ptr<FGTable>.
@@ -248,9 +248,9 @@ public:
   FGTable& operator=(const FGTable&);
 
   /// The constructor for a table
-  FGTable (FGPropertyManager* propMan, Element* el, const std::string& prefix="");
-  FGTable (int );
-  FGTable (int, int);
+  FGTable (CommonData& c, FGPropertyManager* propMan, Element* el, const std::string& prefix="");
+  FGTable (CommonData& c, int );
+  FGTable (CommonData& c, int, int);
   double GetValue(void) const;
   double GetValue(double key) const;
   double GetValue(double rowKey, double colKey) const;

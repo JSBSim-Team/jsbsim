@@ -444,6 +444,7 @@ void FGGasCell::Calculate(double dt)
 
 void FGGasCell::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -498,7 +499,7 @@ const double FGBallonet::Cv_air = 5.0/2.0;        // [??]
 
 FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
                        FGGasCell* parent, const struct FGGasCell::Inputs& input)
-  : in(input)
+  : FGJSBBase(exec->gdata()), in(input)
 {
   string token;
   Element* element;
@@ -794,6 +795,7 @@ void FGBallonet::Calculate(double dt)
 
 void FGBallonet::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

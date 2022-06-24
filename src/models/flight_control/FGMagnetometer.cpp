@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 
 
 FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
-  : FGSensor(fcs, element), FGSensorOrientation(element), counter(0),
+  : FGSensor(fcs, element), FGSensorOrientation(fcs->gdata(), element), counter(0),
     INERTIAL_UPDATE_RATE(1000)
 {
   Propagate = fcs->GetExec()->GetPropagate();
@@ -170,6 +170,7 @@ void FGMagnetometer::Debug(int from)
 {
   string ax[4] = {"none", "X", "Y", "Z"};
 
+  auto debug_lvl = FGSensor::gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

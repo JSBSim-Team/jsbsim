@@ -6,6 +6,9 @@
 class FGJSBBaseTest : public CxxTest::TestSuite, public JSBSim::FGJSBBase
 {
 public:
+  CommonData c;
+  FGJSBBaseTest() : JSBSim::FGJSBBase(c) {}
+
   void testMessages() {
     const std::string myMessage = "My message";
     std::set<int> mesId;

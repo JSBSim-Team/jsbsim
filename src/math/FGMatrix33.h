@@ -254,7 +254,7 @@ public:
 
   /** Returns the quaternion associated with this direction cosine (rotation) matrix.
   */
-  FGQuaternion GetQuaternion(void) const;
+  FGQuaternion GetQuaternion(CommonData& c) const;
 
   /** Returns the Euler angle column vector associated with this matrix.
   */

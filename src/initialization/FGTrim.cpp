@@ -59,7 +59,7 @@ namespace JSBSim {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
-  : fgic(FDMExec)
+  : FGJSBBase(FDMExec->gdata()), fgic(FDMExec)
 {
 
   Nsub=0;
@@ -78,13 +78,13 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
   targetNlf=fgic.GetTargetNlfIC();
   debug_axis=tAll;
   SetMode(tt);
-  if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
+  if (gdata().debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrim::~FGTrim(void) {
-  if (debug_lvl & 2) cout << "Destroyed:    FGTrim" << endl;
+  if (gdata().debug_lvl & 2) cout << "Destroyed:    FGTrim" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,7 +310,7 @@ bool FGTrim::DoTrim(void) {
 
   if((!trim_failed) && (axis_count >= TrimAxes.size())) {
     total_its=N;
-    if (debug_lvl > 0)
+    if (gdata().debug_lvl > 0)
         cout << endl << "  Trim successful" << endl;
   } else { // The trim has failed
     total_its=N;
@@ -331,7 +331,7 @@ bool FGTrim::DoTrim(void) {
     if (fdmex->GetGroundReactions()->GetWOW())
       trimOnGround();
 
-    if (debug_lvl > 0)
+    if (gdata().debug_lvl > 0)
         cout << endl << "  Trim failed" << endl;
   }
 
@@ -396,7 +396,7 @@ void FGTrim::trimOnGround(void)
     FGLocation gearLoc = CGLocation.LocalToLocation(Tb2l * c.location);
 
     FGColumnVector3 normal, vDummy;
-    FGLocation lDummy;
+    FGLocation lDummy(gdata());
     double height = fdmex->GetInertial()->GetContactPoint(gearLoc, lDummy,
                                                           normal, vDummy,
                                                           vDummy);
@@ -439,7 +439,7 @@ void FGTrim::trimOnGround(void)
   // Compute the rotation parameters: angle and the first point to come into
   // contact with the ground when the rotation is applied.
   RotationParameters rParam = calcRotation(contacts, rotationAxis, contact0);
-  FGQuaternion q0(rParam.angleMin, rotationAxis);
+  FGQuaternion q0(gdata(), rParam.angleMin, rotationAxis);
 
   // Apply the computed rotation to all the contact points
   FGMatrix33 rot = q0.GetTInv();
@@ -465,7 +465,7 @@ void FGTrim::trimOnGround(void)
 
   // Compute the rotation parameters
   rParam = calcRotation(contacts, rotationAxis, contact0);
-  FGQuaternion q1(rParam.angleMin, rotationAxis);
+  FGQuaternion q1(gdata(), rParam.angleMin, rotationAxis);
 
   // Update the aircraft orientation
   FGColumnVector3 euler = (fgic.GetOrientation() * q0 * q1).GetEuler();
@@ -802,7 +802,7 @@ void FGTrim::SetMode(TrimMode tt) {
     mode=tt;
     switch(tt) {
       case tFull:
-        if (debug_lvl > 0)
+        if (gdata().debug_lvl > 0)
           cout << "  Full Trim" << endl;
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha));
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
@@ -813,14 +813,14 @@ void FGTrim::SetMode(TrimMode tt) {
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tRdot,tRudder ));
         break;
       case tLongitudinal:
-        if (debug_lvl > 0)
+        if (gdata().debug_lvl > 0)
           cout << "  Longitudinal Trim" << endl;
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha ));
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tUdot,tThrottle ));
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tPitchTrim ));
         break;
       case tGround:
-        if (debug_lvl > 0)
+        if (gdata().debug_lvl > 0)
           cout << "  Ground Trim" << endl;
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAltAGL ));
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tQdot,tTheta ));

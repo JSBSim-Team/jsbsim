@@ -91,7 +91,7 @@ FGWinds::FGWinds(FGFDMExec* fdmex) : FGModel(fdmex)
   // Milspec turbulence model
   windspeed_at_20ft = 0.;
   probability_of_exceedence_index = 0;
-  POE_Table = new FGTable(7,12);
+  POE_Table = new FGTable(gdata(), 7, 12);
   // this is Figure 7 from p. 49 of MIL-F-8785C
   // rows: probability of exceedance curve index, cols: altitude in ft
   *POE_Table
@@ -586,6 +586,7 @@ void FGWinds::bind(void)
 
 void FGWinds::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

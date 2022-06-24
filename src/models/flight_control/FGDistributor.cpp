@@ -66,7 +66,7 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   while (case_element) {
     Case* current_case = new Case;
     Element* test_element = case_element->FindElement("test");
-    if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
+    if (test_element) current_case->SetTest(new FGCondition(gdata(), test_element, PropertyManager));
     Element* prop_val_element = case_element->FindElement("property");
     while (prop_val_element) {
       string value_string = prop_val_element->GetAttributeValue("value");
@@ -129,6 +129,7 @@ bool FGDistributor::Run(void )
 
 void FGDistributor::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

@@ -69,7 +69,7 @@ CLASS DECLARATION
 class FGSensorOrientation  : public FGJSBBase
 {
 public:
-  FGSensorOrientation(Element* element)
+  FGSensorOrientation(CommonData& c, Element* element) : FGJSBBase(c)
   {
     Element* orient_element = element->FindElement("orientation");
     if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");

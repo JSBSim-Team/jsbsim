@@ -76,8 +76,8 @@ bool FGUDPInputSocket::Load(Element* el)
     string property_str = property_element->GetDataLine();
     FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
-      cerr << fgred << highint << endl << "  No property by the name "
-           << property_str << " can be found." << reset << endl;
+      cerr << gdata().fgred << gdata().highint << endl << "  No property by the name "
+           << property_str << " can be found." << gdata().reset << endl;
     } else {
       InputProperties.push_back(node);
     }

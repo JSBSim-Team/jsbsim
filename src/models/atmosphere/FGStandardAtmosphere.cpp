@@ -59,8 +59,8 @@ CLASS IMPLEMENTATION
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   : FGAtmosphere(fdmex), StdSLpressure(StdDaySLpressure), TemperatureBias(0.0),
     TemperatureDeltaGradient(0.0), VaporMassFraction(0.0),
-    SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(9),
-    MaxVaporMassFraction(10)
+    SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(fdmex->gdata(), 9),
+    MaxVaporMassFraction(fdmex->gdata(), 10)
 {
   Name = "FGStandardAtmosphere";
 
@@ -718,6 +718,7 @@ void FGStandardAtmosphere::bind(void)
 
 void FGStandardAtmosphere::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

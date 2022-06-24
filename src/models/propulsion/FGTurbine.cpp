@@ -57,7 +57,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input), FDMExec(exec)
+  : FGEngine(exec->gdata(), engine_number, input), FDMExec(exec)
 {
   Type = etTurbine;
 
@@ -632,6 +632,7 @@ int FGTurbine::InitRunning(void)
 
 void FGTurbine::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

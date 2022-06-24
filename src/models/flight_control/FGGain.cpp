@@ -62,7 +62,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
       cerr << element->ReadFrom()
-           << highint << "      No GAIN specified (default: 1.0)" << normint
+           << gdata().highint << "      No GAIN specified (default: 1.0)" << gdata().normint
            << endl;
     }
   }
@@ -108,7 +108,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (Type == "SCHEDULED_GAIN") {
     if (element->FindElement("table")) {
-      Table = new FGTable(PropertyManager, element->FindElement("table"));
+      Table = new FGTable(gdata(), PropertyManager, element->FindElement("table"));
     } else {
       cerr << element->ReadFrom()
            << "A table must be provided for the scheduled gain component"
@@ -190,6 +190,7 @@ bool FGGain::Run(void )
 
 void FGGain::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

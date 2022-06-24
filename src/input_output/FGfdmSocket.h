@@ -70,8 +70,8 @@ CLASS DECLARATION
 class FGfdmSocket : public FGJSBBase
 {
 public:
-  FGfdmSocket(const std::string& address, int port, int protocol, int precision = 7);
-  FGfdmSocket(int port, int protocol, int precision = 7);
+  FGfdmSocket(CommonData& gdata, const std::string& address, int port, int protocol, int precision = 7);
+  FGfdmSocket(CommonData& gdata, int port, int protocol, int precision = 7);
   ~FGfdmSocket();
   void Send(void);
   void Send(const char *data, int length);

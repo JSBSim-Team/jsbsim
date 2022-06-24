@@ -57,7 +57,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex)
+  : FGModel(fdmex), in(fdmex->gdata()), vLocationVRP(fdmex->gdata())
 {
   Name = "FGAuxiliary";
   pt = 2116.23; // ISA SL pressure
@@ -395,6 +396,7 @@ double FGAuxiliary::BadUnits(void) const
 
 void FGAuxiliary::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

@@ -51,8 +51,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGLocation::FGLocation(void)
-  : mECLoc(1.0, 0.0, 0.0), mCacheValid(false)
+FGLocation::FGLocation(CommonData& r)
+  : FGJSBBase(r), mECLoc(1.0, 0.0, 0.0), mCacheValid(false)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
@@ -66,8 +66,8 @@ FGLocation::FGLocation(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLocation::FGLocation(double lon, double lat, double radius)
-  : mCacheValid(false)
+FGLocation::FGLocation(CommonData& r, double lon, double lat, double radius)
+  : FGJSBBase(r), mCacheValid(false)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
@@ -89,8 +89,8 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLocation::FGLocation(const FGColumnVector3& lv)
-  : mECLoc(lv), mCacheValid(false)
+FGLocation::FGLocation(CommonData& r, const FGColumnVector3& lv)
+  : FGJSBBase(r), mECLoc(lv), mCacheValid(false)
 {
   e2 = c = 0.0;
   a = ec = ec2 = 1.0;
@@ -105,7 +105,7 @@ FGLocation::FGLocation(const FGColumnVector3& lv)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLocation::FGLocation(const FGLocation& l)
-  : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
+  : FGJSBBase(const_cast<CommonData&>(l.gdata())), mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
 {
   a = l.a;
   e2 = l.e2;

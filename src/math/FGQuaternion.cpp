@@ -61,7 +61,8 @@ namespace JSBSim {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize from q
-FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
+FGQuaternion::FGQuaternion(const FGQuaternion& q)
+  : FGJSBBase(const_cast<CommonData&>(q.gdata())), mCacheValid(q.mCacheValid)
 {
   data[0] = q(1);
   data[1] = q(2);
@@ -79,14 +80,14 @@ FGQuaternion::FGQuaternion(const FGQuaternion& q) : mCacheValid(q.mCacheValid)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize with the three euler angles
-FGQuaternion::FGQuaternion(double phi, double tht, double psi): mCacheValid(false)
+FGQuaternion::FGQuaternion(CommonData& c, double phi, double tht, double psi): FGJSBBase(c), mCacheValid(false)
 {
   InitializeFromEulerAngles(phi, tht, psi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGQuaternion::FGQuaternion(FGColumnVector3 vOrient): mCacheValid(false)
+FGQuaternion::FGQuaternion(CommonData& c, FGColumnVector3 vOrient) : FGJSBBase(c), mCacheValid(false)
 {
   double phi = vOrient(ePhi);
   double tht = vOrient(eTht);
@@ -136,7 +137,7 @@ void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Initialize with a direction cosine (rotation) matrix
 
-FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
+FGQuaternion::FGQuaternion(CommonData& c, const FGMatrix33& m) : FGJSBBase(c), mCacheValid(false)
 {
   data[0] = 0.50*sqrt(1.0 + m(1,1) + m(2,2) + m(3,3));
   double t = 0.25/data[0];
@@ -157,7 +158,7 @@ FGQuaternion::FGQuaternion(const FGMatrix33& m) : mCacheValid(false)
 */
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const
 {
-  return FGQuaternion(
+  return FGQuaternion(const_cast<CommonData&>(gdata()),
     -0.5*( data[1]*PQR(eP) + data[2]*PQR(eQ) + data[3]*PQR(eR)),
      0.5*( data[0]*PQR(eP) - data[3]*PQR(eQ) + data[2]*PQR(eR)),
      0.5*( data[3]*PQR(eP) + data[0]*PQR(eQ) - data[1]*PQR(eR)),

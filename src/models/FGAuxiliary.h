@@ -252,6 +252,7 @@ public:
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
   struct Inputs {
+    Inputs(CommonData& c) : vLocation(c) {}
     double Pressure;
     double Density;
     double DensitySL;

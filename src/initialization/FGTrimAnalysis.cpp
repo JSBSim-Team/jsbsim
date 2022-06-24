@@ -318,6 +318,7 @@ void Objective::Set_x_val(double new_x)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt)
+ : FGJSBBase(FDMExec->data())
 {
   SetDebug(2);
 

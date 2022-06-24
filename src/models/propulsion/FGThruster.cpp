@@ -72,7 +72,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   element = thruster_element->FindElement("location");
   if (element)  location = element->FindElementTripletConvertTo("IN");
-  else          cerr << fgred << "      No thruster location found." << reset << endl;
+  else          cerr << gdata().fgred << "      No thruster location found." << gdata().reset << endl;
 
   SetLocation(location);
 
@@ -175,6 +175,7 @@ string FGThruster::GetThrusterValues(int id, const string& delimeter)
 
 void FGThruster::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

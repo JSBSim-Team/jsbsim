@@ -74,14 +74,15 @@ static bool LoadWinSockDLL(int debug_lvl)
     return false;
   }
 
-  if (debug_lvl > 0)
+  if (gdata().debug_lvl > 0)
     cout << "Winsock DLL loaded ..." << endl;
 
   return true;
 }
 #endif
 
-FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int precision)
+FGfdmSocket::FGfdmSocket(CommonData& c, const string& address, int port, int protocol, int precision)
+  : FGJSBBase(c)
 {
   sckt = sckt_in = 0;
   Protocol = (ProtocolType)protocol;
@@ -90,7 +91,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
   this->precision = precision;
 
   #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL(debug_lvl)) return;
+  if (!LoadWinSockDLL(gdata().debug_lvl)) return;
   #endif
 
   struct addrinfo hints;
@@ -123,7 +124,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
 
   sckt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
-  if (debug_lvl > 0) {
+  if (gdata().debug_lvl > 0) {
     if (protocol == ptUDP)  //use udp protocol
       cout << "Creating UDP socket on port " << port << endl;
     else //use tcp protocol
@@ -136,7 +137,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
     scktName.sin_port = htons(port);
 
     if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-      if (debug_lvl > 0)
+      if (gdata().debug_lvl > 0)
         cout << "Successfully connected to socket for output ..." << endl;
       connected = true;
     } else                // unsuccessful
@@ -151,7 +152,8 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // assumes TCP or UDP socket on localhost, for inbound datagrams
-FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
+FGfdmSocket::FGfdmSocket(CommonData& c, int port, int protocol, int precision)
+  : FGJSBBase(c)
 {
   sckt = -1;
   connected = false;
@@ -160,7 +162,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
   this->precision = precision;
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-  if (!LoadWinSockDLL(debug_lvl)) return;
+  if (!LoadWinSockDLL(gdata().debug_lvl)) return;
 #endif
 
   if (Protocol == ptUDP) {  //use udp protocol
@@ -178,7 +180,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
     sckt = socket(AF_INET, SOCK_STREAM, 0);
   }
 
-  if (debug_lvl > 0)
+  if (gdata().debug_lvl > 0)
     cout << "Creating input " << ProtocolName << " socket on port " << port
          << endl;
 
@@ -192,7 +194,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 
     int len = sizeof(struct sockaddr_in);
     if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) {
-      if (debug_lvl > 0)
+      if (gdata().debug_lvl > 0)
         cout << "Successfully bound to " << ProtocolName
              << " input socket on port " << port << endl << endl;
 
@@ -415,6 +417,7 @@ void FGfdmSocket::WaitUntilReadable(void)
 
 void FGfdmSocket::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

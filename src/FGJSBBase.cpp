@@ -47,49 +47,14 @@ namespace JSBSim {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-#ifndef _MSC_VER
-    char FGJSBBase::highint[5]  = {27, '[', '1', 'm', '\0'      };
-    char FGJSBBase::halfint[5]  = {27, '[', '2', 'm', '\0'      };
-    char FGJSBBase::normint[6]  = {27, '[', '2', '2', 'm', '\0' };
-    char FGJSBBase::reset[5]    = {27, '[', '0', 'm', '\0'      };
-    char FGJSBBase::underon[5]  = {27, '[', '4', 'm', '\0'      };
-    char FGJSBBase::underoff[6] = {27, '[', '2', '4', 'm', '\0' };
-    char FGJSBBase::fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
-    char FGJSBBase::fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
-    char FGJSBBase::fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
-    char FGJSBBase::fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
-    char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
-#else
-    char FGJSBBase::highint[5]  = {'\0' };
-    char FGJSBBase::halfint[5]  = {'\0' };
-    char FGJSBBase::normint[6]  = {'\0' };
-    char FGJSBBase::reset[5]    = {'\0' };
-    char FGJSBBase::underon[5]  = {'\0' };
-    char FGJSBBase::underoff[6] = {'\0' };
-    char FGJSBBase::fgblue[6]   = {'\0' };
-    char FGJSBBase::fgcyan[6]   = {'\0' };
-    char FGJSBBase::fgred[6]    = {'\0' };
-    char FGJSBBase::fggreen[6]  = {'\0' };
-    char FGJSBBase::fgdef[6]    = {'\0' };
-#endif
-
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = JSBSIM_VERSION " " __DATE__ " " __TIME__ ;
-
-queue <FGJSBBase::Message> FGJSBBase::Messages;
-FGJSBBase::Message FGJSBBase::localMsg;
-unsigned int FGJSBBase::messageId = 0;
-
-int FGJSBBase::gaussian_random_number_phase = 0;
-
-short FGJSBBase::debug_lvl  = 1;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGJSBBase::PutMessage(const Message& msg)
 {
-  Messages.push(msg);
+  _gdata.Messages.push(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,10 +63,10 @@ void FGJSBBase::PutMessage(const string& text)
 {
   Message msg;
   msg.text = text;
-  msg.messageId = messageId++;
+  msg.messageId = _gdata.messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eText;
-  Messages.push(msg);
+  _gdata.Messages.push(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,11 +75,11 @@ void FGJSBBase::PutMessage(const string& text, bool bVal)
 {
   Message msg;
   msg.text = text;
-  msg.messageId = messageId++;
+  msg.messageId = _gdata.messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eBool;
   msg.bVal = bVal;
-  Messages.push(msg);
+  _gdata.Messages.push(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,11 +88,11 @@ void FGJSBBase::PutMessage(const string& text, int iVal)
 {
   Message msg;
   msg.text = text;
-  msg.messageId = messageId++;
+  msg.messageId = _gdata.messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eInteger;
   msg.iVal = iVal;
-  Messages.push(msg);
+  _gdata.Messages.push(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,40 +101,40 @@ void FGJSBBase::PutMessage(const string& text, double dVal)
 {
   Message msg;
   msg.text = text;
-  msg.messageId = messageId++;
+  msg.messageId = _gdata.messageId++;
   msg.subsystem = "FDM";
   msg.type = Message::eDouble;
   msg.dVal = dVal;
-  Messages.push(msg);
+  _gdata.Messages.push(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGJSBBase::ProcessMessage(void)
 {
-  if (Messages.empty()) return;
-  localMsg = Messages.front();
+  if (_gdata.Messages.empty()) return;
+  _gdata.localMsg = _gdata.Messages.front();
 
   while (SomeMessages()) {
-      switch (localMsg.type) {
-      case JSBSim::FGJSBBase::Message::eText:
-        cout << localMsg.messageId << ": " << localMsg.text << endl;
+      switch (_gdata.localMsg.type) {
+      case JSBSim::Message::eText:
+        cout << _gdata.localMsg.messageId << ": " << _gdata.localMsg.text << endl;
         break;
-      case JSBSim::FGJSBBase::Message::eBool:
-        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.bVal << endl;
+      case JSBSim::Message::eBool:
+        cout << _gdata.localMsg.messageId << ": " << _gdata.localMsg.text << " " << _gdata.localMsg.bVal << endl;
         break;
-      case JSBSim::FGJSBBase::Message::eInteger:
-        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.iVal << endl;
+      case JSBSim::Message::eInteger:
+        cout << _gdata.localMsg.messageId << ": " << _gdata.localMsg.text << " " << _gdata.localMsg.iVal << endl;
         break;
-      case JSBSim::FGJSBBase::Message::eDouble:
-        cout << localMsg.messageId << ": " << localMsg.text << " " << localMsg.dVal << endl;
+      case JSBSim::Message::eDouble:
+        cout << _gdata.localMsg.messageId << ": " << _gdata.localMsg.text << " " << _gdata.localMsg.dVal << endl;
         break;
       default:
         cerr << "Unrecognized message type." << endl;
         break;
       }
-      Messages.pop();
-      if (SomeMessages()) localMsg = Messages.front();
+     _gdata.Messages.pop();
+      if (SomeMessages()) _gdata.localMsg = _gdata.Messages.front();
       else break;
   }
 
@@ -177,30 +142,30 @@ void FGJSBBase::ProcessMessage(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::ProcessNextMessage(void)
+Message* FGJSBBase::ProcessNextMessage(void)
 {
-  if (Messages.empty()) return NULL;
-  localMsg = Messages.front();
+  if (_gdata.Messages.empty()) return NULL;
+  _gdata.localMsg = _gdata.Messages.front();
 
-  Messages.pop();
-  return &localMsg;
+  _gdata.Messages.pop();
+  return &_gdata.localMsg;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGJSBBase::disableHighLighting(void)
 {
-  highint[0]='\0';
-  halfint[0]='\0';
-  normint[0]='\0';
-  reset[0]='\0';
-  underon[0]='\0';
-  underoff[0]='\0';
-  fgblue[0]='\0';
-  fgcyan[0]='\0';
-  fgred[0]='\0';
-  fggreen[0]='\0';
-  fgdef[0]='\0';
+  _gdata.highint[0]='\0';
+  _gdata.halfint[0]='\0';
+  _gdata.normint[0]='\0';
+  _gdata.reset[0]='\0';
+  _gdata.underon[0]='\0';
+  _gdata.underoff[0]='\0';
+  _gdata.fgblue[0]='\0';
+  _gdata.fgcyan[0]='\0';
+  _gdata.fgred[0]='\0';
+  _gdata.fggreen[0]='\0';
+  _gdata.fgdef[0]='\0';
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,26 +181,25 @@ string FGJSBBase::CreateIndexedPropertyName(const string& Property, int index)
 
 double FGJSBBase::GaussianRandomNumber(void)
 {
-  static double V1, V2, S;
   double X;
 
-  if (gaussian_random_number_phase == 0) {
-    V1 = V2 = S = X = 0.0;
+  if (_gdata.gaussian_random_number_phase == 0) {
+    _gdata.V1 = _gdata.V2 = _gdata.S = X = 0.0;
 
     do {
       double U1 = (double)rand() / RAND_MAX;
       double U2 = (double)rand() / RAND_MAX;
 
-      V1 = 2 * U1 - 1;
-      V2 = 2 * U2 - 1;
-      S = V1 * V1 + V2 * V2;
-    } while(S >= 1 || S == 0);
+      _gdata.V1 = 2 * U1 - 1;
+      _gdata.V2 = 2 * U2 - 1;
+      _gdata.S = _gdata.V1 * _gdata.V1 + _gdata.V2 * _gdata.V2;
+    } while(_gdata.S >= 1 || _gdata.S == 0);
 
-    X = V1 * sqrt(-2 * log(S) / S);
+    X = _gdata.V1 * sqrt(-2 * log(_gdata.S) / _gdata.S);
   } else
-    X = V2 * sqrt(-2 * log(S) / S);
+    X = _gdata.V2 * sqrt(-2 * log(_gdata.S) / _gdata.S);
 
-  gaussian_random_number_phase = 1 - gaussian_random_number_phase;
+  _gdata.gaussian_random_number_phase = 1 - _gdata.gaussian_random_number_phase;
 
   return X;
 }

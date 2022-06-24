@@ -235,6 +235,7 @@ bool FGLinearActuator::Run(void )
 //       a message is printed out when they go out of bounds
 void FGLinearActuator::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

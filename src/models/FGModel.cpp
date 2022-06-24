@@ -54,7 +54,7 @@ GLOBAL DECLARATIONS
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModel::FGModel(FGFDMExec* fdmex)
+FGModel::FGModel(FGFDMExec* fdmex) : FGModelFunctions(fdmex->gdata())
 {
   FDMExec     = fdmex;
 
@@ -66,14 +66,14 @@ FGModel::FGModel(FGFDMExec* fdmex)
   exe_ctr     = 1;
   rate        = 1;
 
-  if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
+  if (gdata().debug_lvl & 2) cout << "              FGModel Base Class" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGModel::~FGModel()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
+  if (gdata().debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ bool FGModel::InitModel(void)
 
 bool FGModel::Run(bool Holding)
 {
-  if (debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
+  if (gdata().debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
 
   if (rate == 1) return false; // Fast exit if nothing to do
 
@@ -169,6 +169,7 @@ bool FGModel::Upload(Element* el, bool preLoad)
 
 void FGModel::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

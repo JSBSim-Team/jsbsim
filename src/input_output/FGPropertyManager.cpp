@@ -318,7 +318,6 @@ void FGPropertyManager::Untie(SGPropertyNode *property)
     if (*it == property) {
       property->untie();
       tied_properties.erase(it);
-      if (FGJSBBase::debug_lvl & 0x20) cout << "Untied " << name << endl;
       return;
     }
   }

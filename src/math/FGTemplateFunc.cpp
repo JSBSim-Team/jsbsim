@@ -48,7 +48,7 @@ namespace JSBSim {
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTemplateFunc::FGTemplateFunc(FGFDMExec* fdmex, Element* element)
-  : FGFunction(fdmex->GetPropertyManager())
+  : FGFunction(fdmex->gdata(), fdmex->GetPropertyManager())
 {
   var = new FGPropertyValue(nullptr);
   Load(element, var, fdmex);

@@ -102,13 +102,13 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     name = table_element->GetAttributeValue("name");
     try {
       if (name == "C_THRUST") {
-        cThrust = new FGTable(PropertyManager, table_element);
+        cThrust = new FGTable(gdata(), PropertyManager, table_element);
       } else if (name == "C_POWER") {
-        cPower = new FGTable(PropertyManager, table_element);
+        cPower = new FGTable(gdata(), PropertyManager, table_element);
       } else if (name == "CT_MACH") {
-        CtMach = new FGTable(PropertyManager, table_element);
+        CtMach = new FGTable(gdata(), PropertyManager, table_element);
       } else if (name == "CP_MACH") {
-        CpMach = new FGTable(PropertyManager, table_element);
+        CpMach = new FGTable(gdata(), PropertyManager, table_element);
       } else {
         cerr << "Unknown table type: " << name << " in propeller definition." << endl;
       }
@@ -436,6 +436,7 @@ string FGPropeller::GetThrusterValues(int id, const string& delimeter)
 
 void FGPropeller::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

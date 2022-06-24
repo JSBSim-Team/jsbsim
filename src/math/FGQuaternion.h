@@ -87,7 +87,7 @@ class JSBSIM_API FGQuaternion : public FGJSBBase {
 public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
-  FGQuaternion() : mCacheValid(false) {
+  FGQuaternion(CommonData& c) : FGJSBBase(c), mCacheValid(false) {
     data[0] = 1.0;
     data[1] = data[2] = data[3] = 0.0;
   }
@@ -102,20 +102,20 @@ public:
       @param phi The euler X axis (roll) angle in radians
       @param tht The euler Y axis (attitude) angle in radians
       @param psi The euler Z axis (heading) angle in radians  */
-  FGQuaternion(double phi, double tht, double psi);
+  FGQuaternion(CommonData& c, double phi, double tht, double psi);
 
   /** Initializer by euler angle vector.
       Initialize the quaternion with the euler angle vector.
       @param vOrient The euler axis angle vector in radians (phi, tht, psi) */
-  FGQuaternion(FGColumnVector3 vOrient);
+  FGQuaternion(CommonData& c, FGColumnVector3 vOrient);
 
   /** Initializer by one euler angle.
       Initialize the quaternion with the single euler angle where its index
       is given in the first argument.
       @param idx Index of the euler angle to initialize
       @param angle The euler angle in radians  */
-  FGQuaternion(int idx, double angle)
-    : mCacheValid(false) {
+  FGQuaternion(CommonData& c, int idx, double angle)
+    : FGJSBBase(c), mCacheValid(false) {
 
     double angle2 = 0.5*angle;
 
@@ -149,8 +149,8 @@ public:
       @param angle The angle in radians
       @param axis  The rotation axis
    */
-  FGQuaternion(double angle, const FGColumnVector3& axis)
-    : mCacheValid(false) {
+  FGQuaternion(CommonData& c, double angle, const FGColumnVector3& axis)
+    : FGJSBBase(c), mCacheValid(false) {
 
     double angle2 = 0.5 * angle;
 
@@ -168,7 +168,7 @@ public:
       Initialize the quaternion with the matrix representing a transform from one frame
       to another using the standard aerospace sequence, Yaw-Pitch-Roll (3-2-1).
       @param m the rotation matrix */
-  FGQuaternion(const FGMatrix33& m);
+  FGQuaternion(CommonData& c, const FGMatrix33& m);
 
   /// Destructor.
   ~FGQuaternion() {}
@@ -387,7 +387,8 @@ public:
       @param q a quaternion to be summed.
       @return a quaternion representing Q, where Q = Q + q. */
   FGQuaternion operator+(const FGQuaternion& q) const {
-    return FGQuaternion(data[0]+q.data[0], data[1]+q.data[1],
+    return FGQuaternion(const_cast<CommonData&>(gdata()),
+                        data[0]+q.data[0], data[1]+q.data[1],
                         data[2]+q.data[2], data[3]+q.data[3]);
   }
 
@@ -395,7 +396,8 @@ public:
       @param q a quaternion to be subtracted.
       @return a quaternion representing Q, where Q = Q - q. */
   FGQuaternion operator-(const FGQuaternion& q) const {
-    return FGQuaternion(data[0]-q.data[0], data[1]-q.data[1],
+    return FGQuaternion(const_cast<CommonData&>(gdata()),
+                        data[0]-q.data[0], data[1]-q.data[1],
                         data[2]-q.data[2], data[3]-q.data[3]);
   }
 
@@ -404,7 +406,8 @@ public:
       @param q a quaternion to be multiplied.
       @return a quaternion representing Q, where Q = Q * q. */
   FGQuaternion operator*(const FGQuaternion& q) const {
-    return FGQuaternion(data[0]*q.data[0]-data[1]*q.data[1]-data[2]*q.data[2]-data[3]*q.data[3],
+    return FGQuaternion(const_cast<CommonData&>(gdata()),
+                        data[0]*q.data[0]-data[1]*q.data[1]-data[2]*q.data[2]-data[3]*q.data[3],
                         data[0]*q.data[1]+data[1]*q.data[0]+data[2]*q.data[3]-data[3]*q.data[2],
                         data[0]*q.data[2]-data[1]*q.data[3]+data[2]*q.data[0]+data[3]*q.data[1],
                         data[0]*q.data[3]+data[1]*q.data[2]-data[2]*q.data[1]+data[3]*q.data[0]);
@@ -438,7 +441,8 @@ public:
     if (norm == 0.0)
       return *this;
     double rNorm = 1.0/norm;
-    return FGQuaternion( data[0]*rNorm, -data[1]*rNorm,
+    return FGQuaternion(const_cast<CommonData&>(gdata()),
+                        data[0]*rNorm, -data[1]*rNorm,
                          -data[2]*rNorm, -data[3]*rNorm );
   }
 
@@ -448,7 +452,7 @@ public:
       to the inverse iff the quaternion is normalized.
   */
   FGQuaternion Conjugate(void) const {
-    return FGQuaternion( data[0], -data[1], -data[2], -data[3] );
+    return FGQuaternion(const_cast<CommonData&>(gdata()), data[0], -data[1], -data[2], -data[3] );
   }
 
   friend FGQuaternion operator*(double, const FGQuaternion&);
@@ -477,15 +481,15 @@ public:
 
   /** Zero quaternion vector. Does not represent any orientation.
       Useful for initialization of increments */
-  static FGQuaternion zero(void) { return FGQuaternion( 0.0, 0.0, 0.0, 0.0 ); }
+  static FGQuaternion zero(CommonData& c) { return FGQuaternion(c, 0.0, 0.0, 0.0, 0.0 ); }
 
   std::string Dump(const std::string& delimiter) const;
 
-  friend FGQuaternion QExp(const FGColumnVector3& omega);
+  friend FGQuaternion QExp(CommonData& c, const FGColumnVector3& omega);
 
 private:
   /** Copying by assigning the vector valued components.  */
-  FGQuaternion(double q1, double q2, double q3, double q4) : mCacheValid(false)
+  FGQuaternion(CommonData& c, double q1, double q2, double q3, double q4) : FGJSBBase(c), mCacheValid(false)
     { data[0] = q1; data[1] = q2; data[2] = q3; data[3] = q4; }
 
   /** Computation of derived values.
@@ -537,7 +541,7 @@ private:
     Multiply the Vector with a scalar value.
 */
 inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
-  return FGQuaternion(scalar*q.data[0], scalar*q.data[1], scalar*q.data[2], scalar*q.data[3]);
+  return FGQuaternion(const_cast<CommonData&>(q.gdata()), scalar*q.data[0], scalar*q.data[1], scalar*q.data[2], scalar*q.data[3]);
 }
 
 /** Quaternion exponential
@@ -545,8 +549,8 @@ inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
     Calculate the unit quaternion which is the result of the exponentiation of
     the vector 'omega'.
 */
-inline FGQuaternion QExp(const FGColumnVector3& omega) {
-  FGQuaternion qexp;
+inline FGQuaternion QExp(CommonData& c, const FGColumnVector3& omega) {
+  FGQuaternion qexp(c);
   double angle = omega.Magnitude();
   double sina_a = angle > 0.0 ? sin(angle)/angle : 1.0;
 

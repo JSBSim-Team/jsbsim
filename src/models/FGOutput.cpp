@@ -195,7 +195,7 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   size_t idx = OutputTypes.size();
   FGOutputType* Output = 0;
 
-  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << endl;
+  if (gdata().debug_lvl > 0) cout << endl << "  Output data set: " << idx << endl;
 
   type = to_upper(type);
 
@@ -248,7 +248,7 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   string type = document->GetAttributeValue("type");
   FGOutputType* Output = 0;
 
-  if (debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
+  if (gdata().debug_lvl > 0) cout << endl << "  Output data set: " << idx << "  " << endl;
 
   type = to_upper(type);
 
@@ -313,6 +313,7 @@ SGPath FGOutput::FindFullPathName(const SGPath& path) const
 
 void FGOutput::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

@@ -76,25 +76,83 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+/// JSBSim Message structure
+struct Message {
+  unsigned int fdmId;
+  unsigned int messageId;
+  std::string text;
+  std::string subsystem;
+  enum mType {eText, eInteger, eDouble, eBool} type;
+  bool bVal;
+  int  iVal;
+  double dVal;
+};
+
+// Common data for FGJSBBase, one instance on global scope,
+// A replacement for static variable(not support for multi-thread) in FGJSBBase.
+struct CommonData {
+  Message localMsg;
+  std::queue <Message> Messages;
+  unsigned int messageId = 0;
+
+  short debug_lvl = 1;
+  
+  int gaussian_random_number_phase = 0;
+  double V1 = 0.0;
+  double V2 = 0.0;
+  double S = 0.0;
+
+  ///@name JSBSim console output highlighting terms.
+  //@{
+#ifndef _MSC_VER
+  /// highlights text
+  char highint[5]  = {27, '[', '1', 'm', '\0'      };
+  /// low intensity text
+  char halfint[5]  = {27, '[', '2', 'm', '\0'      };
+  /// normal intensity text
+  char normint[6]  = {27, '[', '2', '2', 'm', '\0' };
+  /// resets text properties
+  char reset[5]    = {27, '[', '0', 'm', '\0'      };
+  /// underlines text
+  char underon[5]  = {27, '[', '4', 'm', '\0'      };
+  /// underline off
+  char underoff[6] = {27, '[', '2', '4', 'm', '\0' };
+  /// blue text
+  char fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
+  /// cyan text
+  char fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
+  /// red text
+  char fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
+  /// green text
+  char fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
+  /// default text
+  char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
+#else
+  char highint[5]  = {'\0' };
+  char halfint[5]  = {'\0' };
+  char normint[6]  = {'\0' };
+  char reset[5]    = {'\0' };
+  char underon[5]  = {'\0' };
+  char underoff[6] = {'\0' };
+  char fgblue[6]   = {'\0' };
+  char fgcyan[6]   = {'\0' };
+  char fgred[6]    = {'\0' };
+  char fggreen[6]  = {'\0' };
+  char fgdef[6]    = {'\0' };
+#endif
+  //@}
+};
+
 class JSBSIM_API FGJSBBase {
 public:
   /// Constructor for FGJSBBase.
-  FGJSBBase() {};
+  FGJSBBase(CommonData& gdata) : _gdata(gdata) {};
 
   /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
 
-  /// JSBSim Message structure
-  struct Message {
-    unsigned int fdmId;
-    unsigned int messageId;
-    std::string text;
-    std::string subsystem;
-    enum mType {eText, eInteger, eDouble, eBool} type;
-    bool bVal;
-    int  iVal;
-    double dVal;
-  };
+  CommonData& gdata() { return _gdata; }
+  const CommonData& gdata() const { return _gdata; }
 
   /// First order, (low pass / lag) filter
   class Filter {
@@ -117,32 +175,6 @@ public:
       return out;
     }
   };
-
-  ///@name JSBSim console output highlighting terms.
-  //@{
-  /// highlights text
-  static char highint[5];
-  /// low intensity text
-  static char halfint[5];
-  /// normal intensity text
-  static char normint[6];
-  /// resets text properties
-  static char reset[5];
-  /// underlines text
-  static char underon[5];
-  /// underline off
-  static char underoff[6];
-  /// blue text
-  static char fgblue[6];
-  /// cyan text
-  static char fgcyan[6];
-  /// red text
-  static char fgred[6];
-  /// green text
-  static char fggreen[6];
-  /// default text
-  static char fgdef[6];
-  //@}
 
   ///@name JSBSim Messaging functions
   //@{
@@ -171,7 +203,7 @@ public:
   void PutMessage(const std::string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return 1 if some messages */
-  int SomeMessages(void) const { return !Messages.empty(); }
+  int SomeMessages(void) const { return !gdata().Messages.empty(); }
   /** Reads the message on the queue and removes it from the queue.
       This function also prints out the message.*/
   void ProcessMessage(void);
@@ -187,8 +219,6 @@ public:
 
   /// Disables highlighting in the console output.
   void disableHighLighting(void);
-
-  static short debug_lvl;
 
   /** Converts from degrees Kelvin to degrees Fahrenheit.
   *   @param kelvin The temperature in degrees Kelvin.
@@ -337,14 +367,11 @@ public:
 
   static constexpr double sign(double num) {return num>=0.0?1.0:-1.0;}
 
-  static double GaussianRandomNumber(void);
+  double GaussianRandomNumber(void);
 
 protected:
-  static Message localMsg;
-
-  static std::queue <Message> Messages;
-
-  static unsigned int messageId;
+  // Reference to the common data
+  CommonData _gdata;
 
   static constexpr double radtodeg = 180. / M_PI;
   static constexpr double degtorad = M_PI / 180.;
@@ -373,7 +400,6 @@ protected:
 
   static std::string CreateIndexedPropertyName(const std::string& Property, int index);
 
-  static int gaussian_random_number_phase;
 
 public:
 /// Moments L, M, N

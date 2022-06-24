@@ -152,20 +152,20 @@ class JSBSIM_API FGLocation : public FGJSBBase
 {
 public:
   /** Default constructor. */
-  FGLocation(void);
+  FGLocation(CommonData& c);
 
   /** Constructor to set the longitude, latitude and the distance
       from the center of the earth.
       @param lon longitude
       @param lat GEOCENTRIC latitude
       @param radius distance from center of earth to vehicle in feet*/
-  FGLocation(double lon, double lat, double radius);
+  FGLocation(CommonData& c, double lon, double lat, double radius);
 
   /** Constructor to initialize the location with the cartesian coordinates
       (X,Y,Z) contained in the input FGColumnVector3. Distances are in feet,
       the position is expressed in the ECEF frame.
       @param lv vector that contain the cartesian coordinates*/
-  FGLocation(const FGColumnVector3& lv);
+  FGLocation(CommonData& c, const FGColumnVector3& lv);
 
   /** Copy constructor. */
   FGLocation(const FGLocation& l);
@@ -324,7 +324,7 @@ public:
       @param lvec Vector in the local horizontal coordinate frame
       @return The location in the earth centered and fixed frame */
   FGLocation LocalToLocation(const FGColumnVector3& lvec) const {
-    ComputeDerived(); return mTl2ec*lvec + mECLoc;
+    ComputeDerived(); return FGLocation(const_cast<CommonData&>(gdata()), mTl2ec*lvec + mECLoc);
   }
 
   /** Conversion from a location in the earth centered and fixed frame
@@ -448,7 +448,7 @@ public:
       A new object is returned that defines a position which is the sum of the
       cartesian coordinates of the two positions provided. */
   FGLocation operator+(const FGLocation& l) const {
-    FGLocation result(mECLoc + l.mECLoc);
+    FGLocation result(const_cast<CommonData&>(gdata()), mECLoc + l.mECLoc);
     if (mEllipseSet) result.SetEllipse(a, ec*a);
     return result;
   }
@@ -457,7 +457,7 @@ public:
       A new object is returned that defines a position which is the difference
       of the cartesian coordinates of the two positions provided. */
   FGLocation operator-(const FGLocation& l) const {
-    FGLocation result(mECLoc - l.mECLoc);
+    FGLocation result(const_cast<CommonData&>(gdata()), mECLoc - l.mECLoc);
     if (mEllipseSet) result.SetEllipse(a, ec*a);
     return result;
   }
@@ -467,7 +467,7 @@ public:
       coordinates of the provided ECEF position scaled by the supplied scalar
       value. */
   FGLocation operator*(double scalar) const {
-    FGLocation result(scalar*mECLoc);
+    FGLocation result(const_cast<CommonData&>(gdata()), scalar*mECLoc);
     if (mEllipseSet) result.SetEllipse(a, ec*a);
     return result;
   }

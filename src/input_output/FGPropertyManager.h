@@ -458,7 +458,6 @@ class JSBSIM_API FGPropertyManager
         cerr << "Failed to tie property " << name << " to a pointer" << endl;
       else {
         tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
       }
     }
 
@@ -492,7 +491,6 @@ class JSBSIM_API FGPropertyManager
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -529,7 +527,6 @@ class JSBSIM_API FGPropertyManager
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -566,7 +563,6 @@ class JSBSIM_API FGPropertyManager
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 
@@ -604,7 +600,6 @@ class JSBSIM_API FGPropertyManager
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
         tied_properties.push_back(property);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
 

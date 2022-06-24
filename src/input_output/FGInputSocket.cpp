@@ -96,7 +96,7 @@ bool FGInputSocket::InitModel(void)
 {
   if (FGInputType::InitModel()) {
     delete socket;
-    socket = new FGfdmSocket(SockPort, SockProtocol);
+    socket = new FGfdmSocket(gdata(), SockPort, SockProtocol);
 
     if (socket == 0) return false;
     if (!socket->GetConnectStatus()) return false;

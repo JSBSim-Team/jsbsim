@@ -81,6 +81,8 @@ CLASS IMPLEMENTATION
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
   : FGModel(fdmex)
+  , VState(fdmex->gdata())
+  , Qec2b(fdmex->gdata())
 {
   Debug(0);
   Name = "FGPropagate";
@@ -98,7 +100,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqQtrndot.resize(5, FGQuaternion(0.0,0.0,0.0));
+  VState.dqQtrndot.resize(5, FGQuaternion(gdata(), 0.0, 0.0, 0.0));
 
   epa = 0.0;
 
@@ -126,7 +128,7 @@ bool FGPropagate::InitModel(void)
   VState.dqPQRidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqUVWidot.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
-  VState.dqQtrndot.resize(5, FGColumnVector3(0.0,0.0,0.0));
+  VState.dqQtrndot.resize(5, FGQuaternion(gdata(), FGColumnVector3(0.0, 0.0, 0.0)));
 
   integrator_rotational_rate = eRectEuler;
   integrator_translational_rate = eAdamsBashforth2;
@@ -162,7 +164,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   // frame relative to the local frame.
   VState.qAttitudeLocal = FGIC->GetOrientation();
 
-  VState.qAttitudeECI = Ti2l.GetQuaternion()*VState.qAttitudeLocal;
+  VState.qAttitudeECI = Ti2l.GetQuaternion(gdata()) * VState.qAttitudeLocal;
   UpdateBodyMatrices();
 
   // Set the velocities in the instantaneus body frame
@@ -269,7 +271,7 @@ bool FGPropagate::Run(bool Holding)
   // Angular orientation derivative
   CalculateQuatdot();
 
-  VState.qAttitudeLocal = Tl2b.GetQuaternion();
+  VState.qAttitudeLocal = Tl2b.GetQuaternion(gdata());
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal
   // frame.
@@ -393,7 +395,7 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
       // The formula from Buss' paper is transposed below to quaternions and is
       // actually the exact solution of the quaternion differential equation
       // qdot = 1/2*w*q when w is constant.
-      Integrand = Integrand * QExp(0.5 * dt * VState.vPQRi);
+      Integrand = Integrand * QExp(gdata(), 0.5 * dt * VState.vPQRi);
     }
     return; // No need to normalize since the quaternion exponential is always normal
   case eBuss2:
@@ -404,7 +406,7 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
       FGColumnVector3 wi = VState.vPQRi;
       FGColumnVector3 wdoti = in.vPQRidot;
       FGColumnVector3 omega = wi + 0.5*dt*wdoti + dt*dt/12.*wdoti*wi;
-      Integrand = Integrand * QExp(0.5 * dt * omega);
+      Integrand = Integrand * QExp(gdata(), 0.5 * dt * omega);
     }
     return; // No need to normalize since the quaternion exponential is always normal
   case eLocalLinearization:
@@ -423,7 +425,7 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
       double C3 = 4.0 * (1.0 - C1) / (omegak*omegak);
       double C4 = 4.0 * (dt - C2) / (omegak*omegak);
       FGColumnVector3 Omega = C2*wi + C3*wdoti + C4*wi*wdoti;
-      FGQuaternion q;
+      FGQuaternion q(gdata());
 
       q(1) = C1 - C4*DotProduct(wi, wdoti);
       q(2) = Omega(eP);
@@ -488,7 +490,7 @@ void FGPropagate::UpdateBodyMatrices(void)
   Tec2b = Ti2b * Tec2i;               // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed();         // body to ECEF frame tranform
 
-  Qec2b = Tec2b.GetQuaternion();
+  Qec2b = Tec2b.GetQuaternion(gdata());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -498,7 +500,7 @@ void FGPropagate::SetInertialOrientation(const FGQuaternion& Qi)
   VState.qAttitudeECI = Qi;
   VState.qAttitudeECI.Normalize();
   UpdateBodyMatrices();
-  VState.qAttitudeLocal = Tl2b.GetQuaternion();
+  VState.qAttitudeLocal = Tl2b.GetQuaternion(gdata());
   CalculateQuatdot();
 }
 
@@ -538,7 +540,7 @@ void FGPropagate::SetAltitudeASL(double altASL)
 
 void FGPropagate::RecomputeLocalTerrainVelocity()
 {
-  FGLocation contact;
+  FGLocation contact(gdata());
   FGColumnVector3 normal;
   Inertial->GetContactPoint(VState.vLocation, contact, normal,
                             LocalTerrainVelocity, LocalTerrainAngularVelocity);
@@ -549,7 +551,7 @@ void FGPropagate::RecomputeLocalTerrainVelocity()
 double FGPropagate::GetTerrainElevation(void) const
 {
   FGColumnVector3 vDummy;
-  FGLocation contact;
+  FGLocation contact(const_cast<CommonData&>(gdata()));
   contact.SetEllipse(in.SemiMajor, in.SemiMinor);
   Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
   return contact.GetGeodAltitude();
@@ -566,7 +568,7 @@ void FGPropagate::SetTerrainElevation(double terrainElev)
 
 double FGPropagate::GetLocalTerrainRadius(void) const
 {
-  FGLocation contact;
+  FGLocation contact(const_cast<CommonData&>(gdata()));
   FGColumnVector3 vDummy;
   Inertial->GetContactPoint(VState.vLocation, contact, vDummy, vDummy, vDummy);
   return contact.GetRadius();
@@ -627,7 +629,7 @@ void FGPropagate::UpdateVehicleState(void)
   UpdateLocationMatrices();
   UpdateBodyMatrices();
   vVel = Tb2l * VState.vUVW;
-  VState.qAttitudeLocal = Tl2b.GetQuaternion();
+  VState.qAttitudeLocal = Tl2b.GetQuaternion(gdata());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -650,32 +652,32 @@ FGColumnVector3 FGPropagate::GetEulerDeg(void) const
 void FGPropagate::DumpState(void)
 {
   cout << endl;
-  cout << fgblue
-       << "------------------------------------------------------------------" << reset << endl;
-  cout << highint
-       << "State Report at sim time: " << FDMExec->GetSimTime() << " seconds" << reset << endl;
-  cout << "  " << underon
-       <<   "Position" << underoff << endl;
+  cout << gdata().fgblue
+       << "------------------------------------------------------------------" << gdata().reset << endl;
+  cout << gdata().highint
+       << "State Report at sim time: " << FDMExec->GetSimTime() << " seconds" << gdata().reset << endl;
+  cout << "  " << gdata().underon
+       <<   "Position" << gdata().underoff << endl;
   cout << "    ECI:   " << VState.vInertialPosition.Dump(", ") << " (x,y,z, in ft)" << endl;
   cout << "    ECEF:  " << VState.vLocation << " (x,y,z, in ft)"  << endl;
   cout << "    Local: " << VState.vLocation.GetGeodLatitudeDeg()
                         << ", " << VState.vLocation.GetLongitudeDeg()
                         << ", " << GetAltitudeASL() << " (geodetic lat, lon, alt ASL in deg and ft)" << endl;
 
-  cout << endl << "  " << underon
-       <<   "Orientation" << underoff << endl;
+  cout << endl << "  " << gdata().underon
+       <<   "Orientation" << gdata().underoff << endl;
   cout << "    ECI:   " << VState.qAttitudeECI.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)" << endl;
   cout << "    Local: " << VState.qAttitudeLocal.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)" << endl;
 
-  cout << endl << "  " << underon
-       <<   "Velocity" << underoff << endl;
+  cout << endl << "  " << gdata().underon
+       <<   "Velocity" << gdata().underoff << endl;
   cout << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)" << endl;
   cout << "    ECEF:  " << (Tb2ec * VState.vUVW).Dump(", ")  << " (x,y,z in ft/s)"  << endl;
   cout << "    Local: " << GetVel() << " (n,e,d in ft/sec)" << endl;
   cout << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)" << endl;
 
-  cout << endl << "  " << underon
-       <<   "Body Rates (relative to given frame, expressed in body frame)" << underoff << endl;
+  cout << endl << "  " << gdata().underon
+       <<   "Body Rates (relative to given frame, expressed in body frame)" << gdata().underoff << endl;
   cout << "    ECI:   " << (VState.vPQRi*radtodeg).Dump(", ") << " (p,q,r in deg/s)" << endl;
   cout << "    ECEF:  " << (VState.vPQR*radtodeg).Dump(", ") << " (p,q,r in deg/s)" << endl;
 }
@@ -861,6 +863,7 @@ void FGPropagate::bind(void)
 
 void FGPropagate::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -875,92 +878,92 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 && from == 2) { // Runtime state variables
-    cout << endl << fgblue << highint << left
+    cout << endl << gdata().fgblue << gdata().highint << left
          << "  Propagation Report (English units: ft, degrees) at simulation time " << FDMExec->GetSimTime() << " seconds"
-         << reset << endl;
+         << gdata().reset << endl;
     cout << endl;
-    cout << highint << "  Earth Position Angle (deg): " << setw(8) << setprecision(3) << reset
+    cout << gdata().highint << "  Earth Position Angle (deg): " << setw(8) << setprecision(3) << gdata().reset
          << GetEarthPositionAngleDeg() << endl;
     cout << endl;
-    cout << highint << "  Body velocity (ft/sec): " << setw(8) << setprecision(3) << reset << VState.vUVW << endl;
-    cout << highint << "  Local velocity (ft/sec): " << setw(8) << setprecision(3) << reset << vVel << endl;
-    cout << highint << "  Inertial velocity (ft/sec): " << setw(8) << setprecision(3) << reset << VState.vInertialVelocity << endl;
-    cout << highint << "  Inertial Position (ft): " << setw(10) << setprecision(3) << reset << VState.vInertialPosition << endl;
-    cout << highint << "  Latitude (deg): " << setw(8) << setprecision(3) << reset << VState.vLocation.GetLatitudeDeg() << endl;
-    cout << highint << "  Longitude (deg): " << setw(8) << setprecision(3) << reset << VState.vLocation.GetLongitudeDeg() << endl;
-    cout << highint << "  Altitude ASL (ft): " << setw(8) << setprecision(3) << reset << GetAltitudeASL() << endl;
-//    cout << highint << "  Acceleration (NED, ft/sec^2): " << setw(8) << setprecision(3) << reset << Tb2l*GetUVWdot() << endl;
+    cout << gdata().highint << "  Body velocity (ft/sec): " << setw(8) << setprecision(3) << gdata().reset << VState.vUVW << endl;
+    cout << gdata().highint << "  Local velocity (ft/sec): " << setw(8) << setprecision(3) << gdata().reset << vVel << endl;
+    cout << gdata().highint << "  Inertial velocity (ft/sec): " << setw(8) << setprecision(3) << gdata().reset << VState.vInertialVelocity << endl;
+    cout << gdata().highint << "  Inertial Position (ft): " << setw(10) << setprecision(3) << gdata().reset << VState.vInertialPosition << endl;
+    cout << gdata().highint << "  Latitude (deg): " << setw(8) << setprecision(3) << gdata().reset << VState.vLocation.GetLatitudeDeg() << endl;
+    cout << gdata().highint << "  Longitude (deg): " << setw(8) << setprecision(3) << gdata().reset << VState.vLocation.GetLongitudeDeg() << endl;
+    cout << gdata().highint << "  Altitude ASL (ft): " << setw(8) << setprecision(3) << gdata().reset << GetAltitudeASL() << endl;
+//    cout << gdata().highint << "  Acceleration (NED, ft/sec^2): " << setw(8) << setprecision(3) << gdata().reset << Tb2l*GetUVWdot() << endl;
     cout << endl;
-    cout << highint << "  Matrix ECEF to Body (Orientation of Body with respect to ECEF): "
-                    << reset << endl << Tec2b.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tec2b.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix ECEF to Body (Orientation of Body with respect to ECEF): "
+                    << gdata().reset << endl << Tec2b.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tec2b.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Body to ECEF (Orientation of ECEF with respect to Body):"
-                    << reset << endl << Tb2ec.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tb2ec.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Body to ECEF (Orientation of ECEF with respect to Body):"
+                    << gdata().reset << endl << Tb2ec.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tb2ec.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Local to Body (Orientation of Body with respect to Local):"
-                    << reset << endl << Tl2b.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tl2b.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Local to Body (Orientation of Body with respect to Local):"
+                    << gdata().reset << endl << Tl2b.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tl2b.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Body to Local (Orientation of Local with respect to Body):"
-                    << reset << endl << Tb2l.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tb2l.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Body to Local (Orientation of Local with respect to Body):"
+                    << gdata().reset << endl << Tb2l.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tb2l.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Local to ECEF (Orientation of ECEF with respect to Local):"
-                    << reset << endl << Tl2ec.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tl2ec.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Local to ECEF (Orientation of ECEF with respect to Local):"
+                    << gdata().reset << endl << Tl2ec.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tl2ec.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix ECEF to Local (Orientation of Local with respect to ECEF):"
-                    << reset << endl << Tec2l.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tec2l.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix ECEF to Local (Orientation of Local with respect to ECEF):"
+                    << gdata().reset << endl << Tec2l.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tec2l.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix ECEF to Inertial (Orientation of Inertial with respect to ECEF):"
-                    << reset << endl << Tec2i.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tec2i.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix ECEF to Inertial (Orientation of Inertial with respect to ECEF):"
+                    << gdata().reset << endl << Tec2i.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tec2i.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Inertial to ECEF (Orientation of ECEF with respect to Inertial):"
-                    << reset << endl << Ti2ec.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Ti2ec.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Inertial to ECEF (Orientation of ECEF with respect to Inertial):"
+                    << gdata().reset << endl << Ti2ec.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Ti2ec.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Inertial to Body (Orientation of Body with respect to Inertial):"
-                    << reset << endl << Ti2b.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Ti2b.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Inertial to Body (Orientation of Body with respect to Inertial):"
+                    << gdata().reset << endl << Ti2b.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Ti2b.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Body to Inertial (Orientation of Inertial with respect to Body):"
-                    << reset << endl << Tb2i.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tb2i.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Body to Inertial (Orientation of Inertial with respect to Body):"
+                    << gdata().reset << endl << Tb2i.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tb2i.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Inertial to Local (Orientation of Local with respect to Inertial):"
-                    << reset << endl << Ti2l.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Ti2l.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Inertial to Local (Orientation of Local with respect to Inertial):"
+                    << gdata().reset << endl << Ti2l.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Ti2l.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
-    cout << highint << "  Matrix Local to Inertial (Orientation of Inertial with respect to Local):"
-                    << reset << endl << Tl2i.Dump("\t", "    ") << endl;
-    cout << highint << "    Associated Euler angles (deg): " << setw(8)
-                    << setprecision(3) << reset << (Tl2i.GetQuaternion().GetEuler()*radtodeg)
+    cout << gdata().highint << "  Matrix Local to Inertial (Orientation of Inertial with respect to Local):"
+                    << gdata().reset << endl << Tl2i.Dump("\t", "    ") << endl;
+    cout << gdata().highint << "    Associated Euler angles (deg): " << setw(8)
+                    << setprecision(3) << gdata().reset << (Tl2i.GetQuaternion(gdata()).GetEuler()*radtodeg)
                     << endl << endl;
 
     cout << setprecision(6); // reset the output stream

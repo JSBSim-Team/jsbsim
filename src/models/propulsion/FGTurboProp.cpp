@@ -60,7 +60,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input),
+  : FGEngine(exec->gdata(), engine_number, input),
     ITT_N1(NULL), EnginePowerRPM_N1(NULL), EnginePowerVC(NULL),
     CombustionEfficiency_N1(NULL)
 {
@@ -148,18 +148,18 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
       // ugly hack but the functionality is obsolete and will be removed some
       // time in the future.
       table_element->SetAttributeValue("name", string("propulsion/engine[#]/") + name);
-      EnginePowerVC = new FGTable(PropertyManager, table_element,
+      EnginePowerVC = new FGTable(gdata(), PropertyManager, table_element,
                                   to_string((int)EngineNumber));
       table_element->SetAttributeValue("name", name);
       cerr << table_element->ReadFrom()
            <<"Note: Using the EnginePowerVC without enclosed <function> tag is deprecated"
            << endl;
     } else if (name == "EnginePowerRPM_N1") {
-      EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
+      EnginePowerRPM_N1 = new FGTable(gdata(), PropertyManager, table_element);
     } else if (name == "ITT_N1") {
-      ITT_N1 = new FGTable(PropertyManager, table_element);
+      ITT_N1 = new FGTable(gdata(), PropertyManager, table_element);
     } else if (name == "CombustionEfficiency_N1") {
-      CombustionEfficiency_N1 = new FGTable(PropertyManager, table_element);
+      CombustionEfficiency_N1 = new FGTable(gdata(), PropertyManager, table_element);
     } else {
       cerr << el->ReadFrom() << "Unknown table type: " << name
            << " in turboprop definition." << endl;
@@ -176,7 +176,7 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   // default table based on '9.333 - (N1)/12.0' approximation
   // gives 430%Fuel at 60%N1
   if (! CombustionEfficiency_N1) {
-    CombustionEfficiency_N1 = new FGTable(6);
+    CombustionEfficiency_N1 = new FGTable(gdata(), 6);
     *CombustionEfficiency_N1 <<  60.0 << 12.0/52.0;
     *CombustionEfficiency_N1 <<  82.0 << 12.0/30.0;
     *CombustionEfficiency_N1 <<  96.0 << 12.0/16.0;
@@ -584,6 +584,7 @@ void FGTurboProp::bindmodel(FGPropertyManager* PropertyManager)
 
 void FGTurboProp::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

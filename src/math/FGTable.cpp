@@ -50,8 +50,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGTable::FGTable(int NRows)
-  : nRows(NRows), nCols(1), PropertyManager(nullptr)
+FGTable::FGTable(CommonData& c, int NRows)
+  : FGJSBBase(c), nRows(NRows), nCols(1), PropertyManager(nullptr)
 {
   Type = tt1D;
   // Fill unused elements with NaNs to detect illegal access.
@@ -62,8 +62,8 @@ FGTable::FGTable(int NRows)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(int NRows, int NCols)
-  : nRows(NRows), nCols(NCols), PropertyManager(nullptr)
+FGTable::FGTable(CommonData& c, int NRows, int NCols)
+  : FGJSBBase(c), nRows(NRows), nCols(NCols), PropertyManager(nullptr)
 {
   Type = tt2D;
   // Fill unused elements with NaNs to detect illegal access.
@@ -73,8 +73,8 @@ FGTable::FGTable(int NRows, int NCols)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(const FGTable& t)
-  : PropertyManager(t.PropertyManager)
+FGTable::FGTable(CommonData& c, const FGTable& t)
+  :  FGJSBBase(c), PropertyManager(t.PropertyManager)
 {
   Type = t.Type;
   nRows = t.nRows;
@@ -88,7 +88,7 @@ FGTable::FGTable(const FGTable& t)
   // Deep copy of t.Tables
   Tables.reserve(t.Tables.size());
   for(const auto &t: t.Tables)
-    Tables.push_back(std::unique_ptr<FGTable>(new FGTable(*t)));
+    Tables.push_back(std::unique_ptr<FGTable>(new FGTable(c, *t)));
 
   Data = t.Data;
 }
@@ -109,9 +109,9 @@ unsigned int FindNumColumns(const string& test_line)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::FGTable(FGPropertyManager* propMan, Element* el,
+FGTable::FGTable(CommonData& c, FGPropertyManager* propMan, Element* el,
                  const std::string& Prefix)
-  : PropertyManager(propMan)
+  : FGJSBBase(c), PropertyManager(propMan)
 {
   string brkpt_string;
   Element *tableData = nullptr;
@@ -142,10 +142,10 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     // at the same time that independentVars are specified.
     if (internal) {
       cerr  << el->ReadFrom()
-            << fgred << "  This table specifies both 'internal' call type" << endl
+            << gdata().fgred << "  This table specifies both 'internal' call type" << endl
             << "  and specific lookup properties via the 'independentVar' element." << endl
             << "  These are mutually exclusive specifications. The 'internal'" << endl
-            << "  attribute will be ignored." << fgdef << endl << endl;
+            << "  attribute will be ignored." << gdata().fgdef << endl << endl;
       internal = false;
     }
 
@@ -326,7 +326,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 
     tableData = el->FindElement("tableData");
     while (tableData) {
-      Tables.push_back(std::unique_ptr<FGTable>(new FGTable(PropertyManager, tableData)));
+      Tables.push_back(std::unique_ptr<FGTable>(new FGTable(gdata(), PropertyManager, tableData)));
       Data.push_back(tableData->GetAttributeValueAsNumber("breakPoint"));
       Tables.back()->lookupProperty[eRow] = lookupProperty[eRow];
       Tables.back()->lookupProperty[eColumn] = lookupProperty[eColumn];
@@ -354,11 +354,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     for (unsigned int b=2; b<=Tables.size(); ++b) {
       if (Data[b] <= Data[b-1]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint
+                  << gdata().fgred << gdata().highint
                   << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
                   << "  in breakpoint " << b;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
+        std::cerr << ":" << gdata().reset << endl
                   << "  " << Data[b] << "<=" << Data[b-1] << endl;
         throw BaseException("Breakpoint lookup is not monotonically increasing");
       }
@@ -370,11 +370,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     for (unsigned int c=2; c<=nCols; ++c) {
       if (Data[c] <= Data[c-1]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint
+                  << gdata().fgred << gdata().highint
                   << "  FGTable: column lookup is not monotonically increasing" << endl
                   << "  in column " << c;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
+        std::cerr << ":" << gdata().reset << endl
                   << "  " << Data[c] << "<=" << Data[c-1] << endl;
         throw BaseException("FGTable: column lookup is not monotonically increasing");
       }
@@ -386,11 +386,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
     for (size_t r=2; r<=nRows; ++r) {
       if (Data[r*(nCols+1)]<=Data[(r-1)*(nCols+1)]) {
         std::cerr << el->ReadFrom()
-                  << fgred << highint
+                  << gdata().fgred << gdata().highint
                   << "  FGTable: row lookup is not monotonically increasing" << endl
                   << "  in row " << r;
         if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
+        std::cerr << ":" << gdata().reset << endl
                   << "  " << Data[r*(nCols+1)] << "<=" << Data[(r-1)*(nCols+1)] << endl;
         throw BaseException("FGTable: row lookup is not monotonically increasing");
       }
@@ -415,7 +415,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 
   bind(el, Prefix);
 
-  if (debug_lvl & 1) Print();
+  if (gdata().debug_lvl & 1) Print();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -423,10 +423,10 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el,
 void FGTable::missingData(Element *el, unsigned int expected_size, size_t actual_size)
 {
   std::cerr << el->ReadFrom()
-            << fgred << highint
+            << gdata().fgred << gdata().highint
             << "  FGTable: Missing data";
   if (!Name.empty()) std::cerr << " in table " << Name;
-  std::cerr << ":" << reset << endl
+  std::cerr << ":" << gdata().reset << endl
             << "  Expecting " << expected_size << " elements while "
             << actual_size << " elements were provided." << endl;
   throw BaseException("FGTable: missing data");
@@ -718,6 +718,7 @@ void FGTable::bind(Element* el, const string& Prefix)
 
 void FGTable::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

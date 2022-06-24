@@ -753,12 +753,12 @@ class FGFunction : public FGParameter, public FGJSBBase
 {
 public:
   /// Default constructor.
-  FGFunction()
-    : cached(false), cachedValue(-HUGE_VAL), PropertyManager(nullptr),
+  FGFunction(CommonData& c)
+    : FGJSBBase(c), cached(false), cachedValue(-HUGE_VAL), PropertyManager(nullptr),
       pNode(nullptr), pCopyTo(nullptr) {}
 
-  explicit FGFunction(FGPropertyManager* pm)
-    : FGFunction()
+  explicit FGFunction(CommonData& c, FGPropertyManager* pm)
+    : FGFunction(c)
   { PropertyManager = pm; }
 
   /** Constructor.

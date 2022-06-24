@@ -96,6 +96,7 @@ public:
   /** The current vehicle state vector structure contains the translational and
     angular position, and the translational and angular velocity. */
   struct VehicleState {
+    VehicleState(CommonData& c) : vLocation(c), qAttitudeLocal(c), qAttitudeECI(c), vQtrndot(c) {}
     /** Represents the current location of the vehicle in Earth centered Earth
         fixed (ECEF) frame.
         units ft */
@@ -583,18 +584,18 @@ public:
   void SetLocation(const FGLocation& l);
   void SetLocation(const FGColumnVector3& lv)
   {
-      FGLocation l = FGLocation(lv);
+      FGLocation l = FGLocation(gdata(), lv);
       SetLocation(l);
   }
   void SetPosition(const double Lon, const double Lat, const double Radius)
   {
-      FGLocation l = FGLocation(Lon, Lat, Radius);
+      FGLocation l = FGLocation(gdata(), Lon, Lat, Radius);
       SetLocation(l);
   }
 
   void NudgeBodyLocation(const FGColumnVector3& deltaLoc) {
     VState.vInertialPosition -= Tb2i*deltaLoc;
-    VState.vLocation -= Tb2ec*deltaLoc;
+    VState.vLocation -= FGLocation(VState.vLocation.gdata(), Tb2ec*deltaLoc);
   }
 
   /** Sets the property forces/hold-down. This allows to do hard 'hold-down'

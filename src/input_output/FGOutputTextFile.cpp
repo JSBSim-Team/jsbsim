@@ -86,10 +86,10 @@ bool FGOutputTextFile::OpenFile(void)
   datafile.clear();
   datafile.open(Filename);
   if (!datafile) {
-    cerr << endl << fgred << highint << "ERROR: unable to open the file "
-         << reset << Filename.c_str() << endl
-         << fgred << highint << "       => Output to this file is disabled."
-         << reset << endl << endl;
+    cerr << endl << gdata().fgred << gdata().highint << "ERROR: unable to open the file "
+         << gdata().reset << Filename.c_str() << endl
+         << gdata().fgred << gdata().highint << "       => Output to this file is disabled."
+         << gdata().reset << endl << endl;
     Disable();
     return false;
   }

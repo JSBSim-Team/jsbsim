@@ -52,8 +52,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGEngine::FGEngine(int engine_number, struct Inputs& input)
-  : in(input), EngineNumber(engine_number)
+FGEngine::FGEngine(CommonData& c, int engine_number, struct Inputs& input)
+  : FGModelFunctions(c), in(input), EngineNumber(engine_number)
 {
   Type = etUnknown;
   SLFuelFlowMax = 0.0;
@@ -262,6 +262,7 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 
 void FGEngine::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

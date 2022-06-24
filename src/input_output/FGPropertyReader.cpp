@@ -67,14 +67,6 @@ bool FGPropertyReader::ResetToIC(void)
 void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
 {
   Element *property_element = el->FindElement("property");
-  if (property_element && FGJSBBase::debug_lvl > 0) {
-    cout << endl << "    ";
-    if (override)
-      cout << "Overriding";
-    else
-      cout << "Declared";
-    cout << " properties" << endl << endl;
-  }
 
   while (property_element) {
     SGPropertyNode* node = nullptr;
@@ -86,18 +78,6 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
     if (PM->HasNode(interface_property_string)) {
       if (override) {
         node = PM->GetNode(interface_property_string);
-
-        if (FGJSBBase::debug_lvl > 0) {
-          if (interface_prop_initial_value.find(node) == interface_prop_initial_value.end()) {
-            cout << property_element->ReadFrom()
-                 << "  The following property will be overridden but it has not been" << endl
-                 << "  defined in the current model '" << el->GetName() << "'" << endl;
-          }
-
-          cout << "      " << "Overriding value for property " << interface_property_string << endl
-               << "       (old value: " << node->getDoubleValue() << "  new value: " << value << ")"
-               << endl << endl;
-        }
 
         node->setDoubleValue(value);
       }
@@ -112,10 +92,6 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
       node = PM->GetNode(interface_property_string, true);
       if (node) {
         node->setDoubleValue(value);
-
-        if (FGJSBBase::debug_lvl > 0)
-          cout << "      " << interface_property_string << " (initial value: " 
-               << value << ")" << endl << endl;
       }
       else {
         cerr << "Could not create property " << interface_property_string

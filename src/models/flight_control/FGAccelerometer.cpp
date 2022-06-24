@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 
 FGAccelerometer::FGAccelerometer(FGFCS* fcs, Element* element)
   : FGSensor(fcs, element),
-    FGSensorOrientation(element)
+    FGSensorOrientation(fcs->gdata(), element)
 {
   Propagate = fcs->GetExec()->GetPropagate();
   Accelerations = fcs->GetExec()->GetAccelerations();
@@ -127,6 +127,7 @@ void FGAccelerometer::Debug(int from)
 {
   string ax[4] = {"none", "X", "Y", "Z"};
 
+  auto debug_lvl = FGSensorOrientation::gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

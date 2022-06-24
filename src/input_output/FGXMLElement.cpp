@@ -32,6 +32,7 @@ INCLUDES
 #include <stdexcept>  // using domain_error, invalid_argument, and length_error.
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
+#include <random>
 
 using namespace std;
 
@@ -667,9 +668,12 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
     if (attType == "gaussian" || attType == "gaussiansigned") {
-      double grn = FGJSBBase::GaussianRandomNumber();
-    if (attType == "gaussian") {
-      value = val + disp*grn;
+      std::random_device rd{};
+      std::mt19937 gen{rd()};
+      std::normal_distribution<double> d{0, 1};
+      double grn = d(gen);
+      if (attType == "gaussian") {
+        value = val + disp*grn;
       } else { // Assume gaussiansigned
         value = (val + disp*grn)*(fabs(grn)/grn);
       }
@@ -755,13 +759,6 @@ void Element::MergeAttributes(Element* el)
   for (it=el->attributes.begin(); it != el->attributes.end(); ++it) {
     if (attributes.find(it->first) == attributes.end())
       attributes[it->first] = it->second;
-    else {
-      if (FGJSBBase::debug_lvl > 0 && (attributes[it->first] != it->second))
-        cout << el->ReadFrom() << " Attribute '" << it->first << "' is overridden in file "
-             << GetFileName() << ": line " << GetLineNumber() << endl
-             << " The value '" << attributes[it->first] << "' will be used instead of '"
-             << it->second << "'." << endl;
-    }
   }
 }
 

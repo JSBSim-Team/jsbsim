@@ -37,6 +37,7 @@ INCLUDES
 
 #include "FGInertial.h"
 #include "input_output/FGXMLElement.h"
+#include "FGFDMExec.h"
 
 using namespace std;
 
@@ -49,6 +50,7 @@ CLASS IMPLEMENTATION
 
 FGInertial::FGInertial(FGFDMExec* fgex)
   : FGModel(fgex)
+  , in(fgex->gdata())
 {
   Name = "Earth";
 
@@ -216,7 +218,7 @@ FGColumnVector3 FGInertial::GetGravityJ2(const FGLocation& position) const
 void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
 {
   FGColumnVector3 vDummy;
-  FGLocation contact;
+  FGLocation contact(location.gdata());
   contact.SetEllipse(a, b);
   GroundCallback->GetAGLevel(location, contact, vDummy, vDummy, vDummy);
   double groundHeight = contact.GetGeodAltitude();
@@ -276,6 +278,7 @@ void FGInertial::bind(void)
 
 void FGInertial::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl; 
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

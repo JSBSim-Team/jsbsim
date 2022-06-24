@@ -79,7 +79,7 @@ public:
   aFunc(const func_t& _f, FGFDMExec* fdmex, Element* el,
         const string& prefix, FGPropertyValue* v, unsigned int Nmax=Nmin,
         FGFunction::OddEven odd_even=FGFunction::OddEven::Either)
-    : FGFunction(fdmex->GetPropertyManager()), f(_f)
+    : FGFunction(fdmex->gdata(), fdmex->GetPropertyManager()), f(_f)
   {
     Load(el, v, fdmex, prefix);
     CheckMinArguments(el, Nmin);
@@ -109,14 +109,14 @@ template<typename func_t>
 class aFunc<func_t, 0>: public FGFunction
 {
 public:
-  aFunc(const func_t& _f, FGPropertyManager* pm, Element* el,
+  aFunc(CommonData& c, const func_t& _f, FGPropertyManager* pm, Element* el,
         const string& Prefix)
-    : FGFunction(pm), f(_f)
+    : FGFunction(c, pm), f(_f)
   {
     if (el->GetNumElements() != 0) {
       ostringstream buffer;
-      buffer << el->ReadFrom() << fgred << highint
-             << "<" << el->GetName() << "> should have no arguments." << reset
+      buffer << el->ReadFrom() << c.fgred << c.highint
+             << "<" << el->GetName() << "> should have no arguments." << c.reset
              << endl;
       throw WrongNumberOfArguments(buffer.str(), Parameters, el);
     }
@@ -157,9 +157,9 @@ bool GetBinary(double val, const string &ctxMsg)
   if (val < 1E-9) return false;
   else if (val-1 < 1E-9) return true;
   else {
-    cerr << ctxMsg << FGJSBBase::fgred << FGJSBBase::highint
+    cerr << ctxMsg
          << "Malformed conditional check in function definition."
-         << FGJSBBase::reset << endl;
+         << endl;
     throw("Fatal Error.");
   }
 }
@@ -191,11 +191,11 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
   }
   catch(WrongNumberOfArguments& e) {
     if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
-      cerr << el->ReadFrom() << FGJSBBase::fgred
+      cerr << el->ReadFrom() << fdmex->gdata().fgred
            << "<" << el->GetName()
            << "> only has one argument which makes it a no-op." << endl
            << "Its argument will be evaluated but <" << el->GetName()
-           << "> will not be applied to the result." << FGJSBBase::reset << endl;
+           << "> will not be applied to the result." << fdmex->gdata().reset << endl;
       return e.FirstParameter();
     }
     else
@@ -207,7 +207,7 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
 
 FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
                        FGPropertyValue* var)
-  : FGFunction(fdmex->GetPropertyManager())
+  : FGFunction(fdmex->gdata(), fdmex->GetPropertyManager())
 {
   Load(el, var, fdmex, prefix);
   CheckMinArguments(el, 1);
@@ -220,8 +220,8 @@ FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
       if (is_number(prefix))
         sCopyTo = replace(sCopyTo,"#",prefix);
       else {
-        cerr << el->ReadFrom() << fgred
-             << "Illegal use of the special character '#'" << reset << endl
+        cerr << el->ReadFrom() << gdata().fgred
+             << "Illegal use of the special character '#'" << gdata().reset << endl
              << "The 'copyto' argument in function " << Name << " is ignored."
              << endl;
         return;
@@ -230,9 +230,9 @@ FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
 
     pCopyTo = PropertyManager->GetNode(sCopyTo);
     if (!pCopyTo)
-      cerr << el->ReadFrom() << fgred
+      cerr << el->ReadFrom() << gdata().fgred
            << "Property \"" << sCopyTo
-           << "\" must be previously defined in function " << Name << reset
+           << "\" must be previously defined in function " << Name << gdata().reset
            << "The 'copyto' argument is ignored." << endl;
   }
 }
@@ -243,9 +243,9 @@ void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
 {
   if (Parameters.size() < _min) {
     ostringstream buffer;
-    buffer << el->ReadFrom() << fgred << highint
+    buffer << el->ReadFrom() << gdata().fgred << gdata().highint
            << "<" << el->GetName() << "> should have at least " << _min
-           << " argument(s)." << reset << endl;
+           << " argument(s)." << gdata().reset << endl;
     throw WrongNumberOfArguments(buffer.str(), Parameters, el);
   }
 }
@@ -256,9 +256,9 @@ void FGFunction::CheckMaxArguments(Element* el, unsigned int _max)
 {
   if (Parameters.size() > _max) {
     ostringstream buffer;
-    buffer << el->ReadFrom() << fgred << highint
+    buffer << el->ReadFrom() << gdata().fgred << gdata().highint
            << "<" << el->GetName() << "> should have no more than " << _max
-           << " argument(s)." << reset << endl;
+           << " argument(s)." << gdata().reset << endl;
     throw WrongNumberOfArguments(buffer.str(), Parameters, el);
   }
 }
@@ -271,17 +271,17 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
   switch(odd_even) {
   case OddEven::Even:
     if (Parameters.size() % 2 == 1) {
-      cerr << el->ReadFrom() << fgred << highint
+      cerr << el->ReadFrom() << gdata().fgred << gdata().highint
            << "<" << el->GetName() << "> must have an even number of arguments."
-           << reset << endl;
+           << gdata().reset << endl;
       throw("Fatal Error");
     }
     break;
   case OddEven::Odd:
     if (Parameters.size() % 2 == 0) {
-      cerr << el->ReadFrom() << fgred << highint
+      cerr << el->ReadFrom() << gdata().fgred << gdata().highint
            << "<" << el->GetName() << "> must have an odd number of arguments."
-           << reset << endl;
+           << gdata().reset << endl;
       throw("Fatal Error");
     }
     break;
@@ -338,8 +338,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
           }
           else {
             cerr << element->ReadFrom()
-                 << fgred << "Illegal use of the special character '#'"
-                 << reset << endl;
+                 << gdata().fgred << "Illegal use of the special character '#'"
+                 << gdata().reset << endl;
             throw("Fatal Error.");
           }
         }
@@ -352,10 +352,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                                                      PropertyManager, f));
           else {
             cerr << element->ReadFrom()
-                 << fgred << highint << "  No function by the name "
+                 << gdata().fgred << gdata().highint << "  No function by the name "
                  << function_str << " has been defined. This property will "
                  << "not be logged. You should check your configuration file."
-                 << reset << endl;
+                 << gdata().reset << endl;
           }
         }
         else
@@ -374,7 +374,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                   << endl;
         throw BaseException("An internal table cannot be nested within a function.");
       }
-      Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
+      Parameters.push_back(new FGTable(gdata(), PropertyManager, element, Prefix));
       // operations
     } else if (operation == "product") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
@@ -611,8 +611,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [generator, distribution]()->double {
                  return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
-                                                     Prefix));
+      Parameters.push_back(new aFunc<decltype(f), 0>(gdata(), f, PropertyManager, element, Prefix));
     } else if (operation == "urandom") {
       double lower = -1.0;
       double upper = 1.0;
@@ -627,16 +626,15 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [generator, distribution]()->double {
                  return (*distribution.get())(*generator);
                };
-      Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
-                                                     Prefix));
+      Parameters.push_back(new aFunc<decltype(f), 0>(gdata(), f, PropertyManager, element, Prefix));
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
-      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+      auto f = [this, ctxMsg](const decltype(Parameters)& p)->double {
                  double temp = p[0]->GetValue();
                  if (temp < 0.0) {
-                   cerr << ctxMsg << fgred << highint
+                   cerr << ctxMsg << gdata().fgred << gdata().highint
                         << "The switch function index (" << temp
-                        << ") is negative." << reset << endl;
+                        << ") is negative." << gdata().reset << endl;
                    throw("Fatal error");
                  }
                  size_t n = p.size()-1;
@@ -645,16 +643,15 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  if (i < n)
                    return p[i+1]->GetValue();
                  else {
-                   cerr << ctxMsg << fgred << highint
+                   cerr << ctxMsg << gdata().fgred << gdata().highint
                         << "The switch function index (" << temp
                         << ") selected a value above the range of supplied values"
                         << "[0:" << n-1 << "]"
-                        << " - not enough values were supplied." << reset << endl;
+                        << " - not enough values were supplied." << gdata().reset << endl;
                    throw("Fatal error");
                  }
                };
-      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
-                                                     var, MaxArgs));
+      Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var, MaxArgs));
     } else if (operation == "interpolate1d") {
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
@@ -696,14 +693,14 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
       // must be from a z-y-x axis rotation order
-      auto f = [](const decltype(Parameters)& p)->double {
+      auto f = [this](const decltype(Parameters)& p)->double {
                  double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
                  double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
                  double phi = p[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
                  double theta = p[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
                  double psi = p[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
 
-                 FGQuaternion qTb2l(phi, theta, psi);
+                 FGQuaternion qTb2l(gdata(), phi, theta, psi);
                  double cos_beta = cos(beta);
                  FGColumnVector3 wind_body(cos(alpha)*cos_beta, sin(beta),
                                            sin(alpha)*cos_beta);
@@ -719,13 +716,13 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // Calculates local angle of sideslip for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
       // must be from a z-y-x axis rotation order
-      auto f = [](const decltype(Parameters)& p)->double {
+      auto f = [this](const decltype(Parameters)& p)->double {
                  double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
                  double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
                  double phi = p[3]->GetValue()*degtorad;   //x-axis Euler angle from the intermediate body frame to the local body frame
                  double theta = p[4]->GetValue()*degtorad; //y-axis Euler angle from the intermediate body frame to the local body frame
                  double psi = p[5]->GetValue()*degtorad;   //z-axis Euler angle from the intermediate body frame to the local body frame
-                 FGQuaternion qTb2l(phi, theta, psi);
+                 FGQuaternion qTb2l(gdata(), phi, theta, psi);
                  double cos_beta = cos(beta);
                  FGColumnVector3 wind_body(cos(alpha)*cos_beta, sin(beta),
                                            sin(alpha)*cos_beta);
@@ -751,7 +748,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // Calculates local roll angle for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
       // must be from a z-y-x axis rotation order
-      auto f = [](const decltype(Parameters)& p)->double {
+      auto f = [this](const decltype(Parameters)& p)->double {
                  double alpha = p[0]->GetValue()*degtorad; //angle of attack of intermediate body frame
                  double beta = p[1]->GetValue()*degtorad;  //sideslip angle of intermediate body frame
                  double gamma = p[2]->GetValue()*degtorad; //roll angle of intermediate body frame
@@ -761,7 +758,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  double cos_alpha = cos(alpha), sin_alpha = sin(alpha);
                  double cos_beta = cos(beta),   sin_beta = sin(beta);
                  double cos_gamma = cos(gamma), sin_gamma = sin(gamma);
-                 FGQuaternion qTb2l(phi, theta, psi);
+                 FGQuaternion qTb2l(gdata(), phi, theta, psi);
                  FGColumnVector3 wind_body_X(cos_alpha*cos_beta, sin_beta,
                                              sin_alpha*cos_beta);
                  FGColumnVector3 wind_body_Y(-sin_alpha*sin_gamma-sin_beta*cos_alpha*cos_gamma,
@@ -798,7 +795,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // Transforms the input vector from a body frame to a wind frame. The
       // origin of the vector remains the same.
       string ctxMsg = element->ReadFrom();
-      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+      auto f = [this, ctxMsg](const decltype(Parameters)& p)->double {
                  double rx = p[0]->GetValue();             //x component of input vector
                  double ry = p[1]->GetValue();             //y component of input vector
                  double rz = p[2]->GetValue();             //z component of input vector
@@ -808,13 +805,13 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  int idx = static_cast<int>(p[6]->GetValue());
 
                  if ((idx < 1) || (idx > 3)) {
-                   cerr << ctxMsg << fgred << highint
+                   cerr << ctxMsg << gdata().fgred << gdata().highint
                         << "The index must be one of the integer value 1, 2 or 3."
-                        << reset << endl;
+                        << gdata().reset << endl;
                    throw("Fatal error");
                  }
 
-                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                 FGQuaternion qa(gdata(), eY, -alpha), qb(gdata(), eZ, beta), qc(gdata(), eX, -gamma);
                  FGMatrix33 mT = (qa*qb*qc).GetT();
                  FGColumnVector3 r0(rx, ry, rz);
                  FGColumnVector3 r = mT*r0;
@@ -826,7 +823,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // Transforms the input vector from q wind frame to a body frame. The
       // origin of the vector remains the same.
       string ctxMsg = element->ReadFrom();
-      auto f = [ctxMsg](const decltype(Parameters)& p)->double {
+      auto f = [this, ctxMsg](const decltype(Parameters)& p)->double {
                  double rx = p[0]->GetValue();             //x component of input vector
                  double ry = p[1]->GetValue();             //y component of input vector
                  double rz = p[2]->GetValue();             //z component of input vector
@@ -836,13 +833,13 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  int idx = static_cast<int>(p[6]->GetValue());
 
                  if ((idx < 1) || (idx > 3)) {
-                   cerr << ctxMsg << fgred << highint
+                   cerr << ctxMsg << gdata().fgred << gdata().highint
                         << "The index must be one of the integer value 1, 2 or 3."
-                        << reset << endl;
+                        << gdata().reset << endl;
                    throw("Fatal error");
                  }
 
-                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                 FGQuaternion qa(gdata(), eY, -alpha), qb(gdata(), eZ, beta), qc(gdata(), eX, -gamma);
                  FGMatrix33 mT = (qa*qb*qc).GetT();
                  FGColumnVector3 r0(rx, ry, rz);
                  mT.T();
@@ -852,9 +849,9 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 7>(f, fdmex, element, Prefix, var));
     } else if (operation != "description") {
-      cerr << element->ReadFrom() << fgred << highint
+      cerr << element->ReadFrom() << gdata().fgred << gdata().highint
            << "Bad operation <" << operation
-           << "> detected in configuration file" << reset << endl;
+           << "> detected in configuration file" << gdata().reset << endl;
     }
 
     // Optimize functions applied on constant parameters by replacing them by
@@ -869,8 +866,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
         Parameters.pop_back();
         Parameters.push_back(new FGRealValue(constant));
-        if (debug_lvl > 0)
-          cout << element->ReadFrom() << fggreen << highint
+        if (gdata().debug_lvl > 0)
+          cout << element->ReadFrom() << gdata().fggreen << gdata().highint
                << "<" << operation << "> is applied on constant parameters."
                << endl << "It will be replaced by its result ("
                << constant << ")";
@@ -878,11 +875,11 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         if (node) {
           node->setDoubleValue(constant);
           node->setAttribute(SGPropertyNode::WRITE, false);
-          if (debug_lvl > 0)
+          if (gdata().debug_lvl > 0)
             cout << " and the property " << pName
                  << " will be unbound and made read only.";
         }
-        cout << reset << endl << endl;
+        cout << gdata().reset << endl << endl;
       }
     }
     element = el->GetNextElement();
@@ -1017,6 +1014,7 @@ void FGFunction::bind(Element* el, const string& Prefix)
 
 void FGFunction::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

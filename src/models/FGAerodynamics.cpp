@@ -38,6 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 #include "input_output/FGXMLElement.h"
+#include "FGFDMExec.h"
 
 using namespace std;
 
@@ -382,8 +383,8 @@ bool FGAerodynamics::Load(Element *document)
         ca.push_back( new FGFunction(FDMExec, function_element) );
       } catch (const string& str) {
         cerr << endl << axis_element->ReadFrom()
-             << endl << fgred << "Error loading aerodynamic function in "
-             << current_func_name << ":" << str << " Aborting." << reset << endl;
+             << endl << gdata().fgred << "Error loading aerodynamic function in "
+             << current_func_name << ":" << str << " Aborting." << gdata().reset << endl;
         return false;
       }
       } else {
@@ -391,8 +392,8 @@ bool FGAerodynamics::Load(Element *document)
           ca_atCG.push_back( new FGFunction(FDMExec, function_element) );
         } catch (const string& str) {
           cerr << endl << axis_element->ReadFrom()
-               << endl << fgred << "Error loading aerodynamic function in "
-               << current_func_name << ":" << str << " Aborting." << reset << endl;
+               << endl << gdata().fgred << "Error loading aerodynamic function in "
+               << current_func_name << ":" << str << " Aborting." << gdata().reset << endl;
           return false;
         }
       }
@@ -692,6 +693,7 @@ void FGAerodynamics::BuildStabilityTransformMatrices(void)
 
 void FGAerodynamics::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

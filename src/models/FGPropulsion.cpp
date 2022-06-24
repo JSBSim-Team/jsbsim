@@ -61,8 +61,6 @@ using namespace std;
 
 namespace JSBSim {
 
-extern short debug_lvl;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -426,7 +424,7 @@ bool FGPropulsion::Load(Element* el)
         return false;
       }
     } catch (std::string& str) {
-      cerr << endl << fgred << str << reset << endl;
+      cerr << endl << gdata().fgred << str << gdata().reset << endl;
       return false;
     }
 
@@ -542,7 +540,7 @@ string FGPropulsion::GetPropulsionTankReport()
     } else {
       tankname = "(Unknown tank type)";
     }
-    outstream << highint << left << setw(4) << i << setw(30) << tankname << normint
+    outstream << gdata().highint << left << setw(4) << i << setw(30) << tankname << gdata().normint
       << right << setw(10) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
          << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
          << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()
@@ -852,6 +850,7 @@ void FGPropulsion::bind(void)
 
 void FGPropulsion::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

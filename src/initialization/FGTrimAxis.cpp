@@ -59,7 +59,7 @@ namespace JSBSim {
 /*****************************************************************************/
 
 FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
-                       Control ctrl) {
+                       Control ctrl) : FGJSBBase(fdex->gdata()) {
 
   fdmex=fdex;
   fgic=ic;
@@ -339,7 +339,7 @@ double FGTrimAxis::GetAvgStability( void ) {
 
 void FGTrimAxis::Debug(int from)
 {
-
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
   if (debug_lvl & 1 ) { // Standard console startup message output
     if (from == 0) { // Constructor

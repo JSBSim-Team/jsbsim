@@ -112,7 +112,7 @@ public:
       @param location Location at which the AGL is evaluated.
       @see SetGroundCallback */
   double GetAltitudeAGL(const FGLocation& location) const {
-    FGLocation lDummy;
+    FGLocation lDummy(const_cast<CommonData&>(location.gdata()));
     FGColumnVector3 vDummy;
     return GroundCallback->GetAGLevel(location, lDummy, vDummy, vDummy,
                                       vDummy);
@@ -195,6 +195,7 @@ public:
   { return GetTl2ec(location).Transposed(); }
 
   struct Inputs {
+    Inputs(CommonData& c) : Position(c) {}
     FGLocation Position;
   } in;
 

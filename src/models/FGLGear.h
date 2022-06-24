@@ -191,6 +191,7 @@ class JSBSIM_API FGLGear : protected FGSurface, public FGForce
 {
 public:
   struct Inputs {
+    Inputs(CommonData& c) : Location(c) {}
     double Vground;
     double VcalibratedKts;
     double Temperature;

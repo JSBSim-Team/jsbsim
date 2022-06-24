@@ -74,7 +74,7 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
-  : Root(root), RandomEngine(new default_random_engine), FDMctr(fdmctr)
+  : FGJSBBase(cData), Root(root), RandomEngine(new default_random_engine), FDMctr(fdmctr)
 {
   Frame           = 0;
   IC              = nullptr;
@@ -106,9 +106,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
-    if (num) debug_lvl = atoi(num); // set debug level
+    if (num) gdata().debug_lvl = atoi(num); // set debug level
   } catch (...) {                   // if error set to 1
-    debug_lvl = 1;
+    gdata().debug_lvl = 1;
   }
 
   if (Root == 0) {                 // Then this is the root FDM
@@ -571,13 +571,13 @@ bool FGFDMExec::RunIC(void)
   Propagate->InitializeDerivatives();
   ResumeIntegration(); // Restores the integration rate to what it was.
 
-  if (debug_lvl > 0) {
+  if (gdata().debug_lvl > 0) {
     MassBalance->GetMassPropertiesReport(0);
 
-    cout << endl << fgblue << highint
+    cout << endl << gdata().fgblue << gdata().highint
          << "End of vehicle configuration loading." << endl
          << "-------------------------------------------------------------------------------"
-         << reset << std::setprecision(6) << endl;
+         << gdata().reset << std::setprecision(6) << endl;
   }
 
   for (unsigned int n=0; n < propulsion->GetNumEngines(); ++n) {
@@ -703,16 +703,16 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     Allocate();
   }
 
-  int saved_debug_lvl = debug_lvl;
+  int saved_debug_lvl = gdata().debug_lvl;
   FGXMLFileRead XMLFileRead;
   Element *document = XMLFileRead.LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
 
   if (document) {
-    if (IsChild) debug_lvl = 0;
+    if (IsChild) gdata().debug_lvl = 0;
 
     ReadPrologue(document);
 
-    if (IsChild) debug_lvl = saved_debug_lvl;
+    if (IsChild) gdata().debug_lvl = saved_debug_lvl;
 
     // Process the fileheader element in the aircraft config file. This element is OPTIONAL.
     Element* element = document->FindElement("fileheader");
@@ -724,7 +724,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
       }
     }
 
-    if (IsChild) debug_lvl = 0;
+    if (IsChild) gdata().debug_lvl = 0;
 
     // Process the planet element. This element is OPTIONAL.
     element = document->FindElement("planet");
@@ -892,12 +892,12 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 
     modelLoaded = true;
 
-    if (IsChild) debug_lvl = saved_debug_lvl;
+    if (IsChild) gdata().debug_lvl = saved_debug_lvl;
 
   } else {
-    cerr << fgred
+    cerr << gdata().fgred
          << "  JSBSim failed to open the configuration file: " << aircraftCfgFileName
-         << fgdef << endl;
+         << gdata().fgdef << endl;
   }
 
   for (unsigned int i=0; i< Models.size(); i++) LoadInputs(i);
@@ -964,8 +964,8 @@ string FGFDMExec::QueryPropertyCatalog(const string& in)
 void FGFDMExec::PrintPropertyCatalog(void)
 {
   cout << endl;
-  cout << "  " << fgblue << highint << underon << "Property Catalog for "
-       << modelName << reset << endl << endl;
+  cout << "  " << gdata().fgblue << gdata().highint << gdata().underon << "Property Catalog for "
+       << modelName << gdata().reset << endl << endl;
   for (unsigned i=0; i<PropertyCatalog.size(); i++) {
     cout << "    " << PropertyCatalog[i] << endl;
   }
@@ -988,10 +988,10 @@ bool FGFDMExec::ReadFileHeader(Element* el)
 {
   bool result = true; // true for success
 
-  if (debug_lvl == 0) return result;
+  if (gdata().debug_lvl == 0) return result;
 
   if (IsChild) {
-    cout << endl <<highint << fgblue << "Reading child model: " << IdFDM << reset << endl << endl;
+    cout << endl << gdata().highint << gdata().fgblue << "Reading child model: " << IdFDM << gdata().reset << endl << endl;
   }
 
   if (el->FindElement("description"))
@@ -1017,50 +1017,50 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
   string AircraftName = el->GetAttributeValue("name");
   ((FGAircraft*)Models[eAircraft])->SetAircraftName(AircraftName);
 
-  if (debug_lvl & 1) cout << underon << "Reading Aircraft Configuration File"
-            << underoff << ": " << highint << AircraftName << normint << endl;
+  if (gdata().debug_lvl & 1) cout << gdata().underon << "Reading Aircraft Configuration File"
+            << gdata().underoff << ": " << gdata().highint << AircraftName << gdata().normint << endl;
 
   CFGVersion = el->GetAttributeValue("version");
   Release    = el->GetAttributeValue("release");
 
-  if (debug_lvl & 1)
-    cout << "                            Version: " << highint << CFGVersion
-                                                    << normint << endl;
+  if (gdata().debug_lvl & 1)
+    cout << "                            Version: " << gdata().highint << CFGVersion
+                                                    << gdata().normint << endl;
   if (CFGVersion != needed_cfg_version) {
-    cerr << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
+    cerr << endl << gdata().fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
             " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     cerr << "Current version needed is: " << needed_cfg_version << endl;
-    cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
+    cerr << "         You have version: " << CFGVersion << endl << gdata().fgdef << endl;
     return false;
   }
 
-  if (Release == "ALPHA" && (debug_lvl & 1)) {
+  if (Release == "ALPHA" && (gdata().debug_lvl & 1)) {
     cout << endl << endl
-         << highint << "This aircraft model is an " << fgred << Release
-         << reset << highint << " release!!!" << endl << endl << reset
+         << gdata().highint << "This aircraft model is an " << gdata().fgred << Release
+         << gdata().reset << gdata().highint << " release!!!" << endl << endl << gdata().reset
          << "This aircraft model may not even properly load, and probably"
          << " will not fly as expected." << endl << endl
-         << fgred << highint << "Use this model for development purposes ONLY!!!"
-         << normint << reset << endl << endl;
-  } else if (Release == "BETA" && (debug_lvl & 1)) {
+         << gdata().fgred << gdata().highint << "Use this model for development purposes ONLY!!!"
+         << gdata().normint << gdata().reset << endl << endl;
+  } else if (Release == "BETA" && (gdata().debug_lvl & 1)) {
     cout << endl << endl
-         << highint << "This aircraft model is a " << fgred << Release
-         << reset << highint << " release!!!" << endl << endl << reset
+         << gdata().highint << "This aircraft model is a " << gdata().fgred << Release
+         << gdata().reset << gdata().highint << " release!!!" << endl << endl << gdata().reset
          << "This aircraft model probably will not fly as expected." << endl << endl
-         << fgblue << highint << "Use this model for development purposes ONLY!!!"
-         << normint << reset << endl << endl;
-  } else if (Release == "PRODUCTION" && (debug_lvl & 1)) {
+         << gdata().fgblue << gdata().highint << "Use this model for development purposes ONLY!!!"
+         << gdata().normint << gdata().reset << endl << endl;
+  } else if (Release == "PRODUCTION" && (gdata().debug_lvl & 1)) {
     cout << endl << endl
-         << highint << "This aircraft model is a " << fgblue << Release
-         << reset << highint << " release." << endl << endl << reset;
-  } else if (debug_lvl & 1) {
+         << gdata().highint << "This aircraft model is a " << gdata().fgblue << Release
+         << gdata().reset << gdata().highint << " release." << endl << endl << gdata().reset;
+  } else if (gdata().debug_lvl & 1) {
     cout << endl << endl
-         << highint << "This aircraft model is an " << fgred << Release
-         << reset << highint << " release!!!" << endl << endl << reset
+         << gdata().highint << "This aircraft model is an " << gdata().fgred << Release
+         << gdata().reset << gdata().highint << " release!!!" << endl << endl << gdata().reset
          << "This aircraft model may not even properly load, and probably"
          << " will not fly as expected." << endl << endl
-         << fgred << highint << "Use this model for development purposes ONLY!!!"
-         << normint << reset << endl << endl;
+         << gdata().fgred << gdata().highint << "Use this model for development purposes ONLY!!!"
+         << gdata().normint << gdata().reset << endl << endl;
   }
 
   return result;
@@ -1099,16 +1099,16 @@ bool FGFDMExec::ReadChild(Element* el)
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
     const string s("  No location was found for this child object!");
-    cerr << el->ReadFrom() << endl << highint << fgred
-         << s << reset << endl;
+    cerr << el->ReadFrom() << endl << gdata().highint << gdata().fgred
+         << s << gdata().reset << endl;
     throw BaseException(s);
   }
 
   Element* orientation = el->FindElement("orient");
   if (orientation) {
     child->Orient = orientation->FindElementTripletConvertTo("RAD");
-  } else if (debug_lvl > 0) {
-    cerr << endl << highint << "  No orientation was found for this child object! Assuming 0,0,0." << reset << endl;
+  } else if (gdata().debug_lvl > 0) {
+    cerr << endl << gdata().highint << "  No orientation was found for this child object! Assuming 0,0,0." << gdata().reset << endl;
   }
 
   ChildFDMList.push_back(child);
@@ -1168,7 +1168,7 @@ void FGFDMExec::DoTrim(int mode)
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   bool success = trim.DoTrim();
 
-  if (debug_lvl > 0)
+  if (gdata().debug_lvl > 0)
     trim.Report();
 
   if (!success)
@@ -1182,7 +1182,7 @@ void FGFDMExec::DoTrim(int mode)
 void FGFDMExec::SRand(int sr)
 {
   RandomSeed = sr;
-  gaussian_random_number_phase = 0;
+  gdata().gaussian_random_number_phase = 0;
   RandomEngine->seed(sr);
   srand(RandomSeed);
 }
@@ -1208,9 +1208,9 @@ void FGFDMExec::SRand(int sr)
 
 void FGFDMExec::Debug(int from)
 {
-  if (debug_lvl <= 0) return;
+  if (gdata().debug_lvl <= 0) return;
 
-  if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
+  if (gdata().debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "\n\n     "
            << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
@@ -1221,21 +1221,21 @@ void FGFDMExec::Debug(int from)
       cout << "\n\nJSBSim startup complete\n\n";
     }
   }
-  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+  if (gdata().debug_lvl & 2 ) { // Instantiation/Destruction notification
     if (from == 0) cout << "Instantiated: FGFDMExec" << endl;
     if (from == 1) cout << "Destroyed:    FGFDMExec" << endl;
   }
-  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  if (gdata().debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
     if (from == 2) {
       cout << "================== Frame: " << Frame << "  Time: "
            << sim_time << " dt: " << dT << endl;
     }
   }
-  if (debug_lvl & 8 ) { // Runtime state variables
+  if (gdata().debug_lvl & 8 ) { // Runtime state variables
   }
-  if (debug_lvl & 16) { // Sanity checking
+  if (gdata().debug_lvl & 16) { // Sanity checking
   }
-  if (debug_lvl & 64) {
+  if (gdata().debug_lvl & 64) {
     if (from == 0) { // Constructor
     }
   }

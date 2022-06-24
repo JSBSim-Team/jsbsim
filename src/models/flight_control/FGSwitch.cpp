@@ -96,7 +96,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   test_element = element->FindElement("test");
   while (test_element) {
     current_test = new Test;
-    current_test->condition = new FGCondition(test_element, PropertyManager);
+    current_test->condition = new FGCondition(gdata(), test_element, PropertyManager);
     value = test_element->GetAttributeValue("value");
     current_test->setTestValue(value, Name, PropertyManager);
     tests.push_back(current_test);
@@ -187,6 +187,7 @@ void FGSwitch::VerifyProperties(void)
 
 void FGSwitch::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

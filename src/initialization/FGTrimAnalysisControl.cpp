@@ -61,7 +61,8 @@ IDENT(IdHdr,ID_TRIMANALYSISCONTROL);
 
 FGTrimAnalysisControl::FGTrimAnalysisControl(FGFDMExec* fdex, FGInitialCondition* ic,
                                              //State st,
-                                             TaControl ctrl) {
+                                             TaControl ctrl)
+                                             : FGJSBBase(fdex->gdata()) {
   fdmex=fdex;
   fgic=ic;
   state=taAll;

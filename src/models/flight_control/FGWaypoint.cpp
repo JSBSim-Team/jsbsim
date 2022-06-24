@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
-  : FGFCSComponent(fcs, element)
+  : FGFCSComponent(fcs, element), source(fcs->gdata())
 {
   if      (Type == "WAYPOINT_HEADING")  WaypointType = eHeading;
   else if (Type == "WAYPOINT_DISTANCE") WaypointType = eDistance;
@@ -242,6 +242,7 @@ bool FGWaypoint::Run(void )
 
 void FGWaypoint::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

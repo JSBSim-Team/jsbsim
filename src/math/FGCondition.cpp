@@ -53,8 +53,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 // This constructor is called when tests are inside an element
-FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
-  : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
+FGCondition::FGCondition(CommonData& c, Element* element, FGPropertyManager* PropertyManager)
+  : FGJSBBase(c), Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
   InitializeConditionals();
@@ -74,7 +74,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
 
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
-    conditions.push_back(new FGCondition(data, PropertyManager, element));
+    conditions.push_back(new FGCondition(c, data, PropertyManager, element));
   }
 
   Element* condition_element = element->GetElement();
@@ -90,7 +90,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
       throw std::invalid_argument("FGCondition: unrecognized tag:'" + tagName + "'");
     }
 
-    conditions.push_back(new FGCondition(condition_element, PropertyManager));
+    conditions.push_back(new FGCondition(c, condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
 
@@ -101,9 +101,9 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager)
 // This constructor is called when there are no nested test groups inside the
 // condition
 
-FGCondition::FGCondition(const string& test, FGPropertyManager* PropertyManager,
+FGCondition::FGCondition(CommonData& c, const string& test, FGPropertyManager* PropertyManager,
                          Element* el)
-  : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
+  : FGJSBBase(c), Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
   InitializeConditionals();
@@ -279,6 +279,7 @@ void FGCondition::PrintCondition(string indent)
 
 void FGCondition::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

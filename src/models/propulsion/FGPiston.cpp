@@ -57,7 +57,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input),
+  : FGEngine(exec->gdata(), engine_number, input),
   R_air(287.3),                  // Gas constant for air J/Kg/K
   calorific_value_fuel(47.3e6),  // J/Kg
   Cp_air(1005),                  // Specific heat (constant pressure) J/Kg/K
@@ -249,9 +249,9 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
     string name = table_element->GetAttributeValue("name");
     try {
       if (name == "COMBUSTION") {
-        Lookup_Combustion_Efficiency = new FGTable(PropertyManager, table_element);
+        Lookup_Combustion_Efficiency = new FGTable(gdata(), PropertyManager, table_element);
       } else if (name == "MIXTURE") {
-        Mixture_Efficiency_Correlation = new FGTable(PropertyManager, table_element);
+        Mixture_Efficiency_Correlation = new FGTable(gdata(), PropertyManager, table_element);
       } else {
         cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
       }
@@ -315,7 +315,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
 // Default tables if not provided in the configuration file
   if(Lookup_Combustion_Efficiency == 0) {
     // First column is thi, second is neta (combustion efficiency)
-    Lookup_Combustion_Efficiency = new FGTable(12);
+    Lookup_Combustion_Efficiency = new FGTable(gdata(), 12);
     *Lookup_Combustion_Efficiency << 0.00 << 0.980;
     *Lookup_Combustion_Efficiency << 0.90 << 0.980;
     *Lookup_Combustion_Efficiency << 1.00 << 0.970;
@@ -332,7 +332,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
 
     // First column is Fuel/Air Ratio, second is neta (mixture efficiency)
   if( Mixture_Efficiency_Correlation == 0) {
-    Mixture_Efficiency_Correlation = new FGTable(15);
+    Mixture_Efficiency_Correlation = new FGTable(gdata(), 15);
     *Mixture_Efficiency_Correlation << 0.05000 << 0.00000;
     *Mixture_Efficiency_Correlation << 0.05137 << 0.00862;
     *Mixture_Efficiency_Correlation << 0.05179 << 0.21552;
@@ -1017,6 +1017,7 @@ string FGPiston::GetEngineValues(const string& delimiter)
 
 void FGPiston::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

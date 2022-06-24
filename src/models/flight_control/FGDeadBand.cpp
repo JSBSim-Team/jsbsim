@@ -121,6 +121,7 @@ bool FGDeadBand::Run(void)
 
 void FGDeadBand::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

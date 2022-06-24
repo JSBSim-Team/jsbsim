@@ -500,7 +500,7 @@ public:
       @param mode Sets the reset mode.*/
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
-  void SetDebugLevel(int level) {debug_lvl = level;}
+  void SetDebugLevel(int level) {gdata().debug_lvl = level;}
 
   struct PropertyCatalogStructure {
     /// Name of the property.
@@ -591,7 +591,7 @@ public:
   unsigned int GetFrame(void) const {return Frame;}
 
   /** Retrieves the current debug level setting. */
-  int GetDebugLevel(void) const {return debug_lvl;};
+  int GetDebugLevel(void) const {return gdata().debug_lvl;};
 
   /** Initializes the simulation with initial conditions
       @param FGIC The initial conditions that will be passed to the simulation. */
@@ -620,6 +620,7 @@ public:
   { return RandomEngine; }
 
 private:
+  CommonData cData;
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;

@@ -49,7 +49,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
+FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element)
+  : FGJSBBase(_fcs->gdata()), fcs(_fcs)
 {
   Input = Output = delay_time = 0.0;
   delay = index = 0;
@@ -343,6 +344,7 @@ void FGFCSComponent::bind(Element* el)
 
 void FGFCSComponent::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

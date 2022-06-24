@@ -61,7 +61,7 @@ CLASS IMPLEMENTATION
 
 // Constructor
 
-FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
+FGScript::FGScript(FGFDMExec* fgex) : FGJSBBase(fgex->gdata()), FDMExec(fgex)
 {
   PropertyManager=FDMExec->GetPropertyManager();
 
@@ -211,6 +211,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   }
 
   // Read local property/value declarations
+  auto& debug_lvl = gdata().debug_lvl;
   int saved_debug_lvl = debug_lvl;
   debug_lvl = 0; // Disable messages
   LocalProperties.Load(run_element, PropertyManager, true);
@@ -242,9 +243,9 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
     Element* condition_element = event_element->FindElement("condition");
     if (condition_element != 0) {
       try {
-        newCondition = new FGCondition(condition_element, PropertyManager);
+        newCondition = new FGCondition(gdata(), condition_element, PropertyManager);
       } catch(string& str) {
-        cout << endl << fgred << str << reset << endl << endl;
+        cout << endl << gdata().fgred << str << gdata().reset << endl << endl;
         delete newEvent;
         return false;
       }
@@ -287,10 +288,10 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
             newEvent->NotifyProperties.push_back(new FGFunctionValue(notifyPropertyName, PropertyManager, f));
           else {
             cerr << notify_property_element->ReadFrom()
-              << fgred << highint << "  No function by the name "
+              << gdata().fgred << gdata().highint << "  No function by the name "
               << function_str << " has been defined. This property will "
               << "not be logged. You should check your configuration file."
-              << reset << endl;
+              << gdata().reset << endl;
           }
         }
         else
@@ -494,10 +495,10 @@ bool FGScript::RunScript(void)
           cout << "  <b>" << thisEvent.Name << " (Event " << event_ctr << ")"
                << " executed at time: " << currentTime << "</b><br/>" << endl;
         } else  {
-          cout << endl << underon
-               << highint << thisEvent.Name << normint << underoff
+          cout << endl <<gdata().underon
+               << gdata().highint << thisEvent.Name << gdata().normint << gdata().underoff
                << " (Event " << event_ctr << ")"
-               << " executed at time: " << highint << currentTime << normint
+               << " executed at time: " << gdata().highint << currentTime << gdata().normint
                << endl;
         }
         if (!thisEvent.Description.empty()) {
@@ -555,6 +556,7 @@ bool FGScript::RunScript(void)
 
 void FGScript::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -601,7 +603,7 @@ void FGScript::Debug(int from)
                 stringstream s;
                 s << "  An attempt has been made to access a non-existent property" << endl
                   << "  in this event. Please check the property names used, spelling, etc.";
-                cerr << fgred << highint << endl << s.str() << reset << endl;
+                cerr << gdata().fgred << gdata().highint << endl << s.str() << gdata().reset << endl;
                 throw BaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]
@@ -618,7 +620,7 @@ void FGScript::Debug(int from)
                 stringstream s;
                 s << "  An attempt has been made to access a non-existent property" << endl
                   << "  in this event. Please check the property names used, spelling, etc.";
-                cerr << fgred << highint << endl << s.str() << reset << endl;
+                cerr << gdata().fgred << gdata().highint << endl << s.str() << gdata().reset << endl;
                 throw BaseException(s.str());
               } else {
                 cout << endl << "      set " << Events[i].SetParamName[j]

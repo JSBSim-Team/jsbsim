@@ -49,7 +49,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
-  : TankNumber(tank_number)
+  : FGJSBBase(exec->gdata()), TankNumber(tank_number)
 {
   string token, strFuelName;
   Element* element;
@@ -510,6 +510,7 @@ void FGTank::bind(FGPropertyManager* PropertyManager)
 
 void FGTank::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

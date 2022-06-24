@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Inputs& input)
-  : FGEngine(engine_number, input), isp_function(nullptr), FDMExec(exec)
+  : FGEngine(exec->gdata(), engine_number, input), isp_function(nullptr), FDMExec(exec)
 {
   Load(exec, el);
 
@@ -127,7 +127,7 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number, struct Input
   // If there is a thrust table element, this is a solid propellant engine.
   thrust_table_element = el->FindElement("thrust_table");
   if (thrust_table_element) {
-    ThrustTable = new FGTable(PropertyManager, thrust_table_element);
+    ThrustTable = new FGTable(gdata(), PropertyManager, thrust_table_element);
     Element* variation_element = el->FindElement("variation");
     if (variation_element) {
       if (variation_element->FindElement("thrust")) {
@@ -333,6 +333,7 @@ void FGRocket::bindmodel(FGPropertyManager* PropertyManager)
 
 void FGRocket::Debug(int from)
 {
+  const auto& debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output

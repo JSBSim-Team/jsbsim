@@ -72,6 +72,7 @@ DECLARATION: FGModelFunctions
 class FGModelFunctions : public FGJSBBase
 {
 public:
+  FGModelFunctions(CommonData& c) : FGJSBBase(c) {}
   virtual ~FGModelFunctions();
   void RunPreFunctions(void);
   void RunPostFunctions(void);

@@ -130,7 +130,7 @@ public:
     double TotalDeltaT;
   };
 
-  FGEngine(int engine_number, struct Inputs& input);
+  FGEngine(CommonData& c, int engine_number, struct Inputs& input);
   ~FGEngine() override;
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};

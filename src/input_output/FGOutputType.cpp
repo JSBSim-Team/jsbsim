@@ -135,10 +135,10 @@ bool FGOutputType::Load(Element* element)
     FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
       cerr << property_element->ReadFrom()
-           << fgred << highint << endl << "  No property by the name "
+           << gdata().fgred << gdata().highint << endl << "  No property by the name "
            << property_str << " has been defined. This property will " << endl
            << "  not be logged. You should check your configuration file."
-           << reset << endl;
+           << gdata().reset << endl;
     } else {
       if (property_element->HasAttribute("apply")) {
         string function_str = property_element->GetAttributeValue("apply");
@@ -147,10 +147,10 @@ bool FGOutputType::Load(Element* element)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {
           cerr << property_element->ReadFrom()
-               << fgred << highint << "  No function by the name "
+               << gdata().fgred << gdata().highint << "  No function by the name "
                << function_str << " has been defined. This property will "
                << "not be logged. You should check your configuration file."
-               << reset << endl;
+               << gdata().reset << endl;
         }
       }
       else
@@ -250,6 +250,7 @@ void FGOutputType::SetOutputProperties(vector<FGPropertyNode_ptr> & outputProper
 
 void FGOutputType::Debug(int from)
 {
+  auto debug_lvl = gdata().debug_lvl;
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
