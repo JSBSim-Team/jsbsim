@@ -33,6 +33,7 @@
 #include "initialization/FGInitialCondition.h"
 #include "initialization/FGTrim.h"
 #include "Interfaces/IPluginManager.h"
+#include "simgear/props/props.hxx"
 
 #pragma warning( pop )
 
@@ -77,6 +78,68 @@ FString UJSBSimMovementComponent::GetAircraftScreenName() const
 
 	return ScreenName;
 }
+
+
+void UJSBSimMovementComponent::PropertyManagerNode(TArray<FString>& Catalog)
+{
+  auto newlist = Exec->GetPropertyCatalog();
+
+  //convert list to array
+  for (auto iterate : newlist)
+  {
+    Catalog.Add(iterate.c_str());
+  }
+}
+
+//TODO, check if this is optimized, as we are using strings for convenience and we could probably cache the propertynode once we have it
+void UJSBSimMovementComponent::CommandConsole(FString Property, FString InValue, FString& OutValue)
+{
+  FGPropertyNode* node = PropertyManager->GetNode(TCHAR_TO_UTF8(*Property),false);
+  if (node != NULL)
+  {    
+    //we skip setting values by using blank InValue.
+    if (InValue != "")
+    {
+      node->setStringValue(TCHAR_TO_UTF8(*InValue));
+    }
+    OutValue = node->getStringValue();
+  }
+  ////check if property has READ(1) attribute
+  //auto attribute = SGPropertyNode::Attribute(1);
+  //if (! node->getAttribute(attribute))
+  //{
+  //  return;
+  //}
+
+}
+
+//TODO, check if this is optimized, as we are using strings for convenience and we could probably cache the propertynode once we have it
+void UJSBSimMovementComponent::CommandConsoleBatch(TArray<FString> Property, TArray<FString> InValue, TArray<FString>& OutValue)
+{
+  OutValue.SetNum(Property.Num());
+  for (int i = 0; i < Property.Num(); i++)
+  {
+    FGPropertyNode* node = PropertyManager->GetNode(TCHAR_TO_UTF8(*(Property[i])),false);
+    if (node != NULL)
+    {
+      //we skip setting values by using blank InValue.
+      if (InValue[i] != "")
+      {
+        node->setStringValue(TCHAR_TO_UTF8(*InValue[i]));
+      }
+      OutValue[i] = node->getStringValue();
+    }
+  }
+  
+  ////check if property has READ(1) attribute
+  //auto attribute = SGPropertyNode::Attribute(1);
+  //if (! node->getAttribute(attribute))
+  //{
+  //  return;
+  //}
+}
+
+
 
 void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
 {
@@ -190,17 +253,25 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		}
 		else
 		{
-            // TODO - Stepping JSBSim model with a potentially variable step might be a bad idea. 
-            // Maybe step the model with a fixed step in another thread
-			Exec->Setdt(DeltaTime); 
 
+      //calculate sim rate to be 120hz independent of game tick rate(Pseudo fixed rate, dev/user needs to set game to a fixed rate too)
+      simDtime = 120.f/(1.f / DeltaTime);
+      remainder = remainder + fmodf(simDtime,1);
+      simloops = truncf(simDtime) + truncf(remainder);
+      remainder = fmodf(remainder,1);
+
+      //jsbsim recommends to step sim at 120hz, eg 1/120 = 0.0083..
+      Exec->Setdt(0.008333333333333333);
 
             // Send Commands and State to JSBSim
 			CopyToJSBSim();
-
-            // Step model
-			Exec->Run(); 
 			
+      //step sim x times per game tick
+      for (int i = 0; i < simloops; i++)
+      {
+        Exec->Run();
+      }
+
             // The CG location in the reference frame can vary over time, for instance when tanks get empty... 
             // Theoretically, we should update the local transforms. But maybe it's overkill to do it each frame...
             UpdateLocalTransforms(); 
@@ -320,6 +391,7 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		GroundReactions = Exec->GetGroundReactions();
 		Accelerations = Exec->GetAccelerations();
 		IC = Exec->GetIC();
+		PropertyManager = Exec->GetPropertyManager();
 
         // Initialize the Models location, relatively to this plugin
 
