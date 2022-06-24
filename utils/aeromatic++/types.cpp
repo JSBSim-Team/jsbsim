@@ -42,7 +42,7 @@ void strCopy(char *b, std::string str)
 char*
 getEnv(const char*name)
 {
-   static char _key[256] = "";
+   char _key[256] = "";
    char *rv = NULL;
    DWORD res, err;
 

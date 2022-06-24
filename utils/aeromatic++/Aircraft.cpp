@@ -74,10 +74,10 @@ Aircraft::~Aircraft()
     _systems.clear();
 }
 
-const char*
+std::string
 Aircraft::get_verbose_description(int no_engines)
 {
-    static char desc[1024];
+    char desc[1024];
     size_t num = _subclasses.size();
     std::string rv;
 

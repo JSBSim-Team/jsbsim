@@ -49,7 +49,7 @@ public:
         return _description;
     };
 
-    const char* get_verbose_description(int no_engines = -1);
+    std::string get_verbose_description(int no_engines = -1);
 
     const std::vector<std::string> get_subclasses() {
         return _subclasses;
