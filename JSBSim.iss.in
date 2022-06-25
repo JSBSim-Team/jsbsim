@@ -21,8 +21,8 @@ Name: "devfiles\matlab"; Description: "Files to build a JSBSim S-Function for Ma
 
 [Files]
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.exe"; DestDir: "{app}"; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\src\simgear\xml\Expat.COPYING"; DestDir: "{app}"; Components: JSBSim
+Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; DestName: JSBSim-LICENSE.txt; Components: JSBSim
+Source: "${CMAKE_SOURCE_DIR}\src\simgear\xml\COPYING"; DestDir: "{app}"; DestName: libexpat-LICENSE.txt; Components: JSBSim
 Source: "${CMAKE_BINARY_DIR}\utils\aeromatic++\aeromatic.exe"; DestDir: "{app}\aeromatic++"; Components: aeromatic
 Source: "${CMAKE_BINARY_DIR}\msvcp*.dll"; DestDir: "{app}"; Components: JSBSim aeromatic
 Source: "${CMAKE_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
