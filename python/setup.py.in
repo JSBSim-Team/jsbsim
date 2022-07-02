@@ -204,7 +204,7 @@ def XML_files(dir_name):
             yield os.path.join(dir_fullname, f.name)
 
 data_files = [
-                ('share/${PROJECT_NAME}', ['LICENSE.txt']),
+                ('share/${PROJECT_NAME}', ['LICENSE.txt', 'libexpat-LICENSE.txt']),
                 ('share/${PROJECT_NAME}/aircraft', list(XML_files('aircraft'))),
                 ('share/${PROJECT_NAME}/engine', list(XML_files('engine'))),
                 ('share/${PROJECT_NAME}/systems', list(XML_files('systems'))),
