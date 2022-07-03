@@ -318,7 +318,7 @@ int real_main(int argc, char* argv[])
   LogDirectiveName.clear();
   bool result = false, success;
   bool was_paused = false;
-  
+
   double frame_duration;
 
   double new_five_second_value = 0.0;
@@ -464,7 +464,7 @@ int real_main(int argc, char* argv[])
 
   // Dump the simulation state (position, orientation, etc.)
   FDMExec->GetPropagate()->DumpState();
-  
+
   // Perform trim if requested via the initialization file
   JSBSim::TrimMode icTrimRequested = (JSBSim::TrimMode)FDMExec->GetIC()->TrimRequested();
   if (icTrimRequested != JSBSim::TrimMode::tNone) {
@@ -481,7 +481,7 @@ int real_main(int argc, char* argv[])
       exit(1);
     }
   }
-  
+
   cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
        << "---- JSBSim Execution beginning ... --------------------------------------------"
        << JSBSim::FGFDMExec::reset << endl << endl;
@@ -507,18 +507,15 @@ int real_main(int argc, char* argv[])
   if (realtime) sleep_nseconds = (long)(frame_duration*1e9);
   else          sleep_nseconds = (sleep_period )*1e9;           // 0.01 seconds
 
-  tzset(); 
+  tzset();
   current_seconds = initial_seconds = getcurrentseconds();
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result && FDMExec->GetSimTime() <= end_time) {
-
-    FDMExec->ProcessMessage(); // Process messages, if any.
-    
     // Check if increment then hold is on and take appropriate actions if it is
     // Iterate is not supported in realtime - only in batch and playnice modes
     FDMExec->CheckIncrementalHold();
-    
+
     // if running realtime, throttle the execution, else just run flat-out fast
     // unless "playing nice", in which case sleep for a while (0.01 seconds) each frame.
     // If suspended, then don't increment cumulative realtime "stopwatch".
@@ -720,7 +717,7 @@ bool options(int count, char **arg)
 
       XMLFile xmlFile;
       SGPath path = SGPath::fromLocal8Bit(keyword.c_str());
-      
+
       if (xmlFile.IsScriptFile(path)) ScriptName = path;
       else if (xmlFile.IsLogDirectiveFile(path))  LogDirectiveName.push_back(path);
       else if (xmlFile.IsAircraftFile(SGPath("aircraft")/keyword/keyword)) AircraftName = keyword;
