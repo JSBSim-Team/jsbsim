@@ -84,18 +84,6 @@ public:
   /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
 
-  /// JSBSim Message structure
-  struct Message {
-    unsigned int fdmId;
-    unsigned int messageId;
-    std::string text;
-    std::string subsystem;
-    enum mType {eText, eInteger, eDouble, eBool} type;
-    bool bVal;
-    int  iVal;
-    double dVal;
-  };
-
   /// First order, (low pass / lag) filter
   class Filter {
     double prev_in;
@@ -142,43 +130,6 @@ public:
   static char fggreen[6];
   /// default text
   static char fgdef[6];
-  //@}
-
-  ///@name JSBSim Messaging functions
-  //@{
-  /** Places a Message structure on the Message queue.
-      @param msg pointer to a Message structure
-      @return pointer to a Message structure */
-  void PutMessage(const Message& msg);
-  /** Creates a message with the given text and places it on the queue.
-      @param text message text
-      @return pointer to a Message structure */
-  void PutMessage(const std::string& text);
-  /** Creates a message with the given text and boolean value and places it on the queue.
-      @param text message text
-      @param bVal boolean value associated with the message
-      @return pointer to a Message structure */
-  void PutMessage(const std::string& text, bool bVal);
-  /** Creates a message with the given text and integer value and places it on the queue.
-      @param text message text
-      @param iVal integer value associated with the message
-      @return pointer to a Message structure */
-  void PutMessage(const std::string& text, int iVal);
-  /** Creates a message with the given text and double value and places it on the queue.
-      @param text message text
-      @param dVal double value associated with the message
-      @return pointer to a Message structure */
-  void PutMessage(const std::string& text, double dVal);
-  /** Reads the message on the queue (but does not delete it).
-      @return 1 if some messages */
-  int SomeMessages(void) const { return !Messages.empty(); }
-  /** Reads the message on the queue and removes it from the queue.
-      This function also prints out the message.*/
-  void ProcessMessage(void);
-  /** Reads the next message on the queue and removes it from the queue.
-      This function also prints out the message.
-      @return a pointer to the message, or NULL if there are no messages.*/
-  Message* ProcessNextMessage(void);
   //@}
 
   /** Returns the version number of JSBSim.
@@ -340,12 +291,6 @@ public:
   static double GaussianRandomNumber(void);
 
 protected:
-  static Message localMsg;
-
-  static std::queue <Message> Messages;
-
-  static unsigned int messageId;
-
   static constexpr double radtodeg = 180. / M_PI;
   static constexpr double degtorad = M_PI / 180.;
   static constexpr double hptoftlbssec = 550.0;
