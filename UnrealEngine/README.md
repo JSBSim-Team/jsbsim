@@ -52,15 +52,15 @@ It is also recommended to set up Visual Studio for Unreal using the following pr
 [https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 [https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
-**2. Build JSBSim as Static libraries and stage Model files**
+**2. Build JSBSim as Dynamic libraries and stage Model files**
 
 Unreal Engine requires that one plugin contains all its needed files in its sub-folders. 
-This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the wrapper around JSBSim.
+This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the JSBSim files.
 In some of these subfolders, one has to place 
- - The JSBSim libraries, compiled as static libs  
+ - The JSBSim libraries, compiled as dynamic libs  
  - The aircrafts/engine/systems definition files.
 
-When the UE application will be packaged, the resources will be copied along with the executable, and the application linked against the static libs transparently.
+When the UE application will be packaged, the resources will be copied along with the executable, and the application dynamically linked against the libs transparently.
 
 To make this process easier, there is a new solution named JSBSimForUnreal.sln at the root of JSBSim repo. 
 
@@ -71,7 +71,7 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
  
 **3. [Optional] - Download HD resources**
  In order to keep the JSBSim repository lightweight, this application contains low quality resources. 
- If you would like to use better looking content, you can download HD textures and non-flat terrain here: 
+ If you would like to use better looking content, you can download HQ aircraft model, HD textures and non-flat terrain here: 
  [High Definition content pack (330 MB)](https://epicgames.box.com/s/93mupzix8qieu51v209ockq68heuxgwj)
  
  Simply extract this archive and copy/paste the content folder into the one of UEReferenceApp, overriding the existing files. 
@@ -159,11 +159,27 @@ Gamepad Layout
 |Time of day - Noon Preset| HOME|
 |Time of day - Dusk Preset| PAGE UP|
 
+## Update: version 1.01
+ - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame (hence pseudo). **It's best to set the game engine to a fixed rate**, otherwise fluctuating framerates could introduce instabilities in JSBsim. (Tip: Find the min of your average framerate and use that as the game fixed framerate.)
+ - Added new functions/blueprint nodes to access any JSBSim property. This is especially useful to get and set any command value. See next section for usage.
+ - Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
+
+## Extended Commands and Properties
+ - JSBSim has a Property Manager to keep track of all properties, settings, and commands.
+ - New functions and blueprint nodes were added to the UE plugin to access this Property Manager, as a general command console interface to JSBSim.
+ - Example of usage: The ah1s helicopter model loads new controls at runtime. Using the new functions we can access it's controls without having to hardcode every usecase into the UE plugin.
+
+![](https://i.imgur.com/V8KDlwN.png)
+![](https://i.imgur.com/y3q6Za2.png)
+![](https://i.imgur.com/CbxSFp5.png)
+
 ## Notes...
 
  - As you'll see in the aircraft animation blueprint comments, we used an aircraft model from the UE Marketplace which bones were not really well aligned with the rotation axes of moving parts. While it could (had has been) solved by using 1D Blend Space, a better way to do it would have to align the bones correctly, and just drive the locations by angles. But it would have required the aircraft 3D model sources that we did not have. 
- - The JSMSim model is stepped with the frame time delta time. If you have a fixed frame rate, there should not be an issue, but it would probably be better to step the model in a separate thread to have a really fixed step whatever the rendering framerate. 
  - The aircraft lights have been made only for illustration purpose. The cone angle logic is approximate and the blinking frequencies/patterns are not the real ones. (We don't want to freak out the purists ;-) )
  - The Primary Flight Display is very simple too. A pitch indicator would help too... 
  - The terrain is a sample terrain. One might use other terrain sources, as long as the georeferencing is correct! 
  - Gamepad support is limited, but can easily be improved in the Input Settings
+ - Multiple instances of JSBSim components/aircrafts currently does not work. You can only run one aircraft simulation at a time.
+ 
+

@@ -202,14 +202,6 @@ jobs:
     strategy:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
-        matlab_version: [ R2020b, R2021a ]
-        exclude:
-        - os: macos-latest
-          matlab_version: R2021a
-        - os: ubuntu-latest
-          matlab_version: R2021a
-        - os: windows-latest
-          matlab_version: R2020b
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -218,7 +210,7 @@ jobs:
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v1.1.0
         with:
-          release: ${{ matrix.matlab_version }}
+          release: R2022a
       - name: Configure JSBSim
         run: |
           mkdir build
@@ -242,71 +234,37 @@ jobs:
         run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
       - name: Run Tests (Linux & MacOSX)
         if: runner.os != 'Windows'
+        id: tests-unix
         uses: matlab-actions/run-command@v1
         with:
           command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
       - name: Run Tests (Windows)
         if: runner.os == 'Windows'
+        id: tests-windows
         uses: matlab-actions/run-command@v1
         with:
           command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
 
-    # Build the Windows installer
-      - name: Checkout JSBSim logos
-        if: env.release == 'true' && runner.os == 'Windows'
-        id: InstallLogos
-        uses: actions/checkout@v2
-        with:
-          repository: JSBSim-Team/jsbsim-logo
-          path: jsbsim-logo
-      - name: Build JSBSim installer for Windows
-        if: steps.InstallLogos.outcome == 'success'
-        id: BuildInstaller
-        working-directory: build
-        run: |
-          cmake --build . --config RelWithDebInfo --target JSBSim aeromatic
-          # Relocate the logos for the wizard installer
-          mkdir logos
-          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
-          mkdir small
-          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
-          # Relocate the executables for the installer
-          cp src\RelWithDebInfo\JSBSim.exe src\.
-          cp src\RelWithDebInfo\JSBSim.lib src\.
-          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
-          # Get the MSVC C++ DLL
-          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
-          foreach($path in $Paths -split ';') {
-            if (Test-Path $path) {
-              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
-              if ($File) {
-                cp $File.FullName .
-                break;
-              }
-            }
-          }
-          # Compile the installer with Inno Setup
-          iscc JSBSim.iss
-
       - name: Upload Files for Release (Linux & MacOSX)
-        if: runner.os != 'Windows'
+        if: steps.tests-unix.outcome == 'success'
         uses: actions/upload-artifact@v2
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: build/matlab/JSBSim_SFunction.mex*
       - name: Upload Files for Release (Windows)
-        if: steps.BuildInstaller.outcome == 'success'
+        if: steps.tests-windows.outcome == 'success'
         uses: actions/upload-artifact@v2
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: |
+            build/JSBSim.iss
+            build/matlab/JSBSimSimulinkCompile.m
             build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
-            build\Output\*.exe
 
   Windows-MinGW32:
     name: C/C++ build (MinGW32)
     needs: XML-validation
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Set up Python 3.10
         uses: actions/setup-python@v1
@@ -330,7 +288,7 @@ jobs:
           mkdir build && cd build
           julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
           $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
-          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
+          cmake -G "MinGW Makefiles" -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_JULIA_PACKAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
       - name: Build JSBSim
         working-directory: build
         run: mingw32-make -j2
@@ -349,7 +307,7 @@ jobs:
   Windows-MSVC:
     name: C/C++ build (MSVC)
     needs: XML-validation
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         shared_libs: [ON, OFF]
@@ -406,6 +364,11 @@ jobs:
           repository: bombela/backward-cpp
           ref: 'v1.6'
           path: backward-cpp
+      - name: MSVC version
+        run: |
+          $MSVC_name = vswhere -property displayName
+          $MSVC_build = vswhere -property catalog_buildVersion
+          Out-File -InputObject $MSVC_name" (build "$MSVC_build")" -NoNewLine MSVC_version.txt
       - name: Configure JSBSim
         run: |
           New-Item -Path .\build -ItemType Directory -Force
@@ -437,8 +400,74 @@ jobs:
         with:
           name: ${{ runner.os }}.binaries
           path: |
-            build\src\RelWithDebInfo\JSBSim.lib
-            build\python\setup.py
+            build/src/RelWithDebInfo/JSBSim.lib
+            build/src/RelWithDebInfo/JSBSim.exe
+            build/utils/aeromatic++/RelWithDebInfo/aeromatic.exe
+            build/python/setup.py
+            MSVC_version.txt
+
+  Windows-installer:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    name: Build Windows installer
+    needs: Matlab-SFunction
+    runs-on: windows-2019
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v2
+      - name: Checkout JSBSim logos
+        uses: actions/checkout@v2
+        with:
+          repository: JSBSim-Team/jsbsim-logo
+          path: jsbsim-logo
+      - name: Download binary file for JSBSim.iss
+        uses: actions/download-artifact@v2
+        with:
+          name: Matlab-SFunction-Windows.binaries
+          path: build
+      - name: Download JSBSim library and executable
+        uses: actions/download-artifact@v2
+        with:
+          name: Windows.binaries
+      - name: Update the version of JSBSim in matlab/README.md
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        run: |
+          $JSBSim_version = ((.\build\src\RelWithDebInfo\JSBSim.exe --version) -split '\s+')[4]
+          $prev_version = ((Get-Content README.md | Select-String -Pattern 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe') -split '-')[1]
+          (Get-Content -Path matlab\README.md) -Replace "$prev_version", "$JSBSim_version" | Set-Content -Path matlab\README.md
+      - name: Build JSBSim installer for Windows
+        working-directory: build
+        run: |
+          # Relocate the logos for the wizard installer
+          mkdir logos
+          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+          mkdir small
+          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+          # Update the version of MSVC in matlab/README.md
+          $MSVC_version = Get-Content -Path ..\MSVC_version.txt
+          (Get-Content -Path ..\matlab\README.md) -Replace 'Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)', "$MSVC_Version" | Set-Content -Path ..\matlab\README.md
+          # Relocate the executables for the installer
+          cp src\RelWithDebInfo\JSBSim.exe src\.
+          cp src\RelWithDebInfo\JSBSim.lib src\.
+          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+          # Get the MSVC C++ DLL
+          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
+          foreach($path in $Paths -split ';') {
+            if (Test-Path $path) {
+              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
+              if ($File) {
+                cp $File.FullName .
+                break;
+              }
+            }
+          }
+          # Compile the installer with Inno Setup
+          iscc JSBSim.iss
+      - name: Upload the installer for Release
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows-installer.binaries
+          path: |
+            build\Output\*.exe
 
   MacOSX:
     name: C/C++ build (MacOSX)
@@ -485,10 +514,10 @@ jobs:
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Build JSBSim
         working-directory: build
-        run: make -j2
+        run: make -j3
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 -E TestInputSocket --output-on-failure
+        run: ctest -j3 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
         if: env.release == 'true'
         working-directory: build/python
@@ -562,7 +591,7 @@ jobs:
         python-version: [3.7, 3.8, 3.9, '3.10']
         # Use macos-10.15 since it generates wheels for Mac OSX 10.14
         # that are also compatible with 11.0.
-        os: [windows-latest, macos-10.15]
+        os: [windows-2019, macos-10.15]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python
@@ -612,7 +641,7 @@ jobs:
             build/python/dist/*.whl
 
   Rolling-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Matlab-SFunction]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
     name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -642,7 +671,7 @@ jobs:
             dist/*.deb
 
   Stable-Release:
-    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Matlab-SFunction]
+    needs: [ManyLinux-Wheels, MacWin-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
     name: Deploy Stable Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
@@ -656,6 +685,7 @@ jobs:
           find . -type f -name *.whl -exec cp {} dist/. \;
           find . -type f -name *.deb -exec cp {} dist/. \;
           find . -type f -name *.tar.gz -exec cp {} dist/. \;
+          find . -type f -name MSVC_version.txt -exec cp {} . \;
 
       # PyPI deployment
       - name: Set up Python 3.7
@@ -678,6 +708,10 @@ jobs:
           pip install jsbsim --no-index -f dist
           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Get MSVC version
+        run : |
+          export MSVC_VERSION=`cat MSVC_version.txt`
+          echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
       - name: GitHub release
         uses: softprops/action-gh-release@v1
         env:
@@ -689,7 +723,7 @@ jobs:
 
             ## Release files
             - Windows 64 bits
-              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer)
+              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
             - Ubuntu Bionic 18.04 and Focal 20.04 - amd64
               - `*.deb` (Debian packages)
             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
@@ -711,18 +745,28 @@ jobs:
         run: |
           # Increment the value of PROJECT_VERSION_PATCH
           sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/echo "\1\\"$((\2+1))\\"\3"/ge' CMakeLists.txt
+          # Extract from CMake the project version number at the next release.
+          echo "message(STATUS \"JSBSIM_VERSION:\${PROJECT_VERSION}\")" >> src/CMakeLists.txt
+          export FUTURE_VERSION=`cmake . | grep JSBSIM_VERSION | awk -F':' '{print $2}'`
+          # Extract the project old version number
+          export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
+          echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_ENV
           # Update references to the current stable version in README.md
-          export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
-          sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
-          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
-          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
+          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC project files.
+          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSim.vcxproj
+          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSimForUnreal.vcxproj
+          # Update the MSVC version
+          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
           # Determine the branch name
           export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
           # Commit the change to CMakeLists.txt
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout $BRANCH_NAME
-          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md
+          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
           git push origin $BRANCH_NAME
 
       # Bump stable version of the `master` branch
@@ -735,10 +779,11 @@ jobs:
         working-directory: _master
         run: |
           # Update references to the current stable version in README.md
-          export PREV_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
-          sed -ri 's/_'"$PREV_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
-          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' README.md
-          sed -ri 's/'"$PREV_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
+          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC version
+          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
           git commit -m "Bump stable release version" README.md matlab/README.md
           git push origin master
 
@@ -756,7 +801,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U numpy sphinx
+        run: pip install -U numpy sphinx cython 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
       - name: Configure JSBSim

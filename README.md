@@ -51,7 +51,7 @@ JSBSim is also used in academic and industry research ([more than 700 citations 
 
 ### Windows
 
-A Windows installer `JSBSim-1.1.11-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.11). It installs the 2 executables along with aircraft data and some example scripts:
+A Windows installer `JSBSim-1.1.12-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.12). It installs the 2 executables along with aircraft data and some example scripts:
 
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
@@ -62,11 +62,11 @@ The Windows installer also contains the files needed to build the JSBSim Matlab 
 
 ### Ubuntu Linux
 
-Debian packages for Ubuntu Linux "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.11). There are 3 packages for each platform:
+Debian packages for Ubuntu Linux "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.12). There are 3 packages for each platform:
 
-* `JSBSim_1.1.11-741.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
-* `JSBSim-devel_1.1.11-741.amd64.deb` which installs the development resources (headers and libraries)
-* `python3-JSBSim_1.1.11-741.amd64.deb` which installs the Python 3.6 module of JSBSim
+* `JSBSim_1.1.12-866.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
+* `JSBSim-devel_1.1.12-866.amd64.deb` which installs the development resources (headers and libraries)
+* `python3-JSBSim_1.1.12-866.amd64.deb` which installs the Python 3.6 module of JSBSim
 
 ### Python module
 
@@ -114,7 +114,7 @@ At the moment, JSBSim does not provide binaries for platforms other than Windows
 
 ### Aircraft data and example scripts
 
-JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.11.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.11.tar.gz).
+JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.12.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.1.12.tar.gz).
 
 ## Quick start
 
@@ -194,8 +194,14 @@ We are also on Facebook: <https://www.facebook.com/jsbsim/>
 
 # Legal Notice
 
-JSBSim is open source and is licensed under the LGPL 2.1 license. The license is included in the source code in the file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING)
+The JSBSim library is open source and is licensed under the [LGPL 2.1 license](https://opensource.org/licenses/LGPL-2.1). The license is included in the source code file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING).
 
-No proprietary code is included. All code included within JSBSim has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
+The Unreal Engine Reference Application for JSBSim is open source and is licensed under the [MIT license](https://opensource.org/licenses/MIT). The license is included in the source code file [UnrealEngine/LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/LICENSE.txt).
+
+The JSBSim interface with MATLAB including the S-Function is open source and is licensed under the [BSD license](https://opensource.org/licenses/bsd-license.php). The license is included in the source code file [matlab/LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab/LICENSE.txt).
+
+The Python module of JSBSim is open source and is licensed under the [LGPL 2.1 license](https://opensource.org/licenses/LGPL-2.1). The license is included in the source code file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING).
+
+No proprietary code is included. All code included within the JSBSim project has been developed on a volunteer basis using publicly available information, and is often directly linked to a particular textbook, for educational reference. In some cases, code of a generic nature has been donated back to the project.
 
 Likewise, the aircraft models included in this project and distribution do not include any proprietary, sensitive, or classified data. All data is derived from textbooks (such as Stevens and Lewis "Aircraft Control and Simulation" and Sutton's "Rocket Propulsion Elements"), freely available technical reports (see: <https://ntrs.nasa.gov> and <https://www.aiaa.org>), or other public data (such as the FAA web site). Aircraft models included in the JSBSim distribution and with names corresponding to existing commercial or military aircraft are approximations crafted using publicly available information, and are for educational or entertainment uses only.

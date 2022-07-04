@@ -21,7 +21,9 @@ Name: "devfiles\matlab"; Description: "Files to build a JSBSim S-Function for Ma
 
 [Files]
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.exe"; DestDir: "{app}"; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; Components: JSBSim devfiles
+Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; DestName: JSBSim-LICENSE.txt; Components: JSBSim
+Source: "${CMAKE_SOURCE_DIR}\src\simgear\xml\COPYING"; DestDir: "{app}"; DestName: libexpat-LICENSE.txt; Components: JSBSim
+Source: "${CMAKE_SOURCE_DIR}\src\GeographicLib\LICENSE.txt"; DestDir: "{app}"; DestName: GeographicLib-LICENSE.txt; Components: JSBSim
 Source: "${CMAKE_BINARY_DIR}\utils\aeromatic++\aeromatic.exe"; DestDir: "{app}\aeromatic++"; Components: aeromatic
 Source: "${CMAKE_BINARY_DIR}\msvcp*.dll"; DestDir: "{app}"; Components: JSBSim aeromatic
 Source: "${CMAKE_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
@@ -39,3 +41,4 @@ Source: "${CMAKE_BINARY_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\ma
 Source: "${CMAKE_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_SOURCE_DIR}\matlab\README.md"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${CMAKE_SOURCE_DIR}\matlab\LICENSE.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab

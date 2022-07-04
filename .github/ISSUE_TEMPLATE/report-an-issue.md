@@ -1,13 +1,12 @@
 ---
 name: Report a bug or request a new feature
-about: Do not submit support requests here.
+about: Do not submit support requests here (NO HOWTO).
 title: ''
 labels: ''
 assignees: ''
 
 ---
-
-Note: for support questions, please use [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions).
+If you need help or want to ask questions, please use [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions).
 
 This repository's issues are reserved for feature requests and bug reports. Issues that are neither bug reports or feature requests will be transferred to [Discussions](https://github.com/JSBSim-Team/jsbsim/discussions) by the team and the issue will be locked and closed.
 

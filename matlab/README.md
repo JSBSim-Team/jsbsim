@@ -4,11 +4,68 @@ JSBSim provides an S-Function to interface your flight dynamics model with MATLA
 
 Below are the instructions to build the S-Function from JSBSim Windows installer.
 
+## Build instructions for MacOS
+
+### Download and build JSBSim from source
+
+Download the JSBSim source from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.12).
+
+Alternatively, you can clone the source using git:
+
+```bash
+> git clone https://github.com/JSBSim-Team/jsbsim/tree/v1.1.12
+```
+
+Build the source following the instructions in the [JSBSim Manual](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/quickstart-building-the-program/).
+Since we are using MacOS, we must build with CMake.
+
+### Preparation for MATLAB
+
+In order to work with the JSBSim MATLAB S-Function block, we must move some
+files into the `build/` directory. From the command line, make sure your
+current directory is the root of the `jsbsim/` source code.
+
+```bash
+> pwd
+/path/to/jsbsim
+```
+
+Then, we must copy some files into the build. These are necessary for the
+S-Function to operate.
+
+```bash
+> cp -r aircraft build/src/aircraft
+> cp -r engine build/src/engine
+> cp -r scripts build/src/scripts
+```
+
+### Compile the S-Function and Move Compiled Files
+
+In `jsbsim/matlab` open `JSBSimSimulinkCompiler.m` and entire that the line
+below `For MacOS:` is the only one that is not commented out. In the MATLAB
+command line, run the script. Then, from the root of the source code,
+copy the following files into the build source:
+
+```bash
+> cp matlab/JSBSim_SFunction.mexmaci64 build/src/JSBSim_SFunction.mexmaci64
+> cp matlab/ex737cruise.slx build/src/ex737cruise.slx
+> cp matlab/TestJSBSim.m build/src/TestJSBSim.m
+> cp matlab/clearSF.m build/src/clearSF.m
+```
+
+You can now follow the test instructions below in order to ensure it is in
+working condition.
+
+Once you have the S-Function compiled, you just need `aircraft/` and `engine/`
+alongside the compiled `JSBSim_SFunction.mexmaci64` in order for it to work.
+You also nede to be sure that the script in the S-Function parameter is in
+the correct location.
+
 ## Build instructions for the Windows platform
 
 ### Download and install JSBSim
 
-A Windows installer `JSBSim-1.1.11-setup.exe` is available from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.11). Download the installer and set up JSBSim in the following local directory tree
+A Windows installer `JSBSim-1.1.12-setup.exe` is available from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.1.12). Download the installer and set up JSBSim in the following local directory tree
 
 ```bash
 <JSBSim root>/
@@ -27,6 +84,8 @@ A Windows installer `JSBSim-1.1.11-setup.exe` is available from [JSBSim release 
 ```
 
 The exact location `<JSBSim root>/` on your system depends on where you choose to install JSBSim.
+
+> **NOTE:** The JSBSim library file located at `lib\JSBSim.lib` has been compiled with Microsoft Visual Studio Enterprise 2019 (build 16.11.32602.291)
 
 ### Prepare MATLAB
 
@@ -140,7 +199,7 @@ Use this model for development purposes ONLY!!!
     Empty Weight: 83000 lbm
     CG (x, y, z): 639 , 0 , -40
 
-  Ground Reactions: 
+  Ground Reactions:
     BOGEY Nose Gear
       Location: 158 , 0 , -84
       Spring Constant:  90000
@@ -198,23 +257,23 @@ Use this model for development purposes ONLY!!!
       Initial temperature: -9999 Fahrenheit
       Priority: 1
     2 dimensional table with 6 rows, 8 columns.
-		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000	
-	0.0000	0.0420	0.0436	0.0528	0.0694	0.0899	0.1183	0.1467	0.0000	
-	0.2000	0.0500	0.0501	0.0335	0.0544	0.0797	0.1049	0.1342	0.0000	
-	0.4000	0.0040	0.0047	0.0020	0.0272	0.0595	0.0891	0.1203	0.0000	
-	0.6000	0.0000	0.0000	0.0000	0.0000	0.0276	0.0718	0.1073	0.0000	
-	0.8000	0.0000	0.0000	0.0000	0.0000	0.0174	0.0468	0.0900	0.0000	
-	1.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0422	0.0700	0.0000	
+		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000
+	0.0000	0.0420	0.0436	0.0528	0.0694	0.0899	0.1183	0.1467	0.0000
+	0.2000	0.0500	0.0501	0.0335	0.0544	0.0797	0.1049	0.1342	0.0000
+	0.4000	0.0040	0.0047	0.0020	0.0272	0.0595	0.0891	0.1203	0.0000
+	0.6000	0.0000	0.0000	0.0000	0.0000	0.0276	0.0718	0.1073	0.0000
+	0.8000	0.0000	0.0000	0.0000	0.0000	0.0174	0.0468	0.0900	0.0000
+	1.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0422	0.0700	0.0000
     Function: propulsion/engine[0]/IdleThrust
     2 dimensional table with 7 rows, 8 columns.
-		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000	
-	0.0000	1.2600	1.0000	0.7400	0.5340	0.3720	0.2410	0.1490	0.0000	
-	0.2000	1.1710	0.9340	0.6970	0.5060	0.3550	0.2310	0.1430	0.0000	
-	0.4000	1.1500	0.9210	0.6920	0.5060	0.3570	0.2330	0.1450	0.0000	
-	0.6000	1.1810	0.9510	0.7210	0.5320	0.3780	0.2480	0.1540	0.0000	
-	0.8000	1.2580	1.0200	0.7820	0.5820	0.4170	0.2750	0.1700	0.0000	
-	1.0000	1.3690	1.1200	0.8710	0.6510	0.4750	0.3150	0.1950	0.0000	
-	1.2000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
+		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000
+	0.0000	1.2600	1.0000	0.7400	0.5340	0.3720	0.2410	0.1490	0.0000
+	0.2000	1.1710	0.9340	0.6970	0.5060	0.3550	0.2310	0.1430	0.0000
+	0.4000	1.1500	0.9210	0.6920	0.5060	0.3570	0.2330	0.1450	0.0000
+	0.6000	1.1810	0.9510	0.7210	0.5320	0.3780	0.2480	0.1540	0.0000
+	0.8000	1.2580	1.0200	0.7820	0.5820	0.4170	0.2750	0.1700	0.0000
+	1.0000	1.3690	1.1200	0.8710	0.6510	0.4750	0.3150	0.1950	0.0000
+	1.2000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
     Function: propulsion/engine[0]/MilThrust
       X = 540.0000
       Y = -193.0000
@@ -222,23 +281,23 @@ Use this model for development purposes ONLY!!!
       Pitch = 0.0000 degrees
       Yaw = 0.0000 degrees
     2 dimensional table with 6 rows, 8 columns.
-		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000	
-	0.0000	0.0420	0.0436	0.0528	0.0694	0.0899	0.1183	0.1467	0.0000	
-	0.2000	0.0500	0.0501	0.0335	0.0544	0.0797	0.1049	0.1342	0.0000	
-	0.4000	0.0040	0.0047	0.0020	0.0272	0.0595	0.0891	0.1203	0.0000	
-	0.6000	0.0000	0.0000	0.0000	0.0000	0.0276	0.0718	0.1073	0.0000	
-	0.8000	0.0000	0.0000	0.0000	0.0000	0.0174	0.0468	0.0900	0.0000	
-	1.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0422	0.0700	0.0000	
+		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000
+	0.0000	0.0420	0.0436	0.0528	0.0694	0.0899	0.1183	0.1467	0.0000
+	0.2000	0.0500	0.0501	0.0335	0.0544	0.0797	0.1049	0.1342	0.0000
+	0.4000	0.0040	0.0047	0.0020	0.0272	0.0595	0.0891	0.1203	0.0000
+	0.6000	0.0000	0.0000	0.0000	0.0000	0.0276	0.0718	0.1073	0.0000
+	0.8000	0.0000	0.0000	0.0000	0.0000	0.0174	0.0468	0.0900	0.0000
+	1.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0422	0.0700	0.0000
     Function: propulsion/engine[1]/IdleThrust
     2 dimensional table with 7 rows, 8 columns.
-		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000	
-	0.0000	1.2600	1.0000	0.7400	0.5340	0.3720	0.2410	0.1490	0.0000	
-	0.2000	1.1710	0.9340	0.6970	0.5060	0.3550	0.2310	0.1430	0.0000	
-	0.4000	1.1500	0.9210	0.6920	0.5060	0.3570	0.2330	0.1450	0.0000	
-	0.6000	1.1810	0.9510	0.7210	0.5320	0.3780	0.2480	0.1540	0.0000	
-	0.8000	1.2580	1.0200	0.7820	0.5820	0.4170	0.2750	0.1700	0.0000	
-	1.0000	1.3690	1.1200	0.8710	0.6510	0.4750	0.3150	0.1950	0.0000	
-	1.2000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
+		-10000.0000	0.0000	10000.0000	20000.0000	30000.0000	40000.0000	50000.0000	60000.0000
+	0.0000	1.2600	1.0000	0.7400	0.5340	0.3720	0.2410	0.1490	0.0000
+	0.2000	1.1710	0.9340	0.6970	0.5060	0.3550	0.2310	0.1430	0.0000
+	0.4000	1.1500	0.9210	0.6920	0.5060	0.3570	0.2330	0.1450	0.0000
+	0.6000	1.1810	0.9510	0.7210	0.5320	0.3780	0.2480	0.1540	0.0000
+	0.8000	1.2580	1.0200	0.7820	0.5820	0.4170	0.2750	0.1700	0.0000
+	1.0000	1.3690	1.1200	0.8710	0.6510	0.4750	0.3150	0.1950	0.0000
+	1.2000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
     Function: propulsion/engine[1]/MilThrust
       X = 540.0000
       Y = 193.0000
@@ -253,7 +312,7 @@ Use this model for development purposes ONLY!!!
     Loading Component "Pitch Trim Sum" of type: SUMMER
       Minimum limit: -1.000000
       Maximum limit: 1.000000
-      INPUTS: 
+      INPUTS:
        elevator-cmd-norm
        pitch-trim-cmd-norm
       OUTPUT: pitch-trim-sum
@@ -285,7 +344,7 @@ Use this model for development purposes ONLY!!!
     Loading Component "Roll Trim Sum" of type: SUMMER
       Minimum limit: -1.000000
       Maximum limit: 1.000000
-      INPUTS: 
+      INPUTS:
        aileron-cmd-norm
        roll-trim-cmd-norm
       OUTPUT: roll-trim-sum
@@ -339,43 +398,43 @@ Use this model for development purposes ONLY!!!
     Loading Component "Rudder Command Sum" of type: SUMMER
       Minimum limit: -1.000000
       Maximum limit: 1.000000
-      INPUTS: 
+      INPUTS:
        rudder-cmd-norm
        yaw-trim-cmd-norm
       OUTPUT: rudder-command-sum
 
     Loading Component "Yaw Damper" of type: SCHEDULED_GAIN
     1 dimensional table with 3 rows.
-	0.0000	0.0000	
-	0.1000	0.0000	
-	0.1100	1.0000	
+	0.0000	0.0000
+	0.1000	0.0000
+	0.1100	1.0000
       INPUT: r-aero-rad_sec
       GAIN: constant value 1.000000
       OUTPUT: yaw-damper
-      Scheduled by table: 
+      Scheduled by table:
     1 dimensional table with 3 rows.
-	0.0000	0.0000	
-	0.1000	0.0000	
-	0.1100	1.0000	
+	0.0000	0.0000
+	0.1000	0.0000
+	0.1100	1.0000
 
     Loading Component "Yaw Damper Final" of type: SCHEDULED_GAIN
     1 dimensional table with 3 rows.
-	0.0000	0.0000	
-	0.1000	0.0000	
-	0.1100	1.0000	
+	0.0000	0.0000
+	0.1000	0.0000
+	0.1100	1.0000
       INPUT: yaw-damper
       GAIN: constant value 1.000000
       OUTPUT: yaw-damper-final
-      Scheduled by table: 
+      Scheduled by table:
     1 dimensional table with 3 rows.
-	0.0000	0.0000	
-	0.1000	0.0000	
-	0.1100	1.0000	
+	0.0000	0.0000
+	0.1000	0.0000
+	0.1100	1.0000
 
     Loading Component "Rudder Sum" of type: SUMMER
       Minimum limit: -1.000000
       Maximum limit: 1.000000
-      INPUTS: 
+      INPUTS:
        rudder-command-sum
        yaw-damper-final
       OUTPUT: rudder-sum
@@ -449,75 +508,75 @@ Use this model for development purposes ONLY!!!
       OUTPUT: spoiler-pos-norm
       OUTPUT: ground-spoilers-control
     1 dimensional table with 10 rows.
-	0.0000	0.0480	
-	0.1000	0.5150	
-	0.1500	0.6290	
-	0.2000	0.7090	
-	0.3000	0.8150	
-	0.4000	0.8820	
-	0.5000	0.9280	
-	0.6000	0.9620	
-	0.7000	0.9880	
-	0.8000	1.0000	
+	0.0000	0.0480
+	0.1000	0.5150
+	0.1500	0.6290
+	0.2000	0.7090
+	0.3000	0.8150
+	0.4000	0.8820
+	0.5000	0.9280
+	0.6000	0.9620
+	0.7000	0.9880
+	0.8000	1.0000
     Function: aero/function/kCDge
     1 dimensional table with 13 rows.
-	0.0000	1.2030	
-	0.1000	1.1270	
-	0.1500	1.0900	
-	0.2000	1.0730	
-	0.3000	1.0460	
-	0.4000	1.0280	
-	0.5000	1.0190	
-	0.6000	1.0130	
-	0.7000	1.0080	
-	0.8000	1.0060	
-	0.9000	1.0030	
-	1.0000	1.0020	
-	1.1000	1.0000	
+	0.0000	1.2030
+	0.1000	1.1270
+	0.1500	1.0900
+	0.2000	1.0730
+	0.3000	1.0460
+	0.4000	1.0280
+	0.5000	1.0190
+	0.6000	1.0130
+	0.7000	1.0080
+	0.8000	1.0060
+	0.9000	1.0030
+	1.0000	1.0020
+	1.1000	1.0000
     Function: aero/function/kCLge
     1 dimensional table with 2 rows.
-	0.0000	1.0000	
-	0.1000	0.8500	
+	0.0000	1.0000
+	0.1000	0.8500
     Function: aero/function/kCLsb
     1 dimensional table with 2 rows.
-	0.0000	1.0000	
-	0.1000	0.6000	
+	0.0000	1.0000
+	0.1000	0.6000
     Function: aero/function/kCLsp
 
   Aerodynamics (Lift|Side|Drag axes):
 
     1 dimensional table with 5 rows.
-	-1.5700	1.5000	
-	-0.2600	0.0420	
-	0.0000	0.0210	
-	0.2600	0.0420	
-	1.5700	1.5000	
+	-1.5700	1.5000
+	-0.2600	0.0420
+	0.0000	0.0210
+	0.2600	0.0420
+	1.5700	1.5000
     Function: aero/coefficient/CD0
     Function: aero/coefficient/CDi
     1 dimensional table with 4 rows.
-	0.0000	0.0000	
-	0.7900	0.0000	
-	1.1000	0.0230	
-	1.8000	0.0150	
+	0.0000	0.0000
+	0.7900	0.0000
+	1.1000	0.0230
+	1.8000	0.0150
     Function: aero/coefficient/CDmach
     Function: aero/coefficient/CDflap
     Function: aero/coefficient/CDgear
     Function: aero/coefficient/CDsb
     Function: aero/coefficient/CDsp
     1 dimensional table with 5 rows.
-	-1.5700	1.2300	
-	-0.2600	0.0500	
-	0.0000	0.0000	
-	0.2600	0.0500	
-	1.5700	1.2300	
+	-1.5700	1.2300
+	-0.2600	0.0500
+	0.0000	0.0000
+	0.2600	0.0500
+	1.5700	1.2300
     Function: aero/coefficient/CDbeta
     Function: aero/coefficient/CDde
     Function: aero/coefficient/CYb
     1 dimensional table with 4 rows.
-	-0.2000	-0.6800	
-	0.0000	0.2000	
-	0.2300	1.2000	
-	0.4600	0.2000	
+	-0.2000	-0.6800
+	0.0000	0.2000
+	0.2300	1.2000
+	0.4600	0.2000
     Function: aero/coefficient/CLalpha
     Function: aero/coefficient/dCLflap
     Function: aero/coefficient/CLde
@@ -525,14 +584,14 @@ Use this model for development purposes ONLY!!!
     Function: aero/coefficient/Clp
     Function: aero/coefficient/Clr
     1 dimensional table with 2 rows.
-	0.0000	0.1000	
-	2.0000	0.0330	
+	0.0000	0.1000
+	2.0000	0.0330
     Function: aero/coefficient/Clda
     Function: aero/coefficient/Cldr
     Function: aero/coefficient/Cmalpha
     1 dimensional table with 2 rows.
-	0.0000	-1.2000	
-	2.0000	-0.3000	
+	0.0000	-1.2000
+	2.0000	-0.3000
     Function: aero/coefficient/Cmde
     Function: aero/coefficient/Cmq
     Function: aero/coefficient/Cmadot
@@ -540,9 +599,9 @@ Use this model for development purposes ONLY!!!
     Function: aero/coefficient/Cnr
     Function: aero/coefficient/Cndr
 
-  Input data set: 0  
+  Input data set: 0
 
-  Input data set: 1  
+  Input data set: 1
 
     Declared properties
 
@@ -581,14 +640,14 @@ Successfully bound to UDP input socket on port 5139
 0   Fuel                               10000     520     -80     -18           0           0           0
 1   Fuel                               10000     520      80     -18           0           0           0
 2   Fuel                                4000     480       0     -18           0           0           0
-                                                                                                                                            
+
     Total:                          107000.0   610.8     0.0   -35.1    591572.3   1539552.7   1986235.4         0.0     19109.1         0.0
 
 End of vehicle configuration loading.
 -------------------------------------------------------------------------------
 
 Simulation completed.
-Remember to reset the program by typing clearSF in the matlab command window! 
+Remember to reset the program by typing clearSF in the matlab command window!
 JSBSim S-Function Reset
 ```
 
@@ -600,27 +659,4 @@ So you just have to try it out and adapt this workflow to your needs.
 
 ## License
 
-Copyright (c) 2009, Brian Mills
-All rights reserved.
-
-Copyright (c) 2021, Agostino De Marco, Elia Tarasov, Michal Podhradsky, Tilda Sikström
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+The JSBSim interface with MATLAB including the S-Function is open source and is licensed under the [BSD license](https://opensource.org/licenses/bsd-license.php). The license is included in the source code file [LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab/LICENSE.txt).
