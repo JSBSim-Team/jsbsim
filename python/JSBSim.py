@@ -4,7 +4,8 @@
 #
 # Standalone version of JSBSim in Python language.
 #
-# Copyright (c) 2019 Bertrand Coconnier
+# Copyright (c) 2019-2022 Bertrand Coconnier
+# Copyright (c) 2020 Ben Busby
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -50,6 +51,8 @@ parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--catalog", default=False, action="store_true",
                     help="specifies that all properties for this aircraft model should be printed")
+parser.add_argument("--property", action="append", metavar="<name=value>",
+                    help="e.g. --property=simulation/integrator/rate/rotational=1")
 parser.add_argument("--simulation-rate", type=float, metavar="<rate (float)>",
                     help="specifies the sim dT time or frequency"
                     "\nIf rate specified is less than 1, it is interpreted as a time step size,"
@@ -113,6 +116,13 @@ if args.simulation_rate:
 
 args.simulation_rate = fdm.get_delta_t()
 
+if args.property:
+    pm = fdm.get_property_manager()
+    for p in args.property:
+        name, value = p.split("=")
+        if "simulation" in name and pm.hasNode(name):
+            fdm.set_property_value(name, float(value))
+
 if args.script:
     if args.aircraft:
         print("You cannot specify an aircraft file with a script.")
@@ -153,6 +163,15 @@ if args.outputlogfile:
             print("Output filename could not be set")
         else:
             print("Output filename change from {} from aircraft configuration file to {} specified on command line.".format(old_filename, f))
+
+if args.property:
+    for p in args.property:
+        name, value = p.split("=")
+        if pm.hasNode(name):
+            fdm.set_property_value(name, float(value))
+        else:
+            print("No property by the name {}".format(name))
+            sys.exit(-1)
 
 fdm.run_ic()
 fdm.print_simulation_configuration()
