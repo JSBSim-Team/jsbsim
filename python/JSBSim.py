@@ -20,12 +20,15 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import xml.etree.ElementTree as et
-import argparse, sys, os
-import jsbsim
+import argparse
+import os
+import sys
 import time
+import xml.etree.ElementTree as et
 
-parser = argparse.ArgumentParser()
+import jsbsim
+
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("input", nargs='?', help="script file name")
 parser.add_argument("--version", action="version",
                     version="%(prog)s {}".format(jsbsim.FGJSBBase().get_version()))
@@ -47,7 +50,11 @@ parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--catalog", default=False, action="store_true",
                     help="specifies that all properties for this aircraft model should be printed")
-parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
+parser.add_argument("--simulation-rate", type=float, metavar="<rate (float)>",
+                    help="specifies the sim dT time or frequency"
+                    "\nIf rate specified is less than 1, it is interpreted as a time step size,"
+                    "\notherwise it is assumed to be a rate in Hertz.")
+parser.add_argument("--end", type=float, default=1E99, metavar="<time (float)>",
                     help="specifies the sim end time")
 args = parser.parse_args()
 
@@ -98,6 +105,14 @@ if args.input:
 
 fdm = jsbsim.FGFDMExec(args.root, None)
 
+if args.simulation_rate:
+    if args.simulation_rate < 1.0:
+        fdm.set_dt(args.simulation_rate)
+    else:
+        fdm.set_dt(1.0/args.simulation_rate)
+
+args.simulation_rate = fdm.get_delta_t()
+
 if args.script:
     if args.aircraft:
         print("You cannot specify an aircraft file with a script.")
@@ -105,7 +120,9 @@ if args.script:
     if args.catalog:
         print("Cannot specify catalog with script option")
         sys.exit(-1)
-    fdm.load_script(args.script)
+    if args.initfile is None:
+        args.initfile = ""
+    fdm.load_script(args.script, args.simulation_rate, args.initfile)
 elif args.aircraft:
     if args.catalog:
         fdm.set_debug_level(0)
