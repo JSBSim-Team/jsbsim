@@ -47,6 +47,8 @@ parser.add_argument("--realtime", default=False, action="store_true",
                     help="specifies to run in real world time")
 parser.add_argument("--nice", default=False, action="store_true",
                     help="specifies to run at lower CPU usage")
+parser.add_argument("--nohighlight", default=False, action="store_true",
+                    help="specifies that console output should be pure text only (no color)")
 parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--catalog", default=False, action="store_true",
@@ -107,6 +109,9 @@ if args.input:
             args.aircraft = args.input
 
 fdm = jsbsim.FGFDMExec(args.root, None)
+
+if args.nohighlight:
+    fdm.disable_highlighting()
 
 if args.simulation_rate:
     if args.simulation_rate < 1.0:
