@@ -49,6 +49,8 @@ parser.add_argument("--nice", default=False, action="store_true",
                     help="specifies to run at lower CPU usage")
 parser.add_argument("--nohighlight", default=False, action="store_true",
                     help="specifies that console output should be pure text only (no color)")
+parser.add_argument("--suspend", default=False, action="store_true",
+                    help="specifies to suspend the simulation after initialization")
 parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
 parser.add_argument("--catalog", default=False, action="store_true",
@@ -185,17 +187,31 @@ sleep_nseconds = (frame_duration if args.realtime else sleep_period) * 1E9
 current_seconds = initial_seconds = time.time()
 result = fdm.run()
 
+if args.suspend:
+    fdm.hold()
+
 while result and fdm.get_sim_time() <= args.end:
-    if args.realtime:
-        current_seconds = time.time()
-        actual_elapsed_time = current_seconds - initial_seconds
-        sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
-
-        for _ in range(int(sim_lag_time / frame_duration)):
-            result = fdm.run()
-            current_seconds = time.time()
-    else:
+    fdm.check_incremental_hold()
+    if fdm.holding():
+        args.suspend = True
+        paused_seconds = time.time() - current_seconds
         result = fdm.run()
+    else:
+        if args.realtime:
+            if args.suspend:
+                initial_seconds += paused_seconds
+                args.suspend = False
+            current_seconds = time.time()
+            actual_elapsed_time = current_seconds - initial_seconds
+            sim_lag_time = actual_elapsed_time - fdm.get_sim_time()
 
-        if args.nice:
-            time.sleep(sleep_nseconds / 1000000.0)
+            for _ in range(int(sim_lag_time / frame_duration)):
+                result = fdm.run()
+                current_seconds = time.time()
+                if fdm.holding():
+                    break
+        else:
+            result = fdm.run()
+
+    if args.nice:
+        time.sleep(sleep_nseconds / 1000000.0)
