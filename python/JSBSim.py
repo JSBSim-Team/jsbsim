@@ -39,14 +39,16 @@ parser.add_argument("--aircraft", metavar="<filename>",
                     help="specifies the name of the aircraft to be modeled")
 parser.add_argument("--script", metavar="<filename>",
                     help="specifies a script to run")
-parser.add_argument("--initfile", metavar="<filename>",
-                    help="specifies an initialization file")
-parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
-                    help="specifies the sim end time")
 parser.add_argument("--realtime", default=False, action="store_true",
                     help="specifies to run in real world time")
 parser.add_argument("--nice", default=False, action="store_true",
                     help="specifies to run at lower CPU usage")
+parser.add_argument("--initfile", metavar="<filename>",
+                    help="specifies an initialization file")
+parser.add_argument("--catalog", default=False, action="store_true",
+                    help="specifies that all properties for this aircraft model should be printed")
+parser.add_argument("--end", type=float, default=1E99, metavar="<time (double)>",
+                    help="specifies the sim end time")
 args = parser.parse_args()
 
 sleep_period = 0.01
@@ -70,14 +72,14 @@ if args.input:
     tree = CheckXMLFile(args.input)
     if not tree:
         print('The argument "{}" cannot be interpreted as a file name.'.format(args.input))
-        sys.exit(1)
+        sys.exit(-1)
 
     root = tree.getroot()
 
     if root.tag == 'runscript':
         if args.script:
             print('Two script files are specified.')
-            sys.exit(1)
+            sys.exit(-1)
         else:
             args.script = args.input
 
@@ -90,28 +92,42 @@ if args.input:
     if root.tag == 'fdm_config':
         if args.aircraft:
             print('Two aircraft files are specified.')
-            sys.exit(1)
+            sys.exit(-1)
         else:
             args.aircraft = args.input
 
 fdm = jsbsim.FGFDMExec(args.root, None)
 
 if args.script:
+    if args.aircraft:
+        print("You cannot specify an aircraft file with a script.")
+        sys.exit(-1)
+    if args.catalog:
+        print("Cannot specify catalog with script option")
+        sys.exit(-1)
     fdm.load_script(args.script)
 elif args.aircraft:
-    fdm.load_model(args.aircraft, False)
+    if args.catalog:
+        fdm.set_debug_level(0)
+    fdm.load_model(args.aircraft)
+    if args.catalog:
+        fdm.print_property_catalog()
+        sys.exit(0)
     if args.initfile:
         fdm.load_ic(args.initfile, True)
+    else:
+        print("You must specify an initialization file with the aircraft name.")
+        sys.exit(-1)
 
 if args.initfile and not args.aircraft:
     print("You must specify an initilization file with the aircraft name")
-    sys.exit(1)
+    sys.exit(-1)
 
 if args.logdirectivefile:
     for f in args.logdirectivefile:
         if not fdm.set_output_directive(f):
             print("Output directives not properly set in file {}".format(f))
-            sys.exit(1)
+            sys.exit(-1)
 
 if args.outputlogfile:
     for n, f in enumerate(args.outputlogfile):
