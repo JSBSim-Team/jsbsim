@@ -171,6 +171,7 @@ cdef extern from "FGJSBBase.h" namespace "JSBSim":
         c_FGJSBBase()
         short debug_lvl
         string GetVersion()
+        void disableHighLighting()
 
 cdef extern from "FGFDMExec.h" namespace "JSBSim":
     cdef cppclass c_FGFDMExec "JSBSim::FGFDMExec" (c_FGJSBBase):
