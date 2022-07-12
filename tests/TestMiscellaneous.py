@@ -55,15 +55,14 @@ class TestMiscellaneous(JSBSimTestCase):
         fdm.run_ic()
 
         catalog = fdm.query_property_catalog('geod-deg')
-        self.assertEqual(len(catalog), 2)
-        self.assertEqual(catalog[0], 'position/lat-geod-deg (R)')
-        self.assertEqual(catalog[1], 'ic/lat-geod-deg (RW)')
+        self.assertIsInstance(catalog, str)
+        self.assertEqual(catalog, 'position/lat-geod-deg (R)\nic/lat-geod-deg (RW)\n')
 
-        values = fdm.get_property_catalog('geod-deg')
-        item = 'position/lat-geod-deg'
-        self.assertEqual(values[item], fdm[item])
-        item = 'ic/lat-geod-deg'
-        self.assertEqual(values[item], fdm[item])
+        catalog = fdm.get_property_catalog()
+        self.assertIsInstance(catalog, list)
+        self.assertGreater(len(catalog), 2)
+        self.assertIn('position/lat-geod-deg (R)', catalog)
+        self.assertIn('ic/lat-geod-deg (RW)', catalog)
 
     def test_FG_reset(self):
         # This test reproduces how FlightGear resets. The important thing is

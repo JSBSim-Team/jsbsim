@@ -1,4 +1,6 @@
 include LICENSE.txt
+include libexpat-LICENSE.txt
+include GeographicLib-LICENSE.txt
 recursive-include . *.h*
 include *.pyx
 include *.pxd

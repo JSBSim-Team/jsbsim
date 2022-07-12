@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
+	"Version": 101,
+	"VersionName": "1.01",
 	"FriendlyName": "JSBSimFlightDynamicsModel",
-	"Description": "A wapper around the OpenSouce JSBSim FDM",
+	"Description": "A wrapper around the OpenSouce JSBSim FDM",
 	"Category": "Other",
 	"CreatedBy": "Epic Games",
 	"CreatedByURL": "http://jsbsim.sourceforge.net/",

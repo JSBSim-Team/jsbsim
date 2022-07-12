@@ -128,6 +128,15 @@ enum class EEngineType : uint8 {
 	Electric
 };
 
+UENUM(BlueprintType)
+enum class EMagnetosMode : uint8 {
+  Off = 0,
+  Left = 1,
+  Right = 2,
+  Both = 3
+};
+
+
 USTRUCT(BlueprintType)
 struct FEngineCommand
 {
@@ -158,7 +167,7 @@ struct FEngineCommand
 
 	// Piston Engine Commands
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Magnetos = 0;
+    EMagnetosMode Magnetos = EMagnetosMode::Off;
 
 	// Turbine Engine Commands
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -184,7 +193,7 @@ struct FEngineCommand
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
-		DebugMessage += FString::Printf(TEXT("      Starter %d    Mixture %.2f    Running %d    CutOff %d  ---- Throttle %f  "), Starter, Mixture, Running, CutOff, Throttle ) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("      Starter %d    Mixture %.2f    Running %d    CutOff %d    Magnetos %s ---- Throttle %f  "), Starter, Mixture, Running, CutOff, *UEnum::GetValueAsName(Magnetos).ToString(), Throttle ) + LINE_TERMINATOR;
 		return DebugMessage;
 	}
 
@@ -233,6 +242,9 @@ struct FEngineState
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool Condition = false; // TurboProp
 
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+    EMagnetosMode Magnetos = EMagnetosMode::Off; // Piston
+    
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
@@ -243,6 +255,11 @@ struct FEngineState
 			DebugMessage += FString::Printf(TEXT("                  N1 %.2f N2 %.2f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
 		}
 		
+        if (EngineType == EEngineType::Piston)
+        {
+          DebugMessage += FString::Printf(TEXT("                  Magnetos %s "), *UEnum::GetValueAsName(Magnetos).ToString()) + LINE_TERMINATOR;
+        }
+    
 		return DebugMessage;
 	}
 };
