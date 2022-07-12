@@ -440,8 +440,16 @@ SGPath FGPropulsion::FindFullPathName(const SGPath& path) const
 {
   if (!ReadingEngine) return FGModel::FindFullPathName(path);
 
-  SGPath name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Engines"),
-                              path);
+  SGPath name{};
+
+  if (!path.dir().empty()) {
+    name = CheckPathName(FDMExec->GetFullAircraftPath(),
+                         path);
+  } else {
+    name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Engines"),
+                         path);
+  }
+
   if (!name.isNull()) return name;
 
   return CheckPathName(FDMExec->GetEnginePath(), path);
