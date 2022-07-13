@@ -545,8 +545,10 @@ void FGLGear::ReportTakeoffOrLanding(void)
 
   if (lastWOW != WOW)
   {
-    cout << "GEAR_CONTACT: " << fdmex->GetSimTime() << " seconds: " << name
-         << " " << WOW << endl;
+    if (debug_lvl > 0) {
+      cout << "GEAR_CONTACT: " << fdmex->GetSimTime() << " seconds: " << name
+           << " " << WOW << endl;
+    }
   }
 }
 
