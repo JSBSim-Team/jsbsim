@@ -483,8 +483,8 @@ public:
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
   /// Mode flags for ResetToInitialConditions
-  static const int START_NEW_OUTPUT    = 0x1;
-  static const int DONT_EXECUTE_RUN_IC = 0x2;
+  enum { START_NEW_OUTPUT    = 1,
+         DONT_EXECUTE_RUN_IC = 2 };
   /** Resets the initial conditions object and prepares the simulation to run
       again. If the mode's first bit is set the output instances will take special actions
       such as closing the current output file and open a new one with a different name.
@@ -617,7 +617,7 @@ private:
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
-  unsigned short Terminate;
+  unsigned int Terminate;
   double dT;
   double saved_dT;
   double sim_time;
@@ -669,7 +669,7 @@ private:
 
   bool HoldDown;
 
-  int RandomSeed;
+  unsigned int RandomSeed;
   std::shared_ptr<std::default_random_engine> RandomEngine;
 
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
