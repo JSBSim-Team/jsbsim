@@ -5,7 +5,7 @@ AppPublisherURL=https://github.com/JSBSim-Team/jsbsim
 DefaultDirName={sd}\JSBSim
 OutputBaseFilename=JSBSim-${PROJECT_VERSION}-$ENV{GITHUB_RUN_NUMBER}-setup
 AlwaysShowDirOnReadyPage=yes
-LicenseFile=${CMAKE_SOURCE_DIR}\COPYING
+LicenseFile=${PROJECT_SOURCE_DIR}\COPYING
 WizardStyle=modern
 WizardImageStretch=no
 WizardImageFile=logos\*.bmp
@@ -21,24 +21,24 @@ Name: "devfiles\matlab"; Description: "Files to build a JSBSim S-Function for Ma
 
 [Files]
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.exe"; DestDir: "{app}"; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\COPYING"; DestDir: "{app}"; DestName: JSBSim-LICENSE.txt; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\src\simgear\xml\COPYING"; DestDir: "{app}"; DestName: libexpat-LICENSE.txt; Components: JSBSim
-Source: "${CMAKE_SOURCE_DIR}\src\GeographicLib\LICENSE.txt"; DestDir: "{app}"; DestName: GeographicLib-LICENSE.txt; Components: JSBSim
+Source: "${PROJECT_SOURCE_DIR}\COPYING"; DestDir: "{app}"; DestName: JSBSim-LICENSE.txt; Components: JSBSim
+Source: "${PROJECT_SOURCE_DIR}\src\simgear\xml\COPYING"; DestDir: "{app}"; DestName: libexpat-LICENSE.txt; Components: JSBSim
+Source: "${PROJECT_SOURCE_DIR}\src\GeographicLib\LICENSE.txt"; DestDir: "{app}"; DestName: GeographicLib-LICENSE.txt; Components: JSBSim
 Source: "${CMAKE_BINARY_DIR}\utils\aeromatic++\aeromatic.exe"; DestDir: "{app}\aeromatic++"; Components: aeromatic
 Source: "${CMAKE_BINARY_DIR}\msvcp*.dll"; DestDir: "{app}"; Components: JSBSim aeromatic
-Source: "${CMAKE_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
-Source: "${CMAKE_SOURCE_DIR}\data_output\*.xml"; DestDir: "{app}\data_output"; Components: data
-Source: "${CMAKE_SOURCE_DIR}\engine\*.xml"; DestDir: "{app}\engine"; Components: data
-Source: "${CMAKE_SOURCE_DIR}\scripts\*.xml"; DestDir: "{app}\scripts"; Components: data
-Source: "${CMAKE_SOURCE_DIR}\systems\*.xml"; DestDir: "{app}\systems"; Components: data
-Source: "${CMAKE_SOURCE_DIR}\utils\aeromatic++\samples\*.param"; DestDir: "{app}\aeromatic++\samples"; Components: aeromatic/samples
+Source: "${PROJECT_SOURCE_DIR}\aircraft\*.xml"; DestDir: "{app}\aircraft"; Flags: recursesubdirs; Components: data
+Source: "${PROJECT_SOURCE_DIR}\data_output\*.xml"; DestDir: "{app}\data_output"; Components: data
+Source: "${PROJECT_SOURCE_DIR}\engine\*.xml"; DestDir: "{app}\engine"; Components: data
+Source: "${PROJECT_SOURCE_DIR}\scripts\*.xml"; DestDir: "{app}\scripts"; Components: data
+Source: "${PROJECT_SOURCE_DIR}\systems\*.xml"; DestDir: "{app}\systems"; Components: data
+Source: "${PROJECT_SOURCE_DIR}\utils\aeromatic++\samples\*.param"; DestDir: "{app}\aeromatic++\samples"; Components: aeromatic/samples
 Source: "${CMAKE_BINARY_DIR}\src\JSBSim.lib"; DestDir: "{app}\lib"; Components: devfiles
-Source: "${CMAKE_SOURCE_DIR}\src\*.h"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
-Source: "${CMAKE_SOURCE_DIR}\src\*.hxx"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
-Source: "${CMAKE_SOURCE_DIR}\matlab\*.cpp"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\src\*.h"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
+Source: "${PROJECT_SOURCE_DIR}\src\*.hxx"; DestDir: "{app}\include"; Flags: recursesubdirs; Components: devfiles
+Source: "${PROJECT_SOURCE_DIR}\matlab\*.cpp"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\matlab\*.h"; DestDir: "{app}\matlab"; Components: devfiles\matlab
 Source: "${CMAKE_BINARY_DIR}\matlab\JSBSimSimulinkCompile.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\README.md"; DestDir: "{app}\matlab"; Components: devfiles\matlab
-Source: "${CMAKE_SOURCE_DIR}\matlab\LICENSE.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\matlab\TestJSBSim.m"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\matlab\ex737cruise.slx"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\matlab\README.md"; DestDir: "{app}\matlab"; Components: devfiles\matlab
+Source: "${PROJECT_SOURCE_DIR}\matlab\LICENSE.txt"; DestDir: "{app}\matlab"; Components: devfiles\matlab
