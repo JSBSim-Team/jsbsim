@@ -214,6 +214,14 @@ for d in os.scandir('data/aircraft'):
         data_files.append(('share/${PROJECT_NAME}/'+dir_name,
                             list(XML_files(dir_name))))
 
+        # Some aircraft folders include a `Systems` sub-directory: make sure it
+        # is copied in the wheel archive.
+        systems_dir = dir_name + '/Systems'
+        systems_dir_fullname = os.path.join('data', systems_dir)
+        if os.path.exists(systems_dir_fullname) and os.path.isdir(systems_dir_fullname):
+            data_files.append(('share/${PROJECT_NAME}/'+systems_dir,
+                                list(XML_files(systems_dir))))
+
 # Build & installation process for the JSBSim Python module
 setup(
     name="${PROJECT_NAME}",
