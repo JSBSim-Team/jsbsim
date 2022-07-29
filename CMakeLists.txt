@@ -46,7 +46,7 @@ if(BUILD_DOCS)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     execute_process(COMMAND date "+%d %b %Y" OUTPUT_VARIABLE TODAY OUTPUT_STRIP_TRAILING_WHITESPACE)
-    configure_file(${CMAKE_SOURCE_DIR}/doc/JSBSim.dox.in
+    configure_file(${PROJECT_SOURCE_DIR}/doc/JSBSim.dox.in
       ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
     if(NOT EXISTS ${CMAKE_BINARY_DIR}/documentation/xml)
       execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
@@ -68,7 +68,7 @@ option(BUILD_PYTHON_MODULE "Set to ON to build the Python module for JSBSim" ON)
 option(INSTALL_JSBSIM_PYTHON_MODULE "Set to ON to install the Python module for JSBSim" OFF)
 
 if (BUILD_PYTHON_MODULE)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/python/CMakeModules)
+  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/python/CMakeModules)
   find_package(Cython)
 
   if (CYTHON_FOUND)
@@ -111,7 +111,7 @@ endif(BUILD_MATLAB_SFUNCTION)
 find_package(CxxTest)
 
 if (CXXTEST_FOUND)
-  include_directories(${CMAKE_SOURCE_DIR}/src)
+  include_directories(${PROJECT_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
 endif(CXXTEST_FOUND)
@@ -239,7 +239,7 @@ endif()
 ################################################################################
 
 if(WIN32)
-  configure_file(${CMAKE_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
+  configure_file(${PROJECT_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
 endif()
 
 ################################################################################

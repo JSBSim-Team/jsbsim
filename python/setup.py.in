@@ -1,4 +1,4 @@
-# This script has been automatically built from ${CMAKE_SOURCE_DIR}/python/setup.py.in
+# This script has been automatically built from ${PROJECT_SOURCE_DIR}/python/setup.py.in
 #
 # Copyright (c) 2014-2022 Bertrand Coconnier
 #
