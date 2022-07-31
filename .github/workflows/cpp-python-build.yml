@@ -522,7 +522,7 @@ jobs:
         if: matrix.arch == 'arm64'
         run: |
           mkdir -p build && cd build
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DCMAKE_OSX_ARCHITECTURE=${{matrix.arch}} -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DCMAKE_OSX_ARCHITECTURES=${{matrix.arch}} -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
       - name: Build JSBSim
         working-directory: build
         run: make -j3
