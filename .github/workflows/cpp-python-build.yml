@@ -473,12 +473,16 @@ jobs:
     name: C/C++ build (MacOSX)
     needs: XML-validation
     runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [x86_64, arm64]
     steps:
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:
           python-version: '3.7'
       - name: Install Python packages
+        if: matrix.arch == 'x86_64'
         run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v2
@@ -486,11 +490,12 @@ jobs:
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
         uses: actions/cache@v2
+        if: matrix.arch == 'x86_64'
         with:
           path: build/Testing/Temporary/CTestCostData.txt
           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
-        if: env.release == 'true'
+        if: env.release == 'true' && matrix.arch == 'x86_64'
         run: |
           brew install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -506,20 +511,25 @@ jobs:
       - name: Configure CxxTest
         working-directory: cxxtest/python
         run: python setup.py install
-      - name: Configure JSBSim
+      - name: Configure JSBSim (x86_64)
         run: |
           mkdir -p build && cd build
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
+      - name: Configure JSBSim (arm64)
+        run: |
+          mkdir -p build && cd build
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DCMAKE_OSX_ARCHITECTURE=${{matrix.arch}} -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
       - name: Build JSBSim
         working-directory: build
         run: make -j3
       - name: Test JSBSim
+        if: matrix.arch == 'x86_64'
         working-directory: build
         run: ctest -j3 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
-        if: env.release == 'true'
+        if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
         run: |
           rm -f jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
@@ -537,7 +547,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v2
-        if: env.release == 'true'
+        if: env.release == 'true' && matrix.arch == 'x86_64'
         with:
           name: ${{ runner.os }}.binaries
           path: |
