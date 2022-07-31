@@ -512,12 +512,14 @@ jobs:
         working-directory: cxxtest/python
         run: python setup.py install
       - name: Configure JSBSim (x86_64)
+        if: matrix.arch == 'x86_64'
         run: |
           mkdir -p build && cd build
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Configure JSBSim (arm64)
+        if: matrix.arch == 'arm64'
         run: |
           mkdir -p build && cd build
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DCMAKE_OSX_ARCHITECTURE=${{matrix.arch}} -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
@@ -525,7 +527,7 @@ jobs:
         working-directory: build
         run: make -j3
       - name: Test JSBSim
-        if: matrix.arch == 'x86_64'
+        #if: matrix.arch == 'x86_64'
         working-directory: build
         run: ctest -j3 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
