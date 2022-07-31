@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
+#include <array>
 
 #include "FGFCS.h"
 #include "input_output/FGModelLoader.h"
@@ -613,8 +614,17 @@ SGPath FGFCS::FindFullPathName(const SGPath& path) const
   SGPath name = FGModel::FindFullPathName(path);
   if (systype != stSystem || !name.isNull()) return name;
 
-  name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Systems"), path);
-  if (!name.isNull()) return name;
+#ifdef _WIN32
+  const array<string, 1> dir_names = {"Systems"};
+#else
+  // Check alternative capitalization for case sensitive OSes.
+  const array<string, 2> dir_names = {"Systems", "systems"};
+#endif
+
+  for(const string& dir_name: dir_names) {
+    name = CheckPathName(FDMExec->GetFullAircraftPath()/dir_name, path);
+    if (!name.isNull()) return name;
+  }
 
   return CheckPathName(FDMExec->GetSystemsPath(), path);
 }
