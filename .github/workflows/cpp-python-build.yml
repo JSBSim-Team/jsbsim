@@ -527,7 +527,7 @@ jobs:
         working-directory: build
         run: make -j3
       - name: Test JSBSim
-        #if: matrix.arch == 'x86_64'
+        if: matrix.arch == 'x86_64'
         working-directory: build
         run: ctest -j3 -E TestInputSocket --output-on-failure
       - name: Build source package for Python
