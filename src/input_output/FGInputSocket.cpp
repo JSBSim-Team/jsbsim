@@ -111,26 +111,26 @@ bool FGInputSocket::InitModel(void)
 
 void FGInputSocket::Read(bool Holding)
 {
-  string line, token;
-  size_t start=0, string_start=0, string_end=0;
-  double value=0;
-  FGPropertyNode* node=0;
-
-  if (socket == 0) return;
+  if (!socket) return;
   if (!socket->GetConnectStatus()) return;
 
   if (BlockingInput)
     socket->WaitUntilReadable(); // block until a transmission is received
-  data = socket->Receive(); // read data
 
-  if (!data.empty()) {
+  string raw_data = socket->Receive(); // read data
+
+  if (!raw_data.empty()) {
+    size_t start = 0;
+
+    data += raw_data;
+
     // parse lines
     while (1) {
-      string_start = data.find_first_not_of("\r\n", start);
+      size_t string_start = data.find_first_not_of("\r\n", start);
       if (string_start == string::npos) break;
-      string_end = data.find_first_of("\r\n", string_start);
+      size_t string_end = data.find_first_of("\r\n", string_start);
       if (string_end == string::npos) break;
-      line = data.substr(string_start, string_end-string_start);
+      string line = data.substr(string_start, string_end-string_start);
       if (line.empty()) break;
 
       // now parse individual line
@@ -148,119 +148,130 @@ void FGInputSocket::Read(bool Holding)
       }
 
       if (command == "set") {                       // SET PROPERTY
+        FGPropertyNode* node = nullptr;
 
         if (argument.empty()) {
-          socket->Reply("No property argument supplied.\n");
+          socket->Reply("No property argument supplied.\r\n");
           break;
         }
         try {
           node = PropertyManager->GetNode(argument);
         } catch(...) {
-          socket->Reply("Badly formed property query\n");
+          socket->Reply("Badly formed property query\r\n");
           break;
         }
 
-        if (node == 0) {
-          socket->Reply("Unknown property\n");
+        if (!node) {
+          socket->Reply("Unknown property\r\n");
           break;
         } else if (!node->hasValue()) {
-          socket->Reply("Not a leaf property\n");
+          socket->Reply("Not a leaf property\r\n");
           break;
         } else {
-          value = atof(str_value.c_str());
+          double value = atof(str_value.c_str());
           node->setDoubleValue(value);
         }
-        socket->Reply("set successful\n");
+        socket->Reply("set successful\r\n");
 
       } else if (command == "get") {             // GET PROPERTY
+        FGPropertyNode* node = nullptr;
 
         if (argument.empty()) {
-          socket->Reply("No property argument supplied.\n");
+          socket->Reply("No property argument supplied.\r\n");
           break;
         }
         try {
           node = PropertyManager->GetNode(argument);
         } catch(...) {
-          socket->Reply("Badly formed property query\n");
+          socket->Reply("Badly formed property query\r\n");
           break;
         }
 
-        if (node == 0) {
-          socket->Reply("Unknown property\n");
+        if (!node) {
+          socket->Reply("Unknown property\r\n");
           break;
         } else if (!node->hasValue()) {
           if (Holding) { // if holding can query property list
-            string query = FDMExec->QueryPropertyCatalog(argument);
+            string query = FDMExec->QueryPropertyCatalog(argument, "\r\n");
             socket->Reply(query);
           } else {
-            socket->Reply("Must be in HOLD to search properties\n");
+            socket->Reply("Must be in HOLD to search properties\r\n");
           }
         } else {
           ostringstream buf;
-          buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << endl;
+          buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << '\r' << endl;
           socket->Reply(buf.str());
         }
 
       } else if (command == "hold") {               // PAUSE
 
         FDMExec->Hold();
-        socket->Reply("Holding\n");
+        socket->Reply("Holding\r\n");
 
       } else if (command == "resume") {             // RESUME
 
         FDMExec->Resume();
-        socket->Reply("Resuming\n");
+        socket->Reply("Resuming\r\n");
 
       } else if (command == "iterate") {            // ITERATE
 
         int argumentInt;
         istringstream (argument) >> argumentInt;
         if (argument.empty()) {
-          socket->Reply("No argument supplied for number of iterations.\n");
+          socket->Reply("No argument supplied for number of iterations.\r\n");
           break;
         }
         if ( !(argumentInt > 0) ){
-          socket->Reply("Required argument must be a positive Integer.\n");
+          socket->Reply("Required argument must be a positive Integer.\r\n");
           break;
         }
         FDMExec->EnableIncrementThenHold( argumentInt );
         FDMExec->Resume();
-        socket->Reply("Iterations performed\n");
+        socket->Reply("Iterations performed\r\n");
 
       } else if (command == "quit") {               // QUIT
 
         // close the socket connection
-        socket->Reply("Closing connection\n");
+        socket->Reply("Closing connection\r\n");
         socket->Close();
 
       } else if (command == "info") {               // INFO
 
         // get info about the sim run and/or aircraft, etc.
         ostringstream info;
-        info << "JSBSim version: " << JSBSim_version << endl;
-        info << "Config File version: " << needed_cfg_version << endl;
-        info << "Aircraft simulated: " << FDMExec->GetAircraft()->GetAircraftName() << endl;
-        info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << endl;
+        info << "JSBSim version: " << JSBSim_version << "\r\n";
+        info << "Config File version: " << needed_cfg_version << "\r\n";
+        info << "Aircraft simulated: " << FDMExec->GetAircraft()->GetAircraftName() << "\r\n";
+        info << "Simulation time: " << setw(8) << setprecision(3) << FDMExec->GetSimTime() << '\r' << endl;
         socket->Reply(info.str());
 
       } else if (command == "help") {               // HELP
 
         socket->Reply(
-        " JSBSim Server commands:\n\n"
-        "   get {property name}\n"
-        "   set {property name} {value}\n"
-        "   hold\n"
-        "   resume\n"
-        "   iterate {value}\n"
-        "   help\n"
-        "   quit\n"
-        "   info\n\n");
+        " JSBSim Server commands:\n\r\n"
+        "   get {property name}\r\n"
+        "   set {property name} {value}\r\n"
+        "   hold\r\n"
+        "   resume\r\n"
+        "   iterate {value}\r\n"
+        "   help\r\n"
+        "   quit\r\n"
+        "   info\n\r\n");
 
       } else {
-        socket->Reply(string("Unknown command: ") +  token + string("\n"));
+        socket->Reply(string("Unknown command: ") + command + "\r\n");
       }
 
       start = string_end;
+    }
+
+    // Remove processed commands.
+    size_t last_crlf = data.find_last_of("\r\n");
+    if (last_crlf != string::npos) {
+      if (last_crlf < data.length()-1)
+        data = data.substr(last_crlf+1);
+      else
+        data.clear();
     }
   }
 
