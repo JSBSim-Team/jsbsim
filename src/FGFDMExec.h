@@ -519,9 +519,10 @@ public:
   *   A string is returned that contains a carriage return delimited list of all
   *   strings in the property catalog that matches the supplied check string.
   *   @param check The string to search for in the property catalog.
+  *   @param end_of_line End of line (CR+LF if needed for Windows).
   *   @return the carriage-return-delimited string containing all matching strings
   *               in the catalog.  */
-  std::string QueryPropertyCatalog(const std::string& check);
+  std::string QueryPropertyCatalog(const std::string& check, const std::string& end_of_line="\n");
 
   // Print the contents of the property catalog for the loaded aircraft.
   void PrintPropertyCatalog(void);
