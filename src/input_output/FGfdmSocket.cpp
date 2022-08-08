@@ -59,13 +59,20 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+#ifndef _WIN32
+// On BSD/Unix, defining the flags INVALID_SOCKET and SOCKET_ERROR to -1 allows
+// using the same syntax for Windows and BSD/Unix platforms.
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#endif
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef _WIN32
 static bool LoadWinSockDLL(int debug_lvl)
 {
   WSADATA wsaData;
@@ -83,19 +90,15 @@ static bool LoadWinSockDLL(int debug_lvl)
 
 FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int precision)
 {
-#ifdef _WIN32
   sckt = sckt_in = INVALID_SOCKET;
-#else
-  sckt = sckt_in = 0;
-#endif
   Protocol = (ProtocolType)protocol;
   connected = false;
   struct addrinfo *addr = nullptr;
   this->precision = precision;
 
-  #if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef _WIN32
   if (!LoadWinSockDLL(debug_lvl)) return;
-  #endif
+#endif
 
   struct addrinfo hints;
   memset(&hints, 0, sizeof(struct addrinfo));
@@ -134,11 +137,7 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
       cout << "Creating TCP socket on port " << port << endl;
   }
 
-#ifdef _WIN32
   if (sckt != INVALID_SOCKET) {  // successful
-#else
-  if (sckt >= 0) {  // successful
-#endif
     int len = sizeof(struct sockaddr_in);
     memcpy(&scktName, addr->ai_addr, len);
     scktName.sin_port = htons(port);
@@ -161,28 +160,25 @@ FGfdmSocket::FGfdmSocket(const string& address, int port, int protocol, int prec
 // assumes TCP or UDP socket on localhost, for inbound datagrams
 FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 {
-#ifdef _WIN32
   sckt = INVALID_SOCKET;
-#else
-  sckt = -1;
-#endif
   connected = false;
   Protocol = (ProtocolType)protocol;
   string ProtocolName;
   this->precision = precision;
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef _WIN32
   if (!LoadWinSockDLL(debug_lvl)) return;
 #endif
 
   if (Protocol == ptUDP) {  //use udp protocol
     ProtocolName = "UDP";
     sckt = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef _WIN32
     u_long NonBlock = 1; // True
     ioctlsocket(sckt, FIONBIO, &NonBlock);
 #else
-    fcntl(sckt, F_SETFL, O_NONBLOCK);
+    int flags = fcntl(sckt, F_GETFL, 0);
+    fcntl(sckt, F_SETFL, flags | O_NONBLOCK);
 #endif
   }
   else {
@@ -194,11 +190,7 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
     cout << "Creating input " << ProtocolName << " socket on port " << port
          << endl;
 
-#ifdef _WIN32
   if (sckt != INVALID_SOCKET) {
-#else
-  if (sckt != -1) {
-#endif
     memset(&scktName, 0, sizeof(struct sockaddr_in));
     scktName.sin_family = AF_INET;
     scktName.sin_port = htons(port);
@@ -207,22 +199,17 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
       scktName.sin_addr.s_addr = htonl(INADDR_ANY);
 
     socklen_t len = sizeof(struct sockaddr_in);
-#ifdef _WIN32
     if (bind(sckt, (struct sockaddr*)&scktName, len) != SOCKET_ERROR) {
-#else
-    if (bind(sckt, (struct sockaddr*)&scktName, len) != -1) {
-#endif
       if (debug_lvl > 0)
         cout << "Successfully bound to " << ProtocolName
              << " input socket on port " << port << endl << endl;
 
       if (Protocol == ptTCP) {
-#ifdef _WIN32
         if (listen(sckt, 5) != SOCKET_ERROR) { // successful listen()
+#ifdef _WIN32
           u_long NoBlock = 1;
           ioctlsocket(sckt, FIONBIO, &NoBlock);
 #else
-        if (listen(sckt, 5) >= 0) { // successful listen()
           int flags = fcntl(sckt, F_GETFL, 0);
           fcntl(sckt, F_SETFL, flags | O_NONBLOCK);
 #endif
@@ -246,8 +233,8 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 
 FGfdmSocket::~FGfdmSocket()
 {
-  if (sckt) shutdown(sckt,2);
-  if (sckt_in) shutdown(sckt_in,2);
+  if (sckt != INVALID_SOCKET) shutdown(sckt,2);
+  if (sckt_in != INVALID_SOCKET) shutdown(sckt_in,2);
   Debug(1);
 }
 
@@ -260,16 +247,13 @@ string FGfdmSocket::Receive(void)
   string data;      // todo: should allocate this with a standard size as a
                     // class attribute and pass as a reference?
 
-#ifdef _WIN32
   if (sckt_in == INVALID_SOCKET && Protocol == ptTCP) {
     sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
     if (sckt_in != INVALID_SOCKET) {
+#ifdef _WIN32
       u_long NoBlock = 1;
       ioctlsocket(sckt_in, FIONBIO, &NoBlock);
 #else
-  if (sckt_in <= 0 && Protocol == ptTCP) {
-    sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
-    if (sckt_in > 0) {
       int flags = fcntl(sckt_in, F_GETFL, 0);
       fcntl(sckt_in, F_SETFL, flags | O_NONBLOCK);
 #endif
@@ -277,11 +261,7 @@ string FGfdmSocket::Receive(void)
     }
   }
 
-#ifdef _WIN32
   if (sckt_in != INVALID_SOCKET) {
-#else
-  if (sckt_in > 0) {
-#endif
     int num_chars;
 
     while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
@@ -303,11 +283,7 @@ string FGfdmSocket::Receive(void)
   }
 
   // this is for FGUDPInputSocket
-#ifdef _WIN32
   if (sckt != INVALID_SOCKET && Protocol == ptUDP) {
-#else
-  if (sckt >= 0 && Protocol == ptUDP) {
-#endif
     struct sockaddr addr;
     socklen_t fromlen = sizeof addr;
     int num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
@@ -323,11 +299,7 @@ int FGfdmSocket::Reply(const string& text)
 {
   int num_chars_sent=0;
 
-#ifdef _WIN32
   if (sckt_in != INVALID_SOCKET) {
-#else
-  if (sckt_in >= 0) {
-#endif
     num_chars_sent = send(sckt_in, text.c_str(), text.size(), 0);
     send(sckt_in, "JSBSim> ", 8, 0);
   } else {
@@ -411,11 +383,7 @@ void FGfdmSocket::Send(const char *data, int length)
 
 void FGfdmSocket::WaitUntilReadable(void)
 {
-#ifdef _WIN32
   if (sckt_in == INVALID_SOCKET)
-#else
-  if (sckt_in <= 0)
-#endif
     return;
 
   fd_set fds;
