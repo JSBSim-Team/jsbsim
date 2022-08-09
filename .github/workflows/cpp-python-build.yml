@@ -356,7 +356,7 @@ jobs:
         run: cmake --build . --config RelWithDebInfo
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 -E TestInputSocket --build-config RelWithDebInfo --output-on-failure
+        run: ctest -j2 --build-config RelWithDebInfo --output-on-failure
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -503,7 +503,7 @@ jobs:
       - name: Test JSBSim
         if: matrix.arch == 'x86_64'
         working-directory: build
-        run: ctest -j3 -E TestInputSocket --output-on-failure
+        run: ctest -j3 --output-on-failure
       - name: Build source package for Python
         if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
