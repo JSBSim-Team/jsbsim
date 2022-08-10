@@ -43,7 +43,7 @@ jobs:
           CIBW_BEFORE_ALL_MACOS: |
             cd build
             rm -f CMakeCache.txt
-            cmake -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
+            cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j3
           CIBW_SKIP: cp*-musllinux_*
           CIBW_ARCHS_MACOS: universal2
