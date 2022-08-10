@@ -18,15 +18,19 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy wheel 'setuptools>=60.0.0'
+        run: pip install -U cython
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake ..
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
-        # env:
+        env:
+          CIBW_BEFORE_ALL_LINUX: |
+            cd ..
+            cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
+            cmake --build . --target libJSBSim -- -j2
+            cd python
         #   CIBW_SOME_OPTION: value
         #    ...
         with:
