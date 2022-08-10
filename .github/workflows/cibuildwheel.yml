@@ -22,6 +22,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
+          cmake ..
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
