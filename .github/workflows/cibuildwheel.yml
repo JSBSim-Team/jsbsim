@@ -29,6 +29,7 @@ jobs:
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
+            rm -f CMakeCache.txt
             cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j2
         #   CIBW_SOME_OPTION: value
