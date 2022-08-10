@@ -18,12 +18,19 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython
+        run: pip install -U cython numpy
+      - name: Install & Configure Doxygen
+        run: |
+          sudo apt-get update
+          sudo apt-get install doxygen
+          # We don't want Doxygen to generate the HTML docs in this job (saves time)
+          # Set GENERATE_HTML and HAVE_DOT to NO
+          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
           cmake ..
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
         env:
@@ -39,7 +46,29 @@ jobs:
           package-dir: build/python
         #   output-dir: wheelhouse
         #   config-file: "{package}/pyproject.toml"
-
-      - uses: actions/upload-artifact@v3
+      - name: Test wheel package
+        run: |
+          pip install jsbsim --no-index -f wheelhouse
+          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+      - name: Test default root package detection
+        run: |
+          # Test global installation
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          # Test --user installation
+          pip install --user jsbsim --no-index -f wheelhouse
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          # Test virtual environment installation
+          python -m venv test_venv
+          source test_venv/bin/activate
+          pip install numpy
+          pip install jsbsim --no-index -f wheelhouse
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          deactivate
+      - name: Upload Files for Release
+        uses: actions/upload-artifact@v3
         with:
+          name: ManyLinux-Wheels.binaries
           path: ./wheelhouse/*.whl
