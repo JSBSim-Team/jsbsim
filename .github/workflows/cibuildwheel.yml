@@ -28,10 +28,9 @@ jobs:
         uses: pypa/cibuildwheel@v2.8.1
         env:
           CIBW_BEFORE_ALL_LINUX: |
-            cd ..
+            cd build
             cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j2
-            cd python
         #   CIBW_SOME_OPTION: value
         #    ...
         with:
