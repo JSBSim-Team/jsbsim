@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout JSBSim
@@ -20,6 +20,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U cython numpy
       - name: Install & Configure Doxygen
+        if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install doxygen
@@ -34,14 +35,13 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
         env:
-          CIBW_BEFORE_ALL_LINUX: |
+          CIBW_BEFORE_ALL: |
             cd build
             rm -f CMakeCache.txt
             cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j2
           CIBW_SKIP: cp*-musllinux_*
-        #   CIBW_SOME_OPTION: value
-        #    ...
+          CIBW_ARCHS_MACOS: universal2
         with:
           package-dir: build/python
         #   output-dir: wheelhouse
@@ -70,5 +70,5 @@ jobs:
       - name: Upload Files for Release
         uses: actions/upload-artifact@v3
         with:
-          name: ManyLinux-Wheels.binaries
+          name: ${{ matrix.os }}-Wheels.binaries
           path: ./wheelhouse/*.whl
