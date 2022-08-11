@@ -19,11 +19,16 @@ jobs:
           python-version: '3.8'
       - name: Install Python packages
         run: pip install -U cython numpy
-      - name: Install & Configure Doxygen
+      - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
           sudo apt-get install doxygen
+      - name: Install Doxygen (MacOSX)
+        if: matrix.os == 'macos-latest'
+        run: brew install doxygen
+      - name: Configure Doxygen
+        run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
