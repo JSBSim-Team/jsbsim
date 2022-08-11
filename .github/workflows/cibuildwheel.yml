@@ -25,8 +25,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen
       - name: Install Doxygen (MacOSX)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-11'
         run: brew install doxygen
+      - name: Install Doxygen (Windows)
+        if: runner.os == 'Windows'
+        run: cinst doxygen.install
       - name: Configure Doxygen
         if: runner.os != 'Windows'
         run: |
@@ -68,7 +71,7 @@ jobs:
         run: |
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
-      - name: Test default root package detection
+      - name: Test default root package detection (global & --user)
         run: |
           # Test global installation
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
@@ -77,6 +80,20 @@ jobs:
           pip install --user jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
+      - name: Test default root package detection (virtual env - Windows)
+        if: runner.os == 'Windows'
+        run: |
+          # Test virtual environment installation
+          python -m venv test_venv
+          test_venv\Scripts\activate.ps1
+          pip install numpy
+          pip install jsbsim --no-index -f wheelhouse
+          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+          pip uninstall jsbsim -y
+          deactivate
+      - name: Test default root package detection (virtual env - BSD/Unix)
+        if: runner.os != 'Windows'
+        run: |
           # Test virtual environment installation
           python -m venv test_venv
           source test_venv/bin/activate
