@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-11, windows-2019]
 
     steps:
       - name: Checkout JSBSim
@@ -28,14 +28,22 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: brew install doxygen
       - name: Configure Doxygen
+        if: runner.os != 'Windows'
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-      - name: Configure JSBSim
+      - name: Configure JSBSim (BSD/Unix)
+        if: runner.os != 'Windows'
         run: |
           mkdir build && cd build
+          cmake ..
+      - name: Configure JSBSim (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          New-Item -Path .\build -ItemType Directory -Force
+          cd build
           cmake ..
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
