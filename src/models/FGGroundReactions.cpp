@@ -133,7 +133,7 @@ void FGGroundReactions::SetDsCmd(double cmd)
 
 bool FGGroundReactions::Load(Element* document)
 {
-  int num=0;
+  static int num = 0;
 
   Name = "Ground Reactions Model: " + document->GetAttributeValue("name");
 

@@ -356,7 +356,7 @@ bool FGPropulsion::Load(Element* el)
   // Process tank definitions first to establish the number of fuel tanks
 
   Element* tank_element = el->FindElement("tank");
-  unsigned int numTanks = 0;
+  unsigned int numTanks = Tanks.size();
 
   while (tank_element) {
     Tanks.push_back(make_shared<FGTank>(FDMExec, tank_element, numTanks));
@@ -373,7 +373,7 @@ bool FGPropulsion::Load(Element* el)
 
   ReadingEngine = true;
   Element* engine_element = el->FindElement("engine");
-  unsigned int numEngines = 0;
+  unsigned int numEngines = Engines.size();
 
   while (engine_element) {
     if (!ModelLoader.Open(engine_element)) return false;
@@ -417,7 +417,12 @@ bool FGPropulsion::Load(Element* el)
     engine_element = el->FindNextElement("engine");
   }
 
-  if (numEngines) bind();
+  static bool properties_bound = false;
+
+  if (numEngines && !properties_bound) {
+    properties_bound = true;
+    bind();
+  }
 
   CalculateTankInertias();
 

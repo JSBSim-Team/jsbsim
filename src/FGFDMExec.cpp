@@ -841,12 +841,15 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the ground_reactions element. This element is REQUIRED.
     element = document->FindElement("ground_reactions");
     if (element) {
-      result = Models[eGroundReactions]->Load(element);
-      if (!result) {
-        cerr << endl << element->ReadFrom()
-             << "Aircraft ground_reactions element has problems in file "
-             << aircraftCfgFileName << endl;
-        return result;
+      while (element) {
+        result = Models[eGroundReactions]->Load(element);
+        if (!result) {
+          cerr << endl << element->ReadFrom()
+              << "Aircraft ground_reactions element has problems in file "
+              << aircraftCfgFileName << endl;
+          return result;
+        }
+        element = document->FindNextElement("ground_reactions");
       }
     } else {
       cerr << endl << "No ground_reactions element was found in the aircraft config file." << endl;
@@ -876,11 +879,15 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the propulsion element. This element is OPTIONAL.
     element = document->FindElement("propulsion");
     if (element) {
-      result = Propulsion->Load(element);
-      if (!result) {
-        cerr << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
-        return result;
+      while (element) {
+        result = Propulsion->Load(element);
+        if (!result) {
+          cerr << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
+          return result;
+        }
+        element = document->FindNextElement("propulsion");
       }
+
       for (unsigned int i=0; i < Propulsion->GetNumEngines(); i++)
         FCS->AddThrottle();
     }
