@@ -832,7 +832,7 @@ jobs:
           lcov -r tmp.info /usr/include/c++/\* /usr/include/cxxtest/\* \*/tests/unit_tests/\* -o coverage.info
           genhtml -o documentation/html/coverage -t "JSBSim unit tests" coverage.info
       - name: Publish docs to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: gh-pages
           build_dir: build/documentation/html
