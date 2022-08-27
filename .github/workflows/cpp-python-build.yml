@@ -93,7 +93,7 @@ jobs:
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: build/Testing/Temporary/CTestCostData.txt
           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
@@ -266,7 +266,7 @@ jobs:
         # between the cores and reduce execution time.
         # Also caches Doxygen executable since its installation from Chocolatey
         # takes such a looong time...
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache-win-msvc
         with:
           path: |
@@ -430,7 +430,7 @@ jobs:
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         if: matrix.arch == 'x86_64'
         with:
           path: build/Testing/Temporary/CTestCostData.txt
