@@ -361,12 +361,12 @@ jobs:
           repository: JSBSim-Team/jsbsim-logo
           path: jsbsim-logo
       - name: Download binary file for JSBSim.iss
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Matlab-SFunction-Windows.binaries
           path: build
       - name: Download JSBSim library and executable
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Windows.binaries
       - name: Update the version of JSBSim in matlab/README.md
@@ -517,7 +517,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Download source package
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: macOS.binaries
       - name: Build Python module from sources (Linux & MacOSX)
@@ -649,7 +649,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Download files
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
       - name: Prepare files
         run: |
           mkdir dist
@@ -679,7 +679,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download files
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
       - name: Prepare files for deployment
         run: |
           mkdir dist
@@ -811,7 +811,7 @@ jobs:
           mkdir build && cd build
           cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Download Python wheels
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ubuntu-latest-Wheels.binaries
           path: build
