@@ -56,7 +56,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install cxxtest valgrind
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: Install Python packages
@@ -187,7 +187,7 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Set up Python 3.10
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Checkout JSBSim
@@ -233,7 +233,7 @@ jobs:
         shared_libs: [ON, OFF]
     steps:
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: Install Python packages
@@ -389,7 +389,7 @@ jobs:
         arch: [x86_64, arm64]
     steps:
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: Install Python packages
@@ -483,7 +483,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Download source package
@@ -518,7 +518,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Set up Python 3.8
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
       - name: Install Python packages
@@ -661,7 +661,7 @@ jobs:
 
       # PyPI deployment
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: PyPI deployment
@@ -768,7 +768,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen graphviz cxxtest lcov
       - name: Set up Python 3.7
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: Install Python packages
