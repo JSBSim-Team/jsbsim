@@ -552,6 +552,7 @@ jobs:
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
+          cmake --build . --target libJSBSim --config RelWithDebInfo
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.8.1
         env:
@@ -567,10 +568,10 @@ jobs:
             cmake --build . --target libJSBSim -- -j3
           CIBW_SKIP: cp*-musllinux_*
           CIBW_ARCHS_MACOS: universal2
+          CIBW_ARCHS_WINDOWS: native
+          JSBSIM_BUILD_CONFIG: RelWithDebInfo
         with:
           package-dir: build/python
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f wheelhouse
