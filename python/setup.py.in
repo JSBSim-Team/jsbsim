@@ -36,7 +36,7 @@ class QuietBuild(build_ext):
     def run(self):
         if "VERBOSE" not in os.environ:
             name = self.extensions[0].name
-            logging.info("building '{}' extension".format(name))
+            logging.info(f"building '{name}' extension")
 
             self.oldstdout = os.dup(sys.stdout.fileno())
             self.devnull = open(name+'-build.log', 'w')
@@ -55,22 +55,19 @@ class QuietBuild(build_ext):
 class InstallJSBSimModule(install_lib):
     def install(self):
         if compiler.compiler_type == 'msvc':
-            import win32api
+            msvcp_dll = 'msvcp140.dll'
 
-            path = win32api.GetEnvironmentVariable('PATH')
-            # Use a set below to remove duplication.
-            dirs = set([win32api.GetSystemDirectory(),
-                        win32api.GetWindowsDirectory()] + path.split(';'))
-
-            for d in dirs:
-                libpath = os.path.join(d, 'msvcp140.dll')
+            for d in os.environ['PATH'].split(';'):
+                libpath = os.path.join(d, msvcp_dll)
                 if os.path.exists(libpath):
                     if not os.path.exists(self.install_dir):
-                        logging.info('creating {}'.format(self.install_dir))
+                        logging.info(f'creating {self.install_dir}')
                         os.makedirs(self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
-                                                         'msvcp140.dll'))
+                                                         msvcp_dll))
                     break
+            else:
+                raise FileNotFoundError(f"Could not find '{msvcp_dll}'")
         install_lib.install(self)
 
 # distutils assumes that all the files must be compiled with the same compiler
