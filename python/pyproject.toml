@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 manylinux-x86_64-image = "manylinux2010"
 manylinux-i686-image = "manylinux2010"
 # Skip building against musl libc images as JSBSim is not compatible with them.
-skip = "cp*-musllinux_*"
+skip = "cp*-musllinux_* cp311*"
 
 [[tool.cibuildwheel.overrides]]
 select = "pp39-*"
