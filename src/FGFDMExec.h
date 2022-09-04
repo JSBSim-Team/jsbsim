@@ -42,7 +42,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <memory>
-#include <random>
 
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
@@ -670,7 +669,7 @@ private:
   bool HoldDown;
 
   unsigned int RandomSeed;
-  std::shared_ptr<std::default_random_engine> RandomEngine;
+  std::shared_ptr<RandomNumberGenerator> RandomEngine;
 
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
   // has the ID 0

@@ -38,8 +38,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <random>
-
 #include "models/FGModel.h"
 #include "math/FGMatrix33.h"
 
@@ -396,9 +394,7 @@ private:
   FGColumnVector3 vBurstGust;
   FGColumnVector3 vTurbulenceNED;
 
-  std::shared_ptr<std::default_random_engine> generator;
-  std::uniform_real_distribution<double> uniform_random;
-  std::normal_distribution<double> normal_random;
+  std::shared_ptr<RandomNumberGenerator> generator;
 
   void Turbulence(double h);
   void UpDownBurst();

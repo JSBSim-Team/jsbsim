@@ -37,8 +37,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <random>
-
 #include "FGFCSComponent.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,9 +178,7 @@ protected:
   void bind(Element* el, FGPropertyManager* pm) override;
 
 private:
-  std::shared_ptr<std::default_random_engine> generator;
-  std::uniform_real_distribution<double> uniform_random;
-  std::normal_distribution<double> normal_random;
+  std::shared_ptr<RandomNumberGenerator> generator;
   void Debug(int from) override;
 };
 }

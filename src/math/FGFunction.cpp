@@ -29,7 +29,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
-#include <random>
 #include <chrono>
 #include <memory>
 
@@ -292,7 +291,7 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-shared_ptr<default_random_engine> makeRandomEngine(Element *el, FGFDMExec* fdmex)
+shared_ptr<RandomNumberGenerator> makeRandomEngine(Element *el, FGFDMExec* fdmex)
 {
   string seed_attr = el->GetAttributeValue("seed");
   unsigned int seed;
@@ -302,7 +301,7 @@ shared_ptr<default_random_engine> makeRandomEngine(Element *el, FGFDMExec* fdmex
     seed = chrono::system_clock::now().time_since_epoch().count();
   else
     seed = atoi(seed_attr.c_str());
-  return make_shared<default_random_engine>(seed);
+  return make_shared<RandomNumberGenerator>(seed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -606,10 +605,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         mean = atof(mean_attr.c_str());
       if (!stddev_attr.empty())
         stddev = atof(stddev_attr.c_str());
-      auto distribution = make_shared<normal_distribution<double>>(mean, stddev);
       auto generator(makeRandomEngine(element, fdmex));
-      auto f = [generator, distribution]()->double {
-                 return (*distribution.get())(*generator);
+      auto f = [generator, mean, stddev]()->double {
+                 double value = generator->GetNormalRandomNumber();
+                 return value*stddev + mean;
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
                                                      Prefix));
@@ -622,10 +621,12 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         lower = atof(lower_attr.c_str());
       if (!upper_attr.empty())
         upper = atof(upper_attr.c_str());
-      auto distribution = make_shared<uniform_real_distribution<double>>(lower, upper);
       auto generator(makeRandomEngine(element, fdmex));
-      auto f = [generator, distribution]()->double {
-                 return (*distribution.get())(*generator);
+      double a = 0.5*(upper-lower);
+      double b = 0.5*(upper+lower);
+      auto f = [generator, a, b]()->double {
+                 double value = generator->GetUniformRandomNumber();
+                 return value*a + b;
                };
       Parameters.push_back(new aFunc<decltype(f), 0>(f, PropertyManager, element,
                                                      Prefix));

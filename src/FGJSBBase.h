@@ -43,6 +43,7 @@ INCLUDES
 #include <string>
 #include <cmath>
 #include <stdexcept>
+#include <random>
 
 #include "JSBSim_API.h"
 #include "input_output/string_utilities.h"
@@ -60,6 +61,23 @@ namespace JSBSim {
 class JSBSIM_API BaseException : public std::runtime_error {
   public:
     BaseException(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+class JSBSIM_API RandomNumberGenerator {
+  public:
+    RandomNumberGenerator(unsigned int seed=0)
+      : generator(seed), uniform_random(-1.0, 1.0), normal_random(0.0,1.0) {}
+    void seed(unsigned int value) {
+      generator.seed(value);
+      uniform_random.reset();
+      normal_random.reset();
+    }
+    double GetUniformRandomNumber(void) { return uniform_random(generator); }
+    double GetNormalRandomNumber(void) { return normal_random(generator); }
+  private:
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> uniform_random;
+    std::normal_distribution<double> normal_random;
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

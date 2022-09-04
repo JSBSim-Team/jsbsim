@@ -72,8 +72,7 @@ static inline double square_signed (double value)
 constexpr double sqr(double x) { return x*x; }
 
 FGWinds::FGWinds(FGFDMExec* fdmex)
-  : FGModel(fdmex), generator(fdmex->GetRandomEngine()),
-    uniform_random(-1.0, 1.0), normal_random(0.0, 1.0)
+  : FGModel(fdmex), generator(fdmex->GetRandomEngine())
 {
   Name = "FGWinds";
 
@@ -215,7 +214,7 @@ void FGWinds::Turbulence(double h)
 
     double random = 0.0;
     if (target_time == 0.0) {
-      strength = random = uniform_random(*generator.get());
+      strength = random = generator->GetUniformRandomNumber();
       target_time = time + 0.71 + (random * 0.5);
     }
     if (time > target_time) {
@@ -301,10 +300,10 @@ void FGWinds::Turbulence(double h)
       tau_p = L_p/in.V, // eq. (9)
       tau_q = 4*b_w/M_PI/in.V, // eq. (13)
       tau_r =3*b_w/M_PI/in.V, // eq. (17)
-      nu_u = normal_random(*generator.get()),
-      nu_v = normal_random(*generator.get()),
-      nu_w = normal_random(*generator.get()),
-      nu_p = normal_random(*generator.get()),
+      nu_u = generator->GetNormalRandomNumber(),
+      nu_v = generator->GetNormalRandomNumber(),
+      nu_w = generator->GetNormalRandomNumber(),
+      nu_p = generator->GetNormalRandomNumber(),
       xi_u=0, xi_v=0, xi_w=0, xi_p=0, xi_q=0, xi_r=0;
 
     // values of turbulence NED velocities
