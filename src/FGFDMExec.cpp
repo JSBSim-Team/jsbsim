@@ -1244,7 +1244,6 @@ void FGFDMExec::SRand(int sr)
 {
   RandomSeed = sr;
   RandomEngine->seed(RandomSeed);
-  gaussian_random_number_phase = 0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

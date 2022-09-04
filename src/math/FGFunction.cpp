@@ -29,7 +29,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
-#include <chrono>
 #include <memory>
 
 #include "simgear/misc/strutils.hxx"
@@ -294,14 +293,14 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 shared_ptr<RandomNumberGenerator> makeRandomEngine(Element *el, FGFDMExec* fdmex)
 {
   string seed_attr = el->GetAttributeValue("seed");
-  unsigned int seed;
   if (seed_attr.empty())
     return fdmex->GetRandomEngine();
   else if (seed_attr == "time_now")
-    seed = chrono::system_clock::now().time_since_epoch().count();
-  else
-    seed = atoi(seed_attr.c_str());
-  return make_shared<RandomNumberGenerator>(seed);
+    return make_shared<RandomNumberGenerator>();
+  else {
+    unsigned int seed = atoi(seed_attr.c_str());
+    return make_shared<RandomNumberGenerator>(seed);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

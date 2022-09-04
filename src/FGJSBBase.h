@@ -44,6 +44,7 @@ INCLUDES
 #include <cmath>
 #include <stdexcept>
 #include <random>
+#include <chrono>
 
 #include "JSBSim_API.h"
 #include "input_output/string_utilities.h"
@@ -65,8 +66,13 @@ class JSBSIM_API BaseException : public std::runtime_error {
 
 class JSBSIM_API RandomNumberGenerator {
   public:
-    RandomNumberGenerator(unsigned int seed=0)
-      : generator(seed), uniform_random(-1.0, 1.0), normal_random(0.0,1.0) {}
+    RandomNumberGenerator(void) : uniform_random(-1.0, 1.0), normal_random(0.0, 1.0)
+    {
+      auto seed_value = std::chrono::system_clock::now().time_since_epoch().count();
+      generator.seed(static_cast<unsigned int>(seed_value));
+    }
+    RandomNumberGenerator(unsigned int seed)
+      : generator(seed), uniform_random(-1.0, 1.0), normal_random(0.0, 1.0) {}
     void seed(unsigned int value) {
       generator.seed(value);
       uniform_random.reset();
@@ -306,8 +312,6 @@ public:
 
   static constexpr double sign(double num) {return num>=0.0?1.0:-1.0;}
 
-  static double GaussianRandomNumber(void);
-
 protected:
   static constexpr double radtodeg = 180. / M_PI;
   static constexpr double degtorad = M_PI / 180.;
@@ -335,8 +339,6 @@ protected:
   static const std::string JSBSim_version;
 
   static std::string CreateIndexedPropertyName(const std::string& Property, int index);
-
-  static int gaussian_random_number_phase;
 
 public:
 /// Moments L, M, N
