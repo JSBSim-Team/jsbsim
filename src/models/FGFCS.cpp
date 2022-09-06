@@ -103,6 +103,8 @@ FGFCS::~FGFCS()
   PropAdvance.clear();
   PropFeatherCmd.clear();
   PropFeather.clear();
+  OperationModeCmd.clear();
+  OperationMode.clear();
 
   unsigned int i;
 
@@ -126,6 +128,8 @@ bool FGFCS::InitModel(void)
   for (i=0; i<MixtureCmd.size(); i++) MixtureCmd[i] = 0.0;
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = 0.0;
   for (i=0; i<PropFeather.size(); i++) PropFeather[i] = 0.0;
+  for (i=0; i<OperationModeCmd.size(); i++) OperationModeCmd[i] = -1.0;
+  for (i=0; i<OperationMode.size(); i++) OperationMode[i] = -1.0;
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
@@ -348,6 +352,42 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFCS::SetOperationModeCmd(int engine, double mode)
+{
+  if (engine < (int)OperationModeCmd.size()) {
+    if (engine < 0) {
+      for (unsigned int ctr=0; ctr<OperationModeCmd.size(); ctr++)
+        OperationModeCmd[ctr] = mode;
+    } else {
+      OperationModeCmd[engine] = mode;
+    }
+  } else {
+    cerr << "Operation mode " << engine << " does not exist! " << OperationModeCmd.size()
+         << " engines exist, but attempted operation mode command is for engine "
+         << engine << endl;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetOperationMode(int engine, double mode)
+{
+  if (engine < (int)OperationMode.size()) {
+    if (engine < 0) {
+      for (unsigned int ctr=0; ctr<OperationMode.size(); ctr++)
+        OperationMode[ctr] = mode;
+    } else {
+      OperationMode[engine] = mode;
+    }
+  } else {
+    cerr << "Operation mode " << engine << " does not exist! " << OperationMode.size()
+         << " engines exist, but attempted operation mode is for engine "
+         << engine << endl;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double FGFCS::GetThrottleCmd(int engineNum) const
 {
   if (engineNum < (int)ThrottlePos.size()) {
@@ -380,6 +420,44 @@ double FGFCS::GetThrottlePos(int engineNum) const
          << engineNum << endl;
   }
   return 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFCS::GetOperationModeCmd(int engine) const
+{
+  if (engine < (int)OperationModeCmd.size()) {
+    if (engine < 0) {
+      cerr << "Cannot get operation mode command value for ALL engines" << endl;
+    } else {
+      return OperationModeCmd[engine];
+    }
+  } else {
+    cerr << "Operation mode " << engine << " does not exist! " << OperationModeCmd.size()
+         << " engines exist, but attempted operation mode command is for engine "
+         << engine << endl;
+  }
+
+  return -1.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFCS::GetOperationMode(int engine) const
+{
+  if (engine < (int)OperationMode.size()) {
+    if (engine < 0) {
+      cerr << "Cannot get operation mode value for ALL engines" << endl;
+    } else {
+      return OperationMode[engine];
+    }
+  } else {
+    cerr << "Operation mode " << engine << " does not exist! " << OperationMode.size()
+         << " engines exist, but attempted operation mode is for engine "
+         << engine << endl;
+  }
+  
+  return -1.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -678,6 +756,8 @@ void FGFCS::AddThrottle(void)
   PropAdvance.push_back(0.0);
   PropFeatherCmd.push_back(false);
   PropFeather.push_back(false);
+  OperationModeCmd.push_back(-1.0);
+  OperationMode.push_back(-1.0);
 
   unsigned int num = (unsigned int)ThrottleCmd.size()-1;
   bindThrottle(num);
@@ -781,6 +861,12 @@ void FGFCS::bindThrottle(unsigned int num)
   tmp = CreateIndexedPropertyName("fcs/feather-pos-norm", num);
   PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetPropFeather,
                                         &FGFCS::SetPropFeather);
+  tmp = CreateIndexedPropertyName("fcs/engine-opmode-cmd", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetOperationModeCmd,
+                                        &FGFCS::SetOperationModeCmd);
+  tmp = CreateIndexedPropertyName("fcs/engine-opmode", num);
+  PropertyManager->Tie( tmp.c_str(), this, num, &FGFCS::GetOperationMode,
+                                        &FGFCS::SetOperationMode);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

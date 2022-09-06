@@ -267,6 +267,8 @@ double FGRocket::CalcFuelNeed(void)
 
     if (mxr_function) MxR = mxr_function->GetValue();
 
+    OpMode = std::round(in.OperationMode[EngineNumber]);
+
     if (OpMode == eModeMonoProp) {
       SLFuelFlowMax = 0.0;
     } else {
@@ -364,8 +366,7 @@ void FGRocket::bindmodel(FGPropertyManager* PropertyManager)
     PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetIsp,
                                                        &FGRocket::SetIsp);
     property_name = base_property_name + "/operation-mode";
-    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOperationMode,
-                                                       &FGRocket::SetOperationMode);
+    PropertyManager->Tie( property_name.c_str(), this, &FGRocket::GetOperationMode);
   }
 }
 

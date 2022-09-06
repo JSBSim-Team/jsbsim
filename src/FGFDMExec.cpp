@@ -518,6 +518,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.MixtureCmd       = FCS->GetMixtureCmd();
     Propulsion->in.PropAdvance      = FCS->GetPropAdvance();
     Propulsion->in.PropFeather      = FCS->GetPropFeather();
+    Propulsion->in.OperationMode    = FCS->GetOperationMode();
     Propulsion->in.H_agl            = Propagate->GetDistanceAGL();
     Propulsion->in.PQRi             = Propagate->GetPQRi();
 
