@@ -45,6 +45,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
+#include <array>
 
 #include "FGFDMExec.h"
 #include "FGPropulsion.h"
@@ -443,19 +444,33 @@ bool FGPropulsion::Load(Element* el)
 
 SGPath FGPropulsion::FindFullPathName(const SGPath& path) const
 {
-  if (!ReadingEngine) return FGModel::FindFullPathName(path);
+  SGPath name = FGModel::FindFullPathName(path);
+  if (!ReadingEngine && !name.isNull()) return name;
 
-  SGPath name{};
+#ifdef _WIN32
+  // Singular and plural are allowed for the folder names for consistency with
+  // the default engine folder name "engine" and for backward compatibility
+  // regarding the folder name "Engines".
+  const array<string, 2> dir_names = {"Engines", "engine"};
+#else
+  // Allow alternative capitalization for case sensitive OSes.
+  const array<string, 4> dir_names = {"Engines", "engines", "Engine", "engine"};
+#endif
 
   if (!path.dir().empty()) {
     name = CheckPathName(FDMExec->GetFullAircraftPath(),
                          path);
-  } else {
-    name = CheckPathName(FDMExec->GetFullAircraftPath()/string("Engines"),
-                         path);
-  }
 
-  if (!name.isNull()) return name;
+    if (!name.isNull()) return name;
+
+  } else {
+    for(const string& dir_name: dir_names) {
+      name = CheckPathName(FDMExec->GetFullAircraftPath()/dir_name,
+                           path);
+
+      if (!name.isNull()) return name;
+    }
+  }
 
   return CheckPathName(FDMExec->GetEnginePath(), path);
 }
