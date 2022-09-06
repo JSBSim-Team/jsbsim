@@ -1,4 +1,4 @@
-# This script has been automatically built from ${CMAKE_SOURCE_DIR}/python/setup.py.in
+# This script has been automatically built from ${PROJECT_SOURCE_DIR}/python/setup.py.in
 #
 # Copyright (c) 2014-2022 Bertrand Coconnier
 #
@@ -36,7 +36,7 @@ class QuietBuild(build_ext):
     def run(self):
         if "VERBOSE" not in os.environ:
             name = self.extensions[0].name
-            logging.info("building '{}' extension".format(name))
+            logging.info(f"building '{name}' extension")
 
             self.oldstdout = os.dup(sys.stdout.fileno())
             self.devnull = open(name+'-build.log', 'w')
@@ -55,22 +55,19 @@ class QuietBuild(build_ext):
 class InstallJSBSimModule(install_lib):
     def install(self):
         if compiler.compiler_type == 'msvc':
-            import win32api
+            msvcp_dll = 'msvcp140.dll'
 
-            path = win32api.GetEnvironmentVariable('PATH')
-            # Use a set below to remove duplication.
-            dirs = set([win32api.GetSystemDirectory(),
-                        win32api.GetWindowsDirectory()] + path.split(';'))
-
-            for d in dirs:
-                libpath = os.path.join(d, 'msvcp140.dll')
+            for d in os.environ['PATH'].split(';'):
+                libpath = os.path.join(d, msvcp_dll)
                 if os.path.exists(libpath):
                     if not os.path.exists(self.install_dir):
-                        logging.info('creating {}'.format(self.install_dir))
+                        logging.info(f'creating {self.install_dir}')
                         os.makedirs(self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
-                                                         'msvcp140.dll'))
+                                                         msvcp_dll))
                     break
+            else:
+                raise FileNotFoundError(f"Could not find '{msvcp_dll}'")
         install_lib.install(self)
 
 # distutils assumes that all the files must be compiled with the same compiler
@@ -133,11 +130,19 @@ else:
 compiler = new_compiler(compiler=compiler_name)
 
 # Update the JSBSim library path according to the --config option
-if args.config:
-    if compiler.compiler_type == 'msvc':
+# If the --config option has not been provided then we try getting the build
+# configuration via the environment variable JSBSIM_BUILD_CONFIG. This feature
+# is mainly useful for CI builds.
+if compiler.compiler_type == 'msvc':
+    if not args.config and 'JSBSIM_BUILD_CONFIG' in os.environ:
+        args.config = os.environ['JSBSIM_BUILD_CONFIG']
+    if args.config:
         library_path=os.path.join(library_path, args.config)
-    else:
-        raise ArgumentError(None, 'option --config not recognized.')
+elif args.config:
+    raise ArgumentError(None, 'option --config not recognized.')
+
+# It is good practice to provide library paths as absolute paths.
+library_path = os.path.abspath(library_path)
 
 convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(';') if item!='']
 
@@ -221,6 +226,17 @@ for d in os.scandir('data/aircraft'):
         dir_name = 'aircraft/' + d.name
         data_files.append(('share/${PROJECT_NAME}/'+dir_name,
                             list(XML_files(dir_name))))
+
+        # Some aircraft folders include a "Systems" and/or an "Engines"
+        # sub-directory (with several alternative spelling) so make sure they
+        # are copied in the wheel archive (see GH issue #687)
+        for sub_dir in ('Systems', 'systems', 'Engines', 'engines', 'Engine',
+                        'engine'):
+            sub_dir_name = dir_name + '/' + sub_dir
+            subdir_dir_fullname = os.path.join('data', sub_dir_name)
+            if os.path.exists(subdir_dir_fullname) and os.path.isdir(subdir_dir_fullname):
+                data_files.append(('share/${PROJECT_NAME}/'+sub_dir_name,
+                                    list(XML_files(sub_dir_name))))
 
 # Build & installation process for the JSBSim Python module
 setup(
