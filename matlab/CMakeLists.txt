@@ -6,7 +6,7 @@ if(Matlab_FOUND)
 
   # Build the mex file.
   matlab_add_mex(NAME JSBSim_SFunction SRC ${SOURCES} LINK_TO libJSBSim)
-  target_include_directories(JSBSim_SFunction PUBLIC ${CMAKE_SOURCE_DIR}/src
+  target_include_directories(JSBSim_SFunction PUBLIC ${PROJECT_SOURCE_DIR}/src
                              ${Matlab_ROOT_DIR}/simulink/include)
   set_target_properties(JSBSim_SFunction PROPERTIES CXX_STANDARD 14)
 
