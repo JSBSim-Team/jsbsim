@@ -75,7 +75,7 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmctr)
-  : RandomSeed(0), RandomEngine(make_shared<RandomNumberGenerator>(RandomSeed)),
+  : RandomSeed(0), RandomGenerator(make_shared<RandomNumberGenerator>(RandomSeed)),
     FDMctr(fdmctr)
 {
   Frame           = 0;
@@ -1243,7 +1243,7 @@ void FGFDMExec::DoTrim(int mode)
 void FGFDMExec::SRand(int sr)
 {
   RandomSeed = sr;
-  RandomEngine->seed(RandomSeed);
+  RandomGenerator->seed(RandomSeed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

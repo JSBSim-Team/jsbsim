@@ -51,7 +51,7 @@ CLASS IMPLEMENTATION
 
 
 FGSensor::FGSensor(FGFCS* fcs, Element* element)
-  : FGFCSComponent(fcs, element), generator(fcs->GetExec()->GetRandomEngine())
+  : FGFCSComponent(fcs, element), generator(fcs->GetExec()->GetRandomGenerator())
 {
   // inputs are read from the base class constructor
 

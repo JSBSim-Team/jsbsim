@@ -290,11 +290,11 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-shared_ptr<RandomNumberGenerator> makeRandomEngine(Element *el, FGFDMExec* fdmex)
+shared_ptr<RandomNumberGenerator> makeRandomGenerator(Element *el, FGFDMExec* fdmex)
 {
   string seed_attr = el->GetAttributeValue("seed");
   if (seed_attr.empty())
-    return fdmex->GetRandomEngine();
+    return fdmex->GetRandomGenerator();
   else if (seed_attr == "time_now")
     return make_shared<RandomNumberGenerator>();
   else {
@@ -604,7 +604,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         mean = atof(mean_attr.c_str());
       if (!stddev_attr.empty())
         stddev = atof(stddev_attr.c_str());
-      auto generator(makeRandomEngine(element, fdmex));
+      auto generator(makeRandomGenerator(element, fdmex));
       auto f = [generator, mean, stddev]()->double {
                  double value = generator->GetNormalRandomNumber();
                  return value*stddev + mean;
@@ -620,7 +620,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         lower = atof(lower_attr.c_str());
       if (!upper_attr.empty())
         upper = atof(upper_attr.c_str());
-      auto generator(makeRandomEngine(element, fdmex));
+      auto generator(makeRandomGenerator(element, fdmex));
       double a = 0.5*(upper-lower);
       double b = 0.5*(upper+lower);
       auto f = [generator, a, b]()->double {
