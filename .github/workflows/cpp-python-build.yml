@@ -236,9 +236,13 @@ jobs:
       - name: Build JSBSim
         working-directory: build
         run: mingw32-make -j2
-      - name: Test JSBSim
+      - name: Test executable
+        run: build/src/JSBSim.exe scripts/c1721.xml
+      - name: Run JSBSim tests
         working-directory: build
-        run: ctest -j2 --output-on-failure
+        run: |
+          cp src/libJSBSim.* julia/.
+          ctest -j2 --output-on-failure
 
     # Upload files
       - name: On failure - Upload logs
