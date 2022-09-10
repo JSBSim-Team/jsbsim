@@ -74,7 +74,8 @@ CLASS IMPLEMENTATION
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
-  : Root(root), RandomEngine(new default_random_engine), FDMctr(fdmctr)
+  : Root(root), RandomSeed(0),
+    RandomGenerator(make_shared<RandomNumberGenerator>(RandomSeed)), FDMctr(fdmctr)
 {
   Frame           = 0;
   IC              = nullptr;
@@ -90,7 +91,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, unsigned int* fdmctr)
   Terminate = false;
   StandAlone = false;
   ResetMode = 0;
-  RandomSeed = 0;
   HoldDown = false;
 
   IncrementThenHolding = false;  // increment then hold is off by default
@@ -1180,9 +1180,7 @@ void FGFDMExec::DoTrim(int mode)
 void FGFDMExec::SRand(int sr)
 {
   RandomSeed = sr;
-  gaussian_random_number_phase = 0;
-  RandomEngine->seed(sr);
-  srand(RandomSeed);
+  RandomGenerator->seed(RandomSeed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
