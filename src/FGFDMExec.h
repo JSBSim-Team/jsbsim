@@ -482,8 +482,8 @@ public:
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
   /// Mode flags for ResetToInitialConditions
-  enum { START_NEW_OUTPUT    = 1,
-         DONT_EXECUTE_RUN_IC = 2 };
+  static const int START_NEW_OUTPUT    = 0x1;
+  static const int DONT_EXECUTE_RUN_IC = 0x2;
   /** Resets the initial conditions object and prepares the simulation to run
       again. If the mode's first bit is set the output instances will take special actions
       such as closing the current output file and open a new one with a different name.
@@ -616,7 +616,7 @@ private:
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
-  unsigned int Terminate;
+  unsigned short Terminate;
   double dT;
   double saved_dT;
   double sim_time;

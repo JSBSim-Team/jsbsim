@@ -30,7 +30,6 @@ INCLUDES
 
 #include <sstream>  // for assembling the error messages / what of exceptions.
 #include <stdexcept>  // using domain_error, invalid_argument, and length_error.
-
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
 
