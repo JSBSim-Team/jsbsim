@@ -670,20 +670,20 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
     double disp = e->GetAttributeValueAsNumber("dispersion");
     if (!supplied_units.empty()) disp *= convert[supplied_units][target_units];
     string attType = e->GetAttributeValue("type");
+    RandomNumberGenerator generator;
+
     if (attType == "gaussian" || attType == "gaussiansigned") {
-      double grn = FGJSBBase::GaussianRandomNumber();
-    if (attType == "gaussian") {
-      value = val + disp*grn;
-      } else { // Assume gaussiansigned
-        value = (val + disp*grn)*(fabs(grn)/grn);
-      }
+      double grn = generator.GetNormalRandomNumber();
+      if (attType == "gaussian")
+        value = val + disp*grn;
+      else // Assume gaussiansigned
+        value = (val + disp*grn)*FGJSBBase::sign(grn);
     } else if (attType == "uniform" || attType == "uniformsigned") {
-      double urn = ((((double)rand()/RAND_MAX)-0.5)*2.0);
-      if (attType == "uniform") {
-      value = val + disp * urn;
-      } else { // Assume uniformsigned
-        value = (val + disp * urn)*(fabs(urn)/urn);
-      }
+      double urn = generator.GetUniformRandomNumber();
+      if (attType == "uniform")
+        value = val + disp * urn;
+      else // Assume uniformsigned
+        value = (val + disp * urn)*FGJSBBase::sign(urn);
     } else {
       std::stringstream s;
       s << ReadFrom() << "Unknown dispersion type" << attType;

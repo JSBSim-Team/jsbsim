@@ -50,7 +50,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+FGSensor::FGSensor(FGFCS* fcs, Element* element)
+  : FGFCSComponent(fcs, element), generator(fcs->GetExec()->GetRandomGenerator())
 {
   // inputs are read from the base class constructor
 
@@ -182,11 +183,10 @@ void FGSensor::Noise(void)
 {
   double random_value=0.0;
 
-  if (DistributionType == eUniform) {
-    random_value = 2.0*(((double)rand()/(double)RAND_MAX) - 0.5);
-  } else {
-    random_value = GaussianRandomNumber();
-  }
+  if (DistributionType == eUniform)
+    random_value = generator->GetUniformRandomNumber();
+  else
+    random_value = generator->GetNormalRandomNumber();
 
   switch( NoiseType ) {
   case ePercent:

@@ -178,6 +178,7 @@ protected:
   void bind(Element* el, FGPropertyManager* pm) override;
 
 private:
+  std::shared_ptr<RandomNumberGenerator> generator;
   void Debug(int from) override;
 };
 }

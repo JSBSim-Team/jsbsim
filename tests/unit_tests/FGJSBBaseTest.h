@@ -37,10 +37,6 @@ public:
     Filter f0;
     Filter f(1.0, 1E-5);
     double x = f.execute(3.0);
-    // Called twice for 100% coverage
-    // Need to test that the numbers follow a Gaussian law ?
-    double ran0 = GaussianRandomNumber();
-    double ran1 = GaussianRandomNumber();
   }
 
   void testTemperatureConversion() {
@@ -67,5 +63,35 @@ public:
   void testMisc() {
     std::string version = GetVersion();
     disableHighLighting();
+  }
+
+  void testRandomNumberGenerator() {
+    JSBSim::RandomNumberGenerator generator(17);
+
+    double u0 = generator.GetUniformRandomNumber();
+    double u1 = generator.GetUniformRandomNumber();
+    double u2 = generator.GetUniformRandomNumber();
+
+    double x0 = generator.GetNormalRandomNumber();
+    double x1 = generator.GetNormalRandomNumber();
+    double x2 = generator.GetNormalRandomNumber();
+
+    // Check that the seed() method correctly resets the random number generator
+    generator.seed(17);
+    double v0 = generator.GetUniformRandomNumber();
+    double v1 = generator.GetUniformRandomNumber();
+    double v2 = generator.GetUniformRandomNumber();
+
+    double y0 = generator.GetNormalRandomNumber();
+    double y1 = generator.GetNormalRandomNumber();
+    double y2 = generator.GetNormalRandomNumber();
+
+    TS_ASSERT_EQUALS(u0, v0);
+    TS_ASSERT_EQUALS(u1, v1);
+    TS_ASSERT_EQUALS(u2, v2);
+
+    TS_ASSERT_EQUALS(x0, y0);
+    TS_ASSERT_EQUALS(x1, y1);
+    TS_ASSERT_EQUALS(x2, y2);
   }
 };

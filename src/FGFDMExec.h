@@ -42,7 +42,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <memory>
-#include <random>
 
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
@@ -611,7 +610,7 @@ public:
     TemplateFunctions[name] = std::make_shared<FGTemplateFunc>(this, el);
   }
 
-  auto GetRandomEngine(void) const { return RandomEngine; }
+  auto GetRandomGenerator(void) const { return RandomGenerator; }
 
 private:
   unsigned int Frame;
@@ -669,8 +668,8 @@ private:
 
   bool HoldDown;
 
-  int RandomSeed;
-  std::shared_ptr<std::default_random_engine> RandomEngine;
+  unsigned int RandomSeed;
+  std::shared_ptr<RandomNumberGenerator> RandomGenerator;
 
   // The FDM counter is used to give each child FDM an unique ID. The root FDM
   // has the ID 0

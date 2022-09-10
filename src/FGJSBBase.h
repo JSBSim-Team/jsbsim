@@ -43,6 +43,8 @@ INCLUDES
 #include <string>
 #include <cmath>
 #include <stdexcept>
+#include <random>
+#include <chrono>
 
 #include "JSBSim_API.h"
 #include "input_output/string_utilities.h"
@@ -60,6 +62,43 @@ namespace JSBSim {
 class JSBSIM_API BaseException : public std::runtime_error {
   public:
     BaseException(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+/**
+ * @brief Random number generator.
+ * This class encapsulates the C++11 random number generation classes for
+ * uniform and gaussian (aka normal) distributions as well as their seed.
+ * This class guarantees that whenever its seed is reset so are its uniform
+ * and normal random number generators.
+ */
+
+class JSBSIM_API RandomNumberGenerator {
+  public:
+    /// Default constructor using a seed based on the system clock.
+    RandomNumberGenerator(void) : uniform_random(-1.0, 1.0), normal_random(0.0, 1.0)
+    {
+      auto seed_value = std::chrono::system_clock::now().time_since_epoch().count();
+      generator.seed(static_cast<unsigned int>(seed_value));
+    }
+    /// Constructor allowing to specify a seed.
+    RandomNumberGenerator(unsigned int seed)
+      : generator(seed), uniform_random(-1.0, 1.0), normal_random(0.0, 1.0) {}
+    /// Specify a new seed and reinitialize the random generation process.
+    void seed(unsigned int value) {
+      generator.seed(value);
+      uniform_random.reset();
+      normal_random.reset();
+    }
+    /** Get a random number which probability of occurrence is uniformly
+     * distributed over the segment [-1;1( */
+    double GetUniformRandomNumber(void) { return uniform_random(generator); }
+    /** Get a random number which probability of occurrence is following Gauss
+     * normal distribution with a mean of 0.0 and a standard deviation of 1.0 */
+    double GetNormalRandomNumber(void) { return normal_random(generator); }
+  private:
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> uniform_random;
+    std::normal_distribution<double> normal_random;
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -288,8 +327,6 @@ public:
 
   static constexpr double sign(double num) {return num>=0.0?1.0:-1.0;}
 
-  static double GaussianRandomNumber(void);
-
 protected:
   static constexpr double radtodeg = 180. / M_PI;
   static constexpr double degtorad = M_PI / 180.;
@@ -317,8 +354,6 @@ protected:
   static const std::string JSBSim_version;
 
   static std::string CreateIndexedPropertyName(const std::string& Property, int index);
-
-  static int gaussian_random_number_phase;
 
 public:
 /// Moments L, M, N

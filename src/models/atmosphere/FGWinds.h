@@ -394,6 +394,8 @@ private:
   FGColumnVector3 vBurstGust;
   FGColumnVector3 vTurbulenceNED;
 
+  std::shared_ptr<RandomNumberGenerator> generator;
+
   void Turbulence(double h);
   void UpDownBurst();
 

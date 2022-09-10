@@ -77,8 +77,6 @@ CLASS IMPLEMENTATION
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = JSBSIM_VERSION " " __DATE__ " " __TIME__ ;
 
-int FGJSBBase::gaussian_random_number_phase = 0;
-
 short FGJSBBase::debug_lvl  = 1;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,34 +103,6 @@ string FGJSBBase::CreateIndexedPropertyName(const string& Property, int index)
   ostringstream buf;
   buf << Property << '[' << index << ']';
   return buf.str();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGJSBBase::GaussianRandomNumber(void)
-{
-  static double V1, V2, S;
-  double X;
-
-  if (gaussian_random_number_phase == 0) {
-    V1 = V2 = S = X = 0.0;
-
-    do {
-      double U1 = (double)rand() / RAND_MAX;
-      double U2 = (double)rand() / RAND_MAX;
-
-      V1 = 2 * U1 - 1;
-      V2 = 2 * U2 - 1;
-      S = V1 * V1 + V2 * V2;
-    } while(S >= 1 || S == 0);
-
-    X = V1 * sqrt(-2 * log(S) / S);
-  } else
-    X = V2 * sqrt(-2 * log(S) / S);
-
-  gaussian_random_number_phase = 1 - gaussian_random_number_phase;
-
-  return X;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
