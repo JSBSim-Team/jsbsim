@@ -121,7 +121,7 @@ jobs:
     needs: [ Linux, MacOSX, Windows-MSVC ]
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-22.04, windows-latest ]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
