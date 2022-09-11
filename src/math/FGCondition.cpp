@@ -77,7 +77,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
 
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
-    conditions.push_back(unique_ptr<FGCondition>(new FGCondition(data, PropertyManager, element)));
+    conditions.push_back(make_shared<FGCondition>(data, PropertyManager, element));
   }
 
   Element* condition_element = element->GetElement();
@@ -93,7 +93,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
       throw BaseException("FGCondition: unrecognized tag:'" + tagName + "'");
     }
 
-    conditions.push_back(make_unique<FGCondition>(condition_element, PropertyManager));
+    conditions.push_back(make_shared<FGCondition>(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
 

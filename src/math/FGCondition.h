@@ -65,13 +65,13 @@ class JSBSIM_API FGCondition : public FGJSBBase
 {
 public:
   FGCondition(Element* element, std::shared_ptr<FGPropertyManager> PropertyManager);
+  FGCondition(const std::string& test, std::shared_ptr<FGPropertyManager> PropertyManager,
+              Element* el);
 
   bool Evaluate(void);
   void PrintCondition(std::string indent="  ");
 
 private:
-  FGCondition(const std::string& test, std::shared_ptr<FGPropertyManager> PropertyManager,
-              Element* el);
 
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
   enum eLogic {elUndef=0, eAND, eOR};
@@ -81,8 +81,7 @@ private:
   FGParameter_ptr TestParam2;
   eComparison Comparison;
   std::string conditional;
-
-  std::vector <std::unique_ptr<FGCondition>> conditions;
+  std::vector<std::shared_ptr<FGCondition>> conditions;
 
   void Debug(int from);
 };
