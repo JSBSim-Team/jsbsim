@@ -38,6 +38,8 @@ INCLUDES
 #include <cstdlib>
 #include <stdexcept>
 #include <assert.h>
+#include <array>
+#include <utility>
 
 #include "FGCondition.h"
 #include "FGPropertyValue.h"
@@ -58,8 +60,6 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
-  InitializeConditionals();
-
   string logic = element->GetAttributeValue("logic");
   if (!logic.empty()) {
     if (logic == "OR") Logic = eOR;
@@ -73,9 +73,11 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
     Logic = eAND; // default
   }
 
+  assert(Logic != elUndef);
+
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
-    conditions.push_back(new FGCondition(data, PropertyManager, element));
+    conditions.push_back(unique_ptr<FGCondition>(new FGCondition(data, PropertyManager, element)));
   }
 
   Element* condition_element = element->GetElement();
@@ -91,7 +93,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
       throw BaseException("FGCondition: unrecognized tag:'" + tagName + "'");
     }
 
-    conditions.push_back(new FGCondition(condition_element, PropertyManager));
+    conditions.push_back(make_unique<FGCondition>(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
 
@@ -113,7 +115,26 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
   : Logic(elUndef), TestParam1(nullptr), TestParam2(nullptr),
     Comparison(ecUndef)
 {
-  InitializeConditionals();
+  static constexpr array<pair<const char*, enum eComparison>, 18> mComparison {{
+    {"!=", eNE},
+    {"<",  eLT},
+    {"<=", eLE},
+    {"==", eEQ},
+    {">",  eGT},
+    {">=", eGE},
+    {"EQ", eEQ},
+    {"GE", eGE},
+    {"GT", eGT},
+    {"LE", eLE},
+    {"LT", eLT},
+    {"NE", eNE},
+    {"eq", eEQ},
+    {"ge", eGE},
+    {"gt", eGT},
+    {"le", eLE},
+    {"lt", eLT},
+    {"ne", eNE},
+  }};
 
   vector<string> test_strings = split(test, ' ');
 
@@ -129,44 +150,18 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
     throw BaseException("FGCondition: incorrect number of test elements:" + std::to_string(test_strings.size()));
   }
 
-  Comparison = mComparison[conditional];
+  assert(Comparison == ecUndef);
+  for(auto& elm: mComparison) {
+    if (conditional == elm.first) {
+      Comparison = elm.second;
+      break;
+    }
+  }
+
   if (Comparison == ecUndef) {
     throw BaseException("FGCondition: Comparison operator: \""+conditional
           +"\" does not exist.  Please check the conditional.");
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGCondition::InitializeConditionals(void)
-{
-  mComparison["EQ"] = eEQ;
-  mComparison["NE"] = eNE;
-  mComparison["GT"] = eGT;
-  mComparison["GE"] = eGE;
-  mComparison["LT"] = eLT;
-  mComparison["LE"] = eLE;
-  mComparison["eq"] = eEQ;
-  mComparison["ne"] = eNE;
-  mComparison["gt"] = eGT;
-  mComparison["ge"] = eGE;
-  mComparison["lt"] = eLT;
-  mComparison["le"] = eLE;
-  mComparison["=="] = eEQ;
-  mComparison["!="] = eNE;
-  mComparison[">"]  = eGT;
-  mComparison[">="] = eGE;
-  mComparison["<"]  = eLT;
-  mComparison["<="] = eLE;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGCondition::~FGCondition(void)
-{
-  for (auto cond: conditions) delete cond;
-
-  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,44 +175,41 @@ bool FGCondition::Evaluate(void )
     if (Logic == eAND) {
 
       pass = true;
-      for (auto cond: conditions) {
+      for (auto& cond: conditions) {
         if (!cond->Evaluate()) pass = false;
       }
 
     } else { // Logic must be eOR
 
       pass = false;
-      for (auto cond: conditions) {
+      for (auto& cond: conditions) {
         if (cond->Evaluate()) pass = true;
       }
 
     }
 
   } else {
-
-    double compareValue = TestParam2->GetValue();
+    double value1 = TestParam1->GetValue();
+    double value2 = TestParam2->GetValue();
 
     switch (Comparison) {
-    case ecUndef:
-      assert(false);  // Should not be reached
-      break;
     case eEQ:
-      pass = TestParam1->getDoubleValue() == compareValue;
+      pass = value1 == value2;
       break;
     case eNE:
-      pass = TestParam1->getDoubleValue() != compareValue;
+      pass = value1 != value2;
       break;
     case eGT:
-      pass = TestParam1->getDoubleValue() > compareValue;
+      pass = value1 > value2;
       break;
     case eGE:
-      pass = TestParam1->getDoubleValue() >= compareValue;
+      pass = value1 >= value2;
       break;
     case eLT:
-      pass = TestParam1->getDoubleValue() < compareValue;
+      pass = value1 < value2;
       break;
     case eLE:
-      pass = TestParam1->getDoubleValue() <= compareValue;
+      pass = value1 <= value2;
       break;
     default:
      assert(false);  // Should not be reached
@@ -253,7 +245,7 @@ void FGCondition::PrintCondition(string indent)
     }
     cout << scratch << endl;
 
-    for (auto cond: conditions) {
+    for (auto& cond: conditions) {
       cond->PrintCondition(indent + "  ");
       cout << endl;
     }
