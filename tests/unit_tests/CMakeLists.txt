@@ -12,7 +12,10 @@ set(UNIT_TESTS FGColumnVector3Test
                FGInitialConditionTest
                FGInertialTest
                FGPropertyValueTest
-               FGTableTest)
+               FGTableTest
+               FGRealValueTest
+               FGParameterTest
+               FGParameterValueTest)
 
 foreach(test ${UNIT_TESTS})
   cxxtest_add_test(${test}1 ${test}.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${test}.h)

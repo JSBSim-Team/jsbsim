@@ -209,14 +209,8 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
             }
           }
         }
-        else {
-          if (nLines == 0) {
-            std::cerr << tableData->ReadFrom()
-                      << "<tableData> is empty." << endl;
-            throw BaseException("<tableData> is empty.");
-          }
+        else
           dimension = 1;
-        }
 
         if (dimension == 1 && nColumns != 2) {
           std::cerr << tableData->ReadFrom()
@@ -254,6 +248,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
               << "FGTable: <tableData> elements are missing" << endl;
     throw BaseException("FGTable: <tableData> elements are missing");
   }
+  else if (tableData->GetNumDataLines() == 0) {
+    std::cerr << tableData->ReadFrom() << "<tableData> is empty." << endl;
+    throw BaseException("<tableData> is empty.");
+  }
 
   // Check that the lookup axes match the declared dimension of the table.
   if (!internal && brkpt_string.empty()) {
@@ -280,8 +278,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       }
       break;
     default:
-      std::cerr << el->ReadFrom() << endl << "No dimension given" << endl;
-      throw BaseException("FGTable: dimensionless table");
+      assert(false); // Should never be called
       break;
     }
   }
@@ -410,6 +407,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     if (Data.size() != nRows+1) missingData(el, nRows, Data.size()-1);
     break;
   default:
+    assert(false);  // Should never be called
     break;
   }
 
@@ -484,8 +482,8 @@ double FGTable::GetValue(void) const
                     lookupProperty[eColumn]->getDoubleValue(),
                     lookupProperty[eTable]->getDoubleValue());
   default:
-    cerr << "Attempted to GetValue() for invalid/unknown table type" << endl;
-    throw BaseException("Attempted to GetValue() for invalid/unknown table type");
+    assert(false); // Should never be called
+    return std::numeric_limits<double>::quiet_NaN();
   }
 }
 
@@ -666,18 +664,17 @@ void FGTable::Print(void)
 
 void FGTable::bind(Element* el, const string& Prefix)
 {
-  typedef double (FGTable::*PMF)(void) const;
-
   if ( !Name.empty() && !internal) {
     if (!Prefix.empty()) {
       if (is_number(Prefix)) {
-        if (Name.find("#") != string::npos) { // if "#" is found
+        if (Name.find("#") != string::npos) {
           Name = replace(Name, "#", Prefix);
         } else {
           cerr << el->ReadFrom()
                 << "Malformed table name with number: " << Prefix
                 << " and property name: " << Name
                 << " but no \"#\" sign for substitution." << endl;
+          throw BaseException("Missing \"#\" sign for substitution");
         }
       } else {
         Name = Prefix + "/" + Name;
@@ -694,7 +691,7 @@ void FGTable::bind(Element* el, const string& Prefix)
       }
     }
 
-    PropertyManager->Tie(tmp, this, (PMF)&FGTable::GetValue);
+    PropertyManager->Tie<FGTable, double>(tmp, this, &FGTable::GetValue);
   }
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

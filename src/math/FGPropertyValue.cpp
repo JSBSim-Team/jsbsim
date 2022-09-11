@@ -62,11 +62,11 @@ FGPropertyNode* FGPropertyValue::GetNode(void) const
   // Manage late binding.
   PropertyNode = PropertyManager->GetNode(PropertyName);
   if (!PropertyNode) {
-    if (!XML_def)
-      cerr << XML_def->ReadFrom() 
+    if (XML_def)
+      cerr << XML_def->ReadFrom()
            << "Property " << PropertyName << " does not exist" << endl;
-    throw(std::string("FGPropertyValue::GetValue() The property " +
-                      PropertyName + " does not exist."));
+    throw BaseException("FGPropertyValue::GetValue() The property " +
+                        PropertyName + " does not exist.");
   }
 
   XML_def = nullptr; // Now that the property is bound, we no longer need that.

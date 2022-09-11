@@ -66,6 +66,9 @@ public:
     TS_ASSERT_EQUALS(property.GetPrintableName(), std::string("x"));
     TS_ASSERT_EQUALS(property.IsConstant(), false);
     TS_ASSERT_EQUALS(property.IsLateBound(), true);
+    // The property manager does not contain the property "x" so GetValue()
+    // should throw an exception.
+    TS_ASSERT_THROWS(property.GetValue(), BaseException&);
   }
 
   void testInstantiateLateBound() {
