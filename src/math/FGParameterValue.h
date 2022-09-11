@@ -60,7 +60,7 @@ class FGPropertyManager;
   DECLARATION: FGParameterValue
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGParameterValue : public FGParameter
+class JSBSIM_API FGParameterValue : public FGParameter
 {
 public:
   FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm)

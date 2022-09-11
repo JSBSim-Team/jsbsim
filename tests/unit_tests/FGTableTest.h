@@ -1414,7 +1414,7 @@ public:
     Element_ptr elm = readFromXML("<dummy>"
                                   "  <table name=\"test\" type=\"internal\">"
                                   "    <tableData>"
-                                  "      1.0/ -1.0\n"
+                                  "      1.0% -1.0\n"
                                   "      2.0  1.5\n"
                                   "    </tableData>"
                                   "  </table>"
@@ -1445,7 +1445,7 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
-  void testExtraPrefix() {
+  void testUnexpectedPrefix() {
     auto pm = make_shared<FGPropertyManager>();
 
     // FGTable expects <table> to be the child of another XML element, hence the
