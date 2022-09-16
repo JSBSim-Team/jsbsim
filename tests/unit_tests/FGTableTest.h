@@ -3,19 +3,11 @@
 
 #include <cxxtest/TestSuite.h>
 #include <math/FGTable.h>
-#include <input_output/FGXMLParse.h>
+#include "TestUtilities.h"
 
 const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 
 using namespace JSBSim;
-
-
-Element_ptr readFromXML(const std::string& XML) {
-  std::istringstream data(XML);
-  FGXMLParse parser;
-  readXML(data, parser);
-  return parser.GetDocument();
-}
 
 
 class FGTable1DTest : public CxxTest::TestSuite
@@ -25,10 +17,12 @@ public:
     FGTable t1(1);
     TS_ASSERT_EQUALS(t1.GetNumRows(), 1);
     TS_ASSERT_EQUALS(t1.GetName(), std::string(""));
+    TS_ASSERT(!t1.IsConstant());
 
     FGTable t2(2);
     TS_ASSERT_EQUALS(t2.GetNumRows(), 2);
     TS_ASSERT_EQUALS(t2.GetName(), std::string(""));
+    TS_ASSERT(!t2.IsConstant());
   }
 
   void testPopulateAndGetElement() {
@@ -56,6 +50,7 @@ public:
     FGTable t(2);
     t << 1.0 << -1.0
       << 2.0 << 1.5;
+    TS_ASSERT(!t.IsConstant());
 
     FGTable t2(t);
     TS_ASSERT_EQUALS(t2.GetNumRows(), 2);
@@ -63,15 +58,18 @@ public:
     TS_ASSERT_EQUALS(t2.GetElement(1,1), -1.0);
     TS_ASSERT_EQUALS(t2.GetElement(2,0), 2.0);
     TS_ASSERT_EQUALS(t2.GetElement(2,1), 1.5);
+    TS_ASSERT(!t2.IsConstant());
 
     // Check that the data of the 2 tables is independent.
     FGTable temp(2);
     temp << 1.0 << -1.0;
+    TS_ASSERT(!temp.IsConstant());
 
     FGTable temp2(temp);
     // Alter the data of the 2 tables *after* the copy.
     temp << 2.0 << 1.5;
     temp2 << 2.5 << -3.2;
+    TS_ASSERT(!temp2.IsConstant());
 
     TS_ASSERT_EQUALS(temp.GetNumRows(), 2);
     TS_ASSERT_EQUALS(temp.GetElement(1,0), 1.0);
@@ -356,18 +354,22 @@ public:
     FGTable t_1x1(1,1);
     TS_ASSERT_EQUALS(t_1x1.GetNumRows(), 1);
     TS_ASSERT_EQUALS(t_1x1.GetName(), std::string(""));
+    TS_ASSERT(!t_1x1.IsConstant());
 
     FGTable t_2x1(2,1);
     TS_ASSERT_EQUALS(t_2x1.GetNumRows(), 2);
     TS_ASSERT_EQUALS(t_2x1.GetName(), std::string(""));
+    TS_ASSERT(!t_2x1.IsConstant());
 
     FGTable t_1x2(1,2);
     TS_ASSERT_EQUALS(t_1x2.GetNumRows(), 1);
     TS_ASSERT_EQUALS(t_1x2.GetName(), std::string(""));
+    TS_ASSERT(!t_1x2.IsConstant());
 
     FGTable t_2x2(2,2);
     TS_ASSERT_EQUALS(t_2x2.GetNumRows(), 2);
     TS_ASSERT_EQUALS(t_2x2.GetName(), std::string(""));
+    TS_ASSERT(!t_2x2.IsConstant());
   }
 
   void testPopulateAndGetElement() {
@@ -437,6 +439,7 @@ public:
     temp0 << 0.0 << 1.0
           << 2.0 << 3.0 << -1.0
           << 4.0 << -0.5 << 0.3;
+    TS_ASSERT(!temp0.IsConstant());
 
     FGTable t_2x2(temp0);
     TS_ASSERT_EQUALS(t_2x2.GetNumRows(), 2);
@@ -449,6 +452,7 @@ public:
     TS_ASSERT_EQUALS(t_2x2(2,0), 4.0);
     TS_ASSERT_EQUALS(t_2x2(2,1), -0.5);
     TS_ASSERT_EQUALS(t_2x2(2,2), 0.3);
+    TS_ASSERT(!t_2x2.IsConstant());
 
     FGTable temp1(2,2);
     temp1 << 0.0 << 1.0
@@ -462,6 +466,7 @@ public:
     TS_ASSERT_EQUALS(temp1(2,0), 10.0);
     TS_ASSERT_EQUALS(temp1(2,1), 11.0);
     TS_ASSERT_EQUALS(temp1(2,2), -12.0);
+    TS_ASSERT(!temp1.IsConstant());
 
     TS_ASSERT_EQUALS(t2.GetNumRows(), 2);
     TS_ASSERT_EQUALS(t2.GetName(), std::string(""));
@@ -473,6 +478,7 @@ public:
     TS_ASSERT_EQUALS(t2(2,0), 4.0);
     TS_ASSERT_EQUALS(t2(2,1), -0.5);
     TS_ASSERT_EQUALS(t2(2,2), 0.3);
+    TS_ASSERT(!t2.IsConstant());
   }
 
   void testGetValue() {
@@ -1182,6 +1188,7 @@ public:
     // Check breakpoints value
     TS_ASSERT_EQUALS(t_2x2x2(1,1), -1.0);
     TS_ASSERT_EQUALS(t_2x2x2(2,1), 0.5);
+    TS_ASSERT(!t_2x2x2.IsConstant());
 
     // Check the table values.
     TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.0, 0.0, -1.0), 3.0);
@@ -1288,6 +1295,75 @@ public:
     TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -1.5);
     TS_ASSERT_EQUALS(output->getDoubleValue(), -1.5);
   }
+
+  void testCopyConstructor() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto row = pm->GetNode("x", true);
+    auto column = pm->GetNode("y", true);
+    auto table = pm->GetNode("z", true);
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test2\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData breakPoint=\"-1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"0.5\">"
+                                  "            0.5  1.5\n"
+                                  "      2.5   3.5 -2.5\n"
+                                  "      4.5  -1.5  1.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+    auto ref = std::make_unique<FGTable>(pm, el_table);
+    TS_ASSERT(!ref->IsConstant());
+    // Check that the property "test2" is now bound to the property manager
+    TS_ASSERT(pm->HasNode("test2"));
+    auto output = pm->GetNode("test2");
+
+    table->setDoubleValue(-1.0);
+    row->setDoubleValue(2.5);
+    column->setDoubleValue(0.5);
+    TS_ASSERT_EQUALS(ref->GetValue(), 0.3125);
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.3125);
+
+    FGTable t_2x2x2(*ref.get());
+    // Delete the original table to make sure that `t_2x2x2` does not make use
+    // of any of `ref` data.
+    ref.reset();
+
+    TS_ASSERT_EQUALS(t_2x2x2.GetNumRows(), 2);
+    TS_ASSERT_EQUALS(t_2x2x2.GetName(), std::string("test2"));
+    TS_ASSERT(!t_2x2x2.IsConstant());
+    // Check breakpoints value
+    TS_ASSERT_EQUALS(t_2x2x2(1,1), -1.0);
+    TS_ASSERT_EQUALS(t_2x2x2(2,1), 0.5);
+
+    // Check the table values.
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.0, 0.0, -1.0), 3.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.0, 0.0, -1.0), -1.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.0, 1.0, -1.0), -2.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.0, 1.0, -1.0), 0.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.5, 0.5, 0.5), 3.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.5, 0.5, 0.5), -1.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(2.5, 1.5, 0.5), -2.5);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(4.5, 1.5, 0.5), 1.0);
+
+    table->setDoubleValue(0.5);
+    row->setDoubleValue(4.0);
+    column->setDoubleValue(1.0);
+    TS_ASSERT_EQUALS(t_2x2x2.GetValue(), -0.0625);
+
+    // Check that the property `test2` has remained unchanged since the table
+    // `ref` was destroyed.
+    TS_ASSERT_EQUALS(output->getDoubleValue(), 0.3125);
+  }
 };
 
 
@@ -1331,6 +1407,63 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
+  void testMalformedData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "      1.0% -1.0\n"
+                                  "      2.0  1.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void testPropertyAlreadyTied() {
+    auto pm = make_shared<FGPropertyManager>();
+    static double value = 0;
+    pm->Tie("test", &value);
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar>x</independentVar>"
+                                  "    <tableData>"
+                                  "      1.0 -1.0\n"
+                                  "      2.0  1.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void testUnexpectedPrefix() {
+    auto pm = make_shared<FGPropertyManager>();
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar>x</independentVar>"
+                                  "    <tableData>"
+                                  "      1.0 -1.0\n"
+                                  "      2.0  1.5\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table, "0"), BaseException&);
+  }
+
   void test1DInternalMissingTableData() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
@@ -1344,18 +1477,53 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
   }
 
-  void test1DMissingTableData() {
+  void test1DInternalEmptyTableData() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
                                   "  <table name=\"test\" type=\"internal\">"
+                                  "    <tableData/>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test1DMissingTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
                                   "    <independentVar>x</independentVar>"
                                   "  </table>"
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");
 
     TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test1DEmptyTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar>x</independentVar>"
+                                  "    <tableData/>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x1(pm, el_table), BaseException&);
+  }
+
+  void test1DRowsNotIncreasing() {
+    FGTable t(2);
+    t << 1.0 << -1.0;
+    TS_ASSERT_THROWS(t << 1.0, BaseException&);
   }
 
   void test1DMissingLookupAxis() {
@@ -1419,6 +1587,36 @@ public:
     el_table = elm2->FindElement("table");
 
     TS_ASSERT_THROWS(FGTable t_1x2(pm, el_table), BaseException&);
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm3 = readFromXML("<dummy>"
+                                  "  <table name=\"test2\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "      1.0 -1.0\n"
+                                  "      2.0  1.5\n"
+                                  "      3.0  0.0 4.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    el_table = elm3->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_3x1(pm, el_table), BaseException&);
+
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm4 = readFromXML("<dummy>"
+                                  "  <table name=\"test2\" type=\"internal\">"
+                                  "    <tableData>"
+                                  "      1.0 -1.0  2.3\n"
+                                  "      2.0  1.5 -7.1\n"
+                                  "      3.0  0.0  4.0\n"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    el_table = elm4->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_3x2(pm, el_table), BaseException&);
   }
 
   void test2DMissingColumnLookupAxis1() {
@@ -1478,7 +1676,7 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
-  void test2DMissingData() {
+  void test2DMissingTableData() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -1493,10 +1691,20 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
-  void test1DRowsNotIncreasing() {
-    FGTable t(2);
-    t << 1.0 << -1.0;
-    TS_ASSERT_THROWS(t << 1.0, BaseException&);
+  void test2DEmptyTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <tableData/>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
   void test2DColumnsNotIncreasing() {
@@ -1650,7 +1858,7 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
   }
 
-  void test3DMissingData() {
+  void test3DMissingTableData() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -1659,6 +1867,45 @@ public:
                                   "    <independentVar lookup=\"row\">x</independentVar>"
                                   "    <independentVar lookup=\"column\">y</independentVar>"
                                   "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DEmptyTableData() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData/>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
+  }
+
+  void test3DEmptyTableData2() {
+    auto pm = make_shared<FGPropertyManager>();
+    // FGTable expects <table> to be the child of another XML element, hence the
+    // <dummy> element.
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test\">"
+                                  "    <independentVar lookup=\"row\">x</independentVar>"
+                                  "    <independentVar lookup=\"column\">y</independentVar>"
+                                  "    <independentVar lookup=\"table\">z</independentVar>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "            0.0  1.0\n"
+                                  "      2.0   3.0 -2.0\n"
+                                  "      4.0  -1.0  0.5\n"
+                                  "    </tableData>"
+                                  "    <tableData/>"
                                   "  </table>"
                                   "</dummy>");
     Element* el_table = elm->FindElement("table");

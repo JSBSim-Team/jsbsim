@@ -37,6 +37,7 @@ INCLUDES
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
+#include <assert.h>
 
 #include "FGCondition.h"
 #include "FGPropertyValue.h"
@@ -66,7 +67,7 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
     else { // error
       cerr << element->ReadFrom()
            << "Unrecognized LOGIC token " << logic << endl;
-      throw std::invalid_argument("FGCondition: unrecognized logic value:'" + logic + "'");
+      throw BaseException("FGCondition: unrecognized logic value:'" + logic + "'");
     }
   } else {
     Logic = eAND; // default
@@ -87,11 +88,17 @@ FGCondition::FGCondition(Element* element, std::shared_ptr<FGPropertyManager> Pr
       cerr << condition_element->ReadFrom()
            << "Unrecognized tag <" << tagName << "> in the condition statement."
            << endl;
-      throw std::invalid_argument("FGCondition: unrecognized tag:'" + tagName + "'");
+      throw BaseException("FGCondition: unrecognized tag:'" + tagName + "'");
     }
 
     conditions.push_back(new FGCondition(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
+  }
+
+  if (conditions.empty()) {
+    cerr << element->ReadFrom()
+         << "Empty conditional" << endl;
+    throw BaseException("Empty conditional");
   }
 
   Debug(0);
@@ -119,12 +126,12 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
          << "  Conditional test is invalid: \"" << test
          << "\" has " << test_strings.size() << " elements in the "
          << "test condition." << endl;
-    throw std::invalid_argument("FGCondition: incorrect number of test elements:" + std::to_string(test_strings.size()));
+    throw BaseException("FGCondition: incorrect number of test elements:" + std::to_string(test_strings.size()));
   }
 
   Comparison = mComparison[conditional];
   if (Comparison == ecUndef) {
-    throw std::invalid_argument("FGCondition: Comparison operator: \""+conditional
+    throw BaseException("FGCondition: Comparison operator: \""+conditional
           +"\" does not exist.  Please check the conditional.");
   }
 }
@@ -192,7 +199,7 @@ bool FGCondition::Evaluate(void )
 
     switch (Comparison) {
     case ecUndef:
-      cerr << "Undefined comparison operator." << endl;
+      assert(false);  // Should not be reached
       break;
     case eEQ:
       pass = TestParam1->getDoubleValue() == compareValue;
@@ -213,7 +220,8 @@ bool FGCondition::Evaluate(void )
       pass = TestParam1->getDoubleValue() <= compareValue;
       break;
     default:
-     cerr << "Unknown comparison operator." << endl;
+     assert(false);  // Should not be reached
+     break;
     }
   }
 

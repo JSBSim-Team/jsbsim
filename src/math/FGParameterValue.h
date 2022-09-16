@@ -60,7 +60,7 @@ class FGPropertyManager;
   DECLARATION: FGParameterValue
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGParameterValue : public FGParameter
+class JSBSIM_API FGParameterValue : public FGParameter
 {
 public:
   FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm)
@@ -73,7 +73,7 @@ public:
            << "The element <" << el->GetName()
            << "> must either contain a value number or a property name."
            << endl;
-      throw invalid_argument("FGParameterValue: Illegal argument defining: " + el->GetName());
+      throw BaseException("FGParameterValue: Illegal argument defining: " + el->GetName());
     }
   }
 
@@ -95,7 +95,7 @@ public:
     if (v)
       return v->GetNameWithSign();
     else
-      return to_string(param->GetValue());
+      return param->GetName();
   }
 
   bool IsLateBound(void) const {
