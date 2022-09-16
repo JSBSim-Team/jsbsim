@@ -44,9 +44,13 @@ INCLUDES
 #include <vector>
 #include <stdio.h>
 
+#include "JSBSim_API.h"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+JSBSIM_API bool is_number(const std::string& str);
 
 #if !defined(BASE)
   extern std::string& trim_left(std::string& str);
@@ -55,7 +59,6 @@ CLASS DECLARATION
   extern std::string& trim_all_space(std::string& str);
   extern std::string& to_upper(std::string& str);
   extern std::string& to_lower(std::string& str);
-  extern bool is_number(const std::string& str);
   std::vector <std::string> split(std::string str, char d);
 
   extern std::string replace(std::string str, const std::string& old, const std::string& newstr);

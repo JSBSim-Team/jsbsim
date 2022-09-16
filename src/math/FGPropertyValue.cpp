@@ -61,8 +61,8 @@ FGPropertyNode* FGPropertyValue::GetNode(void) const
     FGPropertyNode* node = PropertyManager->GetNode(PropertyName);
     
     if (!node)
-      throw(std::string("FGPropertyValue::GetValue() The property " +
-                        PropertyName + " does not exist."));
+      throw BaseException("FGPropertyValue::GetValue() The property " +
+                          PropertyName + " does not exist.");
 
     PropertyNode = node;
   }
