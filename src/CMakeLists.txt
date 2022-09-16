@@ -62,6 +62,7 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Structure>
   $<TARGET_OBJECTS:Simgear>
   )
+add_coverage(libJSBSim)
 
 if(EXPAT_FOUND)
   include_directories(${EXPAT_INCLUDE_DIRS})
@@ -85,12 +86,8 @@ set(JSBSIM_MSVC_COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS} PARENT_SCOPE)
 get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
 
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
-  string(SUBSTRING ${OBJECT} 0 17 HEADER)
-  if (${HEADER} STREQUAL "$<TARGET_OBJECTS:")
-    string(LENGTH ${OBJECT} OBJECT_LENGTH)
-    math(EXPR TARGET_LENGTH "${OBJECT_LENGTH}-18")
-    string(SUBSTRING ${OBJECT} 17 ${TARGET_LENGTH} TARGET_OBJECT)
-    list(APPEND TARGET_OBJECTS_LIST ${TARGET_OBJECT})
+	if (${OBJECT} MATCHES "TARGET_OBJECTS:([^ >]+)")
+    list(APPEND TARGET_OBJECTS_LIST ${CMAKE_MATCH_1})
   endif()
 endforeach(OBJECT)
 
@@ -166,6 +163,8 @@ endif()
 
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
+# Add JSBSim to the coverage analysis to avoid linking errors
+add_coverage(JSBSim)
 
 if(MSVC AND BUILD_SHARED_LIBS)
   # Under Windows, during the linking process, executables must have a
