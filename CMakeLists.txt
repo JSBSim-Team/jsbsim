@@ -34,6 +34,8 @@ find_package(PkgConfig)
 # Build JSBSim libs and exec                                                   #
 ################################################################################
 
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tests/unit_tests/CMakeModules)
+find_package(codecov)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
 
@@ -114,6 +116,11 @@ if (CXXTEST_FOUND)
   include_directories(${PROJECT_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/JSBSim.cpp'")
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/GeographicLib/*'")
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/simgear/*'")
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/unit_tests/*'")
+  coverage_evaluate()
 endif(CXXTEST_FOUND)
 
 ################################################################################

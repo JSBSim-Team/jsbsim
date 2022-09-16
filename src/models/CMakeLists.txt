@@ -48,5 +48,6 @@ set(HEADERS FGAerodynamics.h
 add_library(Models OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Models PROPERTIES TARGET_DIRECTORY
                              ${CMAKE_CURRENT_SOURCE_DIR})
+add_coverage(Models)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models COMPONENT devel)

@@ -649,6 +649,37 @@ jobs:
           name: ${{ matrix.os }}-Wheels.binaries
           path: ./wheelhouse/*.whl
 
+  Codecov:
+    name: Code coverage
+    needs: Linux
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install cxxtest lcov
+      - name: Checkout JSBSim
+        uses: actions/checkout@v3
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF ..
+      - name: Build JSBSim
+        working-directory: build
+        run: make -j2
+      - name: Run JSBSim tests
+        working-directory: build
+        run: ctest -R Test1 --output-on-failure
+      - name: Generate coverage report
+        working-directory: build
+        run: make lcov
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          working-directory: build/lcov/data/capture
+          files: all_targets.info
+
   Rolling-Release:
     needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
     name: Deploy Rolling Release
@@ -804,19 +835,19 @@ jobs:
       - name: Install Ubuntu packages
         run: |
           sudo apt-get update
-          sudo apt-get install doxygen graphviz cxxtest lcov
+          sudo apt-get install doxygen graphviz
       - name: Set up Python 3.7
         uses: actions/setup-python@v4
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U numpy sphinx cython 'setuptools>=60.0.0'
+        run: pip install -U numpy sphinx
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DCMAKE_C_FLAGS_DEBUG="--coverage" -DCMAKE_CXX_FLAGS_DEBUG="--coverage" -DCMAKE_BUILD_TYPE=Debug ..
+          cmake -DBUILD_PYTHON_MODULE=OFF ..
       - name: Download Python wheels
         uses: actions/download-artifact@v3
         with:
@@ -828,16 +859,6 @@ jobs:
           pip install jsbsim --no-index -f .
           touch documentation/html/.nojekyll
           sphinx-build -b html documentation documentation/html/python
-      - name: Build JSBSim
-        working-directory: build
-        run: make -j2
-      - name: Unit tests coverage
-        working-directory: build
-        run: |
-          ctest -R Test1 --output-on-failure
-          lcov -d . -c -o tmp.info
-          lcov -r tmp.info /usr/include/c++/\* /usr/include/cxxtest/\* \*/tests/unit_tests/\* -o coverage.info
-          genhtml -o documentation/html/coverage -t "JSBSim unit tests" coverage.info
       - name: Publish docs to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v3
         with:
