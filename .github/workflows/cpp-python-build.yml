@@ -247,33 +247,15 @@ jobs:
         run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v3
-      - name: Cache CTest cost data & Doxygen
+      - name: Cache CTest cost data
         # Cache the file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
-        # Also caches Doxygen executable since its installation from Chocolatey
-        # takes such a looong time...
         uses: actions/cache@v3
         id: cache-win-msvc
         with:
           path: |
             build/Testing/Temporary/CTestCostData.txt
-            C:\Program Files\doxygen\
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}-dox
-      - name: Install Doxygen
-        # Install Doxygen if there is a cache miss - even if we are not releasing
-        # Otherwise the executable doxygen.exe could be missing from the cache at
-        # the next release.
-        if: steps.cache-win-msvc.outputs.cache-hit != 'true'
-        run: cinst doxygen.install
-      - name: Configure Doxygen
-        if: env.release == 'true'
-        run: |
-          # Update PATH for CMake to find Doxygen
-          $env:Path += ";C:\Program Files\doxygen\bin"
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe "s/GENERATE_HTML\s*=\s*YES/GENERATE_HTML = NO/g" doc\JSBSim.dox.in
-          perl -i -pe "s/HAVE_DOT\s*=\s*YES/HAVE_DOT = NO/g" doc\JSBSim.dox.in
+          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Checkout CxxTest
         uses: actions/checkout@v3
         with:
@@ -542,7 +524,6 @@ jobs:
         if: runner.os == 'Windows'
         run: cinst doxygen.install
       - name: Configure Doxygen
-        if: runner.os != 'Windows'
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
           # Set GENERATE_HTML and HAVE_DOT to NO
