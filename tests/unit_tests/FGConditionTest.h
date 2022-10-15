@@ -11,7 +11,7 @@ using namespace JSBSim;
 class FGConditionTest : public CxxTest::TestSuite
 {
 public:
-  void testEqualConstant() {
+  void testXMLEqualConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x == 1.0 </dummy>",
@@ -28,7 +28,21 @@ public:
     }
   }
 
-  void testNotEqualConstant() {
+  void testEqualConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x == 1.0", "x EQ 1.0", "x eq 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLNotEqualConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x != 1.0 </dummy>",
@@ -45,7 +59,21 @@ public:
     }
   }
 
-  void testGreaterThanConstant() {
+  void testNotEqualConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x != 1.0", "x NE 1.0", "x ne 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testXMLGreaterThanConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x &gt; 1.0 </dummy>",
@@ -64,7 +92,23 @@ public:
     }
   }
 
-  void testGreaterOrEqualConstant() {
+  void testGreaterThanConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x > 1.0", "x GT 1.0", "x gt 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLGreaterOrEqualConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x &gt;= 1.0 </dummy>",
@@ -83,7 +127,23 @@ public:
     }
   }
 
-  void testLowerThanConstant() {
+  void testGreaterOrEqualConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x >= 1.0", "x GE 1.0", "x ge 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLLowerThanConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x &lt; 1.0 </dummy>",
@@ -102,7 +162,23 @@ public:
     }
   }
 
-  void testLowerOrEqualConstant() {
+  void testLowerThanConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x < 1.0", "x LT 1.0", "x lt 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testXMLLowerOrEqualConstant() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     const array<string, 3> XML{"<dummy> x &lt;= 1.0 </dummy>",
@@ -121,7 +197,23 @@ public:
     }
   }
 
-  void testEqualProperty() {
+  void testLowerOrEqualConstant() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    const array<string, 3> conditions{"x <= 1.0", "x LE 1.0", "x le 1.0"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testXMLEqualProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -146,7 +238,29 @@ public:
     }
   }
 
-  void testNotEqualProperty() {
+  void testEqualProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x == y", "x EQ y", "x eq y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLNotEqualProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -171,7 +285,29 @@ public:
     }
   }
 
-  void testGreaterThanProperty() {
+  void testNotEqualProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x != y", "x NE y", "x ne y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testXMLGreaterThanProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -200,7 +336,33 @@ public:
     }
   }
 
-  void testGreaterOrEqualProperty() {
+  void testGreaterThanProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x > y", "x GT y", "x gt y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(-1.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLGreaterOrEqualProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -229,7 +391,33 @@ public:
     }
   }
 
-  void testLowerThanProperty() {
+  void testGreaterOrEqualProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x >= y", "x GE y", "x ge y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(-1.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(cond.Evaluate());
+    }
+  }
+
+  void testXMLLowerThanProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -258,7 +446,33 @@ public:
     }
   }
 
-  void testLowerOrEqualProperty() {
+  void testLowerThanProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x < y", "x LT y", "x lt y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
+
+      x->setDoubleValue(-1.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(0.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testXMLLowerOrEqualProperty() {
     auto pm = make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -268,6 +482,32 @@ public:
     for(const string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm.get());
+
+      x->setDoubleValue(-1.0);
+      y->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(0.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(!cond.Evaluate());
+
+      x->setDoubleValue(0.0);
+      y->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(1.0);
+      TS_ASSERT(cond.Evaluate());
+      x->setDoubleValue(2.0);
+      TS_ASSERT(!cond.Evaluate());
+    }
+  }
+
+  void testLowerOrEqualProperty() {
+    auto pm = make_shared<FGPropertyManager>();
+    auto x = pm->GetNode("x", true);
+    auto y = pm->GetNode("y", true);
+    const array<string, 3> conditions{"x <= y", "x LE y", "x le y"};
+    for(const string& line: conditions) {
+      FGCondition cond(line, pm.get(), nullptr);
 
       x->setDoubleValue(-1.0);
       y->setDoubleValue(0.0);

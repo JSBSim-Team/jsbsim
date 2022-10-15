@@ -37,7 +37,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <map>
+#include <memory>
 
 #include "FGJSBBase.h"
 #include "math/FGPropertyValue.h"
@@ -67,27 +67,23 @@ class JSBSIM_API FGCondition : public FGJSBBase
 {
 public:
   FGCondition(Element* element, FGPropertyManager* PropertyManager);
-  ~FGCondition(void);
+  FGCondition(const std::string& test, FGPropertyManager* PropertyManager,
+              Element* el);
 
   bool Evaluate(void);
   void PrintCondition(std::string indent="  ");
 
 private:
-  FGCondition(const std::string& test, FGPropertyManager* PropertyManager,
-              Element* el);
 
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
   enum eLogic {elUndef=0, eAND, eOR};
-  std::map <std::string, eComparison> mComparison;
   eLogic Logic;
 
   FGPropertyValue_ptr TestParam1;
   FGParameter_ptr TestParam2;
   eComparison Comparison;
   std::string conditional;
-
-  std::vector <FGCondition*> conditions;
-  void InitializeConditionals(void);
+  std::vector<std::shared_ptr<FGCondition>> conditions;
 
   void Debug(int from);
 };
