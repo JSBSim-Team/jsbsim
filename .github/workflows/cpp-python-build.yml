@@ -67,7 +67,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel valgrindci 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
@@ -268,7 +268,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Cache CTest cost data
@@ -417,7 +417,7 @@ jobs:
           python-version: '3.7'
       - name: Install Python packages
         if: matrix.arch == 'x86_64'
-        run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Cache CTest cost data
@@ -468,7 +468,15 @@ jobs:
         if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
         run: |
+          cython --cplus _jsbsim.pyx -X embedsignature=True -o _jsbsim.cxx
+          python -m build --wheel
+          ls
+          ls build
+          cd build/lib*
+          stubgen -p jsbsim -o ../..
+          cd ../..
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          rm -fR fpectl
           touch jsbsim/py.typed
           python -m build --sdist
 
@@ -493,7 +501,7 @@ jobs:
             build/python/dist/*.tar.gz
 
   Test-Build-PyPackage-From-Source:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     name: Build Python Module from Source
     needs: MacOSX
     strategy:
@@ -551,7 +559,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython numpy
+        run: pip install -U cython 'numpy>=1.20'
       - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -620,7 +628,7 @@ jobs:
           # Test virtual environment installation
           python -m venv test_venv
           test_venv\Scripts\activate.ps1
-          pip install numpy
+          pip install 'numpy>=1.20'
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
@@ -631,7 +639,7 @@ jobs:
           # Test virtual environment installation
           python -m venv test_venv
           source test_venv/bin/activate
-          pip install numpy
+          pip install 'numpy>=1.20'
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
@@ -737,7 +745,7 @@ jobs:
     # Deploy stable release to GitHub
       - name: Get JSBSim version
         run: |
-          pip install -U numpy
+          pip install -U 'numpy>=1.20'
           pip install jsbsim --no-index -f dist
           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -834,7 +842,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U numpy sphinx
+        run: pip install -U 'numpy>=1.20' sphinx
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Configure JSBSim
