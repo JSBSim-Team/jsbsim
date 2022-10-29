@@ -469,6 +469,7 @@ jobs:
         working-directory: build/python
         run: |
           cython --cplus _jsbsim.pyx -X embedsignature=True -o _jsbsim.cxx
+          touch jsbsim/py.typed
           python -m build --wheel
           ls
           ls build
@@ -477,7 +478,6 @@ jobs:
           cd ../..
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           rm -fR fpectl
-          touch jsbsim/py.typed
           python -m build --sdist
 
     # On failure, upload logs
