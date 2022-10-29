@@ -469,6 +469,7 @@ jobs:
         working-directory: build/python
         run: |
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          touch jsbsim/py.typed
           python -m build --sdist
 
     # On failure, upload logs
@@ -573,12 +574,14 @@ jobs:
         run: |
           mkdir build && cd build
           cmake ..
+          touch python/jsbsim/py.typed
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
+          New-Item python/jsbsim/py.typed
           cmake --build . --target libJSBSim --config RelWithDebInfo
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
