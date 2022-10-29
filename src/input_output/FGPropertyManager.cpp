@@ -134,26 +134,16 @@ string FGPropertyNode::GetPrintableName( void ) const
 
 string FGPropertyNode::GetFullyQualifiedName(void) const
 {
-    vector<string> stack;
-    stack.push_back( getDisplayName(true) );
-    const SGPropertyNode* tmpn=getParent();
-    bool atroot=false;
-    while( !atroot ) {
-     stack.push_back( tmpn->getDisplayName(true) );
-     if( !tmpn->getParent() )
-      atroot=true;
-     else
-      tmpn=tmpn->getParent();
-    }
+  string fqname;
+  const SGPropertyNode* node = this;
+  while(node) {
+    fqname = node->getDisplayName(true) + "/" + fqname;
+    node = node->getParent();
+  }
 
-    string fqname="";
-    for(size_t i=stack.size()-1;i>0;i--) {
-      fqname+= stack[i];
-      fqname+= "/";
-    }
-    fqname+= stack[0];
-    return fqname;
-
+  // Remove the trailing slash if the node is not the root.
+  size_t len = std::max<size_t>(1, fqname.size()-1);
+  return fqname.substr(0, len);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
