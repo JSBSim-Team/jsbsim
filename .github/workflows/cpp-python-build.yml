@@ -492,7 +492,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v3
-        if: env.release == 'true' && matrix.arch == 'x86_64'
+        if: matrix.arch == 'x86_64' # && env.release == 'true'
         with:
           name: ${{ runner.os }}.binaries
           path: |
