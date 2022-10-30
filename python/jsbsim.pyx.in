@@ -61,7 +61,7 @@ geographic_error = <PyObject*>GeographicError
 
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
-    for path in site.getsitepackages():
+    for path in site.getsitepackages() + [site.USER_SITE]:
         root_dir = os.path.join(path, 'jsbsim')
         aircraft_dir = os.path.join(root_dir, 'aircraft')
         if os.path.isdir(aircraft_dir):

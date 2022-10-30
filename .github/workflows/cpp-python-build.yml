@@ -525,8 +525,12 @@ jobs:
         shell: python
         run: |
           import jsbsim
-          fdm=jsbsim.FGFDMExec('.', None)
           print(jsbsim.FGAircraft.__doc__)
+          fdm=jsbsim.FGFDMExec(None)
+          fdm.load_script('scripts/Short_S23_1.xml')
+          fdm.run_ic()
+          while fdm.get_sim_time() < 10:
+            fdm.run()
 
   Python-Wheels:
     # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
@@ -597,7 +601,7 @@ jobs:
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
       - name: Test default root package detection (global & --user)
         run: |
           # Test global installation
