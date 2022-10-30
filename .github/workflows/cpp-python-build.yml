@@ -477,7 +477,6 @@ jobs:
           stubgen -p jsbsim -o ../..
           cd ../..
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
-          rm -fR fpectl
           python -m build --sdist
 
     # On failure, upload logs
