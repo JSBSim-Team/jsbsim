@@ -451,7 +451,7 @@ jobs:
           mkdir -p build && cd build
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Configure JSBSim (arm64)
         if: matrix.arch == 'arm64'
         run: |
@@ -466,21 +466,15 @@ jobs:
         run: ctest -j3 --output-on-failure
       - name: Build the source package for Python
         if: env.release == 'true' && matrix.arch == 'x86_64'
-        working-directory: build/python
+        working-directory: build/tests
         run: |
-          echo "::group::Prepare the package"
-          touch jsbsim/py.typed
-          echo "::endgroup::"
-
           echo "::group::Build the type hints stubs"
-          cython --cplus _jsbsim.pyx -X embedsignature=True -o _jsbsim.cxx
-          python -m build --wheel
-          cd build/lib*
-          stubgen -p jsbsim -o ../..
-          cd ../..
+          stubgen -p jsbsim -o ../python
           echo "::endgroup::"
 
           echo "::group::Build the source package"
+          cd ../python
+          touch jsbsim/py.typed
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           python -m build --sdist
           echo "::endgroup::"
@@ -564,7 +558,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' mypy
+        run: pip install -U cython 'numpy>=1.20'
       - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -582,27 +576,15 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Download source package
+        uses: actions/download-artifact@v3
+        with:
+          name: macOS.binaries
       - name: Configure JSBSim (BSD/Unix)
         if: runner.os != 'Windows'
         run: |
-          echo "::group::Run CMake"
           mkdir build && cd build
-          cmake -DCYTHON_FLAGS="-X embedsignature=True" ..
-          echo "::endgroup::"
-
-          echo "::group::Prepare the package"
-          cd python
-          touch jsbsim/py.typed
-          cd ..
-          echo "::endgroup::"
-
-          echo "::group::Build the type hints stubs"
-          cmake --build . --target PythonJSBSim -- -j2
-          cd tests
-          stubgen -p jsbsim -o ../python
-          ls -l ../python/jsbsim
-          cat ../python/jsbsim/_jsbsim.pyi
-          echo "::endgroup::"
+          cmake ..
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
@@ -610,6 +592,11 @@ jobs:
           cd build
           cmake ..
           cmake --build . --target libJSBSim --config RelWithDebInfo
+      - name: Get Python package sources
+        working-directory: python/dist
+        run: |
+          tar zxvf *.tar.gz
+          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
         env:
