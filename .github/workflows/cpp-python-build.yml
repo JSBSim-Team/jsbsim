@@ -468,16 +468,22 @@ jobs:
         if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
         run: |
-          cython --cplus _jsbsim.pyx -X embedsignature=True -o _jsbsim.cxx
+          echo "::group::Prepare the package"
           touch jsbsim/py.typed
+          echo "::endgroup::"
+
+          echo "::group::Build the type hints stubs"
+          cython --cplus _jsbsim.pyx -X embedsignature=True -o _jsbsim.cxx
           python -m build --wheel
-          ls
-          ls build
           cd build/lib*
           stubgen -p jsbsim -o ../..
           cd ../..
+          echo "::endgroup::"
+
+          echo "::group::Build the source package"
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           python -m build --sdist
+          echo "::endgroup::"
 
     # On failure, upload logs
       - name: On failure - Upload logs
