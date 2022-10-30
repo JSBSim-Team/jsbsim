@@ -1,4 +1,5 @@
-# cython: language_level=2
+# cython: language_level=3
+# distutils: language=c++
 #
 # PyJSBSim a JSBSim python interface using cython.
 #

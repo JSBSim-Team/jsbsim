@@ -21,9 +21,9 @@ import logging
 import os
 import sys
 from argparse import ArgumentError
+
 from setuptools._distutils.ccompiler import new_compiler
 from setuptools._distutils.unixccompiler import UnixCCompiler
-
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
@@ -177,7 +177,7 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
     if os.path.exists('${JSBSIM_CXX}'):
         source_file = '${JSBSIM_CXX}'
     else:
-        source_file = 'jsbsim.pyx'
+        source_file = '_jsbsim.pyx'
 
     ext_kwargs = { 'sources': [source_file],
                    'include_dirs': ['src'],
@@ -195,7 +195,7 @@ else:
     else:
         compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
-    ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
+    ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('_jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
                    'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
@@ -266,9 +266,11 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    scripts=['JSBSim'],
+    scripts=['JSBSim.py'],
     install_requires=['numpy'],
-    ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
+    ext_modules=[Extension('jsbsim._jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.7",
     data_files=data_files,
+    packages=['jsbsim'],
+    package_data={'jsbsim': ['py.typed', '*.pyi', '*.pxd']},
     **setup_kwargs)
