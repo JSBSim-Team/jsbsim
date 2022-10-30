@@ -37,7 +37,6 @@ import sys
 import numpy
 
 from typing import List, Tuple
-from numpy.typing import ArrayLike
 
 
 __version__='${PROJECT_VERSION}'
@@ -108,17 +107,17 @@ cdef class FGPropagate:
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
 
-    def get_Tl2b(self) -> ArrayLike:
+    def get_Tl2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetTl2b())
 
-    def get_Tec2b(self) -> ArrayLike:
+    def get_Tec2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetTec2b)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetTec2b())
 
-    def get_uvw(self) -> ArrayLike:
+    def get_uvw(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetUVW)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetUVW())
@@ -213,10 +212,10 @@ cdef class FGLGear:
         self.__intercept_invalid_pointer()
         return deref(self.thisptr).GetBodyZForce()
 
-    def get_location(self) -> ArrayLike:
+    def get_location(self) -> numpy.ndarray:
         return _convertToNumpyVec(deref(self.thisptr).GetLocation())
 
-    def get_acting_location(self) -> ArrayLike:
+    def get_acting_location(self) -> numpy.ndarray:
         return _convertToNumpyVec(deref(self.thisptr).GetActingLocation())
 
 cdef class FGAuxiliary:
@@ -238,12 +237,12 @@ cdef class FGAuxiliary:
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
 
-    def get_Tw2b(self) -> ArrayLike:
+    def get_Tw2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetTw2b())
 
-    def get_Tb2w(self) -> ArrayLike:
+    def get_Tb2w(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAuxiliary::GetTb2w)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetTb2w())
@@ -267,12 +266,12 @@ cdef class FGAerodynamics:
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
 
-    def get_moments_MRC(self) -> ArrayLike:
+    def get_moments_MRC(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetMomentsMRC())
 
-    def get_forces(self) -> ArrayLike:
+    def get_forces(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAerodynamics::GetForces)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetForces())
@@ -296,7 +295,7 @@ cdef class FGAircraft:
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
 
-    def get_xyz_rp(self) -> ArrayLike:
+    def get_xyz_rp(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetXYZrp())
@@ -350,17 +349,17 @@ cdef class FGMassBalance:
         if not self.thisptr:
             raise AttributeError("Object is not initialized")
 
-    def get_xyz_cg(self) -> ArrayLike:
+    def get_xyz_cg(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetXYZcg())
 
-    def get_J(self) -> ArrayLike:
+    def get_J(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetJ)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetJ())
 
-    def get_Jinv(self) -> ArrayLike:
+    def get_Jinv(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetJinv)"""
         self.__intercept_invalid_pointer()
         return _convertToNumpyMat(deref(self.thisptr).GetJinv())
@@ -483,49 +482,49 @@ cdef class FGLinearization:
             deref(self.thisptr).WriteScicoslab(path.encode("utf-8"))
 
     @property
-    def x0(self) -> ArrayLike:
+    def x0(self) -> numpy.ndarray:
         """Initial state"""
         self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialState())
 
     @property
-    def u0(self) -> ArrayLike:
+    def u0(self) -> numpy.ndarray:
         """Initial input"""
         self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialInput())
 
     @property
-    def y0(self) -> ArrayLike:
+    def y0(self) -> numpy.ndarray:
         """Initial output"""
         self.__intercept_invalid_pointer()
         return numpy.array(deref(self.thisptr).GetInitialOutput())
 
     @property
-    def system_matrix(self) -> ArrayLike:
+    def system_matrix(self) -> numpy.ndarray:
         self.__intercept_invalid_pointer()
         cdef const vector[vector[double]]* cdef_A = &deref(self.thisptr).GetSystemMatrix()
         return numpy.array(deref(cdef_A))
 
     @property
-    def input_matrix(self) -> ArrayLike:
+    def input_matrix(self) -> numpy.ndarray:
         self.__intercept_invalid_pointer()
         cdef const vector[vector[double]]* cdef_B = &deref(self.thisptr).GetInputMatrix()
         return numpy.array(deref(cdef_B))
 
     @property
-    def output_matrix(self) -> ArrayLike:
+    def output_matrix(self) -> numpy.ndarray:
         self.__intercept_invalid_pointer()
         cdef const vector[vector[double]]* cdef_C = &deref(self.thisptr).GetOutputMatrix()
         return numpy.array(deref(cdef_C))
 
     @property
-    def feedforward_matrix(self) -> ArrayLike:
+    def feedforward_matrix(self) -> numpy.ndarray:
         self.__intercept_invalid_pointer()
         cdef const vector[vector[double]]* cdef_D = &deref(self.thisptr).GetFeedforwardMatrix()
         return numpy.array(deref(cdef_D))
 
     @property
-    def state_space(self) -> Tuple[ArrayLike]:
+    def state_space(self) -> Tuple[numpy.ndarray]:
         return (self.system_matrix, self.input_matrix, self.output_matrix, self.feedforward_matrix)
 
     @property
