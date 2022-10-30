@@ -564,7 +564,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20'
+        run: pip install -U cython 'numpy>=1.20' mypy
       - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -585,16 +585,29 @@ jobs:
       - name: Configure JSBSim (BSD/Unix)
         if: runner.os != 'Windows'
         run: |
+          echo "::group::Run CMake"
           mkdir build && cd build
-          cmake ..
-          touch python/jsbsim/py.typed
+          cmake -DCYTHON_FLAGS="-X embedsignature=True" ..
+          echo "::endgroup::"
+
+          echo "::group::Prepare the package"
+          cd python
+          touch jsbsim/py.typed
+          cd ..
+          echo "::endgroup::"
+
+          echo "::group::Build the type hints stubs"
+          cmake --build . --target PythonJSBSim -- -j2
+          cd tests
+          stubgen -p jsbsim -o ../python
+          ll ../python/jsbsim
+          echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
-          New-Item python/jsbsim/py.typed
           cmake --build . --target libJSBSim --config RelWithDebInfo
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
