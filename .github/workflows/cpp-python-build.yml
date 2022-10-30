@@ -468,16 +468,8 @@ jobs:
         if: matrix.arch == 'x86_64' # && env.release == 'true'
         working-directory: build/python
         run: |
-          echo "::group::Prepare the package"
-          mkdir jsbsim
-          cp ../../python/__init__.py jsbsim/.
-          cp _jsbsim.pxd jsbsim/.
-          echo "::endgroup::"
-
-          echo "::group::Build the source package"
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           python -m build --sdist
-          echo "::endgroup::"
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -572,38 +564,18 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-      - name: Download source package
-        uses: actions/download-artifact@v3
-        with:
-          name: macOS.binaries
       - name: Configure JSBSim (BSD/Unix)
         if: runner.os != 'Windows'
         run: |
-          echo "::group::Run CMake"
           mkdir build && cd build
           cmake ..
-          echo "::endgroup::"
-
-          echo "::group::Get Python package sources"
-          cd ../python/dist
-          tar zxvf *.tar.gz
-          cp -R JSBSim-*/jsbsim ../../build/python
-          echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
-          echo "::group::Run CMake"
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
           cmake --build . --target libJSBSim --config RelWithDebInfo
-          echo "::endgroup::"
-          echo "::group::Get Python package sources"
-          cd ..\python/dist
-          $PyPackage = Get-ChildItem .\*.tar.gz -Name
-          tar zxvf $PyPackage
-          Copy-Item -Path .\JSBSim-*\jsbsim -Destination ..\..\build\python\jsbsim -recurse -Force
-          echo "::endgroup::"
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.1
         env:

@@ -31,7 +31,6 @@ from cython.operator cimport dereference as deref
 
 import errno
 import os
-import platform
 import site
 import sys
 
@@ -62,14 +61,10 @@ geographic_error = <PyObject*>GeographicError
 
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
-
-    # Test the following paths for JSBSim default root dir:
-    # * `sys.prefix` and `sys.exec_prefix` are for virtual envs (pip & conda)
-    # * `site.USER_BASE` is for pip install --user ...
-    # * `cmd.install_data` is for system-wide installation.
-    for path in (site.USER_BASE, sys.prefix, sys.exec_prefix):
-        root_dir = os.path.join(path, 'share', '${PROJECT_NAME}')
-        if os.path.isdir(root_dir):
+    for path in site.getsitepackages():
+        root_dir = os.path.join(path, 'jsbsim')
+        aircraft_dir = os.path.join(root_dir, 'aircraft')
+        if os.path.isdir(aircraft_dir):
             return root_dir
     raise IOError("Can't find the default root directory")
 
