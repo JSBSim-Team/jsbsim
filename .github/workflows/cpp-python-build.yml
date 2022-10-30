@@ -465,7 +465,7 @@ jobs:
         working-directory: build
         run: ctest -j3 --output-on-failure
       - name: Build the source package for Python
-        if: matrix.arch == 'x86_64' # && env.release == 'true'
+        if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
         run: |
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
@@ -483,7 +483,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v3
-        if: matrix.arch == 'x86_64' # && env.release == 'true'
+        if: env.release == 'true' && matrix.arch == 'x86_64'
         with:
           name: ${{ runner.os }}.binaries
           path: |
@@ -492,7 +492,7 @@ jobs:
             build/python/dist/*.tar.gz
 
   Test-Build-PyPackage-From-Source:
-    # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     name: Build Python Module from Source
     needs: MacOSX
     strategy:
@@ -533,7 +533,7 @@ jobs:
             fdm.run()
 
   Python-Wheels:
-    # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     name: Build Python wheels
     needs: [Linux, Windows-MSVC, MacOSX]
     runs-on: ${{ matrix.os }}
