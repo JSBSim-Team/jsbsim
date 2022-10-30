@@ -600,7 +600,8 @@ jobs:
           cmake --build . --target PythonJSBSim -- -j2
           cd tests
           stubgen -p jsbsim -o ../python
-          ll ../python/jsbsim
+          ls -l ../python/jsbsim
+          cat ../python/jsbsim/_jsbsim.pyi
           echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
