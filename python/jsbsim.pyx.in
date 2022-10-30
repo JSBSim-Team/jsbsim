@@ -837,7 +837,7 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::GetDebugLevel) """
         return self.thisptr.GetDebugLevel()
 
-    def load_ic(self, rstfile: str, useStoredPath: bool) -> bool:
+    def load_ic(self, rstfile, useStoredPath):
         reset_file = _append_xml(rstfile)
         if useStoredPath and not os.path.isabs(reset_file):
             reset_file = os.path.join(self.get_full_aircraft_path(), reset_file)
