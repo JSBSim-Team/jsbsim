@@ -583,20 +583,34 @@ jobs:
       - name: Configure JSBSim (BSD/Unix)
         if: runner.os != 'Windows'
         run: |
+          echo "::group::Run CMake"
           mkdir build && cd build
           cmake ..
+          echo "::endgroup::"
+
+          echo "::group::Get Python package sources"
+          touch python/jsbsim/py.typed
+          cd ../python/dist
+          tar zxvf *.tar.gz
+          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+          echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
+          echo "::group::Run CMake"
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
           cmake --build . --target libJSBSim --config RelWithDebInfo
-      - name: Get Python package sources
-        working-directory: python/dist
-        run: |
-          tar zxvf *.tar.gz
-          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+          echo "::endgroup::"
+
+          echo "::group::Get Python package sources"
+          New-Item python\jsbsim\py.typed
+          cd ..\python/dist
+          $PyPackage = Get-ChildItem .\*.tar.gz -Name
+          tar zxvf $PyPackage
+          Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
+          echo "::endgroup::"
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
         env:
