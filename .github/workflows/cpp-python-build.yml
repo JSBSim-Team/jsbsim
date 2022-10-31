@@ -517,6 +517,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Python packages
+        run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
         uses: actions/download-artifact@v3
         with:
@@ -539,6 +541,10 @@ jobs:
           fdm.run_ic()
           while fdm.get_sim_time() < 10:
             fdm.run()
+      - name: Test type hints
+        run: |
+          echo "import jsbsim" > test.py
+          mypy test.py
 
   Python-Wheels:
     # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
@@ -558,7 +564,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20'
+        run: pip install -U cython 'numpy>=1.20' mypy
       - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -631,8 +637,15 @@ jobs:
           package-dir: build/python
       - name: Test wheel package
         run: |
+          echo "::group::Test module execution"
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
+          echo "::endgroup::"
+
+          echo "::group::Test type hints"
+          echo "import jsbsim" > test.py
+          mypy test.py
+          echo "::ungroup::"
       - name: Test default root package detection (global & --user)
         run: |
           # Test global installation

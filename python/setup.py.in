@@ -257,4 +257,5 @@ setup(
     python_requires=">=3.7",
     packages=['jsbsim'],
     package_data={'jsbsim': package_data_files},
+    zip_safe=False,  # needed for mypy to find the type hints stubs
     **setup_kwargs)
