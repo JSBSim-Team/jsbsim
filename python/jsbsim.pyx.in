@@ -1,4 +1,7 @@
-# PyJSBSim a JSBSim python interface using cython.
+# cython: language_level=3
+# distutils: language=c++
+#
+# JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
 # Copyright (c) 2014-2022 Bertrand Coconnier
@@ -26,7 +29,6 @@
 
 import errno
 import os
-import platform
 import site
 import sys
 
@@ -51,14 +53,10 @@ trimfailure_error = <PyObject*>TrimFailureError
 
 def get_default_root_dir():
     """Return the root dir to default aircraft data."""
-
-    # Test the following paths for JSBSim default root dir:
-    # * `sys.prefix` and `sys.exec_prefix` are for virtual envs (pip & conda)
-    # * `site.USER_BASE` is for pip install --user ...
-    # * `cmd.install_data` is for system-wide installation.
-    for path in (site.USER_BASE, sys.prefix, sys.exec_prefix):
-        root_dir = os.path.join(path, 'share', '${PROJECT_NAME}')
-        if os.path.isdir(root_dir):
+    for path in site.getsitepackages() + [site.USER_SITE]:
+        root_dir = os.path.join(path, 'jsbsim')
+        aircraft_dir = os.path.join(root_dir, 'aircraft')
+        if os.path.isdir(aircraft_dir):
             return root_dir
     raise IOError("Can't find the default root directory")
 
@@ -227,7 +225,7 @@ cdef class FGAtmosphere:
 
     def set_temperature(self, t, h, unit):
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
-        return self.thisptr.SetTemperature(t, h, unit)
+        self.thisptr.SetTemperature(t, h, unit)
 
     def get_temperature(self, h):
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
@@ -235,7 +233,7 @@ cdef class FGAtmosphere:
 
     def set_pressure_SL(self, unit, p):
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
-        return self.thisptr.SetPressureSL(unit, p)
+        self.thisptr.SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
     """@Dox(JSBSim::FGMassBalance)"""
@@ -467,7 +465,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_model_name(self):
         """@Dox(JSBSim::FGFDMExec::GetModelName)"""
-        return self.thisptr.GetModelName()
+        return self.thisptr.GetModelName().decode()
 
     def set_output_directive(self, fname):
         """@Dox(JSBSim::FGFDMExec::SetOutputDirectives)"""
@@ -487,7 +485,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_output_filename(self, n):
         """@Dox(JSBSim::FGFDMExec::GetOutputFileName)"""
-        return self.thisptr.GetOutputFileName(n)
+        return self.thisptr.GetOutputFileName(n).decode()
 
     def do_trim(self, mode):
         """@Dox(JSBSim::FGFDMExec::DoTrim) """
@@ -555,7 +553,7 @@ cdef class FGFDMExec(FGJSBBase):
 
     def get_propulsion_tank_report(self):
         """@Dox(JSBSim::FGFDMExec::GetPropulsionTankReport)"""
-        return self.thisptr.GetPropulsionTankReport()
+        return self.thisptr.GetPropulsionTankReport().decode()
 
     def get_sim_time(self):
         """@Dox(JSBSim::FGFDMExec::GetSimTime)"""
@@ -600,8 +598,7 @@ cdef class FGFDMExec(FGJSBBase):
         if not os.path.exists(reset_file):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
                                     reset_file)
-        rstfile = rstfile.encode()
-        return self.thisptr.GetIC().Load(c_SGPath(rstfile, NULL), useStoredPath)
+        return self.thisptr.GetIC().Load(c_SGPath(rstfile.encode(), NULL), useStoredPath)
 
     def get_propagate(self):
         """@Dox(JSBSim::FGFDMExec::GetPropagate)"""

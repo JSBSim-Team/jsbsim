@@ -126,7 +126,8 @@ def convert_para(para, indent):
 
     return docstring
 
-with open('${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx') as source:
+
+with open("${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx") as source:
     pyx_data = source.read()
 
 klasses = re.findall(r'cdef\s+class\s+(\w+)', pyx_data)
@@ -211,6 +212,6 @@ while doxytag:
                                                                              docstring.rstrip())
     doxytag = re.search(request, pyx_data)
 
-with open('${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx', 'w') as dest:
+with open("${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx", "w") as dest:
     dest.write(pyx_data)
 

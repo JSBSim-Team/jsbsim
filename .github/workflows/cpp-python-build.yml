@@ -37,6 +37,7 @@ jobs:
     name: C/C++ build (Linux)
     needs: XML-validation
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-20.04]
         expat: [ON, OFF]
@@ -120,9 +121,9 @@ jobs:
     name: Matlab S-Function
     needs: [ Linux, MacOSX, Windows-MSVC ]
     strategy:
+      fail-fast: false
       matrix:
         os: [ macos-latest, ubuntu-22.04, windows-latest ]
-      fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
@@ -186,6 +187,7 @@ jobs:
     needs: XML-validation
     runs-on: windows-2019
     strategy:
+      fail-fast: false
       matrix:
         shared_libs: [ON, OFF]
     steps:
@@ -236,6 +238,7 @@ jobs:
     needs: XML-validation
     runs-on: windows-2019
     strategy:
+      fail-fast: false
       matrix:
         shared_libs: [ON, OFF]
     steps:
@@ -374,6 +377,7 @@ jobs:
     needs: XML-validation
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
         arch: [x86_64, arm64]
     steps:
@@ -430,11 +434,11 @@ jobs:
         if: matrix.arch == 'x86_64'
         working-directory: build
         run: ctest -j3 --output-on-failure
-      - name: Build source package for Python
+      - name: Build the source package for Python
         if: env.release == 'true' && matrix.arch == 'x86_64'
         working-directory: build/python
         run: |
-          rm -f jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           python -m build --sdist
 
     # On failure, upload logs
@@ -491,8 +495,12 @@ jobs:
         shell: python
         run: |
           import jsbsim
-          fdm=jsbsim.FGFDMExec('.', None)
           print(jsbsim.FGAircraft.__doc__)
+          fdm=jsbsim.FGFDMExec(None)
+          fdm.load_script('scripts/Short_S23_1.xml')
+          fdm.run_ic()
+          while fdm.get_sim_time() < 10:
+            fdm.run()
 
   Python-Wheels:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
@@ -500,6 +508,7 @@ jobs:
     needs: [Linux, Windows-MSVC, MacOSX]
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-11, windows-2019]
 
@@ -562,7 +571,7 @@ jobs:
       - name: Test wheel package
         run: |
           pip install jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;fdm=jsbsim.FGFDMExec('.', None);print(jsbsim.FGAircraft.__doc__)"
+          python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
       - name: Test default root package detection (global & --user)
         run: |
           # Test global installation

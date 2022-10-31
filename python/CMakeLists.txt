@@ -2,8 +2,9 @@
 include(UseCython)
 
 # Declare JSBSim as a C++ project
-set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pyx)
+set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pxd COPYONLY)
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
                                                      INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src)
 
@@ -22,7 +23,7 @@ if(DOXYGEN_FOUND AND BUILD_DOCS)
 endif(DOXYGEN_FOUND AND BUILD_DOCS)
 
 # Build the Python module using Cython and the JSBSim library
-compile_pyx(jsbsim _JSBSIM_CXX ${JSBSIM_PYX})
+compile_pyx(_jsbsim _JSBSIM_CXX ${JSBSIM_PYX})
 file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
 
 # Check if we are using Visual Studio msbuild
@@ -32,6 +33,18 @@ if(MSVC)
     set(USING_MSBUILD 1)
   endif()
 endif(MSVC)
+
+# Build the package directory
+set(JSBSIM_PACKAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jsbsim)
+file(MAKE_DIRECTORY ${JSBSIM_PACKAGE_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_PACKAGE_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${JSBSIM_PACKAGE_DIR}/_jsbsim.pxd COPYONLY)
+
+# Build the package directory in the test folder
+set(JSBSIM_TEST_DIR ${CMAKE_BINARY_DIR}/tests)
+set(JSBSIM_TEST_PACKAGE_DIR ${JSBSIM_TEST_DIR}/jsbsim)
+file(MAKE_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_TEST_PACKAGE_DIR} COPYONLY)
 
 # Duplicate the files for the source distribution of JSBSim
 cmake_policy(SET CMP0051 NEW)
@@ -44,24 +57,23 @@ file(COPY ${PROJECT_SOURCE_DIR}/COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/LICENSE.txt)
 
 set(SIMGEAR_XML_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/simgear/xml)
-file(COPY ${SIMGEAR_XML_SOURCE_DIR}/COPYING DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/COPYING ${CMAKE_CURRENT_BINARY_DIR}/libexpat-LICENSE.txt)
+file(COPY ${SIMGEAR_XML_SOURCE_DIR}/COPYING DESTINATION ${JSBSIM_PACKAGE_DIR})
+file(RENAME ${JSBSIM_PACKAGE_DIR}/COPYING ${JSBSIM_PACKAGE_DIR}/libexpat-LICENSE.txt)
 configure_file(${SIMGEAR_XML_SOURCE_DIR}/xmltok_impl.c
                ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_impl.c COPYONLY)
 configure_file(${SIMGEAR_XML_SOURCE_DIR}/xmltok_ns.c
                ${CMAKE_CURRENT_BINARY_DIR}/src/simgear/xml/xmltok_ns.c COPYONLY)
 
-foreach(_FILE "MANIFEST.in" "jsbsim.pxd" "ExceptionManagement.h"
+foreach(_FILE "MANIFEST.in" "ExceptionManagement.h"
               "fpectl/fpectlmodule.h" "JSBSim.py" "pyproject.toml")
-  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${_FILE} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 endforeach()
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR}/JSBSim)
 
 # Duplicate data files (i.e. aircraft, engines, etc.)
-file(COPY ${PROJECT_SOURCE_DIR}/aircraft DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
-file(COPY ${PROJECT_SOURCE_DIR}/engine DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
-file(COPY ${PROJECT_SOURCE_DIR}/systems DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
-file(COPY ${PROJECT_SOURCE_DIR}/scripts DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data)
+file(COPY ${PROJECT_SOURCE_DIR}/aircraft DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
+file(COPY ${PROJECT_SOURCE_DIR}/engine DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
+file(COPY ${PROJECT_SOURCE_DIR}/systems DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
+file(COPY ${PROJECT_SOURCE_DIR}/scripts DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
 
 # Copy each source file
 foreach(OBJECT ${libJSBSim_SOURCE_FILES})
@@ -94,14 +106,14 @@ file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DI
 set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 configure_file(setup.py.in ${SETUP_PY})
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py jsbsim OUTPUT_VARIABLE PYTHON_MODULE_NAME)
-set(JSBSIM_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${PYTHON_MODULE_NAME})
+execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py _jsbsim OUTPUT_VARIABLE PYTHON_MODULE_NAME)
+set(JSBSIM_PYTHON_MODULE ${JSBSIM_TEST_PACKAGE_DIR}/${PYTHON_MODULE_NAME})
 
 # setup.py build_ext is called with --force because dependencies and time stamps
 # are managed by CMake so we don't want setup.py to check them as well.
 add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
   DEPENDS ${SETUP_PY} ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h $<TARGET_FILE:libJSBSim>
-  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests --force
+  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${JSBSIM_TEST_DIR} --force
                                            $<$<BOOL:${USING_MSBUILD}>:--config> $<$<BOOL:${USING_MSBUILD}>:$<CONFIG>>
                                            $<$<BOOL:${BUILD_SHARED_LIBS}>:--sharedlibs>
                                            $<$<BOOL:${MINGW}>:--compiler> $<$<BOOL:${MINGW}>:mingw32>
@@ -114,16 +126,17 @@ add_dependencies(PythonJSBSim libJSBSim)
 
 # Windows needs the DLL to be copied locally for unit tests to run.
 if(WIN32 AND BUILD_SHARED_LIBS)
-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/tests/JSBSim.dll
+  add_custom_command(OUTPUT ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll
                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
                       $<TARGET_FILE:libJSBSim>
-                      ${CMAKE_BINARY_DIR}/tests)
-  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${CMAKE_BINARY_DIR}/tests/JSBSim.dll)
+                      ${JSBSIM_TEST_PACKAGE_DIR})
+  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll)
   add_dependencies(CopyJSBSimDLL libJSBSim)
 endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)
   execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findInstallDir.py OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
-  install(FILES ${JSBSIM_PYTHON_MODULE} DESTINATION ${PYTHON_INSTALL_DIR} COMPONENT pymodules)
+  file(MAKE_DIRECTORY ${PYTHON_INSTALL_DIR}/jsbsim)
+  install(DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR} DESTINATION ${PYTHON_INSTALL_DIR} COMPONENT pymodules)
 endif()
