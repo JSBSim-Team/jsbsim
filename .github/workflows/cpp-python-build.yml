@@ -465,7 +465,7 @@ jobs:
         working-directory: build
         run: ctest -j3 --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true' && matrix.arch == 'x86_64'
+        if: matrix.arch == 'x86_64' # && env.release == 'true'
         working-directory: build/tests
         run: |
           echo "::group::Build the type hints stubs"
@@ -541,7 +541,7 @@ jobs:
             fdm.run()
 
   Python-Wheels:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+    # if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     name: Build Python wheels
     needs: [Linux, Windows-MSVC, MacOSX]
     runs-on: ${{ matrix.os }}
