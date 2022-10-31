@@ -581,7 +581,7 @@ jobs:
           cmake ..
           cmake --build . --target libJSBSim --config RelWithDebInfo
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.11.1
+        uses: pypa/cibuildwheel@v2.11.2
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
