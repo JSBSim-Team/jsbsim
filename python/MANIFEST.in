@@ -1,11 +1,3 @@
-include LICENSE.txt
-include libexpat-LICENSE.txt
-include GeographicLib-LICENSE.txt
 recursive-include . *.h*
 include *.pyx
-include *.pxd
 include src/simgear/xml/xmltok_*.c
-recursive-include data/aircraft *.xml
-recursive-include data/engine *.xml
-recursive-include data/systems *.xml
-recursive-include data/scripts *.xml

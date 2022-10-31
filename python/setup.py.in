@@ -21,9 +21,9 @@ import logging
 import os
 import sys
 from argparse import ArgumentError
+
 from setuptools._distutils.ccompiler import new_compiler
 from setuptools._distutils.unixccompiler import UnixCCompiler
-
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
@@ -177,7 +177,7 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
     if os.path.exists('${JSBSIM_CXX}'):
         source_file = '${JSBSIM_CXX}'
     else:
-        source_file = 'jsbsim.pyx'
+        source_file = '_jsbsim.pyx'
 
     ext_kwargs = { 'sources': [source_file],
                    'include_dirs': ['src'],
@@ -195,7 +195,7 @@ else:
     else:
         compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
-    ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
+    ext_kwargs = { 'sources': convert_CMake_list_to_Python_list('_jsbsim.pyx;${JSBSIM_SOURCE_FILES}'),
                    'libraries': link_libraries,
                    'include_dirs': ['src', 'src/simgear/xml'],
                    'extra_compile_args': compile_flags }
@@ -203,40 +203,25 @@ else:
     setup_kwargs = {'cmdclass' : {'build_ext': BuildC_CxxExtension}}
 
 # Prepare the list of XML data files (aircraft, engines, ...)
-
-# Iterate over the XML files in a directory
-def XML_files(dir_name):
-    dir_fullname = os.path.join('data', dir_name)
-    for f in os.scandir(dir_fullname):
-        if f.is_file() and os.path.splitext(f.name)[-1] == '.xml':
-            yield os.path.join(dir_fullname, f.name)
-
-data_files = [
-                ('share/${PROJECT_NAME}', ['LICENSE.txt', 'libexpat-LICENSE.txt',
-                                           'GeographicLib-LICENSE.txt']),
-                ('share/${PROJECT_NAME}/aircraft', list(XML_files('aircraft'))),
-                ('share/${PROJECT_NAME}/engine', list(XML_files('engine'))),
-                ('share/${PROJECT_NAME}/systems', list(XML_files('systems'))),
-                ('share/${PROJECT_NAME}/scripts', list(XML_files('scripts'))),
-            ]
+package_data_files = ['_jsbsim.pxd', 'engine/*.xml', 'scripts/*.xml', 'systems/*.xml',
+                      'aircraft/*.xml', 'LICENSE.txt', 'libexpat-LICENSE.txt',
+                      'GeographicLib-LICENSE.txt']
 
 # Iterate over the aircraft folders
-for d in os.scandir('data/aircraft'):
+for d in os.scandir('jsbsim/aircraft'):
     if d.is_dir():
-        dir_name = 'aircraft/' + d.name
-        data_files.append(('share/${PROJECT_NAME}/'+dir_name,
-                            list(XML_files(dir_name))))
+        dir_name = os.path.join('aircraft', d.name)
+        package_data_files.append(os.path.join(dir_name, '*.xml'))
 
         # Some aircraft folders include a "Systems" and/or an "Engines"
         # sub-directory (with several alternative spelling) so make sure they
         # are copied in the wheel archive (see GH issue #687)
         for sub_dir in ('Systems', 'systems', 'Engines', 'engines', 'Engine',
                         'engine'):
-            sub_dir_name = dir_name + '/' + sub_dir
-            subdir_dir_fullname = os.path.join('data', sub_dir_name)
+            sub_dir_name = os.path.join(dir_name, sub_dir)
+            subdir_dir_fullname = os.path.join('jsbsim', sub_dir_name)
             if os.path.exists(subdir_dir_fullname) and os.path.isdir(subdir_dir_fullname):
-                data_files.append(('share/${PROJECT_NAME}/'+sub_dir_name,
-                                    list(XML_files(sub_dir_name))))
+                package_data_files.append(os.path.join(sub_dir_name, '*.xml'))
 
 # Build & installation process for the JSBSim Python module
 setup(
@@ -266,9 +251,10 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    scripts=['JSBSim'],
+    scripts=['JSBSim.py'],
     install_requires=['numpy'],
-    ext_modules=[Extension('jsbsim', language='c++', **ext_kwargs)],
+    ext_modules=[Extension('jsbsim._jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.7",
-    data_files=data_files,
+    packages=['jsbsim'],
+    package_data={'jsbsim': package_data_files},
     **setup_kwargs)
