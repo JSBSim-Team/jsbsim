@@ -67,7 +67,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel valgrindci 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
@@ -268,7 +268,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U cython numpy pandas scipy wheel pywin32 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Cache CTest cost data
@@ -417,7 +417,7 @@ jobs:
           python-version: '3.7'
       - name: Install Python packages
         if: matrix.arch == 'x86_64'
-        run: pip install -U cython numpy pandas scipy build 'setuptools>=60.0.0'
+        run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Cache CTest cost data
@@ -451,7 +451,7 @@ jobs:
           mkdir -p build && cd build
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
       - name: Configure JSBSim (arm64)
         if: matrix.arch == 'arm64'
         run: |
@@ -466,10 +466,18 @@ jobs:
         run: ctest -j3 --output-on-failure
       - name: Build the source package for Python
         if: env.release == 'true' && matrix.arch == 'x86_64'
-        working-directory: build/python
+        working-directory: build/tests
         run: |
+          echo "::group::Build the type hints stubs"
+          stubgen -p jsbsim -o ../python
+          echo "::endgroup::"
+
+          echo "::group::Build the source package"
+          cd ../python
+          touch jsbsim/py.typed
           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
           python -m build --sdist
+          echo "::endgroup::"
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -509,6 +517,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Python packages
+        run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
         uses: actions/download-artifact@v3
         with:
@@ -531,6 +541,10 @@ jobs:
           fdm.run_ic()
           while fdm.get_sim_time() < 10:
             fdm.run()
+      - name: Test type hints
+        run: |
+          echo "import jsbsim" > test.py
+          mypy test.py
 
   Python-Wheels:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
@@ -550,7 +564,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython numpy
+        run: pip install -U cython 'numpy>=1.20' mypy
       - name: Install Doxygen (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -568,18 +582,41 @@ jobs:
           # Set GENERATE_HTML and HAVE_DOT to NO
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+      - name: Download source package
+        uses: actions/download-artifact@v3
+        with:
+          name: macOS.binaries
       - name: Configure JSBSim (BSD/Unix)
         if: runner.os != 'Windows'
         run: |
+          echo "::group::Run CMake"
           mkdir build && cd build
           cmake ..
+          echo "::endgroup::"
+
+          echo "::group::Get Python package sources"
+          touch python/jsbsim/py.typed
+          cd ../python/dist
+          tar zxvf *.tar.gz
+          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+          echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
         run: |
+          echo "::group::Run CMake"
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
           cmake --build . --target libJSBSim --config RelWithDebInfo
+          echo "::endgroup::"
+
+          echo "::group::Get Python package sources"
+          New-Item python\jsbsim\py.typed
+          cd ..\python/dist
+          $PyPackage = Get-ChildItem .\*.tar.gz -Name
+          tar zxvf $PyPackage
+          Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
+          echo "::endgroup::"
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.11.2
         env:
@@ -600,8 +637,15 @@ jobs:
           package-dir: build/python
       - name: Test wheel package
         run: |
+          echo "::group::Test module execution"
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
+          echo "::endgroup::"
+
+          echo "::group::Test type hints"
+          echo "import jsbsim" > test.py
+          mypy test.py
+          echo "::endgroup::"
       - name: Test default root package detection (global & --user)
         run: |
           # Test global installation
@@ -617,7 +661,7 @@ jobs:
           # Test virtual environment installation
           python -m venv test_venv
           test_venv\Scripts\activate.ps1
-          pip install numpy
+          pip install 'numpy>=1.20'
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
@@ -628,7 +672,7 @@ jobs:
           # Test virtual environment installation
           python -m venv test_venv
           source test_venv/bin/activate
-          pip install numpy
+          pip install 'numpy>=1.20'
           pip install jsbsim --no-index -f wheelhouse
           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
           pip uninstall jsbsim -y
@@ -734,7 +778,7 @@ jobs:
     # Deploy stable release to GitHub
       - name: Get JSBSim version
         run: |
-          pip install -U numpy
+          pip install -U 'numpy>=1.20'
           pip install jsbsim --no-index -f dist
           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -831,7 +875,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U numpy sphinx
+        run: pip install -U 'numpy>=1.20' sphinx
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Configure JSBSim

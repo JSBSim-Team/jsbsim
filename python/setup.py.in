@@ -205,7 +205,7 @@ else:
 # Prepare the list of XML data files (aircraft, engines, ...)
 package_data_files = ['_jsbsim.pxd', 'engine/*.xml', 'scripts/*.xml', 'systems/*.xml',
                       'aircraft/*.xml', 'LICENSE.txt', 'libexpat-LICENSE.txt',
-                      'GeographicLib-LICENSE.txt']
+                      'GeographicLib-LICENSE.txt', 'py.typed', '*.pyi']
 
 # Iterate over the aircraft folders
 for d in os.scandir('jsbsim/aircraft'):
@@ -252,9 +252,10 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
     scripts=['JSBSim.py'],
-    install_requires=['numpy'],
+    install_requires=['numpy>=1.20'],
     ext_modules=[Extension('jsbsim._jsbsim', language='c++', **ext_kwargs)],
     python_requires=">=3.7",
     packages=['jsbsim'],
     package_data={'jsbsim': package_data_files},
+    zip_safe=False,  # needed for mypy to find the type hints stubs
     **setup_kwargs)
