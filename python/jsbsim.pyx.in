@@ -34,6 +34,9 @@ import sys
 
 import numpy
 
+from typing import List, Tuple
+
+
 __version__='${PROJECT_VERSION}'
 
 
@@ -51,7 +54,7 @@ base_error = <PyObject*>BaseError
 trimfailure_error = <PyObject*>TrimFailureError
 
 
-def get_default_root_dir():
+def get_default_root_dir() -> str:
     """Return the root dir to default aircraft data."""
     for path in site.getsitepackages() + [site.USER_SITE]:
         root_dir = os.path.join(path, 'jsbsim')
@@ -61,7 +64,7 @@ def get_default_root_dir():
     raise IOError("Can't find the default root directory")
 
 
-def _append_xml(name):
+def _append_xml(name: str) -> str:
     if len(name) < 4 or name[-4:] != '.xml':
         return name+'.xml'
     return name
@@ -84,16 +87,27 @@ cdef class FGPropagate:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_Tl2b(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_Tl2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetTl2b())
 
-    def get_Tec2b(self):
+    def get_Tec2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetTec2b)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetTec2b())
 
-    def get_uvw(self):
+    def get_uvw(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetUVW)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetUVW())
 
 
@@ -113,14 +127,23 @@ cdef class FGPropertyManager:
             self.thisptr = NULL
             self.thisptr_owner = False
 
-    def __dealloc__(self):
+    def __dealloc__(self) -> None:
         if self.thisptr is not NULL and self.thisptr_owner:
             del self.thisptr
             self.thisptr = NULL
             self.thisptr_owner = False
 
-    def hasNode(self, path):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.HasNode(path.encode())
 
 cdef class FGGroundReactions:
@@ -131,14 +154,24 @@ cdef class FGGroundReactions:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_gear_unit(self, gear):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_gear_unit(self, gear: int) -> FGLGear:
         """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
+        self.__intercept_invalid_pointer()
         lgear = FGLGear()
         lgear.thisptr = self.thisptr.GetGearUnit(gear)
         return lgear
 
-    def get_num_gear_units(self):
+    def get_num_gear_units(self) -> int:
         """@Dox(JSBSim::FGGroundReactions::GetNumGearUnits)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetNumGearUnits()
 
 cdef class FGLGear:
@@ -149,26 +182,40 @@ cdef class FGLGear:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_steer_norm(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_steer_norm(self) -> float:
         """@Dox(JSBSim::FGLGear::GetSteerNorm)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetSteerNorm()
 
-    def get_body_x_force(self):
+    def get_body_x_force(self) -> float:
         """@Dox(JSBSim::FGLGear::GetBodyXForce)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetBodyXForce()
 
-    def get_body_y_force(self):
+    def get_body_y_force(self) -> float:
         """@Dox(JSBSim::FGLGear::GetBodyYForce)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetBodyYForce()
 
-    def get_body_z_force(self):
+    def get_body_z_force(self) -> float:
         """@Dox(JSBSim::FGLGear::GetBodyZForce)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetBodyZForce()
 
-    def get_location(self):
+    def get_location(self) -> numpy.ndarray:
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetLocation())
 
-    def get_acting_location(self):
+    def get_acting_location(self) -> numpy.ndarray:
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetActingLocation())
 
 cdef class FGAuxiliary:
@@ -179,12 +226,22 @@ cdef class FGAuxiliary:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_Tw2b(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_Tw2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetTw2b())
 
-    def get_Tb2w(self):
+    def get_Tb2w(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAuxiliary::GetTb2w)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetTb2w())
 
 cdef class FGAerodynamics:
@@ -195,12 +252,22 @@ cdef class FGAerodynamics:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_moments_MRC(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_moments_MRC(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetMomentsMRC())
 
-    def get_forces(self):
+    def get_forces(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAerodynamics::GetForces)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetForces())
 
 cdef class FGAircraft:
@@ -211,8 +278,17 @@ cdef class FGAircraft:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_xyz_rp(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_xyz_rp(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetXYZrp())
 
 cdef class FGAtmosphere:
@@ -223,16 +299,27 @@ cdef class FGAtmosphere:
     def __init__(self):
         self.thisptr = NULL
 
-    def set_temperature(self, t, h, unit):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def set_temperature(self, t: float, h: float, unit: eTemperature) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
+        self.__intercept_invalid_pointer()
         self.thisptr.SetTemperature(t, h, unit)
 
-    def get_temperature(self, h):
+    def get_temperature(self, h: float) -> float:
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetTemperature(h)
 
-    def set_pressure_SL(self, unit, p):
+    def set_pressure_SL(self, unit: ePressure, p: float) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
+        self.__intercept_invalid_pointer()
         self.thisptr.SetPressureSL(unit, p)
 
 cdef class FGMassBalance:
@@ -243,16 +330,27 @@ cdef class FGMassBalance:
     def __init__(self):
         self.thisptr = NULL
 
-    def get_xyz_cg(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def get_xyz_cg(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetXYZcg())
 
-    def get_J(self):
+    def get_J(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetJ)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetJ())
 
-    def get_Jinv(self):
+    def get_Jinv(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetJinv)"""
+        self.__intercept_invalid_pointer()
         return _convertToNumpyMat(self.thisptr.GetJinv())
 
 cdef class FGJSBBase:
@@ -269,20 +367,20 @@ cdef class FGJSBBase:
             del self.baseptr
 
     @property
-    def debug_lvl(self):
+    def debug_lvl(self) -> None:
         return self.baseptr.debug_lvl
 
     @debug_lvl.setter
-    def debug_lvl(self, dbglvl):
+    def debug_lvl(self, dbglvl: int) -> None:
         self.baseptr.debug_lvl = dbglvl
 
-    def get_version(self):
+    def get_version(self) -> str:
         """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
 
-    def disable_highlighting(self):
+    def disable_highlighting(self) -> None:
         """@Dox(JSBSim::FGJSBBase::disableHighLighting)"""
-        return self.baseptr.disableHighLighting()
+        self.baseptr.disableHighLighting()
 
 cdef class FGPropulsion:
     """@Dox(JSBSim::FGPropulsion)"""
@@ -292,22 +390,34 @@ cdef class FGPropulsion:
     def __init__(self):
         self.thisptr = NULL
 
-    def init_running(self, n):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def init_running(self, n: int) -> None:
         """@Dox(JSBSim::FGPropulsion::InitRunning)"""
+        self.__intercept_invalid_pointer()
         self.thisptr.InitRunning(n)
 
-    def get_num_engines(self):
+    def get_num_engines(self) -> int:
         """@Dox(JSBSim::FGPropulsion::GetNumEngines)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetNumEngines()
 
-    def get_engine(self, idx):
+    def get_engine(self, idx: int) -> FGEngine:
         """@Dox(JSBSim::FGPropulsion::GetEngine)"""
+        self.__intercept_invalid_pointer()
         engine = FGEngine()
         engine.thisptr = self.thisptr.GetEngine(idx)
         return engine
 
-    def get_steady_state(self):
+    def get_steady_state(self) -> bool:
         """@Dox(JSBSim::FGPropulsion::GetSteadyState)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.GetSteadyState()
 
 cdef class FGEngine:
@@ -318,8 +428,17 @@ cdef class FGEngine:
     def __init__(self):
         self.thisptr = NULL
 
-    def init_running(self):
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __intercept_invalid_pointer(self) -> None:
+        if self.thisptr is NULL:
+            raise AttributeError("Object is not initialized")
+
+    def init_running(self) -> int:
         """@Dox(JSBSim::FGEngine::InitRunning)"""
+        self.__intercept_invalid_pointer()
         return self.thisptr.InitRunning()
 
 # this is the python wrapper class
@@ -353,10 +472,10 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
 
-    def __dealloc__(self):
+    def __dealloc__(self) -> None:
         del self.thisptr
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "FGFDMExec \n" \
             "root dir\t:\t{0}\n" \
             "aircraft path\t:\t{1}\n" \
@@ -370,30 +489,31 @@ cdef class FGFDMExec(FGJSBBase):
                 self.get_systems_path(),
                 self.get_output_path())
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> float:
         _key = key.strip()
         pm = self.get_property_manager()
         if not pm.hasNode(_key):
             raise KeyError("No property named {}".format(_key))
         return self.get_property_value(_key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: float) -> None:
         self.set_property_value(key.strip(), value)
 
-    def run(self):
+    def run(self) -> bool:
         """@Dox(JSBSim::FGFDMExec::Run)"""
         return self.thisptr.Run()
 
-    def run_ic(self):
+    def run_ic(self) -> bool:
         """@Dox(JSBSim::FGFDMExec::RunIC)"""
         return  self.thisptr.RunIC()
 
-    def load_model(self, model, add_model_to_path=True):
+    def load_model(self, model: str, add_model_to_path: bool = True) -> bool:
         """@Dox(JSBSim::FGFDMExec::LoadModel(const std::string &, bool))"""
         return self.thisptr.LoadModel(model.encode(), add_model_to_path)
 
-    def load_model_with_paths(self, model, aircraft_path,
-                   engine_path, systems_path, add_model_to_path=True):
+    def load_model_with_paths(self, model: str, aircraft_path: str,
+                   engine_path: str, systems_path: str,
+                   add_model_to_path: bool = True) -> bool:
         """@Dox(JSBSim::FGFDMExec::LoadModel(const SGPath &, const SGPath &,
                                              const SGPath &, const std::string &,
                                              bool))"""
@@ -402,7 +522,7 @@ cdef class FGFDMExec(FGJSBBase):
                                       c_SGPath(systems_path.encode(), NULL),
                                       model.encode(), add_model_to_path)
 
-    def load_script(self, script, delta_t=0.0, initfile=""):
+    def load_script(self, script: str, delta_t: float = 0.0, initfile:str = "") -> bool:
         """@Dox(JSBSim::FGFDMExec::LoadScript) """
         scriptfile = os.path.join(self.get_root_dir(), script)
         if not os.path.exists(scriptfile):
@@ -411,187 +531,187 @@ cdef class FGFDMExec(FGJSBBase):
         return self.thisptr.LoadScript(c_SGPath(script.encode(), NULL), delta_t,
                                        c_SGPath(initfile.encode(),NULL))
 
-    def set_engine_path(self, path):
+    def set_engine_path(self, path: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetEnginePath) """
         return self.thisptr.SetEnginePath(c_SGPath(path.encode(), NULL))
 
-    def set_aircraft_path(self, path):
+    def set_aircraft_path(self, path: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetAircraftPath)"""
         return self.thisptr.SetAircraftPath(c_SGPath(path.encode(), NULL))
 
-    def set_systems_path(self, path):
+    def set_systems_path(self, path: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetSystemsPath) """
         return self.thisptr.SetSystemsPath(c_SGPath(path.encode(), NULL))
 
-    def set_output_path(self, path):
+    def set_output_path(self, path: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetOutputPath) """
         return self.thisptr.SetOutputPath(c_SGPath(path.encode(), NULL))
 
-    def set_root_dir(self, path):
+    def set_root_dir(self, path: str) -> None:
         """@Dox(JSBSim::FGFDMExec::SetRootDir)"""
         self.thisptr.SetRootDir(c_SGPath(path.encode(), NULL))
 
-    def get_engine_path(self):
+    def get_engine_path(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetEnginePath)"""
         return self.thisptr.GetEnginePath().utf8Str().decode('utf-8')
 
-    def get_aircraft_path(self):
+    def get_aircraft_path(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetAircraftPath)"""
         return self.thisptr.GetAircraftPath().utf8Str().decode('utf-8')
 
-    def get_systems_path(self):
+    def get_systems_path(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetSystemsPath)"""
         return self.thisptr.GetSystemsPath().utf8Str().decode('utf-8')
 
-    def get_output_path(self):
+    def get_output_path(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetOutputPath)"""
         return self.thisptr.GetOutputPath().utf8Str().decode('utf-8')
 
-    def get_full_aircraft_path(self):
+    def get_full_aircraft_path(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetFullAircraftPath)"""
         return self.thisptr.GetFullAircraftPath().utf8Str().decode('utf-8')
 
-    def get_root_dir(self):
+    def get_root_dir(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetRootDir)"""
         return self.thisptr.GetRootDir().utf8Str().decode('utf-8')
 
-    def get_property_value(self, name):
+    def get_property_value(self, name: str) -> float:
         """@Dox(JSBSim::FGFDMExec::GetPropertyValue) """
         return self.thisptr.GetPropertyValue(name.encode())
 
-    def set_property_value(self, name, value):
+    def set_property_value(self, name: str, value: float) -> None:
         """@Dox(JSBSim::FGFDMExec::SetPropertyValue)"""
         self.thisptr.SetPropertyValue(name.encode(), value)
 
-    def get_model_name(self):
+    def get_model_name(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetModelName)"""
         return self.thisptr.GetModelName().decode()
 
-    def set_output_directive(self, fname):
+    def set_output_directive(self, fname: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetOutputDirectives)"""
         return self.thisptr.SetOutputDirectives(c_SGPath(fname.encode(), NULL))
 
-    # def force_output(self, index):
+    # def force_output(self, index: int) -> None:
     #     """@Dox(JSBSim::FGFDMExec::ForceOutput)"""
     #     self.thisptr.ForceOutput(index)
 
-    def set_logging_rate(self, rate):
+    def set_logging_rate(self, rate: float) -> None:
         """@Dox(JSBSim::FGFDMExec::SetLoggingRate)"""
         self.thisptr.SetLoggingRate(rate)
 
-    def set_output_filename(self, n, fname):
+    def set_output_filename(self, n: int, fname: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetOutputFileName)"""
         return self.thisptr.SetOutputFileName(n, fname.encode())
 
-    def get_output_filename(self, n):
+    def get_output_filename(self, n: int) -> str:
         """@Dox(JSBSim::FGFDMExec::GetOutputFileName)"""
         return self.thisptr.GetOutputFileName(n).decode()
 
-    def do_trim(self, mode):
+    def do_trim(self, mode: int) -> None:
         """@Dox(JSBSim::FGFDMExec::DoTrim) """
         self.thisptr.DoTrim(mode)
 
-    def disable_output(self):
+    def disable_output(self) -> None:
         """@Dox(JSBSim::FGFDMExec::DisableOutput)"""
         self.thisptr.DisableOutput()
 
-    def enable_output(self):
+    def enable_output(self) -> None:
         """@Dox(JSBSim::FGFDMExec::EnableOutput)"""
         self.thisptr.EnableOutput()
 
-    def hold(self):
+    def hold(self) -> None:
         """@Dox(JSBSim::FGFDMExec::Hold)"""
         self.thisptr.Hold()
 
-    def enable_increment_then_hold(self, time_steps):
+    def enable_increment_then_hold(self, time_steps: int) -> None:
         """@Dox(JSBSim::FGFDMExec::EnableIncrementThenHold)"""
         self.thisptr.EnableIncrementThenHold(time_steps)
 
-    def check_incremental_hold(self):
+    def check_incremental_hold(self) -> None:
         """@Dox(JSBSim::FGFDMExec::CheckIncrementalHold)"""
         self.thisptr.CheckIncrementalHold()
 
-    def resume(self):
+    def resume(self) -> None:
         """@Dox(JSBSim::FGFDMExec::Resume)"""
         self.thisptr.Resume()
 
-    def holding(self):
+    def holding(self) -> bool:
         """@Dox(JSBSim::FGFDMExec::Holding)"""
         return self.thisptr.Holding()
 
-    def reset_to_initial_conditions(self, mode):
+    def reset_to_initial_conditions(self, mode: int) -> None:
         """@Dox(JSBSim::FGFDMExec::ResetToInitialConditions)"""
         self.thisptr.ResetToInitialConditions(mode)
 
-    def set_debug_level(self, level):
+    def set_debug_level(self, level: int) -> None:
         """@Dox(JSBSim::FGFDMExec::SetDebugLevel)"""
         self.thisptr.SetDebugLevel(level)
 
-    def query_property_catalog(self, check):
+    def query_property_catalog(self, check: str) -> str:
         """@Dox(JSBSim::FGFDMExec::QueryPropertyCatalog)"""
         return (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8')
 
-    def get_property_catalog(self):
+    def get_property_catalog(self) -> List[str]:
         """Retrieves the property catalog as a list."""
         return self.query_property_catalog('').rstrip().split('\n')
 
-    def print_property_catalog(self):
+    def print_property_catalog(self) -> None:
         """@Dox(JSBSim::FGFDMExec::PrintPropertyCatalog)"""
         self.thisptr.PrintPropertyCatalog()
 
-    def print_simulation_configuration(self):
+    def print_simulation_configuration(self) -> None:
         """@Dox(JSBSim::FGFDMExec::PrintSimulationConfiguration)"""
         self.thisptr.PrintSimulationConfiguration()
 
-    def set_trim_status(self, status):
+    def set_trim_status(self, status: bool) -> None:
         """@Dox(JSBSim::FGFDMExec::SetTrimStatus)"""
         self.thisptr.SetTrimStatus(status)
 
-    def get_trim_status(self):
+    def get_trim_status(self) -> bool:
         """@Dox(JSBSim::FGFDMExec::GetTrimStatus)"""
         return self.thisptr.GetTrimStatus()
 
-    def get_propulsion_tank_report(self):
+    def get_propulsion_tank_report(self) -> str:
         """@Dox(JSBSim::FGFDMExec::GetPropulsionTankReport)"""
         return self.thisptr.GetPropulsionTankReport().decode()
 
-    def get_sim_time(self):
+    def get_sim_time(self) -> float:
         """@Dox(JSBSim::FGFDMExec::GetSimTime)"""
         return self.thisptr.GetSimTime()
 
-    def get_delta_t(self):
+    def get_delta_t(self) -> float:
         """@Dox(JSBSim::FGFDMExec::GetDeltaT)"""
         return self.thisptr.GetDeltaT()
 
-    def suspend_integration(self):
+    def suspend_integration(self) -> None:
         """@Dox(JSBSim::FGFDMExec::SuspendIntegration)"""
         self.thisptr.SuspendIntegration()
 
-    def resume_integration(self):
+    def resume_integration(self) -> None:
         """@Dox(JSBSim::FGFDMExec::ResumeIntegration)"""
         self.thisptr.ResumeIntegration()
 
-    def integration_suspended(self):
+    def integration_suspended(self) -> bool:
         """@Dox(JSBSim::FGFDMExec::IntegrationSuspended)"""
         return self.thisptr.IntegrationSuspended()
 
-    def set_sim_time(self, time):
+    def set_sim_time(self, time: float) -> bool:
         """@Dox(JSBSim::FGFDMExec::Setsim_time)"""
         return self.thisptr.Setsim_time(time)
 
-    def set_dt(self, dt):
+    def set_dt(self, dt: float) -> None:
         """@Dox(JSBSim::FGFDMExec::Setdt)"""
         self.thisptr.Setdt(dt)
 
-    def incr_time(self):
+    def incr_time(self) -> float:
         """@Dox(JSBSim::FGFDMExec::IncrTime)"""
         return self.thisptr.IncrTime()
 
-    def get_debug_level(self):
+    def get_debug_level(self) -> int:
         """@Dox(JSBSim::FGFDMExec::GetDebugLevel) """
         return self.thisptr.GetDebugLevel()
 
-    def load_ic(self, rstfile, useStoredPath):
+    def load_ic(self, rstfile: str, useStoredPath: bool) -> bool:
         reset_file = _append_xml(rstfile)
         if useStoredPath and not os.path.isabs(reset_file):
             reset_file = os.path.join(self.get_full_aircraft_path(), reset_file)
@@ -600,55 +720,55 @@ cdef class FGFDMExec(FGJSBBase):
                                     reset_file)
         return self.thisptr.GetIC().Load(c_SGPath(rstfile.encode(), NULL), useStoredPath)
 
-    def get_propagate(self):
+    def get_propagate(self) -> FGPropagate:
         """@Dox(JSBSim::FGFDMExec::GetPropagate)"""
         propagate = FGPropagate()
         propagate.thisptr = self.thisptr.GetPropagate()
         return propagate
 
-    def get_property_manager(self):
+    def get_property_manager(self) -> FGPropertyManager:
         """@Dox(JSBSim::FGFDMExec::GetPropertyManager)"""
         pm = FGPropertyManager()
         pm.thisptr = self.thisptr.GetPropertyManager()
         return pm
 
-    def get_ground_reactions(self):
+    def get_ground_reactions(self) -> FGGroundReactions:
         """@Dox(JSBSim::FGFDMExec::GetGroundReactions)"""
         grndreact = FGGroundReactions()
         grndreact.thisptr = self.thisptr.GetGroundReactions()
         return grndreact
 
-    def get_auxiliary(self):
+    def get_auxiliary(self) -> FGAuxiliary:
         """@Dox(JSBSim::FGFDMExec::GetAuxiliary)"""
         auxiliary = FGAuxiliary()
         auxiliary.thisptr = self.thisptr.GetAuxiliary()
         return auxiliary
 
-    def get_aerodynamics(self):
+    def get_aerodynamics(self) -> FGAerodynamics:
         """@Dox(JSBSim::FGFDMExec::GetAerodynamics)"""
         aerodynamics = FGAerodynamics()
         aerodynamics.thisptr = self.thisptr.GetAerodynamics()
         return aerodynamics
 
-    def get_aircraft(self):
+    def get_aircraft(self) -> FGAircraft:
         """@Dox(JSBSim::FGFDMExec::GetAircraft)"""
         aircraft = FGAircraft()
         aircraft.thisptr = self.thisptr.GetAircraft()
         return aircraft
 
-    def get_mass_balance(self):
+    def get_mass_balance(self) -> FGMassBalance:
         """@Dox(JSBSim::FGFDMExec::GetMassBalance)"""
         massbalance = FGMassBalance()
         massbalance.thisptr = self.thisptr.GetMassBalance()
         return massbalance
 
-    def get_atmosphere(self):
+    def get_atmosphere(self) -> FGAtmosphere:
         """@Dox(JSBSim::FGFDMExec::GetAtmosphere)"""
         atmosphere = FGAtmosphere()
         atmosphere.thisptr = self.thisptr.GetAtmosphere()
         return atmosphere
 
-    def get_propulsion(self):
+    def get_propulsion(self) -> FGPropulsion:
         """@Dox(JSBSim::FGFDMExec::GetPropulsion)"""
         propulsion = FGPropulsion()
         propulsion.thisptr = self.thisptr.GetPropulsion()
