@@ -93,7 +93,7 @@ cdef class FGPropagate:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_Tl2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGPropagate::GetTl2b)"""
@@ -139,7 +139,7 @@ cdef class FGPropertyManager:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
@@ -160,7 +160,7 @@ cdef class FGGroundReactions:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_gear_unit(self, gear: int) -> FGLGear:
         """@Dox(JSBSim::FGGroundReactions::GetGearUnit)"""
@@ -188,7 +188,7 @@ cdef class FGLGear:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_steer_norm(self) -> float:
         """@Dox(JSBSim::FGLGear::GetSteerNorm)"""
@@ -232,7 +232,7 @@ cdef class FGAuxiliary:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_Tw2b(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAuxiliary::GetTw2b)"""
@@ -258,7 +258,7 @@ cdef class FGAerodynamics:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_moments_MRC(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAerodynamics::GetMomentsMRC)"""
@@ -284,7 +284,7 @@ cdef class FGAircraft:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_xyz_rp(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
@@ -305,7 +305,7 @@ cdef class FGAtmosphere:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def set_temperature(self, t: float, h: float, unit: eTemperature) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
@@ -336,7 +336,7 @@ cdef class FGMassBalance:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def get_xyz_cg(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGMassBalance::GetXYZcg)"""
@@ -396,7 +396,7 @@ cdef class FGPropulsion:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def init_running(self, n: int) -> None:
         """@Dox(JSBSim::FGPropulsion::InitRunning)"""
@@ -434,7 +434,7 @@ cdef class FGEngine:
 
     def __intercept_invalid_pointer(self) -> None:
         if self.thisptr is NULL:
-            raise AttributeError("Object is not initialized")
+            raise BaseError("Object is not initialized")
 
     def init_running(self) -> int:
         """@Dox(JSBSim::FGEngine::InitRunning)"""
