@@ -136,11 +136,11 @@ class TestMiscellaneous(JSBSimTestCase):
         if atm:
             self.fail()
         with self.assertRaises(jsbsim.BaseError):
-            atm.set_temperature(15, 0, 0)
+            atm.set_temperature(15, 0, jsbsim.eTemperature.eCelsius)
         with self.assertRaises(jsbsim.BaseError):
             atm.get_temperature(0)
         with self.assertRaises(jsbsim.BaseError):
-            atm.set_pressure_SL(0, 101325)
+            atm.set_pressure_SL(jsbsim.ePressure.ePascals, 101325)
 
         prop = jsbsim.FGPropulsion()
         if prop:

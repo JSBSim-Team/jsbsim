@@ -2,4 +2,4 @@ from ._jsbsim import (__version__, FGAerodynamics, FGAircraft, FGAtmosphere, FGA
                         FGEngine, FGFDMExec, FGGroundReactions, FGJSBBase, FGLGear,
                         FGMassBalance, FGPropagate, FGPropertyManager,
                         FGPropulsion, BaseError, TrimFailureError,
-                        get_default_root_dir)
+                        get_default_root_dir, eTemperature, ePressure)

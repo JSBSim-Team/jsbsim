@@ -27,6 +27,7 @@
 
    @DoxMainPage"""
 
+import enum
 import errno
 import os
 import site
@@ -34,7 +35,6 @@ import sys
 
 import numpy
 
-from typing import List, Tuple
 
 
 __version__='${PROJECT_VERSION}'
@@ -291,6 +291,23 @@ cdef class FGAircraft:
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(self.thisptr.GetXYZrp())
 
+
+class eTemperature(enum.Enum):
+    eNoTempUnit = 0
+    eFahrenheit = 1
+    eCelsius    = 2
+    eRankine    = 3
+    eKelvin     = 4
+
+
+class ePressure(enum.Enum):
+        eNoPressUnit= 0
+        ePSF        = 1
+        eMillibars  = 2
+        ePascals    = 3
+        eInchesHg   = 4
+
+
 cdef class FGAtmosphere:
     """@Dox(JSBSim::FGAtmosphere)"""
 
@@ -310,7 +327,7 @@ cdef class FGAtmosphere:
     def set_temperature(self, t: float, h: float, unit: eTemperature) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
         self.__intercept_invalid_pointer()
-        self.thisptr.SetTemperature(t, h, unit)
+        self.thisptr.SetTemperature(t, h, unit.value)
 
     def get_temperature(self, h: float) -> float:
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
@@ -320,7 +337,7 @@ cdef class FGAtmosphere:
     def set_pressure_SL(self, unit: ePressure, p: float) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
         self.__intercept_invalid_pointer()
-        self.thisptr.SetPressureSL(unit, p)
+        self.thisptr.SetPressureSL(unit.value, p)
 
 cdef class FGMassBalance:
     """@Dox(JSBSim::FGMassBalance)"""
@@ -651,7 +668,7 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::QueryPropertyCatalog)"""
         return (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8')
 
-    def get_property_catalog(self) -> List[str]:
+    def get_property_catalog(self) -> list[str]:
         """Retrieves the property catalog as a list."""
         return self.query_property_catalog('').rstrip().split('\n')
 
