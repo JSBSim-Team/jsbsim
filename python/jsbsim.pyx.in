@@ -29,6 +29,7 @@
 
 from cython.operator cimport dereference as deref
 
+import enum
 import errno
 import os
 import site
@@ -36,7 +37,6 @@ import sys
 
 import numpy
 
-from typing import List, Tuple
 
 
 __version__='${PROJECT_VERSION}'
@@ -302,6 +302,23 @@ cdef class FGAircraft:
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetXYZrp())
 
+
+class eTemperature(enum.Enum):
+    eNoTempUnit = 0
+    eFahrenheit = 1
+    eCelsius    = 2
+    eRankine    = 3
+    eKelvin     = 4
+
+
+class ePressure(enum.Enum):
+        eNoPressUnit= 0
+        ePSF        = 1
+        eMillibars  = 2
+        ePascals    = 3
+        eInchesHg   = 4
+
+
 cdef class FGAtmosphere:
     """@Dox(JSBSim::FGAtmosphere)"""
 
@@ -320,7 +337,7 @@ cdef class FGAtmosphere:
     def set_temperature(self, t: float, h: float, unit: eTemperature) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetTemperature)"""
         self.__intercept_invalid_pointer()
-        deref(self.thisptr).SetTemperature(t, h, unit)
+        deref(self.thisptr).SetTemperature(t, h, unit.value)
 
     def get_temperature(self, h: float) -> float:
         """@Dox(JSBSim::FGAtmosphere::GetTemperature(double))"""
@@ -330,7 +347,7 @@ cdef class FGAtmosphere:
     def set_pressure_SL(self, unit: ePressure, p: float) -> None:
         """@Dox(JSBSim::FGAtmosphere::SetPressureSL)"""
         self.__intercept_invalid_pointer()
-        deref(self.thisptr).SetPressureSL(unit, p)
+        deref(self.thisptr).SetPressureSL(unit.value, p)
 
 cdef class FGMassBalance:
     """@Dox(JSBSim::FGMassBalance)"""
@@ -526,46 +543,46 @@ cdef class FGLinearization:
         return numpy.array(deref(cdef_D))
 
     @property
-    def state_space(self) -> Tuple[numpy.ndarray]:
+    def state_space(self) -> tuple[numpy.ndarray]:
         return (self.system_matrix, self.input_matrix, self.output_matrix, self.feedforward_matrix)
 
     @property
-    def x_names(self) -> Tuple[str]:
+    def x_names(self) -> tuple[str]:
         """State names"""
         self.__intercept_invalid_pointer()
         cdef vector[string] names = deref(self.thisptr).GetStateNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
-    def u_names(self) -> Tuple[str]:
+    def u_names(self) -> tuple[str]:
         "Input names"
         self.__intercept_invalid_pointer()
         cdef vector[string] names = deref(self.thisptr).GetInputNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
-    def y_names(self) -> Tuple[str]:
+    def y_names(self) -> tuple[str]:
         """Output names"""
         self.__intercept_invalid_pointer()
         cdef vector[string] names = deref(self.thisptr).GetOutputNames()
         return tuple(name.decode("utf-8") for name in names)
 
     @property
-    def x_units(self) -> Tuple[str]:
+    def x_units(self) -> tuple[str]:
         """State units"""
         self.__intercept_invalid_pointer()
         cdef vector[string] units = deref(self.thisptr).GetStateUnits()
         return tuple(unit.decode("utf-8") for unit in units)
 
     @property
-    def u_units(self) -> Tuple[str]:
+    def u_units(self) -> tuple[str]:
         """Input unit"""
         self.__intercept_invalid_pointer()
         cdef vector[string] units = deref(self.thisptr).GetInputUnits()
         return tuple(unit.decode("utf-8") for unit in units)
 
     @property
-    def y_units(self) -> Tuple[str]:
+    def y_units(self) -> tuple[str]:
         """Output units"""
         self.__intercept_invalid_pointer()
         cdef vector[string] units = deref(self.thisptr).GetOutputUnits()
@@ -783,7 +800,7 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::QueryPropertyCatalog)"""
         return (self.thisptr.QueryPropertyCatalog(check.encode())).decode('utf-8')
 
-    def get_property_catalog(self) -> List[str]:
+    def get_property_catalog(self) -> list[str]:
         """Retrieves the property catalog as a list."""
         return self.query_property_catalog('').rstrip().split('\n')
 

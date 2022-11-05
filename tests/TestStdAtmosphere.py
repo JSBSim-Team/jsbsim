@@ -22,6 +22,7 @@
 import math
 
 from JSBSim_utils import JSBSimTestCase, RunTest
+from jsbsim import eTemperature, ePressure
 
 def compute_pressure(P, L, dH, T_K, factor):
     if abs(L) > 1E-8:
@@ -271,9 +272,8 @@ class TestStdAtmosphere(JSBSimTestCase):
         fdm.run_ic()
 
         atmos = fdm.get_atmosphere()
-        eInchesHg = 4
 
-        atmos.set_pressure_SL(eInchesHg, 29.92)
+        atmos.set_pressure_SL(ePressure.eInchesHg, 29.92)
         fdm.run_ic()
         self.assertAlmostEqual(2115.8849626, fdm['atmosphere/P-psf'])
 
@@ -283,15 +283,14 @@ class TestStdAtmosphere(JSBSimTestCase):
         fdm.run_ic()
 
         atmos = fdm.get_atmosphere()
-        eRankine = 3
 
         # Check that there are no side effects if we call SetTemperature()
         # twice in a row.
-        atmos.set_temperature(520, 0.0, eRankine)
+        atmos.set_temperature(520, 0.0, eTemperature.eRankine)
         fdm.run_ic()
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/520.0)
 
-        atmos.set_temperature(500, 0.0, eRankine)
+        atmos.set_temperature(500, 0.0, eTemperature.eRankine)
         fdm.run_ic()
         self.assertAlmostEqual(1.0, fdm['atmosphere/T-R']/500.0)
 
@@ -302,7 +301,7 @@ class TestStdAtmosphere(JSBSimTestCase):
         for alt in range(5000):
             h = alt*1000
             fdm['atmosphere/delta-T'] = 0.0 # Make sure there is no temperature bias
-            atmos.set_temperature(354, h, eRankine)
+            atmos.set_temperature(354, h, eTemperature.eRankine)
             self.assertAlmostEqual(1.0, atmos.get_temperature(h)/354.0,
                                    msg='\nFailed at h={} ft'.format(h))
 
@@ -310,7 +309,7 @@ class TestStdAtmosphere(JSBSimTestCase):
         graded_delta_T_K = -10.0
         fdm['atmosphere/SL-graded-delta-T'] = graded_delta_T_K*self.K_to_R
 
-        atmos.set_temperature(530, 1000.0, eRankine)
+        atmos.set_temperature(530, 1000.0, eTemperature.eRankine)
         fdm['ic/h-sl-ft'] = 1000.
         fdm.run_ic()
 

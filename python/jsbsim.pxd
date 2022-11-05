@@ -94,14 +94,14 @@ cdef extern from "models/FGAircraft.h" namespace "JSBSim":
         c_FGColumnVector3& GetXYZrp()
 
 cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
-    cdef enum eTemperature "JSBSim::FGAtmosphere::eTemperature":
+    cdef enum c_eTemperature "JSBSim::FGAtmosphere::eTemperature":
         eNoTempUnit = 0,
         eFahrenheit = 1,
         eCelsius    = 2,
         eRankine    = 3,
         eKelvin     = 4
 
-    cdef enum ePressure "JSBSim::FGAtmosphere::ePressure":
+    cdef enum c_ePressure "JSBSim::FGAtmosphere::ePressure":
         eNoPressUnit= 0,
         ePSF        = 1,
         eMillibars  = 2,
@@ -110,8 +110,8 @@ cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
 
     cdef cppclass c_FGAtmosphere "JSBSim::FGAtmosphere":
         double GetTemperature(double h)
-        void SetTemperature(double t, double h, eTemperature unit)
-        void SetPressureSL(ePressure unit, double pressure)
+        void SetTemperature(double t, double h, c_eTemperature unit)
+        void SetPressureSL(c_ePressure unit, double pressure)
 
 cdef extern from "models/FGAuxiliary.h" namespace "JSBSim":
     cdef cppclass c_FGAuxiliary "JSBSim::FGAuxiliary":
