@@ -131,19 +131,8 @@ cdef class FGPropertyManager:
     def __cinit__(self, *args, **kwargs):
         self.thisptr.reset(new c_FGPropertyManager())
 
-    def __bool__(self) -> bool:
-        """Check if the object is initialized."""
-        if self.thisptr:
-            return True
-        return False
-
-    cdef __intercept_invalid_pointer(self):
-        if not self.thisptr:
-            raise BaseError("Object is not initialized")
-
     def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
-        self.__intercept_invalid_pointer()
         return deref(self.thisptr).HasNode(path.encode())
 
 cdef class FGGroundReactions:
