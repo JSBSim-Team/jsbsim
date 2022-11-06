@@ -103,7 +103,7 @@ cdef class FGPropagate:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -137,7 +137,7 @@ cdef class FGPropertyManager:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -161,7 +161,7 @@ cdef class FGGroundReactions:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -188,7 +188,7 @@ cdef class FGLGear:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -235,7 +235,7 @@ cdef class FGAuxiliary:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -264,7 +264,7 @@ cdef class FGAerodynamics:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -293,7 +293,7 @@ cdef class FGAircraft:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -312,11 +312,11 @@ class eTemperature(enum.Enum):
 
 
 class ePressure(enum.Enum):
-        eNoPressUnit= 0
-        ePSF        = 1
-        eMillibars  = 2
-        ePascals    = 3
-        eInchesHg   = 4
+    eNoPressUnit= 0
+    ePSF        = 1
+    eMillibars  = 2
+    ePascals    = 3
+    eInchesHg   = 4
 
 
 cdef class FGAtmosphere:
@@ -330,7 +330,7 @@ cdef class FGAtmosphere:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -364,7 +364,7 @@ cdef class FGMassBalance:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -427,7 +427,7 @@ cdef class FGPropulsion:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -464,7 +464,7 @@ cdef class FGEngine:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
@@ -488,7 +488,7 @@ cdef class FGLinearization:
             return True
         return False
 
-    def __intercept_invalid_pointer(self) -> None:
+    cdef __intercept_invalid_pointer(self):
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
