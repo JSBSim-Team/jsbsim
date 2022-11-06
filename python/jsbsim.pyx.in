@@ -28,6 +28,7 @@
    @DoxMainPage"""
 
 from cython.operator cimport dereference as deref
+from typing import Optional
 
 import enum
 import errno
@@ -125,15 +126,85 @@ cdef class FGPropagate:
         return _convertToNumpyVec(deref(self.thisptr).GetUVW())
 
 
+cdef class FGPropertyNode:
+    """@Dox(JSBSim::FGPropertyNode)"""
+
+    cdef c_FGPropertyNode* thisptr
+
+    def __cinit__(self, *args, **kwargs):
+        self.thisptr = NULL
+
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        return self.thisptr is not NULL
+
+    def __str__(self) -> str:
+        if self.thisptr is not NULL:
+            return f"Property '{self.get_fully_qualified_name()}' (value: {self.get_double_value()})"
+        return "Uninitialized property"
+
+    cdef __intercept_invalid_pointer(self):
+        if self.thisptr is NULL:
+            raise BaseError("Object is not initialized")
+
+    cdef __validate_node_pointer(self, create: bool):
+        if self.thisptr is not NULL:
+            return self
+        else:
+            if create:
+                raise MemoryError()
+            return None
+
+    def get_name(self) -> str:
+        """@Dox(JSBSim::FGPropertyManager::GetName)"""
+        self.__intercept_invalid_pointer()
+        return self.thisptr.GetName().decode()
+
+    def get_fully_qualified_name(self) -> str:
+        """@Dox(JSBSim::FGPropertyManager::GetFullyQualifiedName)"""
+        self.__intercept_invalid_pointer()
+        return self.thisptr.GetFullyQualifiedName().decode()
+
+    def get_node(self, path: str, create: bool = False) -> Optional[FGPropertyNode]:
+        self.__intercept_invalid_pointer()
+        node = FGPropertyNode()
+        node.thisptr = self.thisptr.GetNode(path.encode(), create)
+        return node.__validate_node_pointer(create)
+
+    def get_double_value(self) -> float:
+        self.__intercept_invalid_pointer()
+        return self.thisptr.getDoubleValue()
+
+    def set_double_value(self, value: float) -> None:
+        self.__intercept_invalid_pointer()
+        self.thisptr.setDoubleValue(value)
+
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
 
     cdef shared_ptr[c_FGPropertyManager] thisptr
 
-    def __cinit__(self, *args, **kwargs):
-        self.thisptr.reset(new c_FGPropertyManager())
+    def __cinit__(self, FGPropertyNode node = None, *args, **kwargs):
+        if node is None:
+            self.thisptr.reset(new c_FGPropertyManager())
+        else:
+            try:
+                node.__intercept_invalid_pointer()
+            except BaseError:
+                raise BaseError("Cannot instantiate FGPropertyManager with an uninitialized property node.")
+            self.thisptr.reset(new c_FGPropertyManager(node.thisptr))
+
         if not self.thisptr:
             raise MemoryError()
+
+    def get_node(self, path: Optional[str] = None, create: bool = False) -> Optional[FGPropertyNode]:
+        """@Dox(JSBSim::FGPropertyManager::GetNode)"""
+        node = FGPropertyNode()
+        if path is None:
+            node.thisptr = deref(self.thisptr).GetNode()
+        else:
+            node.thisptr = deref(self.thisptr).GetNode(path.encode(), create)
+        return node.__validate_node_pointer(create)
 
     def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""

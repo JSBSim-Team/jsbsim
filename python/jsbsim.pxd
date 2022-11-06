@@ -66,9 +66,20 @@ cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
 
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
+    cdef cppclass c_FGPropertyNode "JSBSim::FGPropertyNode":
+        c_FGPropertyNode* GetNode(const string& path, bool create)
+        const string& GetName() const
+        const string& GetFullyQualifiedName() const
+        double getDoubleValue() const
+        void setDoubleValue(double value)
+
+cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
         c_FGPropertyManager()
-        bool HasNode(string path) except +convertJSBSimToPyExc
+        c_FGPropertyManager(c_FGPropertyNode* root)
+        c_FGPropertyNode* GetNode()
+        c_FGPropertyNode* GetNode(const string& path, bool create)
+        bool HasNode(const string& path) except +convertJSBSimToPyExc
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
     cdef cppclass c_FGColumnVector3 "JSBSim::FGColumnVector3":

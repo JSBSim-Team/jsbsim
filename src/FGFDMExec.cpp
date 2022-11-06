@@ -123,7 +123,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   else
     Root = root->GetNode();
 
-  FGPropertyNode* instanceRoot = Root->GetNode("/fdm/jsbsim", IdFDM, true);
+  FGPropertyNode* instanceRoot = Root->GetNode("fdm/jsbsim", IdFDM, true);
   instance = std::make_shared<FGPropertyManager>(instanceRoot);
 
   try {
