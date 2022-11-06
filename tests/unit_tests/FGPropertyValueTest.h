@@ -46,13 +46,43 @@ public:
   }
 
   void testConstant_ness() {
-    FGPropertyNode root;
-    FGPropertyNode_ptr node = root.GetNode("x", true);
+    auto pm = make_shared<FGPropertyManager>();
+    FGPropertyNode_ptr node = pm->GetNode("x", true);
     FGPropertyValue property(node);
 
-    TS_ASSERT_EQUALS(property.IsConstant(), false);
+    TS_ASSERT(!property.IsConstant());
     node->setAttribute(SGPropertyNode::WRITE, false);
-    TS_ASSERT_EQUALS(property.IsConstant(), true);
+    TS_ASSERT(property.IsConstant());
+  }
+
+  void testTiedPropertiesAreNotConstant() {
+    // Check that tied properties are not constant even if the underlying
+    // property is set to READ ONLY.
+    auto pm = make_shared<FGPropertyManager>();
+    double value = 0.0;
+    FGPropertyNode_ptr node = pm->GetNode("x", true);
+    FGPropertyValue property(node);
+
+    node->setAttribute(SGPropertyNode::WRITE, false);
+
+    pm->Tie("x", &value);
+    TS_ASSERT(!node->getAttribute(SGPropertyNode::WRITE)); // READ ONLY
+    TS_ASSERT(!property.IsConstant()); // but not constant.
+
+    // Since the property is declared READ ONLY, calls to
+    // SGPropertyNode::setDoubleValue are ignored.
+    node->setDoubleValue(1.0);
+    TS_ASSERT_EQUALS(property.GetValue(), 0.0);
+
+    // However FGPropertyValue can be modified by altering the variable which
+    // it is tied to.
+    value = 1.0;
+    TS_ASSERT_EQUALS(property.GetValue(), 1.0);
+    // And as soon as the property is untied, the FGProperty instance can be
+    // made constant again.
+    pm->Untie("x");
+    node->setAttribute(SGPropertyNode::WRITE, false);
+    TS_ASSERT(property.IsConstant());
   }
 
   void testConstructorLateBound() {
