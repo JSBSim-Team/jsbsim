@@ -96,6 +96,8 @@ cdef class FGPropagate:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGPropagate(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -130,6 +132,8 @@ cdef class FGPropertyManager:
 
     def __cinit__(self, *args, **kwargs):
         self.thisptr.reset(new c_FGPropertyManager())
+        if not self.thisptr:
+            raise MemoryError()
 
     def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
@@ -143,6 +147,8 @@ cdef class FGGroundReactions:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGGroundReactions(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -217,6 +223,8 @@ cdef class FGAuxiliary:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGAuxiliary(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -246,6 +254,8 @@ cdef class FGAerodynamics:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGAerodynamics(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -275,6 +285,8 @@ cdef class FGAircraft:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGAircraft(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -346,6 +358,8 @@ cdef class FGMassBalance:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGMassBalance(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -380,6 +394,8 @@ cdef class FGJSBBase:
     def __cinit__(self, *args, **kwargs):
         if type(self) is FGJSBBase: # Check if it is called from a derived class
             self.baseptr = new c_FGJSBBase()
+            if not self.baseptr:
+                raise MemoryError()
 
     def __dealloc__(self) -> None:
         if type(self) is FGJSBBase:
@@ -409,6 +425,8 @@ cdef class FGPropulsion:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGPropulsion(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
@@ -470,6 +488,8 @@ cdef class FGLinearization:
     def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
         if fdmex is not None:
             self.thisptr.reset(new c_FGLinearization(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
