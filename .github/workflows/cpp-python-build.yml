@@ -876,13 +876,13 @@ jobs:
         with:
           python-version: '3.7'
       - name: Install Python packages
-        run: pip install -U 'numpy>=1.20' sphinx
+        run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DBUILD_PYTHON_MODULE=OFF ..
+          cmake ..
       - name: Download Python wheels
         uses: actions/download-artifact@v3
         with:
