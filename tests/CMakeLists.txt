@@ -49,7 +49,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestLinearization
                  TestLinearActuator
                  TestPlanet
-                 TestLighterThanAir)
+                 TestLighterThanAir
+                 TestUnusableFuel)
 
 foreach(test ${PYTHON_TESTS})
   add_test(NAME ${test}
