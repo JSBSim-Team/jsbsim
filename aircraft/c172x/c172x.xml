@@ -283,6 +283,25 @@
       </channel>
     </system>
 
+    <system name="Fuel content in volume">
+        <fcs_function name="propulsion/tank[0]/contents-volume-gal">
+            <function>
+                <quotient>
+                    <p> propulsion/tank[0]/contents-lbs </p>
+                    <p> propulsion/tank[0]/density-lbs_per_gal </p>
+                </quotient>
+            </function>
+        </fcs_function>
+        <fcs_function name="propulsion/tank[1]/contents-volume-gal">
+            <function>
+                <quotient>
+                    <p> propulsion/tank[1]/contents-lbs </p>
+                    <p> propulsion/tank[1]/density-lbs_per_gal </p>
+                </quotient>
+            </function>
+        </fcs_function>
+    </system>
+
     <system name="Mixture control">
       <!--
       E = 1.3 * Mixture * P_std / P_amb
