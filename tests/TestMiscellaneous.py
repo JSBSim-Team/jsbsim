@@ -22,17 +22,16 @@
 
 import os
 
-from JSBSim_utils import JSBSimTestCase, RunTest, jsbsim
+from JSBSim_utils import CreateFDM, JSBSimTestCase, RunTest, jsbsim
 
 
 class TestMiscellaneous(JSBSimTestCase):
     def test_property_access(self):
         fdm = self.create_fdm()
-        fdm.load_model("ball")
-        fdm.run_ic()
 
         # Check that the node 'qwerty' does not exist
         pm = fdm.get_property_manager()
+        self.assertEqual(pm.get_node().get_fully_qualified_name(), "/fdm/jsbsim")
         self.assertFalse(pm.hasNode("qwerty"))
 
         # Check the default behavior of get_property_value. Non existing
@@ -48,6 +47,40 @@ class TestMiscellaneous(JSBSimTestCase):
         fdm["qwerty"] = 42.0
         self.assertAlmostEqual(fdm.get_property_value("qwerty"), 42.0)
         self.assertAlmostEqual(fdm["qwerty"], 42.0)
+
+        # Test the FGPropertyNode API to access property nodes
+        node = pm.get_node("qwerty")
+        if not node:
+            self.fail()
+        self.assertAlmostEqual(node.get_double_value(), 42.0)
+        node.set_double_value(-1.0)
+        self.assertAlmostEqual(node.get_double_value(), -1.0)
+        self.assertAlmostEqual(fdm.get_property_value("qwerty"), -1.0)
+        self.assertAlmostEqual(fdm["qwerty"], -1.0)
+
+        # Test the FGPropertyNode to create new nodes
+        self.assertFalse(pm.hasNode("egg"))
+        self.assertIsNone(pm.get_node("egg"))  # `create` flag set to default (False)
+        self.assertIsNone(pm.get_node("egg", False))  # `create` flag set to False
+        egg_node = pm.get_node("egg", True)  # `create` flag set to True
+        self.assertEqual(egg_node.get_name(), "egg")
+        self.assertEqual(egg_node.get_fully_qualified_name(), "/fdm/jsbsim/egg")
+
+        egg_node.set_double_value(0.25)
+        self.assertAlmostEqual(egg_node.get_double_value(), 0.25)
+        self.assertAlmostEqual(fdm.get_property_value("egg"), 0.25)
+        self.assertAlmostEqual(fdm["egg"], 0.25)
+
+        # Create a sub-node from a node
+        self.assertIsNone(egg_node.get_node("spam"))
+        spam_node = egg_node.get_node("spam", True)
+        self.assertEqual(spam_node.get_name(), "spam")
+        self.assertEqual(spam_node.get_fully_qualified_name(), "/fdm/jsbsim/egg/spam")
+
+        pm2 = jsbsim.FGPropertyManager()
+        root_node = pm2.get_node()
+        self.assertEqual(root_node.get_name(), "")
+        self.assertEqual(root_node.get_fully_qualified_name(), "/")
 
     def test_property_catalog(self):
         fdm = self.create_fdm()
@@ -197,7 +230,7 @@ class TestMiscellaneous(JSBSimTestCase):
         with self.assertRaises(jsbsim.BaseError):
             lin.u_units
 
-        fdm = jsbsim.FGFDMExec('.')
+        fdm = jsbsim.FGFDMExec(".")
         if not fdm.get_propagate():
             self.fail()
         if not fdm.get_ground_reactions():
@@ -214,6 +247,45 @@ class TestMiscellaneous(JSBSimTestCase):
             self.fail()
         if not fdm.get_propulsion():
             self.fail()
+
+        node = jsbsim.FGPropertyNode()
+        if node:
+            self.fail()
+        with self.assertRaises(jsbsim.BaseError):
+            node.get_name()
+        with self.assertRaises(jsbsim.BaseError):
+            node.get_fully_qualified_name()
+        with self.assertRaises(jsbsim.BaseError):
+            node.get_node("x", False)
+        with self.assertRaises(jsbsim.BaseError):
+            node.get_node("x", True)
+        with self.assertRaises(jsbsim.BaseError):
+            node.get_double_value()
+        with self.assertRaises(jsbsim.BaseError):
+            node.set_double_value(1.0)
+
+        pm = jsbsim.FGPropertyManager()
+        node = pm.get_node()
+        if not node:
+            self.fail()
+
+    def test_property_manager_sharing(self):
+        script_path = self.sandbox.path_to_jsbsim_file("scripts")
+        pm = jsbsim.FGPropertyManager()
+        root_c172 = pm.get_node("/c172", True)
+
+        fdm_c172 = CreateFDM(self.sandbox, jsbsim.FGPropertyManager(root_c172))
+        fdm_c172.load_script(os.path.join(script_path, "c1721.xml"))
+        fdm_c172.run_ic()
+
+        root_S23 = pm.get_node("/Short_S23", True)
+        fdm_S23 = CreateFDM(self.sandbox, jsbsim.FGPropertyManager(root_S23))
+        fdm_S23.load_script(os.path.join(script_path, "Short_S23_1.xml"))
+        fdm_S23.run_ic()
+
+        while fdm_c172["simulation/sim-time-sec"] < 1.0:
+            fdm_c172.run()
+            self.assertEqual(fdm_S23["simulation/sim-time-sec"], 0.0)
 
 
 RunTest(TestMiscellaneous)
