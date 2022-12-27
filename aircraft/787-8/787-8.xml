@@ -248,16 +248,6 @@
 <propulsion>
 
    <engine file="trent_1000">
-    <location unit="IN">
-      <x> -211.92078 </x>
-      <y> -383.15712</y>
-      <z> -31.29148 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>2</feed>
     <feed>0</feed>
     <thruster file="direct">
@@ -275,16 +265,6 @@
   </engine>
 
    <engine file="trent_1000">
-    <location unit="IN">
-      <x> -211.92078 </x>
-      <y> 383.15712</y>
-      <z> -31.29148 </z>
-    </location>
-    <orient unit="DEG">
-      <pitch> 0.00 </pitch>
-      <roll>   0.00 </roll>
-      <yaw>   0.00 </yaw>
-    </orient>
     <feed>1</feed>
     <feed>2</feed>
     <thruster file="direct">
