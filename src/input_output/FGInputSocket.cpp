@@ -136,7 +136,7 @@ void FGInputSocket::Read(bool Holding)
       // now parse individual line
       vector <string> tokens = split(line,' ');
 
-      string command="", argument="", str_value="";
+      string command, argument, str_value;
       if (!tokens.empty()) {
         command = to_lower(tokens[0]);
         if (tokens.size() > 1) {
@@ -168,8 +168,19 @@ void FGInputSocket::Read(bool Holding)
           socket->Reply("Not a leaf property\r\n");
           break;
         } else {
-          double value = atof(str_value.c_str());
-          node->setDoubleValue(value);
+          if (is_number(trim(str_value))) {
+            try {
+              double value = atof_locale_c(str_value);
+              node->setDoubleValue(value);
+            } catch(BaseException& e) {
+              socket->Reply(e.what());
+              break;
+            }
+          }
+          else {
+            socket->Reply("Invalid number\r\n");
+            break;
+          }
         }
         socket->Reply("set successful\r\n");
 

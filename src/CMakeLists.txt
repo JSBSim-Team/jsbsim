@@ -4,9 +4,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # Define some commons compile flags.                                           #
 ################################################################################
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 # MSVC specific compile definitions
-set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
+set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX _HAS_STD_BYTE=0)
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #
