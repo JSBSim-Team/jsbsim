@@ -91,9 +91,12 @@ public:
   void testAtofLocaleC() {
     TS_ASSERT_EQUALS(atof_locale_c("+1  "), 1.0);
     TS_ASSERT_EQUALS(atof_locale_c(" 123.4"), 123.4);
-    TS_ASSERT_THROWS(atof_locale_c("XYZ"), JSBSim::BaseException&);
-    TS_ASSERT_THROWS(atof_locale_c("1E+999"), JSBSim::BaseException&);
     TS_ASSERT_EQUALS(atof_locale_c("-3.14e-2"), -0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("1E-999"), 0.0);
+    TS_ASSERT_EQUALS(atof_locale_c("-1E-999"), 0.0);
+    TS_ASSERT_EQUALS(atof_locale_c("0.0"), 0.0);
+    TS_ASSERT_THROWS(atof_locale_c("1E+999"), JSBSim::BaseException&);
+    TS_ASSERT_THROWS(atof_locale_c("-1E+999"), JSBSim::BaseException&);
   }
 
 private:
