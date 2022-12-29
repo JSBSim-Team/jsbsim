@@ -55,20 +55,24 @@ double atof_locale_c(const std::string& input)
 
 #ifdef _WIN32
   _locale_t lc_numeric_c = _create_locale(LC_NUMERIC, "C");
+  errno = 0;
   double value = _strtod_l(first, nullptr, lc_numeric_c);
+  int error = errno;
   _free_locale(lc_numeric_c);
 #else
-  locale_t lc_numeric_c = newlocale(LC_NUMERIC_MASK, "C", LC_GLOBAL_LOCALE);
+  locale_t lc_numeric_c = newlocale(LC_NUMERIC_MASK, "C", 0);
+  errno = 0;
   double value = strtod_l(first, nullptr, lc_numeric_c);
+  int error = errno;
   freelocale(lc_numeric_c);
 #endif
 
   // Error management
   std::stringstream s;
 
-  if (fabs(value) == HUGE_VAL && errno == ERANGE)
+  if (fabs(value) == HUGE_VAL && error == ERANGE)
     s << "This number is too large: " << input;
-  else if (fabs(value) == 0 && errno == EINVAL)
+  else if (fabs(value) == 0 && error == EINVAL)
     s << "Expecting numeric attribute value, but got: " << input;
   else
     return value;
