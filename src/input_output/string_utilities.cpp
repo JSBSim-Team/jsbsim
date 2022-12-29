@@ -44,6 +44,10 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "string_utilities.h"
 
+/* This function is a locale independent version of atof().
+ * Whatever is the current locale of the application, atof_locale_c() reads
+ * numbers assuming that the decimal point is the period (.)
+ */
 double atof_locale_c(const std::string& input)
 {
   const char* first = input.c_str();
@@ -55,15 +59,15 @@ double atof_locale_c(const std::string& input)
 
 #ifdef _WIN32
   _locale_t lc_numeric_c = _create_locale(LC_NUMERIC, "C");
-  errno = 0;
+  errno = 0;          // Reset the error code
   double value = _strtod_l(first, nullptr, lc_numeric_c);
-  int error = errno;
+  int error = errno;  // Save the error code
   _free_locale(lc_numeric_c);
 #else
   locale_t lc_numeric_c = newlocale(LC_NUMERIC_MASK, "C", 0);
-  errno = 0;
+  errno = 0;          // Reset the error code
   double value = strtod_l(first, nullptr, lc_numeric_c);
-  int error = errno;
+  int error = errno;  // Save the error code
   freelocale(lc_numeric_c);
 #endif
 
