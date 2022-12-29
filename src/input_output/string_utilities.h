@@ -50,6 +50,7 @@ INCLUDES
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+JSBSIM_API bool is_number(const std::string& str);
 JSBSIM_API double atof_locale_c(const std::string& input);
 
 #if !defined(BASE)
@@ -59,7 +60,6 @@ JSBSIM_API double atof_locale_c(const std::string& input);
   extern std::string& trim_all_space(std::string& str);
   extern std::string& to_upper(std::string& str);
   extern std::string& to_lower(std::string& str);
-  extern bool is_number(const std::string& str);
   std::vector <std::string> split(std::string str, char d);
 
   extern std::string replace(std::string str, const std::string& old, const std::string& newstr);
