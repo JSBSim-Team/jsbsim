@@ -34,10 +34,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <errno.h>
-#ifdef _WIN32
-#include <locale.h>
-#else
+#ifdef __APPLE__
 #include <xlocale.h>
+#else
+#include <locale.h>
 #endif
 #include <sstream>
 
