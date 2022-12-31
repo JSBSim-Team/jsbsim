@@ -487,8 +487,8 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   JSBSim::Element* tsfcElement = el->FindElement("tsfc");
   if (tsfcElement) {
     string value = tsfcElement->GetDataLine();
-    if (is_number(value))
-      TSFC = std::make_unique<FGSimplifiedTSFC>(this, atof(value.c_str()));
+    if (is_number(trim(value)))
+      TSFC = std::make_unique<FGSimplifiedTSFC>(this, atof_locale_c(value));
     else
       TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string(EngineNumber));
   }
@@ -496,8 +496,8 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   JSBSim::Element* atsfcElement = el->FindElement("atsfc");
   if (atsfcElement) {
     string value = atsfcElement->GetDataLine();
-    if (is_number(value))
-      ATSFC = std::make_unique<FGRealValue>(atof(value.c_str()));
+    if (is_number(trim(value)))
+      ATSFC = std::make_unique<FGRealValue>(atof_locale_c(value));
     else
       ATSFC = std::make_unique<FGFunction>(FDMExec, atsfcElement, to_string((int)EngineNumber));
   }

@@ -293,12 +293,12 @@ double Element::GetAttributeValueAsNumber(const string& attr)
   else {
     double number=0;
     if (is_number(trim(attribute)))
-      number = atof(attribute.c_str());
+      number = atof_locale_c(attribute);
     else {
       std::stringstream s;
       s << ReadFrom() << "Expecting numeric attribute value, but got: " << attribute;
       cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      throw BaseException(s.str());
     }
 
     return (number);
@@ -347,12 +347,12 @@ double Element::GetDataAsNumber(void)
   if (data_lines.size() == 1) {
     double number=0;
     if (is_number(trim(data_lines[0])))
-      number = atof(data_lines[0].c_str());
+      number = atof_locale_c(data_lines[0]);
     else {
       std::stringstream s;
       s << ReadFrom() << "Expected numeric value, but got: " << data_lines[0];
       cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      throw BaseException(s.str());
     }
 
     return number;

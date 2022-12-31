@@ -87,9 +87,10 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     value = test_element->GetAttributeValue("value");
     current_test->setTestValue(value, Name, PropertyManager, test_element);
     current_test->Default = true;
-    if (delay > 0 && is_number(value)) {        // If there is a delay, initialize the
+    if (delay > 0 && is_number(trim(value))) {  // If there is a delay, initialize the
+      double v = atof_locale_c(value);
       for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
-        output_array[i] = atof(value.c_str());  // for the switch if that value is a number.
+        output_array[i] = v;                    // for the switch if that value is a number.
       }
     }
     tests.push_back(current_test);
