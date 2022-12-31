@@ -1,11 +1,11 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       string_utilities.cpp
- Author:       Bertrand Coconnier
+ Author:       Bertrand Coconnier / Sean McLeod
  Date started: 12/28/22
  Purpose:      Utilities to manipulate strings.
 
- ------------- Copyright (C) 2022 Bertrand Coconnier -------------
+ ------------ Copyright (C) 2022 Bertrand Coconnier, Sean McLeod,  -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free
@@ -26,8 +26,9 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This is the place where you create output routines to dump data for perusal
-later.
+String handling conveniences such as trim, is_number, split, etc.; these new
+capabilities have been incorporated into the source code where the
+string::find() functions were formerly used.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -44,7 +45,32 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "string_utilities.h"
 
-/* This function is a locale independent version of atof().
+#ifdef _WIN32
+typedef _locale_t locale_t;
+#define freelocale _free_locale
+#define strtod_l _strtod_l
+#endif
+
+struct CNumericLocale
+{
+  CNumericLocale()
+  {
+#ifdef _WIN32
+    Locale = _create_locale(LC_NUMERIC, "C");
+#else
+    Locale = newlocale(LC_NUMERIC_MASK, "C", 0);
+#endif
+  }
+
+  ~CNumericLocale()
+  {
+    freelocale(Locale);
+  }
+
+  locale_t Locale;
+};
+
+/* A locale independent version of atof().
  * Whatever is the current locale of the application, atof_locale_c() reads
  * numbers assuming that the decimal point is the period (.)
  */
@@ -57,26 +83,16 @@ double atof_locale_c(const std::string& input)
   //Ignoring the leading '+' sign
   if (*first == '+') ++first;
 
-#ifdef _WIN32
-  _locale_t lc_numeric_c = _create_locale(LC_NUMERIC, "C");
+  CNumericLocale numeric_c;
   errno = 0;          // Reset the error code
-  double value = _strtod_l(first, nullptr, lc_numeric_c);
-  int error = errno;  // Save the error code
-  _free_locale(lc_numeric_c);
-#else
-  locale_t lc_numeric_c = newlocale(LC_NUMERIC_MASK, "C", 0);
-  errno = 0;          // Reset the error code
-  double value = strtod_l(first, nullptr, lc_numeric_c);
-  int error = errno;  // Save the error code
-  freelocale(lc_numeric_c);
-#endif
+  double value = _strtod_l(first, nullptr, numeric_c.Locale);
 
   // Error management
   std::stringstream s;
 
-  if (fabs(value) == HUGE_VAL && error == ERANGE)
+  if (fabs(value) == HUGE_VAL && errno == ERANGE)
     s << "This number is too large: " << input;
-  else if (fabs(value) == 0 && error == EINVAL)
+  else if (fabs(value) == 0 && errno == EINVAL)
     s << "Expecting numeric attribute value, but got: " << input;
   else
     return value;
