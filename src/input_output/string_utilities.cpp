@@ -85,7 +85,7 @@ double atof_locale_c(const std::string& input)
 
   CNumericLocale numeric_c;
   errno = 0;          // Reset the error code
-  double value = _strtod_l(first, nullptr, numeric_c.Locale);
+  double value = strtod_l(first, nullptr, numeric_c.Locale);
 
   // Error management
   std::stringstream s;
