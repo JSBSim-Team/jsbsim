@@ -22,6 +22,7 @@ import os
 # Function to change CG in aircraft xml
 # Change the directory to the aircraft to be studied
 # Note - Moments of inertia are not updated
+# Note - Aircraft directory needs to be writeable in order to modify the cg
 def changeCG(fdm, cgPos, readOnly):
     tree = ET.parse(os.path.join(fdm.get_root_dir(), 'aircraft/global5000/global5000.xml'))
     root = tree.getroot()
@@ -62,7 +63,6 @@ h_ft=[8000,30000]
 
 # Run for different CG's 
 for j in range(2):
-    # Points to jsbsim executable and make an object
     fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES) 
     fdm.load_model('global5000')
     # Set engines running
