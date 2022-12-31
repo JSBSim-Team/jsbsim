@@ -51,6 +51,7 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 JSBSIM_API bool is_number(const std::string& str);
+JSBSIM_API double atof_locale_c(const std::string& input);
 
 #if !defined(BASE)
   extern std::string& trim_left(std::string& str);

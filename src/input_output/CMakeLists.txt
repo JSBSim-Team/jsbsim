@@ -14,7 +14,8 @@ set(SOURCES FGGroundCallback.cpp
             FGModelLoader.cpp
             FGInputType.cpp
             FGInputSocket.cpp
-            FGUDPInputSocket.cpp)
+            FGUDPInputSocket.cpp
+            string_utilities.cpp)
 
 set(HEADERS FGGroundCallback.h
             FGPropertyManager.h

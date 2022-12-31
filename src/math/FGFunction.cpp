@@ -600,10 +600,24 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       double stddev = 1.0;
       string mean_attr = element->GetAttributeValue("mean");
       string stddev_attr = element->GetAttributeValue("stddev");
-      if (!mean_attr.empty())
-        mean = atof(mean_attr.c_str());
-      if (!stddev_attr.empty())
-        stddev = atof(stddev_attr.c_str());
+      if (!mean_attr.empty()) {
+        if (is_number(trim(mean_attr)))
+          mean = atof_locale_c(mean_attr);
+        else {
+          cerr << element->ReadFrom()
+               << "Expecting a number, but got: " << mean_attr <<endl;
+          throw BaseException("Invalid number");
+        }
+      }
+      if (!stddev_attr.empty()) {
+        if (is_number(trim(stddev_attr)))
+          stddev = atof_locale_c(stddev_attr);
+        else {
+          cerr << element->ReadFrom()
+               << "Expecting a number, but got: " << stddev_attr <<endl;
+          throw BaseException("Invalid number");
+        }
+      }
       auto generator(makeRandomGenerator(element, fdmex));
       auto f = [generator, mean, stddev]()->double {
                  double value = generator->GetNormalRandomNumber();
@@ -616,10 +630,24 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       double upper = 1.0;
       string lower_attr = element->GetAttributeValue("lower");
       string upper_attr = element->GetAttributeValue("upper");
-      if (!lower_attr.empty())
-        lower = atof(lower_attr.c_str());
-      if (!upper_attr.empty())
-        upper = atof(upper_attr.c_str());
+      if (!lower_attr.empty()) {
+        if (is_number(trim(lower_attr)))
+          lower = atof_locale_c(lower_attr);
+        else {
+          cerr << element->ReadFrom()
+               << "Expecting a number, but got: " << lower_attr <<endl;
+          throw BaseException("Invalid number");
+        }
+      }
+      if (!upper_attr.empty()) {
+        if (is_number(trim(upper_attr)))
+          upper = atof_locale_c(upper_attr);
+        else {
+          cerr << element->ReadFrom()
+               << "Expecting a number, but got: " << upper_attr <<endl;
+          throw BaseException("Invalid number");
+        }
+      }
       auto generator(makeRandomGenerator(element, fdmex));
       double a = 0.5*(upper-lower);
       double b = 0.5*(upper+lower);

@@ -116,10 +116,10 @@ foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
   endforeach(TARGET_OBJECT)
 endforeach(COMPILE_DEF)
 
-set_target_properties (libJSBSim PROPERTIES
-                                 OUTPUT_NAME JSBSim
-                                 VERSION ${LIBRARY_VERSION}
-                                 TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(libJSBSim PROPERTIES
+                                OUTPUT_NAME JSBSim
+                                VERSION ${LIBRARY_VERSION}
+                                TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Manage link libraries
 set(JSBSIM_LINK_LIBRARIES ${ALL_LINK_LIBRARIES} PARENT_SCOPE)
@@ -137,9 +137,9 @@ elseif(UNIX)
 endif()
 
 if(BUILD_SHARED_LIBS)
-  set_target_properties (libJSBSim PROPERTIES
-                                   SOVERSION ${LIBRARY_SOVERSION}
-                                   FRAMEWORK ON)
+  set_target_properties(libJSBSim PROPERTIES
+                                  SOVERSION ${LIBRARY_SOVERSION}
+                                  FRAMEWORK ON)
   install(TARGETS libJSBSim LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
