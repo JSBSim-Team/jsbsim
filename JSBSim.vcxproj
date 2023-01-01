@@ -364,6 +364,7 @@
     <ClCompile Include="src\input_output\FGPropertyReader.cpp" />
     <ClCompile Include="src\input_output\FGUDPInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGXMLFileRead.cpp" />
+    <ClCompile Include="src\input_output\string_utilities.cpp" />
     <ClCompile Include="src\math\FGStateSpace.cpp" />
     <ClCompile Include="src\math\FGTemplateFunc.cpp" />
     <ClCompile Include="src\models\atmosphere\FGStandardAtmosphere.cpp" />
