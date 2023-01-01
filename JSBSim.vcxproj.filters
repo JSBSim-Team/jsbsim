@@ -329,6 +329,9 @@
     <ClCompile Include="src\input_output\FGXMLFileRead.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\input_output\string_utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_output\FGInputSocket.h">
