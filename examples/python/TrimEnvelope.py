@@ -53,7 +53,6 @@ for speed in range(120, 460, 10):
 
         # Initialize the aircraft with initial conditions
         fdm.run_ic() 
-        fdm.run()
 
         # Trim
         try:
