@@ -382,10 +382,7 @@
     <ClCompile Include="src\models\flight_control\FGAccelerometer.cpp" />
     <ClCompile Include="src\models\flight_control\FGActuator.cpp" />
     <ClCompile Include="src\models\FGAerodynamics.cpp" />
-    <ClCompile Include="src\models\FGAircraft.cpp">
-      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
-      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Speed</FavorSizeOrSpeed>
-    </ClCompile>
+    <ClCompile Include="src\models\FGAircraft.cpp" />
     <ClCompile Include="src\models\FGAtmosphere.cpp" />
     <ClCompile Include="src\models\FGAuxiliary.cpp" />
     <ClCompile Include="src\models\FGBuoyantForces.cpp" />
@@ -443,10 +440,7 @@
     <ClCompile Include="src\models\flight_control\FGSummer.cpp" />
     <ClCompile Include="src\models\flight_control\FGSwitch.cpp" />
     <ClCompile Include="src\math\FGTable.cpp" />
-    <ClCompile Include="src\models\propulsion\FGTank.cpp">
-      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
-      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Fast</FloatingPointModel>
-    </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTank.cpp" />
     <ClCompile Include="src\models\propulsion\FGThruster.cpp" />
     <ClCompile Include="src\initialization\FGTrim.cpp" />
     <ClCompile Include="src\initialization\FGTrimAxis.cpp" />
