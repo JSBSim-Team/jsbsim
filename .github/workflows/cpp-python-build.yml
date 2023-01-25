@@ -155,7 +155,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v3
       - name: Set up Matlab
-        uses: matlab-actions/setup-matlab@v1.2.3
+        uses: matlab-actions/setup-matlab@v1.2.4
         with:
           release: R2022a
       - name: Configure JSBSim
