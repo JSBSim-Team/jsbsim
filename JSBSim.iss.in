@@ -2,7 +2,7 @@
 AppName=JSBSim
 AppVersion=${PROJECT_VERSION}
 AppPublisherURL=https://github.com/JSBSim-Team/jsbsim
-DefaultDirName={sd}\JSBSim
+DefaultDirName={localappdata}\JSBSim
 OutputBaseFilename=JSBSim-${PROJECT_VERSION}-$ENV{GITHUB_RUN_NUMBER}-setup
 AlwaysShowDirOnReadyPage=yes
 LicenseFile=${PROJECT_SOURCE_DIR}\COPYING
