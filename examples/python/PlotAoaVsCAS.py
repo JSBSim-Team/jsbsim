@@ -1,7 +1,7 @@
 # Originally developed by JSBSim Team
 # Modified by Guilherme A. L. da Silva - aerothermalsolutions.co
 # Calculation required by aircraft icing enginering
-# Plots the variation in AoA versus CAS for level trim for different 
+# Plots the variation in AoA versus CAS for level trim for different
 # aircraft weights, cg and altitude.
 
 # GNU Lesser General Public License v2.1
@@ -19,19 +19,29 @@ import xml.etree.ElementTree as ET
 import matplotlib.pyplot as plt
 import os
 
+# Global variables that must be modified to match your particular need
+# The aircraft name
+# Note - It should match the exact spelling of the model file
+AIRCRAFT_NAME="global5000"
+# Relative path to the directory where the flight model is stored
+# Note - Aircraft directory needs to be writeable in order to modify the cg
+PATH_TO_JSBSIM_FILES="../.."
+
+# Avoid flooding the console with log messages
+jsbsim.FGJSBBase().debug_lvl = 0
+
 # Function to change CG in aircraft xml
 # Change the directory to the aircraft to be studied
 # Note - Moments of inertia are not updated
-# Note - Aircraft directory needs to be writeable in order to modify the cg
 def changeCG(fdm, cgPos, readOnly):
-    tree = ET.parse(os.path.join(fdm.get_root_dir(), 'aircraft/global5000/global5000.xml'))
+    tree = ET.parse(os.path.join(fdm.get_root_dir(), f'aircraft/{AIRCRAFT_NAME}/{AIRCRAFT_NAME}.xml'))
     root = tree.getroot()
 
     for x in root.findall('mass_balance/location'):
         cg = x.find('x').text
         if not readOnly:
              x.find('x').text=str(cgPos)
-             tree.write(os.path.join(fdm.get_root_dir(), 'aircraft/global5000/global5000.xml'))
+             tree.write(os.path.join(fdm.get_root_dir(), f'aircraft/{AIRCRAFT_NAME}/{AIRCRAFT_NAME}.xml'))
     return cg
 
 # Fuel max for Global5000
@@ -47,10 +57,7 @@ fuel=[1000,fuelmax/2,fuelmax]
 # Three cases for weight
 weight=["light","mid","heavy"]
 
-# Path to JSBSim files
-PATH_TO_JSBSIM_FILES="../../"
-
-fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES) 
+fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
 # Get the original CG from aircraft xml
 cgOrig=float(changeCG(fdm,0,True))
 # Vary CG in the study
@@ -61,10 +68,10 @@ h_ft=[8000,30000]
 
 # Run the simulation varying CG, altitude, speed and total weight
 
-# Run for different CG's 
+# Run for different CG's
 for j in range(2):
-    fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES) 
-    fdm.load_model('global5000')
+    fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
+    fdm.load_model(f'{AIRCRAFT_NAME}')
     # Set engines running
     cg=changeCG(fdm,cgPos[j],False)
     fdm['propulsion/engine[0]/set-running'] = 1
@@ -98,7 +105,7 @@ for j in range(2):
                 # is due to the trim failure otherwise rethrow.
                 if e.args[0] != 'Trim Failed':
                     raise
-        
+
         print("-----------------------------------------")
         print("Altitude {} - Weight {} - CG {}".format(h_ft[j],weight[i],cgPos[j]))
         print("-----------------------------------------")
