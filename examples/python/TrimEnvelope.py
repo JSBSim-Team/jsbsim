@@ -24,6 +24,10 @@ import jsbsim
 import matplotlib.pyplot as plt
 import math
 
+# Global variables that must be modified to match your particular need
+# The aircraft name
+# Note - It should match the exact spelling of the model file
+AIRCRAFT_NAME="737"
 # Path to JSBSim files, location of the folders "aircraft", "engines" and "systems"
 PATH_TO_JSBSIM_FILES="../.."
 
@@ -32,8 +36,8 @@ jsbsim.FGJSBBase().debug_lvl = 0
 
 fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
 
-# Load the 737 aircraft model
-fdm.load_model('737')
+# Load the aircraft model
+fdm.load_model(AIRCRAFT_NAME)
 
 # Set engines running
 fdm['propulsion/engine[0]/set-running'] = 1
