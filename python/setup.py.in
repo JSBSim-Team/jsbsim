@@ -1,6 +1,6 @@
 # This script has been automatically built from ${PROJECT_SOURCE_DIR}/python/setup.py.in
 #
-# Copyright (c) 2014-2022 Bertrand Coconnier
+# Copyright (c) 2014-${THIS_YEAR} Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
