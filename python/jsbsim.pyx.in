@@ -4,7 +4,7 @@
 # JSBSim python interface using cython.
 #
 # Copyright (c) 2013 James Goppert
-# Copyright (c) 2014-2022 Bertrand Coconnier
+# Copyright (c) 2014-${THIS_YEAR} Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the Free

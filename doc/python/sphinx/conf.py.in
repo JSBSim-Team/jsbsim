@@ -16,10 +16,18 @@ import sys
 
 sys.path.insert(0, '${CMAKE_BINARY_DIR}/tests')
 
+try:
+    import jsbsim._jsbsim
+except ModuleNotFoundError:
+    # If the JSBSim module cannot be loaded from the `tests` folder then
+    # restore `sys.path` to its inital value and use the globally installed
+    # JSBSim module, if there is one.
+    sys.path = sys.path[1:]
+
 # -- Project information -----------------------------------------------------
 
 project = u'JSBSim'
-copyright = u'2021, ${PROJECT_CONTACT_VENDOR}'
+copyright = u'${THIS_YEAR}, ${PROJECT_CONTACT_VENDOR}'
 author = u'${PROJECT_CONTACT_VENDOR}'
 
 # The short X.Y version
