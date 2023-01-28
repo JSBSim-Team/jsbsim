@@ -19,7 +19,7 @@ sys.path.insert(0, '${CMAKE_BINARY_DIR}/tests')
 # -- Project information -----------------------------------------------------
 
 project = u'JSBSim'
-copyright = u'2021, ${PROJECT_CONTACT_VENDOR}'
+copyright = u'${THIS_YEAR}, ${PROJECT_CONTACT_VENDOR}'
 author = u'${PROJECT_CONTACT_VENDOR}'
 
 # The short X.Y version

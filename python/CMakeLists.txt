@@ -1,6 +1,9 @@
 # Import the Cython utilities for CMake
 include(UseCython)
 
+# Get the current year to update the copyrights.
+string(TIMESTAMP THIS_YEAR "%Y")
+
 # Declare JSBSim as a C++ project
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
