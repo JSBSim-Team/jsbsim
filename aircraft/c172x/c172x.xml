@@ -379,8 +379,7 @@
         <channel name="Roll">
 
             <summer name="fcs/roll-trim-sum">
-<!--                <input>ap/aileron_cmd</input> -->
-                <input>ap/roll-cmd-norm-output</input>
+                <input>ap/aileron_cmd</input>
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
