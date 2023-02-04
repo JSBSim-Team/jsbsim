@@ -124,7 +124,7 @@ public:
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
 
   inline bool GetGeneratorPower(void) const { return GeneratorPower; }
-  inline int GetCondition(void) const { return Condition; }
+  inline bool GetCondition(void) const { return Condition; }
 
   void SetPhase( phaseType p ) { phase = p; }
   void SetReverse(bool reversed) { Reversed = reversed; }
@@ -176,7 +176,7 @@ private:
 
   bool EngStarting;            // logicaly output - TRUE if engine is starting
   bool GeneratorPower;
-  int Condition;
+  bool Condition;
   int thrusterType;            // the attached thruster
 
   double Off(void);
