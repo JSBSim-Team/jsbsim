@@ -1,7 +1,7 @@
 # TrimEnvelope.py
 #
 # Calculate the set of trim points for an aircraft over a range of airspeeds
-# and range of flight path angles (gamma). The required thrust and AoA is 
+# and range of flight path angles (gamma). The required thrust and AoA is
 # indicated via a colormap for each trim point.
 #
 # Copyright (c) 2023 Sean McLeod
@@ -24,13 +24,20 @@ import jsbsim
 import matplotlib.pyplot as plt
 import math
 
+# Global variables that must be modified to match your particular need
+# The aircraft name
+# Note - It should match the exact spelling of the model file
+AIRCRAFT_NAME="737"
 # Path to JSBSim files, location of the folders "aircraft", "engines" and "systems"
-PATH_TO_JSBSIM_FILES="../../"
+PATH_TO_JSBSIM_FILES="../.."
 
-fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)  
+# Avoid flooding the console with log messages
+jsbsim.FGJSBBase().debug_lvl = 0
 
-# Load the 737 aircraft model
-fdm.load_model('737') 
+fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
+
+# Load the aircraft model
+fdm.load_model(AIRCRAFT_NAME)
 
 # Set engines running
 fdm['propulsion/engine[0]/set-running'] = 1
@@ -52,7 +59,7 @@ for speed in range(120, 460, 10):
         fdm['ic/gamma-deg'] = gamma
 
         # Initialize the aircraft with initial conditions
-        fdm.run_ic() 
+        fdm.run_ic()
 
         # Trim
         try:
