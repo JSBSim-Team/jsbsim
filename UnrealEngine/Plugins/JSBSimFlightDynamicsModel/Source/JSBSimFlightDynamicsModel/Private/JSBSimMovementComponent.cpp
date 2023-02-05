@@ -1102,7 +1102,7 @@ void UJSBSimMovementComponent::DrawDebugMessage()
 	DebugMessage += LINE_TERMINATOR;
 	int32 NumGears = Gears.Num();
 	DebugMessage += FString::Printf(TEXT("Landing Gears (%d) : "), NumGears) + LINE_TERMINATOR;
-	for (int32 i = 0; i < NumTanks; i++)
+	for (int32 i = 0; i < NumGears; i++)
 	{
 		if (Gears[i].IsBogey)
 		{
