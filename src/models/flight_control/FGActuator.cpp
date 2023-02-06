@@ -349,7 +349,7 @@ void FGActuator::Debug(int from)
       if (rate_limit_decr != 0) {
         cout << "      Decreasing rate limit: " << rate_limit_decr->GetName() << endl;
       }
-      if (lag != 0) cout << "      Actuator lag: " << lag << endl;
+      if (lag != 0) cout << "      Actuator lag: " << lag->GetName() << endl;
       if (hysteresis_width != 0) cout << "      Hysteresis width: " << hysteresis_width << endl;
       if (deadband_width != 0) cout << "      Deadband width: " << deadband_width << endl;
     }
