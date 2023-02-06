@@ -112,7 +112,13 @@
     </ground_reactions>
     <propulsion>
         <engine file="t56">
+            <location unit="IN">
+                <x> 586.5 </x>
+                <y> -265 </y>
+                <z> -40 </z>
+            </location>
             <feed>0</feed>
+            <feed>4</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
                     <x> 586.5 </x>
@@ -128,10 +134,11 @@
         </engine>
         <engine file="t56">
             <feed>1</feed>
+            <feed>4</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
                     <x> 586.5 </x>
-                    <y> -265 </y>
+                    <y> 265 </y>
                     <z> -40 </z>
                 </location>
                 <orient unit="DEG">
@@ -143,6 +150,7 @@
         </engine>
         <engine file="t56">
             <feed>2</feed>
+            <feed>4</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
                     <x> 586.5 </x>
@@ -158,6 +166,7 @@
         </engine>
         <engine file="t56">
             <feed>3</feed>
+            <feed>4</feed>
             <thruster file="t56_prop">
                 <location unit="IN">
                     <x> 586.5 </x>
