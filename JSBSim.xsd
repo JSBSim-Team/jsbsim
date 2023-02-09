@@ -1441,297 +1441,176 @@
       <xs:element ref="or" />
       <xs:element ref="not" />
       <xs:element ref="ifthen" />
-      <xs:element name="switch">
-        <xs:complexType>
-          <xs:choice minOccurs="2" maxOccurs="unbounded">
-            <xs:group ref="func_group" />
-            <xs:element ref="value" />
-            <xs:element ref="property" />
-          </xs:choice>
-        </xs:complexType>
-     </xs:element>
+      <xs:element name="switch" type="switch_func"/>
       <xs:element ref="interpolate1d" />
+      <xs:element ref="value" />
+      <xs:element ref="property" />
     </xs:choice>
   </xs:group>
   <xs:element name="function">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="description" minOccurs="0"/>
-        <xs:group ref="func_group" />
+        <xs:choice>
+          <xs:group ref="func_group" />
+        </xs:choice>
       </xs:sequence>
       <xs:attribute name="name" use="optional" />
     </xs:complexType>
   </xs:element>
   <xs:element name="product">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="difference">
     <xs:complexType>
-      <xs:choice maxOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="sum">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="quotient">
     <xs:complexType>
-      <xs:choice maxOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="abs">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="pow">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="sin">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="cos">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="tan">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="asin">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="acos">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="atan">
     <xs:complexType>
-      <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="1" minOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="atan2">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="min">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="max">
     <xs:complexType>
-      <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="avg">
     <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="fraction">
     <xs:complexType>
-      <xs:choice>
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" />
     </xs:complexType>
   </xs:element>
   <xs:element name="integer">
     <xs:complexType>
-      <xs:choice>
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" />
     </xs:complexType>
   </xs:element>
   <xs:element name="value" type="xs:double" />
-
   <xs:element name="mod">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="lt">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="le">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="gt">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="ge">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="eq">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="nq">
     <xs:complexType>
-      <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" maxOccurs="2" minOccurs="2"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="and">
     <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="or">
     <xs:complexType>
-      <xs:choice minOccurs="2" maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="not">
     <xs:complexType>
-      <xs:choice minOccurs="1" maxOccurs="1">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="1" maxOccurs="1"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="ifthen">
     <xs:complexType>
-      <xs:choice minOccurs="3" maxOccurs="3">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="3" maxOccurs="3"/>
     </xs:complexType>
   </xs:element>
+  <!-- avoid name collision of "switch" -->
+  <xs:complexType name="switch_func">
+    <xs:group ref="func_group" minOccurs="2" maxOccurs="unbounded"/>
+  </xs:complexType>
   <xs:element name="interpolate1d">
     <xs:complexType>
-      <xs:choice minOccurs="3" maxOccurs="unbounded">
-        <xs:group ref="func_group" />
-        <xs:element ref="value" />
-        <xs:element ref="property" />
-      </xs:choice>
+      <xs:group ref="func_group" minOccurs="3" maxOccurs="unbounded"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="orient">
@@ -1745,11 +1624,13 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="pointing">
-    <xs:annotation><xs:documentation>
-      The pointing element is an alternative to the use of the orient element. With the pointing
-      element, a unit vector is supplied that represents the direction that the thruster force vector acts
-      in. The pointing vector is defined in the structural frame.
-    </xs:documentation></xs:annotation>
+    <xs:annotation>
+      <xs:documentation>
+        The pointing element is an alternative to the use of the orient element. With the pointing
+        element, a unit vector is supplied that represents the direction that the thruster force vector acts
+        in. The pointing vector is defined in the structural frame.
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="x"/>
@@ -1761,7 +1642,15 @@
   <xs:element name="roll" type="xs:double" />
   <xs:element name="pitch" type="xs:double" />
   <xs:element name="yaw" type="xs:double" />
-  <xs:element name="property" type="xs:string" />
+  <xs:element name="property">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="value" use="optional" type="xs:double" />
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="table">
     <xs:complexType>
       <xs:sequence>
