@@ -412,5 +412,10 @@ class TestStdAtmosphere(JSBSimTestCase):
         self.assertGreater(fdm['atmosphere/pressure-altitude'], 900000.)
         self.assertLess(fdm['atmosphere/pressure-altitude'], fdm['ic/h-sl-ft'])
 
+        fdm['atmosphere/P-sl-psf'] = 0.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['atmosphere/P-sl-psf']*1E17, 2.08854342)
+        self.assertAlmostEqual(fdm['atmosphere/P-psf']*1E17, 2.08854342)
+
 
 RunTest(TestStdAtmosphere)
