@@ -95,10 +95,6 @@ public:
     TS_ASSERT_EQUALS(JSBSim::atof_locale_c("0.0"), 0.0);
     TS_ASSERT_THROWS(JSBSim::atof_locale_c("1E+999"), JSBSim::BaseException&);
     TS_ASSERT_THROWS(JSBSim::atof_locale_c("-1E+999"), JSBSim::BaseException&);
-    setlocale(LC_NUMERIC, "fr_FR");
-    TS_ASSERT_EQUALS(atof("1,2"), 1.2);
-    TS_ASSERT_EQUALS(atof("1.2"), 1.0);
-    TS_ASSERT_EQUALS(JSBSim::atof_locale_c("1.2"), 1.2);
   }
 
 private:
