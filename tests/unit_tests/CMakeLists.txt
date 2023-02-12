@@ -19,11 +19,13 @@ set(UNIT_TESTS FGColumnVector3Test
                FGConditionTest
                FGPropertyManagerTest)
 
-add_library(string_utilities STATIC ${PROJECT_SOURCE_DIR}/src/input_output/string_utilities.cpp)
+if(WIN32 AND BUILD_SHARED_LIBS)
+  add_library(string_utilities STATIC ${PROJECT_SOURCE_DIR}/src/input_output/string_utilities.cpp)
+endif()
 
 foreach(test ${UNIT_TESTS})
   cxxtest_add_test(${test}1 ${test}.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${test}.h)
-  if (test STREQUAL "StringUtilitiesTest")
+  if (WIN32 AND BUILD_SHARED_LIBS AND test STREQUAL "StringUtilitiesTest")
     target_link_libraries(${test}1 libJSBSim string_utilities)
   else()
     target_link_libraries(${test}1 libJSBSim)
