@@ -19,22 +19,9 @@ set(UNIT_TESTS FGColumnVector3Test
                FGConditionTest
                FGPropertyManagerTest)
 
-# Windows cannot access the functions in `string_utilities.h` when JSBSim is
-# compiled as a DLL. Rather than adding `JSBSIM_API` to all of these functions
-# just for the sake of using them in unit tests, we are compiling `string_utilities.h`
-# as a static library and linking it to the unit tests.
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_library(string_utilities STATIC ${PROJECT_SOURCE_DIR}/src/input_output/string_utilities.cpp)
-  target_compile_definitions(string_utilities PRIVATE JSBSIM_STATIC_LINK)
-endif()
-
 foreach(test ${UNIT_TESTS})
   cxxtest_add_test(${test}1 ${test}.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${test}.h)
-  if (WIN32 AND BUILD_SHARED_LIBS)
-    target_link_libraries(${test}1 libJSBSim string_utilities)
-  else()
-    target_link_libraries(${test}1 libJSBSim)
-  endif()
+  target_link_libraries(${test}1 libJSBSim)
   add_coverage(${test}1)
 endforeach()
 

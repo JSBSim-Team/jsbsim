@@ -46,18 +46,16 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
-double atof_locale_c(const std::string& input);
-
-std::string& trim_left(std::string& str);
-std::string& trim_right(std::string& str);
-std::string& trim(std::string& str);
-std::string& trim_all_space(std::string& str);
-std::string& to_upper(std::string& str);
-std::string& to_lower(std::string& str);
-bool is_number(const std::string& str);
-std::vector <std::string> split(std::string str, char d);
-
-std::string replace(std::string str, const std::string& old, const std::string& newstr);
+JSBSIM_API double atof_locale_c(const std::string& input);
+JSBSIM_API std::string& trim_left(std::string& str);
+JSBSIM_API std::string& trim_right(std::string& str);
+JSBSIM_API std::string& trim(std::string& str);
+JSBSIM_API std::string& trim_all_space(std::string& str);
+JSBSIM_API std::string& to_upper(std::string& str);
+JSBSIM_API std::string& to_lower(std::string& str);
+JSBSIM_API bool is_number(const std::string& str);
+JSBSIM_API std::vector <std::string> split(std::string str, char d);
+JSBSIM_API std::string replace(std::string str, const std::string& old, const std::string& newstr);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
