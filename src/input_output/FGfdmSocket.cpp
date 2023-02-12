@@ -51,6 +51,8 @@ INCLUDES
 #include <unistd.h>
 #endif
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 #include <cstring>
 #include "FGfdmSocket.h"
 
