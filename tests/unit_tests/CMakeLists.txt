@@ -21,6 +21,7 @@ set(UNIT_TESTS FGColumnVector3Test
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   add_library(string_utilities STATIC ${PROJECT_SOURCE_DIR}/src/input_output/string_utilities.cpp)
+  target_compile_definitions(string_utilities PRIVATE JSBSIM_STATIC_LINK)
 endif()
 
 foreach(test ${UNIT_TESTS})
