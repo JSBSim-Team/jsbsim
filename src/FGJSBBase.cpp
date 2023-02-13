@@ -35,8 +35,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define BASE
-
 #include "FGJSBBase.h"
 #include "models/FGAtmosphere.h"
 
