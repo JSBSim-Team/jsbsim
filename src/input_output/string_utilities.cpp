@@ -35,12 +35,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <errno.h>
+#include <iostream>
+#include <sstream>
+#include <stdio.h>
 #ifdef __APPLE__
 #include <xlocale.h>
 #else
 #include <locale.h>
 #endif
-#include <sstream>
 
 #include "FGJSBBase.h"
 #include "string_utilities.h"
@@ -51,6 +53,7 @@ typedef _locale_t locale_t;
 #define strtod_l _strtod_l
 #endif
 
+namespace JSBSim {
 struct CNumericLocale
 {
   CNumericLocale()
@@ -100,3 +103,92 @@ double atof_locale_c(const std::string& input)
   std::cerr << s.str() << std::endl;
   throw JSBSim::BaseException(s.str());
 }
+
+
+std::string& trim_left(std::string& str)
+{
+  while (!str.empty() && isspace((unsigned char)str[0])) {
+    str = str.erase(0,1);
+  }
+  return str;
+}
+
+std::string& trim_right(std::string& str)
+{
+  while (!str.empty() && isspace((unsigned char)str[str.size()-1])) {
+    str = str.erase(str.size()-1,1);
+  }
+  return str;
+}
+
+std::string& trim(std::string& str)
+{
+  if (str.empty()) return str;
+  std::string temp_str = trim_right(str);
+  return str = trim_left(temp_str);
+}
+
+std::string& trim_all_space(std::string& str)
+{
+  for (size_t i=0; i<str.size(); i++) {
+    if (isspace((unsigned char)str[i])) {
+      str = str.erase(i,1);
+      --i;
+    }
+  }
+  return str;
+}
+
+std::string& to_upper(std::string& str)
+{
+  for (size_t i=0; i<str.size(); i++) str[i] = toupper(str[i]);
+  return str;
+}
+
+std::string& to_lower(std::string& str)
+{
+  for (size_t i=0; i<str.size(); i++) str[i] = tolower(str[i]);
+  return str;
+}
+
+bool is_number(const std::string& str)
+{
+  if (str.empty())
+    return false;
+  else
+    return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
+}
+
+std::vector <std::string> split(std::string str, char d)
+{
+  std::vector <std::string> str_array;
+  size_t index=0;
+  std::string temp = "";
+
+  trim(str);
+  index = str.find(d);
+  while (index != std::string::npos) {
+    temp = str.substr(0,index);
+    trim(temp);
+    if (!temp.empty()) str_array.push_back(temp);
+    str = str.erase(0,index+1);
+    index = str.find(d);
+  }
+  if (!str.empty()) {
+    temp = trim(str);
+    if (!temp.empty()) str_array.push_back(temp);
+  }
+
+  return str_array;
+}
+
+std::string replace(std::string str, const std::string& oldstr, const std::string& newstr)
+{
+  std::string temp = str;
+  size_t old_idx = str.find(oldstr);
+  if (old_idx != std::string::npos) {
+    temp = str.replace(old_idx, 1, newstr);
+  }
+  return temp;
+}
+};

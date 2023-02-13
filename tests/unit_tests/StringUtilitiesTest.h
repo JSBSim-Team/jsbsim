@@ -1,9 +1,9 @@
 #include <string>
 #include <cxxtest/TestSuite.h>
-#define BASE
-#include <input_output/string_utilities.h>
-#undef BASE
 #include "FGJSBBase.h"
+#include <input_output/string_utilities.h>
+
+using namespace JSBSim;
 
 class StringUtilitiesTest : public CxxTest::TestSuite
 {
@@ -95,8 +95,8 @@ public:
     TS_ASSERT_EQUALS(atof_locale_c("1E-999"), 0.0);
     TS_ASSERT_EQUALS(atof_locale_c("-1E-999"), 0.0);
     TS_ASSERT_EQUALS(atof_locale_c("0.0"), 0.0);
-    TS_ASSERT_THROWS(atof_locale_c("1E+999"), JSBSim::BaseException&);
-    TS_ASSERT_THROWS(atof_locale_c("-1E+999"), JSBSim::BaseException&);
+    TS_ASSERT_THROWS(atof_locale_c("1E+999"), BaseException&);
+    TS_ASSERT_THROWS(atof_locale_c("-1E+999"), BaseException&);
   }
 
 private:

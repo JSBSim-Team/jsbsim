@@ -23,6 +23,7 @@ INCLUDES
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "FGJSBBase.h"
 
