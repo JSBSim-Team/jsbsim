@@ -19,7 +19,7 @@ INCLUDES
 #include <string.h>
 
 #include "easyxml.hxx"
-#include <expat.h>
+#include "expat.h"
 
 #include <fstream>
 #include <iostream>
