@@ -384,4 +384,38 @@ class TestStdAtmosphere(JSBSimTestCase):
             self.assertAlmostEqual(rhov/rhoa, ppm*1E-6)
             self.assertAlmostEqual(fdm['atmosphere/vapor-fraction-ppm']/ppm, 1.0)
 
+    def test_temperature_lower_limit(self):
+        fdm = self.create_fdm()
+        fdm.load_model('ball')
+        fdm['ic/h-sl-ft'] = 500000.
+        fdm.run_ic()
+
+        fdm['atmosphere/delta-T'] = -4000.
+        fdm.run()
+        self.assertAlmostEqual(fdm['atmosphere/T-R'], 1.8)
+
+        fdm['atmosphere/delta-T'] = 0.0
+        fdm['atmosphere/SL-graded-delta-T'] = -4000.
+        fdm.run()
+        self.assertAlmostEqual(fdm['atmosphere/T-sl-R'], fdm['atmosphere/T-R'])
+
+        fdm['atmosphere/delta-T'] = -4000.
+        fdm.run()
+        self.assertAlmostEqual(fdm['atmosphere/T-sl-R'], 1.8)
+
+    def test_pressure_lower_limit(self):
+        fdm = self.create_fdm()
+        fdm.load_model('ball')
+        fdm['ic/h-sl-ft'] = 1E7
+        fdm.run_ic()
+        self.assertAlmostEqual(fdm['atmosphere/P-psf']*1E17, 2.08854342)
+        self.assertGreater(fdm['atmosphere/pressure-altitude'], 900000.)
+        self.assertLess(fdm['atmosphere/pressure-altitude'], fdm['ic/h-sl-ft'])
+
+        fdm['atmosphere/P-sl-psf'] = 0.0
+        fdm.run()
+        self.assertAlmostEqual(fdm['atmosphere/P-sl-psf']*1E17, 2.08854342)
+        self.assertAlmostEqual(fdm['atmosphere/P-psf']*1E17, 2.08854342)
+
+
 RunTest(TestStdAtmosphere)

@@ -103,19 +103,58 @@ bool FGAtmosphere::Run(bool Holding)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Using pressure in Outer Space between stars in the Milky Way.
+
+double FGAtmosphere::ValidatePressure(double p, const string& msg, bool quiet) const
+{
+  const double MinPressure = ConvertToPSF(1E-15, ePascals);
+  if (p < MinPressure) {
+    if (!quiet) {
+      cerr << msg << " " << p << " is too low." << endl
+           << msg << " is capped to " << MinPressure << endl;
+    }
+    return MinPressure;
+  }
+  return p;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  // Make sure that the ambient temperature never drops to zero.
+  // According to Wikipedia, 1K is the temperature at the coolest natural place
+  // currently (2023) known in the Universe: the Boomerang Nebula
+
+double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet) const
+{
+  // Using pressure in Outer Space between stars in the Milky Way.
+  const double MinTemperature = ConvertToRankine(1.0, eKelvin);
+  if (t < MinTemperature) {
+    if (!quiet) {
+      cerr << msg << " " << t << " is too low." << endl
+           << msg << " is capped to " << MinTemperature << endl;
+    }
+    return MinTemperature;
+  }
+  return t;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAtmosphere::Calculate(double altitude)
 {
   FGPropertyNode* node = PropertyManager->GetNode();
+  double t =0.0;
   if (!PropertyManager->HasNode("atmosphere/override/temperature"))
-    Temperature = GetTemperature(altitude);
+    t = GetTemperature(altitude);
   else
-    Temperature = node->GetDouble("atmosphere/override/temperature");
+    t = node->GetDouble("atmosphere/override/temperature");
+  Temperature = ValidateTemperature(t, "", true);
 
+  double p = 0.0;
   if (!PropertyManager->HasNode("atmosphere/override/pressure"))
-    Pressure = GetPressure(altitude);
+    p = GetPressure(altitude);
   else
-    Pressure = node->GetDouble("atmosphere/override/pressure");
+    p = node->GetDouble("atmosphere/override/pressure");
+  Pressure = ValidatePressure(p, "", true);
 
   if (!PropertyManager->HasNode("atmosphere/override/density"))
     Density = GetDensity(altitude);
@@ -136,7 +175,7 @@ void FGAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
   double press = ConvertToPSF(pressure, unit);
 
-  SLpressure = press;
+  SLpressure = ValidatePressure(press, "Sea Level pressure");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +200,9 @@ double FGAtmosphere::GetSoundSpeed(double altitude) const
 
 void FGAtmosphere::SetTemperatureSL(double t, eTemperature unit)
 {
-  SLtemperature = ConvertToRankine(t, unit);
+  double temp = ConvertToRankine(t, unit);
+
+  SLtemperature = ValidateTemperature(temp, "Sea Level temperature");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
