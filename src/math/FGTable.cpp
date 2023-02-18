@@ -491,6 +491,7 @@ double FGTable::GetValue(void) const
 
 double FGTable::GetValue(double key) const
 {
+  assert(nCols == 1);
   assert(Data.size() == 2*nRows+2);
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
@@ -520,6 +521,7 @@ double FGTable::GetValue(double rowKey, double colKey) const
 {
   if (nCols == 1) return GetValue(rowKey);
 
+  assert(Type == tt2D);
   assert(Data.size() == (nCols+1)*(nRows+1));
 
   unsigned int c = 2;
@@ -550,6 +552,7 @@ double FGTable::GetValue(double rowKey, double colKey) const
 
 double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
+  assert(Type == tt3D);
   assert(Data.size() == nRows+1);
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
@@ -571,6 +574,21 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 
   double y0 = Tables[r-2]->GetValue(rowKey, colKey);
   return Factor*(Tables[r-1]->GetValue(rowKey, colKey) - y0) + y0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTable::GetMinValue(void) const
+{
+  assert(Type == tt1D);
+  assert(Data.size() == 2*nRows+2);
+
+  double minValue = HUGE_VAL;
+
+  for(unsigned int i=1; i<=nRows; ++i)
+    minValue = std::min(minValue, Data[2*i+1]);
+
+  return minValue;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

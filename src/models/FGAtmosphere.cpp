@@ -125,14 +125,15 @@ double FGAtmosphere::ValidatePressure(double p, const string& msg, bool quiet) c
 
 double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet) const
 {
-  // Using pressure in Outer Space between stars in the Milky Way.
-  const double MinTemperature = ConvertToRankine(1.0, eKelvin);
-  if (t < MinTemperature) {
+  // Minimum known temperature in the universe currently
+  constexpr double minUniverseTemperature = KelvinToRankine(1.0);
+
+  if (t < minUniverseTemperature) {
     if (!quiet) {
       cerr << msg << " " << t << " is too low." << endl
-           << msg << " is capped to " << MinTemperature << endl;
+           << msg << " is capped to " << minUniverseTemperature << endl;
     }
-    return MinTemperature;
+    return minUniverseTemperature;
   }
   return t;
 }
