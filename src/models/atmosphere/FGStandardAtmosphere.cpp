@@ -345,18 +345,26 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 
 void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
 {
-  unsigned int numRows = StdAtmosTemperatureTable.GetNumRows();
-  const double minTemperature = StdAtmosTemperatureTable(numRows, 1) - 1.8;
+  // Retrieve the minimum temperature in the standard atmosphere, may not be the
+  // last row in future if for example it's extended and maybe there is some
+  // temperature inversion layer etc. So run through and find the minimum.
+  const double minStdAtmosphereTemp = StdAtmosTemperatureTable.GetMinValue();
+
+  // Minimum known temperature in the universe currently
+  constexpr double minUniverseTemperature = KelvinToRankine(1.0);
 
   if (unit == eCelsius || unit == eKelvin)
     t *= 1.80; // If temp delta "t" is given in metric, scale up to English
 
   TemperatureBias = t;
-  if (TemperatureBias <= -minTemperature) {
+  // Confirm the temperature bias isn't going to result in an atmosphere
+  // temperature lower than the  lowest known temperature in the universe
+  if (minStdAtmosphereTemp + TemperatureBias < minUniverseTemperature) {
+    double minBias = minUniverseTemperature - minStdAtmosphereTemp;
     cerr << "The temperature bias " << TemperatureBias << " R is too low. "
          << "It could result in temperatures below the absolute zero." << endl
-         << "Temperature bias is therefore capped to " << -minTemperature << endl;
-    TemperatureBias = -minTemperature;
+         << "Temperature bias is therefore capped to " << minBias << endl;
+    TemperatureBias = minBias;
   }
 
   CalculatePressureBreakpoints(SLpressure);
@@ -393,9 +401,11 @@ void FGStandardAtmosphere::SetSLTemperatureGradedDelta(eTemperature unit, double
 
 void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, eTemperature unit)
 {
-  unsigned int numRows = StdAtmosTemperatureTable.GetNumRows();
-  const double minTemperature = StdAtmosTemperatureTable(numRows, 1);
-  const double minDeltaTemperature = minTemperature - StdSLtemperature;
+  // Retrieve the minimum temperature in the standard atmosphere, may not be the
+  // last row in future if for example it's extended and maybe there is some
+  // temperature inversion layer etc. So run through and find the minimum.
+  const double minStdAtmosphereTemp = StdAtmosTemperatureTable.GetMinValue();
+  const double minDeltaTemperature = minStdAtmosphereTemp - StdSLtemperature;
 
   if (unit == eCelsius || unit == eKelvin)
     deltemp *= 1.80; // If temp delta "t" is given in metric, scale up to English
