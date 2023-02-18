@@ -121,6 +121,46 @@ public:
     TS_ASSERT_EQUALS(t.GetValue(),  1.5);
   }
 
+  void testMinValue() {
+    FGTable t1(1);
+    t1 << 0.0 << 1.0;
+
+    TS_ASSERT_EQUALS(t1.GetMinValue(), 1.0);
+
+    FGTable t21(2);
+    t21 << 0.0 << -1.0
+        << 1.0 << 5.0;
+
+    TS_ASSERT_EQUALS(t21.GetMinValue(), -1.0);
+
+    FGTable t22(2);
+    t22 << 0.0 << 1.0
+        << 1.0 << -5.0;
+
+    TS_ASSERT_EQUALS(t22.GetMinValue(), -5.0);
+
+    FGTable t31(3);
+    t31 << 0.0 << -1.0
+        << 1.0 << 5.0
+        << 3.0 << 3.0;
+
+    TS_ASSERT_EQUALS(t31.GetMinValue(), -1.0);
+
+    FGTable t32(3);
+    t32 << 0.0 << 1.0
+        << 1.0 << -5.0
+        << 3.0 << 3.0;
+
+    TS_ASSERT_EQUALS(t32.GetMinValue(), -5.0);
+
+    FGTable t33(3);
+    t33 << 0.0 << 1.0
+        << 1.0 << 5.0
+        << 3.0 << -3.0;
+
+    TS_ASSERT_EQUALS(t33.GetMinValue(), -3.0);
+  }
+
   void testLoadInternalFromXML() {
     auto pm = make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the

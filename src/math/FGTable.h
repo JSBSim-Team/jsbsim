@@ -248,12 +248,31 @@ public:
   /// The constructor for a table
   FGTable (std::shared_ptr<FGPropertyManager> propMan, Element* el,
            const std::string& prefix="");
-  FGTable (int );
+  FGTable (int);
   FGTable (int, int);
+
+  /// Get the current table value
   double GetValue(void) const;
+  /// @brief Get a value from a 1D internal table
+  /// @param key Row coordinate at which the value must be interpolated
+  /// @return The interpolated value
   double GetValue(double key) const;
+  /// @brief Get a value from a 2D internal table
+  /// @param rowKey Row coordinate at which the value must be interpolated
+  /// @param colKey Column coordinate at which the value must be interpolated
+  /// @return The interpolated value
   double GetValue(double rowKey, double colKey) const;
+  /// @brief Get a value from a 3D internal table
+  /// @param rowKey Row coordinate at which the value must be interpolated
+  /// @param colKey Column coordinate at which the value must be interpolated
+  /// @param TableKey Table coordinate at which the value must be interpolated
+  /// @return The interpolated value
   double GetValue(double rowKey, double colKey, double TableKey) const;
+
+  double GetMinValue(void) const;
+  double GetMinValue(double colKey) const;
+  double GetMinValue(double colKey, double TableKey) const;
+
   /** Read the table in.
       Data in the config file should be in matrix format with the row
       independents as the first column and the column independents in
