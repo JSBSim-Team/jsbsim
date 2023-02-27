@@ -224,7 +224,8 @@ double FGStandardAtmosphere::GetPressure(double altitude) const
 
 void FGStandardAtmosphere::SetPressureSL(ePressure unit, double pressure)
 {
-  SLpressure = ConvertToPSF(pressure, unit);
+  double p = ConvertToPSF(pressure, unit);
+  SLpressure = ValidatePressure(p, "Sea Level pressure");
   CalculateSLDensity();
   CalculatePressureBreakpoints(SLpressure);
 }
@@ -328,12 +329,12 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 {
   double targetTemp = ConvertToRankine(t, unit);
   double GeoPotAlt = GeopotentialAltitude(h);
-
-  TemperatureBias = targetTemp - GetStdTemperature(h);
+  double bias = targetTemp - GetStdTemperature(h);
 
   if (GeoPotAlt <= GradientFadeoutAltitude)
-    TemperatureBias -= TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
+    bias -= TemperatureDeltaGradient * (GradientFadeoutAltitude - GeoPotAlt);
 
+  SetTemperatureBias(eRankine, bias);
   CalculatePressureBreakpoints(SLpressure);
 
   SLtemperature = GetTemperature(0.0);
@@ -344,10 +345,28 @@ void FGStandardAtmosphere::SetTemperature(double t, double h, eTemperature unit)
 
 void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
 {
+  // Retrieve the minimum temperature in the standard atmosphere, may not be the
+  // last row in future if for example it's extended and maybe there is some
+  // temperature inversion layer etc. So run through and find the minimum.
+  const double minStdAtmosphereTemp = StdAtmosTemperatureTable.GetMinValue();
+
+  // Minimum known temperature in the universe currently
+  constexpr double minUniverseTemperature = KelvinToRankine(1.0);
+
   if (unit == eCelsius || unit == eKelvin)
     t *= 1.80; // If temp delta "t" is given in metric, scale up to English
 
   TemperatureBias = t;
+  // Confirm the temperature bias isn't going to result in an atmosphere
+  // temperature lower than the  lowest known temperature in the universe
+  if (minStdAtmosphereTemp + TemperatureBias < minUniverseTemperature) {
+    double minBias = minUniverseTemperature - minStdAtmosphereTemp;
+    cerr << "The temperature bias " << TemperatureBias << " R is too low. "
+         << "It could result in temperatures below the absolute zero." << endl
+         << "Temperature bias is therefore capped to " << minBias << endl;
+    TemperatureBias = minBias;
+  }
+
   CalculatePressureBreakpoints(SLpressure);
 
   SLtemperature = GetTemperature(0.0);
@@ -382,8 +401,21 @@ void FGStandardAtmosphere::SetSLTemperatureGradedDelta(eTemperature unit, double
 
 void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, eTemperature unit)
 {
+  // Retrieve the minimum temperature in the standard atmosphere, may not be the
+  // last row in future if for example it's extended and maybe there is some
+  // temperature inversion layer etc. So run through and find the minimum.
+  const double minStdAtmosphereTemp = StdAtmosTemperatureTable.GetMinValue();
+  const double minDeltaTemperature = minStdAtmosphereTemp - StdSLtemperature;
+
   if (unit == eCelsius || unit == eKelvin)
     deltemp *= 1.80; // If temp delta "t" is given in metric, scale up to English
+
+  if (deltemp <= minDeltaTemperature) {
+    cerr << "The temperature delta " << deltemp << " R is too low. "
+         << "It could result in temperatures below the absolute zero." << endl
+         << "Temperature delta is therefore capped to " << minDeltaTemperature << endl;
+    deltemp = minDeltaTemperature;
+  }
 
   TemperatureDeltaGradient = deltemp/(GradientFadeoutAltitude - GeopotentialAltitude(h));
   CalculateLapseRates();
@@ -584,10 +616,24 @@ void FGStandardAtmosphere::ValidateVaporMassFraction(double h)
 
 void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
 {
-  double altitude = CalculatePressureAltitude(Pressure, 0.0);
-  double VaporPressure = CalculateVaporPressure(ConvertToRankine(dewpoint, unit));
-  VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
-  ValidateVaporMassFraction(altitude);
+  double dewPoint_R = ConvertToRankine(dewpoint, unit);
+  constexpr double minDewPoint = -CelsiusToRankine(c) + 1.0;
+
+  if (dewPoint_R <= minDewPoint) {
+    cerr << "The dew point temperature " << dewPoint_R << " is lower than "
+         << minDewPoint << " R." << endl
+         << "Dew point is therefore capped to " << minDewPoint << endl;
+    dewPoint_R = minDewPoint;
+  }
+
+  double VaporPressure = CalculateVaporPressure(dewPoint_R);
+  SetVaporPressure(ePSF, VaporPressure);
+
+  double finalizedDewPoint = GetDewPoint(eRankine);
+  if (finalizedDewPoint < dewPoint_R) {
+    cerr << "Dew point temperature has been capped to " << finalizedDewPoint
+         << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -604,7 +650,7 @@ double FGStandardAtmosphere::GetDewPoint(eTemperature to) const
     dewpoint_degC = c*x / (b - x);
   }
 
-  return ConvertFromRankine(1.8*(dewpoint_degC + 273.15), to);
+  return ConvertFromRankine(CelsiusToRankine(dewpoint_degC), to);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -613,6 +659,16 @@ void FGStandardAtmosphere::SetVaporPressure(ePressure unit, double Pa)
 {
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
   double VaporPressure = ConvertToPSF(Pa, unit);
+  if (VaporPressure < 0.0) {
+    cerr << "The vapor pressure cannot be negative." << endl
+         << "Vapor pressure is set to 0.0" << endl;
+    VaporPressure = 0.0;
+  } else if (VaporPressure >= Pressure) {
+    cerr << "The vapor pressure " << VaporPressure
+         << " PSF is higher than the ambient pressure." << endl
+         << "Vapor pressure is therefore capped to " << Pressure-1.0 << endl;
+    VaporPressure = Pressure - 1.0;
+  }
   VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
   ValidateVaporMassFraction(altitude);
 }
@@ -644,10 +700,18 @@ double FGStandardAtmosphere::GetRelativeHumidity(void) const
 
 void FGStandardAtmosphere::SetRelativeHumidity(double RH)
 {
-  double altitude = CalculatePressureAltitude(Pressure, 0.0);
+  if (RH < 0.0) {
+    cerr << "The relative humidity cannot be negative." << endl
+         << "Relative humidity is set to 0%" << endl;
+    RH = 0.0;
+  } else if (RH > 100.0) {
+    cerr << "The relative humidity cannot be higher than 100%." << endl
+         << "Relative humidity is set to 100%" << endl;
+    RH = 100.0;
+  }
+
   double VaporPressure = 0.01*RH*SaturatedVaporPressure;
-  VaporMassFraction = Rdry * VaporPressure / (Rwater * (Pressure - VaporPressure));
-  ValidateVaporMassFraction(altitude);
+  SetVaporPressure(ePSF, VaporPressure);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -664,6 +728,11 @@ void FGStandardAtmosphere::SetVaporMassFractionPPM(double frac)
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
   VaporMassFraction = frac*1E-6;
   ValidateVaporMassFraction(altitude);
+
+  if (fabs(VaporMassFraction*1E6-frac)>1E-2) {
+    cerr << "The vapor mass fraction " << frac << " has been capped to "
+         << VaporMassFraction*1E6 << "PPM." << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

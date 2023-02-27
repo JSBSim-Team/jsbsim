@@ -254,6 +254,16 @@ protected:
   /// Converts from PSF (pounds per square foot) to one of several unit systems.
   double ConvertFromPSF(double t, ePressure unit=ePSF) const;
 
+  /// Check that the pressure is within plausible boundaries.
+  /// @param msg Message to display if the pressure is out of boundaries
+  /// @param quiet Don't display the message if set to true
+  double ValidatePressure(double p, const string& msg, bool quiet=false) const;
+
+  /// Check that the temperature is within plausible boundaries.
+  /// @param msg Message to display if the pressure is out of boundaries
+  /// @param quiet Don't display the message if set to true
+  double ValidateTemperature(double t, const string& msg, bool quiet=false) const;
+
   /// @name ISA constants
   //@{
   /// Universal gas constant - ft*lbf/R/mol
