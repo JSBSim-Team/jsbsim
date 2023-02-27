@@ -1033,16 +1033,18 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   if (document->HasAttribute("version"))
     version = document->GetAttributeValueAsNumber("version");
 
-  if (version == HUGE_VAL) {
+    if (version >= 3.0) {
+      const string s("Only initialization file formats 1 and 2 are currently supported");
+      cerr << document->ReadFrom() << endl << s << endl;
+      throw BaseException(s);
+    } else if (version >= 2.0) {
+      result = Load_v2(document);
+    } else if (version >= 1.0) {
+      result = Load_v1(document);
+    }
+
+  } else {
     result = Load_v1(document); // Default to the old version
-  } else if (version >= 3.0) {
-    const string s("Only initialization file formats 1 and 2 are currently supported");
-    cerr << document->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
-  } else if (version >= 2.0) {
-    result = Load_v2(document);
-  } else if (version >= 1.0) {
-    result = Load_v1(document);
   }
 
   // Check to see if any engines are specified to be initialized in a running state
