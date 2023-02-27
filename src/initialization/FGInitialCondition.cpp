@@ -1030,7 +1030,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   double version = HUGE_VAL;
   bool result = false;
 
-  if (document->HasAttribute("version"))
+  if (document->HasAttribute("version")) {
     version = document->GetAttributeValueAsNumber("version");
 
     if (version >= 3.0) {
