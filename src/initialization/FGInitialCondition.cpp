@@ -1027,21 +1027,23 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
     throw BaseException(s.str());
   }
 
-  double version = HUGE_VAL;
   bool result = false;
 
-  if (document->HasAttribute("version"))
-    version = document->GetAttributeValueAsNumber("version");
+  // If doc has an version, check it. Otherwise fall back to legacy.
+  if (document->HasAttribute("version")) {
+    double version = document->GetAttributeValueAsNumber("version");
+    
+    if (version >= 3.0) {
+      const string s("Only initialization file formats 1 and 2 are currently supported");
+      cerr << document->ReadFrom() << endl << s << endl;
+      throw BaseException(s);
+    } else if (version >= 2.0) {
+      result = Load_v2(document);
+    } else if (version >= 1.0) {
+      result = Load_v1(document);
+    }
 
-  if (version == HUGE_VAL) {
-    result = Load_v1(document); // Default to the old version
-  } else if (version >= 3.0) {
-    const string s("Only initialization file formats 1 and 2 are currently supported");
-    cerr << document->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
-  } else if (version >= 2.0) {
-    result = Load_v2(document);
-  } else if (version >= 1.0) {
+  } else {
     result = Load_v1(document);
   }
 
