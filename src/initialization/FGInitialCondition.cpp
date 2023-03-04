@@ -1027,12 +1027,11 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
     throw BaseException(s.str());
   }
 
-  double version = HUGE_VAL;
   bool result = false;
 
   // If doc has an version, check it. Otherwise fall back to legacy.
   if (document->HasAttribute("version")) {
-    version = document->GetAttributeValueAsNumber("version");
+    double version = document->GetAttributeValueAsNumber("version");
     
     if (version >= 3.0) {
       const string s("Only initialization file formats 1 and 2 are currently supported");
