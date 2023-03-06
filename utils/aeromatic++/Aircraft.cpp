@@ -603,7 +603,31 @@ Aeromatic::write_XML()
     file << " </fileheader>" << std::endl;
     file << std::endl;
     file << "<!--\n  File:     " << _name << ".xml" << std::endl;
-    file << "  Inputs:" << std::endl;
+    file << "  Input parameters:" << std::endl;
+    for (auto it : _general_order) {
+        Param *param = _general[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : _weight_balance_order) {
+        Param *param = _weight_balance[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : _geometry_order) {
+        Param *param = _geometry[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : get_systems())
+    {
+        auto system = it;
+        Param* param;
+        system->param_reset();
+        while ((param = system->param_next()) != 0) {
+            file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+        }
+    }
+//
+    file << std::endl;
+    file << "  Specifications:" << std::endl;
     file << "    name:          " << _name << std::endl;
     file << "    type:          ";
     if (_no_engines == 0) file << "No engine ";
