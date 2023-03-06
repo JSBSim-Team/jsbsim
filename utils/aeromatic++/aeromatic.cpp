@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
     }
 
 #if defined(__GNUC__) && !defined(sgi)
-    feenableexcept(FE_INVALID);
+//  feenableexcept(FE_INVALID);
 #endif
 
     cout << endl;
