@@ -249,6 +249,18 @@ bool Aeromatic::fdm()
 
 
 //***** METRICS ***************************************
+    // empty weight > max weight? then assume a user mistake.
+    if (_empty_weight > _max_weight)
+    {
+        float tmp = _max_weight;
+        _max_weight = _empty_weight;
+        _empty_weight = tmp;
+    }
+
+    if (_max_weight == 0) {
+        _max_weight = 10000.0f;
+    }
+
     _payload = _max_weight;
     _stall_weight = _max_weight;
 
@@ -272,6 +284,10 @@ bool Aeromatic::fdm()
         _wing.aspect = aircraft->get_aspect_ratio();
     } else {
         _user_wing_data++;
+    }
+
+    if (_wing.span == 0) {
+        _wing.span = sqrtf(_wing.aspect * _wing.area);
     }
 
     if (_wing.taper == 0) {
@@ -319,6 +335,22 @@ bool Aeromatic::fdm()
         }
         _wing.sweep_le *= RAD_TO_DEG;
         _wing.sweep_le += _wing.sweep;
+    }
+
+    if (_length == 0) {
+        _length = _wing.span;
+    }
+
+    if (_stall_speed == 0)
+    {
+        float rho = 0.0023769f;
+        aircraft->set_lift();
+        _stall_speed = sqrtf(2.0f*_stall_weight/(_CL0*rho*_wing.area));
+    }
+
+    // estimate empty weight, based on max weight
+    if (_empty_weight == 0) {
+        _empty_weight = _max_weight * aircraft->get_empty_weight();
     }
 
     if (_wing.thickness == 0)
@@ -421,13 +453,6 @@ bool Aeromatic::fdm()
         _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
     }
 
-//***** EMPTY WEIGHT *********************************
-
-    // estimate empty weight, based on max weight
-    if (_empty_weight == 0) {
-        _empty_weight = _max_weight * aircraft->get_empty_weight();
-    }
-
 //***** MOMENTS OF INERTIA ******************************
 
     // use Roskam's formulae to estimate moments of inertia
@@ -479,6 +504,7 @@ bool Aeromatic::fdm()
     payload_loc[Y] = _cg_loc[Y];
     payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
+    if (_payload < 0.0f) _payload = 0.0f;
 
 //***** COEFFICIENTS **********************************
     aircraft->set_lift();

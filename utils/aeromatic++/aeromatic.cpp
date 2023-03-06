@@ -167,6 +167,10 @@ int main(int argc, char *argv[])
         in.basic_ios<char>::rdbuf(cin.rdbuf());
     }
 
+#if defined(__GNUC__) && !defined(sgi)
+    feenableexcept(FE_INVALID);
+#endif
+
     cout << endl;
     cout << "** AeromatiC++ version " << AEROMATIC_VERSION_STR << endl;
     cout << "Aeromatic is a JSBSim configuration file generation utility." << endl;

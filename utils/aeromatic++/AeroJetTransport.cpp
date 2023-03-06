@@ -38,7 +38,9 @@ JetTransport::JetTransport(Aeromatic *p) : Aircraft(p)
     _subclasses.push_back("Passenger Jet Airliner");
     _subclasses.push_back("Transonic Jet Transport");
 
-    _systems.push_back(new Propulsion(_aircraft));
+    if (_aircraft->_no_engines > 0) {
+        _systems.push_back(new Propulsion(_aircraft));
+    }
     _systems.push_back(new ThrustReverse(_aircraft));
     _systems.push_back(new Controls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
