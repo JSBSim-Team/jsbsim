@@ -505,7 +505,7 @@ public:
 
   /** Gets the initial total wind velocity in feet/sec.
       @return Initial wind velocity in feet/second */
-  double GetWindFpsIC(void)  const;
+  double GetWindFpsIC(void) const;
 
   /** Gets the initial wind direction.
       @return Initial wind direction in feet/second */
