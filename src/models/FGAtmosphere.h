@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGAtmosphere : public FGModel {
+class JSBSIM_API FGAtmosphere : public FGModel {
 public:
 
   /// Enums for specifying temperature units.
