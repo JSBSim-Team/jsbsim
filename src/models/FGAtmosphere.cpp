@@ -53,9 +53,7 @@ CLASS IMPLEMENTATION
 
 // Atmosphere constants in British units converted from the SI values specified in the
 // ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
-double FGAtmosphere::Reng = Rstar / Mair;
-
-const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng*StdDaySLtemperature);
+const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng0*StdDaySLtemperature);
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 {
@@ -175,6 +173,7 @@ void FGAtmosphere::SetPressureSL(ePressure unit, double pressure)
   double press = ConvertToPSF(pressure, unit);
 
   SLpressure = ValidatePressure(press, "Sea Level pressure");
+  SLdensity = GetDensity(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,6 +201,8 @@ void FGAtmosphere::SetTemperatureSL(double t, eTemperature unit)
   double temp = ConvertToRankine(t, unit);
 
   SLtemperature = ValidateTemperature(temp, "Sea Level temperature");
+  SLdensity = GetDensity(0.0);
+  SLsoundspeed = GetSoundSpeed(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -285,10 +285,12 @@ protected:
   */
   static constexpr double g0 = 9.80665 / fttom;
   /// Specific gas constant for air - ft*lbf/slug/R
-  static double Reng;
+  static constexpr double Reng0 = Rstar / Mair;
   //@}
 
   static constexpr double SHRatio = 1.4;
+
+  double Reng = Reng0;
 
   virtual void bind(void);
   void Debug(int from) override;
