@@ -51,15 +51,13 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// Atmosphere constants in British units converted from the SI values specified in the 
+// Atmosphere constants in British units converted from the SI values specified in the
 // ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
 double FGAtmosphere::Reng = Rstar / Mair;
 
 const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng*StdDaySLtemperature);
 
-FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                               PressureAltitude(0.0),      // ft
-                                               DensityAltitude(0.0)       // ft
+FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAtmosphere";
 
@@ -80,11 +78,11 @@ bool FGAtmosphere::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  Calculate(0.0);
   SLtemperature = Temperature = StdDaySLtemperature;
   SLpressure = Pressure = StdDaySLpressure;
   SLdensity = Density = Pressure/(Reng*Temperature);
   SLsoundspeed = Soundspeed = StdDaySLsoundspeed;
+  Calculate(0.0);
 
   return true;
 }
@@ -158,7 +156,7 @@ void FGAtmosphere::Calculate(double altitude)
   Pressure = ValidatePressure(p, "", true);
 
   if (!PropertyManager->HasNode("atmosphere/override/density"))
-    Density = GetDensity(altitude);
+    Density = Pressure/(Reng*Temperature);
   else
     Density = node->GetDouble("atmosphere/override/density");
 
