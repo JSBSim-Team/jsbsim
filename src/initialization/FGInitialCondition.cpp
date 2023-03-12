@@ -919,7 +919,8 @@ double FGInitialCondition::GetWindDirDegIC(void) const
   FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
 
-  return atan2(_vWIND_NED(eV), _vWIND_NED(eU))*radtodeg;
+  return _vWIND_NED.Magnitude(eU, eV) == 0.0 ? 0.0
+                              : atan2(_vWIND_NED(eV), _vWIND_NED(eU))*radtodeg;
 }
 
 //******************************************************************************
