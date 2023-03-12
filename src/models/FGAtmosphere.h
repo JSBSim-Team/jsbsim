@@ -216,12 +216,12 @@ public:
 
 protected:
   // Sea level conditions
-  double SLtemperature = 1.0;
+  double SLtemperature = 1.8;
   double SLdensity = 1.0;
   double SLpressure = 1.0;
   double SLsoundspeed = 1.0;
   // Current actual conditions at altitude
-  double Temperature = 1.0;
+  double Temperature = 1.8;
   double Density = 0.0;
   double Pressure = 0.0;
   double Soundspeed = 0.0;

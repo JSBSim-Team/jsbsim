@@ -225,7 +225,7 @@ double FGAtmosphere::ConvertToRankine(double t, eTemperature unit) const
     targetTemp = t*1.8;
     break;
   default:
-    break;
+    throw BaseException("Undefined temperature unit given");
   }
 
   return targetTemp;
@@ -251,7 +251,7 @@ double FGAtmosphere::ConvertFromRankine(double t, eTemperature unit) const
     targetTemp = t/1.8;
     break;
   default:
-    break;
+    throw BaseException("Undefined temperature unit given");
   }
 
   return targetTemp;
@@ -277,7 +277,7 @@ double FGAtmosphere::ConvertToPSF(double p, ePressure unit) const
     targetPressure = p*70.7180803;
     break;
   default:
-    throw("Undefined pressure unit given");
+    throw BaseException("Undefined pressure unit given");
   }
 
   return targetPressure;
@@ -301,7 +301,7 @@ double FGAtmosphere::ConvertFromPSF(double p, ePressure unit) const
     targetPressure = p/70.7180803;
     break;
   default:
-    throw("Undefined pressure unit given");
+    throw BaseException("Undefined pressure unit given");
   }
 
   return targetPressure;
