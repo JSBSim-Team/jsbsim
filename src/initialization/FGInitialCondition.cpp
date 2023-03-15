@@ -581,7 +581,7 @@ void FGInitialCondition::SetWindDownKtsIC(double wD)
   const FGMatrix33& Tb2l = orientation.GetTInv();
   FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
 
-  _vt_NED(eW) = vUVW_NED(eW) + wD;
+  _vt_NED(eW) = vUVW_NED(eW) + wD * ktstofps;
   vt = _vt_NED.Magnitude();
 
   calcAeroAngles(_vt_NED);
@@ -919,19 +919,16 @@ double FGInitialCondition::GetWindDirDegIC(void) const
   FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
   FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
 
-  return _vWIND_NED(eV) == 0.0 ? 0.0
-                               : atan2(_vWIND_NED(eV), _vWIND_NED(eU))*radtodeg;
+  return _vWIND_NED.Magnitude(eU, eV) == 0.0 ? 0.0
+                              : atan2(_vWIND_NED(eV), _vWIND_NED(eU))*radtodeg;
 }
 
 //******************************************************************************
 
-double FGInitialCondition::GetNEDWindFpsIC(int idx) const
-{
+FGColumnVector3 FGInitialCondition::GetWindNEDFpsIC(void) const {
   const FGMatrix33& Tb2l = orientation.GetTInv();
   FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
-  FGColumnVector3 _vWIND_NED = _vt_NED - vUVW_NED;
-
-  return _vWIND_NED(idx);
+  return _vt_NED - vUVW_NED;
 }
 
 //******************************************************************************
@@ -1032,7 +1029,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
   // If doc has an version, check it. Otherwise fall back to legacy.
   if (document->HasAttribute("version")) {
     double version = document->GetAttributeValueAsNumber("version");
-    
+
     if (version >= 3.0) {
       const string s("Only initialization file formats 1 and 2 are currently supported");
       cerr << document->ReadFrom() << endl << s << endl;
