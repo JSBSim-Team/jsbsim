@@ -315,7 +315,7 @@ double FGAtmosphere::PitotTotalPressure(double mach, double p) const
   constexpr double b = SHRatio / (SHRatio-1.0);
   constexpr double c = 2.0*b;
   constexpr double d = 1.0 / (SHRatio-1.0);
-  const double coeff = pow(0.5*(SHRatio+1.0), b)*pow((SHRatio-1.0)/(SHRatio+1.0),-d);
+  const double coeff = pow(0.5*(SHRatio+1.0), b)*pow((SHRatio+1.0)/(SHRatio-1.0), d);
 
   if (mach < 0) return p;
   if (mach < 1)    //calculate total pressure assuming isentropic flow
@@ -346,12 +346,18 @@ double FGAtmosphere::PitotTotalPressure(double mach, double p) const
 
 double FGAtmosphere::MachFromImpactPressure(double qc, double p) const
 {
+  constexpr double a = 2.0/(SHRatio-1.0);
+  constexpr double b = (SHRatio-1.0)/SHRatio;
+  constexpr double c = 2.0/b;
+  constexpr double d = 0.5*a;
+  const double coeff = pow(0.5*(SHRatio+1.0), -0.25*c)*pow(0.5*(SHRatio+1.0)/SHRatio, -0.5*d);
+
   double A = qc / p + 1;
-  double M = sqrt(5.0*(pow(A, 1. / 3.5) - 1));  // Equation (4.12)
+  double M = sqrt(a*(pow(A, b) - 1.0));  // Equation (4.12)
 
   if (M > 1.0)
     for (unsigned int i = 0; i<10; i++)
-      M = 0.8812848543473311*sqrt(A*pow(1 - 1.0 / (7.0*M*M), 2.5));  // Equation (4.17)
+      M = coeff*sqrt(A*pow(1 - 1.0 / (c*M*M), d));  // Equation (4.17)
 
   return M;
 }
