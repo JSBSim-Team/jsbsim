@@ -175,7 +175,7 @@ void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
   double altitudeASL = GetAltitudeASLFtIC();
   double pressure = Atmosphere->GetPressure(altitudeASL);
-  double mach = MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
+  double mach = Atmosphere->MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
 
   SetVtrueFpsIC(mach * soundSpeed);
@@ -683,7 +683,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
   double rhoSL = Atmosphere->GetDensitySL();
 
   double mach0 = vt / soundSpeed;
-  double vc0 = VcalibratedFromMach(mach0, pressure);
+  double vc0 = Atmosphere->VcalibratedFromMach(mach0, pressure);
   double ve0 = vt * sqrt(rho/rhoSL);
 
   switch(lastLatitudeSet) {
@@ -725,7 +725,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = MachFromVcalibrated(vc0, pressure);
+      mach0 = Atmosphere->MachFromVcalibrated(vc0, pressure);
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
     case setmach:
@@ -755,7 +755,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
   double rhoSL = Atmosphere->GetDensitySL();
 
   double mach0 = vt / soundSpeed;
-  double vc0 = VcalibratedFromMach(mach0, pressure);
+  double vc0 = Atmosphere->VcalibratedFromMach(mach0, pressure);
   double ve0 = vt * sqrt(rho/rhoSL);
 
   switch(lastLatitudeSet) {
@@ -829,7 +829,7 @@ void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 
   switch(lastSpeedSet) {
     case setvc:
-      mach0 = MachFromVcalibrated(vc0, pressure);
+      mach0 = Atmosphere->MachFromVcalibrated(vc0, pressure);
       SetVtrueFpsIC(mach0 * soundSpeed);
       break;
     case setmach:
@@ -963,7 +963,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   double mach = vt / soundSpeed;
 
-  return fpstokts * VcalibratedFromMach(mach, pressure);
+  return fpstokts * Atmosphere->VcalibratedFromMach(mach, pressure);
 }
 
 //******************************************************************************

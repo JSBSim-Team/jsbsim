@@ -6,19 +6,6 @@
 class FGJSBBaseTest : public CxxTest::TestSuite, public JSBSim::FGJSBBase
 {
 public:
-  void testCASConversion() {
-    double p = 2116.228;
-    TS_ASSERT_EQUALS(VcalibratedFromMach(-0.1, p), 0.0);
-    TS_ASSERT_EQUALS(VcalibratedFromMach(0, p), 0.0);
-    TS_ASSERT_DELTA(VcalibratedFromMach(0.5, p), 558.2243, 1E-4);
-    TS_ASSERT_DELTA(VcalibratedFromMach(1.0, p), 1116.4486, 1E-4);
-    TS_ASSERT_DELTA(VcalibratedFromMach(1.5, p), 1674.6728, 1E-4);
-    TS_ASSERT_EQUALS(MachFromVcalibrated(0.0, p), 0.0);
-    TS_ASSERT_DELTA(MachFromVcalibrated(558.2243, p), 0.5, 1E-4);
-    TS_ASSERT_DELTA(MachFromVcalibrated(1116.4486, p), 1.0, 1E-4);
-    TS_ASSERT_DELTA(MachFromVcalibrated(1674.6728, p), 1.5, 1E-4);
-  }
-
   void testNumericRoutines() {
     double dx = 1.0;
     float  fx = 1.0;

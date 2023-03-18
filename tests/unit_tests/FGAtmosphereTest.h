@@ -611,4 +611,20 @@ public:
     TS_ASSERT_EQUALS(atm.GetTemperature(1000.), 1.8);
     TS_ASSERT_DELTA(atm.GetPressure(1000.)*psftopa*1e15, 1.0, 1e-5);
   }
+
+  void testCASConversion() {
+    FGFDMExec fdmex;
+    auto atm = DummyAtmosphere(&fdmex, -1.0, -100.0);
+
+    double p = 2116.228;
+    TS_ASSERT_EQUALS(atm.VcalibratedFromMach(-0.1, p), 0.0);
+    TS_ASSERT_EQUALS(atm.VcalibratedFromMach(0, p), 0.0);
+    TS_ASSERT_DELTA(atm.VcalibratedFromMach(0.5, p), 558.2243, 1E-4);
+    TS_ASSERT_DELTA(atm.VcalibratedFromMach(1.0, p), 1116.4486, 1E-4);
+    TS_ASSERT_DELTA(atm.VcalibratedFromMach(1.5, p), 1674.6728, 1E-4);
+    TS_ASSERT_EQUALS(atm.MachFromVcalibrated(0.0, p), 0.0);
+    TS_ASSERT_DELTA(atm.MachFromVcalibrated(558.2243, p), 0.5, 1E-4);
+    TS_ASSERT_DELTA(atm.MachFromVcalibrated(1116.4486, p), 1.0, 1E-4);
+    TS_ASSERT_DELTA(atm.MachFromVcalibrated(1674.6728, p), 1.5, 1E-4);
+  }
 };
