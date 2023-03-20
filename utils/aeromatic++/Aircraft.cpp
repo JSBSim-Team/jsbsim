@@ -255,9 +255,12 @@ bool Aeromatic::fdm()
         float tmp = _max_weight;
         _max_weight = _empty_weight;
         _empty_weight = tmp;
+        _warnings.push_back("Empty weight is set larger than maximum weigth, swapping.");
     }
 
-    if (_max_weight == 0) {
+    if (_max_weight == 0)
+    {
+        _alerts.push_back("Maximum weigth is set to zero. Guessing.");
         _max_weight = 10000.0f;
     }
 
@@ -337,7 +340,9 @@ bool Aeromatic::fdm()
         _wing.sweep_le += _wing.sweep;
     }
 
-    if (_length == 0) {
+    if (_length == 0)
+    {
+        _warnings.push_back("Aircraft length is zero. Change it to match the span.");
         _length = _wing.span;
     }
 
@@ -504,7 +509,11 @@ bool Aeromatic::fdm()
     payload_loc[Y] = _cg_loc[Y];
     payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
-    if (_payload < 0.0f) _payload = 0.0f;
+    if (_payload < 0.0f)
+    {
+        _alerts.push_back("Payload would have become negative. Clip it.");
+        _payload = 0.0f;
+    }
 
 //***** COEFFICIENTS **********************************
     aircraft->set_lift();

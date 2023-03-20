@@ -51,11 +51,19 @@ public:
 
     const char* get_verbose_description(int no_engines = -1);
 
-    const std::vector<std::string> get_subclasses() {
+    const std::vector<std::string>& get_warnings() {
+        return _warnings;
+    }
+
+    const std::vector<std::string>& get_alerts() {
+        return _alerts;
+    }
+
+    const std::vector<std::string>& get_subclasses() {
         return _subclasses;
     }
 
-    virtual const std::vector<System*> get_systems() {
+    virtual const std::vector<System*>& get_systems() {
         return _systems;
     }
 
@@ -106,6 +114,9 @@ protected:
     Aeromatic *_aircraft;
     const char* _description;
     std::vector<std::string> _subclasses;
+
+    std::vector<std::string> _warnings;
+    std::vector<std::string> _alerts;
 };
 
 
@@ -529,7 +540,7 @@ public:
     static std::string create_dir(std::string path, std::string subdir);
     static bool overwrite(std::string path);
 
-    const std::vector<System*> get_systems() override {
+    const std::vector<System*>& get_systems() override {
         return _aircraft[_atype]->get_systems();
     }
 
