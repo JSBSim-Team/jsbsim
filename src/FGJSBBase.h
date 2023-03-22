@@ -333,10 +333,10 @@ protected:
   static constexpr double hptoftlbssec = 550.0;
   static constexpr double psftoinhg = 0.014138;
   static constexpr double psftopa = 47.88;
-  static constexpr double ktstofps = 1.68781;
+  static constexpr double fttom = 0.3048;
+  static constexpr double ktstofps = 1852./(3600*fttom);
   static constexpr double fpstokts = 1.0 / ktstofps;
   static constexpr double inchtoft = 1.0/12.0;
-  static constexpr double fttom = 0.3048;
   static constexpr double m3toft3 = 1.0/(fttom*fttom*fttom);
   static constexpr double in3tom3 = inchtoft*inchtoft*inchtoft/m3toft3;
   static constexpr double inhgtopa = 3386.38;

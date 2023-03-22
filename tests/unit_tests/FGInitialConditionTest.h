@@ -9,6 +9,7 @@ using namespace JSBSim;
 
 const double epsilon = 100. * std::numeric_limits<double>::epsilon();
 const FGColumnVector3 zero {0.0, 0.0, 0.0};
+constexpr double ktstofps = 1852./(3600*0.3048);
 
 class FGInitialConditionTest : public CxxTest::TestSuite
 {
@@ -330,5 +331,32 @@ public:
       TS_ASSERT_DELTA(ic.GetThetaDegIC(), 0.0, epsilon);
       TS_ASSERT_DELTA(ic.GetPsiDegIC(), psi, epsilon*10.);
     }
+  }
+
+  void testWindVelocity() {
+    FGFDMExec fdmex;
+    FGInitialCondition ic(&fdmex);
+
+    ic.SetWindDownKtsIC(1.0);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), ktstofps, epsilon);
+
+    ic.SetWindNEDFpsIC(1.0, 2.0, 3.0);
+    TS_ASSERT_VECTOR_EQUALS(ic.GetWindNEDFpsIC(), FGColumnVector3(1.0, 2.0, 3.0));
+    TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 1.0, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 2.0, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindFpsIC(), sqrt(5.0), epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDirDegIC(), atan2(2.0, 1.0)*180./M_PI, epsilon);
+
+    double mag = ic.GetWindFpsIC();
+    ic.SetWindDirDegIC(30.);
+    TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 0.5*mag*sqrt(3.0), epsilon);
+    TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 0.5*mag, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
+
+    ic.SetWindMagKtsIC(7.0);
+    TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 3.5*sqrt(3.0)*ktstofps, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 3.5*ktstofps, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
   }
 };

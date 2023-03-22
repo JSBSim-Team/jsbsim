@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGAtmosphere : public FGModel {
+class JSBSIM_API FGAtmosphere : public FGModel {
 public:
 
   /// Enums for specifying temperature units.
@@ -90,7 +90,7 @@ public:
 
   /** Runs the atmosphere forces model; called by the Executive.
       Can pass in a value indicating if the executive is directing the simulation to Hold.
-      @param Holding if true, the executive has been directed to hold the sim from 
+      @param Holding if true, the executive has been directed to hold the sim from
                      advancing time. Some models may ignore this flag, such as the Input
                      model, which may need to be active to listen on a socket for the
                      "Resume" command to be given.
@@ -111,7 +111,7 @@ public:
   /// Returns the actual modeled temperature in degrees Rankine at a specified altitude.
   /// @param altitude The altitude above sea level (ASL) in feet.
   /// @return Modeled temperature in degrees Rankine at the specified altitude.
-  virtual double GetTemperature(double altitude) const = 0; 
+  virtual double GetTemperature(double altitude) const = 0;
 
   /// Returns the actual, modeled sea level temperature in degrees Rankine.
   /// @return The modeled temperature in degrees Rankine at sea level.
@@ -184,7 +184,7 @@ public:
 
   /// Returns the speed of sound in ft/sec at a given altitude in ft.
   virtual double GetSoundSpeed(double altitude) const;
-  
+
   /// Returns the sea level speed of sound in ft/sec.
   virtual double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
@@ -215,15 +215,23 @@ public:
   static const double StdDaySLsoundspeed;
 
 protected:
-  double    SLtemperature,    SLdensity,    SLpressure,    SLsoundspeed; // Sea level conditions
-  double      Temperature,      Density,      Pressure,      Soundspeed; // Current actual conditions at altitude
-
-  double PressureAltitude;
-  double DensityAltitude;
+  // Sea level conditions
+  double SLtemperature = 1.8;
+  double SLdensity = 1.0;
+  double SLpressure = 1.0;
+  double SLsoundspeed = 1.0;
+  // Current actual conditions at altitude
+  double Temperature = 1.8;
+  double Density = 0.0;
+  double Pressure = 0.0;
+  double Soundspeed = 0.0;
+  double PressureAltitude = 0.0;
+  double DensityAltitude = 0.0;
 
   static constexpr double SutherlandConstant = 198.72;  // deg Rankine
   static constexpr double Beta = 2.269690E-08; // slug/(sec ft R^0.5)
-  double Viscosity, KinematicViscosity;
+  double Viscosity = 0.0;
+  double KinematicViscosity = 0.0;
 
   /// Calculate the atmosphere for the given altitude.
   virtual void Calculate(double altitude);
@@ -244,7 +252,7 @@ protected:
 
   /// Converts to Rankine from one of several unit systems.
   double ConvertToRankine(double t, eTemperature unit) const;
-  
+
   /// Converts from Rankine to one of several unit systems.
   double ConvertFromRankine(double t, eTemperature unit) const;
 
@@ -277,10 +285,12 @@ protected:
   */
   static constexpr double g0 = 9.80665 / fttom;
   /// Specific gas constant for air - ft*lbf/slug/R
-  static double Reng;
+  static constexpr double Reng0 = Rstar / Mair;
   //@}
 
   static constexpr double SHRatio = 1.4;
+
+  double Reng = Reng0;
 
   virtual void bind(void);
   void Debug(int from) override;
