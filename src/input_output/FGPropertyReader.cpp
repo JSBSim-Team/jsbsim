@@ -64,12 +64,12 @@ bool FGPropertyReader::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
+void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override_props)
 {
   Element *property_element = el->FindElement("property");
   if (property_element && FGJSBBase::debug_lvl > 0) {
     cout << endl << "    ";
-    if (override)
+    if (override_props)
       cout << "Overriding";
     else
       cout << "Declared";
@@ -79,13 +79,15 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
   while (property_element) {
     SGPropertyNode* node = nullptr;
     double value=0.0;
-    if ( ! property_element->GetAttributeValue("value").empty())
+    bool has_value_attribute = !property_element->GetAttributeValue("value").empty();
+
+    if (has_value_attribute)
       value = property_element->GetAttributeValueAsNumber("value");
 
     string interface_property_string = property_element->GetDataLine();
     if (PM->HasNode(interface_property_string)) {
-      if (override) {
-        node = PM->GetNode(interface_property_string);
+      node = PM->GetNode(interface_property_string);
+      if (override_props) {
 
         if (FGJSBBase::debug_lvl > 0) {
           if (interface_prop_initial_value.find(node) == interface_prop_initial_value.end()) {
@@ -102,11 +104,15 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
         node->setDoubleValue(value);
       }
       else {
-        cerr << property_element->ReadFrom()
-             << "      Property " << interface_property_string 
-             << " is already defined." << endl;
-	property_element = el->FindNextElement("property");
-	continue;
+        if (has_value_attribute) {
+          cerr << property_element->ReadFrom()
+              << "      Property " << interface_property_string
+              << " is already defined." << endl
+              << "      Its value (" << node->getDoubleValue() << ") will not"
+              << " be overridden." << endl;
+        }
+        property_element = el->FindNextElement("property");
+        continue;
       }
     } else {
       node = PM->GetNode(interface_property_string, true);
@@ -114,7 +120,7 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
         node->setDoubleValue(value);
 
         if (FGJSBBase::debug_lvl > 0)
-          cout << "      " << interface_property_string << " (initial value: " 
+          cout << "      " << interface_property_string << " (initial value: "
                << value << ")" << endl << endl;
       }
       else {
@@ -130,7 +136,7 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override)
 
     property_element = el->FindNextElement("property");
   }
-  
+
   // End of interface property loading logic
 }
 }
