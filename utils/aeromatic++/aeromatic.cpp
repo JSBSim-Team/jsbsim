@@ -12,12 +12,12 @@
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
-// 
+//
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
@@ -167,6 +167,10 @@ int main(int argc, char *argv[])
         in.basic_ios<char>::rdbuf(cin.rdbuf());
     }
 
+#if defined(__GNUC__) && !defined(sgi)
+//  feenableexcept(FE_INVALID);
+#endif
+
     cout << endl;
     cout << "** AeromatiC++ version " << AEROMATIC_VERSION_STR << endl;
     cout << "Aeromatic is a JSBSim configuration file generation utility." << endl;
@@ -182,7 +186,7 @@ int main(int argc, char *argv[])
     cout << "** Weight and Balance **" << endl << endl;
     for (auto it : aeromatic._weight_balance_order) {
         ask(in, log, aeromatic._weight_balance[it]);
-    }  
+    }
     cout << endl;
 
     cout << "** Geometry **" << endl << endl;
@@ -225,6 +229,20 @@ int main(int argc, char *argv[])
         cout << aeromatic._dir;
     }
     cout << endl << endl;
+
+    auto& warnings = aeromatic.get_warnings();
+    for (auto it : warnings) {
+        cout << "Warning: " << it << endl;
+    }
+
+    cout << endl;
+
+    auto& alerts = aeromatic.get_alerts();
+    for (auto it : alerts) {
+        cout << "Alert: " << it << endl;
+    }
+
+    cout << endl << endl;;
 
     cout << "Press enter to continue." << endl;
     string input;

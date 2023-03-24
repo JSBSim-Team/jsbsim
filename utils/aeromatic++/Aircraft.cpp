@@ -249,6 +249,21 @@ bool Aeromatic::fdm()
 
 
 //***** METRICS ***************************************
+    // empty weight > max weight? then assume a user mistake.
+    if (_empty_weight > _max_weight)
+    {
+        float tmp = _max_weight;
+        _max_weight = _empty_weight;
+        _empty_weight = tmp;
+        _warnings.push_back("Empty weight is set larger than maximum weigth, swapping.");
+    }
+
+    if (_max_weight == 0)
+    {
+        _alerts.push_back("Maximum weigth is set to zero. Guessing.");
+        _max_weight = 10000.0f;
+    }
+
     _payload = _max_weight;
     _stall_weight = _max_weight;
 
@@ -272,6 +287,10 @@ bool Aeromatic::fdm()
         _wing.aspect = aircraft->get_aspect_ratio();
     } else {
         _user_wing_data++;
+    }
+
+    if (_wing.span == 0) {
+        _wing.span = sqrtf(_wing.aspect * _wing.area);
     }
 
     if (_wing.taper == 0) {
@@ -319,6 +338,24 @@ bool Aeromatic::fdm()
         }
         _wing.sweep_le *= RAD_TO_DEG;
         _wing.sweep_le += _wing.sweep;
+    }
+
+    if (_length == 0)
+    {
+        _warnings.push_back("Aircraft length is zero. Change it to match the span.");
+        _length = _wing.span;
+    }
+
+    if (_stall_speed == 0)
+    {
+        float rho = 0.0023769f;
+        aircraft->set_lift();
+        _stall_speed = sqrtf(2.0f*_stall_weight/(_CL0*rho*_wing.area));
+    }
+
+    // estimate empty weight, based on max weight
+    if (_empty_weight == 0) {
+        _empty_weight = _max_weight * aircraft->get_empty_weight();
     }
 
     if (_wing.thickness == 0)
@@ -421,13 +458,6 @@ bool Aeromatic::fdm()
         _vtail.de_da = 4.0f/(_vtail.aspect+2.0f);
     }
 
-//***** EMPTY WEIGHT *********************************
-
-    // estimate empty weight, based on max weight
-    if (_empty_weight == 0) {
-        _empty_weight = _max_weight * aircraft->get_empty_weight();
-    }
-
 //***** MOMENTS OF INERTIA ******************************
 
     // use Roskam's formulae to estimate moments of inertia
@@ -479,6 +509,11 @@ bool Aeromatic::fdm()
     payload_loc[Y] = _cg_loc[Y];
     payload_loc[Z] = _cg_loc[Z];
     _payload -= _empty_weight;
+    if (_payload < 0.0f)
+    {
+        _alerts.push_back("Payload would have become negative. Clip it.");
+        _payload = 0.0f;
+    }
 
 //***** COEFFICIENTS **********************************
     aircraft->set_lift();
@@ -577,7 +612,31 @@ Aeromatic::write_XML()
     file << " </fileheader>" << std::endl;
     file << std::endl;
     file << "<!--\n  File:     " << _name << ".xml" << std::endl;
-    file << "  Inputs:" << std::endl;
+    file << "  Input parameters:" << std::endl;
+    for (auto it : _general_order) {
+        Param *param = _general[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : _weight_balance_order) {
+        Param *param = _weight_balance[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : _geometry_order) {
+        Param *param = _geometry[it];
+        file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+    }
+    for (auto it : get_systems())
+    {
+        auto system = it;
+        Param* param;
+        system->param_reset();
+        while ((param = system->param_next()) != 0) {
+            file << "    " << std::left << std::setw(35) << param->name() << ": " << param->get() << std::endl;
+        }
+    }
+//
+    file << std::endl;
+    file << "  Specifications:" << std::endl;
     file << "    name:          " << _name << std::endl;
     file << "    type:          ";
     if (_no_engines == 0) file << "No engine ";
