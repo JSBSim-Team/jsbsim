@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.12)
 
 ################################################################################
 # Project description                                                          #
@@ -74,13 +74,13 @@ if (BUILD_PYTHON_MODULE)
   find_package(Cython)
 
   if (CYTHON_FOUND)
-    find_package(PythonLibs)
-    if (PYTHONLIBS_FOUND)
+    find_package(Python3 COMPONENTS Interpreter Development)
+    if (Python3_Development_FOUND)
       enable_testing()
       add_subdirectory(tests)
       add_subdirectory(python)
-    endif(PYTHONLIBS_FOUND)
-  elseif(NOT PYTHONLIBS_FOUND)
+    endif(Python3_Development_FOUND)
+  elseif(NOT Python3_Development_FOUND)
     message(WARNING "JSBSim Python module and test suite will not be built")
   endif(CYTHON_FOUND)
 endif(BUILD_PYTHON_MODULE)

@@ -15,16 +15,12 @@ else()
     endif(BACKWARD_FOUND)
   endif(FPECTL_DISPLAY_STACK_TRACE)
 
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/fpectl_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/fpectl_config.h)
-  set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in ${SETUP_PY})
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/python/findModuleFileName.py fpectl OUTPUT_VARIABLE FPECTL_MODULE_NAME)
-  set(FPECTL_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${FPECTL_MODULE_NAME})
-
-  add_custom_command(OUTPUT ${FPECTL_PYTHON_MODULE}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.h ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
-    COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${CMAKE_BINARY_DIR}/tests
-    COMMENT "Building fpectl module...")
-
-  add_custom_target(fpectl ALL DEPENDS ${FPECTL_PYTHON_MODULE})
+  set(FPECTL_CONFIG_HEADER ${CMAKE_CURRENT_BINARY_DIR}/fpectl_config.h)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/fpectl_config.h.in ${FPECTL_CONFIG_HEADER})
+  python3_add_library(fpectl MODULE ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
+                                    fpectlmodule.h
+                                    ${FPECTL_CONFIG_HEADER}
+                                    fpectlmodule.cpp)
+  target_include_directories(fpectl PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 endif(APPLE)
