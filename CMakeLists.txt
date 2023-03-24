@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.15)
 
 ################################################################################
 # Project description                                                          #
@@ -74,7 +74,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/python/CMakeModules)
 find_package(Cython)
 
 if (CYTHON_FOUND)
-    cmake_policy(SET CMP0094 NEW)  # makes FindPython3 prefer activated virtualenv Python over the latest version
+    cmake_policy(SET CMP0094 NEW)  # makes FindPython3 prefer activated virtualenv Python to the latest version
     find_package(Python3 COMPONENTS Interpreter Development)
     if (Python3_Development_FOUND)
       enable_testing()
