@@ -79,7 +79,9 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override_pr
   while (property_element) {
     SGPropertyNode* node = nullptr;
     double value=0.0;
-    if (!property_element->GetAttributeValue("value").empty())
+    bool has_value_attribute = !property_element->GetAttributeValue("value").empty();
+
+    if (has_value_attribute)
       value = property_element->GetAttributeValueAsNumber("value");
 
     string interface_property_string = property_element->GetDataLine();
@@ -102,7 +104,7 @@ void FGPropertyReader::Load(Element* el, FGPropertyManager* PM, bool override_pr
         node->setDoubleValue(value);
       }
       else {
-        if (!property_element->GetAttributeValue("value").empty()) {
+        if (has_value_attribute) {
           cerr << property_element->ReadFrom()
               << "      Property " << interface_property_string
               << " is already defined." << endl
