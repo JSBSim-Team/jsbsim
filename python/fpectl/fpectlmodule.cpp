@@ -66,7 +66,9 @@
   ** Added the display of stack trace: July 11, 2021. Bertrand Coconnier
   */
 
-#include "fpectl_config.h"
+#ifdef LIBBFD_FOUND
+#define BACKWARD_HAS_BFD 1
+#endif
 #ifdef BACKWARD_FOUND
 #include "backward.hpp"
 #endif
