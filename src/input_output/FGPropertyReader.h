@@ -62,7 +62,7 @@ CLASS DECLARATION
 class FGPropertyReader
 {
 public:
-  void Load(Element* el, FGPropertyManager* PropertyManager, bool override);
+  void Load(Element* el, FGPropertyManager* PropertyManager, bool override_props);
   bool ResetToIC(void);
 
   class const_iterator
