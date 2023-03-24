@@ -26,15 +26,15 @@
  * References:
  *
  * http://www.princeton.edu/~stengel/MAE331Lectures.html
- * http://www.dept.aoe.vt.edu/~mason/Mason_f/ConfigAeroTransonics.pdf
- * http://aerostudents.com/files/flightDynamics/lateralStabilityDerivatives.pdf
- * http://aerostudents.com/files/flightDynamics/longitudinalStabilityDerivatives.pdf
+ * https://archive.aoe.vt.edu/mason/Mason_f/ConfigAeroTransonics.pdf
+ * http://www.aerostudents.com/courses/flight-dynamics/flightDynamicsFullVersion.pdf
+ * http://www.aerostudents.com/courses/flight-dynamics/flightDynamicsFullVersion.pdf
  *
  * Formula's for CLalpha wing for different configurations:
  * http://aviation.stackexchange.com/questions/14508/calculating-a-finite-wings-lift-from-its-sectional-airfoil-shape
  *
  * See also:
- * http://www.flightlevelengineering.com/downloads/stab.pdf
+ * https://web.archive.org/web/20180712182926/http://www.flightlevelengineering.com/downloads/stab.pdf
  */
 
 #include <math.h>
