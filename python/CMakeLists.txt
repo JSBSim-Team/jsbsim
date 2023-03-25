@@ -17,7 +17,7 @@ set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
 if(DOXYGEN_FOUND AND BUILD_DOCS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
     doxy2pydocs.py)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} python/doxy2pydocs.py
+  execute_process(COMMAND ${Python3_EXECUTABLE} python/doxy2pydocs.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
   # Prepare the sphinx build files
@@ -129,7 +129,7 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findInstallDir.py OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+  execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findInstallDir.py OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
   file(MAKE_DIRECTORY ${PYTHON_INSTALL_DIR}/jsbsim)
   install(DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR} DESTINATION ${PYTHON_INSTALL_DIR} COMPONENT pymodules)
 endif()

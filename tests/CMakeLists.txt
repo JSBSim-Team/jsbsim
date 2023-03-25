@@ -54,5 +54,5 @@ set(PYTHON_TESTS ResetOutputFiles
 
 foreach(test ${PYTHON_TESTS})
   add_test(NAME ${test}
-    COMMAND ${PYTHON_EXECUTABLE} -B ${CMAKE_CURRENT_SOURCE_DIR}/${test}.py)
+    COMMAND ${Python3_EXECUTABLE} -B ${CMAKE_CURRENT_SOURCE_DIR}/${test}.py)
 endforeach()
