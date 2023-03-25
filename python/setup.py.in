@@ -20,7 +20,7 @@ import os
 
 from setuptools._distutils.ccompiler import new_compiler
 from setuptools._distutils.unixccompiler import UnixCCompiler
-from setuptools._distutils.log import log
+from setuptools._distutils import log
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
@@ -98,15 +98,15 @@ convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(
 
 # `cpp_compile_flag` is used for C++ compilation only (see class `C_CxxCompiler`)
 if compiler.compiler_type == 'unix':
-    cpp_compile_flag = ['-std=c++14']
+    cpp_compile_flag = ['-std=c++14', '-DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_UNIX_LINK_LIBRARIES}')
 elif compiler.compiler_type == 'msvc':
-    cpp_compile_flag = []
+    cpp_compile_flag = ['/DJSBSIM_STATIC_LINK', '/DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_WINDOWS_LINK_LIBRARIES}')
 else:
-    cpp_compile_flag = []
+    cpp_compile_flag = ['-DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES}')
 
