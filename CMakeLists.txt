@@ -71,11 +71,11 @@ option(INSTALL_JSBSIM_PYTHON_MODULE "Set to ON to install the Python module for 
 
 if (BUILD_PYTHON_MODULE)
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/python/CMakeModules)
+  cmake_policy(SET CMP0094 NEW)  # makes FindPython3 prefer activated virtualenv Python to the latest version
   find_package(Python3 COMPONENTS Interpreter Development)
   find_package(Cython)
 
   if (CYTHON_FOUND)
-    cmake_policy(SET CMP0094 NEW)  # makes FindPython3 prefer activated virtualenv Python to the latest version
     if (Python3_Development_FOUND)
       enable_testing()
       add_subdirectory(tests)
