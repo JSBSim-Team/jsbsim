@@ -16,11 +16,11 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import logging
 import os
 
 from setuptools._distutils.ccompiler import new_compiler
 from setuptools._distutils.unixccompiler import UnixCCompiler
+from setuptools._distutils.log import log
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
@@ -41,8 +41,9 @@ class InstallJSBSimModule(install_lib):
                 libpath = os.path.join(d, msvcp_dll)
                 if os.path.exists(libpath):
                     if not os.path.exists(self.install_dir):
-                        logging.info(f'creating {self.install_dir}')
+                        log.info(f'creating {self.install_dir}')
                         os.makedirs(self.install_dir)
+                    log.info("copying %s -> %s", libpath, self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
                                                          msvcp_dll))
                     break
@@ -79,9 +80,6 @@ class BuildC_CxxExtension(build_ext):
             for attr, value in old_compiler.__dict__.items():
                 setattr(self.compiler, attr, value)
         return build_ext.build_extension(self, ext)
-
-# Initialize the default logger to custom settings.
-logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 # Get the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
