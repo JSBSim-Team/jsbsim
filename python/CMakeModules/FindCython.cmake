@@ -21,12 +21,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #=============================================================================
+#
+# Bertrand Coconnier 2023/03/25 - Rely on CMake FindPython3 to locate the Python executable
 
 # Use the Cython executable that lives next to the Python executable
 # if it is a local installation.
-find_package( PythonInterp )
-if( PYTHONINTERP_FOUND )
-  get_filename_component( _python_path ${PYTHON_EXECUTABLE} PATH )
+if(Python3_Interpreter_FOUND)
+  get_filename_component( _python_path ${Python3_EXECUTABLE} PATH )
   find_program( CYTHON_EXECUTABLE
     NAMES cython cython.bat
     HINTS ${_python_path}
