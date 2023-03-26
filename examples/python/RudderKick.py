@@ -84,11 +84,9 @@ fdm.run_ic()
 try:
     fdm['simulation/do_simple_trim'] = 1
 
-except RuntimeError as e:
-    # The trim cannot succeed. Just make sure that the raised exception
-    # is due to the trim failure otherwise rethrow.
-    if e.args[0] != 'Trim Failed':
-        raise
+except jsbsim.TrimFailureError:
+    print("Trim failed, continuing rudder kick in an untrimmed state.")
+    pass  # Ignore trim failure
 
 # Time to run for in seconds
 run_period = 20
