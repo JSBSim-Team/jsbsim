@@ -5,6 +5,8 @@ include(UseCython)
 string(TIMESTAMP THIS_YEAR "%Y")
 
 # Declare JSBSim as a C++ project
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pxd COPYONLY)
@@ -15,7 +17,7 @@ set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
 if(DOXYGEN_FOUND AND BUILD_DOCS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
     doxy2pydocs.py)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} python/doxy2pydocs.py
+  execute_process(COMMAND ${Python3_EXECUTABLE} python/doxy2pydocs.py
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
   # Prepare the sphinx build files
@@ -28,14 +30,6 @@ endif(DOXYGEN_FOUND AND BUILD_DOCS)
 # Build the Python module using Cython and the JSBSim library
 compile_pyx(_jsbsim _JSBSIM_CXX ${JSBSIM_PYX})
 file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
-
-# Check if we are using Visual Studio msbuild
-if(MSVC)
-  string(TOUPPER CMAKE_GENERATOR _GENERATOR)
-  if(NOT (_GENERATOR STREQUAL NINJA))
-    set(USING_MSBUILD 1)
-  endif()
-endif(MSVC)
 
 # Build the package directory
 set(JSBSIM_PACKAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jsbsim)
@@ -106,26 +100,20 @@ endforeach(_FILE)
 # been built.
 file(RELATIVE_PATH BUILD_ROOT_PATH ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_BINARY_DIR})
 
-set(SETUP_PY ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
-configure_file(setup.py.in ${SETUP_PY})
+configure_file(setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/setup.py)
 
-execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findModuleFileName.py _jsbsim OUTPUT_VARIABLE PYTHON_MODULE_NAME)
-set(JSBSIM_PYTHON_MODULE ${JSBSIM_TEST_PACKAGE_DIR}/${PYTHON_MODULE_NAME})
+python3_add_library(_jsbsim MODULE ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h)
+target_include_directories(_jsbsim PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(_jsbsim PRIVATE libJSBSim)
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
 
-# setup.py build_ext is called with --force because dependencies and time stamps
-# are managed by CMake so we don't want setup.py to check them as well.
-add_custom_command(OUTPUT ${JSBSIM_PYTHON_MODULE}
-  DEPENDS ${SETUP_PY} ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/ExceptionManagement.h $<TARGET_FILE:libJSBSim>
-  COMMAND ${PYTHON_EXECUTABLE} ${SETUP_PY} build_ext -b ${JSBSIM_TEST_DIR} --force
-                                           $<$<BOOL:${USING_MSBUILD}>:--config> $<$<BOOL:${USING_MSBUILD}>:$<CONFIG>>
-                                           $<$<BOOL:${BUILD_SHARED_LIBS}>:--sharedlibs>
-                                           $<$<BOOL:${MINGW}>:--compiler> $<$<BOOL:${MINGW}>:mingw32>
-  COMMENT "Building Python module...")
+# Output directories for MSVC
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${JSBSIM_TEST_PACKAGE_DIR})
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_TEST_PACKAGE_DIR})
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_TEST_PACKAGE_DIR})
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_TEST_PACKAGE_DIR})
 
 add_subdirectory(fpectl)
-
-add_custom_target(PythonJSBSim ALL DEPENDS ${JSBSIM_PYTHON_MODULE})
-add_dependencies(PythonJSBSim libJSBSim)
 
 # Windows needs the DLL to be copied locally for unit tests to run.
 if(WIN32 AND BUILD_SHARED_LIBS)
@@ -139,7 +127,7 @@ endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findInstallDir.py OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+  execute_process(COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/findInstallDir.py OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
   file(MAKE_DIRECTORY ${PYTHON_INSTALL_DIR}/jsbsim)
   install(DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR} DESTINATION ${PYTHON_INSTALL_DIR} COMPONENT pymodules)
 endif()

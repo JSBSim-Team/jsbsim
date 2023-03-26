@@ -64,6 +64,7 @@
 #
 # Bertrand Coconnier 2019/02/16 - Commented out the addition of include directories from the *.pyx path.
 # Bertrand Coconnier 2020/11/12 - Added the extraction of include directories from the *.pyx file.
+# Bertrand Coconnier 2023/03/25 - Rely on CMake FindPython3 to locate the Python executable
 
 # Configuration options.
 set( CYTHON_ANNOTATE OFF
@@ -75,7 +76,6 @@ set( CYTHON_FLAGS "" CACHE STRING
 mark_as_advanced( CYTHON_ANNOTATE CYTHON_NO_DOCSTRINGS CYTHON_FLAGS )
 
 find_package( Cython REQUIRED )
-find_package( PythonLibs REQUIRED )
 
 set( CYTHON_CXX_EXTENSION "cxx" )
 set( CYTHON_C_EXTENSION "c" )
@@ -243,12 +243,12 @@ function( cython_add_module _name )
     endif()
   endforeach()
   compile_pyx( ${_name} generated_file ${pyx_module_sources} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python3_INCLUDE_DIRS} )
   python_add_module( ${_name} ${generated_file} ${other_module_sources} )
   if( APPLE )
     set_target_properties( ${_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
   else()
-    target_link_libraries( ${_name} ${PYTHON_LIBRARIES} )
+    target_link_libraries( ${_name} ${Python3_LIBRARIES} )
   endif()
 endfunction()
 
@@ -260,7 +260,7 @@ function( cython_add_standalone_executable _name )
   set( other_module_sources "" )
   set( main_module "" )
   cmake_parse_arguments( cython_arguments "" "MAIN_MODULE" "" ${ARGN} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python3_INCLUDE_DIRS} )
   foreach( _file ${cython_arguments_UNPARSED_ARGUMENTS} )
     if( ${_file} MATCHES ".*\\.py[x]?$" )
       get_filename_component( _file_we ${_file} NAME_WE )
@@ -286,5 +286,5 @@ function( cython_add_standalone_executable _name )
   set( CYTHON_FLAGS ${CYTHON_FLAGS} --embed )
   compile_pyx( "${main_module_we}_static" generated_file ${main_module} )
   add_executable( ${_name} ${generated_file} ${pyx_module_sources} ${other_module_sources} )
-  target_link_libraries( ${_name} ${PYTHON_LIBRARIES} ${pyx_module_libs} )
+  target_link_libraries( ${_name} ${Python3_LIBRARIES} ${pyx_module_libs} )
 endfunction()

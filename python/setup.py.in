@@ -16,37 +16,17 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
-import argparse
-import logging
 import os
-import sys
-from argparse import ArgumentError
 
 from setuptools._distutils.ccompiler import new_compiler
 from setuptools._distutils.unixccompiler import UnixCCompiler
+from setuptools._distutils import log
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install_lib import install_lib
 from setuptools.dist import Distribution
 from setuptools.extension import Extension
 
-
-# Performs a build which verbosity is driven by VERBOSE
-class QuietBuild(build_ext):
-    def run(self):
-        if "VERBOSE" not in os.environ:
-            name = self.extensions[0].name
-            logging.info(f"building '{name}' extension")
-
-            self.oldstdout = os.dup(sys.stdout.fileno())
-            self.devnull = open(name+'-build.log', 'w')
-            os.dup2(self.devnull.fileno(), sys.stdout.fileno())
-
-        build_ext.run(self)
-
-        if "VERBOSE" not in os.environ:
-            os.dup2(self.oldstdout, sys.stdout.fileno())
-            self.devnull.close()
 
 # When compiled with Microsoft Visual C++, the JSBSim Python module is linked
 # with the dynamically linked library msvcp140.dll which is not a standard
@@ -61,8 +41,9 @@ class InstallJSBSimModule(install_lib):
                 libpath = os.path.join(d, msvcp_dll)
                 if os.path.exists(libpath):
                     if not os.path.exists(self.install_dir):
-                        logging.info(f'creating {self.install_dir}')
+                        log.info(f'creating {self.install_dir}')
                         os.makedirs(self.install_dir)
+                    log.info("copying %s -> %s", libpath, self.install_dir)
                     self.copy_file(libpath, os.path.join(self.install_dir,
                                                          msvcp_dll))
                     break
@@ -100,46 +81,15 @@ class BuildC_CxxExtension(build_ext):
                 setattr(self.compiler, attr, value)
         return build_ext.build_extension(self, ext)
 
-# Initialize the default logger to custom settings.
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-
 # Get the path to the JSBSim library.
 library_path = os.path.join('${BUILD_ROOT_PATH}', 'src')
 
-# Intercept the --config option that we set for msbuild
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument("--config", help="Build mode used by Visual C++",
-                    choices=['Debug', 'Release', 'RelWithDebInfo'])
-parser.add_argument("--sharedlibs", default=False, action="store_true",
-                    help="specifies if JSBSim has been built with shared libs")
-args, extra = parser.parse_known_args()
+compiler = new_compiler()
 
-if args.config or args.sharedlibs:
-    # Remove the option from the command line to prevent complaints from
-    # distutils
-    sys.argv[1:] = extra
-
-# Determine which compiler will be used to build the package.
-dist = Distribution({'script_name': __file__})
-
-if dist.parse_command_line() and 'build_ext' in dist.commands:
-    compiler_name = dist.get_command_obj('build_ext').compiler
-else:
-    compiler_name = None
-
-compiler = new_compiler(compiler=compiler_name)
-
-# Update the JSBSim library path according to the --config option
-# If the --config option has not been provided then we try getting the build
-# configuration via the environment variable JSBSIM_BUILD_CONFIG. This feature
-# is mainly useful for CI builds.
-if compiler.compiler_type == 'msvc':
-    if not args.config and 'JSBSIM_BUILD_CONFIG' in os.environ:
-        args.config = os.environ['JSBSIM_BUILD_CONFIG']
-    if args.config:
-        library_path=os.path.join(library_path, args.config)
-elif args.config:
-    raise ArgumentError(None, 'option --config not recognized.')
+# Update the JSBSim library path according to the environment variable
+# JSBSIM_BUILD_CONFIG. This feature is mainly useful for CI builds.
+if compiler.compiler_type == 'msvc' and 'JSBSIM_BUILD_CONFIG' in os.environ:
+    library_path=os.path.join(library_path, os.environ['JSBSIM_BUILD_CONFIG'])
 
 # It is good practice to provide library paths as absolute paths.
 library_path = os.path.abspath(library_path)
@@ -148,21 +98,22 @@ convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(
 
 # `cpp_compile_flag` is used for C++ compilation only (see class `C_CxxCompiler`)
 if compiler.compiler_type == 'unix':
-    cpp_compile_flag = ['-std=c++11']
+    cpp_compile_flag = ['-std=c++11', '-DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_UNIX_LINK_LIBRARIES}')
 elif compiler.compiler_type == 'msvc':
-    cpp_compile_flag = []
+    cpp_compile_flag = ['/DJSBSIM_STATIC_LINK', '/DNDEBUG']
     cpp_link_flags = []
-    if not args.sharedlibs:
-        cpp_compile_flag.append('/DJSBSIM_STATIC_LINK')
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_WINDOWS_LINK_LIBRARIES}')
 else:
-    cpp_compile_flag = []
+    cpp_compile_flag = ['-DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES}')
 
 # Check if the library exists and build the Python module accordingly.
+dist = Distribution({'script_name': __file__})
+dist.parse_command_line()
+
 if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
                                                                'JSBSim'):
     # OK, the JSBSim library has already been compiled so let's use it to build
@@ -178,8 +129,7 @@ if 'sdist' not in dist.commands and compiler.find_library_file([library_path],
                    'library_dirs': [library_path],
                    'extra_compile_args': cpp_compile_flag,
                    'extra_link_args': cpp_link_flags }
-    setup_kwargs = { 'cmdclass' : {'build_ext': QuietBuild,
-                                   'install_lib': InstallJSBSimModule}}
+    setup_kwargs = { 'cmdclass' : {'install_lib': InstallJSBSimModule}}
 else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.

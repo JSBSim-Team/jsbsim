@@ -2,16 +2,14 @@
 if (APPLE)
   file(COPY fpectl.py DESTINATION ${CMAKE_BINARY_DIR}/tests)
 else()
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/python/findModuleFileName.py fpectl OUTPUT_VARIABLE FPECTL_MODULE_NAME)
-  set(FPECTL_PYTHON_MODULE ${CMAKE_BINARY_DIR}/tests/${FPECTL_MODULE_NAME})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py ${CMAKE_CURRENT_BINARY_DIR})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.h ${CMAKE_CURRENT_BINARY_DIR})
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp ${CMAKE_CURRENT_BINARY_DIR})
+  python3_add_library(fpectl MODULE ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
+                                    fpectlmodule.h
+                                    fpectlmodule.cpp)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 
-  add_custom_command(OUTPUT ${FPECTL_PYTHON_MODULE}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.h ${CMAKE_CURRENT_SOURCE_DIR}/fpectlmodule.cpp ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
-    COMMAND ${PYTHON_EXECUTABLE} setup.py build_ext -b ${CMAKE_BINARY_DIR}/tests
-    COMMENT "Building fpectl module...")
-
-  add_custom_target(fpectl ALL DEPENDS ${FPECTL_PYTHON_MODULE})
+  # Output directories for MSVC
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_BINARY_DIR}/tests)
 endif(APPLE)
