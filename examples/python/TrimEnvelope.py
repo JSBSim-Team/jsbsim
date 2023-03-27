@@ -65,12 +65,8 @@ for speed in range(120, 460, 10):
         try:
             fdm['simulation/do_simple_trim'] = 1
             results.append((fdm['velocities/vc-kts'], fdm['aero/alpha-deg'], gamma, fdm['fcs/throttle-cmd-norm[0]']))
-        except RuntimeError as e:
-            # The trim cannot succeed. Just make sure that the raised exception
-            # is due to the trim failure otherwise rethrow.
-            if e.args[0] != 'Trim Failed':
-                raise
-
+        except jsbsim.TrimFailureError:
+            pass  # Ignore trim failures
 
 # Extract the trim results
 speed, alpha, gamma, throttle = zip(*results)
