@@ -54,6 +54,7 @@ It is also recommended to set up Visual Studio for Unreal using the following pr
 
 **2. Build JSBSim as Dynamic libraries and stage Model files**
 
+### Windows
 Unreal Engine requires that one plugin contains all its needed files in its sub-folders. 
 This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the JSBSim files.
 In some of these subfolders, one has to place 
@@ -68,6 +69,15 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
  - It will take care of making a clean build, and copy all needed files at the right location
 	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
 	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
+
+### Linux & Macos
+
+```bash
+mkdir build
+cd build
+cmake -DBUILD_SHARED_LIBS=ON ..
+make
+```
  
 **3. [Optional] - Download HD resources**
  In order to keep the JSBSim repository lightweight, this application contains low quality resources. 
