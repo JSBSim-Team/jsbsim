@@ -8,7 +8,9 @@ public class JSBSim : ModuleRules
 	public JSBSim(ReadOnlyTargetRules Target) : base(Target)
 	{
 		Type = ModuleType.External;
-		
+
+		bUseRTTI = true;
+
 		bool bSupported = Target.Platform == UnrealTargetPlatform.Win64 ||
 			Target.Platform == UnrealTargetPlatform.Mac ||
 			Target.Platform == UnrealTargetPlatform.Linux; // Android Soon
@@ -18,6 +20,7 @@ public class JSBSim : ModuleRules
 		// This folder is where the JSBSimForUnreal build has been generated
 		string JSBSimLocalFolder = "JSBSim";
 		string LibFolderName = "Lib";
+		string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
 				
 		// Include headers
 		PublicSystemIncludePaths.Add(Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include"));
@@ -37,7 +40,7 @@ public class JSBSim : ModuleRules
             }
         		
 			// Link Lib
-			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
+			
 			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.lib"));
 			
 			// Stage DLL along the binaries files
@@ -52,18 +55,16 @@ public class JSBSim : ModuleRules
 		}
 		else if (Target.Platform == UnrealTargetPlatform.Mac)
 		{
-			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Mac");
 			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.Framework"));
 		}
 		else if (Target.Platform == UnrealTargetPlatform.Linux)
 		{
-			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Linux");
-		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
+		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.so"));
 		}
 		else if (Target.Platform == UnrealTargetPlatform.Android)
 		{
-			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Android");
-		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
+			LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, Path.Combine(LibFolderName, "Android"));
+		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.so"));
 		}
 	}
 }
