@@ -52,9 +52,8 @@ It is also recommended to set up Visual Studio for Unreal using the following pr
 [https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 [https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
-**2. Build JSBSim as Dynamic libraries and stage Model files**
+**2. Build JSBSim as Dynamic libraries and stage Model files (Windows)**
 
-### Windows
 Unreal Engine requires that one plugin contains all its needed files in its sub-folders. 
 This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the JSBSim files.
 In some of these subfolders, one has to place 
@@ -70,13 +69,56 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
 	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
 	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
 
-### Linux & Macos
+**3. Build JSBSim for Linux or Macos**
+
+The first step is to build JSBSim on your target platform using cmake. Open an terminal and type the following commands
 
 ```bash
 mkdir build
 cd build
 cmake ..
 make
+```
+
+```bash
+# From the build folder
+cd ..
+
+# Create target folders
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/GeographicLib/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/initialization/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/input_output/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/math/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/models/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/simgear/
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/utilities/
+
+# Copy headers
+cp -Rf cp -Rf src/GeographicLib/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/GeographicLib/
+cp -Rf cp -Rf src/initialization/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/initialization/
+cp -Rf cp -Rf src/input_output/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/input_output/
+cp -Rf cp -Rf src/math/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/math/
+cp -Rf cp -Rf src/models/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/models/
+cp -Rf cp -Rf src/simgear/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/simgear/
+cp -Rf cp -Rf src/utilities/*.h* UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/utilities/
+cp -Rf cp -Rf src/FGFDMExec.h UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/FGFDMExec.h
+cp -Rf cp -Rf src/FGJSBBase.h UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/FGJSBBase.h
+cp -Rf cp -Rf src/JSBSim_API.h UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/JSBSim_API.h
+
+# Copy the JSBSim library
+cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/ # Linux
+cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/ # Macos
+cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/ # Android
+
+# Copy the resource files
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+cp -Rf aircraft UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+cp -Rf engine UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+cp -Rf systems UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 ```
 
 #### How to fix `typeid` compilation error
