@@ -406,11 +406,18 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		FString AircraftPath(TEXT("aircraft"));
 		FString EnginePath(TEXT("engine"));
 		FString SystemPath(TEXT("systems"));
+
+#if PLATFORM_WINDOWS
 		Exec->SetRootDir(SGPath(*RootDir));
 		Exec->SetAircraftPath(SGPath(*AircraftPath));
 		Exec->SetEnginePath(SGPath(*EnginePath));
 		Exec->SetSystemsPath(SGPath(*SystemPath));
-
+#else
+		Exec->SetRootDir(SGPath(TCHAR_TO_UTF8(*RootDir)));
+		Exec->SetAircraftPath(SGPath(TCHAR_TO_UTF8(*AircraftPath)));
+		Exec->SetEnginePath(SGPath(TCHAR_TO_UTF8(*EnginePath)));
+		Exec->SetSystemsPath(SGPath(TCHAR_TO_UTF8(*SystemPath)));
+#endif
 		// Prepare Initial Conditions
 		TrimNeeded = true;
 

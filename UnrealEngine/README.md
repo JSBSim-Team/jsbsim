@@ -75,9 +75,18 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
 ```bash
 mkdir build
 cd build
-cmake -DBUILD_SHARED_LIBS=ON ..
+cmake ..
 make
 ```
+
+#### How to fix `typeid` compilation error
+**Temp**: You've to edit the props.hxx located in /Plugins/ and change the line 1893 by this
+```cplusplus
+static const char* name() { return ""; }// typeid(T).name(); }
+```
+
+The keyword `typeid` is **not** supported by Unreal on Linux/Mac/Android and prevent us to compile the sources.
+Help is much appreciated to fix this.
  
 **3. [Optional] - Download HD resources**
  In order to keep the JSBSim repository lightweight, this application contains low quality resources. 

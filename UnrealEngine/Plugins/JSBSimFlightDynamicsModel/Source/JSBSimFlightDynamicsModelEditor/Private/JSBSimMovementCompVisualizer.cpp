@@ -4,7 +4,7 @@
 #include "JSBSimMovementCompVisualizer.h"
 #include "JSBSimMovementComponent.h"
 
-
+#if PLATFORM_WINDOWS
 #pragma warning( push )
 #pragma warning( disable : 4263 )
 #pragma warning( disable : 4264 )
@@ -19,6 +19,7 @@
 #include "Engine/Engine.h"
 
 #pragma warning( pop )
+#endif
 
 #define FEET_TO_METER 0.3048
 #define METER_TO_FEET 3.2808398950131233595800524934383
@@ -35,6 +36,7 @@ FJSBSimMovementCompVisualizer::~FJSBSimMovementCompVisualizer()
 
 void FJSBSimMovementCompVisualizer::DrawVisualization(const UActorComponent* Component, const FSceneView* View, FPrimitiveDrawInterface* PDI)
 {
+#if PLATFORM_WINDOWS
 	const UJSBSimMovementComponent* MovementComponent = Cast<UJSBSimMovementComponent>(Component);
 	AActor* Owner = Component->GetOwner();
 
@@ -80,10 +82,12 @@ void FJSBSimMovementCompVisualizer::DrawVisualization(const UActorComponent* Com
 			PDI->DrawPoint(GearWorldLocation, FLinearColor::Red, 5, SDPG_World);
 		}
 	}
+#endif
 }
 
 void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* Component, const FViewport* Viewport, const FSceneView* View, FCanvas* Canvas)
 {
+#if PLATFORM_WINDOWS
 	const UJSBSimMovementComponent* MovementComponent = Cast<UJSBSimMovementComponent>(Component);
 	AActor* Owner = MovementComponent->GetOwner();
 
@@ -121,4 +125,5 @@ void FJSBSimMovementCompVisualizer::DrawVisualizationHUD(const UActorComponent* 
 			Canvas->DrawShadowedString(PixelLocation.X, PixelLocation.Y, *(Gear.Name), GEngine->GetSmallFont(), FLinearColor::Red);
 		}
 	}
+#endif
 }

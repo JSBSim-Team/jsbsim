@@ -9,8 +9,6 @@ public class JSBSim : ModuleRules
 	{
 		Type = ModuleType.External;
 
-		bUseRTTI = true;
-
 		bool bSupported = Target.Platform == UnrealTargetPlatform.Win64 ||
 			Target.Platform == UnrealTargetPlatform.Mac ||
 			Target.Platform == UnrealTargetPlatform.Linux; // Android Soon
@@ -23,8 +21,10 @@ public class JSBSim : ModuleRules
 		string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
 				
 		// Include headers
-		PublicSystemIncludePaths.Add(Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include"));
-
+		string IncludePath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include");
+		System.Console.WriteLine($"JSBSim Include Path: {IncludePath}");
+		PublicSystemIncludePaths.Add(IncludePath);
+		
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
             // When working in debug mode, try to use the Debug version of JSBSim
@@ -40,7 +40,6 @@ public class JSBSim : ModuleRules
             }
         		
 			// Link Lib
-			
 			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.lib"));
 			
 			// Stage DLL along the binaries files
@@ -53,18 +52,17 @@ public class JSBSim : ModuleRules
             }
             RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.dll", DllFullPath);
 		}
-		else if (Target.Platform == UnrealTargetPlatform.Mac)
+		else 
 		{
-			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.Framework"));
-		}
-		else if (Target.Platform == UnrealTargetPlatform.Linux)
-		{
-		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.so"));
-		}
-		else if (Target.Platform == UnrealTargetPlatform.Android)
-		{
-			LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, Path.Combine(LibFolderName, "Android"));
-		    PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.so"));
+			// See https://forums.unrealengine.com/t/busertti-true-makes-an-unreal-project-fail-to-load/407837
+			bUseRTTI = true;
+			bEnableExceptions = true;
+			
+			LibPath = Path.Combine(LibPath, $"{Target.Platform}");
+			System.Console.WriteLine($"JSBSim Lib Path: {LibPath}");
+			// Same for Linux, Macos and Android
+			//PublicLibraryPaths.Add(LibPath);
+			PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
 		}
 	}
 }
