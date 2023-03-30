@@ -1878,30 +1878,6 @@ inline std::string getValue<std::string>(const SGPropertyNode* node)
     return node->getStringValue();
 }
 
-/** Extract enum from SGPropertyNode */
-template<typename T>
-#if PROPS_STANDALONE
-inline T
-#else
-inline typename boost::enable_if<boost::is_enum<T>, T>::type
-#endif
-getValue(const SGPropertyNode* node)
-{
-  typedef simgear::enum_traits<T> Traits;
-  int val = node->getIntValue();
-  if( !Traits::validate(val) )
-  {
-    SG_LOG
-    (
-      SG_GENERAL,
-      SG_WARN,
-      "Invalid value for enum (" << Traits::name() << ", val = " << val << ")"
-    );
-    return Traits::defVal();
-  }
-  return static_cast<T>(node->getIntValue());
-}
-
 inline bool setValue(SGPropertyNode* node, bool value)
 {
     return node->setBoolValue(value);
