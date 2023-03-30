@@ -86,13 +86,17 @@ cd ..
 # Copy headers
 rsync -avm --include='*.h' --include='*.hpp' --include='*.hxx' -f 'hide,! */' src/ UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include/
 
+# Copy the JSBSim library (Macos)
+mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+
 # Copy the JSBSim library (Linux)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
 cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
 
-# Copy the JSBSim library (Macos)
+# Copy the JSBSim library (Android)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
 
 # Copy the resource files
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
@@ -101,15 +105,6 @@ cp -Rf engine UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf systems UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 ```
 
-#### How to fix `typeid` compilation error
-**Temp**: You've to edit the props.hxx located in /Plugins/ and change the line 1893 by this
-```cplusplus
-static const char* name() { return ""; }// typeid(T).name(); }
-```
-
-The keyword `typeid` is **not** supported by Unreal on Linux/Mac/Android and prevent us to compile the sources.
-Help is much appreciated to fix this.
- 
 ## 4. [Optional] - Download HD resources
  In order to keep the JSBSim repository lightweight, this application contains low quality resources. 
  If you would like to use better looking content, you can download HQ aircraft model, HD textures and non-flat terrain here: 
