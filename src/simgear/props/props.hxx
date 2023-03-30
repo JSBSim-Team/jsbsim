@@ -1878,32 +1878,6 @@ inline std::string getValue<std::string>(const SGPropertyNode* node)
     return node->getStringValue();
 }
 
-namespace simgear
-{
-  /**
-   * Default trait for extracting enum values from SGPropertyNode. Create your
-   * own specialization for specific enum types to enable validation of values.
-   */
-  template<class T>
-  struct enum_traits
-  {
-    /**
-     * Typename of the enum
-     */
-    static const char* name() { return typeid(T).name(); }
-
-    /**
-     * @return Default value (will be used if validation fails)
-     */
-    static T defVal() { return T(); }
-
-    /**
-     * @return Whether the given integer value has an enum value defined
-     */
-    static bool validate(int) { return true; }
-  };
-} // namespace simgear
-
 /** Extract enum from SGPropertyNode */
 template<typename T>
 #if PROPS_STANDALONE
