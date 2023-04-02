@@ -364,16 +364,18 @@ double FGAtmosphere::MachFromImpactPressure(double qc, double p) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAtmosphere::VcalibratedFromMach(double mach, double p) const
+double FGAtmosphere::VcalibratedFromMach(double mach, double altitude) const
 {
+  double p = GetPressure(altitude);
   double qc = PitotTotalPressure(mach, p) - p;
   return StdDaySLsoundspeed * MachFromImpactPressure(qc, StdDaySLpressure);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAtmosphere::MachFromVcalibrated(double vcas, double p) const
+double FGAtmosphere::MachFromVcalibrated(double vcas, double altitude) const
 {
+  double p = GetPressure(altitude);
   double qc = PitotTotalPressure(vcas / StdDaySLsoundspeed, StdDaySLpressure) - StdDaySLpressure;
   return MachFromImpactPressure(qc, p);
 }

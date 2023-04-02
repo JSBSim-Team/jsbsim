@@ -197,7 +197,7 @@ bool FGAuxiliary::Run(bool Holding)
   pt = FDMExec->GetAtmosphere()->PitotTotalPressure(Mach, in.Pressure);
 
   if (abs(Mach) > 0.0) {
-    vcas = FDMExec->GetAtmosphere()->VcalibratedFromMach(Mach, in.Pressure);
+    vcas = FDMExec->GetAtmosphere()->VcalibratedFromMach(Mach, in.AltitudeASL);
     veas = sqrt(2 * qbar / in.DensitySL);
   }
   else

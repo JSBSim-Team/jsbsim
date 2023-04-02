@@ -226,20 +226,20 @@ public:
   /** Calculate the calibrated airspeed from the Mach number. Based on the
   *   formulas in the US Air Force Aircraft Performance Flight Testing
   *   Manual (AFFTC-TIH-99-01).
-  *   @param mach  The Mach number
-  *   @param p     Pressure in psf
+  *   @param mach     The Mach number
+  *   @param altitude The altitude above sea level (ASL) in feet.
   *   @return The calibrated airspeed (CAS) in ft/s
   * */
-  double VcalibratedFromMach(double mach, double p) const;
+  double VcalibratedFromMach(double mach, double altitude) const;
 
   /** Calculate the Mach number from the calibrated airspeed.Based on the
   *   formulas in the US Air Force Aircraft Performance Flight Testing
   *   Manual (AFFTC-TIH-99-01).
-  *   @param vcas  The calibrated airspeed (CAS) in ft/s
-  *   @param p     Pressure in psf
+  *   @param vcas     The calibrated airspeed (CAS) in ft/s
+  *   @param altitude The altitude above sea level (ASL) in feet.
   *   @return The Mach number
   * */
-  double MachFromVcalibrated(double vcas, double p) const;
+  double MachFromVcalibrated(double vcas, double altitude) const;
 
   struct Inputs {
     double altitudeASL;

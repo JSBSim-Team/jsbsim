@@ -260,6 +260,7 @@ public:
     double SoundSpeed;
     double KinematicViscosity;
     double DistanceAGL;
+    double AltitudeASL;
     double Wingspan;
     double Wingchord;
     double StandardGravity;

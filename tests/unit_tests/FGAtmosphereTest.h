@@ -708,31 +708,32 @@ public:
 
     // Ambient conditions far upstream (i.e. upstream the normal schock
     // in supersonic flight)
-    double psl = atm.GetPressureSL();
     double t1 = atm.GetTemperatureSL();
 
-    TS_ASSERT_DELTA(atm.VcalibratedFromMach(0.0, psl), 0.0, epsilon);
-    TS_ASSERT_DELTA(atm.MachFromVcalibrated(0.0, psl), 0.0, epsilon);
+    TS_ASSERT_DELTA(atm.VcalibratedFromMach(0.0, 0.0), 0.0, epsilon);
+    TS_ASSERT_DELTA(atm.MachFromVcalibrated(0.0, 0.0), 0.0, epsilon);
 
     // Check that VCAS match the true airspeed at sea level
     for(double M1=0.1; M1<3.0; M1+=0.25) {
       double u1 = M1*sqrt(gama*R*t1);
-      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, psl)/u1, 1.0, 1e-7);
-      TS_ASSERT_DELTA(atm.MachFromVcalibrated(u1, psl)/M1, 1.0, 1e-7);
+      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, 0.0)/u1, 1.0, 1e-7);
+      TS_ASSERT_DELTA(atm.MachFromVcalibrated(u1, 0.0)/M1, 1.0, 1e-7);
     }
 
-    double p1 = atm.GetPressure(1000.);
+    // Check the VCAS computation at an altitude of 1000 ft
     double asl = atm.GetSoundSpeedSL();
 
-    TS_ASSERT_DELTA(atm.VcalibratedFromMach(0.0, p1), 0.0, epsilon);
-    TS_ASSERT_DELTA(atm.MachFromVcalibrated(0.0, p1), 0.0, epsilon);
+    TS_ASSERT_DELTA(atm.VcalibratedFromMach(0.0, 1000.), 0.0, epsilon);
+    TS_ASSERT_DELTA(atm.MachFromVcalibrated(0.0, 1000.), 0.0, epsilon);
 
     for(double M=0.1; M<3.0; M+=0.25) {
       double vcas = M*asl;
-      double M1 = atm.MachFromVcalibrated(vcas, p1);
-      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, p1)/vcas, 1.0, 1e-7);
+      double M1 = atm.MachFromVcalibrated(vcas, 1000.);
+      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, 1000.)/vcas, 1.0, 1e-7);
     }
 
+    double psl = atm.GetPressureSL();
+    double p1 = atm.GetPressure(1000.);
     t1 = atm.GetTemperature(1000.);
     double rho1 = atm.GetDensity(1000.);
     constexpr double Cp = gama*R/(gama-1.0);
@@ -757,7 +758,7 @@ public:
       double P2 = p2*pow(T0/t2, gama/(gama-1.0));
       double mach = atm.MachFromImpactPressure(P2-p1, psl);
 
-      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, p1)/(mach*asl), 1.0, 1e-8);
+      TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, 1000.)/(mach*asl), 1.0, 1e-8);
     }
   }
 };
