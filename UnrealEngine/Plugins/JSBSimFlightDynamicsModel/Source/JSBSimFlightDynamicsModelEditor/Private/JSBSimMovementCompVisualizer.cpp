@@ -3,6 +3,7 @@
 
 #include "JSBSimMovementCompVisualizer.h"
 #include "JSBSimMovementComponent.h"
+#include "CanvasTypes.h"
 
 #if PLATFORM_WINDOWS
 #pragma warning( push )
