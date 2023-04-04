@@ -193,7 +193,7 @@ double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FV
   // Compute the raycast Origin point
   FVector StartEngineLocation;
   GeoReferencingSystem->ECEFToEngine(StartECEFLocation, StartEngineLocation);
-  FVector LineCheckStart = StartEngineLocation + 200 * Up; // slightly above the starting point
+  FVector LineCheckStart = StartEngineLocation + AGLThresholdMeters * 100 * Up; // slightly above the starting point
 
   // Compute the raycast end point
   // Estimate raycast length - Altitude + 5% of ellipsoid radius in case of negative altitudes
