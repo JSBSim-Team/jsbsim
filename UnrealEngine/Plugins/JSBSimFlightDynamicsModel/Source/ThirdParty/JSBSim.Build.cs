@@ -66,13 +66,24 @@ public class JSBSim : ModuleRules
         // Include headers
         string IncludePath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include");
         System.Console.WriteLine($"JSBSim Include Path: {IncludePath}");
-        PublicSystemIncludePaths.Add(IncludePath);
+        PublicIncludePaths.Add(IncludePath);
 
-        bUseRTTI = true;
-        bEnableExceptions = true;
+        //bUseRTTI = true;
+        //bEnableExceptions = true;
 
         LibPath = Path.Combine(LibPath, $"{Target.Platform}");
         System.Console.WriteLine($"JSBSim Lib Path: {LibPath}");
         PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
+
+        string DllFullPath = Path.Combine(LibPath, "libJSBSim.so");
+
+        if (File.Exists(DllFullPath))
+        {
+            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "libJSBSim.so", DllFullPath);
+        }
+        else
+        {
+            System.Console.WriteLine("libJSBSim.so not found");
+        }
     }
 }
