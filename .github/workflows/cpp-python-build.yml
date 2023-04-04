@@ -49,10 +49,6 @@ jobs:
             shared_libs: OFF
             build_julia: ON
             display_stack_trace: OFF
-          - os: ubuntu-18.04
-            expat: OFF
-            shared_libs: OFF
-            build_julia: ON
     env:
       static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
     runs-on: ${{ matrix.os }}
@@ -774,7 +770,7 @@ jobs:
             ## Release files
             - Windows 64 bits
               - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
-            - Ubuntu Bionic 18.04 and Focal 20.04 - amd64
+            - Ubuntu Focal 20.04 and Jammy 22.04 - amd64
               - `*.deb` (Debian packages)
             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
             - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
