@@ -46,14 +46,7 @@ public class JSBSim : ModuleRules
         PublicAdditionalLibraries.Add(Path.Combine(LibPath, "JSBSim.lib"));
 
         // Stage DLL along the binaries files
-        string DllFullPath = Path.Combine(LibPath, "JSBSim.dll");
-        if (!File.Exists(DllFullPath))
-        {
-            string Err = string.Format("JSBSim.dll not found in {0} - Make sure that you have built JSBSimForUnreal.sln first", LibPath);
-            System.Console.WriteLine(Err);
-            throw new BuildException(Err);
-        }
-
+        string DllFullPath = CheckForFile(LibPath, "JSBSim.dll");
         RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.dll", DllFullPath);
     }
 
@@ -66,24 +59,51 @@ public class JSBSim : ModuleRules
         // Include headers
         string IncludePath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include");
         System.Console.WriteLine($"JSBSim Include Path: {IncludePath}");
-        PublicIncludePaths.Add(IncludePath);
+        PublicSystemIncludePaths.Add(IncludePath);
 
-        //bUseRTTI = true;
-        //bEnableExceptions = true;
+        bUseRTTI = true;
+        bEnableExceptions = true;
 
         LibPath = Path.Combine(LibPath, $"{Target.Platform}");
         System.Console.WriteLine($"JSBSim Lib Path: {LibPath}");
-        PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
 
-        string DllFullPath = Path.Combine(LibPath, "libJSBSim.so");
+        string staticLibPath = CheckForFile(LibPath, "libJSBSim.a");
+        PublicAdditionalLibraries.Add(staticLibPath);
 
-        if (File.Exists(DllFullPath))
+        if (Target.Platform == UnrealTargetPlatform.Mac)
         {
-            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "libJSBSim.so", DllFullPath);
+            string macFrameworkPath = CheckForDirectory(LibPath, "JSBSim.framework");
+            string macJSBSimExec = CheckForFile(LibPath, "JSBSim");
+
+            //RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.framework", macFrameworkPath);
+            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim", macJSBSimExec);  
         }
-        else
+        else 
         {
-            System.Console.WriteLine("libJSBSim.so not found");
+            string soFilePath = CheckForFile(LibPath, "libJSBSim.so");
+            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "libJSBSim.so", soFilePath);
         }
+    }
+
+    private static string CheckForFile(string path, string file)
+    {
+        string filePath = Path.Combine(path, file);
+        if (File.Exists(filePath))
+            return filePath;
+
+        string Err = $"{file} not found at {path}";
+        System.Console.WriteLine(Err);
+        throw new BuildException(Err);
+    }
+
+    private static string CheckForDirectory(string path, string directory)
+    {
+        string directoryPath = Path.Combine(path, directory);
+        if (Directory.Exists(directoryPath))
+            return directoryPath;
+
+        string Err = $"{directory} not found at {path}";
+        System.Console.WriteLine(Err);
+        throw new BuildException(Err);
     }
 }
