@@ -66,13 +66,13 @@ FGInputSocket::FGInputSocket(FGFDMExec* fdmex) :
 
 FGInputSocket::~FGInputSocket()
 {
-  delete socket;
+  //delete socket;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGInputSocket::Load(Element* el)
-{
+{/*
   if (!FGInputType::Load(el))
     return false;
 
@@ -87,13 +87,14 @@ bool FGInputSocket::Load(Element* el)
   if (to_upper(action) == "BLOCKING_INPUT")
     BlockingInput = true;
 
-  return true;
+  return true;*/
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGInputSocket::InitModel(void)
-{
+{/*
   if (FGInputType::InitModel()) {
     delete socket;
     socket = new FGfdmSocket(SockPort, SockProtocol);
@@ -103,7 +104,7 @@ bool FGInputSocket::InitModel(void)
 
     return true;
   }
-
+*/
   return false;
 }
 
@@ -111,7 +112,7 @@ bool FGInputSocket::InitModel(void)
 
 void FGInputSocket::Read(bool Holding)
 {
-  if (!socket) return;
+  /*if (!socket) return;
   if (!socket->GetConnectStatus()) return;
 
   if (BlockingInput)
@@ -270,7 +271,7 @@ void FGInputSocket::Read(bool Holding)
         "   info\n\r\n");
 
       } else {
-        socket->Reply(string("Unknown command: ") + command + "\r\n");
+        //socket->Reply(string("Unknown command: ") + command + "\r\n");
       }
 
       start = string_end;
@@ -284,7 +285,7 @@ void FGInputSocket::Read(bool Holding)
       else
         data.clear();
     }
-  }
+  }*/
 
 }
 

@@ -683,7 +683,8 @@ std::string error_string(int errnum)
   // Always makes the string in 'buf' null-terminated
   retcode = strerror_s(buf, sizeof(buf), errnum);
 #elif defined(_GNU_SOURCE)
-  return std::string(strerror_r(errnum, buf, sizeof(buf)));
+  //return std::string(strerror_r(errnum, buf, sizeof(buf)));
+    return std::string("");
 #elif (_POSIX_C_SOURCE >= 200112L) || defined(SG_MAC) || defined(__FreeBSD__)
   int retcode;
   // POSIX.1-2001 and POSIX.1-2008

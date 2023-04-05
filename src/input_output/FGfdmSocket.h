@@ -41,13 +41,6 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
-  #include <winsock.h>
-  #include <io.h>
-#else
-  #include <netdb.h>
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -85,7 +78,7 @@ public:
   void Clear(void);
   void Clear(const std::string& s);
   void Close(void);
-  bool GetConnectStatus(void) {return connected;}
+  bool GetConnectStatus(void) {return false;}
   void WaitUntilReadable(void);
 
   enum ProtocolType {ptUDP, ptTCP};
@@ -98,12 +91,6 @@ private:
   int sckt;
   int sckt_in;
 #endif
-  ProtocolType Protocol;
-  struct sockaddr_in scktName;
-  struct hostent *host;
-  std::ostringstream buffer;
-  int precision;
-  bool connected;
   void Debug(int from);
 };
 }
