@@ -69,6 +69,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   ConstantSpeed = 0;
   cThrust = cPower = CtMach = CpMach = 0;
   Vinduced = 0.0;
+  in.Soundspeed = 1.0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 1e-06);
