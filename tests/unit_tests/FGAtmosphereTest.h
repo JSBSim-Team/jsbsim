@@ -37,6 +37,7 @@ public:
   static constexpr double GetSutherlandConstant(void) { return SutherlandConstant; }
   static constexpr double GetPSFtoPa(void) { return psftopa; }
   static constexpr double GetPSFtoInHg(void) { return psftoinhg; }
+  static constexpr double GetFpsToKts(void) { return fpstokts; }
 private:
   double a_t, a_p;
 };
@@ -48,6 +49,7 @@ constexpr double k = DummyAtmosphere::GetSutherlandConstant();
 constexpr double psftopa = DummyAtmosphere::GetPSFtoPa();
 constexpr double psftombar = psftopa/100.;
 constexpr double psftoinhg = DummyAtmosphere::GetPSFtoInHg();
+constexpr double fpstokts = DummyAtmosphere::GetFpsToKts();
 
 class FGAtmosphereTest : public CxxTest::TestSuite
 {
@@ -63,11 +65,14 @@ public:
     TS_ASSERT_EQUALS(atm.GetTemperature(0.0), 1.8);
     TS_ASSERT_EQUALS(atm.GetTemperatureRatio(), 1.0);
     TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
+    TS_ASSERT_EQUALS(atm.GetTotalTemperature(), 1.8);
+    TS_ASSERT_EQUALS(atm.GetTAT_C(), -272.15);
 
     TS_ASSERT_EQUALS(atm.GetPressureSL(), 1.0);
     TS_ASSERT_EQUALS(atm.GetPressure(), 0.0);
     TS_ASSERT_EQUALS(atm.GetPressure(0.0), 1.0);
     TS_ASSERT_EQUALS(atm.GetPressureRatio(), 0.0);
+    TS_ASSERT_EQUALS(atm.GetTotalPressure(), 0.0);
 
     const double rho = 1.0/(R*1.8);
     TS_ASSERT_EQUALS(atm.GetDensitySL(), 1.0);
@@ -87,6 +92,9 @@ public:
     TS_ASSERT_EQUALS(atm.GetAbsoluteViscosity(), 0.0);
     TS_ASSERT_EQUALS(atm.GetKinematicViscosity(), 0.0);
 
+    TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+    TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
+
     FGJSBBase::debug_lvl = 0;
   }
 
@@ -105,10 +113,14 @@ public:
     TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
     TS_ASSERT_EQUALS(atm.GetTemperatureRatio(), 1.0);
     TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
+    TS_ASSERT_EQUALS(atm.GetTotalTemperature(), T0);
+    TS_ASSERT_DELTA(atm.GetTAT_C(), 15.0, 10.*epsilon);
+
     TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
     TS_ASSERT_EQUALS(atm.GetPressure(), P0);
     TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
     TS_ASSERT_EQUALS(atm.GetPressureRatio(), 1.0);
+    TS_ASSERT_EQUALS(atm.GetTotalPressure(), P0);
 
     const double SLdensity = P0/(R*T0);
     TS_ASSERT_EQUALS(atm.GetDensity(), SLdensity);
@@ -124,6 +136,9 @@ public:
 
     TS_ASSERT_EQUALS(atm.GetDensityAltitude(), 0.0);
     TS_ASSERT_EQUALS(atm.GetPressureAltitude(), 0.0);
+
+    TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+    TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
 
     const double mu = beta*T0*sqrt(T0)/(k+T0);
     const double nu = mu/SLdensity;
@@ -152,8 +167,11 @@ public:
       TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
+      TS_ASSERT_EQUALS(atm.GetTotalTemperature(), T0);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T0), 1.0, epsilon);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
+      TS_ASSERT_EQUALS(atm.GetTotalPressure(), P0);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(h), rho, epsilon);
@@ -180,6 +198,8 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressureAltitude(), 0.0);
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu0, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu0, epsilon);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -206,6 +226,8 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
@@ -213,6 +235,7 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
@@ -235,6 +258,9 @@ public:
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -266,6 +292,8 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), 1.0+0.1*h/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
@@ -273,6 +301,7 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
@@ -295,6 +324,9 @@ public:
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -326,12 +358,15 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
       TS_ASSERT_DELTA(atm.GetPressure(), P, epsilon);
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P0+h, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
@@ -354,6 +389,9 @@ public:
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -385,6 +423,8 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
@@ -392,6 +432,7 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
       TS_ASSERT_DELTA(atm.GetDensity(0.0), rho0, epsilon);
@@ -413,6 +454,9 @@ public:
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -441,6 +485,8 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
@@ -448,6 +494,7 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
@@ -470,6 +517,9 @@ public:
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
     }
   }
 
@@ -498,6 +548,8 @@ public:
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(T), 1.0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
@@ -505,6 +557,7 @@ public:
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(atm.GetTotalPressure(), P, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
@@ -528,6 +581,9 @@ public:
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
+
+      TS_ASSERT_EQUALS(atm.GetVcalibratedFPS(), 0.0);
+      TS_ASSERT_EQUALS(atm.GetVcalibratedKTS(), 0.0);
   }
 
   void testPressureConversion()
@@ -759,6 +815,151 @@ public:
       double mach = atm.MachFromImpactPressure(P2-p1, psl);
 
       TS_ASSERT_DELTA(atm.VcalibratedFromMach(M1, 1000.)/(mach*asl), 1.0, 1e-8);
+    }
+  }
+
+  void testCASComputation() {
+    FGFDMExec fdmex;
+    auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
+    TS_ASSERT(atm.InitModel());
+
+    constexpr double T0 = FGAtmosphere::StdDaySLtemperature;
+    constexpr double P0 = FGAtmosphere::StdDaySLpressure;
+    constexpr double rho0 = P0/(R*T0);
+    const double a0 = sqrt(gama*R*T0);
+    constexpr double k1 = 0.5*(gama-1.0);
+
+    for(double h=-1000.0; h<10000; h+= 1000) {
+      atm.in.altitudeASL = h;
+
+      double T = T0 + 0.1*h;
+      double a = sqrt(gama*R*T);
+      double P = P0 + 1.0*h;
+      double rho = P/(R*T);
+      double mu = beta*T*sqrt(T)/(k+T);
+      double nu = mu/rho;
+
+      for(double M1=0.1; M1<3.0; M1+=0.25) {
+        atm.in.vUVW = {M1*a, 0.0, 0.0};
+        double Tt = T*(1.0+k1*M1*M1);
+        TS_ASSERT(atm.Run(false) == false);
+        TS_ASSERT_EQUALS(atm.GetTemperatureSL(), T0);
+        TS_ASSERT_DELTA(atm.GetTemperature(), T, epsilon);
+        TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
+        TS_ASSERT_DELTA(atm.GetTemperature(h), T, epsilon);
+        TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
+        TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
+        TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTotalTemperature() / Tt, 1.0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(Tt), 1.0, epsilon);
+
+        double Pt = atm.PitotTotalPressure(M1, P);
+        TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
+        TS_ASSERT_DELTA(atm.GetPressure(), P, epsilon);
+        TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
+        TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
+        TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTotalPressure() / Pt, 1.0, epsilon);
+
+        TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensity(0.0), rho0, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensity(h), rho, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensitySL(), rho0, epsilon);
+        TS_ASSERT_EQUALS(atm.GetDensityRatio(), rho/rho0);
+
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(), a, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(0.0), a0, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(h), a, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeedSL(), a0, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeedRatio(), a/a0, epsilon);
+
+        TS_ASSERT_EQUALS(atm.GetDensityAltitude(), h);
+        TS_ASSERT_EQUALS(atm.GetPressureAltitude(), h);
+
+        TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
+        TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+        double vc = atm.VcalibratedFromMach(M1, h);
+        TS_ASSERT_DELTA(atm.GetVcalibratedFPS()/vc, 1.0, epsilon);
+        TS_ASSERT_DELTA(atm.GetVcalibratedKTS() / (vc*fpstokts), 1.0, epsilon);
+      }
+    }
+  }
+
+  void testCASComputationWithWind() {
+    FGFDMExec fdmex;
+    auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
+    TS_ASSERT(atm.InitModel());
+
+    constexpr double T0 = FGAtmosphere::StdDaySLtemperature;
+    constexpr double P0 = FGAtmosphere::StdDaySLpressure;
+    constexpr double rho0 = P0/(R*T0);
+    const double a0 = sqrt(gama*R*T0);
+    constexpr double k1 = 0.5*(gama-1.0);
+
+    atm.in.Tl2b = { 1.0, 0.0, 0.0,
+                    0.0, 2.0, 0.0,
+                    0.0, 0.0, 1.0}; // Double the Y component
+    // Wind is 10 ft/s tailwind and 25 ft/s crosswind
+    atm.in.TotalWindNED = {-10.0, 15.0, 40.0};
+
+    for(double h=-1000.0; h<10000; h+= 1000) {
+      atm.in.altitudeASL = h;
+
+      double T = T0 + 0.1*h;
+      double a = sqrt(gama*R*T);
+      double P = P0 + 1.0*h;
+      double rho = P/(R*T);
+      double mu = beta*T*sqrt(T)/(k+T);
+      double nu = mu/rho;
+
+      for(double M1=0.1; M1<3.0; M1+=0.25) {
+        atm.in.vUVW = {M1*a, 0.0, 0.0};
+        double Vg = M1*a+10;
+        double V = sqrt(Vg*Vg+2500.0);
+        double mach = V / a;
+        double Tt = T*(1.0+k1*mach*mach);
+        TS_ASSERT(atm.Run(false) == false);
+        TS_ASSERT_EQUALS(atm.GetTemperatureSL(), T0);
+        TS_ASSERT_DELTA(atm.GetTemperature(), T, epsilon);
+        TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
+        TS_ASSERT_DELTA(atm.GetTemperature(h), T, epsilon);
+        TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
+        TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
+        TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTotalTemperature() / Tt, 1.0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTAT_C()/FGJSBBase::RankineToCelsius(Tt), 1.0, epsilon);
+
+        double Pt = atm.PitotTotalPressure(mach, P);
+        TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
+        TS_ASSERT_DELTA(atm.GetPressure(), P, epsilon);
+        TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
+        TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
+        TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+        TS_ASSERT_DELTA(atm.GetTotalPressure() / Pt, 1.0, epsilon);
+
+        TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensity(0.0), rho0, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensity(h), rho, epsilon);
+        TS_ASSERT_DELTA(atm.GetDensitySL(), rho0, epsilon);
+        TS_ASSERT_EQUALS(atm.GetDensityRatio(), rho/rho0);
+
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(), a, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(0.0), a0, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeed(h), a, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeedSL(), a0, epsilon);
+        TS_ASSERT_DELTA(atm.GetSoundSpeedRatio(), a/a0, epsilon);
+
+        TS_ASSERT_EQUALS(atm.GetDensityAltitude(), h);
+        TS_ASSERT_EQUALS(atm.GetPressureAltitude(), h);
+
+        TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
+        TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
+
+        double vc = atm.VcalibratedFromMach(mach, h);
+        TS_ASSERT_DELTA(atm.GetVcalibratedFPS()/vc, 1.0, epsilon);
+        TS_ASSERT_DELTA(atm.GetVcalibratedKTS() / (vc*fpstokts), 1.0, epsilon);
+      }
     }
   }
 };

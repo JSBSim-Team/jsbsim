@@ -57,6 +57,13 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
 {
   Name = "FGAtmosphere";
 
+  in.altitudeASL = 0.0;
+  in.Tl2b = { 1.0, 0.0, 0.0,
+              0.0, 1.0, 0.0,
+              0.0, 0.0, 1.0};
+  in.vUVW.InitMatrix();
+  in.TotalWindNED.InitMatrix();
+
   bind();
   Debug(0);
 }
