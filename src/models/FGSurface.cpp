@@ -52,7 +52,6 @@ CLASS IMPLEMENTATION
 FGSurface::FGSurface(FGFDMExec* fdmex, int number) :
    contactNumber(number)
 {
-  _PropertyManager = fdmex->GetPropertyManager();
   resetValues();
 }
 
@@ -78,10 +77,8 @@ void FGSurface::resetValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSurface::bind(void)
+void FGSurface::bind(FGPropertyManager* PropertyManager)
 {
-  if (!_PropertyManager) return;
-
   string base_property_name;
   string property_name;
 
@@ -100,15 +97,15 @@ void FGSurface::bind(void)
   }
  
   property_name = base_property_name + "/solid";
-  _PropertyManager->Tie( property_name.c_str(), &isSolid);
+  PropertyManager->Tie( property_name.c_str(), &isSolid);
   property_name = base_property_name + "/bumpiness";
-  _PropertyManager->Tie( property_name.c_str(), &bumpiness);
+  PropertyManager->Tie( property_name.c_str(), &bumpiness);
   property_name = base_property_name + "/maximum-force-lbs";
-  _PropertyManager->Tie( property_name.c_str(), &maximumForce);
+  PropertyManager->Tie( property_name.c_str(), &maximumForce);
   property_name = base_property_name + "/rolling_friction-factor";
-  _PropertyManager->Tie( property_name.c_str(), &rollingFFactor);
+  PropertyManager->Tie( property_name.c_str(), &rollingFFactor);
   property_name = base_property_name + "/static-friction-factor";
-  _PropertyManager->Tie( property_name.c_str(), &staticFFactor);
+  PropertyManager->Tie( property_name.c_str(), &staticFFactor);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
