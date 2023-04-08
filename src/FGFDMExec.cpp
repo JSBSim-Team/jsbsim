@@ -390,6 +390,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
     Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
     Auxiliary->in.DistanceAGL  = Propagate->GetDistanceAGL();
+    Auxiliary->in.AltitudeASL  = Propagate->GetAltitudeASL();
     Auxiliary->in.Mass         = MassBalance->GetMass();
     Auxiliary->in.Tl2b         = Propagate->GetTl2b();
     Auxiliary->in.Tb2l         = Propagate->GetTb2l();

@@ -250,41 +250,6 @@ public:
     return measure*0.3048;
   }
 
-  /** Compute the total pressure in front of the Pitot tube. It uses the
-  *   Rayleigh formula for supersonic speeds (See "Introduction to Aerodynamics
-  *   of a Compressible Fluid - H.W. Liepmann, A.E. Puckett - Wiley & sons
-  *   (1947)" §5.4 pp 75-80)
-  *   @param mach  The Mach number
-  *   @param p     Pressure in psf
-  *   @return The total pressure in front of the Pitot tube in psf */
-  static double PitotTotalPressure(double mach, double p);
-
-  /** Compute the Mach number from the differential pressure (qc) and the
-  *   static pressure. Based on the formulas in the US Air Force Aircraft
-  *   Performance Flight Testing Manual (AFFTC-TIH-99-01).
-  *   @param qc    The differential/impact pressure
-  *   @param p     Pressure in psf
-  *   @return The Mach number */
-  static double MachFromImpactPressure(double qc, double p);
-
-  /** Calculate the calibrated airspeed from the Mach number. Based on the
-  *   formulas in the US Air Force Aircraft Performance Flight Testing
-  *   Manual (AFFTC-TIH-99-01).
-  *   @param mach  The Mach number
-  *   @param p     Pressure in psf
-  *   @return The calibrated airspeed (CAS) in ft/s
-  * */
-  static double VcalibratedFromMach(double mach, double p);
-
-  /** Calculate the Mach number from the calibrated airspeed.Based on the
-  *   formulas in the US Air Force Aircraft Performance Flight Testing
-  *   Manual (AFFTC-TIH-99-01).
-  *   @param vcas  The calibrated airspeed (CAS) in ft/s
-  *   @param p     Pressure in psf
-  *   @return The Mach number
-  * */
-  static double MachFromVcalibrated(double vcas, double p);
-
   /** Finite precision comparison.
       @param a first value to compare
       @param b second value to compare

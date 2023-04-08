@@ -206,13 +206,48 @@ public:
 
   virtual double GetPressureAltitude() const {return PressureAltitude;}
 
+  /** Compute the total pressure in front of the Pitot tube. It uses the
+  *   Rayleigh formula for supersonic speeds (See "Introduction to Aerodynamics
+  *   of a Compressible Fluid - H.W. Liepmann, A.E. Puckett - Wiley & sons
+  *   (1947)" §5.4 pp 75-80)
+  *   @param mach  The Mach number
+  *   @param p     Pressure in psf
+  *   @return The total pressure in front of the Pitot tube in psf */
+  double PitotTotalPressure(double mach, double p) const;
+
+  /** Compute the Mach number from the differential pressure (qc) and the
+  *   static pressure. Based on the formulas in the US Air Force Aircraft
+  *   Performance Flight Testing Manual (AFFTC-TIH-99-01).
+  *   @param qc    The differential/impact pressure
+  *   @param p     Pressure in psf
+  *   @return The Mach number */
+  double MachFromImpactPressure(double qc, double p) const;
+
+  /** Calculate the calibrated airspeed from the Mach number. Based on the
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
+  *   Manual (AFFTC-TIH-99-01).
+  *   @param mach     The Mach number
+  *   @param altitude The altitude above sea level (ASL) in feet.
+  *   @return The calibrated airspeed (CAS) in ft/s
+  * */
+  double VcalibratedFromMach(double mach, double altitude) const;
+
+  /** Calculate the Mach number from the calibrated airspeed.Based on the
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
+  *   Manual (AFFTC-TIH-99-01).
+  *   @param vcas     The calibrated airspeed (CAS) in ft/s
+  *   @param altitude The altitude above sea level (ASL) in feet.
+  *   @return The Mach number
+  * */
+  double MachFromVcalibrated(double vcas, double altitude) const;
+
   struct Inputs {
     double altitudeASL;
   } in;
 
   static constexpr double StdDaySLtemperature = 518.67;
   static constexpr double StdDaySLpressure = 2116.228;
-  static const double StdDaySLsoundspeed;
+  const double StdDaySLsoundspeed;
 
 protected:
   // Sea level conditions
