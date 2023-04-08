@@ -38,6 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "math/FGMatrix33.h"
 #include "models/FGModel.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,12 +242,41 @@ public:
   * */
   double MachFromVcalibrated(double vcas, double altitude) const;
 
+  /** Returns Calibrated airspeed in feet/second.*/
+  double GetVcalibratedFPS(void) const { return vcas; }
+
+  /** Returns Calibrated airspeed in knots.*/
+  double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
+
+  /** Returns the total pressure in PSF.
+      Total pressure is freestream total pressure for subsonic only.
+      For supersonic it is the 1D total pressure behind a normal shock.
+    */
+  double GetTotalPressure(void) const { return TotalPressure; }
+
+  /** Returns the total temperature in Rankine.
+    The total temperature ("tat", isentropic flow) is calculated:
+    @code
+    tat = Temperature*(1 + 0.2*Mach*Mach)
+    @endcode
+    (where "Temperature" is the temperature calculated by the atmosphere model)
+  */
+  double GetTotalTemperature(void) const { return TotalTemperature; }
+
+  /** Return the total ambient temperature in degrees Celsius.
+      @see GetTotalTemperature
+  */
+  double GetTAT_C(void) const { return RankineToCelsius(TotalTemperature); }
+
   struct Inputs {
     double altitudeASL;
+    FGColumnVector3 vUVW;
+    FGMatrix33 Tl2b;
+    FGColumnVector3 TotalWindNED;
   } in;
 
-  static constexpr double StdDaySLtemperature = 518.67;
-  static constexpr double StdDaySLpressure = 2116.228;
+  static constexpr double StdDaySLtemperature = 518.67;  // deg Rankine
+  static constexpr double StdDaySLpressure = 2116.228;  // PSF
   const double StdDaySLsoundspeed;
 
 protected:
@@ -264,9 +294,13 @@ protected:
   double DensityAltitude = 0.0;
 
   static constexpr double SutherlandConstant = 198.72;  // deg Rankine
-  static constexpr double Beta = 2.269690E-08; // slug/(sec ft R^0.5)
+  static constexpr double Beta = 2.269690E-08;  // slug/(sec ft R^0.5)
   double Viscosity = 0.0;
   double KinematicViscosity = 0.0;
+
+  double vcas = 0.0;
+  double TotalPressure = 0.0;
+  double TotalTemperature = 1.8;
 
   /// Calculate the atmosphere for the given altitude.
   virtual void Calculate(double altitude);

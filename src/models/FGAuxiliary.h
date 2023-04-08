@@ -121,10 +121,6 @@ public:
 // GET functions
 
   // Atmospheric parameters GET functions
-  /** Returns Calibrated airspeed in feet/second.*/
-  double GetVcalibratedFPS(void) const { return vcas; }
-  /** Returns Calibrated airspeed in knots.*/
-  double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
   /** Returns equivalent airspeed in feet/second. */
   double GetVequivalentFPS(void) const { return veas; }
   /** Returns equivalent airspeed in knots. */
@@ -133,23 +129,6 @@ public:
   double GetVtrueFPS() const { return Vt; }
   /** Returns the true airspeed in knots. */
   double GetVtrueKTS() const { return Vt * fpstokts; }
-
-  /** Returns the total pressure.
-      Total pressure is freestream total pressure for
-      subsonic only. For supersonic it is the 1D total pressure
-      behind a normal shock. */
-  double GetTotalPressure(void) const { return pt; }
-
-  /** Returns the total temperature.
-    The total temperature ("tat", isentropic flow) is calculated:
-    @code
-    tat = in.Temperature*(1 + 0.2*Mach*Mach)
-    @endcode
-    (where "in.Temperature" is standard temperature calculated by the atmosphere
-    model) */
-
-  double GetTotalTemperature(void) const { return tat; }
-  double GetTAT_C(void) const { return tatc; }
 
   double GetPilotAccel(int idx)  const { return vPilotAccel(idx);  }
   double GetNpilot(int idx)      const { return vPilotAccelN(idx); }
@@ -252,11 +231,8 @@ public:
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
   struct Inputs {
-    double Pressure;
     double Density;
     double DensitySL;
-    double PressureSL;
-    double Temperature;
     double SoundSpeed;
     double KinematicViscosity;
     double DistanceAGL;
@@ -288,8 +264,7 @@ public:
   } in;
 
 private:
-  double vcas, veas;
-  double pt, tat, tatc; // Don't add a getter for pt!
+  double veas;
 
   FGMatrix33 mTw2b;
   FGMatrix33 mTb2w;

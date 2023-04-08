@@ -78,6 +78,9 @@ bool FGAtmosphere::InitModel(void)
   SLpressure = Pressure = StdDaySLpressure;
   SLdensity = Density = Pressure/(Reng*Temperature);
   SLsoundspeed = Soundspeed = StdDaySLsoundspeed;
+  vcas = 0.0;
+  TotalPressure = StdDaySLpressure;
+  TotalTemperature = StdDaySLtemperature;
   Calculate(0.0);
 
   return true;
@@ -87,10 +90,20 @@ bool FGAtmosphere::InitModel(void)
 
 bool FGAtmosphere::Run(bool Holding)
 {
+  constexpr double a = 0.5*(SHRatio-1.0);
+
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
   Calculate(in.altitudeASL);
+
+  FGColumnVector3 vAeroUVW = in.vUVW - in.Tl2b * in.TotalWindNED;
+  double Mach = vAeroUVW.Magnitude() / Soundspeed;
+
+  TotalPressure = PitotTotalPressure(Mach, Pressure);
+  vcas = StdDaySLsoundspeed * MachFromImpactPressure(TotalPressure - Pressure,
+                                                      StdDaySLpressure);
+  TotalTemperature = Temperature*(1+a*Mach*Mach);
 
   Debug(2);
   return false;
@@ -397,6 +410,11 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/a-ratio", this, &FGAtmosphere::GetSoundSpeedRatio);
   PropertyManager->Tie("atmosphere/density-altitude", this, &FGAtmosphere::GetDensityAltitude);
   PropertyManager->Tie("atmosphere/pressure-altitude", this, &FGAtmosphere::GetPressureAltitude);
+  PropertyManager->Tie("velocities/vc-fps", this, &FGAtmosphere::GetVcalibratedFPS);
+  PropertyManager->Tie("velocities/vc-kts", this, &FGAtmosphere::GetVcalibratedKTS);
+  PropertyManager->Tie("propulsion/tat-r", this, &FGAtmosphere::GetTotalTemperature);
+  PropertyManager->Tie("propulsion/tat-c", this, &FGAtmosphere::GetTAT_C);
+  PropertyManager->Tie("propulsion/pt-lbs_sqft", this, &FGAtmosphere::GetTotalPressure);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

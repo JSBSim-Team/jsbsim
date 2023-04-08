@@ -44,6 +44,7 @@ INCLUDES
 #include "FGOutputFG.h"
 #include "FGXMLElement.h"
 #include "models/FGAuxiliary.h"
+#include "models/FGAtmosphere.h"
 #include "models/FGPropulsion.h"
 #include "models/FGFCS.h"
 #include "models/propulsion/FGPiston.h"
@@ -217,7 +218,7 @@ void FGOutputFG::SocketDataFill(void)
   net1->phidot = (float)(Auxiliary->GetEulerRates(ePhi));   // roll rate (radians/sec)
   net1->thetadot = (float)(Auxiliary->GetEulerRates(eTht)); // pitch rate (radians/sec)
   net1->psidot = (float)(Auxiliary->GetEulerRates(ePsi));   // yaw rate (radians/sec)
-  net1->vcas = (float)(Auxiliary->GetVcalibratedKTS());     // VCAS, knots
+  net1->vcas = (float)(Atmosphere->GetVcalibratedKTS());    // VCAS, knots
   net1->climb_rate = (float)(Propagate->Gethdot());         // altitude rate, ft/sec
   net1->v_north = (float)(Propagate->GetVel(eNorth));       // north vel in NED frame, fps
   net1->v_east = (float)(Propagate->GetVel(eEast));         // east vel in NED frame, fps

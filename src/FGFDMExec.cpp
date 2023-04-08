@@ -451,7 +451,10 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Inertial->in.Position      = Propagate->GetLocation();
     break;
   case eAtmosphere:
-    Atmosphere->in.altitudeASL = Propagate->GetAltitudeASL();
+    Atmosphere->in.altitudeASL  = Propagate->GetAltitudeASL();
+    Atmosphere->in.vUVW         = Propagate->GetUVW();
+    Atmosphere->in.TotalWindNED = Winds->GetTotalWindNED();
+    Atmosphere->in.Tl2b         = Propagate->GetTl2b();
     break;
   case eWinds:
     Winds->in.AltitudeASL      = Propagate->GetAltitudeASL();
@@ -462,11 +465,8 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Winds->in.totalDeltaT      = dT * Winds->GetRate();
     break;
   case eAuxiliary:
-    Auxiliary->in.Pressure     = Atmosphere->GetPressure();
     Auxiliary->in.Density      = Atmosphere->GetDensity();
     Auxiliary->in.DensitySL    = Atmosphere->GetDensitySL();
-    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
-    Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
     Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
     Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
     Auxiliary->in.DistanceAGL  = Propagate->GetDistanceAGL();
@@ -503,11 +503,11 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Propulsion->in.DensityRatio     = Atmosphere->GetDensityRatio();
     Propulsion->in.Density          = Atmosphere->GetDensity();
     Propulsion->in.Soundspeed       = Atmosphere->GetSoundSpeed();
-    Propulsion->in.TotalPressure    = Auxiliary->GetTotalPressure();
-    Propulsion->in.Vc               = Auxiliary->GetVcalibratedKTS();
+    Propulsion->in.TotalPressure    = Atmosphere->GetTotalPressure();
+    Propulsion->in.TAT_c            = Atmosphere->GetTAT_C();
+    Propulsion->in.Vc               = Atmosphere->GetVcalibratedKTS();
     Propulsion->in.Vt               = Auxiliary->GetVt();
     Propulsion->in.qbar             = Auxiliary->Getqbar();
-    Propulsion->in.TAT_c            = Auxiliary->GetTAT_C();
     Propulsion->in.AeroUVW          = Auxiliary->GetAeroUVW();
     Propulsion->in.AeroPQR          = Auxiliary->GetAeroPQR();
     Propulsion->in.alpha            = Auxiliary->Getalpha();
@@ -535,7 +535,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   case eGroundReactions:
     // There are no external inputs to this model.
     GroundReactions->in.Vground         = Auxiliary->GetVground();
-    GroundReactions->in.VcalibratedKts  = Auxiliary->GetVcalibratedKTS();
+    GroundReactions->in.VcalibratedKts  = Atmosphere->GetVcalibratedKTS();
     GroundReactions->in.Temperature     = Atmosphere->GetTemperature();
     GroundReactions->in.TakeoffThrottle = (FCS->GetThrottlePos().size() > 0) ? (FCS->GetThrottlePos(0) > 0.90) : false;
     GroundReactions->in.BrakePos        = FCS->GetBrakePos();

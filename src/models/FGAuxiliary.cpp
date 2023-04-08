@@ -61,11 +61,8 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  pt = 2116.23; // ISA SL pressure
-  tatc = 15.0; // ISA SL temperature
-  tat = 518.67;
 
-  vcas = veas = 0.0;
+  veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
   Mach = MachU = 0.0;
   alpha = beta = 0.0;
@@ -96,11 +93,7 @@ bool FGAuxiliary::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  pt = in.Pressure;
-  tat = in.Temperature;
-  tatc = RankineToCelsius(tat);
-
-  vcas = veas = 0.0;
+  veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
   Mach = MachU = 0.0;
   alpha = beta = 0.0;
@@ -191,17 +184,7 @@ bool FGAuxiliary::Run(bool Holding)
   if (psigt < 0.0) psigt += 2*M_PI;
   gamma = atan2(-in.vVel(eDown), Vground);
 
-  tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
-  tatc = RankineToCelsius(tat);
-
-  pt = FDMExec->GetAtmosphere()->PitotTotalPressure(Mach, in.Pressure);
-
-  if (abs(Mach) > 0.0) {
-    vcas = FDMExec->GetAtmosphere()->VcalibratedFromMach(Mach, in.AltitudeASL);
-    veas = sqrt(2 * qbar / in.DensitySL);
-  }
-  else
-    vcas = veas = 0.0;
+  veas = sqrt(2 * qbar / in.DensitySL);
 
   vPilotAccel.InitMatrix();
   vNcg = in.vBodyAccel/in.StandardGravity;
@@ -308,11 +291,6 @@ void FGAuxiliary::bind(void)
 {
   typedef double (FGAuxiliary::*PMF)(int) const;
   typedef double (FGAuxiliary::*PF)(void) const;
-  PropertyManager->Tie("propulsion/tat-r", this, &FGAuxiliary::GetTotalTemperature);
-  PropertyManager->Tie("propulsion/tat-c", this, &FGAuxiliary::GetTAT_C);
-  PropertyManager->Tie("propulsion/pt-lbs_sqft", this, &FGAuxiliary::GetTotalPressure);
-  PropertyManager->Tie("velocities/vc-fps", this, &FGAuxiliary::GetVcalibratedFPS);
-  PropertyManager->Tie("velocities/vc-kts", this, &FGAuxiliary::GetVcalibratedKTS);
   PropertyManager->Tie("velocities/ve-fps", this, &FGAuxiliary::GetVequivalentFPS);
   PropertyManager->Tie("velocities/ve-kts", this, &FGAuxiliary::GetVequivalentKTS);
   PropertyManager->Tie("velocities/vtrue-fps", this, &FGAuxiliary::GetVtrueFPS);
