@@ -70,7 +70,6 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs& inputs) :
-  FGSurface(fdmex, number),
   FGForce(fdmex),
   in(inputs),
   GearNumber(number),
@@ -279,7 +278,7 @@ void FGLGear::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
+const FGColumnVector3& FGLGear::GetBodyForces(void)
 {
   double gearPos = 1.0;
 
@@ -301,15 +300,9 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
                                                           normal, terrainVel,
                                                           dummy);
 
-    // Does this surface contact point interact with another surface?
-    if (surface) {
-      if (!fdmex->GetTrimStatus())
-        height -= (*surface).GetBumpHeight();
-      staticFFactor = (*surface).GetStaticFFactor();
-      rollingFFactor = (*surface).GetRollingFFactor();
-      maximumForce = (*surface).GetMaximumForce();
-      isSolid =  (*surface).GetSolid();
-    }
+    if (!fdmex->GetTrimStatus())
+      height -= GroundReactions->GetBumpHeight();
+    staticFFactor = GroundReactions->GetStaticFFactor();
 
     FGColumnVector3 vWhlDisplVec;
     double LGearProj = 1.0;
@@ -329,7 +322,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
       // including the strut compression.
       switch(eContactType) {
       case ctBOGEY:
-        if (isSolid) {
+        if (GroundReactions->GetSolid()) {
           compressLength = LGearProj > 0.0 ? height * normalZ / LGearProj : 0.0;
           vWhlDisplVec = mTGear * FGColumnVector3(0., 0., -compressLength);
         } else {
@@ -575,7 +568,7 @@ void FGLGear::CrashDetect(void)
 
 void FGLGear::ComputeBrakeForceCoefficient(void)
 {
-  BrakeFCoeff = rollingFFactor * rollingFCoeff;
+  BrakeFCoeff = GroundReactions->GetRollingFFactor() * rollingFCoeff;
 
   if (eBrakeGrp != bgNone)
     BrakeFCoeff += in.BrakePos[eBrakeGrp] * staticFFactor * (staticFCoeff - rollingFCoeff);
@@ -633,6 +626,7 @@ void FGLGear::ComputeVerticalStrutForce()
 
     }
 
+    double maximumForce = GroundReactions->GetMaximumForce();
     StrutForce = min(springForce + dampForce, (double)0.0);
     if (StrutForce > maximumForce) {
       StrutForce = maximumForce;
@@ -774,17 +768,14 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
 
   switch(eContactType) {
   case ctBOGEY:
-    eSurfaceType = FGSurface::ctBOGEY;
     base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
     break;
   case ctSTRUCTURE:
-    eSurfaceType = FGSurface::ctSTRUCTURE;
     base_property_name = CreateIndexedPropertyName("contact/unit", GearNumber);
     break;
   default:
     return;
   }
-  FGSurface::bind(PropertyManager);
 
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );

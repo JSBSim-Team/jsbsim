@@ -100,7 +100,7 @@ bool FGGroundReactions::Run(bool Holding)
   // Perhaps there is some commonality for things which only need to be
   // calculated once.
   for (auto& gear:lGear) {
-    vForces  += gear->GetBodyForces(this);
+    vForces  += gear->GetBodyForces();
     vMoments += gear->GetMoments();
   }
 
