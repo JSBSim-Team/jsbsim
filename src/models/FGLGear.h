@@ -337,7 +337,7 @@ private:
   double compressLength;
   double compressSpeed;
   double staticFCoeff, dynamicFCoeff, rollingFCoeff;
-  double staticFFactor;
+  double staticFFactor = 1.0;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
