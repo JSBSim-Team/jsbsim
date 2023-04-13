@@ -303,6 +303,10 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     if (!fdmex->GetTrimStatus())
       height -= GroundReactions->GetBumpHeight();
     staticFFactor = GroundReactions->GetStaticFFactor();
+    rollingFFactor = GroundReactions->GetRollingFFactor();
+    maximumForce = GroundReactions->GetMaximumForce();
+    bumpiness = GroundReactions->GetBumpiness();
+    isSolid = GroundReactions->GetSolid();
 
     FGColumnVector3 vWhlDisplVec;
     double LGearProj = 1.0;
@@ -322,7 +326,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       // including the strut compression.
       switch(eContactType) {
       case ctBOGEY:
-        if (GroundReactions->GetSolid()) {
+        if (isSolid) {
           compressLength = LGearProj > 0.0 ? height * normalZ / LGearProj : 0.0;
           vWhlDisplVec = mTGear * FGColumnVector3(0., 0., -compressLength);
         } else {
@@ -568,7 +572,7 @@ void FGLGear::CrashDetect(void)
 
 void FGLGear::ComputeBrakeForceCoefficient(void)
 {
-  BrakeFCoeff = GroundReactions->GetRollingFFactor() * rollingFCoeff;
+  BrakeFCoeff = rollingFFactor * rollingFCoeff;
 
   if (eBrakeGrp != bgNone)
     BrakeFCoeff += in.BrakePos[eBrakeGrp] * staticFFactor * (staticFCoeff - rollingFCoeff);
@@ -626,7 +630,6 @@ void FGLGear::ComputeVerticalStrutForce()
 
     }
 
-    double maximumForce = GroundReactions->GetMaximumForce();
     StrutForce = min(springForce + dampForce, (double)0.0);
     if (StrutForce > maximumForce) {
       StrutForce = maximumForce;
@@ -829,6 +832,17 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
     string tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", GearNumber);
     PropertyManager->Tie(tmp.c_str(), this, &FGLGear::GetSteerAngleDeg, &FGLGear::SetSteerAngleDeg);
   }
+
+  property_name = base_property_name + "/solid";
+  PropertyManager->Tie( property_name.c_str(), &isSolid);
+  property_name = base_property_name + "/bumpiness";
+  PropertyManager->Tie( property_name.c_str(), &bumpiness);
+  property_name = base_property_name + "/maximum-force-lbs";
+  PropertyManager->Tie( property_name.c_str(), &maximumForce);
+  property_name = base_property_name + "/rolling_friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &rollingFFactor);
+  property_name = base_property_name + "/static-friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &staticFFactor);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

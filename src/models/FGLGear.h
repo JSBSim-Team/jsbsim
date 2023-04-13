@@ -337,7 +337,6 @@ private:
   double compressLength;
   double compressSpeed;
   double staticFCoeff, dynamicFCoeff, rollingFCoeff;
-  double staticFFactor = 1.0;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
@@ -351,6 +350,11 @@ private:
   double FCoeff;
   double WheelSlip;
   double GearPos;
+  double staticFFactor = 1.0;
+  double rollingFFactor = 1.0;
+  double maximumForce = DBL_MAX;
+  double bumpiness = 0.0;
+  bool isSolid = true;
   bool WOW;
   bool lastWOW;
   bool FirstContact;
