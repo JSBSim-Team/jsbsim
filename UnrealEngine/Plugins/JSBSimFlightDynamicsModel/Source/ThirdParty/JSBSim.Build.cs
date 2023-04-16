@@ -10,8 +10,7 @@ public class JSBSim : ModuleRules
         Type = ModuleType.External;
 
         bool bSupported = Target.Platform == UnrealTargetPlatform.Win64 ||
-            Target.Platform == UnrealTargetPlatform.Mac ||
-            Target.Platform == UnrealTargetPlatform.Linux; // Android Soon
+            Target.Platform == UnrealTargetPlatform.Mac;
 
         if (!bSupported) return;
 
@@ -70,40 +69,25 @@ public class JSBSim : ModuleRules
         string staticLibPath = CheckForFile(LibPath, "libJSBSim.a");
         PublicAdditionalLibraries.Add(staticLibPath);
 
-        if (Target.Platform == UnrealTargetPlatform.Mac)
-        {
-            string macFrameworkPath = CheckForDirectory(LibPath, "JSBSim.framework");
-            string macJSBSimExec = CheckForFile(LibPath, "JSBSim");
+        bool bMacos = Target.Platform == UnrealTargetPlatform.Mac;
+        string UnixDynamicLib = bMacos ? "libJSBSim.dylib" : "libJSBSim.so";
 
-            //RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.framework", macFrameworkPath);
-            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim", macJSBSimExec);  
-        }
-        else 
-        {
-            string soFilePath = CheckForFile(LibPath, "libJSBSim.so");
-            RuntimeDependencies.Add("$(BinaryOutputDir)/" + "libJSBSim.so", soFilePath);
-        }
+        string LibFullPath = CheckForFile(LibPath, UnixDynamicLib, true);
+        if (!string.IsNullOrEmpty(LibFullPath))
+            RuntimeDependencies.Add("$(BinaryOutputDir)/" + UnixDynamicLib, LibFullPath);
     }
 
-    private static string CheckForFile(string path, string file)
+    private static string CheckForFile(string path, string file, bool noException = false)
     {
         string filePath = Path.Combine(path, file);
-        if (File.Exists(filePath))
-            return filePath;
+
+        if (File.Exists(filePath)) return filePath;
 
         string Err = $"{file} not found at {path}";
         System.Console.WriteLine(Err);
-        throw new BuildException(Err);
-    }
 
-    private static string CheckForDirectory(string path, string directory)
-    {
-        string directoryPath = Path.Combine(path, directory);
-        if (Directory.Exists(directoryPath))
-            return directoryPath;
+        if (noException) return null;
 
-        string Err = $"{directory} not found at {path}";
-        System.Console.WriteLine(Err);
         throw new BuildException(Err);
     }
 }
