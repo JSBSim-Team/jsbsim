@@ -406,7 +406,8 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		FString AircraftPath(TEXT("aircraft"));
 		FString EnginePath(TEXT("engine"));
 		FString SystemPath(TEXT("systems"));
-		Exec->SetRootDir(SGPath(*RootDir));
+
+		Exec->SetRootDir(SGPath(bUseExternalAircraftPath ? ExternalAircraftPath : *RootDir));
 		Exec->SetAircraftPath(SGPath(*AircraftPath));
 		Exec->SetEnginePath(SGPath(*EnginePath));
 		Exec->SetSystemsPath(SGPath(*SystemPath));

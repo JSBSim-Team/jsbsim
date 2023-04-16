@@ -189,6 +189,11 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")
 	FAircraftState AircraftState;
 
+	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "Settings")
+	bool bUseExternalAircraftPath;
+	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "Settings")
+	FString ExternalAircraftPath;
+
 
     // Functions
 
