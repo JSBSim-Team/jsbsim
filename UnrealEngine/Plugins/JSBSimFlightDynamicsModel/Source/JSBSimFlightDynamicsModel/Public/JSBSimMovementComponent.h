@@ -197,7 +197,9 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")
 	FAircraftState AircraftState;
 
-
+  UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")
+  TArray<AActor*> GroundCheckIgnoredActors;
+  
     // Functions
 
 	/* Returns the full Aircraft name as set in the JSBSim definition file */ 

@@ -206,6 +206,9 @@ double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FV
   CollisionParams.bTraceComplex = true;
   CollisionParams.AddIgnoredActor(Parent);
 
+  if (GroundCheckIgnoredActors.Num() > 0)
+    CollisionParams.AddIgnoredActors(GroundCheckIgnoredActors);
+
   FCollisionObjectQueryParams ObjectParams = FCollisionObjectQueryParams(ECC_WorldStatic);
   ObjectParams.AddObjectTypesToQuery(ECC_WorldDynamic);
   ObjectParams.AddObjectTypesToQuery(ECC_Pawn);
