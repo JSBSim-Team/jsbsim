@@ -47,6 +47,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 #include "FGInertial.h"
+#include "FGAtmosphere.h"
 
 using namespace std;
 
@@ -193,10 +194,10 @@ bool FGAuxiliary::Run(bool Holding)
   tat = in.Temperature*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
   tatc = RankineToCelsius(tat);
 
-  pt = PitotTotalPressure(Mach, in.Pressure);
+  pt = FDMExec->GetAtmosphere()->PitotTotalPressure(Mach, in.Pressure);
 
   if (abs(Mach) > 0.0) {
-    vcas = VcalibratedFromMach(Mach, in.Pressure);
+    vcas = FDMExec->GetAtmosphere()->VcalibratedFromMach(Mach, in.AltitudeASL);
     veas = sqrt(2 * qbar / in.DensitySL);
   }
   else

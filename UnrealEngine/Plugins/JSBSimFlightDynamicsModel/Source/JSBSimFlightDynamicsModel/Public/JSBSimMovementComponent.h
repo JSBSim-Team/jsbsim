@@ -71,6 +71,14 @@ public:
 	bool DrawDebug = true;
 
 
+    /**
+	 * When querying for the Above Ground Level, JSBSim can throw raycasts from several points, sometimes under the StructuralFrameOrigin. 
+    *  By doing that, some of them can fail if they start below the ground. This value is a vertical offset added to each AGL Query to make sure we hit the ground. 
+    *  (Aircraft geometry is of course ignored during the process - 15m should be sufficient for all kind of aircrafts - Issue #786)
+	*/
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Model|Settings")
+	float AGLThresholdMeters = 15;
+
 	/**
 	 * Center of Gravity Location in Actor local frame
 	*/

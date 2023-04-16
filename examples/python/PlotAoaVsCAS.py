@@ -100,11 +100,8 @@ for j in range(2):
             try:
                 fdm['simulation/do_simple_trim'] = 1
                 results.append((fdm['velocities/vc-kts'], fdm['aero/alpha-deg']))
-            except RuntimeError as e:
-                # The trim cannot succeed. Just make sure that the raised exception
-                # is due to the trim failure otherwise rethrow.
-                if e.args[0] != 'Trim Failed':
-                    raise
+            except jsbsim.TrimFailureError:
+                pass  # Ignore trim failure exceptions
 
         print("-----------------------------------------")
         print("Altitude {} - Weight {} - CG {}".format(h_ft[j],weight[i],cgPos[j]))
