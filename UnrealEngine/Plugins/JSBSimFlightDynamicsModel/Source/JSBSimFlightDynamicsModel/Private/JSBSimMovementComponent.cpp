@@ -683,6 +683,7 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
 	if (AircraftState.AltitudeAGLFt < -10.0 || AircraftState.AltitudeASLFt < -10.0) {
 		Exec->SuspendIntegration();
 		AircraftState.Crashed = true;
+	  AircraftCrashed.Broadcast();
 	}
 	
 	// Copy the fuel levels from JSBSim if fuel

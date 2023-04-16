@@ -35,6 +35,7 @@ namespace JSBSim {
 // UE Forward Declarations
 class AGeoReferencingSystem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDelegateAircraftCrashed);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class JSBSIMFLIGHTDYNAMICSMODEL_API UJSBSimMovementComponent : public UActorComponent
@@ -196,6 +197,10 @@ public:
 
 	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")
 	FAircraftState AircraftState;
+
+  // Events
+  UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+  FDelegateAircraftCrashed AircraftCrashed;
 
 
     // Functions
