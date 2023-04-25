@@ -119,6 +119,7 @@ public:
     auto atm = fdmex.GetAtmosphere();
     auto aux = FGAuxiliary(&fdmex);
     atm->InitModel();
+    aux.in.StdDaySLsoundspeed = atm->StdDaySLsoundspeed;
 
     // Ambient conditions far upstream (i.e. upstream the normal schock
     // in supersonic flight)
