@@ -293,6 +293,9 @@ protected:
 
   virtual void bind(void);
   void Debug(int from) override;
+
+public:
+  static constexpr double StdDaySLdensity = StdDaySLpressure / (Reng0 * StdDaySLtemperature);
 };
 
 } // namespace JSBSim
