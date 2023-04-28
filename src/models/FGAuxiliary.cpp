@@ -198,7 +198,7 @@ bool FGAuxiliary::Run(bool Holding)
 
   if (abs(Mach) > 0.0) {
     vcas = VcalibratedFromMach(Mach, in.Pressure);
-    veas = sqrt(2 * qbar / in.DensitySL);
+    veas = sqrt(2 * qbar / FGAtmosphere::StdDaySLdensity);
   }
   else
     vcas = veas = 0.0;
