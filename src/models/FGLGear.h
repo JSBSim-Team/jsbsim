@@ -41,9 +41,9 @@ INCLUDES
 #include <string>
 
 #include "models/propulsion/FGForce.h"
+#include "math/FGLocation.h"
 #include "math/FGColumnVector3.h"
 #include "math/LagrangeMultiplier.h"
-#include "FGSurface.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -54,6 +54,8 @@ namespace JSBSim {
 class FGTable;
 class Element;
 class FGPropertyManager;
+class FGGroundReactions;
+class FGFunction;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -187,7 +189,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGLGear : protected FGSurface, public FGForce
+class JSBSIM_API FGLGear : public FGForce
 {
 public:
   struct Inputs {
@@ -232,10 +234,8 @@ public:
   /// Destructor
   ~FGLGear();
 
-  /** The Force vector for this gear
-      @param surface another surface to interact with, set to NULL for none.
-   */
-  const FGColumnVector3& GetBodyForces(FGSurface *surface = NULL);
+  /// The Force vector for this gear
+  const FGColumnVector3& GetBodyForces(void) override;
 
   /// Gets the location of the gear in Body axes
   FGColumnVector3 GetBodyLocation(void) const {
@@ -338,7 +338,7 @@ private:
   double bDampRebound;
   double compressLength;
   double compressSpeed;
-  double rollingFCoeff;
+  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
   double Stiffness, Shape, Peak, Curvature; // Pacejka factors
   double BrakeFCoeff;
   double maxCompLen;
@@ -352,6 +352,11 @@ private:
   double FCoeff;
   double WheelSlip;
   double GearPos;
+  double staticFFactor = 1.0;
+  double rollingFFactor = 1.0;
+  double maximumForce = DBL_MAX;
+  double bumpiness = 0.0;
+  bool isSolid = true;
   bool WOW;
   bool lastWOW;
   bool FirstContact;

@@ -124,8 +124,6 @@ protected:
   double bumpiness;
   bool isSolid;
 
-  double staticFCoeff, dynamicFCoeff;
-
 private:
   int contactNumber;
   double pos[3];

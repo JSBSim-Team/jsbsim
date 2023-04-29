@@ -69,7 +69,6 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs& inputs) :
-  FGSurface(fdmex, number),
   FGForce(fdmex),
   in(inputs),
   GearNumber(number),
@@ -276,7 +275,7 @@ void FGLGear::ResetToIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
+const FGColumnVector3& FGLGear::GetBodyForces(void)
 {
   double gearPos = 1.0;
 
@@ -298,15 +297,13 @@ const FGColumnVector3& FGLGear::GetBodyForces(FGSurface *surface)
                                                           normal, terrainVel,
                                                           dummy);
 
-    // Does this surface contact point interact with another surface?
-    if (surface) {
-      if (!fdmex->GetTrimStatus())
-        height -= (*surface).GetBumpHeight();
-      staticFFactor = (*surface).GetStaticFFactor();
-      rollingFFactor = (*surface).GetRollingFFactor();
-      maximumForce = (*surface).GetMaximumForce();
-      isSolid =  (*surface).GetSolid();
-    }
+    if (!fdmex->GetTrimStatus())
+      height -= GroundReactions->GetBumpHeight();
+    staticFFactor = GroundReactions->GetStaticFFactor();
+    rollingFFactor = GroundReactions->GetRollingFFactor();
+    maximumForce = GroundReactions->GetMaximumForce();
+    bumpiness = GroundReactions->GetBumpiness();
+    isSolid = GroundReactions->GetSolid();
 
     FGColumnVector3 vWhlDisplVec;
     double LGearProj = 1.0;
@@ -771,17 +768,14 @@ void FGLGear::bind(void)
 
   switch(eContactType) {
   case ctBOGEY:
-    eSurfaceType = FGSurface::ctBOGEY;
     base_property_name = CreateIndexedPropertyName("gear/unit", GearNumber);
     break;
   case ctSTRUCTURE:
-    eSurfaceType = FGSurface::ctSTRUCTURE;
     base_property_name = CreateIndexedPropertyName("contact/unit", GearNumber);
     break;
   default:
     return;
   }
-  FGSurface::bind();
 
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );
@@ -835,6 +829,17 @@ void FGLGear::bind(void)
     string tmp = CreateIndexedPropertyName("fcs/steer-pos-deg", GearNumber);
     PropertyManager->Tie(tmp.c_str(), this, &FGLGear::GetSteerAngleDeg, &FGLGear::SetSteerAngleDeg);
   }
+
+  property_name = base_property_name + "/solid";
+  PropertyManager->Tie( property_name.c_str(), &isSolid);
+  property_name = base_property_name + "/bumpiness";
+  PropertyManager->Tie( property_name.c_str(), &bumpiness);
+  property_name = base_property_name + "/maximum-force-lbs";
+  PropertyManager->Tie( property_name.c_str(), &maximumForce);
+  property_name = base_property_name + "/rolling_friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &rollingFFactor);
+  property_name = base_property_name + "/static-friction-factor";
+  PropertyManager->Tie( property_name.c_str(), &staticFFactor);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

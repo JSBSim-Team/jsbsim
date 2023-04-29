@@ -109,7 +109,7 @@ bool FGGroundReactions::Run(bool Holding)
   // Perhaps there is some commonality for things which only need to be
   // calculated once.
   for (unsigned int i=0; i<lGear.size(); i++) {
-    vForces  += lGear[i]->GetBodyForces(this);
+    vForces  += lGear[i]->GetBodyForces();
     vMoments += lGear[i]->GetMoments();
   }
 
