@@ -717,21 +717,26 @@ jobs:
             dist/*.deb
 
   Stable-Release:
-    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
     name: Deploy Stable Release
-    runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write  # Needed for the GitHub release
+      id-token: write  # Mandatory for PyPI trusted publishing
     steps:
       - name: Download files
         uses: actions/download-artifact@v3
       - name: Prepare files for deployment
         run: |
-          mkdir dist
-          find . -type f -name *.exe -exec cp {} dist/. \;
-          find . -type f -name *.whl -exec cp {} dist/. \;
-          find . -type f -name *.deb -exec cp {} dist/. \;
-          find . -type f -name *.tar.gz -exec cp {} dist/. \;
           find . -type f -name MSVC_version.txt -exec cp {} . \;
+          mkdir dist
+          find . -type f -name *.whl -exec cp {} dist/. \;
+          find . -type f -name *.tar.gz -exec cp {} dist/. \;
+          mkdir GH_release
+          find . -type f -name *.exe -exec cp {} GH_release/. \;
+          find . -type f -name *.deb -exec cp {} GH_release/. \;
 
       # PyPI deployment
       - name: Set up Python 3.7
@@ -739,13 +744,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: PyPI deployment
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          pip install -U twine
-          twine upload dist/*.whl
-          twine upload dist/*.tar.gz
+        uses: pypa/gh-action-pypi-publish@release/v1
 
     # Deploy stable release to GitHub
       - name: Get JSBSim version
@@ -779,8 +778,8 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            dist/*.exe
-            dist/*.deb
+            GH_release/*.exe
+            GH_release/*.deb
 
       # Bump version
       - name: Checkout JSBSim
