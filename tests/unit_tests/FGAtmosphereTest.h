@@ -186,6 +186,21 @@ public:
   void testRun()
   {
     FGFDMExec fdmex;
+    auto pm = fdmex.GetPropertyManager();
+    pm->Untie("atmosphere/T-R");
+    pm->Untie("atmosphere/rho-slugs_ft3");
+    pm->Untie("atmosphere/P-psf");
+    pm->Untie("atmosphere/a-fps");
+    pm->Untie("atmosphere/T-sl-R");
+    pm->Untie("atmosphere/rho-sl-slugs_ft3");
+    pm->Untie("atmosphere/a-sl-fps");
+    pm->Untie("atmosphere/theta");
+    pm->Untie("atmosphere/sigma");
+    pm->Untie("atmosphere/delta");
+    pm->Untie("atmosphere/a-ratio");
+    pm->Untie("atmosphere/density-altitude");
+    pm->Untie("atmosphere/pressure-altitude");
+
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -194,48 +209,77 @@ public:
     constexpr double rho0 = P0/(R*T0);
     const double a0 = sqrt(gama*R*T0);
 
+    auto T_node = pm->GetNode("atmosphere/T-R");
+    auto rho_node = pm->GetNode("atmosphere/rho-slugs_ft3");
+    auto P_node = pm->GetNode("atmosphere/P-psf");
+    auto a_node = pm->GetNode("atmosphere/a-fps");
+    auto T0_node = pm->GetNode("atmosphere/T-sl-R");
+    auto rho0_node = pm->GetNode("atmosphere/rho-sl-slugs_ft3");
+    auto a0_node = pm->GetNode("atmosphere/a-sl-fps");
+    auto theta_node = pm->GetNode("atmosphere/theta");
+    auto sigma_node = pm->GetNode("atmosphere/sigma");
+    auto delta_node = pm->GetNode("atmosphere/delta");
+    auto a_ratio_node = pm->GetNode("atmosphere/a-ratio");
+    auto density_altitude_node = pm->GetNode("atmosphere/density-altitude");
+    auto pressure_altitude_node = pm->GetNode("atmosphere/pressure-altitude");
+
     for(double h=-1000.0; h<10000; h+= 1000) {
       atm.in.altitudeASL = h;
       TS_ASSERT(atm.Run(false) == false);
 
       double T = T0 + 0.1*h;
       TS_ASSERT_EQUALS(atm.GetTemperatureSL(), T0);
+      TS_ASSERT_DELTA(T0_node->getDoubleValue(), T0, epsilon);
       TS_ASSERT_DELTA(atm.GetTemperature(), T, epsilon);
+      TS_ASSERT_DELTA(T_node->getDoubleValue(), T, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
       TS_ASSERT_DELTA(atm.GetTemperature(h), T, epsilon);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(), T/T0, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperatureRatio(0.0), 1.0);
       TS_ASSERT_DELTA(atm.GetTemperatureRatio(h), T/T0, epsilon);
+      TS_ASSERT_DELTA(theta_node->getDoubleValue(), T/T0, epsilon);
 
       double P = P0 + 1.0*h;
       TS_ASSERT_EQUALS(atm.GetPressureSL(), P0);
       TS_ASSERT_DELTA(atm.GetPressure(), P, epsilon);
+      TS_ASSERT_DELTA(P_node->getDoubleValue(), P, epsilon);
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_DELTA(atm.GetPressureRatio(), P/P0, epsilon);
+      TS_ASSERT_DELTA(delta_node->getDoubleValue(), P/P0, epsilon);
 
       double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(), rho, epsilon);
+      TS_ASSERT_DELTA(rho_node->getDoubleValue(), rho, epsilon);
       TS_ASSERT_DELTA(atm.GetDensity(0.0), rho0, epsilon);
       TS_ASSERT_DELTA(atm.GetDensity(h), rho, epsilon);
       TS_ASSERT_DELTA(atm.GetDensitySL(), rho0, epsilon);
+      TS_ASSERT_DELTA(rho0_node->getDoubleValue(), rho0, epsilon);
       TS_ASSERT_EQUALS(atm.GetDensityRatio(), rho/rho0);
+      TS_ASSERT_DELTA(sigma_node->getDoubleValue(), rho/rho0, epsilon);
 
       double a = sqrt(gama*R*T);
       TS_ASSERT_DELTA(atm.GetSoundSpeed(), a, epsilon);
+      TS_ASSERT_DELTA(a_node->getDoubleValue(), a, epsilon);
       TS_ASSERT_DELTA(atm.GetSoundSpeed(0.0), a0, epsilon);
       TS_ASSERT_DELTA(atm.GetSoundSpeed(h), a, epsilon);
       TS_ASSERT_DELTA(atm.GetSoundSpeedSL(), a0, epsilon);
+      TS_ASSERT_DELTA(a0_node->getDoubleValue(), a0, epsilon);
       TS_ASSERT_DELTA(atm.GetSoundSpeedRatio(), a/a0, epsilon);
+      TS_ASSERT_DELTA(a_ratio_node->getDoubleValue(), a/a0, epsilon);
 
       TS_ASSERT_EQUALS(atm.GetDensityAltitude(), h);
+      TS_ASSERT_EQUALS(density_altitude_node->getDoubleValue(), h);
       TS_ASSERT_EQUALS(atm.GetPressureAltitude(), h);
+      TS_ASSERT_EQUALS(pressure_altitude_node->getDoubleValue(), h);
 
       double mu = beta*T*sqrt(T)/(k+T);
       double nu = mu/rho;
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
+
+    pm->Unbind();
   }
 
   void testTemperatureOverride()
