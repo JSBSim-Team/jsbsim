@@ -15,6 +15,8 @@ public:
     : FGAtmosphere(fdm), a_t(t_lapse_rate), a_p(p_lapse_rate)
   {}
 
+  ~DummyAtmosphere() { PropertyManager->Unbind(this); }
+
   using FGAtmosphere::GetTemperature;
   using FGAtmosphere::GetPressure;
 
@@ -52,9 +54,15 @@ constexpr double psftoinhg = DummyAtmosphere::GetPSFtoInHg();
 class FGAtmosphereTest : public CxxTest::TestSuite
 {
 public:
+  FGFDMExec fdmex;
+
+  FGAtmosphereTest() {
+    auto atm = fdmex.GetAtmosphere();
+    fdmex.GetPropertyManager()->Unbind(atm.get());
+  }
+
   void testDefaultValuesBeforeInit()
   {
-    FGFDMExec fdmex;
     FGJSBBase::debug_lvl = 2;
     auto atm = DummyAtmosphere(&fdmex, 1.0, 1.0);
 
@@ -92,7 +100,6 @@ public:
 
   void testDefaultValuesAfterInit()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 1.0, 1.0);
 
     TS_ASSERT(atm.InitModel());
@@ -133,7 +140,6 @@ public:
 
   void testGetAltitudeParameters()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -185,30 +191,7 @@ public:
 
   void testRun()
   {
-    FGFDMExec fdmex;
     auto pm = fdmex.GetPropertyManager();
-    pm->Untie("atmosphere/T-R");
-    pm->Untie("atmosphere/rho-slugs_ft3");
-    pm->Untie("atmosphere/P-psf");
-    pm->Untie("atmosphere/a-fps");
-    pm->Untie("atmosphere/T-sl-R");
-    pm->Untie("atmosphere/rho-sl-slugs_ft3");
-    pm->Untie("atmosphere/a-sl-fps");
-    pm->Untie("atmosphere/theta");
-    pm->Untie("atmosphere/sigma");
-    pm->Untie("atmosphere/delta");
-    pm->Untie("atmosphere/a-ratio");
-    pm->Untie("atmosphere/density-altitude");
-    pm->Untie("atmosphere/pressure-altitude");
-
-    auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
-    TS_ASSERT(atm.InitModel());
-
-    constexpr double T0 = FGAtmosphere::StdDaySLtemperature;
-    constexpr double P0 = FGAtmosphere::StdDaySLpressure;
-    constexpr double rho0 = P0/(R*T0);
-    const double a0 = sqrt(gama*R*T0);
-
     auto T_node = pm->GetNode("atmosphere/T-R");
     auto rho_node = pm->GetNode("atmosphere/rho-slugs_ft3");
     auto P_node = pm->GetNode("atmosphere/P-psf");
@@ -222,6 +205,14 @@ public:
     auto a_ratio_node = pm->GetNode("atmosphere/a-ratio");
     auto density_altitude_node = pm->GetNode("atmosphere/density-altitude");
     auto pressure_altitude_node = pm->GetNode("atmosphere/pressure-altitude");
+
+    auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
+    TS_ASSERT(atm.InitModel());
+
+    constexpr double T0 = FGAtmosphere::StdDaySLtemperature;
+    constexpr double P0 = FGAtmosphere::StdDaySLpressure;
+    constexpr double rho0 = P0/(R*T0);
+    const double a0 = sqrt(gama*R*T0);
 
     for(double h=-1000.0; h<10000; h+= 1000) {
       atm.in.altitudeASL = h;
@@ -278,13 +269,10 @@ public:
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
-
-    pm->Unbind();
   }
 
   void testTemperatureOverride()
   {
-    FGFDMExec fdmex;
     auto pm = fdmex.GetPropertyManager();
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
@@ -340,11 +328,14 @@ public:
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
+
+    // Detach the property atmosphere/override/temperature
+    auto parent = t_node->getParent();
+    parent->removeChild(t_node);
   }
 
   void testPressureOverride()
   {
-    FGFDMExec fdmex;
     auto pm = fdmex.GetPropertyManager();
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
@@ -399,11 +390,14 @@ public:
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
+
+    // Detach the property atmosphere/override/pressure
+    auto parent = p_node->getParent();
+    parent->removeChild(p_node);
   }
 
   void testDensityOverride()
   {
-    FGFDMExec fdmex;
     auto pm = fdmex.GetPropertyManager();
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
@@ -458,11 +452,14 @@ public:
       TS_ASSERT_DELTA(atm.GetAbsoluteViscosity(), mu, epsilon);
       TS_ASSERT_DELTA(atm.GetKinematicViscosity(), nu, epsilon);
     }
+
+    // Detach the property atmosphere/override/density
+    auto parent = rho_node->getParent();
+    parent->removeChild(rho_node);
   }
 
   void testSetTemperatureSL()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -519,7 +516,6 @@ public:
 
   void testSetPressureSL()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -576,7 +572,6 @@ public:
 
   void testPressureConversion()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -602,7 +597,6 @@ public:
 
   void testTemperatureConversion()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, 0.1, 1.0);
     TS_ASSERT(atm.InitModel());
 
@@ -624,7 +618,6 @@ public:
 
   void testAltitudeParametersValidation()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, -1.0, -100.0);
     TS_ASSERT(atm.InitModel());
 
@@ -637,7 +630,6 @@ public:
 
   void testSeaLevelParametersValidation()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, -1.0, -100.0);
     TS_ASSERT(atm.InitModel());
 
@@ -650,7 +642,6 @@ public:
 
   void testProbeAtADifferentAltitude()
   {
-    FGFDMExec fdmex;
     auto atm = DummyAtmosphere(&fdmex, -1.0, -100.0);
     TS_ASSERT(atm.InitModel());
 

@@ -2475,6 +2475,7 @@ SGPropertyNode_ptr
 SGPropertyNode::eraseChild(simgear::PropertyList::iterator child)
 {
   SGPropertyNode_ptr node = *child;
+  node->_parent = nullptr;
   node->setAttribute(REMOVED, true);
   node->clearValue();
   fireChildRemoved(node);
