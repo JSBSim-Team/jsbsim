@@ -4,14 +4,24 @@
 #include "JSBSimMovementComponent.h"
 #include "JSBSimModule.h"
 
-#pragma warning( push )
-
 // UE treats warning as errors. JSBSim has some warnings in its include files, so if we don't catch them inside this push/pop pragma, we won't be able to build...
 
-#pragma warning( disable : 4263 ) // FGOutputType.h(151): warning C4263: 'bool JSBSim::FGOutputType::Run(void)': member function does not override any base class virtual member function
-#pragma warning( disable : 4264 ) // FGOutputType.h(215): warning C4264: 'bool JSBSim::FGModel::Run(bool)': no override available for virtual member function from base 'JSBSim::FGModel'; function is hidden --- And others
-#pragma warning( disable : 4005 ) // compiler.h(58): warning C4005: 'DEPRECATED': macro redefinition with UE_5.0\Engine\Source\Runtime\Core\Public\Windows\WindowsPlatformCompilerPreSetup.h(55): note: see previous definition of 'DEPRECATED'
-#pragma warning( disable : 4458 ) // FGXMLElement.h(369): error C4458: declaration of 'name' hides class member
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4263 )
+#pragma warning( disable : 4264 )
+#pragma warning( disable : 4005 )
+#pragma warning( disable : 4458 )
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#pragma clang diagnostic ignored "-Wshadow"
+#elif defined(__GNUC__)
+#pragma GCC push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#pragma GCC diagnostic ignored "-Wshadow"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
 
 #include "FGFDMExec.h"
 #include "math/FGLocation.h"
@@ -35,7 +45,13 @@
 #include "Interfaces/IPluginManager.h"
 #include "simgear/props/props.hxx"
 
+#ifdef _MSC_VER
 #pragma warning( pop )
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC pop
+#endif
 
 #include "UEGroundCallback.h"
 

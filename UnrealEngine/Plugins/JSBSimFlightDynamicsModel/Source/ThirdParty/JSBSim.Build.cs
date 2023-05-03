@@ -9,10 +9,12 @@ public class JSBSim : ModuleRules
     {
         Type = ModuleType.External;
 
-        bool bSupported = Target.Platform == UnrealTargetPlatform.Win64 ||
-            Target.Platform == UnrealTargetPlatform.Mac;
+        bool bJSBSimSupported = Target.Platform == UnrealTargetPlatform.Win64 ||
+                                Target.Platform == UnrealTargetPlatform.Mac || 
+                                Target.Platform == UnrealTargetPlatform.Linux || 
+                                Target.Platform == UnrealTargetPlatform.Android;
 
-        if (!bSupported) return;
+        if (!bJSBSimSupported) return;
 
         if (Target.Platform == UnrealTargetPlatform.Win64)
             SetupWindowsPlatform();
@@ -53,40 +55,44 @@ public class JSBSim : ModuleRules
     {
         string JSBSimLocalFolder = "JSBSim";
         string LibFolderName = "Lib";
-        string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
+        string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName, $"{Target.Platform}");
 
         // Include headers
         string IncludePath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include");
-        System.Console.WriteLine($"JSBSim Include Path: {IncludePath}");
         PublicSystemIncludePaths.Add(IncludePath);
 
-        bUseRTTI = true;
-        bEnableExceptions = true;
-
-        LibPath = Path.Combine(LibPath, $"{Target.Platform}");
-        System.Console.WriteLine($"JSBSim Lib Path: {LibPath}");
-
-        string staticLibPath = CheckForFile(LibPath, "libJSBSim.a");
-        PublicAdditionalLibraries.Add(staticLibPath);
-
-        bool bMacos = Target.Platform == UnrealTargetPlatform.Mac;
-        string UnixDynamicLib = bMacos ? "libJSBSim.dylib" : "libJSBSim.so";
-
-        string LibFullPath = CheckForFile(LibPath, UnixDynamicLib, true);
-        if (!string.IsNullOrEmpty(LibFullPath))
-            RuntimeDependencies.Add("$(BinaryOutputDir)/" + UnixDynamicLib, LibFullPath);
+        if (Target.Platform != UnrealTargetPlatform.Mac)
+        {   
+            LibPath = CheckForFile(LibPath, "libJSBSim.so");
+            PublicAdditionalLibraries.Add(LibPath);
+            RuntimeDependencies.Add(LibPath);
+            
+            if (Target.Platform == UnrealTargetPlatform.Android)
+            {
+                string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+                AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "JSBSim/JSBSim_APL.xml"));
+            }
+        }
+        else
+        {
+            // Static linking for now.
+            string aLibPath = CheckForFile(LibPath, "libJSBSim.a");
+            PublicAdditionalLibraries.Add(aLibPath);
+        }
     }
 
-    private static string CheckForFile(string path, string file, bool noException = false)
+    private static string CheckForFile(string path, string file)
     {
         string filePath = Path.Combine(path, file);
 
-        if (File.Exists(filePath)) return filePath;
-
+        if (File.Exists(filePath)) 
+        {
+            System.Console.WriteLine($"JSBSim Path Check OK: {filePath}");
+            return filePath;
+        }
+        
         string Err = $"{file} not found at {path}";
         System.Console.WriteLine(Err);
-
-        if (noException) return null;
 
         throw new BuildException(Err);
     }
