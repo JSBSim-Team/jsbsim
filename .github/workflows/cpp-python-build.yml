@@ -54,11 +54,6 @@ jobs:
             shared_libs: OFF
             build_julia: ON
             display_stack_trace: OFF
-          - os: ubuntu-18.04
-            expat: OFF
-            shared_libs: OFF
-            build_julia: ON
-            display_stack_trace: OFF
     env:
       static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
     runs-on: ${{ matrix.os }}
@@ -623,7 +618,7 @@ jobs:
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
           echo "::endgroup::"
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.12.1
+        uses: pypa/cibuildwheel@v2.12.3
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
@@ -751,21 +746,26 @@ jobs:
             dist/*.deb
 
   Stable-Release:
-    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
     name: Deploy Stable Release
-    runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write  # Needed for the GitHub release
+      id-token: write  # Mandatory for PyPI trusted publishing
     steps:
       - name: Download files
         uses: actions/download-artifact@v3
       - name: Prepare files for deployment
         run: |
-          mkdir dist
-          find . -type f -name *.exe -exec cp {} dist/. \;
-          find . -type f -name *.whl -exec cp {} dist/. \;
-          find . -type f -name *.deb -exec cp {} dist/. \;
-          find . -type f -name *.tar.gz -exec cp {} dist/. \;
           find . -type f -name MSVC_version.txt -exec cp {} . \;
+          mkdir dist
+          find . -type f -name *.whl -exec cp {} dist/. \;
+          find . -type f -name *.tar.gz -exec cp {} dist/. \;
+          mkdir GH_release
+          find . -type f -name *.exe -exec cp {} GH_release/. \;
+          find . -type f -name *.deb -exec cp {} GH_release/. \;
 
       # PyPI deployment
       - name: Set up Python 3.7
@@ -773,13 +773,7 @@ jobs:
         with:
           python-version: '3.7'
       - name: PyPI deployment
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          pip install -U twine
-          twine upload dist/*.whl
-          twine upload dist/*.tar.gz
+        uses: pypa/gh-action-pypi-publish@release/v1
 
     # Deploy stable release to GitHub
       - name: Get JSBSim version
@@ -804,7 +798,7 @@ jobs:
             ## Release files
             - Windows 64 bits
               - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
-            - Ubuntu Bionic 18.04 and Focal 20.04 - amd64
+            - Ubuntu Focal 20.04 and Jammy 22.04 - amd64
               - `*.deb` (Debian packages)
             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
             - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
@@ -813,8 +807,8 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            dist/*.exe
-            dist/*.deb
+            GH_release/*.exe
+            GH_release/*.deb
 
       # Bump version
       - name: Checkout JSBSim

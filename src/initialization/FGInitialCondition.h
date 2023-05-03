@@ -64,6 +64,7 @@ class FGMatrix33;
 class FGColumnVector3;
 class FGAtmosphere;
 class FGAircraft;
+class FGAuxiliary;
 class FGPropertyManager;
 class Element;
 
@@ -707,6 +708,7 @@ private:
   FGFDMExec *fdmex;
   std::shared_ptr<FGAtmosphere> Atmosphere;
   std::shared_ptr<FGAircraft> Aircraft;
+  std::shared_ptr<FGAuxiliary> Auxiliary;
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);

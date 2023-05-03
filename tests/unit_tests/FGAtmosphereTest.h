@@ -86,6 +86,8 @@ public:
 
     TS_ASSERT_EQUALS(atm.GetAbsoluteViscosity(), 0.0);
     TS_ASSERT_EQUALS(atm.GetKinematicViscosity(), 0.0);
+
+    FGJSBBase::debug_lvl = 0;
   }
 
   void testDefaultValuesAfterInit()

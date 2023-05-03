@@ -212,7 +212,8 @@ public:
 
   static constexpr double StdDaySLtemperature = 518.67;
   static constexpr double StdDaySLpressure = 2116.228;
-  static const double StdDaySLsoundspeed;
+  const double StdDaySLsoundspeed;
+  static constexpr double SHRatio = 1.4;
 
 protected:
   // Sea level conditions
@@ -288,12 +289,13 @@ protected:
   static constexpr double Reng0 = Rstar / Mair;
   //@}
 
-  static constexpr double SHRatio = 1.4;
-
   double Reng = Reng0;
 
   virtual void bind(void);
   void Debug(int from) override;
+
+public:
+  static constexpr double StdDaySLdensity = StdDaySLpressure / (Reng0 * StdDaySLtemperature);
 };
 
 } // namespace JSBSim

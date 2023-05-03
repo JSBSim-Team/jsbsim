@@ -464,7 +464,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   case eAuxiliary:
     Auxiliary->in.Pressure     = Atmosphere->GetPressure();
     Auxiliary->in.Density      = Atmosphere->GetDensity();
-    Auxiliary->in.DensitySL    = Atmosphere->GetDensitySL();
     Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
     Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
     Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
@@ -613,12 +612,13 @@ void FGFDMExec::LoadInputs(unsigned int idx)
 
 void FGFDMExec::LoadPlanetConstants(void)
 {
-  Propagate->in.vOmegaPlanet     = Inertial->GetOmegaPlanet();
-  Accelerations->in.vOmegaPlanet = Inertial->GetOmegaPlanet();
-  Propagate->in.SemiMajor        = Inertial->GetSemimajor();
-  Propagate->in.SemiMinor        = Inertial->GetSemiminor();
-  Propagate->in.GM               = Inertial->GetGM();
-  Auxiliary->in.StandardGravity  = Inertial->GetStandardGravity();
+  Propagate->in.vOmegaPlanet       = Inertial->GetOmegaPlanet();
+  Accelerations->in.vOmegaPlanet   = Inertial->GetOmegaPlanet();
+  Propagate->in.SemiMajor          = Inertial->GetSemimajor();
+  Propagate->in.SemiMinor          = Inertial->GetSemiminor();
+  Propagate->in.GM                 = Inertial->GetGM();
+  Auxiliary->in.StandardGravity    = Inertial->GetStandardGravity();
+  Auxiliary->in.StdDaySLsoundspeed = Atmosphere->StdDaySLsoundspeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

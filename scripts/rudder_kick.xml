@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Rudder kick test">
+
+	<description>
+		This script trims the aircraft and then inputs a rudder input 'kick' and aileron input.
+		And equivalent JSBSim python based script can be found in examples\python\RudderKick.py
+	</description>
+
+	<use aircraft="737" initialize="rudder_kick_init"/>
+
+	<run start="0" end="20" dt="0.008333">
+
+		<property value="0"> simulation/notify-time-trigger </property>
+
+		<!--
+		For "do_simple_trim" (Classic trim):
+		0: Longitudinal
+		1: Full
+		2: Ground
+		3: Pullup
+		4: Custom
+		5: Turn
+		6: None
+		-->
+
+		<event name="Start Trim">
+			<condition> simulation/sim-time-sec ge 0 </condition>
+			<set name="simulation/do_simple_trim" value="1"/>
+		</event>
+
+		<event name="RudderInput">
+			<condition> simulation/sim-time-sec ge 0.1 </condition>
+			<set name="fcs/rudder-cmd-norm" value="0.92" action="FG_RAMP" tc="3.0"></set>
+			<notify />
+		</event>
+
+		<event name="AileronInput">
+			<condition> simulation/sim-time-sec ge 0.1 </condition>
+			<set name="fcs/aileron-cmd-norm" value="1.0" action="FG_RAMP" tc="3.0"></set>
+			<notify />
+		</event>
+
+		<event name="Repeating Notify" persistent="true">
+			<description>
+				Output message at 1 second intervals, starting after
+				trimming is completed.
+			</description>
+			<notify>
+				<property>position/h-sl-ft</property>
+				<property>velocities/vc-kts</property>
+				<property>attitude/theta-deg</property>
+				<property>aero/alpha-deg</property>
+				<property>aero/beta-deg</property>
+				<property>fcs/rudder-cmd-norm</property>
+				<property>fcs/aileron-cmd-norm</property>
+			</notify>
+			<condition> simulation/sim-time-sec >= simulation/notify-time-trigger </condition>
+			<set name="simulation/notify-time-trigger" value="1" type="FG_DELTA"/>
+		</event>
+
+	</run>
+
+</runscript>

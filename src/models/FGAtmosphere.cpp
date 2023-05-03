@@ -51,11 +51,9 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// Atmosphere constants in British units converted from the SI values specified in the
-// ISA document - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770009539.pdf
-const double FGAtmosphere::StdDaySLsoundspeed = sqrt(SHRatio*Reng0*StdDaySLtemperature);
-
-FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
+  : FGModel(fdmex),
+    StdDaySLsoundspeed(sqrt(SHRatio*Reng0*StdDaySLtemperature))
 {
   Name = "FGAtmosphere";
 
@@ -282,6 +280,8 @@ double FGAtmosphere::ConvertToPSF(double p, ePressure unit) const
 
   return targetPressure;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAtmosphere::ConvertFromPSF(double p, ePressure unit) const
 {

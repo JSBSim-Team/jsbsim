@@ -120,6 +120,41 @@ public:
 
 // GET functions
 
+  /** Compute the total pressure in front of the Pitot tube. It uses the
+  *   Rayleigh formula for supersonic speeds (See "Introduction to Aerodynamics
+  *   of a Compressible Fluid - H.W. Liepmann, A.E. Puckett - Wiley & sons
+  *   (1947)" §5.4 pp 75-80)
+  *   @param mach      The Mach number
+  *   @param pressure  Pressure in psf
+  *   @return The total pressure in front of the Pitot tube in psf */
+  double PitotTotalPressure(double mach, double pressure) const;
+
+  /** Compute the Mach number from the differential pressure (qc) and the
+  *   static pressure. Based on the formulas in the US Air Force Aircraft
+  *   Performance Flight Testing Manual (AFFTC-TIH-99-01).
+  *   @param qc        The differential/impact pressure
+  *   @param pressure  Pressure in psf
+  *   @return The Mach number */
+  double MachFromImpactPressure(double qc, double p) const;
+
+  /** Calculate the calibrated airspeed from the Mach number. Based on the
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
+  *   Manual (AFFTC-TIH-99-01).
+  *   @param mach      The Mach number
+  *   @param pressure  Pressure in psf
+  *   @return The calibrated airspeed (CAS) in ft/s
+  * */
+  double VcalibratedFromMach(double mach, double pressure) const;
+
+  /** Calculate the Mach number from the calibrated airspeed.Based on the
+  *   formulas in the US Air Force Aircraft Performance Flight Testing
+  *   Manual (AFFTC-TIH-99-01).
+  *   @param vcas      The calibrated airspeed (CAS) in ft/s
+  *   @param pressure  Pressure in psf
+  *   @return The Mach number
+  * */
+  double MachFromVcalibrated(double vcas, double pressure) const;
+
   // Atmospheric parameters GET functions
   /** Returns Calibrated airspeed in feet/second.*/
   double GetVcalibratedFPS(void) const { return vcas; }
@@ -257,6 +292,7 @@ public:
     double DensitySL;
     double PressureSL;
     double Temperature;
+    double StdDaySLsoundspeed;
     double SoundSpeed;
     double KinematicViscosity;
     double DistanceAGL;

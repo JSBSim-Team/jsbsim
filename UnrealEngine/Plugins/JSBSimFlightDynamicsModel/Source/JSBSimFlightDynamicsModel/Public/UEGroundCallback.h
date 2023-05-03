@@ -2,17 +2,34 @@
 
 #pragma once
 
+#ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4263 )
 #pragma warning( disable : 4264 )
 #pragma warning( disable : 4005 )
 #pragma warning( disable : 4458 )
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#pragma clang diagnostic ignored "-Wshadow"
+#elif defined(__GNUC__)
+#pragma GCC push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#pragma GCC diagnostic ignored "-Wshadow"
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+#endif
 
 #include "models/FGInertial.h"
 #include "math/FGLocation.h"
 #include "math/FGColumnVector3.h"
 
+#ifdef _MSC_VER
 #pragma warning( pop )
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC pop
+#endif
 
 #include "CoreMinimal.h"
 

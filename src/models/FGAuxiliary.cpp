@@ -47,6 +47,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 #include "FGInertial.h"
+#include "FGAtmosphere.h"
 
 using namespace std;
 
@@ -60,9 +61,9 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  pt = 2116.23; // ISA SL pressure
-  tatc = 15.0; // ISA SL temperature
-  tat = 518.67;
+  pt = FGAtmosphere::StdDaySLpressure;     // ISA SL pressure
+  tat = FGAtmosphere::StdDaySLtemperature; // ISA SL temperature
+  tatc = RankineToCelsius(tat);
 
   vcas = veas = 0.0;
   qbar = qbarUW = qbarUV = 0.0;
@@ -197,7 +198,7 @@ bool FGAuxiliary::Run(bool Holding)
 
   if (abs(Mach) > 0.0) {
     vcas = VcalibratedFromMach(Mach, in.Pressure);
-    veas = sqrt(2 * qbar / in.DensitySL);
+    veas = sqrt(2 * qbar / FGAtmosphere::StdDaySLdensity);
   }
   else
     vcas = veas = 0.0;
@@ -226,6 +227,82 @@ bool FGAuxiliary::Run(bool Holding)
   hoverbmac = (in.DistanceAGL - vMac(3)) / in.Wingspan;
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::PitotTotalPressure(double mach, double pressure) const
+{
+  constexpr double SHRatio = FGAtmosphere::SHRatio;
+  constexpr double a = (SHRatio-1.0) / 2.0;
+  constexpr double b = SHRatio / (SHRatio-1.0);
+  constexpr double c = 2.0*b;
+  constexpr double d = 1.0 / (SHRatio-1.0);
+  const double coeff = pow(0.5*(SHRatio+1.0), b)
+                     * pow((SHRatio+1.0)/(SHRatio-1.0), d);
+
+  if (mach < 0) return pressure;
+  if (mach < 1)    //calculate total pressure assuming isentropic flow
+    return pressure*pow((1.0 + a*mach*mach), b);
+  else {
+    // Shock in front of pitot tube, we'll assume its normal and use the
+    // Rayleigh Pitot Tube Formula, i.e. the ratio of total pressure behind the
+    // shock to the static pressure in front of the normal shock assumption
+    // should not be a bad one -- most supersonic aircraft place the pitot probe
+    // out front so that it is the forward most point on the aircraft.
+    // The real shock would, of course, take on something like the shape of a
+    // rounded-off cone but, here again, the assumption should be good since the
+    // opening of the pitot probe is very small and, therefore, the effects of
+    // the shock curvature should be small as well. AFAIK, this approach is
+    // fairly well accepted within the aerospace community
+
+    // The denominator below is zero for Mach ~ 0.38, for which
+    // we'll never be here, so we're safe
+
+    return pressure*coeff*pow(mach, c)/pow(c*mach*mach-1.0, d);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Based on the formulas in the US Air Force Aircraft Performance Flight Testing
+// Manual (AFFTC-TIH-99-01). In particular sections 4.6 to 4.8.
+
+double FGAuxiliary::MachFromImpactPressure(double qc, double pressure) const
+{
+  constexpr double SHRatio = FGAtmosphere::SHRatio;
+  constexpr double a = 2.0/(SHRatio-1.0);
+  constexpr double b = (SHRatio-1.0)/SHRatio;
+  constexpr double c = 2.0/b;
+  constexpr double d = 0.5*a;
+  const double coeff = pow(0.5*(SHRatio+1.0), -0.25*c)
+                     * pow(0.5*(SHRatio+1.0)/SHRatio, -0.5*d);
+
+  double A = qc / pressure + 1;
+  double M = sqrt(a*(pow(A, b) - 1.0));  // Equation (4.12)
+
+  if (M > 1.0)
+    for (unsigned int i = 0; i<10; i++)
+      M = coeff*sqrt(A*pow(1 - 1.0 / (c*M*M), d));  // Equation (4.17)
+
+  return M;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::VcalibratedFromMach(double mach, double pressure) const
+{
+  double qc = PitotTotalPressure(mach, pressure) - pressure;
+  return in.StdDaySLsoundspeed * MachFromImpactPressure(qc, FGAtmosphere::StdDaySLpressure);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGAuxiliary::MachFromVcalibrated(double vcas, double pressure) const
+{
+  constexpr double StdDaySLpressure = FGAtmosphere::StdDaySLpressure;
+  double qc = PitotTotalPressure(vcas / in.StdDaySLsoundspeed, StdDaySLpressure) - StdDaySLpressure;
+  return MachFromImpactPressure(qc, pressure);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
