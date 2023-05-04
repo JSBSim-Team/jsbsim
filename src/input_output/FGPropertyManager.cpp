@@ -53,10 +53,25 @@ namespace JSBSim {
 
 void FGPropertyManager::Unbind(void)
 {
-  for(auto& prop: tied_properties)
-    prop->untie();
+  for(auto& property: tied_properties)
+    property.untie();
 
   tied_properties.clear();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropertyManager::Unbind(void* instance)
+{
+  auto it = tied_properties.begin();
+
+  while(it != tied_properties.end()) {
+    auto property = it++;
+    if (property->BindingInstance == instance) {
+      property->untie();
+      tied_properties.erase(property);
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -305,8 +320,8 @@ void FGPropertyManager::Untie(SGPropertyNode *property)
   assert(property->isTied());
 
   for (auto it = tied_properties.begin(); it != tied_properties.end(); ++it) {
-    if (*it == property) {
-      property->untie();
+    if (it->node.ptr() == property) {
+      it->untie();
       tied_properties.erase(it);
       if (FGJSBBase::debug_lvl & 0x20) cout << "Untied " << name << endl;
       return;
