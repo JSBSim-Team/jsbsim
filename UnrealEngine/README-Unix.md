@@ -6,19 +6,21 @@ This document describes how to build the JSBSim library as well as the Unreal En
 | Operating System | Status |
 |------------------|--------|
 | Linux            | Supported |
-| Macos            | Experimental* |
+| Macos            | Supported |
 | Android          | Work in progress |
-
-(*) The Macos plugin is linked with a static library for now. That means you can't distribute your application and only use it for learning/testing purpose.
 
 ## Building
 The first step is to build JSBSim on your target platform using cmake. Open an terminal and type the following commands
 
 ### For Macos
+On macos you've to install Julia first, for instance using homebrew with the following command `brew install julia`.
+
+
 ```bash
-mkdir build
-cd build
-cmake ..
+mkdir -p build && cd build 
+julia -e "import Pkg;Pkg.add(\"CxxWrap\")" 
+export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"` 
+cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH .. 
 make -j4
 ```
 
@@ -33,6 +35,7 @@ cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang
 make -j4
 ```
 
+### Copy headers and the libJSBSim library
 ```bash
 # From the build folder
 cd ..
@@ -42,19 +45,27 @@ rsync -avm --include='*.h' --include='*.hpp' --include='*.hxx' -f 'hide,! */' sr
 
 # Copy the JSBSim library (Macos)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+cp -Rf build/julia/libJSBSimJL.dylib UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/libJSBSim.dylib
 
 # Copy the JSBSim library (Linux)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
+cp -Rf build/src/libJSBSim.so UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
 
 # Copy the JSBSim library (Android)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
+cp -Rf build/src/libJSBSim.so UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
 
 # Copy the resource files
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf aircraft UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf engine UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf systems UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+```
+
+### Compile the Unreal Engine project
+
+Run the following command to compile and run JSBSim for Unreal
+
+```bash
+$PATH_TO_UNREAL/Engine/Binaries/Linux/UnrealEditor $_PATH_TO_UNREAL_PROJECTS/jsbsim/UnrealEngine/UEReferenceApp.uproject
 ```
