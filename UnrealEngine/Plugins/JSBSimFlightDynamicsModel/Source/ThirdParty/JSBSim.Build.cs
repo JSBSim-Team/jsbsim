@@ -61,23 +61,16 @@ public class JSBSim : ModuleRules
         string IncludePath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include");
         PublicSystemIncludePaths.Add(IncludePath);
 
-        if (Target.Platform != UnrealTargetPlatform.Mac)
-        {   
-            LibPath = CheckForFile(LibPath, "libJSBSim.so");
-            PublicAdditionalLibraries.Add(LibPath);
-            RuntimeDependencies.Add(LibPath);
-            
-            if (Target.Platform == UnrealTargetPlatform.Android)
-            {
-                string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
-                AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "JSBSim/JSBSim_APL.xml"));
-            }
-        }
-        else
+        string libExt = Target.Platform == UnrealTargetPlatform.Mac ? "dylib" : "so";
+        LibPath = CheckForFile(LibPath, $"libJSBSim.{libExt}");
+        
+        PublicAdditionalLibraries.Add(LibPath);
+        RuntimeDependencies.Add(LibPath);
+        
+        if (Target.Platform == UnrealTargetPlatform.Android)
         {
-            // Static linking for now.
-            string aLibPath = CheckForFile(LibPath, "libJSBSim.a");
-            PublicAdditionalLibraries.Add(aLibPath);
+            string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+            AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "JSBSim/JSBSim_APL.xml"));
         }
     }
 

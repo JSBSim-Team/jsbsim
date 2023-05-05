@@ -13,10 +13,14 @@ This document describes how to build the JSBSim library as well as the Unreal En
 The first step is to build JSBSim on your target platform using cmake. Open an terminal and type the following commands
 
 ### For Macos
+On macos you've to install Julia first, for instance using homebrew with the following command `brew install julia`.
+
+
 ```bash
-mkdir build
-cd build
-cmake ..
+mkdir -p build && cd build 
+julia -e "import Pkg;Pkg.add(\"CxxWrap\")" 
+export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"` 
+cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH .. 
 make -j4
 ```
 
@@ -41,7 +45,7 @@ rsync -avm --include='*.h' --include='*.hpp' --include='*.hxx' -f 'hide,! */' sr
 
 # Copy the JSBSim library (Macos)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
-cp -Rf build/src/libJSBSim.dylib UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+cp -Rf build/julia/libJSBSimJL.dylib UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/libJSBSim.dylib
 
 # Copy the JSBSim library (Linux)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
