@@ -6,10 +6,8 @@ This document describes how to build the JSBSim library as well as the Unreal En
 | Operating System | Status |
 |------------------|--------|
 | Linux            | Supported |
-| Macos            | Experimental* |
+| Macos            | Supported |
 | Android          | Work in progress |
-
-(*) The Macos plugin is linked with a static library for now. That means you can't distribute your application and only use it for learning/testing purpose.
 
 ## Building
 The first step is to build JSBSim on your target platform using cmake. Open an terminal and type the following commands
@@ -33,6 +31,7 @@ cmake -DBUILD_SHARED_LIBS=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang
 make -j4
 ```
 
+### Copy headers and the libJSBSim library
 ```bash
 # From the build folder
 cd ..
@@ -57,4 +56,12 @@ mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf aircraft UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf engine UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 cp -Rf systems UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
+```
+
+### Compile the Unreal Engine project
+
+Run the following command to compile and run JSBSim for Unreal
+
+```bash
+$PATH_TO_UNREAL/Engine/Binaries/Linux/UnrealEditor $_PATH_TO_UNREAL_PROJECTS/jsbsim/UnrealEngine/UEReferenceApp.uproject
 ```
