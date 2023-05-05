@@ -41,15 +41,15 @@ rsync -avm --include='*.h' --include='*.hpp' --include='*.hxx' -f 'hide,! */' sr
 
 # Copy the JSBSim library (Macos)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
+cp -Rf build/src/libJSBSim.dylib UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Mac/
 
 # Copy the JSBSim library (Linux)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
+cp -Rf build/src/libJSBSim.so UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Linux/
 
 # Copy the JSBSim library (Android)
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
-cp -Rf build/src/libJSBSim.a UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
+cp -Rf build/src/libJSBSim.so UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib/Android/
 
 # Copy the resource files
 mkdir -p UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
