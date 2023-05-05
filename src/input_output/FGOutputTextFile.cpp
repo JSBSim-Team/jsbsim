@@ -319,6 +319,7 @@ void FGOutputTextFile::Print(void)
     outstream << Accelerations->GetMoments().Dump(delimeter);
   }
   if (SubSystems & ssAtmosphere) {
+    auto Atmosphere = FDMExec->GetAtmosphere();
     outstream << delimeter;
     outstream << Atmosphere->GetDensity() << delimeter;
     outstream << Atmosphere->GetAbsoluteViscosity() << delimeter;

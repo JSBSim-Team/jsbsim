@@ -62,7 +62,6 @@ namespace JSBSim {
 class FGFDMExec;
 class FGMatrix33;
 class FGColumnVector3;
-class FGAtmosphere;
 class FGAircraft;
 class FGAuxiliary;
 class FGPropertyManager;
@@ -706,7 +705,6 @@ private:
   int trimRequested;
 
   FGFDMExec *fdmex;
-  std::shared_ptr<FGAtmosphere> Atmosphere;
   std::shared_ptr<FGAircraft> Aircraft;
   std::shared_ptr<FGAuxiliary> Auxiliary;
 
