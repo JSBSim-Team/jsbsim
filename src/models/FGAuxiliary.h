@@ -289,8 +289,6 @@ public:
   struct Inputs {
     double Pressure;
     double Density;
-    double DensitySL;
-    double PressureSL;
     double Temperature;
     double StdDaySLsoundspeed;
     double SoundSpeed;
