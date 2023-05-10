@@ -384,7 +384,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   case eAuxiliary:
     Auxiliary->in.Pressure     = Atmosphere->GetPressure();
     Auxiliary->in.Density      = Atmosphere->GetDensity();
-    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
     Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
     Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
     Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
