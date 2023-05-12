@@ -16,13 +16,13 @@ public class JSBSim : ModuleRules
 		{
 			string LibFolderName = "Lib";
 
-			// When working in debug mode, try to use the Debug version of JSBSim
-			if (Target.Configuration == UnrealTargetConfiguration.Debug)
-			{
+            // When working in debug mode, try to use the Debug version of JSBSim
+            if (Target.Configuration == UnrealTargetConfiguration.DebugGame)
+            {
 				// Source\ThirdParty\JSBSim\LibDebug
 				string DebugLibsPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName + "Debug");
-				if (Directory.Exists(DebugLibsPath))
-				{
+                if (Directory.Exists(DebugLibsPath))
+                {
 					System.Console.WriteLine(string.Format("Found Debug libraries for JSBSim in {0}", DebugLibsPath));
 					LibFolderName += "Debug";
 				}
