@@ -14,8 +14,6 @@ public class JSBSim : ModuleRules
                                 Target.Platform == UnrealTargetPlatform.Linux || 
                                 Target.Platform == UnrealTargetPlatform.Android;
 
-        if (!bJSBSimSupported) return;
-
         if (Target.Platform == UnrealTargetPlatform.Win64)
             SetupWindowsPlatform();
         else
