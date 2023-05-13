@@ -61,16 +61,10 @@ CLASS DECLARATION
 class FGSurface
 {
 public:
-
-  enum ContactType {ctBOGEY, ctSTRUCTURE, ctGROUND};
-
   /// Constructor
-  FGSurface(FGFDMExec* fdmex, int number = -1);
+  FGSurface(FGFDMExec* fdmex);
 
-  /// Destructor
-  ~FGSurface();
-
-  void bind(void);
+  void bind(FGPropertyManager* pm);
 
   /// Reset all surface values to a default
   void resetValues(void);
@@ -114,23 +108,14 @@ public:
   /// Returns the height of the bump at the provided offset
   float  GetBumpHeight();
 
-  std::string GetSurfaceStrings(std::string delimeter) const;
-  std::string GetSurfaceValues(std::string delimeter) const;
-
 protected:
-  ContactType eSurfaceType;
   double staticFFactor, rollingFFactor;
   double maximumForce;
   double bumpiness;
   bool isSolid;
 
 private:
-  int contactNumber;
   double pos[3];
-
-  FGPropertyManager* _PropertyManager;
-
-  static std::string _CreateIndexedPropertyName(const std::string& Property, int index);
 };
 
 }

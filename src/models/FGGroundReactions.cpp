@@ -258,8 +258,7 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter) const
 
 void FGGroundReactions::bind(void)
 {
-  eSurfaceType = ctGROUND;
-  FGSurface::bind();
+  FGSurface::bind(PropertyManager);
 
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
   PropertyManager->Tie("gear/wow", this, &FGGroundReactions::GetWOW);
