@@ -43,6 +43,24 @@ class TestPlanet(JSBSimTestCase):
 
         self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1736000, 1.0)
 
+    def test_load_planet(self):
+        tripod = FlightModel(self, 'tripod')
+        moon_file = self.sandbox.path_to_jsbsim_file('tests/moon.xml')
+        self.fdm = tripod.start()
+        self.fdm.load_planet(moon_file, False)
+        self.fdm['ic/h-agl-ft'] = 0.2
+        self.fdm['ic/long-gc-deg'] = 0.0
+        self.fdm['ic/lat-geod-deg'] = 0.0
+        self.fdm.run_ic()
+
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1738100, 1.0)
+        self.assertAlmostEqual(self.fdm['accelerations/gravity-ft_sec2']*0.3048, 1.62, delta=3e-3)
+
+        self.fdm['ic/lat-geod-deg'] = 90.0
+        self.fdm.run_ic()
+
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/1736000, 1.0)
+
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception
         tripod = FlightModel(self, 'tripod')
