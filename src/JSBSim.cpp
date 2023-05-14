@@ -795,7 +795,7 @@ void PrintHelp(void)
     cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-    cout << "    --planetfile=<filename>  specifies a planet definition file" << endl;
+    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
