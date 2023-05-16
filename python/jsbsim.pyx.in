@@ -760,6 +760,17 @@ cdef class FGFDMExec(FGJSBBase):
         return self.thisptr.LoadScript(c_SGPath(script.encode(), NULL), delta_t,
                                        c_SGPath(initfile.encode(),NULL))
 
+    def load_planet(self, planet_path: str, useAircraftPath: bool) -> bool:
+        """@Dox(JSBSim::FGFDMExec::LoadPlanet)"""
+        planet_file = _append_xml(planet_path)
+        if useAircraftPath and not os.path.isabs(planet_file):
+            planet_file = os.path.join(self.get_full_aircraft_path(), planet_file)
+        if not os.path.exists(planet_file):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    planet_file)
+        return self.thisptr.LoadPlanet(c_SGPath(planet_file.encode(), NULL),
+                                       useAircraftPath)
+
     def set_engine_path(self, path: str) -> bool:
         """@Dox(JSBSim::FGFDMExec::SetEnginePath) """
         return self.thisptr.SetEnginePath(c_SGPath(path.encode(), NULL))
