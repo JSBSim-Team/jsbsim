@@ -83,6 +83,7 @@ SGPath RootDir;
 SGPath ScriptName;
 string AircraftName;
 SGPath ResetName;
+SGPath PlanetName;
 vector <string> LogOutputName;
 vector <SGPath> LogDirectiveName;
 vector <string> CommandLineProperties;
@@ -314,6 +315,7 @@ int real_main(int argc, char* argv[])
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
+  PlanetName = "";
   LogOutputName.clear();
   LogDirectiveName.clear();
   bool result = false, success;
@@ -371,6 +373,16 @@ int real_main(int argc, char* argv[])
       if (FDMExec->GetPropertyManager()->GetNode(CommandLineProperties[i])) {
         FDMExec->SetPropertyValue(CommandLineProperties[i], CommandLinePropertyValues[i]);
       }
+    }
+  }
+
+  if (!PlanetName.isNull()) {
+    result = FDMExec->LoadPlanet(PlanetName, false);
+
+    if (!result) {
+      cerr << "Planet file " << PlanetName << " was not successfully loaded" << endl;
+      delete FDMExec;
+      exit(-1);
     }
   }
 
@@ -669,7 +681,13 @@ bool options(int count, char **arg)
         gripe;
         exit(1);
       }
-
+    } else if (keyword == "--planet") {
+      if (n != string::npos) {
+        PlanetName = SGPath::fromLocal8Bit(value.c_str());
+      } else {
+        gripe;
+        exit(1);
+      }
     } else if (keyword == "--property") {
       if (n != string::npos) {
          string propName = value.substr(0,value.find("="));
@@ -777,6 +795,7 @@ void PrintHelp(void)
     cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
+    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
