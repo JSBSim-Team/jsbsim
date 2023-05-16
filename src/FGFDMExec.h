@@ -256,6 +256,14 @@ public:
       @return true if successful */
   bool RunIC(void);
 
+  /** Loads the planet.
+      Loads the definition of the planet on which the vehicle will evolve such as
+      its radius, gravity or its atmosphere characteristics.
+      @param PlanetPath The name of a planet definition file
+      @param useAircraftPath true if path is given relative to the aircraft path.
+      @return true if successful */
+  bool LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath = true);
+
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft/ directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
@@ -694,6 +702,7 @@ private:
   int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
+  bool LoadPlanet(Element* el);
   void LoadModelConstants(void);
   bool Allocate(void);
   bool DeAllocate(void);

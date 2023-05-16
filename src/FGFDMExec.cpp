@@ -666,6 +666,60 @@ bool FGFDMExec::LoadScript(const SGPath& script, double deltaT,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
+{
+  SGPath PlanetFileName;
+
+  if(useAircraftPath && PlanetPath.isRelative()) {
+    PlanetFileName = AircraftPath/PlanetPath.utf8Str();
+  } else {
+    PlanetFileName = PlanetPath;
+  }
+
+  FGXMLFileRead XMLFileRead;
+  Element* document = XMLFileRead.LoadXMLDocument(PlanetFileName);
+
+  // Make sure that the document is valid
+  if (!document) {
+    stringstream s;
+    s << "File: " << PlanetFileName << " could not be read.";
+    cerr << s.str() << endl;
+    throw BaseException(s.str());
+  }
+
+  if (document->GetName() != "planet") {
+    stringstream s;
+    s << "File: " << PlanetFileName << " is not a reset file.";
+    cerr << s.str() << endl;
+    throw BaseException(s.str());
+  }
+
+  bool result = LoadPlanet(document);
+
+  if (!result)
+    cerr << endl << "Planet element has problems in file " << PlanetFileName << endl;
+
+  return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::LoadPlanet(Element* element)
+{
+  bool result = Models[eInertial]->Load(element);
+
+  if (result) {
+    // Reload the planet constants and re-initialize the models.
+    LoadPlanetConstants();
+    IC->InitializeIC();
+    InitializeModels();
+  }
+
+  return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGFDMExec::LoadModel(const SGPath& AircraftPath, const SGPath& EnginePath,
                           const SGPath& SystemsPath, const string& model,
                           bool addModelToPath)
@@ -727,15 +781,11 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the planet element. This element is OPTIONAL.
     element = document->FindElement("planet");
     if (element) {
-      result = Models[eInertial]->Load(element);
+      result = LoadPlanet(element);
       if (!result) {
         cerr << endl << "Planet element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
-      // Reload the planet constants and re-initialize the models.
-      LoadPlanetConstants();
-      IC->InitializeIC();
-      InitializeModels();
     }
 
     // Process the metrics element. This element is REQUIRED.
