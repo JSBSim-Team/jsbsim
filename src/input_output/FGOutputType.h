@@ -51,7 +51,6 @@ class Element;
 class FGAerodynamics;
 class FGAuxiliary;
 class FGAircraft;
-class FGAtmosphere;
 class FGWinds;
 class FGPropulsion;
 class FGMassBalance;
@@ -198,7 +197,6 @@ protected:
   FGAerodynamics* Aerodynamics;
   FGAuxiliary* Auxiliary;
   FGAircraft* Aircraft;
-  FGAtmosphere* Atmosphere;
   FGWinds* Winds;
   FGPropulsion* Propulsion;
   FGMassBalance* MassBalance;

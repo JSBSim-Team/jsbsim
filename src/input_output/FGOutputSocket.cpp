@@ -333,6 +333,7 @@ void FGOutputSocket::Print(void)
     socket->Append(Aircraft->GetMoments(eN));
   }
   if (SubSystems & ssAtmosphere) {
+    const auto Atmosphere = FDMExec->GetAtmosphere();
     socket->Append(Atmosphere->GetDensity());
     socket->Append(Atmosphere->GetPressureSL());
     socket->Append(Atmosphere->GetPressure());
