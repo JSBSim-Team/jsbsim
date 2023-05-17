@@ -64,7 +64,6 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
   InitializeIC();
 
   if(FDMExec) {
-    Atmosphere=fdmex->GetAtmosphere();
     Aircraft=fdmex->GetAircraft();
     Auxiliary=fdmex->GetAuxiliary();
   } else {
@@ -154,6 +153,7 @@ void FGInitialCondition::InitializeIC(void)
 
 void FGInitialCondition::SetVequivalentKtsIC(double ve)
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double rho = Atmosphere->GetDensity(altitudeASL);
   SetVtrueFpsIC(ve*ktstofps*sqrt(FGAtmosphere::StdDaySLdensity/rho));
@@ -164,6 +164,7 @@ void FGInitialCondition::SetVequivalentKtsIC(double ve)
 
 void FGInitialCondition::SetMachIC(double mach)
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   SetVtrueFpsIC(mach*soundSpeed);
@@ -174,6 +175,7 @@ void FGInitialCondition::SetMachIC(double mach)
 
 void FGInitialCondition::SetVcalibratedKtsIC(double vcas)
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double mach = Auxiliary->MachFromVcalibrated(fabs(vcas)*ktstofps, pressure);
@@ -677,6 +679,7 @@ double FGInitialCondition::GetTerrainElevationFtIC(void) const
 
 void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
@@ -748,6 +751,7 @@ void FGInitialCondition::SetAltitudeAGLFtIC(double agl)
 
 void FGInitialCondition::SetAltitudeASLFtIC(double alt)
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
@@ -957,6 +961,7 @@ double FGInitialCondition::GetBodyWindFpsIC(int idx) const
 
 double FGInitialCondition::GetVcalibratedKtsIC(void) const
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double pressure = Atmosphere->GetPressure(altitudeASL);
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
@@ -969,6 +974,7 @@ double FGInitialCondition::GetVcalibratedKtsIC(void) const
 
 double FGInitialCondition::GetVequivalentKtsIC(void) const
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double rho = Atmosphere->GetDensity(altitudeASL);
   return fpstokts * vt * sqrt(rho/FGAtmosphere::StdDaySLdensity);
@@ -978,6 +984,7 @@ double FGInitialCondition::GetVequivalentKtsIC(void) const
 
 double FGInitialCondition::GetMachIC(void) const
 {
+  const auto Atmosphere = fdmex->GetAtmosphere();
   double altitudeASL = GetAltitudeASLFtIC();
   double soundSpeed = Atmosphere->GetSoundSpeed(altitudeASL);
   return vt / soundSpeed;

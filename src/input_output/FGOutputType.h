@@ -53,7 +53,6 @@ class Element;
 class FGAerodynamics;
 class FGAuxiliary;
 class FGAircraft;
-class FGAtmosphere;
 class FGWinds;
 class FGPropulsion;
 class FGMassBalance;
@@ -200,7 +199,6 @@ protected:
   std::shared_ptr<FGAerodynamics> Aerodynamics;
   std::shared_ptr<FGAuxiliary> Auxiliary;
   std::shared_ptr<FGAircraft> Aircraft;
-  std::shared_ptr<FGAtmosphere> Atmosphere;
   std::shared_ptr<FGWinds> Winds;
   std::shared_ptr<FGPropulsion> Propulsion;
   std::shared_ptr<FGMassBalance> MassBalance;
