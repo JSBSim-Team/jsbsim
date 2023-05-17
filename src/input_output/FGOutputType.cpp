@@ -62,7 +62,6 @@ FGOutputType::FGOutputType(FGFDMExec* fdmex) :
   Aerodynamics = FDMExec->GetAerodynamics();
   Auxiliary = FDMExec->GetAuxiliary();
   Aircraft = FDMExec->GetAircraft();
-  Atmosphere = FDMExec->GetAtmosphere();
   Winds = FDMExec->GetWinds();
   Propulsion = FDMExec->GetPropulsion();
   MassBalance = FDMExec->GetMassBalance();
