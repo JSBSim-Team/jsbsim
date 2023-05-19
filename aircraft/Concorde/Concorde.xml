@@ -6,8 +6,8 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 14 August 2010 </filecreationdate>
-        <version> 1.13 </version>
+        <filecreationdate> 11 August 2019 </filecreationdate>
+        <version> 1.16 </version>
         <description>Aerospatiale/British Aerospace Concorde</description>
 
         <license>
@@ -28,28 +28,13 @@
         <note>Shift of center of pressure.</note>
         <note>London - New York : lands below max landing weight (aloft westerly at 39 kt).</note>
         <note>Gear height adjusted by 3D model, supposed accurate.</note>
-        <note>Pushback.</note>
+        <note>Pushback and wake.</note>
 
         <limitation>Model uses flaps as nose.</limitation>
-        <limitation>Cross feed by additional tanks :
-                    engine may run out of fuel above X 3 speed-up.</limitation>
         <limitation>Without an additional PID, above Mach 1,
                     autopilot heading hold would lock with a right roll.</limitation>
         <limitation>Air intake failure only on the 4 engines at once.</limitation>
         <limitation>Ground idle only on the 4 engines at once.</limitation>
-
-      <note>
-        This model was created using publicly available data, publicly available
-        technical reports, textbooks, and guesses. It contains no proprietary or
-        restricted data. If this model has been validated at all, it would be
-        only to the extent that it seems to "fly right", and that it possibly
-        complies with published, publicly known, performance data (maximum speed,
-        endurance, etc.). Thus, this model is meant for educational and entertainment
-        purposes only.
-
-        This simulation model is not endorsed by the manufacturer. This model is not
-        to be sold.
-      </note>
 
 <!--
   File:     Concorde.xml
@@ -611,18 +596,15 @@
         </contact>
     </ground_reactions>
 
-    <system name="Nose Wheel Steering">
-     <property>systems/NWS/engaged</property>
-     <property value="1">systems/NWS/hydraulics</property>
-
+    <system name="Hydraulics">
      <channel name="Nose Wheel Steering">
-        <scheduled_gain name="systems/NWS/pedal-cmd">
+        <scheduled_gain name="systems/hydraulics/nws-pedal-cmd">
          <documentation>
               default is rudder pedal (flight).
          </documentation>
          <input>fcs/rudder-cmd-norm</input>
          <table>
-          <independentVar lookup="row">systems/NWS/engaged</independentVar>
+          <independentVar lookup="row">systems/hydraulics/nws-engaged</independentVar>
            <tableData>
               0      1.0
               1      0.0
@@ -631,40 +613,69 @@
          <output>fcs/rudder-pedal-norm</output>
         </scheduled_gain>
 
-        <scheduled_gain name="systems/NWS/steer-cmd">
+        <scheduled_gain name="systems/hydraulics/nws-steer-cmd">
          <documentation>
-              - default is no wheel steering (flight).
-              - default is hydraulics.
+              - default is not engaged (flight).
+              - default is able (hydraulics).
               - rudder steering at 10 deg.
          </documentation>
          <input>fcs/rudder-cmd-norm</input>
          <table>
-          <independentVar lookup="row">systems/NWS/engaged</independentVar>
-          <independentVar lookup="column">systems/NWS/hydraulics</independentVar>
+          <independentVar lookup="row">systems/hydraulics/nws-engaged</independentVar>
+          <independentVar lookup="column">systems/hydraulics/nws-unable</independentVar>
            <tableData>
                      0.0      1.0
-              0     -0.0     -0.171
-              1     -0.0     -1.0
+              0     -0.171   -0.0
+              1     -1.0     -0.0
            </tableData>
          </table>
          <output>fcs/steer-cmd-norm</output>
-      </scheduled_gain>
+        </scheduled_gain>
+     </channel>
+
+     <channel name="Pitch Hydraulics">
+        <scheduled_gain name="systems/hydraulics/elevator-yoke-cmd">
+         <documentation>
+              default is yoke (flight).
+         </documentation>
+         <input>fcs/elevator-cmd-norm</input>
+         <table>
+          <independentVar lookup="row">systems/hydraulics/elevon-gravity</independentVar>
+           <tableData>
+              0      1.0
+              1      0.0
+           </tableData>
+         </table>
+         <output>fcs/elevator-yoke-norm</output>
+        </scheduled_gain>
+     </channel>
+
+     <channel name="Roll Hydraulics">
+        <scheduled_gain name="systems/hydraulics/aileron-yoke-cmd">
+         <documentation>
+              default is yoke (flight).
+         </documentation>
+         <input>fcs/aileron-cmd-norm</input>
+         <table>
+          <independentVar lookup="row">systems/hydraulics/elevon-gravity</independentVar>
+           <tableData>
+              0      1.0
+              1      0.0
+           </tableData>
+         </table>
+         <output>fcs/aileron-yoke-norm</output>
+        </scheduled_gain>
      </channel>
     </system>
     
     <system name="Tractor">
-     <property>/sim/model/pushback/target-speed-fps</property>
-     <property>/sim/model/pushback/position-norm</property>     
-     <property>/sim/model/pushback/kp</property>
-     <property>/sim/model/pushback/ki</property>
-     <property>/sim/model/pushback/kd</property>
      <channel name="Tractor">
 
       <switch name="systems/pushback/linked">
         <default value="-1"/>
         <test value="0">
           /sim/model/pushback/position-norm gt 0.95
-          gear/unit[0]/WOW == 1
+          /gear/gear/wow == 1
           gear/unit[0]/wheel-speed-fps lt 50
         </test>
       </switch>
@@ -703,7 +714,7 @@
      <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
-            <input>fcs/elevator-cmd-norm</input>
+            <input>fcs/elevator-yoke-norm</input>
             <input>fcs/pitch-trim-cmd-norm</input>
             <clipto>
                 <min>-1.0000</min>
@@ -741,7 +752,7 @@
      <channel name="Roll">
 
         <summer name="Roll Trim Sum">
-            <input>fcs/aileron-cmd-norm</input>
+            <input>fcs/aileron-yoke-norm</input>
             <input>fcs/roll-trim-cmd-norm</input>
             <clipto>
                 <min>-1.0000</min>
@@ -976,10 +987,18 @@
             - Thruster center 3/4 of length (2428 in.), aligned with engines.
         </documentation>
 
-        <property>fcs/ground-idle</property>
-        <property>fcs/intake-subsonic-pos</property>
-
         <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -249.4000 </y>
+                <z> -52.0000 </z>                                                      <!-- aeromatic -40 -->
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>0</feed>
             <feed>13</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -995,6 +1014,17 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>1</feed>
             <feed>14</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1010,6 +1040,17 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>2</feed>
             <feed>15</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1025,6 +1066,17 @@
             </thruster>
         </engine>
         <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 249.4000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>3</feed>
             <feed>16</feed>
             <thruster file="direct">
                 <location unit="IN">
@@ -1274,6 +1326,7 @@
             - not empty, to avoid stop at launch.
             - can feed 75000 kg/h per engine (takeoff with reheat X 3 speed up) :
               25000 x 3 / 3600 = 46 lb content, if supplied every 1 s from other tanks.
+            - not used in stand alone mode.
         </documentation>
 
         <tank type="FUEL">
@@ -1327,17 +1380,17 @@
         <aero_ref_pt_shift_x>
           <function name="aero/function/kC0">
             <description>Shift_of_center_of_pressure</description>
-            <table>
-              <independentVar>velocities/mach</independentVar>
-              <tableData>
-                0.5   	0.550
-                0.9   	0.580
-                1.0   	0.645
-                1.2   	0.635
-                1.5   	0.625
-                2.0   	0.620
-              </tableData>
-            </table>
+                  <table>
+                      <independentVar>velocities/mach</independentVar>
+                      <tableData>
+                          0.5   	0.550
+                          0.9   	0.580
+                          1.0   	0.645
+                          1.2   	0.635
+                          1.5   	0.625
+                          2.0   	0.620
+                      </tableData>
+                  </table>
           </function>
         </aero_ref_pt_shift_x>
 
@@ -1349,16 +1402,16 @@
         </documentation>
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
-            <table>
-                <independentVar>aero/h_b-mac-ft</independentVar>
-                <tableData>
-                    0.0000	1.2000
-                    0.1000	1.1500
-                    0.1500	1.0900
-                    0.2000	1.0200
-                    1.1000	1.0000
-                </tableData>
-            </table>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	1.2000
+                          0.1000	1.1500
+                          0.1500	1.0900
+                          0.2000	1.0200
+                          1.1000	1.0000
+                      </tableData>
+                  </table>
         </function>
 
         <axis name="DRAG">
@@ -1732,6 +1785,10 @@
     </aerodynamics>
 
    <external_reactions>
+        <documentation>
+            tractor applied at front gear struts.
+        </documentation>
+
        <force name="tractor" frame="BODY">
          <location unit="IN">
            <x> 736.2000 </x>
@@ -1744,5 +1801,30 @@
            <z>0</z>
          </direction>
        </force>
+
+        <documentation>
+            wake applied at wing leading edge.
+            direction avoids warning message.
+        </documentation>
+
+       <force name="ai-wake" frame="BODY">
+         <location unit="IN">
+           <x> 706.46 </x>
+           <y> 0.0 </y>
+           <z> 5.5 </z>
+         </location>
+         <direction>
+           <x>1.0</x>
+           <y>0.0</y>
+           <z>0.0</z>
+         </direction>
+       </force>
+       <moment name="ai-wake" frame="BODY">
+         <direction>
+           <x>1.0</x>
+           <y>0.0</y>
+           <z>0.0</z>
+         </direction>
+       </moment>
    </external_reactions>
 </fdm_config>
