@@ -3,10 +3,9 @@
 #include <vector>
 
 #include <cxxtest/TestSuite.h>
-
 #include <FGFDMExec.h>
 #include <models/atmosphere/FGMSIS.h>
-#include <input_output/string_utilities.h>
+#include "TestUtilities.h"
 
 using namespace JSBSim;
 
@@ -199,6 +198,67 @@ public:
 
       atm.SetDay(MSIS_iyd[i]);
       atm.SetSeconds(MSIS_sec[i]);
+      atm.in.altitudeASL = h;
+      atm.in.GeodLatitudeDeg = MSIS_glat[i];
+      atm.in.LongitudeDeg = MSIS_glon[i];
+      atm.SetF107A(MSIS_f107a[i]);
+      atm.SetF107(MSIS_f107[i]);
+      atm.SetAP(MSIS_ap[i]);
+
+      double T = KelvinToRankine(MSIS_T[i]);
+      TS_ASSERT_DELTA(atm.GetTemperature(h)/T, 1.0, 1E-4);
+      TS_ASSERT_EQUALS(atm.GetTemperatureRatio(), 1.0);
+      TS_ASSERT_EQUALS(theta_node->getDoubleValue(), 1.0);
+
+      double rho = MSIS_rho[i]*gcm3_to_slugft3;
+      TS_ASSERT_DELTA(atm.GetDensity(h)/rho, 1.0, 5E-4);
+      TS_ASSERT_EQUALS(atm.GetDensityRatio(), 1.0);
+      TS_ASSERT_EQUALS(sigma_node->getDoubleValue(), 1.0);
+
+      double R = Rstar / (MSIS_mair[i]*gtoslug);
+      double P = rho*R*T;
+      TS_ASSERT_DELTA(atm.GetPressure(h)/P, 1.0, 5E-4);
+      TS_ASSERT_EQUALS(atm.GetPressureRatio(), 1.0);
+      TS_ASSERT_EQUALS(delta_node->getDoubleValue(), 1.0);
+
+      double a = sqrt(gama*R*T);
+      TS_ASSERT_DELTA(atm.GetSoundSpeed(h)/a, 1.0, 1E-4);
+      TS_ASSERT_EQUALS(atm.GetSoundSpeedRatio(), 1.0);
+      TS_ASSERT_EQUALS(a_ratio_node->getDoubleValue(), 1.0);
+
+      double p_alt = atm.GetPressureAltitude();
+      double P_SL = atm.GetPressureSL();
+      TS_ASSERT_DELTA(std_atm->GetPressure(p_alt), P_SL, 1E-8);
+
+      double rho_alt = atm.GetDensityAltitude();
+      double rho_SL = atm.GetDensitySL();
+      TS_ASSERT_DELTA(std_atm->GetDensity(rho_alt)/rho_SL, 1.0, 1E-8);
+    }
+  }
+
+  void testLoadModel()
+  {
+    auto pm = fdmex.GetPropertyManager();
+    auto theta_node = pm->GetNode("atmosphere/theta");
+    auto sigma_node = pm->GetNode("atmosphere/sigma");
+    auto delta_node = pm->GetNode("atmosphere/delta");
+    auto a_ratio_node = pm->GetNode("atmosphere/a-ratio");
+
+    auto atm = DummyMSIS(&fdmex);
+    TS_ASSERT(atm.InitModel());
+
+    for (unsigned int i=0; i<MSIS_iyd.size(); ++i) {
+      double h = MSIS_alt[i]*kmtoft;
+      std::stringstream s;
+
+      s << "<dummy>"
+        << "  <day>" << MSIS_iyd[i] << "</day>"
+        << "  <utc>" << MSIS_sec[i] << "</utc>"
+        << "</dummy>" << endl;
+
+      Element_ptr elm = readFromXML(s.str());
+      TS_ASSERT(atm.Load(elm));
+
       atm.in.altitudeASL = h;
       atm.in.GeodLatitudeDeg = MSIS_glat[i];
       atm.in.LongitudeDeg = MSIS_glon[i];
