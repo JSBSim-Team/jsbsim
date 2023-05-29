@@ -1002,10 +1002,10 @@ double FGInitialCondition::GetBodyVelFpsIC(int idx) const
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
+bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
 {
   SGPath init_file_name;
-  if(useStoredPath && rstfile.isRelative()) {
+  if(useAircraftPath && rstfile.isRelative()) {
     init_file_name = fdmex->GetFullAircraftPath()/rstfile.utf8Str();
   } else {
     init_file_name = rstfile;
@@ -1022,7 +1022,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useStoredPath)
     throw BaseException(s.str());
   }
 
-  if (document->GetName() != string("initialize")) {
+  if (document->GetName() != "initialize") {
     stringstream s;
     s << "File: " << init_file_name << " is not a reset file.";
     cerr << s.str() << endl;

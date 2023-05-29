@@ -737,7 +737,7 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
         with:
-          working-directory: build/lcov/data/capture
+          directory: build/lcov/data/capture
           files: all_targets.info
 
   Rolling-Release:
