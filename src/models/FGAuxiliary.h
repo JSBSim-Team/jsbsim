@@ -272,14 +272,6 @@ public:
     else return BadUnits();
   }
 
-// Time routines, SET and GET functions, used by FGMSIS atmosphere
-
-  void SetDayOfYear    (int doy)    { day_of_year = doy;    }
-  void SetSecondsInDay (double sid) { seconds_in_day = sid; }
-
-  int    GetDayOfYear    (void) const { return day_of_year;    }
-  double GetSecondsInDay (void) const { return seconds_in_day; }
-
   double GetLongitudeRelativePosition (void) const;
   double GetLatitudeRelativePosition  (void) const;
   double GetDistanceRelativePosition  (void) const;
@@ -345,8 +337,6 @@ private:
   double adot,bdot;
   double psigt, gamma;
   double Nx, Ny, Nz;
-  double seconds_in_day;  // seconds since current GMT day began
-  int    day_of_year;     // GMT day, 1 .. 366
 
   double hoverbcg, hoverbmac;
 
