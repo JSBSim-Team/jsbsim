@@ -1,0 +1,6 @@
+<planet name="Earth">
+  <atmosphere model="MSIS">
+    <day>172</day>    <!--  Jun 21st  -->
+    <utc>29000</utc>  <!-- 08:03:20AM -->
+  </atmosphere>
+</planet>
