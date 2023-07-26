@@ -46,6 +46,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "models/atmosphere/FGStandardAtmosphere.h"
+#include "models/atmosphere/FGMSIS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
@@ -451,7 +452,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Inertial->in.Position      = Propagate->GetLocation();
     break;
   case eAtmosphere:
-    Atmosphere->in.altitudeASL = Propagate->GetAltitudeASL();
+    Atmosphere->in.altitudeASL     = Propagate->GetAltitudeASL();
+    Atmosphere->in.GeodLatitudeDeg = Propagate->GetGeodLatitudeDeg();
+    Atmosphere->in.LongitudeDeg    = Propagate->GetLongitudeDeg();
     break;
   case eWinds:
     Winds->in.AltitudeASL      = Propagate->GetAltitudeASL();
@@ -762,7 +765,7 @@ bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
 
   if (document->GetName() != "planet") {
     stringstream s;
-    s << "File: " << PlanetFileName << " is not a reset file.";
+    s << "File: " << PlanetFileName << " is not a planet file.";
     cerr << s.str() << endl;
     throw BaseException(s.str());
   }
@@ -786,6 +789,28 @@ bool FGFDMExec::LoadPlanet(Element* element)
     LoadPlanetConstants();
     IC->InitializeIC();
     InitializeModels();
+
+    // Process the atmosphere element. This element is OPTIONAL.
+    Element* atm_element = element->FindElement("atmosphere");
+    if (atm_element && atm_element->HasAttribute("model")) {
+      string model = atm_element->GetAttributeValue("model");
+      if (model == "MSIS") {
+        // Replace the existing atmosphere model
+        instance->Unbind(Models[eAtmosphere].get());
+        Models[eAtmosphere] = std::make_shared<FGMSIS>(this);
+        Atmosphere = static_cast<FGAtmosphere*>(Models[eAtmosphere].get());
+
+        // Model initialization sequence
+        LoadInputs(eAtmosphere);
+        Atmosphere->InitModel();
+        result = Atmosphere->Load(atm_element);
+        if (!result) {
+          cerr << endl << "Incorrect definition of <atmosphere>." << endl;
+          return result;
+        }
+        InitializeModels();
+      }
+    }
   }
 
   return result;
