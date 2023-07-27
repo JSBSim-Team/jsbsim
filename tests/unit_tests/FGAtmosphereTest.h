@@ -58,7 +58,7 @@ public:
 
   FGAtmosphereTest() {
     auto atm = fdmex.GetAtmosphere();
-    fdmex.GetPropertyManager()->Unbind(atm.get());
+    fdmex.GetPropertyManager()->Unbind(atm);
   }
 
   void testDefaultValuesBeforeInit()

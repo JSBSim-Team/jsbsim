@@ -796,7 +796,7 @@ bool FGFDMExec::LoadPlanet(Element* element)
       string model = atm_element->GetAttributeValue("model");
       if (model == "MSIS") {
         // Replace the existing atmosphere model
-        instance->Unbind(Models[eAtmosphere].get());
+        instance->Unbind(Models[eAtmosphere]);
         Models[eAtmosphere] = std::make_shared<FGMSIS>(this);
         Atmosphere = static_cast<FGAtmosphere*>(Models[eAtmosphere].get());
 

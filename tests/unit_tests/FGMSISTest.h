@@ -58,7 +58,7 @@ public:
 
   FGMSISTest() {
     std_atm = fdmex.GetAtmosphere();
-    fdmex.GetPropertyManager()->Unbind(std_atm.get());
+    fdmex.GetPropertyManager()->Unbind(std_atm);
 
     const double species_mmol[8] {28.0134, 31.9988, 31.9988/2.0, 4.0, 1.0, 39.948,
                                   28.0134/2.0, 31.9988/2.0};

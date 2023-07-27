@@ -61,7 +61,7 @@ void FGPropertyManager::Unbind(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyManager::Unbind(void* instance)
+void FGPropertyManager::Unbind(const void* instance)
 {
   auto it = tied_properties.begin();
 
