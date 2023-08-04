@@ -403,13 +403,15 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		UE_LOG(LogJSBSim, Display, TEXT("Initializing JSBSimFlightDynamicsModel using Data in '%s'"), *RootDir);
 
 		// Set data paths...
-		FString AircraftPath(TEXT("aircraft"));
-		FString EnginePath(TEXT("engine"));
-		FString SystemPath(TEXT("systems"));
-		Exec->SetRootDir(SGPath(*RootDir));
-		Exec->SetAircraftPath(SGPath(*AircraftPath));
-		Exec->SetEnginePath(SGPath(*EnginePath));
-		Exec->SetSystemsPath(SGPath(*SystemPath));
+        std::string RootPath = std::string(TCHAR_TO_UTF8(*RootDir));
+        std::string AircraftPath = "aircraft";
+        std::string EnginePath = "engine";
+        std::string SystemPath = "systems";
+
+        Exec->SetRootDir(SGPath(RootPath));
+        Exec->SetAircraftPath(SGPath(AircraftPath));
+        Exec->SetEnginePath(SGPath(EnginePath));
+        Exec->SetSystemsPath(SGPath(SystemPath));
 
 		// Prepare Initial Conditions
 		TrimNeeded = true;

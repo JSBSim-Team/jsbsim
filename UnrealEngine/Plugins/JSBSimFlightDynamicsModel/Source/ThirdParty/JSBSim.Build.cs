@@ -45,5 +45,19 @@ public class JSBSim : ModuleRules
             }
             RuntimeDependencies.Add("$(BinaryOutputDir)/" + "JSBSim.dll", DllFullPath);
 		}
+
+		if (Target.Platform == UnrealTargetPlatform.Mac)
+		{
+			// Include headers
+			PublicSystemIncludePaths.Add(Path.Combine(ModuleDirectory, JSBSimLocalFolder, "Include"));
+
+			string LibFolderName = "Lib";
+			string LibPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName);
+            PublicAdditionalLibraries.Add(Path.Combine(LibPath, "libJSBSim.a"));
+
+			// Stage DLL along the binaries files
+			string DllFullPath = Path.Combine(LibPath, "libJSBSim.a");
+            RuntimeDependencies.Add(Path.Combine("$(BinaryOutputdir)/" + "libJSBSim.a", DllFullPath));
+		}
 	}
 }
