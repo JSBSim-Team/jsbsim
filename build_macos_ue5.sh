@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# get the directory containing this script
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
 # make build folder and cd into it
-mkdir build
+mkdir -p build
 cd build
 
 # build the jsbsim library with cmake
-cmake ../JSBSim
+cmake ../
 make
 
 # cd back to the root directory
