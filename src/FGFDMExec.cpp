@@ -46,6 +46,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "models/atmosphere/FGStandardAtmosphere.h"
+#include "models/atmosphere/FGMSIS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
@@ -451,7 +452,9 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Inertial->in.Position      = Propagate->GetLocation();
     break;
   case eAtmosphere:
-    Atmosphere->in.altitudeASL = Propagate->GetAltitudeASL();
+    Atmosphere->in.altitudeASL     = Propagate->GetAltitudeASL();
+    Atmosphere->in.GeodLatitudeDeg = Propagate->GetGeodLatitudeDeg();
+    Atmosphere->in.LongitudeDeg    = Propagate->GetLongitudeDeg();
     break;
   case eWinds:
     Winds->in.AltitudeASL      = Propagate->GetAltitudeASL();
@@ -464,7 +467,6 @@ void FGFDMExec::LoadInputs(unsigned int idx)
   case eAuxiliary:
     Auxiliary->in.Pressure     = Atmosphere->GetPressure();
     Auxiliary->in.Density      = Atmosphere->GetDensity();
-    Auxiliary->in.PressureSL   = Atmosphere->GetPressureSL();
     Auxiliary->in.Temperature  = Atmosphere->GetTemperature();
     Auxiliary->in.SoundSpeed   = Atmosphere->GetSoundSpeed();
     Auxiliary->in.KinematicViscosity = Atmosphere->GetKinematicViscosity();
@@ -740,6 +742,82 @@ bool FGFDMExec::LoadScript(const SGPath& script, double deltaT,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
+{
+  SGPath PlanetFileName;
+
+  if(useAircraftPath && PlanetPath.isRelative()) {
+    PlanetFileName = AircraftPath/PlanetPath.utf8Str();
+  } else {
+    PlanetFileName = PlanetPath;
+  }
+
+  FGXMLFileRead XMLFileRead;
+  Element* document = XMLFileRead.LoadXMLDocument(PlanetFileName);
+
+  // Make sure that the document is valid
+  if (!document) {
+    stringstream s;
+    s << "File: " << PlanetFileName << " could not be read.";
+    cerr << s.str() << endl;
+    throw BaseException(s.str());
+  }
+
+  if (document->GetName() != "planet") {
+    stringstream s;
+    s << "File: " << PlanetFileName << " is not a planet file.";
+    cerr << s.str() << endl;
+    throw BaseException(s.str());
+  }
+
+  bool result = LoadPlanet(document);
+
+  if (!result)
+    cerr << endl << "Planet element has problems in file " << PlanetFileName << endl;
+
+  return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::LoadPlanet(Element* element)
+{
+  bool result = Models[eInertial]->Load(element);
+
+  if (result) {
+    // Reload the planet constants and re-initialize the models.
+    LoadPlanetConstants();
+    IC->InitializeIC();
+    InitializeModels();
+
+    // Process the atmosphere element. This element is OPTIONAL.
+    Element* atm_element = element->FindElement("atmosphere");
+    if (atm_element && atm_element->HasAttribute("model")) {
+      string model = atm_element->GetAttributeValue("model");
+      if (model == "MSIS") {
+        // Replace the existing atmosphere model
+        instance->Unbind(Models[eAtmosphere].get());
+        Models[eAtmosphere] = std::make_shared<FGMSIS>(this);
+        Atmosphere = static_cast<FGAtmosphere*>(Models[eAtmosphere].get());
+
+        // Model initialization sequence
+        LoadInputs(eAtmosphere);
+        Atmosphere->InitModel();
+        result = Atmosphere->Load(atm_element);
+        if (!result) {
+          cerr << endl << "Incorrect definition of <atmosphere>." << endl;
+          return result;
+        }
+        InitializeModels();
+      }
+    }
+  }
+
+  return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGFDMExec::LoadModel(const SGPath& AircraftPath, const SGPath& EnginePath,
                           const SGPath& SystemsPath, const string& model,
                           bool addModelToPath)
@@ -801,15 +879,11 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     // Process the planet element. This element is OPTIONAL.
     element = document->FindElement("planet");
     if (element) {
-      result = Models[eInertial]->Load(element);
+      result = LoadPlanet(element);
       if (!result) {
         cerr << endl << "Planet element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
-      // Reload the planet constants and re-initialize the models.
-      LoadPlanetConstants();
-      IC->InitializeIC();
-      InitializeModels();
     }
 
     // Process the metrics element. This element is REQUIRED.

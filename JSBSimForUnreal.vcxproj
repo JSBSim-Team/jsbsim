@@ -56,10 +56,10 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.2.0.dev1";WIN32;NOMINMAX;XML_STATIC;_DEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.2.0.dev1";WIN32;NOMINMAX;XML_STATIC;NDEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
       <FloatingPointExceptions>true</FloatingPointExceptions>
@@ -70,7 +70,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4996;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <CompileAsManaged>false</CompileAsManaged>
+      <CompileAsManaged>
+      </CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -230,6 +231,7 @@ exit/B %errlev%</Command>
     <ClInclude Include="src\models\FGModel.h" />
     <ClInclude Include="src\math\FGModelFunctions.h" />
     <ClInclude Include="src\models\atmosphere\FGMSIS.h" />
+    <ClInclude Include="src\models\atmosphere\MSIS\nrlmsise-00.h" />
     <ClInclude Include="src\models\propulsion\FGNozzle.h" />
     <ClInclude Include="src\models\FGOutput.h" />
     <ClInclude Include="src\math\FGParameter.h" />
@@ -346,7 +348,8 @@ exit/B %errlev%</Command>
     <ClCompile Include="src\models\FGModel.cpp" />
     <ClCompile Include="src\math\FGModelFunctions.cpp" />
     <ClCompile Include="src\models\atmosphere\FGMSIS.cpp" />
-    <ClCompile Include="src\models\atmosphere\FGMSISData.cpp" />
+    <ClCompile Include="src\models\atmosphere\MSIS\nrlmsise-00.c" />
+    <ClCompile Include="src\models\atmosphere\MSIS\nrlmsise-00_data.c" />
     <ClCompile Include="src\models\propulsion\FGNozzle.cpp" />
     <ClCompile Include="src\models\FGOutput.cpp" />
     <ClCompile Include="src\models\flight_control\FGPID.cpp" />

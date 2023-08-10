@@ -208,6 +208,8 @@ public:
 
   struct Inputs {
     double altitudeASL;
+    double GeodLatitudeDeg;
+    double LongitudeDeg;
   } in;
 
   static constexpr double StdDaySLtemperature = 518.67;

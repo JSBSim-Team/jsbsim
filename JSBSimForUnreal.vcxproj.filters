@@ -194,7 +194,10 @@
     <ClCompile Include="src\models\atmosphere\FGMSIS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\models\atmosphere\FGMSISData.cpp">
+    <ClCompile Include="src\models\atmosphere\MSIS\nrlmsise-00.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\models\atmosphere\MSIS\nrlmsise-00_data.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\models\propulsion\FGNozzle.cpp">
@@ -542,6 +545,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\atmosphere\FGMSIS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\atmosphere\MSIS\nrlmsise-00.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\propulsion\FGNozzle.h">
