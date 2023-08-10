@@ -141,8 +141,7 @@ endif()
 
 if(BUILD_SHARED_LIBS)
   set_target_properties(libJSBSim PROPERTIES
-                                  SOVERSION ${LIBRARY_SOVERSION}
-                                  FRAMEWORK ON)
+                            SOVERSION ${LIBRARY_SOVERSION})
   install(TARGETS libJSBSim LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
