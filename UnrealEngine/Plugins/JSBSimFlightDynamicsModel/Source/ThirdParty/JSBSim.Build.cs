@@ -26,7 +26,7 @@ public class JSBSim : ModuleRules
         string LibFolderName = "Lib";
 
         // When working in debug mode, try to use the Debug version of JSBSim
-        if (Target.Configuration == UnrealTargetConfiguration.Debug)
+        if (Target.Configuration == UnrealTargetConfiguration.DebugGame)
         {
             // Source\ThirdParty\JSBSim\LibDebug
             string DebugLibsPath = Path.Combine(ModuleDirectory, JSBSimLocalFolder, LibFolderName + "Debug");
