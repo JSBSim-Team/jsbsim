@@ -1,6 +1,3 @@
-
- 
-
 #!/bin/bash
 
 rm -rf *.vs
