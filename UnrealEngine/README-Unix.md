@@ -63,6 +63,12 @@ cp -Rf systems UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
 
 Run the following command to compile and run JSBSim for Unreal
 
+You can generate a makefile or an Xcode workspace using the following command
+
 ```bash
-$PATH_TO_UNREAL/Engine/Binaries/Linux/UnrealEditor $_PATH_TO_UNREAL_PROJECTS/jsbsim/UnrealEngine/UEReferenceApp.uproject
+$PATH_TO_UNREAL/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh $PATH_TO_JSBSIM/UnrealEngine/UEReferenceApp.uproject -game
+```
+
+```bash
+$PATH_TO_UNREAL/Engine/Binaries/Linux/UnrealEditor $PATH_TO_JSBSIM/UnrealEngine/UEReferenceApp.uproject
 ```
