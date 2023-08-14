@@ -43,7 +43,11 @@ JSBSim is used in a range of projects among which:
 * Machine Learning Aircraft control: [gym-jsbsim](https://github.com/galleon/gym-jsbsim)
 * [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news-events/2019-10-21) where one of the AI went undefeated in five rounds of mock air combat against an Air Force fighter (see the [video on YouTube](https://www.youtube.com/watch?v=IOJhgC1ksNU)).
 
-JSBSim is also used in academic and industry research ([more than 700 citations referenced by Google Scholar](https://scholar.google.com/scholar?&q=jsbsim) as of May 2022).
+## Academic and Industry Research
+
+JSBSim is also used in academic and industry research ([more than 700 citations referenced by Google Scholar](https://scholar.google.com/scholar?&q=jsbsim) as of May 2023).
+
+In 2023 JSBSim has been featured in the article ["A deep reinforcement learning control approach for high-performance aircraft"](https://link.springer.com/article/10.1007/s11071-023-08725-y) on _Nonlinear Dynamics_, an International Journal of Nonlinear Dynamics and Chaos in Engineering Systems by Springer. The open access article is available as a PDF here [https://link.springer.com/content/pdf/10.1007/s11071-023-08725-y.pdf](https://link.springer.com/content/pdf/10.1007/s11071-023-08725-y.pdf). The work demonstrates an application of Deep Reinforcement Learning (DRL) to flight control and guidance, leveraging the JSBSim interface to MATLAB/Simulink.
 
 # User Guide
 
