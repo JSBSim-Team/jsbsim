@@ -16,8 +16,7 @@ Enjoy, and Simulation for the win!
 
 ## Building the application 
 
- **1. Install Unreal Engine 5.x**
- 
+### 1. Install Unreal Engine 5.x
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
@@ -52,7 +51,7 @@ It is also recommended to set up Visual Studio for Unreal using the following pr
 [https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 [https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
-**2. Build JSBSim as Dynamic libraries and stage Model files**
+### 2. Build JSBSim as Dynamic libraries and stage Model files (Windows)
 
 Unreal Engine requires that one plugin contains all its needed files in its sub-folders. 
 This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the JSBSim files.
@@ -68,15 +67,15 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
  - It will take care of making a clean build, and copy all needed files at the right location
 	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
 	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
- 
-**3. [Optional] - Download HD resources**
+
+### 3. [Optional] - Download HD resources
  In order to keep the JSBSim repository lightweight, this application contains low quality resources. 
  If you would like to use better looking content, you can download HQ aircraft model, HD textures and non-flat terrain here: 
  [High Definition content pack (330 MB)](https://epicgames.box.com/s/93mupzix8qieu51v209ockq68heuxgwj)
  
  Simply extract this archive and copy/paste the content folder into the one of UEReferenceApp, overriding the existing files. 
  
-**4. Build/Open the Unreal Project**
+### 4. Build/Open the Unreal Project
 
 **Option 1** : Simply double click on the `UnrealEngine\UEReferenceApp.uproject` file.
 It will open a popup complaining about missing modules (UEReferenceApp, JSBSimFlightDynamicsModel, JSBSimFlightDynamicsModelEditor). 

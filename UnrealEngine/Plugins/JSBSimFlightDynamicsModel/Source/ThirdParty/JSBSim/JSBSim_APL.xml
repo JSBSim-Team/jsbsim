@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--JSBSim plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- init section is always evaluated once per architecture -->
+	<init>
+		<log text="JSBSim APL Init"/>
+		<setBool result="bCpuArchSupported" value="false"/>
+		<isArch arch="arm64-v8a">
+			<setBool result="bCpuArchSupported" value="true"/>
+		</isArch>
+	</init>
+	
+	<!-- optional files or directories to copy to Intermediate/Android/APK -->
+	<resourceCopies>
+		<if condition="bCpuArchSupported">
+			<true>
+				<log text="Copying libJSBSim.so"/>
+				<copyFile src="$S(PluginDir)/Lib/Android/libJSBSim.so"
+							dst="$S(BuildDir)/libs/arm64-v8a/libJSBSim.so" />
+			</true>
+		</if>
+	</resourceCopies>
+
+
+	<!-- optional libraries to load in GameActivity.java before libUnreal.so -->
+	<soLoadLibrary>
+		<!-- need this if plugin enabled and supported architecture, even if not packaged for LibOVRPlatform -->
+		<if condition="bCpuArchSupported">
+			<true>
+				<loadLibrary name="libJSBSim" failmsg="libJSBSim library not loaded and required by JSBSim." />
+			</true>
+		</if>
+	</soLoadLibrary>
+</root>

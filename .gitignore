@@ -97,8 +97,12 @@ cmake-build-*/
 UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Binaries
 UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Intermediate
 UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Resources/JSBSim
-UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Lib
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/LibDebug
+UnrealEngine/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/Include
 UnrealEngine/Binaries
 UnrealEngine/DerivedDataCache
 UnrealEngine/Intermediate
 UnrealEngine/Saved
+UnrealEngine/UEReferenceApp.xcworkspace
+UnrealEngine/UEReferenceApp.sln

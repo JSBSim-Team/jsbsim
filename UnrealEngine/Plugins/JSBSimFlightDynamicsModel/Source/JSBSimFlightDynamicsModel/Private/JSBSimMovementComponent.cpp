@@ -4,14 +4,22 @@
 #include "JSBSimMovementComponent.h"
 #include "JSBSimModule.h"
 
-#pragma warning( push )
-
 // UE treats warning as errors. JSBSim has some warnings in its include files, so if we don't catch them inside this push/pop pragma, we won't be able to build...
-
-#pragma warning( disable : 4263 ) // FGOutputType.h(151): warning C4263: 'bool JSBSim::FGOutputType::Run(void)': member function does not override any base class virtual member function
-#pragma warning( disable : 4264 ) // FGOutputType.h(215): warning C4264: 'bool JSBSim::FGModel::Run(bool)': no override available for virtual member function from base 'JSBSim::FGModel'; function is hidden --- And others
-#pragma warning( disable : 4005 ) // compiler.h(58): warning C4005: 'DEPRECATED': macro redefinition with UE_5.0\Engine\Source\Runtime\Core\Public\Windows\WindowsPlatformCompilerPreSetup.h(55): note: see previous definition of 'DEPRECATED'
-#pragma warning( disable : 4458 ) // FGXMLElement.h(369): error C4458: declaration of 'name' hides class member
+// FGOutputType.h(151): warning C4263: 'bool JSBSim::FGOutputType::Run(void)': member function does not override any base class virtual member function
+// FGOutputType.h(215): warning C4264: 'bool JSBSim::FGModel::Run(bool)': no override available for virtual member function from base 'JSBSim::FGModel'; function is hidden --- And others
+// compiler.h(58): warning C4005: 'DEPRECATED': macro redefinition with UE_5.0\Engine\Source\Runtime\Core\Public\Windows\WindowsPlatformCompilerPreSetup.h(55): note: see previous definition of 'DEPRECATED'
+// FGXMLElement.h(369): error C4458: declaration of 'name' hides class member
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4263 )
+#pragma warning( disable : 4264 )
+#pragma warning( disable : 4005 )
+#pragma warning( disable : 4458 )
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#pragma clang diagnostic ignored "-Wshadow"
+#endif
 
 #include "FGFDMExec.h"
 #include "math/FGLocation.h"
@@ -35,7 +43,11 @@
 #include "Interfaces/IPluginManager.h"
 #include "simgear/props/props.hxx"
 
+#ifdef _MSC_VER
 #pragma warning( pop )
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 #include "UEGroundCallback.h"
 
@@ -406,11 +418,11 @@ void UJSBSimMovementComponent::InitializeJSBSim()
 		FString AircraftPath(TEXT("aircraft"));
 		FString EnginePath(TEXT("engine"));
 		FString SystemPath(TEXT("systems"));
-		Exec->SetRootDir(SGPath(*RootDir));
-		Exec->SetAircraftPath(SGPath(*AircraftPath));
-		Exec->SetEnginePath(SGPath(*EnginePath));
-		Exec->SetSystemsPath(SGPath(*SystemPath));
 
+		Exec->SetRootDir(SGPath(TCHAR_TO_UTF8(*RootDir)));
+		Exec->SetAircraftPath(SGPath(TCHAR_TO_UTF8(*AircraftPath)));
+		Exec->SetEnginePath(SGPath(TCHAR_TO_UTF8(*EnginePath)));
+		Exec->SetSystemsPath(SGPath(TCHAR_TO_UTF8(*SystemPath)));
 		// Prepare Initial Conditions
 		TrimNeeded = true;
 
