@@ -9,7 +9,10 @@ This document describes how to build the JSBSim library as well as the Unreal En
 | Macos            | Supported |
 | Android          | Work in progress |
 
-## Building
+## Building (Easy way)
+Run `JSBSimForUnrealMac.sh` on Macos or `JSBSimForUnrealLinux.sh` on Linux
+
+## Building (Hard way)
 The first step is to build JSBSim on your target platform using cmake. Open an terminal and type the following commands
 
 ### For Macos
