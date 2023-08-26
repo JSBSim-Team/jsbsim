@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   : FGAtmosphere(fdmex), StdSLpressure(StdDaySLpressure), TemperatureBias(0.0),
     TemperatureDeltaGradient(0.0), VaporMassFraction(0.0),
-    SaturatedVaporPressure(0.0), StdAtmosTemperatureTable(9),
+    SaturatedVaporPressure(StdDaySLpressure), StdAtmosTemperatureTable(9),
     MaxVaporMassFraction(10)
 {
   Name = "FGStandardAtmosphere";

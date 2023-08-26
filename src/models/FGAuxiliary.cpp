@@ -72,8 +72,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   adot = bdot = 0.0;
   gamma = Vt = Vground = 0.0;
   psigt = 0.0;
-  day_of_year = 1;
-  seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
   Nx = Ny = Nz = 0.0;
@@ -107,8 +105,6 @@ bool FGAuxiliary::InitModel(void)
   adot = bdot = 0.0;
   gamma = Vt = Vground = 0.0;
   psigt = 0.0;
-  day_of_year = 1;
-  seconds_in_day = 0.0;
   hoverbmac = hoverbcg = 0.0;
   Re = 0.0;
   Nz = Ny = 0.0;

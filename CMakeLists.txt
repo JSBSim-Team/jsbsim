@@ -121,6 +121,7 @@ if (CXXTEST_FOUND)
   list(APPEND LCOV_REMOVE_PATTERNS "'*/GeographicLib/*'")
   list(APPEND LCOV_REMOVE_PATTERNS "'*/simgear/*'")
   list(APPEND LCOV_REMOVE_PATTERNS "'*/unit_tests/*'")
+  list(APPEND LCOV_REMOVE_PATTERNS "'*/models/atmosphere/MSIS/*'")
   coverage_evaluate()
 endif(CXXTEST_FOUND)
 

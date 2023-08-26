@@ -33,9 +33,34 @@ jobs:
               xmllint --noout --schema JSBSimSystem.xsd $filename
           done
 
+  MSIS-validation:
+    name: MSIS code validation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v3
+      - name: Configure the MSIS test program
+        run: |
+          mkdir build && cd build
+          cmake ../src/models/atmosphere/MSIS
+      - name: Build the JSBSim test program
+        working-directory: build
+        run: make -j2
+      - name: Run the NRLMSIS-00 C package
+        working-directory: src/models/atmosphere/MSIS
+        run: |
+          if [[ $(head -261 DOCUMENTATION | tail -104 | diff -urN <(../../../../build/nrlmsise-test) - | wc -c) -ne 0 ]]; then
+            echo "Failed."
+            exit 1
+          fi
+
   Linux:
     name: C/C++ build (Linux)
-    needs: XML-validation
+    needs: [XML-validation, MSIS-validation]
     strategy:
       fail-fast: false
       matrix:
@@ -375,7 +400,7 @@ jobs:
 
   MacOSX:
     name: C/C++ build (MacOSX)
-    needs: XML-validation
+    needs: [XML-validation, MSIS-validation]
     runs-on: macos-latest
     strategy:
       fail-fast: false
