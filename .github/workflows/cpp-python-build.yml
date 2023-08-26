@@ -571,7 +571,7 @@ jobs:
         run: brew install doxygen
       - name: Install Doxygen (Windows)
         if: runner.os == 'Windows'
-        run: cinst doxygen.install
+        run: choco install doxygen.install
       - name: Configure Doxygen
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
