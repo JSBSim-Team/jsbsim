@@ -43,6 +43,7 @@ INCLUDES
 
 #include <string>
 #include <list>
+#include <memory>
 #include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
@@ -437,8 +438,21 @@ class JSBSIM_API FGPropertyManager
      *
      * Classes should use this function to release control of any
      * properties they have bound using this property manager.
+     * @param instance The instance which properties shall be unbound.
      */
-    void Unbind(void* instance);
+    void Unbind(const void* instance);
+
+    /**
+     * Unbind all properties bound by this manager to an instance.
+     *
+     * Classes should use this function to release control of any
+     * properties they have bound using this property manager.
+     * Helper function for shared_ptr
+     * @see Unbind(const void*)
+     */
+    template <typename T> void Unbind(const std::shared_ptr<T>& instance) {
+      Unbind(instance.get());
+    }
 
     /**
      * Tie a property to an external variable.
@@ -615,10 +629,10 @@ class JSBSIM_API FGPropertyManager
   private:
     struct PropertyState {
       SGPropertyNode_ptr node;
-      void* BindingInstance = nullptr;
+      const void* BindingInstance = nullptr;
       bool WriteAttribute = true;
       bool ReadAttribute = true;
-      PropertyState(SGPropertyNode* property, void* instance)
+      PropertyState(SGPropertyNode* property, const void* instance)
         : node(property), BindingInstance(instance) {
         WriteAttribute = node->getAttribute(SGPropertyNode::WRITE);
         ReadAttribute = node->getAttribute(SGPropertyNode::READ);

@@ -752,7 +752,7 @@ cdef class FGFDMExec(FGJSBBase):
                                       model.encode(), add_model_to_path)
 
     def load_script(self, script: str, delta_t: float = 0.0, initfile:str = "") -> bool:
-        """@Dox(JSBSim::FGFDMExec::LoadScript) """
+        """@Dox(JSBSim::FGFDMExec::LoadScript)"""
         scriptfile = os.path.join(self.get_root_dir(), script)
         if not os.path.exists(scriptfile):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
@@ -951,15 +951,15 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::GetDebugLevel) """
         return self.thisptr.GetDebugLevel()
 
-    def load_ic(self, rstfile: str, useStoredPath: bool) -> bool:
+    def load_ic(self, rstfile: str, useAircraftPath: bool) -> bool:
         reset_file = _append_xml(rstfile)
-        if useStoredPath and not os.path.isabs(reset_file):
+        if useAircraftPath and not os.path.isabs(reset_file):
             reset_file = os.path.join(self.get_full_aircraft_path(), reset_file)
         if not os.path.exists(reset_file):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
                                     reset_file)
         return deref(self.thisptr.GetIC()).Load(c_SGPath(rstfile.encode(), NULL),
-                                                useStoredPath)
+                                                useAircraftPath)
 
     def get_propagate(self) -> FGPropagate:
         """@Dox(JSBSim::FGFDMExec::GetPropagate)"""

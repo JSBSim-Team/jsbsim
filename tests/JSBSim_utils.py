@@ -266,9 +266,8 @@ def FindDifferences(ref, other, tol):
     delta = np.abs(ref - other)
 
     idxmax = delta.idxmax()
-    ref_max = pd.Series(ref.lookup(idxmax, ref.columns), index=ref.columns)
-    other_max = pd.Series(other.lookup(idxmax, other.columns),
-                          index=other.columns)
+    ref_max = pd.Series(np.diag(ref.loc[idxmax]), index=ref.columns)
+    other_max = pd.Series(np.diag(other.loc[idxmax]), index=other.columns)
     diff = pd.concat([idxmax, delta.max(), ref_max, other_max], axis=1)
     diff.columns = ['Time', 'delta', 'ref value', 'value']
     return diff[diff['delta'] > tol]

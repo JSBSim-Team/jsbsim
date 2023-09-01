@@ -133,7 +133,7 @@ public:
   }
 
   /** Set the simulation time.
-      The elapsed time can be used by the ground callbck to assess the planet
+      The elapsed time can be used by the ground callback to assess the planet
       rotation or the movement of objects.
       @param time elapsed time in seconds since the simulation started.
   */

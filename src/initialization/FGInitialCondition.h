@@ -667,9 +667,9 @@ public:
 
   /** Loads the initial conditions.
       @param rstname The name of an initial conditions file
-      @param useStoredPath true if the stored path to the IC file should be used
+      @param useAircraftPath true if path is given relative to the aircraft path.
       @return true if successful */
-  bool Load(const SGPath& rstname, bool useStoredPath = true );
+  bool Load(const SGPath& rstname, bool useAircraftPath = true );
 
   /** Is an engine running ?
       @param index of the engine to be checked

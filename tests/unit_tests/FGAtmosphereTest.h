@@ -34,7 +34,6 @@ public:
   }
   // Getters for the protected members
   static constexpr double GetR(void) { return Reng0; }
-  static constexpr double GetGamma(void) { return SHRatio; }
   static constexpr double GetBeta(void) { return Beta; }
   static constexpr double GetSutherlandConstant(void) { return SutherlandConstant; }
   static constexpr double GetPSFtoPa(void) { return psftopa; }
@@ -44,7 +43,7 @@ private:
 };
 
 constexpr double R = DummyAtmosphere::GetR();
-constexpr double gama = DummyAtmosphere::GetGamma();
+constexpr double gama = FGAtmosphere::SHRatio;
 constexpr double beta = DummyAtmosphere::GetBeta();
 constexpr double k = DummyAtmosphere::GetSutherlandConstant();
 constexpr double psftopa = DummyAtmosphere::GetPSFtoPa();
@@ -58,7 +57,7 @@ public:
 
   FGAtmosphereTest() {
     auto atm = fdmex.GetAtmosphere();
-    fdmex.GetPropertyManager()->Unbind(atm.get());
+    fdmex.GetPropertyManager()->Unbind(atm);
   }
 
   void testDefaultValuesBeforeInit()

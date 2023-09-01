@@ -70,11 +70,11 @@ Debian packages for Ubuntu Linux "Bionic" 18.04 LTS and "Focal" 20.04 LTS for 64
 
 * `JSBSim_1.1.13-986.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
 * `JSBSim-devel_1.1.13-986.amd64.deb` which installs the development resources (headers and libraries)
-* `python3-JSBSim_1.1.13-986.amd64.deb` which installs the Python 3.6 module of JSBSim
+* `python3-JSBSim_1.1.13-986.amd64.deb` which installs the Python module of JSBSim
 
 ### Python module
 
-JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.6, 3.7, 3.8, 3.9 and 3.10). These can be installed using either `pip` or `conda`.
+JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.7, 3.8, 3.9, 3.10 and 3.11). These can be installed using either `pip` or `conda`.
 
 #### Installation with `pip`
 
