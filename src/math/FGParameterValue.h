@@ -34,8 +34,6 @@
   INCLUDES
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <stdexcept>
-
 #include "math/FGRealValue.h"
 #include "math/FGPropertyValue.h"
 #include "input_output/FGXMLElement.h"

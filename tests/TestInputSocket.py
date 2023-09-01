@@ -45,7 +45,7 @@ class TelnetInterface:
         return self.getOutput()
 
     def getOutput(self):
-        time.sleep(0.5) # Wait for the socket to process all the data.
+        time.sleep(1.0) # Wait for the socket to process all the data.
         return self.tn.read_very_eager().decode()
 
     def getPropertyValue(self, property):

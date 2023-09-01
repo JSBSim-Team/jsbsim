@@ -437,8 +437,9 @@ class JSBSIM_API FGPropertyManager
      *
      * Classes should use this function to release control of any
      * properties they have bound using this property manager.
+     * @param instance The instance which properties shall be unbound.
      */
-    void Unbind(void* instance);
+    void Unbind(const void* instance);
 
     /**
      * Tie a property to an external variable.
@@ -619,10 +620,10 @@ class JSBSIM_API FGPropertyManager
   private:
     struct PropertyState {
       SGPropertyNode_ptr node;
-      void* BindingInstance = nullptr;
+      const void* BindingInstance = nullptr;
       bool WriteAttribute = true;
       bool ReadAttribute = true;
-      PropertyState(SGPropertyNode* property, void* instance)
+      PropertyState(SGPropertyNode* property, const void* instance)
         : node(property), BindingInstance(instance) {
         WriteAttribute = node->getAttribute(SGPropertyNode::WRITE);
         ReadAttribute = node->getAttribute(SGPropertyNode::READ);

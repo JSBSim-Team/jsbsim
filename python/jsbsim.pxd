@@ -36,7 +36,7 @@ cdef extern from "ExceptionManagement.h":
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
     cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
         c_FGInitialCondition(c_FGInitialCondition* ic)
-        bool Load(const c_SGPath& rstfile, bool useStoredPath)
+        bool Load(const c_SGPath& rstfile, bool useAircraftPath)
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":

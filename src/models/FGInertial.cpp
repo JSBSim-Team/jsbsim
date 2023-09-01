@@ -286,7 +286,7 @@ void FGInertial::Debug(int from)
       cout << "    Semi minor axis: " << b << endl;
       cout << "    Rotation rate  : " << scientific << vOmegaPlanet(eZ) << endl;
       cout << "    GM             : " << GM << endl;
-      cout << "    J2             : " << J2 << endl << defaultfloat;
+      cout << "    J2             : " << J2 << endl << defaultfloat << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
