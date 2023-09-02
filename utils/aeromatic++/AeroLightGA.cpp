@@ -37,9 +37,7 @@ Light::Light(Aeromatic *p) : Aircraft(p)
     _subclasses.push_back("Glider");
     _subclasses.push_back("Small Commuter");
 
-    if (_aircraft->_no_engines > 0) {
-        _systems.push_back(new Propulsion(_aircraft));
-    }
+    _systems.push_back(new Propulsion(_aircraft));
     _systems.push_back(new CableControls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
