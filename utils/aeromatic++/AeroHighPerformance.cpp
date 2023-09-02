@@ -39,11 +39,7 @@ Performance::Performance(Aeromatic *p) : Aircraft(p)
     _subclasses.push_back("Aerobatic");
     _subclasses.push_back("Air Racer");
 
-    if (_aircraft->_no_engines > 0) {
-        _systems.push_back(new Propulsion(_aircraft));
-    } else {
-        _warnings.push_back("No engine specified.");
-    }
+    _systems.push_back(new Propulsion(_aircraft));
     _systems.push_back(new CableControls(_aircraft));
     _systems.push_back(new LandingGear(_aircraft));
     _systems.push_back(new Flaps(_aircraft));
