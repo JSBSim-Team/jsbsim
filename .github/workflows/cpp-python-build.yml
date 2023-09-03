@@ -600,7 +600,7 @@ jobs:
         run: brew install doxygen
       - name: Install Doxygen (Windows)
         if: runner.os == 'Windows'
-        run: cinst doxygen.install
+        run: choco install doxygen.install
       - name: Configure Doxygen
         run: |
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -643,7 +643,7 @@ jobs:
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
           echo "::endgroup::"
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.14
+        uses: pypa/cibuildwheel@v2.15
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
@@ -656,7 +656,7 @@ jobs:
             cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j3
           CIBW_ARCHS_MACOS: x86_64 universal2
-          CIBW_SKIP: cp*-musllinux_* cp38-macosx_x86_64 cp39-macosx_x86_64 cp310-macosx_x86_64 cp311-macosx_x86_64
+          CIBW_SKIP: cp*-musllinux_* cp38-macosx_x86_64 cp39-macosx_x86_64 cp310-macosx_x86_64 cp311-macosx_x86_64 cp312-macosx_x86_64
           CIBW_ARCHS_WINDOWS: native
           JSBSIM_BUILD_CONFIG: RelWithDebInfo
         with:
