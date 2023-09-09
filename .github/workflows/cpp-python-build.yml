@@ -20,7 +20,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libxml2-utils
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Validate scripts files
         run: |
           for filename in scripts/*.xml; do
@@ -46,7 +46,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Configure the MSIS test program
         run: |
           mkdir build && cd build
@@ -100,11 +100,11 @@ jobs:
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
           echo "JSBSIM_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout Backward-cpp
         if: matrix.display_stack_trace == 'ON'
         id: BackwardCppCheckout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: bombela/backward-cpp
           ref: 'v1.6'
@@ -173,7 +173,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v1.2.4
         with:
@@ -242,9 +242,9 @@ jobs:
         with:
           python-version: '3.10'
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout CxxTest
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -295,7 +295,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Cache CTest cost data
         # Cache the file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
@@ -306,7 +306,7 @@ jobs:
             build/Testing/Temporary/CTestCostData.txt
           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Checkout CxxTest
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -317,7 +317,7 @@ jobs:
           cp python/python3/cxxtest/*.py cxxtest/.
           cp python/python3/scripts/cxxtestgen .
       - name: Checkout Backward-cpp
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: bombela/backward-cpp
           ref: 'v1.6'
@@ -371,9 +371,9 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout JSBSim logos
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: JSBSim-Team/jsbsim-logo
           path: jsbsim-logo
@@ -444,7 +444,7 @@ jobs:
         if: matrix.arch == 'x86_64'
         run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Cache CTest cost data
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
@@ -462,7 +462,7 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Checkout CxxTest
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -583,7 +583,7 @@ jobs:
 
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
@@ -720,7 +720,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install cxxtest lcov
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
@@ -837,7 +837,7 @@ jobs:
 
       # Bump version
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Bump version
@@ -870,7 +870,7 @@ jobs:
 
       # Bump stable version of the `master` branch
       - name: Checkout JSBSim master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: master
           path: _master
@@ -902,7 +902,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
