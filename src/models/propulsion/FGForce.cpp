@@ -101,6 +101,8 @@ const FGMatrix33& FGForce::Transform(void) const
     return fdmex->GetAuxiliary()->GetTw2b();
   case tLocalBody:
     return fdmex->GetPropagate()->GetTl2b();
+  case tInertialBody:
+    return fdmex->GetPropagate()->GetTi2b();
   case tCustom:
   case tNone:
     return mT;
