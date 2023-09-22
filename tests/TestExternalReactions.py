@@ -54,7 +54,7 @@ class TestExternalReactions(JSBSimTestCase):
 
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
-            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*20.0
+            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*10000.0
             f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
