@@ -50,21 +50,21 @@
       <set name="simulation/notify-time-trigger" value="600" type="FG_DELTA"/>
     </event>
 
-    <event name="Start phasing burn">
+    <event name="Undock burn">
       <description> Lower perigee </description>
       <condition>
           simulation/sim-time-sec gt 10
       </condition>
-      <set name="propulsion/rocket_thrust" value="10000" action="FG_RAMP" tc="1.0"/>
+      <set name="propulsion/rocket_thrust" value="2000" action="FG_RAMP" tc="1.0"/>
       <notify>
         <property>simulation/sim-time-sec</property>
       </notify>
     </event>
 
-    <event name="End phasing burn">
+    <event name="End Undock burn">
       <description> Stop lowering perigee </description>
       <condition>
-          simulation/sim-time-sec gt 30
+          simulation/sim-time-sec gt 12
       </condition>
       <set name="propulsion/rocket_thrust" value="0" action="FG_RAMP" tc="1.0"/>
       <notify>
@@ -72,21 +72,49 @@
       </notify>
     </event>
 
-    <!--event name="Final Data Point">
-      <description> Log data on command </description>
+    <event name="Orbit Lowering Burn">
+      <description> Lower orbit below station (Thrust is in negative direction here)</description>
+      <condition>
+          simulation/sim-time-sec gt 2803
+      </condition>
+      <set name="propulsion/rocket_thrust" value="-2000" action="FG_RAMP" tc="1.0"/>
       <notify>
-        <property caption="Simulation Time:         "> simulation/sim-time-sec         </property>
-        <property caption="Height AGL (ft):         "> position/h-agl-ft               </property>
-        <property caption="Altitude (Geod, ft):     "> position/geod-alt-ft            </property>
-        <property caption="Latitude (Geod, deg):    "> position/lat-geod-deg           </property>
-        <property caption="Vehicle Radius (ft):     "> position/radius-to-vehicle-ft   </property>
-        <property caption="Inertial Vel Mag (ft/s): "> velocities/eci-velocity-mag-fps </property>
-        <property caption="Body X Velocity (ft/s):  "> velocities/u-fps                </property>
-        <property caption="Simulation Frame:        "> simulation/frame                </property>
+        <property>simulation/sim-time-sec</property>
       </notify>
-      <condition> simulation/sim-time-sec >= 86400.0 </condition>
-      <set name="simulation/force-output" value="0"/>
-    </event-->
+    </event>
+
+    <event name="End Orbit Lowering Burn">
+      <description> Stop lowering orbit below station </description>
+      <condition>
+          simulation/sim-time-sec gt 2808
+      </condition>
+      <set name="propulsion/rocket_thrust" value="0" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>simulation/sim-time-sec</property>
+      </notify>
+    </event>
+
+    <event name="Orbit Circularizing Burn">
+      <description> Circularize orbit below station (Thrust is in negative direction here)</description>
+      <condition>
+          simulation/sim-time-sec gt 5591
+      </condition>
+      <set name="propulsion/rocket_thrust" value="-2000" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>simulation/sim-time-sec</property>
+      </notify>
+    </event>
+
+    <event name="End Orbit Circularizing Burn">
+      <description> Stop circularizing orbit below station </description>
+      <condition>
+          simulation/sim-time-sec gt 5598
+      </condition>
+      <set name="propulsion/rocket_thrust" value="0" action="FG_RAMP" tc="1.0"/>
+      <notify>
+        <property>simulation/sim-time-sec</property>
+      </notify>
+    </event>
 
   </run>
 </runscript>

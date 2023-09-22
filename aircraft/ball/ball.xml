@@ -108,7 +108,7 @@
             <property>aero/qbar-psf</property>
             <property>fcs/parachute_reef_pos_norm</property>
             <value> 1.0 </value>  <!-- Full drag coefficient -->
-            <value> 20.0 </value> <!-- Full parachute area -->
+            <value> 10000.0 </value> <!-- Full parachute area -->
           </product>
         </function>
         <!-- The location below is in structural frame (x positive
@@ -140,16 +140,10 @@
           <y>0</y>
           <z>0</z>
         </location>
-        <!-- The direction describes a unit vector. In this case, since
-             the selected frame is the INERTIAL frame, the "-1" x component
-             describes a direction exactly opposite of the direction
-             into the INERTIAL VELOCITY vector. That is, the direction specified below
+        <!-- The direction that the thrust acts in is defined below in the Pointing
+             channel of the flight_control section, through the creation of a unit 
+             pointing vector. That is, the direction specified below
              is the direction that the drag force acts in. -->
-        <direction>
-          <x> 0 </x>
-          <y> 0 </y>
-          <z> 0 </z>
-        </direction>
       </force>
 
     </external_reactions>
@@ -163,7 +157,7 @@
         <fcs_function name="propulsion/tvc_inertial_x">
           <function>
             <quotient>
-              <property> -velocities/eci-x-fps            </property>
+              <property>  velocities/eci-x-fps            </property>
               <property>  velocities/eci-velocity-mag-fps </property>
             </quotient>
           </function>
@@ -173,7 +167,7 @@
         <fcs_function name="propulsion/tvc_inertial_y">
           <function>
             <quotient>
-              <property> -velocities/eci-y-fps            </property>
+              <property>  velocities/eci-y-fps            </property>
               <property>  velocities/eci-velocity-mag-fps </property>
             </quotient>
           </function>
@@ -183,7 +177,7 @@
         <fcs_function name="propulsion/tvc_inertial_z">
           <function>
             <quotient>
-              <property> -velocities/eci-z-fps            </property>
+              <property>  velocities/eci-z-fps            </property>
               <property>  velocities/eci-velocity-mag-fps </property>
             </quotient>
           </function>
