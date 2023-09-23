@@ -199,8 +199,7 @@ class TestExternalReactions(JSBSimTestCase):
     def test_moment(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                        'ball_chute.xml')
-        tree, aircraft_name, _ = CopyAircraftDef(script_path,
-                                                             self.sandbox)
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
         extReact_element = tree.getroot().find('external_reactions')
         moment_element = et.SubElement(extReact_element, 'moment')
         moment_element.attrib['name'] = 'parachute'
@@ -229,9 +228,14 @@ class TestExternalReactions(JSBSimTestCase):
 
         fdm['external_reactions/parachute/magnitude-lbsft'] = -3.5
 
+        # Compute the parachute_area
+        parachute_area = 1.0
+        for value in extReact_element.findall('force/function/product/value'):
+            parachute_area *= float(value.text)
+
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
-            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*20.0
+            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*parachute_area
             f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
