@@ -227,7 +227,7 @@ public:
   /// Destructor
   virtual ~FGForce();
 
-  enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
+  enum TransformType { tNone, tWindBody, tLocalBody, tInertialBody, tCustom };
 
   virtual const FGColumnVector3& GetBodyForces(void);
 

@@ -55,7 +55,7 @@
         <ixy unit="SLUG*FT2"> -0 </ixy>
         <ixz unit="SLUG*FT2"> -0 </ixz>
         <iyz unit="SLUG*FT2"> -0 </iyz>
-        <emptywt unit="LBS"> 40 </emptywt>
+        <emptywt unit="LBS"> 20000 </emptywt>
         <location name="CG" unit="IN">
             <x> 0 </x>
             <y> 0 </y>
@@ -100,14 +100,15 @@
     <external_reactions>
       <!-- "Declare" the reefing term -->
       <property>fcs/parachute_reef_pos_norm</property>
-
+      <property>propulsion/rocket_thrust</property>
+      
       <force name="parachute" frame="WIND">
         <function>
           <product>
             <property>aero/qbar-psf</property>
             <property>fcs/parachute_reef_pos_norm</property>
             <value> 1.0 </value>  <!-- Full drag coefficient -->
-            <value> 20.0 </value> <!-- Full parachute area -->
+            <value> 10000.0 </value> <!-- Full parachute area -->
           </product>
         </function>
         <!-- The location below is in structural frame (x positive
@@ -121,19 +122,71 @@
         <!-- The direction describes a unit vector. In this case, since
              the selected frame is the WIND frame, the "-1" x component
              describes a direction exactly opposite of the direction
-             into the wind vector. That is, the direction specified below
+             into the WIND vector. That is, the direction specified below
              is the direction that the drag force acts in. -->
         <direction>
-          <x>-1</x>
-          <y>0</y>
-          <z>0</z>
+          <x> -1 </x>
+          <y>  0 </y>
+          <z>  0 </z>
         </direction>
       </force>
+
+      <force name="rocket" frame="INERTIAL">
+        <function>
+          <property> propulsion/rocket_thrust </property>
+        </function>
+        <location unit="FT">
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </location>
+        <!-- The direction that the thrust acts in is defined below in the Pointing
+             channel of the flight_control section, through the creation of a unit 
+             pointing vector. That is, the direction specified below
+             is the direction that the drag force acts in. -->
+      </force>
+
     </external_reactions>
 
     <propulsion/>
 
-    <flight_control name="FGFCS"/>
+    <flight_control name="FGFCS">
+    
+      <channel name="Pointing">
+      
+        <fcs_function name="propulsion/tvc_inertial_x">
+          <function>
+            <quotient>
+              <property>  velocities/eci-x-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/x </output>
+        </fcs_function>
+      
+        <fcs_function name="propulsion/tvc_inertial_y">
+          <function>
+            <quotient>
+              <property>  velocities/eci-y-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/y </output>
+        </fcs_function>
+
+        <fcs_function name="propulsion/tvc_inertial_z">
+          <function>
+            <quotient>
+              <property>  velocities/eci-z-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/z </output>
+        </fcs_function>
+
+      </channel>
+    
+    </flight_control>
 
     <aerodynamics>
         <axis name="DRAG">

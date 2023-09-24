@@ -23,6 +23,12 @@ import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, CreateFDM, RunTest, CopyAircraftDef
 
+def getParachuteArea(tree):
+    parachute_area = 1.0
+    for value in tree.getroot().findall('external_reactions/force/function/product/value'):
+        parachute_area *= float(value.text)
+    return parachute_area
+
 class TestExternalReactions(JSBSimTestCase):
     def getLeverArm(self, fdm, name):
         lax = (fdm['external_reactions/'+name+'/location-x-in']
@@ -52,9 +58,12 @@ class TestExternalReactions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['external_reactions/parachute/y'], 0.0)
         self.assertAlmostEqual(fdm['external_reactions/parachute/z'], 0.0)
 
+        tree, _, _ = CopyAircraftDef(script_path, self.sandbox)
+        parachute_area = getParachuteArea(tree)
+
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
-            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*20.0
+            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*parachute_area
             f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
@@ -199,8 +208,7 @@ class TestExternalReactions(JSBSimTestCase):
     def test_moment(self):
         script_path = self.sandbox.path_to_jsbsim_file('scripts',
                                                        'ball_chute.xml')
-        tree, aircraft_name, _ = CopyAircraftDef(script_path,
-                                                             self.sandbox)
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
         extReact_element = tree.getroot().find('external_reactions')
         moment_element = et.SubElement(extReact_element, 'moment')
         moment_element.attrib['name'] = 'parachute'
@@ -228,10 +236,11 @@ class TestExternalReactions(JSBSimTestCase):
         self.assertAlmostEqual(fdm['external_reactions/parachute/n'], mDir[2])
 
         fdm['external_reactions/parachute/magnitude-lbsft'] = -3.5
+        parachute_area = getParachuteArea(tree)
 
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
-            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*20.0
+            mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*parachute_area
             f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])

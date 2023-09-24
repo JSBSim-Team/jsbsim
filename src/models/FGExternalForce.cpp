@@ -103,6 +103,8 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
     ttype = tLocalBody;
   } else if (sFrame == "WIND") {
     ttype = tWindBody;
+  } else if (sFrame == "INERTIAL") {
+    ttype = tInertialBody;
   } else {
     cerr << el->ReadFrom()
          << "Invalid frame specified for external " << el->GetName() << ", \""
@@ -238,6 +240,9 @@ void FGExternalForce::Debug(int from)
         break;
       case tWindBody:
         cout << "WIND";
+        break;
+      case tInertialBody:
+        cout << "INERTIAL";
         break;
       default:
         cout << "ERROR/UNKNOWN";
