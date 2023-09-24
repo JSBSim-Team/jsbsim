@@ -111,6 +111,7 @@ CLASS DOCUMENTATION
            completes the right handed system. This is modified from a normal
            wind frame definition, which is rotated about the Y axis 180 degrees
            from this WIND frame.
+    - INERTIAL frame refers to the ECI frame.
 
     Much of the substance of this class is located in the FGForce base class,
     from which this class is derived.

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<initialize name="reset01" version="2.0">
+  <!--
+    This file sets up the spacecraft in a hig inclination elliptical orbit.
+    2023-09-17T01:31:30.000 -4084.032825462220 -5429.695419910110 -0.556775951837 3.81325195203505 -2.85811815725326 6.00306592847078
+  -->
+
+  <position frame="ECI" unit="KM">
+    <x> -4084.03   </x>
+    <y> -5429.69   </y>
+    <z>    -0.5567 </z>
+  </position>
+
+  <orientation unit="DEG" frame="LOCAL">
+    <yaw>   90.0  </yaw>
+  </orientation>
+
+  <velocity unit="KM/SEC" frame="ECI">
+    <x>  3.813252 </x>
+    <y> -2.858118 </y>
+    <z>  6.003066 </z>
+  </velocity>
+
+  <attitude_rate unit="DEG/SEC" frame="ECI">
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+  </attitude_rate>
+
+</initialize>
