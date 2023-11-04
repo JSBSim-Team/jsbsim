@@ -87,10 +87,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install cxxtest valgrind binutils-dev
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
       - name: Configure Julia
@@ -288,10 +288,10 @@ jobs:
       matrix:
         shared_libs: [ON, OFF]
     steps:
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
       - name: Checkout JSBSim
@@ -436,10 +436,10 @@ jobs:
       matrix:
         arch: [x86_64, arm64]
     steps:
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - name: Install Python packages
         if: matrix.arch == 'x86_64'
         run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
@@ -532,7 +532,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.7]
+        python-version: [3.8]
         include:
           - python-version: 3.9
             os: windows-latest
@@ -655,8 +655,8 @@ jobs:
             rm -f CMakeCache.txt
             cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j3
-          CIBW_ARCHS_MACOS: x86_64 universal2
-          CIBW_SKIP: cp*-musllinux_* cp38-macosx_x86_64 cp39-macosx_x86_64 cp310-macosx_x86_64 cp311-macosx_x86_64 cp312-macosx_x86_64
+          CIBW_ARCHS_MACOS: universal2
+          CIBW_SKIP: cp*-musllinux_*
           CIBW_ARCHS_WINDOWS: native
           JSBSIM_BUILD_CONFIG: RelWithDebInfo
         with:
@@ -793,10 +793,10 @@ jobs:
           find . -type f -name *.deb -exec cp {} GH_release/. \;
 
       # PyPI deployment
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - name: PyPI deployment
         uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -895,10 +895,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install doxygen graphviz
-      - name: Set up Python 3.7
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - name: Install Python packages
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim

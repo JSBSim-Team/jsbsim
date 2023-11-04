@@ -74,7 +74,7 @@ Debian packages for Ubuntu Linux "Focal" 20.04 LTS and "Jammy" 22.04 LTS for 64 
 
 ### Python module
 
-JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.7, 3.8, 3.9, 3.10 and 3.11). These can be installed using either `pip` or `conda`.
+JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.8, 3.9, 3.10, 3.11 and 3.12). These can be installed using either `pip` or `conda`.
 
 #### Installation with `pip`
 
