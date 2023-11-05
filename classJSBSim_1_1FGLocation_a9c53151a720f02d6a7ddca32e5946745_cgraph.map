@@ -1,0 +1,4 @@
+<map id="SetLatitude" name="SetLatitude">
+<area shape="rect" id="node1" title="Set the GEOCENTRIC latitude." alt="" coords="5,13,101,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="149,5,343,47"/>
+</map>

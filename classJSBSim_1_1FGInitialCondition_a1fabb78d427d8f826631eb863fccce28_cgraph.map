@@ -1,0 +1,13 @@
+<map id="ResetIC" name="ResetIC">
+<area shape="rect" id="node1" title="Resets the IC data structure to new values." alt="" coords="5,199,77,226"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#adf8684a61e0eb7c35ed18325d3642b35" title="Returns the FGInertial pointer." alt="" coords="371,12,534,53"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="133,57,300,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a3274b54aa011369c34ac661f1d6c7092" title="Initialize the initial conditions to default values." alt="" coords="171,123,262,150"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="356,276,549,317"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a4432f5e65443121378434889b2580f07" title="Sets the initial flight path angle." alt="" coords="125,224,308,251"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGLocation.html#a9c53151a720f02d6a7ddca32e5946745" title="Set the GEOCENTRIC latitude." alt="" coords="142,276,291,317"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGLocation.html#a20809288597c81aac013679a1bc977dd" title="Set the longitude." alt="" coords="142,341,291,382"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGMatrix33.html#a039718b92a595f3eafaafb2091cfa52a" title="Transposed matrix." alt="" coords="141,406,293,448"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGLocation.html#a0697137d8c02a8b84f695d12317347a6" title="Sets the semimajor and semiminor axis lengths for this planet." alt="" coords="378,102,527,144"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGLocation.html#af0f103b7c1f4c5c8cdceb15a55305fe2" title="Sets the longitude, latitude and the distance above the reference spheroid." alt="" coords="372,168,533,209"/>
+</map>

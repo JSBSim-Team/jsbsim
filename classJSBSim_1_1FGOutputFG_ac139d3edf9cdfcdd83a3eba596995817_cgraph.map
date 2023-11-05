@@ -1,0 +1,10 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Evaluate the output directives from an XML file." alt="" coords="5,209,59,236"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="566,5,785,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="566,78,785,119"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#a30a269bd930d31646341ba15787281e3" title="Retrieves an attribute value as a double precision real number." alt="" coords="566,257,785,298"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#ac5c2e3334b384afca061f0bf965dc864" title="Determines if an element has the supplied attribute." alt="" coords="565,323,785,349"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGOutputSocket.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file." alt="" coords="107,202,288,243"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGOutputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file (implement the FGModel interface)." alt="" coords="343,202,511,243"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGOutputSocket.html#a0e328034b29ce0a47dec6d8e6a794687" title="Overwrites the name identifier under which the output will be logged." alt="" coords="336,137,517,178"/>
+</map>

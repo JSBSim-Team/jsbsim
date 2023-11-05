@@ -1,0 +1,8 @@
+<map id="SetAltitudeAGL" name="SetAltitudeAGL">
+<area shape="rect" id="node1" title="Set the altitude above ground level." alt="" coords="5,143,125,170"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGLocation.html#ad6d787090b71419e91678ceb91c6ef1f" title="Gets the geodetic altitude in feet." alt="" coords="181,5,331,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html#a7331ed56fdad41129ef4e74dcc2eff82" title="Get the GEODETIC latitude in radians." alt="" coords="173,71,339,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGLocation.html#a804f3713901ade7ce31549d97d197583" title="Get the longitude." alt="" coords="181,136,331,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGLocation.html#a0697137d8c02a8b84f695d12317347a6" title="Sets the semimajor and semiminor axis lengths for this planet." alt="" coords="181,201,331,243"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGLocation.html#af0f103b7c1f4c5c8cdceb15a55305fe2" title="Sets the longitude, latitude and the distance above the reference spheroid." alt="" coords="175,267,337,308"/>
+</map>

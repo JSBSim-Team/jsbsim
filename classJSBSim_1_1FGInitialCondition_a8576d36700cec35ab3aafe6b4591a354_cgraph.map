@@ -1,0 +1,6 @@
+<map id="GetMachIC" name="GetMachIC">
+<area shape="rect" id="node1" title="Gets the initial mach." alt="" coords="5,46,99,73"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a346a168487e721ed793f896774dbc12c" title="Gets the initial altitude above sea level." alt="" coords="147,46,293,73"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html#aa71688869eede539bff376f43a78ea14" title="Get the distance from the center of the earth in feet." alt="" coords="345,5,494,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGLocation.html#ab0d754a471a7ec7280549a1ae1f93331" title="Get the sea level radius in feet below the current location." alt="" coords="341,71,497,112"/>
+</map>

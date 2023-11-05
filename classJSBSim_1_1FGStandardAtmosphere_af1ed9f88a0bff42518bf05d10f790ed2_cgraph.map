@@ -1,0 +1,5 @@
+<map id="GetDewPoint" name="GetDewPoint">
+<area shape="rect" id="node1" title="Returns the dew point." alt="" coords="5,46,112,73"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html#a7b471bc247e5d616560cc5f5c66b4b6d" title="Converts from degrees Celsius to degrees Rankine." alt="" coords="169,5,324,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAtmosphere.html#a71e412dec8df11a7aa80c0f526be60a2" title="Converts from Rankine to one of several unit systems." alt="" coords="160,71,333,112"/>
+</map>

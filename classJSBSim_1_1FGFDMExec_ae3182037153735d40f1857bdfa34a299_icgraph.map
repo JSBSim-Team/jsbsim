@@ -1,0 +1,6 @@
+<map id="Initialize" name="Initialize">
+<area shape="rect" id="node1" title="Initializes the simulation with initial conditions." alt="" coords="456,31,535,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrim.html#a6a5e26b6c78ad99b63d075c6acc70679" title="Execute the trim." alt="" coords="232,5,408,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFDMExec.html#afaf93cada78d011829d409d0b250120b" title="Initializes the sim from the initial condition object and executes each scheduled model without integ..." alt="" coords="290,56,350,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html#acdaa615364934636260de75dd19c6ca5" title="Resets the initial conditions object and prepares the simulation to run again." alt="" coords="5,56,184,83"/>
+</map>

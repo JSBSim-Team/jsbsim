@@ -1,0 +1,7 @@
+<map id="SetHoldDown" name="SetHoldDown">
+<area shape="rect" id="node1" title="Sets the property forces/hold&#45;down." alt="" coords="5,111,116,138"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAccelerations.html#a878f401e8f53ecc38c9aa4e819fd0e77" title="Retrieves the axis angular acceleration vector in the ECI frame." alt="" coords="164,5,347,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAccelerations.html#acaa9a57bc43ddfa14c54ade82c43633f" title="Retrieves the body axis acceleration in the ECI frame." alt="" coords="164,71,347,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAccelerations.html#ae7bc2590ddc9fba3244495b8967fb30c" title="Sets the property forces/hold&#45;down." alt="" coords="164,136,347,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGPropagate.html#ae7bc2590ddc9fba3244495b8967fb30c" title="Sets the property forces/hold&#45;down." alt="" coords="175,201,335,243"/>
+</map>

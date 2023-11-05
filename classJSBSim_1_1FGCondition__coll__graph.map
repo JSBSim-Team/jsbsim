@@ -1,0 +1,5 @@
+<map id="FGCondition" name="FGCondition">
+<area shape="rect" id="node1" title="Encapsulates a condition, which is used in parts of JSBSim including switches." alt="" coords="5,185,108,212"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="10,109,103,136"/>
+<area shape="rect" id="node3" title=" " alt="" coords="27,5,86,32"/>
+</map>

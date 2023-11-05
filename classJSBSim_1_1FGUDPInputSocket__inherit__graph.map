@@ -1,0 +1,5 @@
+<map id="FGUDPInputSocket" name="FGUDPInputSocket">
+<area shape="rect" id="node1" title="Implements a UDP input socket." alt="" coords="5,155,149,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInputSocket.html" title="Implements the input from a socket." alt="" coords="19,80,135,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInputType.html" title="Abstract class to provide functions generic to all the input directives." alt="" coords="26,5,129,32"/>
+</map>

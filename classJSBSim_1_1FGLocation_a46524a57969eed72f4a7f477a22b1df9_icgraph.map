@@ -1,0 +1,7 @@
+<map id="GetLatitude" name="GetLatitude">
+<area shape="rect" id="node1" title="Get the GEOCENTRIC latitude in radians." alt="" coords="488,78,587,105"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="247,71,440,112"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="5,5,199,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a5c7c88a597829607471730f280b3266b" title="Sets the initial longitude." alt="" coords="5,71,199,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a93ec4bc417c0505b4548f6a63af82bdf" title="Sets the initial terrain elevation." alt="" coords="5,136,199,177"/>
+</map>

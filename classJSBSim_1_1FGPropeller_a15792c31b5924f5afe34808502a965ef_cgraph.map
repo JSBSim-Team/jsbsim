@@ -1,0 +1,7 @@
+<map id="Calculate" name="Calculate">
+<area shape="rect" id="node1" title="Calculates and returns the thrust produced by this propeller." alt="" coords="5,85,88,112"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPropeller.html#a293af3f1b12ea63638fa72e40013b374" title="Retrieves the power required (or &quot;absorbed&quot;) by the propeller &#45; i.e." alt="" coords="161,5,304,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="377,31,572,57"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="136,107,329,149"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGMatrix33.html#a039718b92a595f3eafaafb2091cfa52a" title="Transposed matrix." alt="" coords="157,173,309,214"/>
+</map>

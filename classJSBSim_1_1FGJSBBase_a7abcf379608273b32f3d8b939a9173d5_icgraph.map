@@ -1,0 +1,6 @@
+<map id="RankineToKelvin" name="RankineToKelvin">
+<area shape="rect" id="node1" title="Converts from degrees Rankine to degrees Kelvin." alt="" coords="508,31,637,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPiston.html#a308031836dd2661401a194f63483bdf6" title="Calculates the thrust of the engine, and other engine functions." alt="" coords="255,5,458,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGPiston.html#a4b801a1a064406c4f0326121e82cd4bb" title="Resets the Engine parameters to the initial conditions." alt="" coords="253,56,460,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGPiston.html#a7db5fe477b255ce4ce71fe89817d98ef" title="Constructor." alt="" coords="5,56,205,83"/>
+</map>

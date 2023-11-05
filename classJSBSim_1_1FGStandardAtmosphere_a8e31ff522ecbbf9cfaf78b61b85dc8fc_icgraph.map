@@ -1,0 +1,4 @@
+<map id="SetTemperatureGradedDelta" name="SetTemperatureGradedDelta">
+<area shape="rect" id="node1" title="Sets the temperature delta value at the supplied altitude/elevation above sea level,..." alt="" coords="275,5,481,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae1ec723136d5b58e3b3d4fcb966d0c12" title="Sets a Sea Level temperature delta that is ramped out by 86 km." alt="" coords="5,5,227,32"/>
+</map>

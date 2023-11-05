@@ -1,0 +1,11 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Loads the Buoyant forces model." alt="" coords="5,64,59,91"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="355,5,573,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="366,57,562,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGModel.html#a42ce334dbfdce7ccb2a75f9d32d02065" title="Uploads this model in memory." alt="" coords="107,152,295,179"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#acd9d28a3d57f39a1274f5ca67c49ed08" title="Adds a child element to the list of children stored for this element." alt="" coords="366,174,562,215"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="364,240,564,267"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#a819f0efe04bb9bcd069f44e2a26779fd" title="Merges the attributes of the current element with another element." alt="" coords="343,291,585,317"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="633,316,837,343"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1Element.html#ae4208f7d72ef064a2411f67aa5bebb3a" title="This function sets the value of the parent class attribute to the supplied Element pointer." alt="" coords="364,123,564,149"/>
+</map>

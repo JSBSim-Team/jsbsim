@@ -1,0 +1,5 @@
+<map id="FGWinds::OneMinusCosineGust" name="FGWinds::OneMinusCosineGust">
+<area shape="rect" id="node1" title="Stores the information about a single one minus cosine gust instance." alt="" coords="51,109,277,136"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGColumnVector3.html" title="This class implements a 3 element column vector." alt="" coords="5,5,144,32"/>
+<area shape="rect" id="node3" href="$structJSBSim_1_1FGWinds_1_1OneMinusCosineProfile.html" title=" " alt="" coords="169,5,341,32"/>
+</map>

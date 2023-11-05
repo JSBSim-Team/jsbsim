@@ -1,0 +1,9 @@
+<map id="Initialize" name="Initialize">
+<area shape="rect" id="node1" title="Initializes the simulation with initial conditions." alt="" coords="5,71,84,98"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a6c76f9556fb23b0e83b00b48b6a2283b" title="Gets the initial wind velocity in the NED local frame." alt="" coords="147,5,341,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html#aa83769769c700eba0b0b82a5c62dbc71" title="This function executes each scheduled model in succession." alt="" coords="221,71,267,98"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGWinds.html#a9992c316eabb367ea732ac61acde77be" title="Sets the wind components in NED frame." alt="" coords="132,122,356,149"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="404,5,571,47"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGFDMExec.html#a9238b5d4e99187a0ba3db7334d459caa" title="Increments the simulation time if not in Holding mode." alt="" coords="448,71,527,98"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGFDMExec.html#acdb06267afc2bafc3b7cd61cc390dec4" title="Returns the simulation suspension state." alt="" coords="619,97,783,123"/>
+</map>

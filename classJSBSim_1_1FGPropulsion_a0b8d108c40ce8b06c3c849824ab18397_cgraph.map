@@ -1,0 +1,14 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Loads the propulsion system (engine[s] and tank[s])." alt="" coords="5,263,59,290"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="385,238,604,265"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#abf31eea79e3de7547610926decbb7b3d" title="Searches for the named element and converts and returns the data belonging to it." alt="" coords="107,129,325,171"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="385,5,604,47"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="664,314,868,341"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="397,508,593,549"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGModel.html#a42ce334dbfdce7ccb2a75f9d32d02065" title="Uploads this model in memory." alt="" coords="122,314,310,341"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="399,71,591,112"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="395,187,595,214"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1Element.html#acd9d28a3d57f39a1274f5ca67c49ed08" title="Adds a child element to the list of children stored for this element." alt="" coords="397,391,593,432"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1Element.html#a819f0efe04bb9bcd069f44e2a26779fd" title="Merges the attributes of the current element with another element." alt="" coords="373,339,616,366"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1Element.html#ae4208f7d72ef064a2411f67aa5bebb3a" title="This function sets the value of the parent class attribute to the supplied Element pointer." alt="" coords="395,457,595,483"/>
+</map>

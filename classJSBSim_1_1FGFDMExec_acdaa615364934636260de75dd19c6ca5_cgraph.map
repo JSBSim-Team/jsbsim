@@ -1,0 +1,13 @@
+<map id="ResetToInitialConditions" name="ResetToInitialConditions">
+<area shape="rect" id="node1" title="Resets the initial conditions object and prepares the simulation to run again." alt="" coords="5,258,184,284"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#afaf93cada78d011829d409d0b250120b" title="Initializes the sim from the initial condition object and executes each scheduled model without integ..." alt="" coords="301,152,361,179"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGFDMExec.html#a84bc4234d96a91bce12201e7c0a6e3f0" title="Sets the current sim time." alt="" coords="279,258,383,284"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGOutput.html#a28d17b45a2154a183a48860732e650ba" title="Reset the output prior to a restart of the simulation." alt="" coords="232,309,431,350"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGPropulsion.html#ab32dff840c152a91c69e2848bca8aa3e" title="Retrieves the number of engines defined for the aircraft." alt="" coords="689,24,852,65"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html#ae3182037153735d40f1857bdfa34a299" title="Initializes the simulation with initial conditions." alt="" coords="521,102,599,128"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGFDMExec.html#aa83769769c700eba0b0b82a5c62dbc71" title="This function executes each scheduled model in succession." alt="" coords="747,115,794,142"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGPropulsion.html#ac7ae9e5bb74b9fd27bd191d81e8749b2" title="Sets up the engines as running." alt="" coords="479,36,641,77"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGFDMExec.html#afb4e8e8c83a51c804cfc50d9d90f65a5" title="Resumes the simulation by resetting delta T to the correct value." alt="" coords="487,203,633,230"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGFDMExec.html#adf760b99f286a726dde5b47a377fe243" title="Suspends the simulation and sets the delta T to zero." alt="" coords="486,254,634,280"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInertial.html#ab21d7facec6ebc3cbb460f48c061f1c6" title="Set the simulation time." alt="" coords="490,305,630,346"/>
+</map>

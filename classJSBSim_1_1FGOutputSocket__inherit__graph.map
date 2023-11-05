@@ -1,0 +1,6 @@
+<map id="FGOutputSocket" name="FGOutputSocket">
+<area shape="rect" id="node1" title="Implements the output to a socket." alt="" coords="5,155,132,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGOutputFG.html" title="Implements the output to a FlightGear socket." alt="" coords="17,229,120,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputType.html" title="Abstract class to provide functions generic to all the output directives." alt="" coords="11,80,126,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="29,5,109,32"/>
+</map>

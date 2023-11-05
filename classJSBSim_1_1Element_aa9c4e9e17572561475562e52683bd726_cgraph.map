@@ -1,0 +1,4 @@
+<map id="FindElementValue" name="FindElementValue">
+<area shape="rect" id="node1" title="Searches for the named element and returns the string data belonging to it." alt="" coords="5,5,144,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a66c9f019215d9c6b3f85cdab75d6d429" title="Gets a line of data belonging to an element." alt="" coords="192,5,295,32"/>
+</map>

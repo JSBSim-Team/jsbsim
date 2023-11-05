@@ -1,0 +1,5 @@
+<map id="FGfdmSocket" name="FGfdmSocket">
+<area shape="rect" id="node1" title="Encapsulates an object that enables JSBSim to communicate via socket (input and/or output)." alt="" coords="5,185,115,212"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="13,109,107,136"/>
+<area shape="rect" id="node3" title=" " alt="" coords="31,5,89,32"/>
+</map>

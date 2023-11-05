@@ -1,0 +1,5 @@
+<map id="SetVaporPressure" name="SetVaporPressure">
+<area shape="rect" id="node1" title="Sets the partial pressure of water vapor." alt="" coords="211,31,347,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae383eeb62b1743fbe4f24cd0af2c397f" title="Sets the dew point." alt="" coords="31,5,137,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#a503451f97e330a8e00f7516933ccdcb5" title="Sets the relative humidity." alt="" coords="5,56,163,83"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="FGMassBalance::Inputs" name="FGMassBalance::Inputs">
+<area shape="rect" id="node1" title=" " alt="" coords="58,109,233,136"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGColumnVector3.html" title="This class implements a 3 element column vector." alt="" coords="5,5,144,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGMatrix33.html" title="Handles matrix math operations." alt="" coords="168,5,267,32"/>
+</map>

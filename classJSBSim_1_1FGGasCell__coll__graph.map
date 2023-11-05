@@ -1,0 +1,10 @@
+<map id="FGGasCell" name="FGGasCell">
+<area shape="rect" id="node1" title="Models a gas cell." alt="" coords="269,333,360,360"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGForce.html" title="Utility class that aids in the conversion of forces between coordinate systems and calculation of mom..." alt="" coords="231,244,305,271"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="5,5,99,32"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGFDMExec.html" title="Encapsulates the JSBSim simulation executive." alt="" coords="74,89,174,115"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGColumnVector3.html" title="This class implements a 3 element column vector." alt="" coords="199,89,337,115"/>
+<area shape="rect" id="node6" title=" " alt="" coords="361,81,513,123"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGMatrix33.html" title="Handles matrix math operations." alt="" coords="537,89,636,115"/>
+<area shape="rect" id="node8" href="$structJSBSim_1_1FGGasCell_1_1Inputs.html" title=" " alt="" coords="330,244,393,271"/>
+</map>

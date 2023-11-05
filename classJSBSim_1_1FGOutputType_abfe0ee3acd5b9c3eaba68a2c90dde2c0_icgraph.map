@@ -1,0 +1,4 @@
+<map id="SetOutputName" name="SetOutputName">
+<area shape="rect" id="node1" title="Overwrites the name identifier under which the output will be logged." alt="" coords="231,5,357,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutput.html#a73535c48fc7e09497439e8fb05bea07f" title="Load the output directives and adds a new output instance to the Output Manager list." alt="" coords="5,5,183,32"/>
+</map>

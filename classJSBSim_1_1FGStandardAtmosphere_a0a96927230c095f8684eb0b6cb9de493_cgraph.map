@@ -1,0 +1,9 @@
+<map id="SetVaporPressure" name="SetVaporPressure">
+<area shape="rect" id="node1" title="Sets the partial pressure of water vapor." alt="" coords="5,64,141,91"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#af10797f6dc49e9e5977e364d3a2153f0" title="Calculates the pressure altitude given any temperature or pressure bias." alt="" coords="193,5,384,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAtmosphere.html#a88eae7e36fb9b0dc5facf0f5b4320373" title="Converts to PSF (pounds per square foot) from one of several unit systems." alt="" coords="202,57,375,98"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGStandardAtmosphere.html#aec7ab226284ca4b879edfd5b93f0e864" title="Validate the value of the vapor mass fraction." alt="" coords="189,123,388,149"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#a05ce8403c7535cca4ac4ad9203ba9254" title="Convert a geopotential altitude to a geometric altitude." alt="" coords="463,5,604,32"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGStandardAtmosphere.html#aa608e93e5a0e8bc846d343ab4ca84cff" title="Convert a geometric altitude to a geopotential altitude." alt="" coords="455,97,612,124"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="436,148,631,175"/>
+</map>

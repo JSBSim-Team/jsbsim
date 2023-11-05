@@ -1,0 +1,5 @@
+<map id="GetDensity" name="GetDensity">
+<area shape="rect" id="node1" title="Returns the density in slugs/ft^3." alt="" coords="260,31,355,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGMSIS.html#aa2f78771ae30d0b74346460445829237" title="Returns the density in slugs/ft^3 at a given altitude in ft." alt="" coords="5,5,212,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAtmosphere.html#ac025fa6399d2cf0ac84617f65b120de6" title="Sets the Sea Level temperature." alt="" coords="39,56,179,83"/>
+</map>

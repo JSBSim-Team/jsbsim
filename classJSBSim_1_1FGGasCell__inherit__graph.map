@@ -1,0 +1,5 @@
+<map id="FGGasCell" name="FGGasCell">
+<area shape="rect" id="node1" title="Models a gas cell." alt="" coords="7,155,97,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGForce.html" title="Utility class that aids in the conversion of forces between coordinate systems and calculation of mom..." alt="" coords="15,80,89,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="5,5,99,32"/>
+</map>

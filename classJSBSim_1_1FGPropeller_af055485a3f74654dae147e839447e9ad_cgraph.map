@@ -1,0 +1,27 @@
+<map id="FGPropeller" name="FGPropeller">
+<area shape="rect" id="node1" title="Constructor for FGPropeller." alt="" coords="5,599,104,625"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="153,5,371,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#aee69786373509020c79e3deeb7bfe592" title="Searches for the named element and returns the data belonging to it as a number." alt="" coords="153,107,371,149"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="433,101,625,142"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#abf31eea79e3de7547610926decbb7b3d" title="Searches for the named element and converts and returns the data belonging to it." alt="" coords="153,225,371,266"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="420,166,639,207"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="164,290,360,331"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1Element.html#a30a269bd930d31646341ba15787281e3" title="Retrieves an attribute value as a double precision real number." alt="" coords="153,355,371,397"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGPropeller.html#a2cbbbe49a2603b0e45114a9f8af05e7b" title="Returns a non&#45;zero value if the propeller is constant speed." alt="" coords="191,421,333,448"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGPropeller.html#ad368cb05bf01f1d929380476dbe5127b" title="Calculates the RPMs of the engine based on gear ratio." alt="" coords="203,472,321,499"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGPropeller.html#a83984d0756c39de7d762c0a155729181" title="Retrieves the Mach number at the propeller tips." alt="" coords="189,523,335,549"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGPropeller.html#a6a19f3e87db7e8d180a5c8b95f01fdb9" title="Get the propeller induced velocity." alt="" coords="188,573,336,600"/>
+<area shape="rect" id="node15" href="$classJSBSim_1_1Element.html#a95bd2ea15d24425dc1811dec93de8096" title="Returns a pointer to the parent of an element." alt="" coords="161,624,363,651"/>
+<area shape="rect" id="node16" href="$classJSBSim_1_1FGFDMExec.html#af2e42c30e20dba1c428d58f5bd825e6a" title="Returns a pointer to the property manager object." alt="" coords="181,675,343,717"/>
+<area shape="rect" id="node17" href="$classJSBSim_1_1FGPropeller.html#a33570ed6e3df786097054faa5b27f91e" title="Retrieves the RPMs of the propeller." alt="" coords="225,741,299,768"/>
+<area shape="rect" id="node18" href="$classJSBSim_1_1FGPropeller.html#af483e2a93a5144b18e985132fc7a85ff" title="Retrieves the thrust coefficient." alt="" coords="184,792,340,819"/>
+<area shape="rect" id="node19" href="$classJSBSim_1_1FGPropeller.html#ab7a6f2b751e3426ae992289ccca62781" title="Retrieves the Torque in foot&#45;pounds (Don&#39;t you love the English system?)" alt="" coords="218,843,306,869"/>
+<area shape="rect" id="node20" href="$classJSBSim_1_1Element.html#ac5c2e3334b384afca061f0bf965dc864" title="Determines if an element has the supplied attribute." alt="" coords="152,893,372,920"/>
+<area shape="rect" id="node21" href="$classJSBSim_1_1FGPropeller.html#a60daa969a9fd1bb8a5256b35d3e042ba" title="Sets propeller into constant speed mode, or manual pitch mode." alt="" coords="191,944,333,971"/>
+<area shape="rect" id="node22" href="$classJSBSim_1_1FGPropeller.html#a695f8ab9bc31b4a3f8c324ad49022062" title="Sets coefficient of power multiplier." alt="" coords="213,995,311,1021"/>
+<area shape="rect" id="node23" href="$classJSBSim_1_1FGPropeller.html#a4ccc4a72926604d22cbff05710701d9b" title="Sets coefficient of thrust multiplier." alt="" coords="214,1045,310,1072"/>
+<area shape="rect" id="node24" href="$classJSBSim_1_1FGPropeller.html#a03e6c0208dd18f8fe0359596a319a1ea" title="Set the propeller induced velocity." alt="" coords="189,1096,335,1123"/>
+<area shape="rect" id="node25" href="$classJSBSim_1_1FGPropeller.html#a7fd3a7838d8dae66f3734771320e8239" title="Sets the rotation sense of the propeller." alt="" coords="221,1147,303,1173"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="429,232,629,259"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="427,283,631,309"/>
+</map>

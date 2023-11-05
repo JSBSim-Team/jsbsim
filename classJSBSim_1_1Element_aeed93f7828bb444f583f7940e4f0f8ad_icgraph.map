@@ -1,0 +1,27 @@
+<map id="GetName" name="GetName">
+<area shape="rect" id="node1" title="Retrieves the element name." alt="" coords="736,635,820,661"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFCSComponent.html#ad402808175fe500162a7e3bcd23aed5a" title="Constructor." alt="" coords="487,229,682,270"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGThruster.html#a18899cd20a4e7ceec9427ea4b4bdff4a" title="Constructor." alt="" coords="511,294,659,335"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#abf31eea79e3de7547610926decbb7b3d" title="Searches for the named element and converts and returns the data belonging to it." alt="" coords="481,359,688,401"/>
+<area shape="rect" id="node17" href="$classJSBSim_1_1FGInitialCondition.html#ac87197daba58e5b14d3a584c9b7012db" title="Loads the initial conditions." alt="" coords="488,798,681,839"/>
+<area shape="rect" id="node18" href="$classJSBSim_1_1FGFCS.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the Flight Control System." alt="" coords="245,967,404,993"/>
+<area shape="rect" id="node19" href="$classJSBSim_1_1FGFDMExec.html#aa5b73357a888de44d9789c58c7b5afde" title="Loads the planet." alt="" coords="503,611,666,653"/>
+<area shape="rect" id="node20" href="$classJSBSim_1_1FGScript.html#affd5971385d780aef57a6f7a9645f9f7" title="Loads a script to drive JSBSim (usually in standalone mode)." alt="" coords="481,864,688,891"/>
+<area shape="rect" id="node21" href="$classJSBSim_1_1FGModel.html#a42ce334dbfdce7ccb2a75f9d32d02065" title="Uploads this model in memory." alt="" coords="491,696,679,723"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGBrushLessDCMotor.html#a53fe1ad3ef2b7a72e4392df236fe4d16" title="Constructor." alt="" coords="216,326,433,367"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGElectric.html#ad4e4a9b09b1ce922ec56141027403230" title="Constructor." alt="" coords="253,391,396,433"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGGasCell.html#a1cf9a5c35024d2b623634085b0f380fc" title="Constructor." alt="" coords="249,457,401,498"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGLGear.html#a27044d02e736b462e84b6c61d1200f41" title="Constructor." alt="" coords="227,5,423,32"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGNozzle.html#adaf0d6311aefa75f531c2302dc23b27c" title="Constructor." alt="" coords="221,56,429,83"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGPiston.html#a7db5fe477b255ce4ce71fe89817d98ef" title="Constructor." alt="" coords="225,107,425,133"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGPropeller.html#af055485a3f74654dae147e839447e9ad" title="Constructor for FGPropeller." alt="" coords="249,158,401,199"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGRocket.html#acdd441a759a096a360a1da53602343d8" title="Constructor." alt="" coords="221,224,429,251"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGTank.html#a3f836b4283222c9b9a1e556ab2205f5a" title="Constructor." alt="" coords="235,275,415,301"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGAircraft.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the aircraft." alt="" coords="254,522,395,563"/>
+<area shape="rect" id="node15" href="$classJSBSim_1_1FGPropulsion.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the propulsion system (engine[s] and tank[s])." alt="" coords="243,639,406,681"/>
+<area shape="rect" id="node16" href="$classJSBSim_1_1FGFDMExec.html#ae3203eea8354c1b3caf53395a0a5f6a7" title="Loads an aircraft model." alt="" coords="5,610,168,651"/>
+<area shape="rect" id="node22" href="$classJSBSim_1_1FGInputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the input directives from an XML file (implement the FGModel interface)." alt="" coords="246,901,403,942"/>
+<area shape="rect" id="node23" href="$classJSBSim_1_1FGExternalReactions.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the external forces from the XML configuration file." alt="" coords="219,705,431,746"/>
+<area shape="rect" id="node24" href="$classJSBSim_1_1FGAerodynamics.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Aerodynamics model." alt="" coords="231,770,418,811"/>
+<area shape="rect" id="node25" href="$classJSBSim_1_1FGBuoyantForces.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Buoyant forces model." alt="" coords="229,835,420,877"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="SetTemperature" name="SetTemperature">
+<area shape="rect" id="node1" title="Sets the temperature at the supplied altitude, if it is to be different than the standard temperature..." alt="" coords="5,165,131,192"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#a86254b06f7adbbf9e4c61974adc2998c" title="Calculate (or recalculate) the atmospheric pressure breakpoints at the altitudes in the standard temp..." alt="" coords="400,5,617,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae1554711a7dac71879e2ebc4535411c1" title="Calculate the SL density and sound speed." alt="" coords="407,57,610,98"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGAtmosphere.html#a13ab16e26033bc6cfd83c7c6e4edc6bd" title="Converts to Rankine from one of several unit systems." alt="" coords="179,217,352,258"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGStandardAtmosphere.html#aa608e93e5a0e8bc846d343ab4ca84cff" title="Convert a geometric altitude to a geopotential altitude." alt="" coords="430,283,587,309"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGStandardAtmosphere.html#a5ce759e642bd6399e7d20a43913053a9" title="Returns the standard temperature in degrees Rankine at a specified altitude." alt="" coords="191,333,339,360"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGAtmosphere.html#af90cc0e0a48a2b251498780a103b2c44" title="Returns the actual, modeled temperature at the current altitude in degrees Rankine." alt="" coords="422,187,595,229"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGStandardAtmosphere.html#ab2239a97c1d62b0a27b4c94cc7c03e76" title="Sets the temperature bias to be added to the standard temperature at all altitudes." alt="" coords="189,115,342,141"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGStandardAtmosphere.html#a90c1d8ac6403484f48a69feb4d0148e2" title="Calculate the SL density." alt="" coords="665,64,813,91"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="411,333,606,360"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGJSBBase.html#ab1cd84a064daee36bb88b9052514da65" title="Converts from degrees Kelvin to degrees Rankine." alt="" coords="431,122,586,163"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="FGGyro" name="FGGyro">
+<area shape="rect" id="node1" title="Encapsulates a Gyro component for the flight control system." alt="" coords="251,353,322,380"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGSensor.html" title="Encapsulates a Sensor component for the flight control system." alt="" coords="355,277,439,304"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFCSComponent.html" title="Base class for JSBSim Flight Control System Components." alt="" coords="327,201,467,228"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="291,111,384,137"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGSensorOrientation.html" title="Encapsulates a SensorOrientation capability for a sensor." alt="" coords="128,201,285,228"/>
+<area shape="rect" id="node5" title=" " alt="" coords="403,5,461,32"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGColumnVector3.html" title="This class implements a 3 element column vector." alt="" coords="128,111,267,137"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGMatrix33.html" title="Handles matrix math operations." alt="" coords="5,111,104,137"/>
+</map>

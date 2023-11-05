@@ -1,0 +1,4 @@
+<map id="SetOutputName" name="SetOutputName">
+<area shape="rect" id="node1" title="Overwrites the name identifier under which the output will be logged." alt="" coords="5,13,132,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#ae1d79c1fe9b90cc6df1d5b507a327464" title="Retrieves the path to the output files." alt="" coords="180,5,343,47"/>
+</map>

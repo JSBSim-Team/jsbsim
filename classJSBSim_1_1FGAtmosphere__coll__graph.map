@@ -1,0 +1,9 @@
+<map id="FGAtmosphere" name="FGAtmosphere">
+<area shape="rect" id="node1" title="Models an empty, abstract base atmosphere class." alt="" coords="261,199,380,225"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="233,109,313,136"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="5,13,148,39"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html" title="Encapsulates the JSBSim simulation executive." alt="" coords="172,13,272,39"/>
+<area shape="rect" id="node5" title=" " alt="" coords="295,13,354,39"/>
+<area shape="rect" id="node6" title=" " alt="" coords="379,5,553,47"/>
+<area shape="rect" id="node7" href="$structJSBSim_1_1FGAtmosphere_1_1Inputs.html" title=" " alt="" coords="337,109,400,136"/>
+</map>

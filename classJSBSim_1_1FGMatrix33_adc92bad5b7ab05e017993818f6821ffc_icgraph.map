@@ -1,0 +1,10 @@
+<map id="InitMatrix" name="InitMatrix">
+<area shape="rect" id="node1" title="Initialize the matrix." alt="" coords="244,209,329,235"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGBuoyantForces.html#a4559157711cdd9dfa9a5cfb65bd913df" title="Constructor." alt="" coords="5,5,196,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html#a9733612bee95cc2e43ca33aeccf74372" title="Default constructor." alt="" coords="26,71,175,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGPropulsion.html#a38d4dc9b3961e4188720604d2552a1f0" title="Constructor." alt="" coords="19,136,182,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGThruster.html#a18899cd20a4e7ceec9427ea4b4bdff4a" title="Constructor." alt="" coords="27,201,175,243"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGGasCell.html#ab4f2abee6ace8ea44fa06a50f78b7540" title="Runs the gas cell model; called by BuoyantForces." alt="" coords="25,267,177,308"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGBallonet.html#ab4f2abee6ace8ea44fa06a50f78b7540" title="Runs the ballonet model; called by FGGasCell." alt="" coords="27,332,175,373"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGBuoyantForces.html#a5c2733974d6eea4a73ac61917e80945c" title="Gets the total moments of inertia for the gas mass in the body frame." alt="" coords="5,397,196,439"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="GetQDot" name="GetQDot">
+<area shape="rect" id="node1" title="Quaternion derivative for given angular rates." alt="" coords="5,5,84,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGQuaternion.html#af37693324e4bd4b0781668dc2e347821" title="Default initializer." alt="" coords="132,5,244,32"/>
+</map>

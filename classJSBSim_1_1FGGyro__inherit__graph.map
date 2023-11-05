@@ -1,0 +1,7 @@
+<map id="FGGyro" name="FGGyro">
+<area shape="rect" id="node1" title="Encapsulates a Gyro component for the flight control system." alt="" coords="93,229,164,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGSensor.html" title="Encapsulates a Sensor component for the flight control system." alt="" coords="15,155,99,181"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFCSComponent.html" title="Base class for JSBSim Flight Control System Components." alt="" coords="5,80,145,107"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="82,5,175,32"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGSensorOrientation.html" title="Encapsulates a SensorOrientation capability for a sensor." alt="" coords="123,155,281,181"/>
+</map>

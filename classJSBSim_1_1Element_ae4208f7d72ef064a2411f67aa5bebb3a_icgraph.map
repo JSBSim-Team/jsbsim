@@ -1,0 +1,11 @@
+<map id="SetParent" name="SetParent">
+<area shape="rect" id="node1" title="This function sets the value of the parent class attribute to the supplied Element pointer." alt="" coords="501,202,585,229"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGModel.html#a42ce334dbfdce7ccb2a75f9d32d02065" title="Uploads this model in memory." alt="" coords="265,202,453,229"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the input directives from an XML file (implement the FGModel interface)." alt="" coords="33,5,190,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAircraft.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the aircraft." alt="" coords="41,71,182,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGExternalReactions.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the external forces from the XML configuration file." alt="" coords="5,136,217,177"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGFCS.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the Flight Control System." alt="" coords="32,202,191,229"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGPropulsion.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the propulsion system (engine[s] and tank[s])." alt="" coords="30,253,193,295"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGAerodynamics.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Aerodynamics model." alt="" coords="18,319,205,360"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGBuoyantForces.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Buoyant forces model." alt="" coords="16,384,207,425"/>
+</map>

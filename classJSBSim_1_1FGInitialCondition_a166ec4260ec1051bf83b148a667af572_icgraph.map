@@ -1,0 +1,5 @@
+<map id="GetPhiRadIC" name="GetPhiRadIC">
+<area shape="rect" id="node1" title="Gets the initial roll angle." alt="" coords="229,42,332,69"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrimAxis.html#ad2aa672957b8b63104434e1adcce0951" title="Constructor for Trim Axis class." alt="" coords="18,5,169,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTrim.html#a6a5e26b6c78ad99b63d075c6acc70679" title="Execute the trim." alt="" coords="5,71,181,98"/>
+</map>

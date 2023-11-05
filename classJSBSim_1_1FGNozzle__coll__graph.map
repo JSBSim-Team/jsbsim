@@ -1,0 +1,7 @@
+<map id="FGNozzle" name="FGNozzle">
+<area shape="rect" id="node1" title="Models a rocket nozzle." alt="" coords="94,171,178,197"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGThruster.html" title="Base class for specific thrusting devices such as propellers, nozzles, etc." alt="" coords="89,95,183,121"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGForce.html" title="Utility class that aids in the conversion of forces between coordinate systems and calculation of mom..." alt="" coords="5,5,80,32"/>
+<area shape="rect" id="node4" href="$structJSBSim_1_1FGThruster_1_1Inputs.html" title=" " alt="" coords="105,5,167,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="192,5,251,32"/>
+</map>

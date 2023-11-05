@@ -1,0 +1,4 @@
+<map id="GetTargetNlfIC" name="GetTargetNlfIC">
+<area shape="rect" id="node1" title="Gets the target normal load factor set from IC." alt="" coords="229,5,347,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrim.html#ab8b8c986a483a9dcb1e7c94234957933" title="Initializes the trimming class." alt="" coords="5,5,181,32"/>
+</map>

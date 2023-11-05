@@ -1,0 +1,8 @@
+<map id="FGKinemat" name="FGKinemat">
+<area shape="rect" id="node1" title="Constructor." alt="" coords="5,97,100,124"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="148,5,367,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#aee69786373509020c79e3deeb7bfe592" title="Searches for the named element and returns the data belonging to it as a number." alt="" coords="148,57,367,98"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="159,122,355,163"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="155,188,359,215"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="415,57,607,98"/>
+</map>

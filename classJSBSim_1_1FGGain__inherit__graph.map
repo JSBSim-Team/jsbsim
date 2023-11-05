@@ -1,0 +1,5 @@
+<map id="FGGain" name="FGGain">
+<area shape="rect" id="node1" title="Encapsulates a gain component for the flight control system." alt="" coords="40,155,111,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFCSComponent.html" title="Base class for JSBSim Flight Control System Components." alt="" coords="5,80,145,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="29,5,122,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="LoadPlanet" name="LoadPlanet">
+<area shape="rect" id="node1" title="Loads the planet." alt="" coords="5,5,100,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="148,5,348,32"/>
+</map>

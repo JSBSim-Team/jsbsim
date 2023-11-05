@@ -1,0 +1,5 @@
+<map id="IncrTime" name="IncrTime">
+<area shape="rect" id="node1" title="Increments the simulation time if not in Holding mode." alt="" coords="5,35,84,61"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#acdb06267afc2bafc3b7cd61cc390dec4" title="Returns the simulation suspension state." alt="" coords="132,5,296,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInertial.html#ab21d7facec6ebc3cbb460f48c061f1c6" title="Set the simulation time." alt="" coords="144,57,284,98"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="FGLocation" name="FGLocation">
+<area shape="rect" id="node1" title="Constructor to set the longitude, latitude and the distance from the center of the earth." alt="" coords="5,13,100,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGMatrix33.html#adc92bad5b7ab05e017993818f6821ffc" title="Initialize the matrix." alt="" coords="148,5,300,47"/>
+</map>

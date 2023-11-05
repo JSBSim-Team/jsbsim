@@ -1,0 +1,8 @@
+.. _FGPropertyNode:
+
+==============
+FGPropertyNode
+==============
+
+.. autoclass:: jsbsim.FGPropertyNode
+   :members:

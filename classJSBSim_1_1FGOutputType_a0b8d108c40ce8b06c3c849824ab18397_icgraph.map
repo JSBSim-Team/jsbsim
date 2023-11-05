@@ -1,0 +1,8 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Init the output directives from an XML file (implement the FGModel interface)." alt="" coords="445,78,499,105"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputFile.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file." alt="" coords="226,5,387,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGOutputSocket.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file." alt="" coords="216,71,397,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGOutput.html#aac25385536a14c4bf0ae6aafa785e218" title="Load the output directives and adds a new output instance to the Output Manager list." alt="" coords="218,138,395,165"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGOutputFG.html#ac139d3edf9cdfcdd83a3eba596995817" title="Evaluate the output directives from an XML file." alt="" coords="9,68,165,109"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGFDMExec.html#ae3203eea8354c1b3caf53395a0a5f6a7" title="Loads an aircraft model." alt="" coords="5,133,168,175"/>
+</map>

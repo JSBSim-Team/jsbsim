@@ -1,0 +1,16 @@
+<map id="FindElementValueAsNumber" name="FindElementValueAsNumber">
+<area shape="rect" id="node1" title="Searches for the named element and returns the data belonging to it as a number." alt="" coords="284,385,491,411"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGActuator.html#a0962ac7e146feeb5eaad86e2c48a509f" title="Constructor." alt="" coords="46,5,195,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGBrushLessDCMotor.html#a53fe1ad3ef2b7a72e4392df236fe4d16" title="Constructor." alt="" coords="12,71,229,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGGasCell.html#a1cf9a5c35024d2b623634085b0f380fc" title="Constructor." alt="" coords="45,136,197,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGKinemat.html#abe34d80da8adce1b0d37349b3426eaa0" title="Constructor." alt="" coords="42,201,199,243"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGLGear.html#a27044d02e736b462e84b6c61d1200f41" title="Constructor." alt="" coords="23,267,219,294"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGLinearActuator.html#aa9a886685d7f93109a4077064af3c27b" title="Constructor." alt="" coords="26,319,215,360"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGPiston.html#a7db5fe477b255ce4ce71fe89817d98ef" title="Constructor." alt="" coords="21,385,221,411"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGPropeller.html#af055485a3f74654dae147e839447e9ad" title="Constructor for FGPropeller." alt="" coords="45,436,197,477"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGRocket.html#acdd441a759a096a360a1da53602343d8" title="Constructor." alt="" coords="17,502,225,529"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGRotor.html#a4bc3dbf658386662ee7dc09a2a70383c" title="Constructor for FGRotor." alt="" coords="25,553,216,579"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGSummer.html#a1d8006dbbd5618442ddb9ca52bb86bdc" title="Constructor." alt="" coords="5,603,236,630"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGTank.html#a3f836b4283222c9b9a1e556ab2205f5a" title="Constructor." alt="" coords="31,654,211,681"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGScript.html#affd5971385d780aef57a6f7a9645f9f7" title="Loads a script to drive JSBSim (usually in standalone mode)." alt="" coords="17,705,224,731"/>
+</map>

@@ -1,0 +1,8 @@
+.. _FGPropertyManager:
+
+=================
+FGPropertyManager
+=================
+
+.. autoclass:: jsbsim.FGPropertyManager
+   :members:

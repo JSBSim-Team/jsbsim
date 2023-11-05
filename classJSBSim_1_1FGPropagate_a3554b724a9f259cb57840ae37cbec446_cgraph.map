@@ -1,0 +1,4 @@
+<map id="GetLocalTerrainRadius" name="GetLocalTerrainRadius">
+<area shape="rect" id="node1" title="Returns the &quot;constant&quot; LocalTerrainRadius." alt="" coords="5,13,172,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGLocation.html#aa71688869eede539bff376f43a78ea14" title="Get the distance from the center of the earth in feet." alt="" coords="220,5,369,47"/>
+</map>

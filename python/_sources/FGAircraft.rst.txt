@@ -1,0 +1,8 @@
+.. _FGAircraft:
+
+==========
+FGAircraft
+==========
+
+.. autoclass:: jsbsim.FGAircraft
+   :members:

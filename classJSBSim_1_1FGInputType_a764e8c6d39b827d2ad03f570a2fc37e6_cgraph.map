@@ -1,0 +1,5 @@
+<map id="Run" name="Run">
+<area shape="rect" id="node1" title="Executes the input directives (implement the FGModel interface)." alt="" coords="5,31,52,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInputType.html#ac092e0493efaf236a9093d46b306cf41" title="Generate the input." alt="" coords="156,5,211,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html#a35ac9aa2a24b4c76037dcc874cdfdcdd" title="Runs the model; called by the Executive." alt="" coords="100,56,267,83"/>
+</map>

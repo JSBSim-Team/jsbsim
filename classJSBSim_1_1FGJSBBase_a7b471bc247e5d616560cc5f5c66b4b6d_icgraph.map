@@ -1,0 +1,5 @@
+<map id="CelsiusToRankine" name="CelsiusToRankine">
+<area shape="rect" id="node1" title="Converts from degrees Celsius to degrees Rankine." alt="" coords="563,42,699,69"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#af1ed9f88a0bff42518bf05d10f790ed2" title="Returns the dew point." alt="" coords="284,5,515,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae383eeb62b1743fbe4f24cd0af2c397f" title="Sets the dew point." alt="" coords="5,35,236,76"/>
+</map>

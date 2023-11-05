@@ -1,0 +1,6 @@
+<map id="SetRadius" name="SetRadius">
+<area shape="rect" id="node1" title="Set the distance from the center of the earth." alt="" coords="488,46,575,73"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="247,39,440,80"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a777b283e5014563b30f96b47a9e6220a" title="Sets the initial geodetic latitude." alt="" coords="5,5,199,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="5,71,199,112"/>
+</map>

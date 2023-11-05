@@ -1,0 +1,5 @@
+<map id="GetValue" name="GetValue">
+<area shape="rect" id="node1" title="Get a value from a 2D internal table." alt="" coords="5,42,87,69"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html#a68d4cc66e32cfecaae8f500d688252c9" title="Constrain a value between a minimum and a maximum value." alt="" coords="135,5,289,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="171,71,253,98"/>
+</map>

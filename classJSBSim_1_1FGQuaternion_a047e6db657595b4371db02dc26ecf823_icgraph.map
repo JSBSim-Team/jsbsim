@@ -1,0 +1,5 @@
+<map id="GetEuler" name="GetEuler">
+<area shape="rect" id="node1" title="Retrieves the Euler angles." alt="" coords="247,46,325,73"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPropagate.html#a269d067d10ad81cf2b04e951dc1af761" title="Retrieves the Euler angles (in degrees) that define the vehicle orientation." alt="" coords="22,5,182,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a4e35ac529197f0bbcd476f52eae08a40" title="Sets the initial sideslip angle." alt="" coords="5,71,199,112"/>
+</map>

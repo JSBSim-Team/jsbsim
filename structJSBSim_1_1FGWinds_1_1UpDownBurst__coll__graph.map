@@ -1,0 +1,4 @@
+<map id="FGWinds::UpDownBurst" name="FGWinds::UpDownBurst">
+<area shape="rect" id="node1" title="Stores information about a specified Up&#45; or Down&#45;burst." alt="" coords="5,95,183,121"/>
+<area shape="rect" id="node2" href="$structJSBSim_1_1FGWinds_1_1OneMinusCosineProfile.html" title=" " alt="" coords="8,5,180,32"/>
+</map>

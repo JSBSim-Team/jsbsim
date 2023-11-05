@@ -1,0 +1,15 @@
+<map id="GetAltitudeASLFtIC" name="GetAltitudeASLFtIC">
+<area shape="rect" id="node1" title="Gets the initial altitude above sea level." alt="" coords="432,233,579,260"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a8576d36700cec35ab3aafe6b4591a354" title="Gets the initial mach." alt="" coords="259,5,353,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a5ff3b7823e19062dfc47fc7350e6384b" title="Gets the initial calibrated airspeed." alt="" coords="229,56,383,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#abe2a911da5e3610023f885e9e50939d1" title="Gets the initial equivalent airspeed." alt="" coords="228,107,384,133"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="233,157,379,184"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="25,208,160,235"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="234,259,378,285"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#a777b283e5014563b30f96b47a9e6220a" title="Sets the initial geodetic latitude." alt="" coords="9,284,177,311"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGInitialCondition.html#a4b214047e1c25d93b9d706621f32f6ce" title="Set mach initial condition." alt="" coords="261,360,351,387"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInitialCondition.html#abaa026e39ca6d9c383ccffa8f9bbd936" title="Set calibrated airspeed initial condition in knots." alt="" coords="231,411,381,437"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGInitialCondition.html#a13d4b8fd402f41dcf6eef8ed0c11f435" title="Set equivalent airspeed initial condition in knots." alt="" coords="229,461,383,488"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGInitialCondition.html#a5c7c88a597829607471730f280b3266b" title="Sets the initial longitude." alt="" coords="20,157,165,184"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a93ec4bc417c0505b4548f6a63af82bdf" title="Sets the initial terrain elevation." alt="" coords="5,107,180,133"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="GetPowerRequired" name="GetPowerRequired">
+<area shape="rect" id="node1" title="Retrieves the power required (or &quot;absorbed&quot;) by the propeller &#45; i.e." alt="" coords="5,5,148,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="196,5,391,32"/>
+</map>

@@ -1,0 +1,8 @@
+.. _FGJSBBase:
+
+=========
+FGJSBBase
+=========
+
+.. autoclass:: jsbsim.FGJSBBase
+   :members:

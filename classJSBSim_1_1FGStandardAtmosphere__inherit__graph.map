@@ -1,0 +1,6 @@
+<map id="FGStandardAtmosphere" name="FGStandardAtmosphere">
+<area shape="rect" id="node1" title="Models the 1976 U.S." alt="" coords="5,155,183,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGMSIS.html" title="Models the MSIS&#45;00 atmosphere." alt="" coords="58,229,130,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAtmosphere.html" title="Models an empty, abstract base atmosphere class." alt="" coords="35,80,153,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="54,5,134,32"/>
+</map>

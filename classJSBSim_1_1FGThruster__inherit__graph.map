@@ -1,0 +1,8 @@
+<map id="FGThruster" name="FGThruster">
+<area shape="rect" id="node1" title="Base class for specific thrusting devices such as propellers, nozzles, etc." alt="" coords="116,155,211,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGNozzle.html" title="Models a rocket nozzle." alt="" coords="5,229,89,256"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGPropeller.html" title="FGPropeller models a propeller given the tabular data for Ct (thrust) and Cp (power),..." alt="" coords="114,229,213,256"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGRotor.html" title="Models a helicopter rotor." alt="" coords="237,229,311,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGForce.html" title="Utility class that aids in the conversion of forces between coordinate systems and calculation of mom..." alt="" coords="126,80,201,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="117,5,210,32"/>
+</map>

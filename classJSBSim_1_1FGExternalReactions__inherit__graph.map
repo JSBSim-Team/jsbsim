@@ -1,0 +1,5 @@
+<map id="FGExternalReactions" name="FGExternalReactions">
+<area shape="rect" id="node1" title="Manages the external and/or arbitrary forces and moments." alt="" coords="5,155,164,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="45,80,125,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="13,5,156,32"/>
+</map>

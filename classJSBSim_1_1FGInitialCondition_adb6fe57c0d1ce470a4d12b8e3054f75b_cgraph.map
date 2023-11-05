@@ -1,0 +1,15 @@
+<map id="SetAltitudeASLFtIC" name="SetAltitudeASLFtIC">
+<area shape="rect" id="node1" title="Sets the altitude above sea level initial condition in feet." alt="" coords="5,267,149,294"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a346a168487e721ed793f896774dbc12c" title="Gets the initial altitude above sea level." alt="" coords="207,27,353,54"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGLocation.html#ab0d754a471a7ec7280549a1ae1f93331" title="Get the sea level radius in feet below the current location." alt="" coords="429,71,585,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGLocation.html#ad6d787090b71419e91678ceb91c6ef1f" title="Gets the geodetic altitude in feet." alt="" coords="205,129,355,171"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGLocation.html#a7331ed56fdad41129ef4e74dcc2eff82" title="Get the GEODETIC latitude in radians." alt="" coords="197,195,363,236"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGFDMExec.html#adf8684a61e0eb7c35ed18325d3642b35" title="Returns the FGInertial pointer." alt="" coords="199,260,361,301"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGLocation.html#a804f3713901ade7ce31549d97d197583" title="Get the longitude." alt="" coords="205,325,355,367"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGLocation.html#af0f103b7c1f4c5c8cdceb15a55305fe2" title="Sets the longitude, latitude and the distance above the reference spheroid." alt="" coords="199,391,361,432"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGLocation.html#ad1b855893aaa82233cdd6e509c1ee23a" title="Set the distance from the center of the earth." alt="" coords="205,456,355,497"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInitialCondition.html#aa27763a4d398c95e7b346b824153d11e" title="Sets the initial true airspeed." alt="" coords="223,523,337,550"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html#aa71688869eede539bff376f43a78ea14" title="Get the distance from the center of the earth in feet." alt="" coords="433,5,582,47"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="411,453,604,495"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="424,519,591,560"/>
+</map>

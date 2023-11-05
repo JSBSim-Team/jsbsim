@@ -1,0 +1,12 @@
+<map id="SetTerrainElevationFtIC" name="SetTerrainElevationFtIC">
+<area shape="rect" id="node1" title="Sets the initial terrain elevation." alt="" coords="5,26,180,53"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a84eb5205c00cea25382e8961e77a4784" title="Gets the initial altitude above ground level." alt="" coords="429,26,577,53"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFDMExec.html#adf8684a61e0eb7c35ed18325d3642b35" title="Returns the FGInertial pointer." alt="" coords="632,19,795,60"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="228,194,375,221"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a346a168487e721ed793f896774dbc12c" title="Gets the initial altitude above sea level." alt="" coords="430,245,577,271"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGLocation.html#ad6d787090b71419e91678ceb91c6ef1f" title="Gets the geodetic altitude in feet." alt="" coords="429,296,578,337"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGLocation.html#a46524a57969eed72f4a7f477a22b1df9" title="Get the GEOCENTRIC latitude in radians." alt="" coords="429,361,578,403"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGLocation.html#a804f3713901ade7ce31549d97d197583" title="Get the longitude." alt="" coords="429,427,578,468"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGLocation.html#af0f103b7c1f4c5c8cdceb15a55305fe2" title="Sets the longitude, latitude and the distance above the reference spheroid." alt="" coords="423,77,584,119"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#aa27763a4d398c95e7b346b824153d11e" title="Sets the initial true airspeed." alt="" coords="446,143,561,170"/>
+</map>

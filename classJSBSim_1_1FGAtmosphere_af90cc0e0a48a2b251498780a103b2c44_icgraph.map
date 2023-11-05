@@ -1,0 +1,14 @@
+<map id="GetTemperature" name="GetTemperature">
+<area shape="rect" id="node1" title="Returns the actual, modeled temperature at the current altitude in degrees Rankine." alt="" coords="841,210,968,237"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAtmosphere.html#a4c497d810b0509f4743ec5acf449864c" title="Calculate the atmosphere for the given altitude." alt="" coords="637,42,719,69"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGAtmosphere.html#aa2f78771ae30d0b74346460445829237" title="Returns the density in slugs/ft^3 at a given altitude in ft." alt="" coords="631,93,725,119"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGStandardAtmosphere.html#aabde8cacafe2f2974ef21af2df798f80" title="Returns the pressure at a specified altitude in psf." alt="" coords="563,144,793,185"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGAtmosphere.html#a2ddd4673024ddccaaac2fdc3964b6a67" title="Returns the speed of sound in ft/sec at a given altitude in ft." alt="" coords="615,210,741,237"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGStandardAtmosphere.html#a80e5e0f5f758fe6c0c9a19e16245bf55" title="Sets the temperature at the supplied altitude, if it is to be different than the standard temperature..." alt="" coords="284,283,515,324"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGStandardAtmosphere.html#ab2239a97c1d62b0a27b4c94cc7c03e76" title="Sets the temperature bias to be added to the standard temperature at all altitudes." alt="" coords="563,312,793,353"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGStandardAtmosphere.html#a8e31ff522ecbbf9cfaf78b61b85dc8fc" title="Sets the temperature delta value at the supplied altitude/elevation above sea level,..." alt="" coords="563,377,793,419"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#a6b680ec4f2cb19d546928fca48e58176" title="Calculate the atmosphere for the given altitude." alt="" coords="284,5,515,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAtmosphere.html#a764e8c6d39b827d2ad03f570a2fc37e6" title="Runs the atmosphere forces model; called by the Executive." alt="" coords="376,71,423,98"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGStandardAtmosphere.html#ad56cd84161ea889f17e5cf8971eab3b2" title="Sets the Sea Level temperature, if it is to be different than the standard." alt="" coords="5,283,236,324"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae1ec723136d5b58e3b3d4fcb966d0c12" title="Sets a Sea Level temperature delta that is ramped out by 86 km." alt="" coords="284,377,515,419"/>
+</map>

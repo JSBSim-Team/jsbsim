@@ -1,0 +1,4 @@
+<map id="Setsim_time" name="Setsim_time">
+<area shape="rect" id="node1" title="Sets the current sim time." alt="" coords="5,13,109,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInertial.html#ab21d7facec6ebc3cbb460f48c061f1c6" title="Set the simulation time." alt="" coords="157,5,297,47"/>
+</map>

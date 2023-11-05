@@ -1,0 +1,5 @@
+<map id="ClearStates" name="ClearStates">
+<area shape="rect" id="node1" title="Clear all state&#45;control pairs from the current configuration." alt="" coords="248,5,345,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrim.html#a620e970bb5917f073dae47e0d43f09b8" title="Clear all state&#45;control pairs and set a predefined trim mode." alt="" coords="121,5,200,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTrim.html#ab8b8c986a483a9dcb1e7c94234957933" title="Initializes the trimming class." alt="" coords="5,5,73,32"/>
+</map>

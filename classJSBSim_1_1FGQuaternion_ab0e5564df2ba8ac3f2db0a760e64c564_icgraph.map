@@ -1,0 +1,23 @@
+<map id="GetTInv" name="GetTInv">
+<area shape="rect" id="node1" title="Backward transformation matrix." alt="" coords="488,438,561,465"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a6788d9297505a09051952a5fa67a48a9" title="Gets the initial wind direction." alt="" coords="247,5,440,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a4c68f8e908b432d18201003670fa2c7c" title="Gets the initial total wind velocity in feet/sec." alt="" coords="247,71,440,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a6c76f9556fb23b0e83b00b48b6a2283b" title="Gets the initial wind velocity in the NED local frame." alt="" coords="247,136,440,177"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#a1fabb78d427d8f826631eb863fccce28" title="Resets the IC data structure to new values." alt="" coords="247,201,440,243"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGInitialCondition.html#aab430a890b7eb995d69c0c042fca969a" title="Sets the initial angle of attack." alt="" coords="247,267,440,308"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a4e35ac529197f0bbcd476f52eae08a40" title="Sets the initial sideslip angle." alt="" coords="247,332,440,373"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGInitialCondition.html#aa0085586d19a7796ec2ac667f8d89b14" title="Sets the initial climb rate." alt="" coords="247,397,440,439"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#a57d4e26c7e34322f7e032b418cf8772f" title="Sets the initial crosswind speed." alt="" coords="247,463,440,504"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGInitialCondition.html#aade0339651dc5bf735d0fb105dc16cdf" title="Sets the initial headwind velocity." alt="" coords="247,528,440,569"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInitialCondition.html#aef47a274b700f482ad7c4e75aa8e204b" title="Sets the initial ground speed." alt="" coords="247,593,440,635"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGInitialCondition.html#aa27763a4d398c95e7b346b824153d11e" title="Sets the initial true airspeed." alt="" coords="247,659,440,700"/>
+<area shape="rect" id="node19" href="$classJSBSim_1_1FGInitialCondition.html#acb10a2eea909a886349f49830377b028" title="Sets the initial wind direction." alt="" coords="247,724,440,765"/>
+<area shape="rect" id="node20" href="$classJSBSim_1_1FGInitialCondition.html#a1cc39afd956177b29210420e224beb46" title="Sets the initial wind downward speed." alt="" coords="247,789,440,831"/>
+<area shape="rect" id="node21" href="$classJSBSim_1_1FGInitialCondition.html#a3064f4b800bd75993cc04e6f85b0846c" title="Sets the initial total wind speed." alt="" coords="247,855,440,896"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGFDMExec.html#ae3182037153735d40f1857bdfa34a299" title="Initializes the simulation with initial conditions." alt="" coords="21,136,183,177"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="5,528,199,569"/>
+<area shape="rect" id="node15" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="5,593,199,635"/>
+<area shape="rect" id="node16" href="$classJSBSim_1_1FGInitialCondition.html#a4b214047e1c25d93b9d706621f32f6ce" title="Set mach initial condition." alt="" coords="5,659,199,700"/>
+<area shape="rect" id="node17" href="$classJSBSim_1_1FGInitialCondition.html#abaa026e39ca6d9c383ccffa8f9bbd936" title="Set calibrated airspeed initial condition in knots." alt="" coords="5,724,199,765"/>
+<area shape="rect" id="node18" href="$classJSBSim_1_1FGInitialCondition.html#a13d4b8fd402f41dcf6eef8ed0c11f435" title="Set equivalent airspeed initial condition in knots." alt="" coords="5,789,199,831"/>
+</map>

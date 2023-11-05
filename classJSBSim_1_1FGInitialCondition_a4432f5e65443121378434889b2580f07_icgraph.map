@@ -1,0 +1,4 @@
+<map id="SetFlightPathAngleRadIC" name="SetFlightPathAngleRadIC">
+<area shape="rect" id="node1" title="Sets the initial flight path angle." alt="" coords="125,5,308,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a1fabb78d427d8f826631eb863fccce28" title="Resets the IC data structure to new values." alt="" coords="5,5,77,32"/>
+</map>

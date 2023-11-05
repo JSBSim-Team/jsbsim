@@ -1,0 +1,10 @@
+<map id="Transposed" name="Transposed">
+<area shape="rect" id="node1" title="Transposed matrix." alt="" coords="249,195,344,221"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGRotor.html#a4bc3dbf658386662ee7dc09a2a70383c" title="Constructor for FGRotor." alt="" coords="8,5,199,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGPropeller.html#a15792c31b5924f5afe34808502a965ef" title="Calculates and returns the thrust produced by this propeller." alt="" coords="27,57,179,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGLGear.html#a0890dab6172664fc6f6b7bbdfee8151b" title="The Force vector for this gear." alt="" coords="5,122,201,163"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInertial.html#a891d6a4818f727f19c512da34b692871" title="Transform matrix from the earth centered to local horizontal frame." alt="" coords="33,187,173,229"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#a1fabb78d427d8f826631eb863fccce28" title="Resets the IC data structure to new values." alt="" coords="7,253,200,294"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGPropagate.html#a35ac9aa2a24b4c76037dcc874cdfdcdd" title="Runs the state propagation model; called by the Executive Can pass in a value indicating if the execu..." alt="" coords="7,319,200,345"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a4e35ac529197f0bbcd476f52eae08a40" title="Sets the initial sideslip angle." alt="" coords="7,370,200,411"/>
+</map>

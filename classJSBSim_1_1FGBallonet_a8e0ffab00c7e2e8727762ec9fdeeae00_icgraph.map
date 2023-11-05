@@ -1,0 +1,4 @@
+<map id="GetMass" name="GetMass">
+<area shape="rect" id="node1" title="Get the current mass of the ballonets." alt="" coords="136,5,215,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGBallonet.html#ab4f2abee6ace8ea44fa06a50f78b7540" title="Runs the ballonet model; called by FGGasCell." alt="" coords="5,5,88,32"/>
+</map>

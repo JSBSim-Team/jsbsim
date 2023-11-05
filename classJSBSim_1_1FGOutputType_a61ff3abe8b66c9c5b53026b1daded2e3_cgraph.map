@@ -1,0 +1,7 @@
+<map id="SetRateHz" name="SetRateHz">
+<area shape="rect" id="node1" title="Set the output rate for this output instances." alt="" coords="5,85,96,112"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputType.html#aba9ec81f447e9a505fe732037c0f79e7" title="Disables the output generation." alt="" coords="205,5,276,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGOutputType.html#aebec479a7234241b3b664d7cfcb43401" title="Enables the output generation." alt="" coords="207,56,274,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html#a738179a34b72fa5a9a72ddafc2e4adae" title="Returns the simulation delta T." alt="" coords="159,107,322,149"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGModel.html#aa869d818d1cc23946f954079b88cbd2a" title="Set the ouput rate for the model in frames." alt="" coords="144,173,337,200"/>
+</map>

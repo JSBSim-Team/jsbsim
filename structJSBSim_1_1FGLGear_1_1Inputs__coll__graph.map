@@ -1,0 +1,8 @@
+<map id="FGLGear::Inputs" name="FGLGear::Inputs">
+<area shape="rect" id="node1" title=" " alt="" coords="246,200,373,227"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGColumnVector3.html" title="This class implements a 3 element column vector." alt="" coords="5,81,144,108"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html" title="FGLocation holds an arbitrary location in the Earth centered Earth fixed reference frame (ECEF)." alt="" coords="169,81,263,108"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="169,5,263,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="287,81,425,108"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGMatrix33.html" title="Handles matrix math operations." alt="" coords="449,81,548,108"/>
+</map>

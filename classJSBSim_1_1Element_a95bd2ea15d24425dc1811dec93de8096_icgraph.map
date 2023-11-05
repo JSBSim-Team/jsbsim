@@ -1,0 +1,7 @@
+<map id="GetParent" name="GetParent">
+<area shape="rect" id="node1" title="Returns a pointer to the parent of an element." alt="" coords="244,97,331,123"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPropeller.html#af055485a3f74654dae147e839447e9ad" title="Constructor for FGPropeller." alt="" coords="25,5,177,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGRotor.html#a4bc3dbf658386662ee7dc09a2a70383c" title="Constructor for FGRotor." alt="" coords="5,71,196,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGTable.html#a521c226159bbc85c27f4eaa5d4dbfa18" title="The constructor for a table." alt="" coords="7,122,195,149"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGThruster.html#a18899cd20a4e7ceec9427ea4b4bdff4a" title="Constructor." alt="" coords="27,173,175,215"/>
+</map>

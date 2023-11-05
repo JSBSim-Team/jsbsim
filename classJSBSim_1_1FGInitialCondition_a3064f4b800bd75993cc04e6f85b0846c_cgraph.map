@@ -1,0 +1,5 @@
+<map id="SetWindMagKtsIC" name="SetWindMagKtsIC">
+<area shape="rect" id="node1" title="Sets the initial total wind speed." alt="" coords="5,46,144,73"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="205,5,372,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="192,71,385,112"/>
+</map>

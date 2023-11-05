@@ -1,0 +1,8 @@
+.. _FGAuxiliary:
+
+===========
+FGAuxiliary
+===========
+
+.. autoclass:: jsbsim.FGAuxiliary
+   :members:

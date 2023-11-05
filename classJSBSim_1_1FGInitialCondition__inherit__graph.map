@@ -1,0 +1,4 @@
+<map id="FGInitialCondition" name="FGInitialCondition">
+<area shape="rect" id="node1" title="Initializes the simulation run." alt="" coords="5,80,144,107"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="28,5,121,32"/>
+</map>

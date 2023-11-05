@@ -1,0 +1,8 @@
+.. _FGMassBalance:
+
+=============
+FGMassBalance
+=============
+
+.. autoclass:: jsbsim.FGMassBalance
+   :members:

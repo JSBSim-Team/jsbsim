@@ -1,0 +1,4 @@
+<map id="Drain" name="Drain">
+<area shape="rect" id="node1" title="Removes fuel from the tank." alt="" coords="136,5,193,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTank.html#a8f2a5deb2b85c8fc88048d1b9c5736a7" title="Performs local, tanks&#45;specific calculations, such as fuel temperature." alt="" coords="5,5,88,32"/>
+</map>

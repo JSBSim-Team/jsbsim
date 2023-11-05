@@ -1,0 +1,12 @@
+<map id="SetVtrueFpsIC" name="SetVtrueFpsIC">
+<area shape="rect" id="node1" title="Sets the initial true airspeed." alt="" coords="431,157,545,184"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="232,56,379,83"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="233,107,377,133"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a4b214047e1c25d93b9d706621f32f6ce" title="Set mach initial condition." alt="" coords="260,157,351,184"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGInitialCondition.html#abaa026e39ca6d9c383ccffa8f9bbd936" title="Set calibrated airspeed initial condition in knots." alt="" coords="230,208,381,235"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#a13d4b8fd402f41dcf6eef8ed0c11f435" title="Set equivalent airspeed initial condition in knots." alt="" coords="228,259,383,285"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="25,107,160,133"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a5c7c88a597829607471730f280b3266b" title="Sets the initial longitude." alt="" coords="20,5,165,32"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a93ec4bc417c0505b4548f6a63af82bdf" title="Sets the initial terrain elevation." alt="" coords="5,56,180,83"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGInitialCondition.html#a777b283e5014563b30f96b47a9e6220a" title="Sets the initial geodetic latitude." alt="" coords="9,157,177,184"/>
+</map>

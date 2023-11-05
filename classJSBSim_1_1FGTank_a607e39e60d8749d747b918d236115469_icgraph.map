@@ -1,0 +1,6 @@
+<map id="GetUnusable" name="GetUnusable">
+<area shape="rect" id="node1" title="Returns the amount of unusable fuel in the tank." alt="" coords="255,31,361,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTank.html#a3f836b4283222c9b9a1e556ab2205f5a" title="Constructor." alt="" coords="136,5,207,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTank.html#a4d69ea3c4fa47fb3481d43af0dc0a0e9" title="Removes fuel from the tank." alt="" coords="143,56,200,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGTank.html#a8f2a5deb2b85c8fc88048d1b9c5736a7" title="Performs local, tanks&#45;specific calculations, such as fuel temperature." alt="" coords="5,56,88,83"/>
+</map>

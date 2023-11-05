@@ -1,0 +1,15 @@
+<map id="SetPositionGeodetic" name="SetPositionGeodetic">
+<area shape="rect" id="node1" title="Sets the longitude, latitude and the distance above the reference spheroid." alt="" coords="540,209,693,235"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGDefaultGroundCallback.html#a8ea3c30532eecf47acf6932c7b8b86fb" title="Compute the altitude above ground." alt="" coords="247,5,492,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInertial.html#a6d0c95d18efaa1d57774a5caf0fd8026" title="Transform matrix from the local horizontal frame to earth centered." alt="" coords="299,71,439,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a3274b54aa011369c34ac661f1d6c7092" title="Initialize the initial conditions to default values." alt="" coords="273,136,466,177"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGInertial.html#a362f841fccd857fbf35aecd9f0c38418" title="Set the altitude above ground level." alt="" coords="299,201,439,243"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="273,267,466,308"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="273,332,466,373"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGInitialCondition.html#a777b283e5014563b30f96b47a9e6220a" title="Sets the initial geodetic latitude." alt="" coords="5,397,199,439"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a7b8b2775771dd307348987788fe1cf7c" title="Constructor." alt="" coords="5,71,199,112"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#a1fabb78d427d8f826631eb863fccce28" title="Resets the IC data structure to new values." alt="" coords="5,136,199,177"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="5,332,199,373"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#a5c7c88a597829607471730f280b3266b" title="Sets the initial longitude." alt="" coords="5,201,199,243"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGInitialCondition.html#a93ec4bc417c0505b4548f6a63af82bdf" title="Sets the initial terrain elevation." alt="" coords="5,267,199,308"/>
+</map>

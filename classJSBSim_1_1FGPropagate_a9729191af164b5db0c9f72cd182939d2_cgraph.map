@@ -1,0 +1,4 @@
+<map id="InitModel" name="InitModel">
+<area shape="rect" id="node1" title="Initializes the FGPropagate class after instantiation and prior to first execution." alt="" coords="5,13,88,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGLocation.html#a0697137d8c02a8b84f695d12317347a6" title="Sets the semimajor and semiminor axis lengths for this planet." alt="" coords="136,5,285,47"/>
+</map>

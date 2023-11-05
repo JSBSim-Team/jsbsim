@@ -1,0 +1,16 @@
+<map id="GetRadius" name="GetRadius">
+<area shape="rect" id="node1" title="Get the distance from the center of the earth in feet." alt="" coords="729,297,819,323"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPropagate.html#a645621ae6613dac57bf228543069e829" title="Returns the current altitude above sea level." alt="" coords="505,224,665,265"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a346a168487e721ed793f896774dbc12c" title="Gets the initial altitude above sea level." alt="" coords="488,289,681,331"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGPropagate.html#a3554b724a9f259cb57840ae37cbec446" title="Returns the &quot;constant&quot; LocalTerrainRadius." alt="" coords="497,355,672,396"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a8576d36700cec35ab3aafe6b4591a354" title="Gets the initial mach." alt="" coords="247,5,440,47"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a5ff3b7823e19062dfc47fc7350e6384b" title="Gets the initial calibrated airspeed." alt="" coords="247,71,440,112"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#abe2a911da5e3610023f885e9e50939d1" title="Gets the initial equivalent airspeed." alt="" coords="247,136,440,177"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGInitialCondition.html#a78752db06521e6974fad0089a5e31695" title="Sets the initial Altitude above ground level." alt="" coords="247,201,440,243"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="5,260,199,301"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGInitialCondition.html#adb6fe57c0d1ce470a4d12b8e3054f75b" title="Sets the altitude above sea level initial condition in feet." alt="" coords="247,319,440,360"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGInitialCondition.html#a777b283e5014563b30f96b47a9e6220a" title="Sets the initial geodetic latitude." alt="" coords="5,351,199,392"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGInitialCondition.html#a4b214047e1c25d93b9d706621f32f6ce" title="Set mach initial condition." alt="" coords="247,436,440,477"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInitialCondition.html#abaa026e39ca6d9c383ccffa8f9bbd936" title="Set calibrated airspeed initial condition in knots." alt="" coords="247,501,440,543"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGInitialCondition.html#a13d4b8fd402f41dcf6eef8ed0c11f435" title="Set equivalent airspeed initial condition in knots." alt="" coords="247,567,440,608"/>
+</map>

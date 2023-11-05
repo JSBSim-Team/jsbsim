@@ -1,0 +1,10 @@
+<map id="FGInertial" name="FGInertial">
+<area shape="rect" id="node1" title="Models inertial forces (e.g." alt="" coords="328,199,415,225"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="285,109,365,136"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="5,13,148,39"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html" title="Encapsulates the JSBSim simulation executive." alt="" coords="172,13,272,39"/>
+<area shape="rect" id="node5" title=" " alt="" coords="295,13,354,39"/>
+<area shape="rect" id="node6" title=" " alt="" coords="379,5,553,47"/>
+<area shape="rect" id="node7" href="$structJSBSim_1_1FGInertial_1_1Inputs.html" title=" " alt="" coords="491,109,553,136"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGLocation.html" title="FGLocation holds an arbitrary location in the Earth centered Earth fixed reference frame (ECEF)." alt="" coords="577,13,672,39"/>
+</map>

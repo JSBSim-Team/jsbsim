@@ -1,0 +1,4 @@
+<map id="SetMode" name="SetMode">
+<area shape="rect" id="node1" title="Clear all state&#45;control pairs and set a predefined trim mode." alt="" coords="5,5,84,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrim.html#a311066bccbe388bae09055dadb0357f7" title="Clear all state&#45;control pairs from the current configuration." alt="" coords="132,5,229,32"/>
+</map>

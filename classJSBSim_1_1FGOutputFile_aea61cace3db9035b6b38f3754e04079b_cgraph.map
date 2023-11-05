@@ -1,0 +1,4 @@
+<map id="SetStartNewOutput" name="SetStartNewOutput">
+<area shape="rect" id="node1" title="Reset the output prior to a restart of the simulation." alt="" coords="5,5,152,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputFile.html#a32db5279a26b99aeb12b3f3d8aded01e" title="Closes the file." alt="" coords="200,5,281,32"/>
+</map>

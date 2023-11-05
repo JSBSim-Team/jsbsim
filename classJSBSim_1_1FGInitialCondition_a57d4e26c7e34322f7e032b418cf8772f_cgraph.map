@@ -1,0 +1,7 @@
+<map id="SetCrossWindKtsIC" name="SetCrossWindKtsIC">
+<area shape="rect" id="node1" title="Sets the initial crosswind speed." alt="" coords="5,111,152,138"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGQuaternion.html#a15a2018bc1a5faa4c85a2e27a20fa5d8" title="Retrieves cosine of the given euler angle." alt="" coords="213,5,380,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGQuaternion.html#a05a24cffb3dbe93f6dac60998eb3dbf9" title="Retrieves sine of the given euler angle." alt="" coords="213,71,380,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="213,136,380,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGColumnVector3.html#a4b994a872678de3097f1c86723ce92c9" title="Length of the vector." alt="" coords="200,201,393,243"/>
+</map>

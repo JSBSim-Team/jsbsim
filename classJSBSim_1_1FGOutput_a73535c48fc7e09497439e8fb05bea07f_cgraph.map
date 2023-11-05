@@ -1,0 +1,10 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Load the output directives and adds a new output instance to the Output Manager list." alt="" coords="5,166,59,193"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputTextFile.html#a4ea4d215e0aef4e97eb0550eee351e3b" title="Set the delimiter." alt="" coords="107,5,295,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGOutputType.html#a6f1370cfe2ed983e54af0720b6c0b3d5" title="Set the idx for this output instance." alt="" coords="117,71,285,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGOutputType.html#a61ff3abe8b66c9c5b53026b1daded2e3" title="Set the output rate for this output instances." alt="" coords="343,129,511,171"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGOutputType.html#abfe0ee3acd5b9c3eaba68a2c90dde2c0" title="Overwrites the name identifier under which the output will be logged." alt="" coords="117,188,285,229"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGOutputType.html#aef42c534f81d63d86c924967108dfb2f" title="Set the list of properties that should be output for this output instance." alt="" coords="117,253,285,295"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGOutputType.html#adf530cd3a94a418574de8d346527803b" title="Set the activated subsystems for this output instance." alt="" coords="117,319,285,360"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGOutputType.html#adb242c9bce9b5f32874da035829151ef" title="Get the output rate in Hz for this output." alt="" coords="343,64,511,105"/>
+</map>

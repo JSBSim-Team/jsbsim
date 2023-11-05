@@ -1,0 +1,6 @@
+<map id="GetHoldDown" name="GetHoldDown">
+<area shape="rect" id="node1" title="Gets the value of the property forces/hold&#45;down." alt="" coords="268,56,380,83"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#a6c212ee12c5305eddfe4f735fb926f06" title="Default constructor." alt="" coords="63,5,163,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAccelerations.html#a764e8c6d39b827d2ad03f570a2fc37e6" title="Runs the state propagation model; called by the Executive Can pass in a value indicating if the execu..." alt="" coords="5,56,220,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGMassBalance.html#a764e8c6d39b827d2ad03f570a2fc37e6" title="Runs the Mass Balance model; called by the Executive Can pass in a value indicating if the executive ..." alt="" coords="6,107,219,133"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="Load" name="Load">
+<area shape="rect" id="node1" title="Init the output directives from an XML file (implement the FGModel interface)." alt="" coords="5,247,59,273"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="107,5,326,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#aa9c4e9e17572561475562e52683bd726" title="Searches for the named element and returns the string data belonging to it." alt="" coords="107,57,326,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#a66c9f019215d9c6b3f85cdab75d6d429" title="Gets a line of data belonging to an element." alt="" coords="375,93,593,120"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="119,174,315,215"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="107,239,326,281"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#a30a269bd930d31646341ba15787281e3" title="Retrieves an attribute value as a double precision real number." alt="" coords="107,305,326,346"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1Element.html#ac5c2e3334b384afca061f0bf965dc864" title="Determines if an element has the supplied attribute." alt="" coords="107,371,327,397"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="115,421,319,448"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGOutputType.html#a61ff3abe8b66c9c5b53026b1daded2e3" title="Set the output rate for this output instances." alt="" coords="171,472,262,499"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGOutputType.html#aba9ec81f447e9a505fe732037c0f79e7" title="Disables the output generation." alt="" coords="449,392,519,419"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGOutputType.html#aebec479a7234241b3b664d7cfcb43401" title="Enables the output generation." alt="" coords="451,443,517,469"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGFDMExec.html#a738179a34b72fa5a9a72ddafc2e4adae" title="Returns the simulation delta T." alt="" coords="403,494,565,535"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGModel.html#aa869d818d1cc23946f954079b88cbd2a" title="Set the ouput rate for the model in frames." alt="" coords="387,560,581,587"/>
+</map>

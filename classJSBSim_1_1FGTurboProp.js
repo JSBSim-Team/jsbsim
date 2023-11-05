@@ -1,0 +1,37 @@
+var classJSBSim_1_1FGTurboProp =
+[
+    [ "phaseType", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1", [
+      [ "tpOff", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1a9512cbda39d606ee0e3018b99cffc85c", null ],
+      [ "tpRun", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1a4abcb1475eda1ba63d6d136523aa2f7f", null ],
+      [ "tpSpinUp", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1aac976f553a1f9daa97602f933a4b5f3a", null ],
+      [ "tpStart", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1a1b330453903c61e680b2c417d991535f", null ],
+      [ "tpTrim", "classJSBSim_1_1FGTurboProp.html#a4f71dc10e5b076ba5df4d31d3abe8dd1a7c99088d7c92e05f73ab702e5a9bb86b", null ]
+    ] ],
+    [ "FGTurboProp", "classJSBSim_1_1FGTurboProp.html#a6e34142bc65223950d55f52806bd9f3f", null ],
+    [ "CalcFuelNeed", "classJSBSim_1_1FGTurboProp.html#a8c1a9250c6bf27f558c9584afd9fd3d3", null ],
+    [ "Calculate", "classJSBSim_1_1FGTurboProp.html#a308031836dd2661401a194f63483bdf6", null ],
+    [ "ExpSeek", "classJSBSim_1_1FGTurboProp.html#ae0c54cb68a97cb3e0483778ca67cca58", null ],
+    [ "GetCondition", "classJSBSim_1_1FGTurboProp.html#a434980ac589531448a60c0e7cb08cde4", null ],
+    [ "GetCutoff", "classJSBSim_1_1FGTurboProp.html#a605b6cc1ce4086cb6325fa21cd92e87c", null ],
+    [ "GetEngineLabels", "classJSBSim_1_1FGTurboProp.html#ac4f56819de5ba4489b17e450bf93ee97", null ],
+    [ "GetEngineValues", "classJSBSim_1_1FGTurboProp.html#a9cdf6884938be6a1a1846613d2ff48a8", null ],
+    [ "GetEngStarting", "classJSBSim_1_1FGTurboProp.html#a99388e31e82d1fb1b1ad3c293128c4c2", null ],
+    [ "GetGeneratorPower", "classJSBSim_1_1FGTurboProp.html#af099a038bb82c82d0943b275cb7447c7", null ],
+    [ "GetIeluIntervent", "classJSBSim_1_1FGTurboProp.html#af6a3cd7e77f74cfcc66c1475f7607536", null ],
+    [ "GetIeluThrottle", "classJSBSim_1_1FGTurboProp.html#acc7c5030a18e9322edf5f59e0aefa967", null ],
+    [ "GetITT", "classJSBSim_1_1FGTurboProp.html#a399110b7f90260d7dc3168a99743601f", null ],
+    [ "GetN1", "classJSBSim_1_1FGTurboProp.html#afaadac03345ac51cac1ccf3e0a7a6fec", null ],
+    [ "getOilPressure_psi", "classJSBSim_1_1FGTurboProp.html#a3cedb707cb7cc3e768173dacf3e3c507", null ],
+    [ "getOilTemp_degF", "classJSBSim_1_1FGTurboProp.html#a25f282156ab3af0e1f44c6d189133f16", null ],
+    [ "GetPhase", "classJSBSim_1_1FGTurboProp.html#a1f78ddebad89411af08eab9e1a7ae898", null ],
+    [ "GetPowerAvailable", "classJSBSim_1_1FGTurboProp.html#ad8f964b25e0ff10b879e4819a2a58f29", null ],
+    [ "GetReversed", "classJSBSim_1_1FGTurboProp.html#ab9e262339bc43f1ab0acb056604b682a", null ],
+    [ "GetRPM", "classJSBSim_1_1FGTurboProp.html#a33570ed6e3df786097054faa5b27f91e", null ],
+    [ "InitRunning", "classJSBSim_1_1FGTurboProp.html#afc78dae153660a82c819e60c374cac80", null ],
+    [ "Seek", "classJSBSim_1_1FGTurboProp.html#a19ece223c6dc819db12351f6a5e371c6", null ],
+    [ "SetCondition", "classJSBSim_1_1FGTurboProp.html#a2fb8167bb1db088d0121af36dc05f6ae", null ],
+    [ "SetCutoff", "classJSBSim_1_1FGTurboProp.html#aff150f55b8c2421fb624fc5f8fcb94a2", null ],
+    [ "SetGeneratorPower", "classJSBSim_1_1FGTurboProp.html#aaf8c9e0f476828058b1ee690a6487879", null ],
+    [ "SetPhase", "classJSBSim_1_1FGTurboProp.html#abe6d0f6873f00019ed2b7d68700ea88f", null ],
+    [ "SetReverse", "classJSBSim_1_1FGTurboProp.html#a2f32f640191fb61277adb1e5ab3fe7cd", null ]
+];

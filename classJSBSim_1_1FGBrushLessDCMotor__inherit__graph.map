@@ -1,0 +1,5 @@
+<map id="FGBrushLessDCMotor" name="FGBrushLessDCMotor">
+<area shape="rect" id="node1" title=" " alt="" coords="5,155,168,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGEngine.html" title="Base class for all engines." alt="" coords="45,80,129,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="15,5,158,32"/>
+</map>

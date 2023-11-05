@@ -1,0 +1,7 @@
+<map id="CalculateLapseRates" name="CalculateLapseRates">
+<area shape="rect" id="node1" title="Recalculate the lapse rate vectors when the temperature profile is altered in a way that would change..." alt="" coords="529,56,688,83"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#aac7c1e551afab2db966dea34647c5dc3" title="Constructor." alt="" coords="289,5,467,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#aed830675db14a50dd538b130c193fb83" title="This function resets the model to apply no bias or delta gradient to the temperature." alt="" coords="301,56,455,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGStandardAtmosphere.html#a8e31ff522ecbbf9cfaf78b61b85dc8fc" title="Sets the temperature delta value at the supplied altitude/elevation above sea level,..." alt="" coords="275,107,481,133"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae1ec723136d5b58e3b3d4fcb966d0c12" title="Sets a Sea Level temperature delta that is ramped out by 86 km." alt="" coords="5,107,227,133"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="FGTank" name="FGTank">
+<area shape="rect" id="node1" title="Models a fuel tank." alt="" coords="17,80,87,107"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="5,5,99,32"/>
+</map>

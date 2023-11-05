@@ -1,0 +1,4 @@
+<map id="GetValueAsString" name="GetValueAsString">
+<area shape="rect" id="node1" title="The value that the function evaluates to, as a string." alt="" coords="5,5,140,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFunction.html#a20153bedb4fc19a8b698f34dada67e5f" title="Retrieves the value of the function object." alt="" coords="188,5,269,32"/>
+</map>

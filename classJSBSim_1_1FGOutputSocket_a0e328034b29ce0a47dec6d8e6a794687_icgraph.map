@@ -1,0 +1,5 @@
+<map id="SetOutputName" name="SetOutputName">
+<area shape="rect" id="node1" title="Overwrites the name identifier under which the output will be logged." alt="" coords="311,13,437,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputSocket.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file." alt="" coords="209,13,263,39"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGOutputFG.html#ac139d3edf9cdfcdd83a3eba596995817" title="Evaluate the output directives from an XML file." alt="" coords="5,5,161,47"/>
+</map>

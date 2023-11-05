@@ -1,0 +1,6 @@
+<map id="SetAltitudeAGLFtIC" name="SetAltitudeAGLFtIC">
+<area shape="rect" id="node1" title="Sets the initial Altitude above ground level." alt="" coords="228,56,375,83"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#ab6f6dae970e40878a34789be7dfcb9a7" title="Sets the initial latitude." alt="" coords="25,5,160,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a5c7c88a597829607471730f280b3266b" title="Sets the initial longitude." alt="" coords="20,56,165,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a93ec4bc417c0505b4548f6a63af82bdf" title="Sets the initial terrain elevation." alt="" coords="5,107,180,133"/>
+</map>

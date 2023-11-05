@@ -1,0 +1,7 @@
+<map id="SetRelativeHumidity" name="SetRelativeHumidity">
+<area shape="rect" id="node1" title="Sets the relative humidity." alt="" coords="5,64,163,91"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#a0a96927230c095f8684eb0b6cb9de493" title="Sets the partial pressure of water vapor." alt="" coords="211,64,347,91"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#af10797f6dc49e9e5977e364d3a2153f0" title="Calculates the pressure altitude given any temperature or pressure bias." alt="" coords="399,5,589,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAtmosphere.html#a88eae7e36fb9b0dc5facf0f5b4320373" title="Converts to PSF (pounds per square foot) from one of several unit systems." alt="" coords="407,57,581,98"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGStandardAtmosphere.html#aec7ab226284ca4b879edfd5b93f0e864" title="Validate the value of the vapor mass fraction." alt="" coords="395,123,593,149"/>
+</map>

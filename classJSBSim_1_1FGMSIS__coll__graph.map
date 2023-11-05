@@ -1,0 +1,7 @@
+<map id="FGMSIS" name="FGMSIS">
+<area shape="rect" id="node1" title="Models the MSIS&#45;00 atmosphere." alt="" coords="149,229,221,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html" title="Models the 1976 U.S." alt="" coords="96,153,273,180"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAtmosphere.html" title="Models an empty, abstract base atmosphere class." alt="" coords="5,5,124,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGTable.html" title="Lookup table class." alt="" coords="147,5,222,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="327,5,464,32"/>
+</map>

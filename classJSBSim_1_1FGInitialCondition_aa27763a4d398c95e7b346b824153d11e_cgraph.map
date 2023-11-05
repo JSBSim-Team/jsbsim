@@ -1,0 +1,4 @@
+<map id="SetVtrueFpsIC" name="SetVtrueFpsIC">
+<area shape="rect" id="node1" title="Sets the initial true airspeed." alt="" coords="5,13,120,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="168,5,335,47"/>
+</map>

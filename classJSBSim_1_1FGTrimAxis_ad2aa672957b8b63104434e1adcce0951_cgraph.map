@@ -1,0 +1,8 @@
+<map id="FGTrimAxis" name="FGTrimAxis">
+<area shape="rect" id="node1" title="Constructor for Trim Axis class." alt="" coords="5,111,101,138"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a84eb5205c00cea25382e8961e77a4784" title="Gets the initial altitude above ground level." alt="" coords="149,5,343,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a166ec4260ec1051bf83b148a667af572" title="Gets the initial roll angle." alt="" coords="149,71,343,112"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#ac5907b6c99a44689f3220cee1cdf8e33" title="Gets the initial heading angle." alt="" coords="149,136,343,177"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#acd24191b1a1075553a497c6b57014883" title="Gets the initial pitch angle." alt="" coords="149,201,343,243"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFDMExec.html#adf8684a61e0eb7c35ed18325d3642b35" title="Returns the FGInertial pointer." alt="" coords="391,5,553,47"/>
+</map>

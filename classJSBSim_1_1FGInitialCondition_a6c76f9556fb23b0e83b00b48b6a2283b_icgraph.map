@@ -1,0 +1,6 @@
+<map id="GetWindNEDFpsIC" name="GetWindNEDFpsIC">
+<area shape="rect" id="node1" title="Gets the initial wind velocity in the NED local frame." alt="" coords="440,35,583,61"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#ae3182037153735d40f1857bdfa34a299" title="Initializes the simulation with initial conditions." alt="" coords="229,27,392,69"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGTrim.html#a6a5e26b6c78ad99b63d075c6acc70679" title="Execute the trim." alt="" coords="5,5,181,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFDMExec.html#afaf93cada78d011829d409d0b250120b" title="Initializes the sim from the initial condition object and executes each scheduled model without integ..." alt="" coords="12,57,175,98"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="SetSense" name="SetSense">
+<area shape="rect" id="node1" title="Sets the rotation sense of the propeller." alt="" coords="152,5,235,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGPropeller.html#af055485a3f74654dae147e839447e9ad" title="Constructor for FGPropeller." alt="" coords="5,5,104,32"/>
+</map>

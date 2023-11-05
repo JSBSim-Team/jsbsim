@@ -1,0 +1,3 @@
+<map id="GetForcesInStabilityAxes" name="GetForcesInStabilityAxes">
+<area shape="rect" id="node1" title="Retrieves the aerodynamic forces in the stability axes, given an axis." alt="" coords="5,29,189,56"/>
+</map>

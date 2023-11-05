@@ -1,0 +1,6 @@
+<map id="FGOutputFile" name="FGOutputFile">
+<area shape="rect" id="node1" title="Abstract class that provide functions that are generic to all the outputs that are directed to a file..." alt="" coords="19,155,126,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGOutputTextFile.html" title="Implements the output to a human readable text file." alt="" coords="5,229,140,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputType.html" title="Abstract class to provide functions generic to all the output directives." alt="" coords="15,80,130,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="33,5,113,32"/>
+</map>

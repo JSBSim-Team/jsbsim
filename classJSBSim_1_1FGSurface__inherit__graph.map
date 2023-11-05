@@ -1,0 +1,4 @@
+<map id="FGSurface" name="FGSurface">
+<area shape="rect" id="node1" title="Base class for all surface properties." alt="" coords="36,5,125,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGGroundReactions.html" title="Manages ground reactions modeling." alt="" coords="5,80,156,107"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="LoadModel" name="LoadModel">
+<area shape="rect" id="node1" title="Loads an aircraft model." alt="" coords="260,5,353,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGScript.html#affd5971385d780aef57a6f7a9645f9f7" title="Loads a script to drive JSBSim (usually in standalone mode)." alt="" coords="5,5,212,32"/>
+</map>

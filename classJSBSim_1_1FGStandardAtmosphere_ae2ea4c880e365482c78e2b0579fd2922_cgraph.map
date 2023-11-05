@@ -1,0 +1,8 @@
+<map id="SetVaporMassFractionPPM" name="SetVaporMassFractionPPM">
+<area shape="rect" id="node1" title="Sets the vapor mass per million of dry air mass units." alt="" coords="5,31,200,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#af10797f6dc49e9e5977e364d3a2153f0" title="Calculates the pressure altitude given any temperature or pressure bias." alt="" coords="252,5,443,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGStandardAtmosphere.html#aec7ab226284ca4b879edfd5b93f0e864" title="Validate the value of the vapor mass fraction." alt="" coords="248,56,447,83"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#a05ce8403c7535cca4ac4ad9203ba9254" title="Convert a geopotential altitude to a geometric altitude." alt="" coords="521,5,663,32"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGStandardAtmosphere.html#aa608e93e5a0e8bc846d343ab4ca84cff" title="Convert a geometric altitude to a geopotential altitude." alt="" coords="513,56,671,83"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGTable.html#ad9eb06000eb981ecbca78954e7a3145b" title="Get the current table value." alt="" coords="495,107,689,133"/>
+</map>

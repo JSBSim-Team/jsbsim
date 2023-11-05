@@ -1,0 +1,4 @@
+<map id="GetDewPoint" name="GetDewPoint">
+<area shape="rect" id="node1" title="Returns the dew point." alt="" coords="159,5,265,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae383eeb62b1743fbe4f24cd0af2c397f" title="Sets the dew point." alt="" coords="5,5,111,32"/>
+</map>

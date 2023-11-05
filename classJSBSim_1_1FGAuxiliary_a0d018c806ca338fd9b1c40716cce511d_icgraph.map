@@ -1,0 +1,6 @@
+<map id="PitotTotalPressure" name="PitotTotalPressure">
+<area shape="rect" id="node1" title="Compute the total pressure in front of the Pitot tube." alt="" coords="312,56,451,83"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAuxiliary.html#ab5eca2536ff5d2022191ff51f439dc34" title="Calculate the Mach number from the calibrated airspeed.Based on the formulas in the US Air Force Airc..." alt="" coords="100,5,264,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAuxiliary.html#a764e8c6d39b827d2ad03f570a2fc37e6" title="Runs the Auxiliary routines; called by the Executive Can pass in a value indicating if the executive ..." alt="" coords="5,81,52,108"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAuxiliary.html#a2e6e30f5b00e1a4ca63dfc42f9f89d9c" title="Calculate the calibrated airspeed from the Mach number." alt="" coords="100,107,264,133"/>
+</map>

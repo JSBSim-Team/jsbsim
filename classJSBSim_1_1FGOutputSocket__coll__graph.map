@@ -1,0 +1,22 @@
+<map id="FGOutputSocket" name="FGOutputSocket">
+<area shape="rect" id="node1" title="Implements the output to a socket." alt="" coords="828,37,955,64"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGOutputType.html" title="Abstract class to provide functions generic to all the output directives." alt="" coords="619,492,733,519"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="305,155,385,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,81,64,108"/>
+<area shape="rect" id="node14" title=" " alt="" coords="266,205,425,232"/>
+<area shape="rect" id="node20" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="299,37,392,64"/>
+<area shape="rect" id="node5" title=" " alt="" coords="269,322,421,363"/>
+<area shape="rect" id="node6" title=" " alt="" coords="266,387,425,429"/>
+<area shape="rect" id="node7" title=" " alt="" coords="269,453,421,494"/>
+<area shape="rect" id="node8" title=" " alt="" coords="269,518,421,559"/>
+<area shape="rect" id="node9" title=" " alt="" coords="243,583,448,625"/>
+<area shape="rect" id="node10" title=" " alt="" coords="258,649,433,690"/>
+<area shape="rect" id="node11" title=" " alt="" coords="255,714,436,755"/>
+<area shape="rect" id="node12" title=" " alt="" coords="269,779,421,821"/>
+<area shape="rect" id="node13" title=" " alt="" coords="269,845,421,886"/>
+<area shape="rect" id="node15" title=" " alt="" coords="269,910,421,951"/>
+<area shape="rect" id="node16" title=" " alt="" coords="267,975,423,1017"/>
+<area shape="rect" id="node17" title=" " alt="" coords="269,89,421,130"/>
+<area shape="rect" id="node18" title=" " alt="" coords="269,257,421,298"/>
+<area shape="rect" id="node19" href="$classJSBSim_1_1FGfdmSocket.html" title="Encapsulates an object that enables JSBSim to communicate via socket (input and/or output)." alt="" coords="621,37,731,64"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="SetDewPoint" name="SetDewPoint">
+<area shape="rect" id="node1" title="Sets the dew point." alt="" coords="5,122,111,149"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#adae3ed16af6092c17c0cb5bf79f1b6f3" title="Calculate the pressure of water vapor with the Magnus formula." alt="" coords="159,13,335,39"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGJSBBase.html#a7b471bc247e5d616560cc5f5c66b4b6d" title="Converts from degrees Celsius to degrees Rankine." alt="" coords="405,80,559,121"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGAtmosphere.html#a13ab16e26033bc6cfd83c7c6e4edc6bd" title="Converts to Rankine from one of several unit systems." alt="" coords="160,115,333,156"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGStandardAtmosphere.html#af1ed9f88a0bff42518bf05d10f790ed2" title="Returns the dew point." alt="" coords="193,181,300,207"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGStandardAtmosphere.html#a0a96927230c095f8684eb0b6cb9de493" title="Sets the partial pressure of water vapor." alt="" coords="179,246,315,273"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGJSBBase.html#a9daa4b8416feb6ef2964aacbb1ad07e7" title="Converts from degrees Rankine to degrees Celsius." alt="" coords="405,5,559,47"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGAtmosphere.html#a71e412dec8df11a7aa80c0f526be60a2" title="Converts from Rankine to one of several unit systems." alt="" coords="395,164,569,205"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGStandardAtmosphere.html#af10797f6dc49e9e5977e364d3a2153f0" title="Calculates the pressure altitude given any temperature or pressure bias." alt="" coords="387,230,577,257"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGAtmosphere.html#a88eae7e36fb9b0dc5facf0f5b4320373" title="Converts to PSF (pounds per square foot) from one of several unit systems." alt="" coords="395,281,569,323"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGStandardAtmosphere.html#aec7ab226284ca4b879edfd5b93f0e864" title="Validate the value of the vapor mass fraction." alt="" coords="383,347,581,374"/>
+</map>

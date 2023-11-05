@@ -1,0 +1,6 @@
+<map id="FGPropertyValue" name="FGPropertyValue">
+<area shape="rect" id="node1" title="Represents a property value which can use late binding." alt="" coords="5,155,136,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGFunctionValue.html" title="Represents a property value on which a function is applied." alt="" coords="5,229,136,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGParameter.html" title="Represents various types of parameters." alt="" coords="17,80,124,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="13,5,128,32"/>
+</map>

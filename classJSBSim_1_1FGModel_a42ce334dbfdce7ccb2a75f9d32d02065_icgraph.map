@@ -1,0 +1,13 @@
+<map id="Upload" name="Upload">
+<area shape="rect" id="node1" title="Uploads this model in memory." alt="" coords="695,202,763,229"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the input directives from an XML file (implement the FGModel interface)." alt="" coords="462,5,619,47"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGAircraft.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the aircraft." alt="" coords="470,71,611,112"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGExternalReactions.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the external forces from the XML configuration file." alt="" coords="435,136,647,177"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGFCS.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the Flight Control System." alt="" coords="461,202,620,229"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGPropulsion.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the propulsion system (engine[s] and tank[s])." alt="" coords="220,215,383,256"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGAerodynamics.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Aerodynamics model." alt="" coords="447,304,634,345"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGBuoyantForces.html#a1014467ea360d4ca824b64edf04793d9" title="Loads the Buoyant forces model." alt="" coords="445,369,636,411"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInputSocket.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the input directives from an XML file." alt="" coords="216,5,387,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInput.html#a0b8d108c40ce8b06c3c849824ab18397" title="Load the input directives and adds a new input instance to the Input Manager list." alt="" coords="218,102,385,129"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGFDMExec.html#ae3203eea8354c1b3caf53395a0a5f6a7" title="Loads an aircraft model." alt="" coords="5,185,168,227"/>
+</map>

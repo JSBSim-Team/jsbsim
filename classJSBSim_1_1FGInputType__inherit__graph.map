@@ -1,0 +1,7 @@
+<map id="FGInputType" name="FGInputType">
+<area shape="rect" id="node1" title="Abstract class to provide functions generic to all the input directives." alt="" coords="26,155,129,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInputSocket.html" title="Implements the input from a socket." alt="" coords="19,229,135,256"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="37,80,117,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="6,5,149,32"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGUDPInputSocket.html" title="Implements a UDP input socket." alt="" coords="5,304,149,331"/>
+</map>

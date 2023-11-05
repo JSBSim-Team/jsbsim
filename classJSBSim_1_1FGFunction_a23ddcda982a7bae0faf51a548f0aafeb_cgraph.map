@@ -1,0 +1,4 @@
+<map id="cacheValue" name="cacheValue">
+<area shape="rect" id="node1" title="Specifies whether to cache the value of the function, so it is calculated only once per frame." alt="" coords="5,5,101,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFunction.html#a20153bedb4fc19a8b698f34dada67e5f" title="Retrieves the value of the function object." alt="" coords="149,5,231,32"/>
+</map>

@@ -1,0 +1,21 @@
+<map id="LoadScript" name="LoadScript">
+<area shape="rect" id="node1" title="Loads a script to drive JSBSim (usually in standalone mode)." alt="" coords="5,476,96,503"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="145,5,363,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#aa9c4e9e17572561475562e52683bd726" title="Searches for the named element and returns the string data belonging to it." alt="" coords="145,57,363,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#a66c9f019215d9c6b3f85cdab75d6d429" title="Gets a line of data belonging to an element." alt="" coords="412,93,631,120"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1Element.html#aee69786373509020c79e3deeb7bfe592" title="Searches for the named element and returns the data belonging to it as a number." alt="" coords="145,174,363,215"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="156,239,352,281"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="145,305,363,346"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1Element.html#a30a269bd930d31646341ba15787281e3" title="Retrieves an attribute value as a double precision real number." alt="" coords="145,370,363,411"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGFDMExec.html#a738179a34b72fa5a9a72ddafc2e4adae" title="Returns the simulation delta T." alt="" coords="173,435,335,477"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGFDMExec.html#a02c456a2715e9a4dbcc77dcdb2995cdd" title="Returns a pointer to the FGInitialCondition object." alt="" coords="173,501,335,542"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGFDMExec.html#afe21f9c04de73039ec3ae35d2227997b" title="Returns the FGInput pointer." alt="" coords="173,566,335,607"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="154,632,354,659"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1FGFDMExec.html#a4c768bced9c21e81e734710dbec7f7af" title="Returns the FGOutput pointer." alt="" coords="173,683,335,725"/>
+<area shape="rect" id="node15" href="$classJSBSim_1_1Element.html#ac5c2e3334b384afca061f0bf965dc864" title="Determines if an element has the supplied attribute." alt="" coords="144,749,364,776"/>
+<area shape="rect" id="node16" href="$classJSBSim_1_1FGFDMExec.html#ac6cf940d8ffc0907ffb2be6bcb3f88db" title="Loads an aircraft model." alt="" coords="173,801,335,842"/>
+<area shape="rect" id="node17" href="$classJSBSim_1_1FGFDMExec.html#adc2be69d46f65054228abbcbc402718e" title="Sets the integration time step for the simulation executive." alt="" coords="173,866,335,907"/>
+<area shape="rect" id="node18" href="$classJSBSim_1_1FGFDMExec.html#a84bc4234d96a91bce12201e7c0a6e3f0" title="Sets the current sim time." alt="" coords="173,931,335,973"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="425,174,617,215"/>
+<area shape="rect" id="node19" href="$classJSBSim_1_1FGInertial.html#ab21d7facec6ebc3cbb460f48c061f1c6" title="Set the simulation time." alt="" coords="451,931,591,973"/>
+</map>

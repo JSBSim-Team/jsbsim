@@ -1,0 +1,8 @@
+.. _FGLGear:
+
+=======
+FGLGear
+=======
+
+.. autoclass:: jsbsim.FGLGear
+   :members:

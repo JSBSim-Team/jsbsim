@@ -1,0 +1,6 @@
+<map id="FGMars" name="FGMars">
+<area shape="rect" id="node1" title="Models the Martian atmosphere." alt="" coords="57,171,129,197"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAtmosphere.html" title="Models an empty, abstract base atmosphere class." alt="" coords="34,95,153,121"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModel.html" title="Base class for all scheduled JSBSim models." alt="" coords="5,5,85,32"/>
+<area shape="rect" id="node4" href="$structJSBSim_1_1FGAtmosphere_1_1Inputs.html" title=" " alt="" coords="110,5,173,32"/>
+</map>

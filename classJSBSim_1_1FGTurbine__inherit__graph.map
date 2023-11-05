@@ -1,0 +1,5 @@
+<map id="FGTurbine" name="FGTurbine">
+<area shape="rect" id="node1" title="This class models a turbine engine." alt="" coords="33,155,120,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGEngine.html" title="Base class for all engines." alt="" coords="35,80,119,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGModelFunctions.html" title="The model functions class provides the capability for loading, storing, and executing arbitrary funct..." alt="" coords="5,5,148,32"/>
+</map>

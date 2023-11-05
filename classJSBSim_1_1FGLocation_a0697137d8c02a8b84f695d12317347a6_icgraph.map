@@ -1,0 +1,13 @@
+<map id="SetEllipse" name="SetEllipse">
+<area shape="rect" id="node1" title="Sets the semimajor and semiminor axis lengths for this planet." alt="" coords="540,238,627,265"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGDefaultGroundCallback.html#a8ea3c30532eecf47acf6932c7b8b86fb" title="Compute the altitude above ground." alt="" coords="247,5,492,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a5454247df3a6df9d8b0816529d6e6529" title="Gets the initial terrain elevation." alt="" coords="273,71,466,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#a3274b54aa011369c34ac661f1d6c7092" title="Initialize the initial conditions to default values." alt="" coords="273,136,466,177"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGPropagate.html#a9729191af164b5db0c9f72cd182939d2" title="Initializes the FGPropagate class after instantiation and prior to first execution." alt="" coords="289,201,449,243"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGLocation.html#a0cc2085643e91b6c1967abd934a88f30" title="This operator scales an ECEF position vector." alt="" coords="327,267,411,294"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGLocation.html#a1fa8578c916768dd42dc4a8525e371e1" title="This operator adds two ECEF position vectors." alt="" coords="325,318,413,345"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1FGLocation.html#aca8c26d489ffa520a6d00e3747282102" title="This operator substracts two ECEF position vectors." alt="" coords="328,369,411,395"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1FGInertial.html#a362f841fccd857fbf35aecd9f0c38418" title="Set the altitude above ground level." alt="" coords="299,420,439,461"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#a7b8b2775771dd307348987788fe1cf7c" title="Constructor." alt="" coords="5,104,199,145"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInitialCondition.html#a1fabb78d427d8f826631eb863fccce28" title="Resets the IC data structure to new values." alt="" coords="5,169,199,211"/>
+</map>

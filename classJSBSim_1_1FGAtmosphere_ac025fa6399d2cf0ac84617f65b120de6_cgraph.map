@@ -1,0 +1,8 @@
+<map id="SetTemperatureSL" name="SetTemperatureSL">
+<area shape="rect" id="node1" title="Sets the Sea Level temperature." alt="" coords="5,81,145,108"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAtmosphere.html#a13ab16e26033bc6cfd83c7c6e4edc6bd" title="Converts to Rankine from one of several unit systems." alt="" coords="202,5,342,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAtmosphere.html#aeaca37e1fe64398b1e759c854fbd2e23" title="Returns the density in slugs/ft^3." alt="" coords="225,56,319,83"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGAtmosphere.html#a9279f5c904e49a436c68665f57ab6be9" title="Returns the speed of sound in ft/sec." alt="" coords="209,107,335,133"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGAtmosphere.html#a7b9018c2e4e6cf80f088be631458cba5" title="Check that the temperature is within plausible boundaries." alt="" coords="193,157,351,184"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGJSBBase.html#ab1cd84a064daee36bb88b9052514da65" title="Converts from degrees Kelvin to degrees Rankine." alt="" coords="399,150,553,191"/>
+</map>

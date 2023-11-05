@@ -1,0 +1,7 @@
+<map id="GetCosEuler" name="GetCosEuler">
+<area shape="rect" id="node1" title="Retrieves cosine of the given euler angle." alt="" coords="247,111,349,138"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a4e35ac529197f0bbcd476f52eae08a40" title="Sets the initial sideslip angle." alt="" coords="5,5,199,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGInitialCondition.html#a57d4e26c7e34322f7e032b418cf8772f" title="Sets the initial crosswind speed." alt="" coords="5,71,199,112"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGInitialCondition.html#aade0339651dc5bf735d0fb105dc16cdf" title="Sets the initial headwind velocity." alt="" coords="5,136,199,177"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#aef47a274b700f482ad7c4e75aa8e204b" title="Sets the initial ground speed." alt="" coords="5,201,199,243"/>
+</map>

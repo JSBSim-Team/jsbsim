@@ -1,0 +1,4 @@
+<map id="ValidateTemperature" name="ValidateTemperature">
+<area shape="rect" id="node1" title="Check that the temperature is within plausible boundaries." alt="" coords="5,13,163,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html#ab1cd84a064daee36bb88b9052514da65" title="Converts from degrees Kelvin to degrees Rankine." alt="" coords="211,5,365,47"/>
+</map>

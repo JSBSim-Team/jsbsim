@@ -1,0 +1,4 @@
+<map id="operator*" name="operator*">
+<area shape="rect" id="node1" title="This operator scales an ECEF position vector." alt="" coords="5,5,89,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGLocation.html#a0697137d8c02a8b84f695d12317347a6" title="Sets the semimajor and semiminor axis lengths for this planet." alt="" coords="137,5,224,32"/>
+</map>

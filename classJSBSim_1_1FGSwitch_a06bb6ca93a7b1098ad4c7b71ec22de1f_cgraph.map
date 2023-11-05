@@ -1,0 +1,6 @@
+<map id="FGSwitch" name="FGSwitch">
+<area shape="rect" id="node1" title="Constructor." alt="" coords="5,64,88,91"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="136,5,355,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="147,57,343,98"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="136,122,355,163"/>
+</map>

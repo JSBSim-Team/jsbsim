@@ -1,0 +1,8 @@
+<map id="SetVequivalentKtsIC" name="SetVequivalentKtsIC">
+<area shape="rect" id="node1" title="Set equivalent airspeed initial condition in knots." alt="" coords="5,110,160,137"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInitialCondition.html#a346a168487e721ed793f896774dbc12c" title="Gets the initial altitude above sea level." alt="" coords="208,78,355,105"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGInitialCondition.html#aa27763a4d398c95e7b346b824153d11e" title="Sets the initial true airspeed." alt="" coords="224,135,339,162"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGLocation.html#aa71688869eede539bff376f43a78ea14" title="Get the distance from the center of the earth in feet." alt="" coords="411,5,561,47"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGLocation.html#ab0d754a471a7ec7280549a1ae1f93331" title="Get the sea level radius in feet below the current location." alt="" coords="408,71,564,112"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGQuaternion.html#ab0e5564df2ba8ac3f2db0a760e64c564" title="Backward transformation matrix." alt="" coords="403,136,569,177"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="SetIdx" name="SetIdx">
+<area shape="rect" id="node1" title="Set the idx for this input instance." alt="" coords="431,13,493,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGInput.html#a0b8d108c40ce8b06c3c849824ab18397" title="Load the input directives and adds a new input instance to the Input Manager list." alt="" coords="216,13,383,39"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFDMExec.html#ae3203eea8354c1b3caf53395a0a5f6a7" title="Loads an aircraft model." alt="" coords="5,5,168,47"/>
+</map>

@@ -1,0 +1,20 @@
+<map id="LoadModel" name="LoadModel">
+<area shape="rect" id="node1" title="Loads an aircraft model." alt="" coords="5,461,99,488"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#a6846ebc420e576f49054da588cbd811a" title="Builds a catalog of properties." alt="" coords="150,5,310,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#a0290668d182e1035b626b551f2b552e7" title="Searches for a specified element." alt="" coords="853,327,1072,353"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1Element.html#ac49b58ae4fd6170ac11c2ed21d882666" title="Searches for the next element as specified." alt="" coords="865,231,1061,273"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGPropulsion.html#ab32dff840c152a91c69e2848bca8aa3e" title="Retrieves the number of engines defined for the aircraft." alt="" coords="149,865,311,906"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGInput.html#a0b8d108c40ce8b06c3c849824ab18397" title="Load the input directives and adds a new input instance to the Input Manager list." alt="" coords="147,595,313,621"/>
+<area shape="rect" id="node11" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="861,573,1065,600"/>
+<area shape="rect" id="node13" href="$classJSBSim_1_1FGPropulsion.html#a0b8d108c40ce8b06c3c849824ab18397" title="Loads the propulsion system (engine[s] and tank[s])." alt="" coords="369,454,531,495"/>
+<area shape="rect" id="node15" href="$classJSBSim_1_1FGOutput.html#aac25385536a14c4bf0ae6aafa785e218" title="Load the output directives and adds a new output instance to the Output Manager list." alt="" coords="361,337,539,364"/>
+<area shape="rect" id="node18" href="$classJSBSim_1_1FGFDMExec.html#aa5b73357a888de44d9789c58c7b5afde" title="Loads the planet." alt="" coords="183,813,277,840"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1Element.html#a4fd4cb4d88046523b2cf729bf847e0e2" title="Retrieves an attribute." alt="" coords="853,435,1072,477"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGInputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the input directives from an XML file (implement the FGModel interface)." alt="" coords="371,529,529,570"/>
+<area shape="rect" id="node12" href="$classJSBSim_1_1FGInputType.html#a6f1370cfe2ed983e54af0720b6c0b3d5" title="Set the idx for this input instance." alt="" coords="371,646,529,687"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGModel.html#a42ce334dbfdce7ccb2a75f9d32d02065" title="Uploads this model in memory." alt="" coords="602,544,790,571"/>
+<area shape="rect" id="node10" href="$classJSBSim_1_1Element.html#aeed93f7828bb444f583f7940e4f0f8ad" title="Retrieves the element name." alt="" coords="863,653,1063,680"/>
+<area shape="rect" id="node14" href="$classJSBSim_1_1Element.html#abf31eea79e3de7547610926decbb7b3d" title="Searches for the named element and converts and returns the data belonging to it." alt="" coords="587,646,805,687"/>
+<area shape="rect" id="node16" href="$classJSBSim_1_1FGOutputType.html#a0b8d108c40ce8b06c3c849824ab18397" title="Init the output directives from an XML file (implement the FGModel interface)." alt="" coords="612,275,780,317"/>
+<area shape="rect" id="node17" href="$classJSBSim_1_1FGOutputType.html#a6f1370cfe2ed983e54af0720b6c0b3d5" title="Set the idx for this output instance." alt="" coords="612,158,780,199"/>
+</map>

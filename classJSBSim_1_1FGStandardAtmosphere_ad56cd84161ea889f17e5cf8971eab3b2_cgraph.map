@@ -1,0 +1,11 @@
+<map id="SetTemperatureSL" name="SetTemperatureSL">
+<area shape="rect" id="node1" title="Sets the Sea Level temperature, if it is to be different than the standard." alt="" coords="5,153,145,180"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#a80e5e0f5f758fe6c0c9a19e16245bf55" title="Sets the temperature at the supplied altitude, if it is to be different than the standard temperature..." alt="" coords="193,153,319,180"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGStandardAtmosphere.html#a86254b06f7adbbf9e4c61974adc2998c" title="Calculate (or recalculate) the atmospheric pressure breakpoints at the altitudes in the standard temp..." alt="" coords="588,5,805,32"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGStandardAtmosphere.html#ae1554711a7dac71879e2ebc4535411c1" title="Calculate the SL density and sound speed." alt="" coords="595,63,798,105"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGAtmosphere.html#a13ab16e26033bc6cfd83c7c6e4edc6bd" title="Converts to Rankine from one of several unit systems." alt="" coords="367,205,540,246"/>
+<area shape="rect" id="node6" href="$classJSBSim_1_1FGStandardAtmosphere.html#aa608e93e5a0e8bc846d343ab4ca84cff" title="Convert a geometric altitude to a geopotential altitude." alt="" coords="618,296,775,323"/>
+<area shape="rect" id="node7" href="$classJSBSim_1_1FGStandardAtmosphere.html#a5ce759e642bd6399e7d20a43913053a9" title="Returns the standard temperature in degrees Rankine at a specified altitude." alt="" coords="379,271,527,297"/>
+<area shape="rect" id="node8" href="$classJSBSim_1_1FGAtmosphere.html#af90cc0e0a48a2b251498780a103b2c44" title="Returns the actual, modeled temperature at the current altitude in degrees Rankine." alt="" coords="610,142,783,183"/>
+<area shape="rect" id="node9" href="$classJSBSim_1_1FGStandardAtmosphere.html#ab2239a97c1d62b0a27b4c94cc7c03e76" title="Sets the temperature bias to be added to the standard temperature at all altitudes." alt="" coords="377,103,530,129"/>
+</map>

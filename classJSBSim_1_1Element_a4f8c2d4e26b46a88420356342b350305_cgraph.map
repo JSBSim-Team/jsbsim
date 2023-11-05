@@ -1,0 +1,4 @@
+<map id="FindElementValueAsBoolean" name="FindElementValueAsBoolean">
+<area shape="rect" id="node1" title="Searches for the named element and returns the data belonging to it as a bool." alt="" coords="5,5,213,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="261,5,405,32"/>
+</map>

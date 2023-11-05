@@ -1,0 +1,8 @@
+.. _FGLinearization:
+
+===============
+FGLinearization
+===============
+
+.. autoclass:: jsbsim.FGLinearization
+   :members:

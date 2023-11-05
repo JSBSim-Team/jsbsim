@@ -1,0 +1,4 @@
+<map id="SetTemperature" name="SetTemperature">
+<area shape="rect" id="node1" title="Sets the temperature at the supplied altitude, if it is to be different than the standard temperature..." alt="" coords="193,5,319,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGStandardAtmosphere.html#ad56cd84161ea889f17e5cf8971eab3b2" title="Sets the Sea Level temperature, if it is to be different than the standard." alt="" coords="5,5,145,32"/>
+</map>

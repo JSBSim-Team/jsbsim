@@ -1,0 +1,4 @@
+<map id="SetQRadpsIC" name="SetQRadpsIC">
+<area shape="rect" id="node1" title="Sets the initial body axis pitch rate." alt="" coords="229,5,336,32"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGTrim.html#a6a5e26b6c78ad99b63d075c6acc70679" title="Execute the trim." alt="" coords="5,5,181,32"/>
+</map>

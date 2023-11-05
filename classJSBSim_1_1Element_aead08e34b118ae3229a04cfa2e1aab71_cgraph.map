@@ -1,0 +1,5 @@
+<map id="FindElementValueAsNumberConvertFromTo" name="FindElementValueAsNumberConvertFromTo">
+<area shape="rect" id="node1" title="Searches for the named element and converts and returns the data belonging to it." alt="" coords="5,23,212,65"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1Element.html#ac4d4a2672f9ed7d1da87e393c185d1f2" title="Converts the element data to a number." alt="" coords="260,5,404,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1Element.html#a947c5ac935ae1435154c6198c46fbb55" title="Return a string that contains a description of the location where the current XML element was read fr..." alt="" coords="288,56,376,83"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="MachFromVcalibrated" name="MachFromVcalibrated">
+<area shape="rect" id="node1" title="Calculate the Mach number from the calibrated airspeed.Based on the formulas in the US Air Force Airc..." alt="" coords="5,31,169,57"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGAuxiliary.html#acf544cf047ef348fe9c85a03e8654744" title="Compute the Mach number from the differential pressure (qc) and the static pressure." alt="" coords="217,5,408,32"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAuxiliary.html#a0d018c806ca338fd9b1c40716cce511d" title="Compute the total pressure in front of the Pitot tube." alt="" coords="243,56,382,83"/>
+</map>

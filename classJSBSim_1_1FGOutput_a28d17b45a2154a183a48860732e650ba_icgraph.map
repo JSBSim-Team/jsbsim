@@ -1,0 +1,5 @@
+<map id="SetStartNewOutput" name="SetStartNewOutput">
+<area shape="rect" id="node1" title="Reset the output prior to a restart of the simulation." alt="" coords="443,13,589,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGFDMExec.html#acdaa615364934636260de75dd19c6ca5" title="Resets the initial conditions object and prepares the simulation to run again." alt="" coords="216,5,395,47"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGFDMExec.html#a6c212ee12c5305eddfe4f735fb926f06" title="Default constructor." alt="" coords="5,5,168,47"/>
+</map>

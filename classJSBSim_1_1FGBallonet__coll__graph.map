@@ -1,0 +1,6 @@
+<map id="FGBallonet" name="FGBallonet">
+<area shape="rect" id="node1" title="Models a ballonet inside a gas cell." alt="" coords="55,199,150,225"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="5,109,99,136"/>
+<area shape="rect" id="node3" title=" " alt="" coords="23,5,81,32"/>
+<area shape="rect" id="node4" href="$structJSBSim_1_1FGGasCell_1_1Inputs.html" title=" " alt="" coords="123,109,186,136"/>
+</map>

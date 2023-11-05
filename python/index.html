@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>JSBSim Flight Dynamics Model &#8212; JSBSim 1.2.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=28c8e701" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=4c8675c2"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="FGAerodynamics" href="FGAerodynamics.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/logo_JSBSIM_globe.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="#">JSBSim</a></h1>
+
+
+
+<p class="blurb">An open source flight dynamics & control software library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=JSBSim-Team&repo=jsbsim&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/JSBSim-Team/jsbsim">
+    <img
+        alt="https://secure.travis-ci.org/JSBSim-Team/jsbsim.svg?branch=master"
+        src="https://secure.travis-ci.org/JSBSim-Team/jsbsim.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="FGAerodynamics.html">FGAerodynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGAircraft.html">FGAircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGAtmosphere.html">FGAtmosphere</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGAuxiliary.html">FGAuxiliary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGEngine.html">FGEngine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGFDMExec.html">FGFDMExec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGGroundReactions.html">FGGroundReactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGJSBBase.html">FGJSBBase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGLGear.html">FGLGear</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGLinearization.html">FGLinearization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGMassBalance.html">FGMassBalance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGPropagate.html">FGPropagate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGPropertyManager.html">FGPropertyManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGPropertyNode.html">FGPropertyNode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FGPropulsion.html">FGPropulsion</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="FGAerodynamics.html" title="next chapter">FGAerodynamics</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="jsbsim-flight-dynamics-model">
+<h1>JSBSim Flight Dynamics Model<a class="headerlink" href="#jsbsim-flight-dynamics-model" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h2>
+<p>JSBSim is an open source, multi-platform, object-oriented flight dynamics
+model (FDM) framework written in the C++ programming language. It is
+designed to support simulation modeling of any aerospace craft without the
+need for specific compiled and linked program code, instead relying on a
+versatile and powerful specification written in an XML format. The format is
+formally known as JSBSim-ML (JSBSim Markup Language).</p>
+<p>JSBSim (<a class="reference external" href="https://www.jsbsim.org">www.jsbsim.org</a>) was created initially for
+the open source FlightGear flight simulator (<a class="reference external" href="https://www.flightgear.org">www.flightgear.org</a>). JSBSim maintains the ability to run as a
+standalone executable in soft real-time, or batch mode. This is useful for
+running tests or sets of tests automatically using the internal scripting
+capability.</p>
+<p>JSBSim does not model specific aircraft in program code. The aircraft itself
+is defined in a file written in an XML-based format where the aircraft mass
+and geometric properties are specified. Additional statements define such
+characteristics as:</p>
+<ul class="simple">
+<li><p>Landing gear location and properties.</p></li>
+<li><p>Pilot eyepoint</p></li>
+<li><p>Additional point masses (passengers, cargo, etc.)</p></li>
+<li><p>Propulsion system (engines, fuel tanks, and “thrusters”)</p></li>
+<li><p>Flight control system</p></li>
+<li><p>Autopilot</p></li>
+<li><p>Aerodynamic stability derivatives and coefficients</p></li>
+</ul>
+<p>The configuration file format is set up to be easily comprehensible, for
+instance featuring textbook-like coefficients, which enables newcomers to
+become immediately fluent in describing vehicles, and requiring only prior
+basic theoretical aero knowledge.</p>
+<p>One of the more unique features of JSBSim is its method of modeling aircraft
+systems such as a flight control system, autopilot, electrical, etc. These
+are modeled by assembling strings of components that represent filters,
+switches, summers, gains, sensors, and so on.</p>
+<p>Another unique feature is displayed in the use of “properties”. Properties
+essentially expose chosen variables as nodes in a tree, in a directory-like
+hierarchy. This approach facilitates plugging in different FDMs (Flight
+Dynamics Model) into FlightGear, but it also is a fundamental tool in
+allowing a wide range of aircraft to be modeled, each having its own unique
+control system, aerosurfaces, and flight deck instrument panel. The use of
+properties allows all these items for a craft to be modeled and integrated
+without the need for specific and unique program source code.</p>
+<p>The equations of motion are modeled essentially as they are presented in
+aerospace textbooks for the benefit of student users, but quaternions are
+used to track orientation, avoiding “gimbal lock”. JSBSim can model the
+atmospheric flight of an aircraft, or the motion of a spacecraft in orbit.
+Coriolis and centripetal accelerations are incorporated into the EOM.</p>
+<p>JSBSim can output (log) data in a configurable way. Sets of data that are
+logically related can be selected to be output at a chosen rate, and
+individual properties can be selected for output. The output can be streamed
+to the console, and/or to a file (or files), and/or can be transmitted
+through a socket or sockets, or any combination of the aforementioned
+methods.</p>
+<p>JSBSim has been used in a variety of ways:</p>
+<ul class="simple">
+<li><p>For developing control laws for a sounding rocket</p></li>
+<li><p>For crafting an aircraft autopilot as part of a thesis project</p></li>
+<li><p>As a flight model for FlightGear</p></li>
+<li><p>As an FDM that drives motion base simulators for some
+commercial/entertainment simulators</p></li>
+</ul>
+</section>
+<section id="supported-platforms">
+<h2>Supported Platforms<a class="headerlink" href="#supported-platforms" title="Permalink to this heading">¶</a></h2>
+<p>JSBSim has been built on the following platforms:</p>
+<ul class="simple">
+<li><p>Linux (x86)</p></li>
+<li><p>Windows (MSVC, Cygwin, Mingwin)</p></li>
+<li><p>Mac OS X</p></li>
+<li><p>FreeBSD</p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<p>JSBSim has no external dependencies at present. No code is autogenerated.</p>
+</section>
+<section id="licensing">
+<h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this heading">¶</a></h2>
+<p>JSBSim is licensed under the terms of the Lesser GPL (LGPL)</p>
+</section>
+<section id="website">
+<h2>Website<a class="headerlink" href="#website" title="Permalink to this heading">¶</a></h2>
+<p>For more information, see the JSBSim web site:
+href=”<a class="reference external" href="https://www.jsbsim.org">https://www.jsbsim.org</a>”&gt;www.jsbsim.org.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2023, The JSBSim team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/JSBSim-Team/jsbsim" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

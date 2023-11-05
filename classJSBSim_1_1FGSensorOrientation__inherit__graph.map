@@ -1,0 +1,7 @@
+<map id="FGSensorOrientation" name="FGSensorOrientation">
+<area shape="rect" id="node1" title="Encapsulates a SensorOrientation capability for a sensor." alt="" coords="121,80,278,107"/>
+<area shape="rect" id="node3" href="$classJSBSim_1_1FGAccelerometer.html" title="Encapsulates a Accelerometer component for the flight control system." alt="" coords="5,155,140,181"/>
+<area shape="rect" id="node4" href="$classJSBSim_1_1FGGyro.html" title="Encapsulates a Gyro component for the flight control system." alt="" coords="164,155,235,181"/>
+<area shape="rect" id="node5" href="$classJSBSim_1_1FGMagnetometer.html" title="Encapsulates a magnetometer component for the flight control system." alt="" coords="259,155,395,181"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGJSBBase.html" title="JSBSim Base class." alt="" coords="153,5,246,32"/>
+</map>

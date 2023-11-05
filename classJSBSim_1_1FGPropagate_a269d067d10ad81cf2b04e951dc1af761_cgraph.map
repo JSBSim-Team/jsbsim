@@ -1,0 +1,4 @@
+<map id="GetEulerDeg" name="GetEulerDeg">
+<area shape="rect" id="node1" title="Retrieves the Euler angles (in degrees) that define the vehicle orientation." alt="" coords="5,13,109,39"/>
+<area shape="rect" id="node2" href="$classJSBSim_1_1FGQuaternion.html#a047e6db657595b4371db02dc26ecf823" title="Retrieves the Euler angles." alt="" coords="157,5,324,47"/>
+</map>
