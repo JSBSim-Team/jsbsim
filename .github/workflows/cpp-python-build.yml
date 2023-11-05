@@ -1,10 +1,6 @@
 name: C/C++ build
 
-on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
-  pull_request:
+on: [push, pull_request]
 
 env:
   release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
@@ -249,7 +245,7 @@ jobs:
           repository: CxxTest/cxxtest
           ref: '4.4'
           path: cxxtest
-      - name : Configure CxxTest
+      - name: Configure CxxTest
         working-directory: cxxtest
         run: |
           cp python/python3/cxxtest/*.py cxxtest/.
@@ -311,7 +307,7 @@ jobs:
           repository: CxxTest/cxxtest
           ref: '4.4'
           path: cxxtest
-      - name : Configure CxxTest
+      - name: Configure CxxTest
         working-directory: cxxtest
         run: |
           cp python/python3/cxxtest/*.py cxxtest/.
