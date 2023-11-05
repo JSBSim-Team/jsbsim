@@ -865,7 +865,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout $BRANCH_NAME
-          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
+          git commit -m "Bump stable release version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
           git push origin $BRANCH_NAME
 
       # Bump stable version of the `master` branch
@@ -877,13 +877,18 @@ jobs:
       - name: Bump stable version in README.md
         working-directory: _master
         run: |
+          # Increment the value of PROJECT_VERSION_PATCH
+          sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+).*/echo "\1\\"$((\2+1))\.dev1\\"\\)/ge' CMakeLists.txt
           # Update references to the current stable version in README.md
           sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
+          # Update the MSVC project files.
+          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSim.vcxproj
+          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSimForUnreal.vcxproj
           # Update the MSVC version
           sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
-          git commit -m "Bump stable release version" README.md matlab/README.md
+          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
           git push origin master
 
   Documentation:
