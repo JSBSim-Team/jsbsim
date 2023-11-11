@@ -512,6 +512,7 @@ void FGPropagate::ComputeOrbitalParameters(void)
   else {
     RightAscension = 0.0;
     N = {1., 0., 0.};
+    PerigeeArgument = 0.0;
   }
   R.Normalize();
   double vr = DotProduct(R, VState.vInertialVelocity);
@@ -519,8 +520,10 @@ void FGPropagate::ComputeOrbitalParameters(void)
   Eccentricity = eVector.Magnitude();
   if (Eccentricity > 1E-8) {
     eVector /= Eccentricity;
-    PerigeeArgument = acos(DotProduct(N, eVector))*radtodeg;
-    if (eVector(eZ) < 0) PerigeeArgument = 360. - PerigeeArgument;
+    if (abs(Inclination) > 1E-8) {
+      PerigeeArgument = acos(DotProduct(N, eVector)) * radtodeg;
+      if (eVector(eZ) < 0) PerigeeArgument = 360. - PerigeeArgument;
+    }
   }
   else
   {
