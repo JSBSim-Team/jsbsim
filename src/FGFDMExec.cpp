@@ -60,6 +60,8 @@ INCLUDES
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "initialization/FGTrim.h"
+#include "initialization/FGSimplexTrim.h"
+#include "initialization/FGLinearization.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
 #include "initialization/FGInitialCondition.h"
@@ -158,6 +160,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/do_simplex_trim", this, (iPMF)0, &FGFDMExec::DoSimplexTrim);
+  instance->Tie("simulation/do_linearization", this, &FGFDMExec::DoLinearization);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
   instance->Tie("simulation/randomseed", this, (iPMF)&FGFDMExec::SRand, &FGFDMExec::SRand);
@@ -1311,6 +1315,34 @@ void FGFDMExec::DoTrim(int mode)
     throw TrimFailureException("Trim Failed");
 
   trim_completed = 1;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoSimplexTrim(int mode)
+{
+  double saved_time;
+  if (Constructing) return;
+  if (mode < 0 || mode > JSBSim::tNone) {
+      cerr << endl << "Illegal trimming mode!" << endl << endl;
+      return;
+  }
+  saved_time = sim_time;
+  FGSimplexTrim trim(this, (JSBSim::TrimMode)mode);
+  Setsim_time(saved_time);
+  std::cout << "dT: " << dT << std::endl;
+  trim_completed = 1;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoLinearization(int mode)
+{
+  double saved_time;
+  if (Constructing) return;
+  saved_time = sim_time;
+  FGLinearization lin(this);
+  Setsim_time(saved_time);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
