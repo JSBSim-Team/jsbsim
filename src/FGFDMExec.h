@@ -474,12 +474,11 @@ public:
   * - tTurn
   * - tNone  */
   void DoTrim(int mode);
-  void DoSimplexTrim(int mode);
 
   /** Executes linearization with state-space output
    * You must trim first to get an accurate state-space model
    */
-  void DoLinearization(void);
+  void DoLinearization(int);
   
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
