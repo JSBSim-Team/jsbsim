@@ -33,42 +33,12 @@
       6: None
     -->
     
-    <event name="Trim">
+    <event name="Trim and linearize">
       <condition>
         simulation/sim-time-sec gt 0.1
       </condition>
       <set name="simulation/do_simple_trim" value="5"/>
-      <delay>0.0</delay>
-      <notify>
-        <property>propulsion/engine[0]/n2</property>
-        <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[0]/thrust-lbs</property>
-        <property>propulsion/engine[1]/thrust-lbs</property>
-        <property>velocities/vc-kts</property>
-        <property>velocities/vc-fps</property>
-        <property>velocities/vt-fps</property>
-        <property>attitude/phi-rad</property>
-        <property>attitude/theta-rad</property>
-        <property>attitude/psi-rad</property>
-      </notify>
-    </event>
-    
-    <event name="Linearization">
-      <condition> simulation/sim-time-sec gt 1.0 </condition>
-      <set name="simulation/do_linearization" value="1"/>
-      <delay>0.0</delay>
-      <notify>
-        <property>propulsion/engine[0]/n2</property>
-        <property>propulsion/engine[0]/thrust-lbs</property>
-        <property>propulsion/engine[1]/n2</property>
-        <property>propulsion/engine[1]/thrust-lbs</property>
-        <property>velocities/vc-kts</property>
-        <property>velocities/vc-fps</property>
-        <property>velocities/vt-fps</property>
-        <property>attitude/phi-rad</property>
-        <property>attitude/theta-rad</property>
-        <property>attitude/psi-rad</property>
-      </notify>
+      <set name="simulation/do_linearization" value="0"/>
     </event>
 
     <event name="Repeating Notify" persistent="true">
