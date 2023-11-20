@@ -479,7 +479,7 @@ public:
   /** Executes linearization with state-space output
    * You must trim first to get an accurate state-space model
    */
-  void DoLinearization(int mode);
+  void DoLinearization(void);
   
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
