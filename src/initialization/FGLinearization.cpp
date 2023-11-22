@@ -104,58 +104,6 @@ void FGLinearization::WriteScicoslab(std::string& path) const {
             << std::endl;
     scicos.close();
 
-    // Export A Matrix to CSV file - - - - - - - - - - - - -
-    std::ofstream aFile("a.csv");
-    aFile.precision(10);
-
-    // States Names
-    for (unsigned int i = 0; i < x_names.size(); i++)
-      aFile << x_names[i] << ",";
-    aFile << "\n";
-
-    // A matrix
-    for (int i = 0; i < A.size(); i++) {
-      for (int j = 0; j < A[i].size(); j++)
-        aFile << std::scientific << std::setw(width) << A[i][j] << ",";
-      aFile << "\n";
-    }
-    aFile.close();
-
-    cout << "\n\nState Matrix written to file. States:\n";
-    for (unsigned int i = 0; i < x_names.size(); i++)
-      cout << std::setw(width) << x_names[i] << ",";
-    cout << "\n";
-    for (unsigned int i = 0; i < x_units.size(); i++) {
-      cout << std::setw(width) << x_units[i] << ",";
-    }
-    cout << "\n";
-
-    // Export B Matrix to CSV file - - - - - - - - - - - - -
-    std::ofstream bFile("b.csv");
-    bFile.precision(10);
-
-    // Control Names
-    for (unsigned int i = 0; i < u_names.size(); i++)
-      bFile << u_names[i] << ",";
-    bFile << "\n";
-
-    // B matrix
-    for (int i = 0; i < B.size(); i++) {
-      for (int j = 0; j < B[i].size(); j++)
-        bFile << std::scientific << std::setw(width) << B[i][j] << ",";
-      bFile << "\n";
-    }
-    bFile.close();
-    
-    cout << "\n\nControl Matrix written to file. Control inputs:\n";
-    for (unsigned int i = 0; i < u_names.size(); i++)
-      cout << std::setw(width) << u_names[i] << ",";
-    cout << "\n";
-    for (unsigned int i = 0; i < u_units.size(); i++) {
-      cout << std::setw(width) << u_units[i] << ",";
-    }
-    cout << "\n";
-
 }
 
 } // JSBSim
