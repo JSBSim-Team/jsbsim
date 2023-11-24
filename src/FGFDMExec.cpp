@@ -60,6 +60,7 @@ INCLUDES
 #include "models/FGAuxiliary.h"
 #include "models/FGInput.h"
 #include "initialization/FGTrim.h"
+#include "initialization/FGLinearization.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
 #include "initialization/FGInitialCondition.h"
@@ -158,6 +159,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
   instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
   instance->Tie("simulation/randomseed", this, (iPMF)&FGFDMExec::SRand, &FGFDMExec::SRand);
@@ -1311,6 +1313,16 @@ void FGFDMExec::DoTrim(int mode)
     throw TrimFailureException("Trim Failed");
 
   trim_completed = 1;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoLinearization(int)
+{
+  double dt0 = this->GetDeltaT();
+  FGLinearization lin(this);
+  lin.WriteScicoslab();
+  this->Setdt(dt0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

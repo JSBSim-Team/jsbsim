@@ -475,6 +475,11 @@ public:
   * - tNone  */
   void DoTrim(int mode);
 
+  /** Executes linearization with state-space output
+   * You must trim first to get an accurate state-space model
+   */
+  void DoLinearization(int);
+  
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.

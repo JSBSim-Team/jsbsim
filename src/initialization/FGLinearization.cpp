@@ -87,9 +87,10 @@ void FGLinearization::WriteScicoslab() const {
 }
 
 void FGLinearization::WriteScicoslab(std::string& path) const {
-    int width=10;
+    int width=20;
+    int precision=10;
     std::ofstream scicos(path.c_str());
-    scicos.precision(10);
+    scicos.precision(precision);
     width=20;
     scicos  << std::scientific
             << aircraft_name << ".x0=..\n" << std::setw(width) << x0 << ";\n"
@@ -101,6 +102,8 @@ void FGLinearization::WriteScicoslab(std::string& path) const {
             << std::setw(width) << D << ");\n"
             << aircraft_name << ".tfm = ss2tf(" << aircraft_name << ".sys);\n"
             << std::endl;
+    scicos.close();
+
 }
 
 } // JSBSim
