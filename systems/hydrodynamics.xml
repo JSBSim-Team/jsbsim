@@ -22,7 +22,7 @@
 -->
 <system name="hydrodynamics">
 
- <documentation>
+ <description>
   This system computes forces and moments due to the hull's interaction
   with water, both hydrostatic and hydrodynamic, with respect to the
   hydrodynamic reference point (HRP).
@@ -217,7 +217,7 @@
      </direction>
     </force>
 
- </documentation>
+ </description>
 
  <!-- Inputs -->
 
@@ -612,10 +612,10 @@
  <channel name ="Hull position">
 
   <fcs_function name="hydro/height-agl-ft">
-   <documentation>
+   <description>
     Distance between the hydrodynamic reference point and the water surface.
     Not completely correctly computed yet.
-   </documentation>
+   </description>
    <function>
     <difference>
      <sum>
