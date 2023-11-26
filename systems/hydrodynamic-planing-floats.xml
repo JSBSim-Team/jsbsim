@@ -22,7 +22,7 @@
 -->
 <system name="hydrodynamic planing of floats">
 
- <documentation>
+ <description>
 
   This system depends on the generic hydrodynamics.xml system for JSBSim.
 
@@ -31,7 +31,7 @@
              title="Planing of Watercraft  Translated as NACA-TM-1139"
              date="1933/1948"/>
 
- </documentation>
+ </description>
 
  <!-- Model parameters -->
 
