@@ -6,7 +6,7 @@
  <description>This is a take off run for the Short S.23.</description>
 
  <use aircraft="Short_S23" initialize="reset00"/>
- <run start="0.0" end="200" dt="0.00833333">
+ <run start="0.0" end="200" dt="0.0010416667">
 
   <!--
       Take-off data from [Cassidy:2004:FE], page 156/149:
@@ -70,7 +70,7 @@
    <set name="inertia/pointmass-weight-lbs[8]" value="0.0"/>
    <set name="inertia/pointmass-weight-lbs[9]" value="1300.0"/>
    <!-- Set sea level to the terrain elevation. -->
-   <set name="hydro/water-level-ft">
+   <set name="hydro/environment/water-level-ft">
     <function>
      <property>ic/terrain-elevation-ft</property>
     </function>

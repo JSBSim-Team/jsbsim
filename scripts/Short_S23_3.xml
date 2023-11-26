@@ -9,7 +9,7 @@
  </description>
 
  <use aircraft="Short_S23" initialize="reset02"/>
- <run start="0.0" end="300" dt="0.00833333">
+ <run start="0.0" end="300" dt="0.0010416667">
 
   <!--
 
