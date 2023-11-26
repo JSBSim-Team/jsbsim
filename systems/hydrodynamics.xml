@@ -224,7 +224,7 @@
  <!-- Environment -->
  <property value="0.0">hydro/environment/water-level-ft</property>
  <property value="1.9736403">hydro/environment/rho-slug_ft3</property>
- <property value="1.1302106e-05">hydro/environment/kinematic-viscosity-ft2_sec</property> <!-- Sea water at 20 degC. -->
+ <property value="0.000011302106">hydro/environment/kinematic-viscosity-ft2_sec</property> <!-- Sea water at 20 degC. -->
 
  <property value="0.0">hydro/environment/current-from-north-fps</property>
  <property value="0.0">hydro/environment/current-from-east-fps</property>
