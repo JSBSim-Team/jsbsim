@@ -701,6 +701,7 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
 
+    def __init__(self, *args, **kwargs):
         # Dictionary cache of property nodes
         self.properties = { }
 
