@@ -14,8 +14,8 @@
   </orientation>
 
   <velocity unit="FT/SEC" frame="BODY">
-    <!--x> 23869.978340 </x--> <!-- For use with standard grav model -->
-    <x> 23889.145167 </x> <!-- For use with WGS84 grav model -->
+    <x> 23869.97834067227 </x> <!-- For use with WGS84 grav model -->
+    <!--<x> 23889.145167 </x--> <!-- For use with standard grav model -->
   </velocity>
 
   <attitude_rate unit="DEG/SEC" frame="ECI">
