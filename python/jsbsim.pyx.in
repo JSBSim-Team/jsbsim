@@ -674,6 +674,7 @@ cdef class FGFDMExec(FGJSBBase):
     """@Dox(JSBSim::FGFDMExec)"""
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
+    cdef dict properties           # Dictionary cache of property nodes
 
     def __cinit__(self, root_dir, FGPropertyManager pm_root=None, *args,
                   **kwargs):
@@ -700,10 +701,6 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_engine_path("engine")
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
-
-    def __init__(self, *args, **kwargs):
-        # Dictionary cache of property nodes
-        self.properties = { }
 
     def __dealloc__(self) -> None:
         del self.thisptr
