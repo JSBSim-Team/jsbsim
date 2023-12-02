@@ -702,6 +702,8 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
 
+        self.properties = { }
+
     def __dealloc__(self) -> None:
         del self.thisptr
 
