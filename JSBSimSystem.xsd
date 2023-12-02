@@ -17,7 +17,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="description" minOccurs="0"/>
         <xs:choice maxOccurs="unbounded">
           <xs:element name="property" type="property-with-value"/>
           <xs:element ref="channel"/>
@@ -34,7 +34,7 @@
   <xs:element name="channel">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="accelerometer" type="sensor-with-location"/>
           <xs:element ref="actuator"/>
@@ -66,7 +66,7 @@
           is not used for anything other than display.
         </xs:documentation></xs:annotation>
       </xs:attribute>
-      <xs:attribute name="execute" type="xs:string">
+      <xs:attribute name="execute" type="property-name">
         <xs:annotation><xs:documentation>
           The execute attribute value refers to a property that evaluates to a
           boolean indicating whether the channel should execute or not. If this
@@ -85,34 +85,34 @@
 
   <xs:complexType name="orientation">
     <xs:all>
-      <xs:element name="pitch" type="xs:decimal"/>
-      <xs:element name="roll" type="xs:decimal"/>
-      <xs:element name="yaw" type="xs:decimal"/>
+      <xs:element name="pitch" type="xs:double"/>
+      <xs:element name="roll" type="xs:double"/>
+      <xs:element name="yaw" type="xs:double"/>
     </xs:all>
-    <xs:attribute name="unit" type="angleUnit"/>
+    <xs:attribute name="unit" type="angle-unit"/>
   </xs:complexType>
 
   <xs:complexType name="sensor-with-location">
     <xs:all>
-      <xs:element name="location" minOccurs="1">
+      <xs:element name="location">
         <xs:complexType>
           <xs:all>
-            <xs:element name="x" type="xs:decimal"/>
-            <xs:element name="y" type="xs:decimal"/>
-            <xs:element name="z" type="xs:decimal"/>
+            <xs:element name="x" type="xs:double"/>
+            <xs:element name="y" type="xs:double"/>
+            <xs:element name="z" type="xs:double"/>
           </xs:all>
-          <xs:attribute name="unit" type="distanceUnit"/>
+          <xs:attribute name="unit" type="length-unit"/>
         </xs:complexType>
       </xs:element>
-      <xs:element name="axis" type="axis" minOccurs="1"/>
+      <xs:element name="axis" type="axis"/>
       <xs:element name="orientation" type="orientation" minOccurs="0"/>
       <xs:element ref="quantization" minOccurs="0"/>
-      <xs:element name="bias" type="xs:float" minOccurs="0"/>
-      <xs:element name="gain" type="xs:float" minOccurs="0"/>
-      <xs:element name="drift_rate" type="xs:float" minOccurs="0"/>
-      <xs:element name="lag" type="xs:float" minOccurs="0"/>
+      <xs:element name="bias" type="xs:double" minOccurs="0"/>
+      <xs:element name="gain" type="xs:double" minOccurs="0"/>
+      <xs:element name="drift_rate" type="xs:double" minOccurs="0"/>
+      <xs:element name="lag" type="xs:double" minOccurs="0"/>
       <xs:element ref="noise" minOccurs="0"/>
-      <xs:element name="delay" type="xs:float" minOccurs="0"/>
+      <xs:element name="delay" type="xs:double" minOccurs="0"/>
       <xs:element name="output" type="property-name"/>
     </xs:all>
     <xs:attribute name="name" use="required" type="xs:string"/>
@@ -126,12 +126,12 @@
         <xs:element name="axis" type="axis"/>
         <xs:element name="orientation" type="orientation"/>
         <xs:element ref="quantization" minOccurs="0"/>
-        <xs:element name="bias" type="xs:float" minOccurs="0"/>
-        <xs:element name="gain" type="xs:float" minOccurs="0"/>
-        <xs:element name="drift_rate" type="xs:float" minOccurs="0"/>
-        <xs:element name="lag" type="xs:float" minOccurs="0"/>
+        <xs:element name="bias" type="xs:double" minOccurs="0"/>
+        <xs:element name="gain" type="xs:double" minOccurs="0"/>
+        <xs:element name="drift_rate" type="xs:double" minOccurs="0"/>
+        <xs:element name="lag" type="xs:double" minOccurs="0"/>
         <xs:element ref="noise" minOccurs="0"/>
-        <xs:element name="delay" type="xs:float" minOccurs="0"/>
+        <xs:element name="delay" type="xs:double" minOccurs="0"/>
         <xs:element name="output" type="property-name"/>
       </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
@@ -142,11 +142,11 @@
   <xs:element name="angle">
     <xs:complexType>
       <xs:all>
-        <xs:element name="source_angle" type="angleProperty"/>
-        <xs:element name="target_angle" type="angleProperty"/>
+        <xs:element name="source_angle" type="angle-property"/>
+        <xs:element name="target_angle" type="angle-property"/>
       </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
-      <xs:attribute name="unit" type="angleUnit"/>
+      <xs:attribute name="unit" type="angle-unit"/>
     </xs:complexType>
   </xs:element>
 
@@ -170,9 +170,9 @@
   <xs:element name="summer">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string" maxOccurs="unbounded"/>
-        <xs:element name="bias" type="xs:float" minOccurs="0"/>
+        <xs:element name="bias" type="xs:double" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
         <xs:element name="output" minOccurs="0" type="xs:string" maxOccurs="unbounded"/>
       </xs:sequence>
@@ -193,17 +193,17 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
-        <xs:element ref="range" minOccurs="1" maxOccurs="1"/>
-        <xs:element name="gain" minOccurs="0" maxOccurs="1">
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
+        <xs:element ref="domain" minOccurs="0"/>
+        <xs:element ref="range"/>
+        <xs:element name="gain" minOccurs="0">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:choice>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -214,11 +214,11 @@
   <xs:element name="kinematic">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
         <xs:element ref="traverse"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -226,7 +226,7 @@
   <xs:element name="traverse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="setting" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="setting" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -244,14 +244,14 @@
   <xs:element name="lead_lag_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
         <xs:element name="c1" type="xs:double"/>
         <xs:element name="c2" type="xs:double" minOccurs="0"/>
         <xs:element name="c3" type="xs:double" minOccurs="0"/>
         <xs:element name="c4" type="xs:double"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -262,11 +262,11 @@
   <xs:element name="washout_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
-        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
+        <xs:element name="c1" type="xs:double"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -277,12 +277,12 @@
   <xs:element name="integrator">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
-        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="trigger" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
+        <xs:element name="c1" type="xs:double"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="trigger" type="xs:string" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -293,7 +293,7 @@
   <xs:element name="pid">
     <xs:complexType>
       <xs:all>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="kp" type="xs:string" minOccurs="0">
           <xs:annotation><xs:documentation>Specifies the proportional constant value or property.</xs:documentation></xs:annotation>
@@ -317,7 +317,7 @@
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-        <xs:element name="kd" type="xs:float" minOccurs="0">
+        <xs:element name="kd" type="xs:double" minOccurs="0">
           <xs:annotation><xs:documentation>The derivative control action gain.</xs:documentation></xs:annotation>
         </xs:element>
         <xs:element name="trigger" type="xs:string" minOccurs="0">
@@ -354,7 +354,7 @@
           </xs:annotation>
         </xs:element>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" type="property-name"/>
       </xs:all>
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="type" use="optional">
@@ -380,7 +380,7 @@
   <xs:element name="second_order_filter">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="c1" type="xs:double"/>
         <xs:element name="c2" type="xs:double"/>
@@ -388,8 +388,8 @@
         <xs:element name="c4" type="xs:double"/>
         <xs:element name="c5" type="xs:double"/>
         <xs:element name="c6" type="xs:double"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -400,15 +400,15 @@
   <xs:element name="pure_gain">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element name="gain" type="xs:string">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -419,16 +419,16 @@
   <xs:element name="scheduled_gain">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element ref="table"/>
-        <xs:element name="gain" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:element name="gain" type="xs:string" minOccurs="0">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -439,12 +439,12 @@
   <xs:element name="switch">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="0"/>
         <xs:element ref="default" minOccurs="0"/>
         <xs:element ref="test" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -458,14 +458,14 @@
         <xs:element name="description" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
         <xs:element ref="quantization"/>
-        <xs:element name="bias" type="xs:float"/>
-        <xs:element name="gain" type="xs:float"/>
-        <xs:element name="drift_rate" type="xs:float"/>
-        <xs:element name="lag" type="xs:float"/>
+        <xs:element name="bias" type="xs:double"/>
+        <xs:element name="gain" type="xs:double"/>
+        <xs:element name="drift_rate" type="xs:double"/>
+        <xs:element name="lag" type="xs:double"/>
         <xs:element ref="noise"/>
         <xs:element name="delay"/>
         <xs:element ref="clipto"/>
-        <xs:element name="output"/>
+        <xs:element name="output" type="property-name"/>
       </xs:choice>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -483,10 +483,10 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="input" minOccurs="1" type="xs:string"/>
-        <xs:element name="lag" type="xs:float" minOccurs="0"/>
-        <xs:element name="rate_limit" minOccurs="0" maxOccurs="1">
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="input" type="xs:string"/>
+        <xs:element name="lag" type="xs:double" minOccurs="0"/>
+        <xs:element name="rate_limit" minOccurs="0">
           <xs:annotation><xs:documentation>
             The rate limit can be specified as a numeric value or as a property.
             Further, an "incr" or "decr" sense attribute to specify which
@@ -516,11 +516,11 @@
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-        <xs:element name="bias" type="xs:float" minOccurs="0"/>
-        <xs:element name="deadband_width" type="xs:float" minOccurs="0"/>
-        <xs:element name="hysteresis_width" type="xs:float" minOccurs="0"/>
+        <xs:element name="bias" type="xs:double" minOccurs="0"/>
+        <xs:element name="deadband_width" type="xs:double" minOccurs="0"/>
+        <xs:element name="hysteresis_width" type="xs:double" minOccurs="0"/>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" type="property-name"/>
       </xs:all>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -531,11 +531,11 @@
   <xs:element name="deadband">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string"/>
-        <xs:element name="width" minOccurs="1"/>
+        <xs:element name="width"/>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -545,11 +545,11 @@
   <xs:element name="fcs_function">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="input" type="xs:string" minOccurs="0"/>
         <xs:element ref="function"/>
         <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="property-name"/>
       </xs:sequence>
       <xs:attribute name="name" use="optional" type="xs:string"/>
     </xs:complexType>
@@ -560,7 +560,7 @@
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="waypoint_input">
-          <xs:attribute name="unit" type="distanceUnit"/>
+          <xs:attribute name="unit" type="length-unit"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -570,7 +570,7 @@
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="waypoint_input">
-          <xs:attribute name="unit" type="angleUnit"/>
+          <xs:attribute name="unit" type="angle-unit"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -578,30 +578,30 @@
 
   <xs:complexType name="waypoint_input">
     <xs:all>
-      <xs:element name="target_latitude" minOccurs="1" type="angleProperty"/>
-      <xs:element name="target_longitude" minOccurs="1" type="angleProperty"/>
-      <xs:element name="source_latitude" minOccurs="1" type="angleProperty"/>
-      <xs:element name="source_longitude" minOccurs="1" type="angleProperty"/>
+      <xs:element name="target_latitude" type="angle-property"/>
+      <xs:element name="target_longitude" type="angle-property"/>
+      <xs:element name="source_latitude" type="angle-property"/>
+      <xs:element name="source_longitude" type="angle-property"/>
     </xs:all>
     <xs:attribute name="name" use="required" type="xs:string"/>
   </xs:complexType>
 
-  <xs:complexType name="angleProperty">
+  <xs:complexType name="angle-property">
     <xs:simpleContent>
       <xs:extension base="property-name">
-        <xs:attribute name="unit" type="angleUnit"/>
+        <xs:attribute name="unit" type="angle-unit"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:simpleType name="angleUnit">
+  <xs:simpleType name="angle-unit">
     <xs:restriction base="xs:token">
       <xs:enumeration value="DEG"/>
       <xs:enumeration value="RAD"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="distanceUnit">
+  <xs:simpleType name="length-unit">
     <xs:restriction base="xs:token">
       <xs:enumeration value="FT"/>
       <xs:enumeration value="IN"/>
@@ -611,23 +611,6 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!--
-
-  <xs:group name="functionGroup">
-    <xs:sequence>
-      <xs:element ref="input"/>
-      <xs:element name="function"/>
-    </xs:sequence>
-  </xs:group>
-
-  <xs:group name="deadbandGroup">
-    <xs:sequence>
-      <xs:element ref="input"/>
-      <xs:element ref="width"/>
-    </xs:sequence>
-  </xs:group>
-
--->
   <xs:element name="test">
     <xs:complexType>
       <xs:simpleContent>
@@ -645,7 +628,7 @@
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  <xs:element name="width" type="PositiveNumber">
+  <xs:element name="width" type="positive-number">
     <xs:annotation>
       <xs:documentation>The width value specifies the width of the deadband - i.e.
         the total span about zero where the input will be mapped to zero output.</xs:documentation>
@@ -660,7 +643,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
-        <xs:extension base="xs:float">
+        <xs:extension base="xs:double">
           <xs:attribute name="variation">
             <xs:simpleType>
               <xs:restriction base="xs:token">
@@ -686,8 +669,8 @@
     <xs:complexType>
       <xs:all>
         <xs:element name="bits" type="xs:int"/>
-        <xs:element name="min" type="xs:float"/>
-        <xs:element name="max" type="xs:float"/>
+        <xs:element name="min" type="xs:double"/>
+        <xs:element name="max" type="xs:double"/>
       </xs:all>
       <xs:attribute type="xs:string" name="name"/>
     </xs:complexType>
@@ -701,8 +684,8 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="max" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="min" minOccurs="0"/>
+        <xs:element name="max" minOccurs="0"/>
       </xs:all>
     </xs:complexType>
   </xs:element>
@@ -712,8 +695,8 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:float" default="-1"/>
-        <xs:element name="max" type="xs:float" default="1"/>
+        <xs:element name="min" type="xs:double" default="-1"/>
+        <xs:element name="max" type="xs:double" default="1"/>
       </xs:all>
     </xs:complexType>
   </xs:element>
@@ -723,8 +706,8 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:float" default="0"/>
-        <xs:element name="max" type="xs:float" default="0"/>
+        <xs:element name="min" type="xs:double" default="0"/>
+        <xs:element name="max" type="xs:double" default="0"/>
       </xs:all>
     </xs:complexType>
   </xs:element>
@@ -738,7 +721,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" ref="independentVar"/>
-        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="tableData" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="name" use="optional" type="xs:string"/>
     </xs:complexType>
@@ -757,10 +740,4 @@
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-
-  <xs:simpleType name="PositiveNumber">
-    <xs:restriction base="xs:double">
-      <xs:minInclusive value="0"/>
-    </xs:restriction>
-  </xs:simpleType>
 </xs:schema>

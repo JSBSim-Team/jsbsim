@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <!--<?xml-stylesheet type="text/xsl" href="XMLToDoc.xsl"?>-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="positive-number">
+    <xs:restriction base="xs:double">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="ON-OFF">
     <xs:restriction base="xs:token">
@@ -26,14 +31,14 @@
     </xs:documentation></xs:annotation>
     <xs:simpleContent>
       <xs:extension base="property-name">
-        <xs:attribute name="apply" type="xs:token"/>
+        <xs:attribute name="apply" type="property-name"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
 
   <xs:simpleType name="property-name">
     <xs:restriction base="xs:token">
-      <xs:pattern value="[A-Za-z//\[_\]0-9/-]*"/>
+      <xs:pattern value="/?([a-zA-Z0-9_-]+(\[[0-9]+\])?/)*[a-zA-Z0-9_-]+(\[[0-9]+\])?"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -44,7 +49,7 @@
   <xs:complexType name="property-with-value">
     <xs:simpleContent>
       <xs:extension base="property">
-        <xs:attribute name="value" type="xs:decimal" default="0.0"/>
+        <xs:attribute name="value" type="xs:double" default="0.0"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -119,9 +124,9 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="value" type="xs:decimal"/>
+      <xs:element name="value" type="xs:double"/>
       <xs:element name="property" type="property"/>
-      <xs:element name="v" type="xs:decimal"/>
+      <xs:element name="v" type="xs:double"/>
       <xs:element name="p" type="property"/>
     </xs:choice>
   </xs:group>
@@ -129,7 +134,7 @@
   <xs:element name="function">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
+        <xs:element name="description" minOccurs="0" type="xs:string">
           <xs:annotation><xs:documentation>
             A description of the function.
           </xs:documentation></xs:annotation>
