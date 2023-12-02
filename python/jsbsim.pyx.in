@@ -701,6 +701,9 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
 
+        # Dictionary cache of property nodes
+        self.properties = { }
+
     def __dealloc__(self) -> None:
         del self.thisptr
 
@@ -720,10 +723,17 @@ cdef class FGFDMExec(FGJSBBase):
 
     def __getitem__(self, key: str) -> float:
         _key = key.strip()
-        pm = self.get_property_manager()
-        if not pm.hasNode(_key):
-            raise KeyError("No property named {}".format(_key))
-        return self.get_property_value(_key)
+        try:
+            property_node = self.properties[_key]
+            return property_node.get_double_value()
+        except KeyError:
+            pm = self.get_property_manager()
+            property_node = pm.get_node(_key)
+            if property_node is not None:
+                self.properties[_key] = property_node
+                return property_node.get_double_value()
+            else:
+                raise KeyError(f'No property named {_key}')
 
     def __setitem__(self, key: str, value: float) -> None:
         self.set_property_value(key.strip(), value)
