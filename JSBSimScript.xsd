@@ -231,7 +231,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:all minOccurs="0">
-        <xs:element minOccurs="0" ref="function"/>
+        <xs:element name="function" minOccurs="0" type="function"/>
       </xs:all>
       <xs:attribute name="name" type="xs:token" use="required"/>
       <xs:attribute name="action" use="optional" default="FG_STEP">
@@ -275,32 +275,4 @@
       <xs:attribute name="logic" type="AND-OR" default="AND"/>
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="table">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="independentVar" />
-        <xs:element ref="tableData" maxOccurs="unbounded" />
-      </xs:sequence>
-      <xs:attribute name="name" use="optional" type="xs:token" />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="independentVar">
-    <xs:complexType mixed="true">
-      <xs:attribute name="lookup" type="xs:token" />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="tableData">
-    <xs:simpleType>
-      <xs:list itemType="xs:double"/>
-    </xs:simpleType>
-    <!-- <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute name="breakPoint" type="xs:double" use="optional" />
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType> -->
-  </xs:element>
-
 </xs:schema>
