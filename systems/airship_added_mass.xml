@@ -2,7 +2,7 @@
 
   Airship added/virtual mass model for JSBSim.
 
-    Copyright (C) 2008 - 2014  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2018  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,12 +35,15 @@
   Define the following properties:
     aero/constants/volume-ft3
     aero/constants/length-diameter-ft2          (length^2 + diameter^2)
-    aero/constants/added-mass/k-axial
-    aero/constants/added-mass/k-traverse
-    aero/constants/added-mass/k-rotational
-    aero/constants/added-mass/tweak-factor   (1.0 is the standard value)
+    aero/constants/added-mass/k-axial           (all three are positive but
+    aero/constants/added-mass/k-transverse       can be entered as negative
+    aero/constants/added-mass/k-rotational       for backwards compatibility)
+    aero/constants/added-mass/tweak-factor      (1.0 is the standard value)
 
-  Define the following external forces:
+    aero/constants/added-mass/k-traverse        (old misspelling, can be given
+                                                 to work with older FlightGear)
+
+  Define the following external forces and moments:
 
     <force name="added-mass-bx" frame="BODY">
      <location unit="">
@@ -72,6 +75,31 @@
       <z> 1.0 </z>
      </direction>
     </force>
+
+    <moment name="added-mass-pitch" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 0.0 </x>
+      <y> 1.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </moment>
+    <moment name="added-mass-roll" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </moment>
+    <moment name="added-mass-yaw" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 1.0 </z>
+     </direction>
+    </moment>
+
+  The old deprecated force based external moment implementation below is still
+  supported.
 
     <force name="added-mass-pitch[0]" frame="BODY">
      <location unit="">
@@ -145,14 +173,32 @@
 
  </channel>
 
+ <property>aero/constants/added-mass/k-transverse</property>
+ <property>aero/constants/added-mass/k-traverse</property>
+ <channel name="backward-compatibility">
+
+  <!-- Allow vehicles still using the old misspelled k-traverse coefficient. -->
+  <switch name="aero/constants/added-mass/k-transverse-final">
+   <default value="aero/constants/added-mass/k-transverse"/>
+   <test logic="AND" value="aero/constants/added-mass/k-transverse">
+     aero/constants/added-mass/k-transverse NE 0.0
+   </test>
+   <test logic="AND" value="aero/constants/added-mass/k-traverse">
+     aero/constants/added-mass/k-traverse NE 0.0
+   </test>
+  </switch>
+
+ </channel>
+
  <channel name="translational">
 
   <fcs_function name="aero/added-mass/force-bx-lbs">
    <function>
     <product>
+     <value>-1.0</value>
      <property> aero/added-mass/active </property>
      <property> atmosphere/rho-slugs_ft3 </property>
-     <property> aero/constants/added-mass/k-axial </property>
+     <abs><property> aero/constants/added-mass/k-axial </property></abs>
      <property> aero/constants/volume-ft3 </property>
      <property> accelerations/udot-ft_sec2 </property>
     </product>
@@ -163,9 +209,10 @@
   <fcs_function name="aero/added-mass/force-by-lbs">
    <function>
     <product>
+     <value>-1.0</value>
      <property> aero/added-mass/active </property>
      <property> atmosphere/rho-slugs_ft3 </property>
-     <property> aero/constants/added-mass/k-traverse </property>
+     <abs><property> aero/constants/added-mass/k-transverse-final </property></abs>
      <property> aero/constants/volume-ft3 </property>
      <property> accelerations/vdot-ft_sec2 </property>
     </product>
@@ -176,9 +223,10 @@
   <fcs_function name="aero/added-mass/force-bz-lbs">
    <function>
     <product>
+     <value>-1.0</value>
      <property> aero/added-mass/active </property>
      <property> atmosphere/rho-slugs_ft3 </property>
-     <property> aero/constants/added-mass/k-traverse </property>
+     <abs><property> aero/constants/added-mass/k-transverse-final </property></abs>
      <property> aero/constants/volume-ft3 </property>
      <property> accelerations/wdot-ft_sec2 </property>
     </product>
@@ -194,9 +242,9 @@
    <function>
     <product>
      <property> aero/added-mass/active </property>
-     <value> 0.05 </value>
+     <value>-0.05 </value>
      <property> atmosphere/rho-slugs_ft3 </property>
-     <property> aero/constants/added-mass/k-rotational </property>
+     <abs><property> aero/constants/added-mass/k-rotational </property></abs>
      <property> aero/constants/volume-ft3 </property>
      <property> aero/constants/length-diameter-ft2 </property>
      <property> accelerations/qdot-rad_sec2 </property>
@@ -208,9 +256,9 @@
    <function>
     <product>
      <property> aero/added-mass/active </property>
-     <value> 0.05 </value>
-     <property> aero/constants/added-mass/k-rotational </property>
+     <value>-0.05 </value>
      <property> atmosphere/rho-slugs_ft3 </property>
+     <abs><property> aero/constants/added-mass/k-rotational </property></abs>
      <property> aero/constants/volume-ft3 </property>
      <property> aero/constants/length-diameter-ft2 </property>
      <property> accelerations/rdot-rad_sec2 </property>
@@ -218,23 +266,33 @@
    </function>
   </fcs_function>
 
-  <pure_gain name="aero/added-mass/pitch-moment-force-lbs[0]">
+  <pure_gain name="aero/added-mass/pitch-moment/moment-lbsft">
+   <input>aero/added-mass/pitch-moment-lbsft</input>
+   <gain>1.0</gain>
+   <output>external_reactions/added-mass-pitch/magnitude-lbsft</output>
+  </pure_gain>
+  <pure_gain name="aero/added-mass/pitch-moment/force-lbs[0]">
    <input> aero/added-mass/pitch-moment-lbsft </input>
    <gain>-0.5</gain>
    <output> external_reactions/added-mass-pitch[0]/magnitude </output>
   </pure_gain>
-  <pure_gain name="aero/added-mass/pitch-moment-force-lbs[1]">
+  <pure_gain name="aero/added-mass/pitch-moment/force-lbs[1]">
    <input> aero/added-mass/pitch-moment-lbsft </input>
    <gain>0.5</gain>
    <output> external_reactions/added-mass-pitch[1]/magnitude </output>
   </pure_gain>
 
-  <pure_gain name="aero/added-mass/yaw-moment-force-lbs[0]">
+  <pure_gain name="aero/added-mass/yaw-moment/moment-lbsft">
+   <input>aero/added-mass/yaw-moment-lbsft</input>
+   <gain>1.0</gain>
+   <output>external_reactions/added-mass-yaw/magnitude-lbsft</output>
+  </pure_gain>
+  <pure_gain name="aero/added-mass/yaw-moment/force-lbs[0]">
    <input> aero/added-mass/yaw-moment-lbsft </input>
    <gain>-0.5</gain>
    <output> external_reactions/added-mass-yaw[0]/magnitude </output>
   </pure_gain>
-  <pure_gain name="aero/added-mass/yaw-moment-force-lbs[1]">
+  <pure_gain name="aero/added-mass/yaw-moment/force-lbs[1]">
    <input> aero/added-mass/yaw-moment-lbsft </input>
    <gain>0.5</gain>
    <output> external_reactions/added-mass-yaw[1]/magnitude </output>
