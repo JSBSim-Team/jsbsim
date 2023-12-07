@@ -4,8 +4,8 @@
     This file sets up the aircraft to start off
     from the runway in preparation for takeoff.
   -->
-  <latitude unit="DEG">     37.23471 </latitude>
-  <longitude unit="DEG">  -122.04400 </longitude>
+  <latitude unit="DEG">     36.815   </latitude>
+  <longitude unit="DEG">  -122.00    </longitude>
   <elevation   unit="FT">   31.0     </elevation>
   <altitudeAGL unit="FT">   20.0     </altitudeAGL>
 
