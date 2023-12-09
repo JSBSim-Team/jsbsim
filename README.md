@@ -190,6 +190,10 @@ print(jsbsim.get_default_root_dir())
 
 A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
 
+# Contributing Source Code Changes
+
+If you would like to contribute source code changes please take a look at the [Contributing Source Code Changes to JSBSim](https://github.com/JSBSim-Team/jsbsim/wiki/Contributing-Source-Code-Changes-to-JSBSim) Wiki page for instructions on how to go about contributing.
+
 # Contact
 
 For more information about JSBSim, you can contact the development team on [GitHub discussion](https://github.com/JSBSim-Team/jsbsim/discussions) or submit tickets on <https://github.com/JSBSim-Team/jsbsim/issues>
