@@ -129,26 +129,23 @@ cdef class FGPropagate:
 cdef class FGPropertyNode:
     """@Dox(JSBSim::FGPropertyNode)"""
 
-    cdef c_FGPropertyNode* thisptr
-
-    def __cinit__(self, *args, **kwargs):
-        self.thisptr = NULL
+    cdef SGSharedPtr[c_FGPropertyNode] thisptr
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
-        return self.thisptr is not NULL
+        return self.thisptr.ptr() is not NULL
 
     def __str__(self) -> str:
-        if self.thisptr is not NULL:
+        if self.thisptr.ptr() is not NULL:
             return f"Property '{self.get_fully_qualified_name()}' (value: {self.get_double_value()})"
         return "Uninitialized property"
 
     cdef __intercept_invalid_pointer(self):
-        if self.thisptr is NULL:
+        if self.thisptr.ptr() is NULL:
             raise BaseError("Object is not initialized")
 
     cdef __validate_node_pointer(self, create: bool):
-        if self.thisptr is not NULL:
+        if self.thisptr.ptr() is not NULL:
             return self
         else:
             if create:
@@ -156,28 +153,31 @@ cdef class FGPropertyNode:
             return None
 
     def get_name(self) -> str:
-        """@Dox(JSBSim::FGPropertyManager::GetName)"""
+        """@Dox(JSBSim::FGPropertyNode::GetName)"""
         self.__intercept_invalid_pointer()
-        return self.thisptr.GetName().decode()
+        return self.thisptr.ptr().GetName().decode()
 
     def get_fully_qualified_name(self) -> str:
-        """@Dox(JSBSim::FGPropertyManager::GetFullyQualifiedName)"""
+        """@Dox(JSBSim::FGPropertyNode::GetFullyQualifiedName)"""
         self.__intercept_invalid_pointer()
-        return self.thisptr.GetFullyQualifiedName().decode()
+        return self.thisptr.ptr().GetFullyQualifiedName().decode()
 
     def get_node(self, path: str, create: bool = False) -> Optional[FGPropertyNode]:
+        """@Dox(JSBSim::FGPropertyNode::GetNode)"""
         self.__intercept_invalid_pointer()
         node = FGPropertyNode()
-        node.thisptr = self.thisptr.GetNode(path.encode(), create)
+        node.thisptr = self.thisptr.ptr().GetNode(path.encode(), create)
         return node.__validate_node_pointer(create)
 
     def get_double_value(self) -> float:
+        """@Dox(SGPropertyNode::getDoubleValue)"""
         self.__intercept_invalid_pointer()
-        return self.thisptr.getDoubleValue()
+        return self.thisptr.ptr().getDoubleValue()
 
     def set_double_value(self, value: float) -> None:
+        """@Dox(SGPropertyNode::setDoubleValue)"""
         self.__intercept_invalid_pointer()
-        self.thisptr.setDoubleValue(value)
+        self.thisptr.ptr().setDoubleValue(value)
 
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
@@ -192,7 +192,7 @@ cdef class FGPropertyManager:
                 node.__intercept_invalid_pointer()
             except BaseError:
                 raise BaseError("Cannot instantiate FGPropertyManager with an uninitialized property node.")
-            self.thisptr.reset(new c_FGPropertyManager(node.thisptr))
+            self.thisptr.reset(new c_FGPropertyManager(node.thisptr.ptr()))
 
         if not self.thisptr:
             raise MemoryError()
