@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<runscript name="free flight test">
+ <!--
+   This run is for testing lighter-than-air aircraft.
+ -->
+
+ <use aircraft="Submarine_Scout" initialize="reset00"/>
+ <run start="0.0" end="480.1" dt="0.0020833333">
+
+  <property value="0">simulation/notify-time-trigger</property>
+
+  <event name="Initialization 1">
+   <notify>
+    <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
+    <property>inertia/weight-lbs</property>
+   </notify>
+   <condition>
+     simulation/sim-time-sec GE 0.5
+   </condition>
+   <set name="inertia/pointmass-weight-lbs[0]"
+        value="25.0"/>
+  </event>
+
+  <event name="Initialization 2">
+   <notify>
+    <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
+    <property>inertia/weight-lbs</property>
+   </notify>
+   <condition>
+     simulation/sim-time-sec GE 1.0
+   </condition>
+   <set name="fcs/ballonet-in-valve-cmd-norm[0]" value="0.2"/>
+   <set name="fcs/ballonet-in-valve-cmd-norm[1]" value="0.2"/>
+   <set name="fcs/ballonet-out-valve-cmd-norm[0]" value="0.1"/>
+   <set name="fcs/ballonet-out-valve-cmd-norm[1]" value="0.1"/>
+  </event>
+
+  <event name="Engine start 1">
+   <description>Start the engine</description>
+   <condition>
+    simulation/sim-time-sec GE 2.0
+   </condition>
+   <notify/>
+   <set name="fcs/advance-cmd-norm[0]" value="0.0"/>
+   <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+   <set name="fcs/mixture-cmd-norm[0]" value="1.0"/>
+   <set name="propulsion/magneto_cmd"  value="3"/>
+   <set name="propulsion/starter_cmd"  value="1"/>
+  </event>
+  <event name="Engine start 2">
+   <description>The engine has started</description>
+   <condition>
+    propulsion/engine[0]/engine-rpm GE 400
+   </condition>
+   <notify>
+    <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[0]/power-hp</property>
+   </notify>
+   <set name="propulsion/starter_cmd"  value="0"/>
+   <set name="fcs/throttle-cmd-norm"   value="0.75"/>
+   <set name="ap/yaw-damper-active"    value="1.0"/>
+  </event>
+
+  <event name="Stay at fixed altitude 1">
+   <notify>
+    <property>fcs/ballonet-in-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-in-valve-cmd-norm[1]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[1]</property>
+   </notify>
+   <condition>
+     simulation/sim-time-sec GE 30.0
+   </condition>
+   <set name="fcs/ballonet-in-valve-cmd-norm[0]" value="1.0"/>
+   <set name="ap/pitch-setpoint-deg" value="1.7"/>
+   <set name="ap/pitch-hold-active" value="1.0"/>
+  </event>
+  <event name="Stay at fixed altitude 2">
+   <notify>
+    <property>fcs/elevator-pos-norm</property>
+    <property>fcs/ballonet-in-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-in-valve-cmd-norm[1]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[1]</property>
+   </notify>
+   <condition>
+     simulation/sim-time-sec GE 250.0
+   </condition>
+   <set name="fcs/ballonet-in-valve-cmd-norm[0]" value="0.2"/>
+   <set name="fcs/ballonet-in-valve-cmd-norm[1]" value="0.2"/>
+   <set name="fcs/ballonet-out-valve-cmd-norm[0]" value="0.1"/>
+   <set name="fcs/ballonet-out-valve-cmd-norm[1]" value="0.1"/>
+  </event>
+
+<!--
+  <event name="Nose up">
+   <description>Give some nose up elevator</description>
+   <notify/>
+   <condition>
+     sim-time-sec >= 400.0
+   </condition>
+   <set name="fcs/elevator-cmd-norm" value="-0.4"/>
+   <set name="fcs/throttle-cmd-norm"
+        value="0.2"
+        action="FG_RAMP" tc ="10.0"/>
+  </event>
+
+  <event name="Start turn">
+   <notify/>
+   <condition>
+     sim-time-sec >= 600.0
+   </condition>
+   <set name="fcs/rudder-cmd-norm"
+        value="-1.0"/>
+  </event>
+
+  <event name="Neutral rudder">
+   <notify/>
+   <condition>
+     sim-time-sec >= 615.0
+   </condition>
+   <set name="fcs/rudder-cmd-norm"
+        value="0.0"/>
+  </event>
+
+  <event name="Opposite rudder">
+   <notify/>
+   <condition>
+     sim-time-sec >= 800.0
+   </condition>
+   <set name="fcs/rudder-cmd-norm"
+        value="0.5"/>
+  </event>
+
+  <event name="Neutral rudder">
+   <notify/>
+   <condition>
+     sim-time-sec >= 815.0
+   </condition>
+   <set name="fcs/rudder-cmd-norm"
+        value="0.0"/>
+  </event>
+-->
+  <event name="Time Notify" persistent="true">
+   <description>Output message at 10 second intervals</description>
+   <notify>
+    <property>position/distance-from-start-mag-mt</property>
+    <property>velocities/vc-kts</property>
+    <property>position/h-agl-ft</property>
+    <property>velocities/u-fps</property>
+    <property>velocities/v-fps</property>
+    <property>velocities/w-fps</property>
+    <property>attitude/phi-deg</property>
+    <property>attitude/theta-deg</property>
+    <property>attitude/psi-deg</property>
+    <property>aero/alpha-deg</property>
+    <property>aero/beta-deg</property>
+    <property>inertia/cg-x-in</property>
+    <property>inertia/cg-y-in</property>
+    <property>inertia/cg-z-in</property>
+    <property>fcs/ballonet-in-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-in-valve-cmd-norm[1]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[0]</property>
+    <property>fcs/ballonet-out-valve-cmd-norm[1]</property>
+    <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
+    <property>inertia/weight-lbs</property>
+    <property>buoyant_forces/gas-cell/contents-mol</property>
+    <property>buoyant_forces/gas-cell/pressure-psf</property>
+    <property>buoyant_forces/gas-cell/ballonet[0]/pressure-psf</property>
+    <property>buoyant_forces/gas-cell/ballonet[1]/pressure-psf</property>
+    <property>buoyant_forces/gas-cell/volume-ft3</property>
+    <property>buoyant_forces/gas-cell/ballonet[0]/volume-ft3</property>
+    <property>buoyant_forces/gas-cell/ballonet[1]/volume-ft3</property>
+    <property>fcs/rudder-pos-norm</property>
+    <property>fcs/elevator-pos-norm</property>
+    <property>fcs/throttle-pos-norm</property>
+    <property>propulsion/engine[0]/engine-rpm</property>
+    <property>propulsion/engine[0]/power-hp</property>
+    <property>ap/pitch-error-rad</property>
+   </notify>
+   <condition> simulation/sim-time-sec GE simulation/notify-time-trigger </condition>
+   <set name="simulation/notify-time-trigger" value="10" type="FG_DELTA"/>
+  </event>
+
+ </run>
+</runscript>
