@@ -1,0 +1,254 @@
+<?xml version="1.0"?>
+<!--
+
+  Submarine Scout airship flight model for JSBSim.
+
+    Copyright (C) 2007 - 2011  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+-->
+<system name="air-and-gas-control-jsbsim">
+
+ <documentation>
+   "Two ballonets are provided, one forward and one aft, the capacity
+   of each being 6,375 cubic feet.  The supply of air for filling
+   these is taken from the propeller draught by a slanting aluminium
+   tube to the underside of the envelope, where it meets a
+   longitudinal fabric hose which connects the two ballonet air
+   inlets.  Non-return fabric valves known as crab-pots are fitted in
+   this fabric hose on either side of their junction with the air
+   scoop.  Two automatic air valves are fitted to the underside of the
+   envelope, one for each ballonet.  The air pressure tends to open
+   the valve instead of keeping it shut and to counteract this the
+   spring of the valve is inside the envelope.  The springs are set to
+   open at a pressure of 25 to 28 mm."  [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "The valve cords are led to the pilot's seat through eyes attached
+   to the envelope."  [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "Two gas valves are also fitted, one on the top of the envelope,
+   the other at the bottom.  The bottom gas valve spring is set to
+   open at 30 to 35 mm. pressure, the top valve is hand controlled
+   only."   [Whale:1919:BA] on the S.S.B.E. 2C.
+
+   "One ripping panel is fitted, which is situated on the top of the
+   envelope towards the nose.  It has a length of 14 feet 5 inches and
+   a breadth of about 8 inches."  [Whale:1919:BA] on the S.S.B.E. 2C.
+ </documentation>
+ <limitation>
+   The slip stream pressure calculation does not take the direction of the
+   relative wind into account.
+ </limitation>
+
+ <!-- Pilot inputs. -->
+ <property value="0.0">fcs/gas-valve-cmd-norm[0]</property>
+ <property value="0.0">fcs/ballonet-out-valve-cmd-norm[0]</property>
+ <property value="0.0">fcs/ballonet-out-valve-cmd-norm[1]</property>
+ <property value="0.0">fcs/ballonet-in-valve-cmd-norm[0]</property>
+ <property value="0.0">fcs/ballonet-in-valve-cmd-norm[1]</property>
+ <property value="0.0">fcs/rip-cord-cmd-norm</property>
+
+ <!-- Outputs (forward declared in the buoyant forces section). -->
+ <!--
+ <property value="0.0">ballonets/in-flow-ft3ps[0]</property>
+ <property value="0.0">ballonets/in-flow-ft3ps[1]</property>
+ -->
+
+ <!-- Threshold values for the automatic relief valves. -->
+ <property value="7.168565">gas/automatic-valve-threshold-psf</property>
+ <property value="5.1204036">ballonets/automatic-valve-threshold-psf[0]</property>
+ <property value="5.1204036">ballonets/automatic-valve-threshold-psf[1]</property>
+
+ <documentation>
+  Range [0, 1].
+ </documentation>
+
+ <channel name="Gas valves">
+
+  <switch name="gas/ripped-sample-hold">
+   <default value="fcs/rip-cord-cmd-norm"/>
+   <test logic="AND" value="gas/ripped-sample-hold">
+    gas/ripped-sample-hold GE 1.0
+   </test>
+  </switch>
+
+  <fcs_function name="gas/relief-cmd-norm">
+   <function>
+    <product>
+     <value>1.0240807</value>
+     <difference>
+      <difference>
+       <property>buoyant_forces/gas-cell/pressure-psf</property>
+       <property>atmosphere/P-psf</property>
+      </difference>
+      <property>gas/automatic-valve-threshold-psf</property>
+     </difference>
+    </product>
+   </function>
+   <clipto>
+    <min>0</min>
+    <max>1</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="gas/valve-pos-norm">
+   <function>
+    <sum>
+     <property>fcs/gas-valve-cmd-norm</property>
+     <property>gas/relief-cmd-norm</property>
+     <product>
+      <value>100.0</value>
+      <property>gas/ripped-sample-hold</property>
+     </product>
+    </sum>
+   </function>
+   <output>buoyant_forces/gas-cell/valve_open</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Ballonet out-flow">
+
+  <fcs_function name="ballonets/relief-cmd-norm[0]">
+   <function>
+    <product>
+     <value>1.0240807</value>
+     <difference>
+      <difference>
+       <property>buoyant_forces/gas-cell/ballonet[0]/pressure-psf</property>
+       <property>atmosphere/P-psf</property>
+      </difference>
+      <property>ballonets/automatic-valve-threshold-psf[0]</property>
+     </difference>
+    </product>
+   </function>
+   <clipto>
+    <min>0</min>
+    <max>1</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="ballonets/relief-cmd-norm[1]">
+   <function>
+    <product>
+     <value>1.0240807</value>
+     <difference>
+      <difference>
+       <property>buoyant_forces/gas-cell/ballonet[1]/pressure-psf</property>
+       <property>atmosphere/P-psf</property>
+      </difference>
+      <property>ballonets/automatic-valve-threshold-psf[1]</property>
+     </difference>
+    </product>
+   </function>
+   <clipto>
+    <min>0</min>
+    <max>1</max>
+   </clipto>
+  </fcs_function>
+
+  <fcs_function name="ballonets/valve-pos-norm[0]">
+   <function>
+    <sum>
+     <property>fcs/ballonet-out-valve-cmd-norm[0]</property>
+     <property>ballonets/relief-cmd-norm[0]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0</min>
+    <max>1</max>
+   </clipto>
+   <output>buoyant_forces/gas-cell/ballonet[0]/valve_open</output>
+  </fcs_function>
+
+  <fcs_function name="ballonets/valve-pos-norm[1]">
+   <function>
+    <sum>
+     <property>fcs/ballonet-out-valve-cmd-norm[1]</property>
+     <property>ballonets/relief-cmd-norm[1]</property>
+    </sum>
+   </function>
+   <clipto>
+    <min>0</min>
+    <max>1</max>
+   </clipto>
+   <output>buoyant_forces/gas-cell/ballonet[1]/valve_open</output>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Ballonet air supply">
+
+  <fcs_function name="ballonets/slip-stream-pressure-psf">
+   <function>
+    <sum>
+     <property>atmosphere/P-psf</property>
+     <product>
+      <value>0.5</value>
+      <property>atmosphere/rho-slugs_ft3</property>
+      <pow>
+       <sum>
+        <property>velocities/u-aero-fps</property>
+        <property>propulsion/engine[0]/prop-induced-velocity_fps</property>
+       </sum>
+       <value>2.0</value>
+      </pow>
+     </product>
+    </sum>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[0]">
+   <function>
+    <product>
+     <value>20.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+     <max>
+      <value>0.0</value>
+      <product>
+       <property>fcs/ballonet-in-valve-cmd-norm[0]</property>
+       <difference>
+        <property>ballonets/slip-stream-pressure-psf</property>
+        <property>buoyant_forces/gas-cell/ballonet[0]/pressure-psf</property>
+       </difference>
+      </product>
+     </max>
+    </product>
+   </function>
+   <output>ballonets/in-flow-ft3ps[0]</output>
+  </fcs_function>
+
+  <fcs_function name="ballonets/crab-pot-valve-flow-ft3ps[1]">
+   <function>
+    <product>
+     <value>20.0</value> <!-- Inflow valve coefficient ft4*sec/slug -->
+     <max>
+      <value>0.0</value>
+      <product>
+       <property>fcs/ballonet-in-valve-cmd-norm[1]</property>
+       <difference>
+        <property>ballonets/slip-stream-pressure-psf</property>
+        <property>buoyant_forces/gas-cell/ballonet[1]/pressure-psf</property>
+       </difference>
+      </product>
+     </max>
+    </product>
+   </function>
+   <output>ballonets/in-flow-ft3ps[1]</output>
+  </fcs_function>
+
+ </channel>
+
+</system>
