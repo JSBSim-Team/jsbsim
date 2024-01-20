@@ -99,7 +99,7 @@ bool FGOutput::Run(bool Holding)
   if (!enabled) return true;
 
   for (auto output: OutputTypes)
-    output->Run();
+    output->Run(Holding);
 
   return false;
 }

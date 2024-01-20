@@ -184,9 +184,9 @@ bool FGOutputType::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGOutputType::Run(void)
+bool FGOutputType::Run(bool Holding)
 {
-  if (FGModel::Run(false)) return true;
+  if (FGModel::Run(Holding)) return true;
   if (!enabled) return true;
 
   RunPreFunctions();
