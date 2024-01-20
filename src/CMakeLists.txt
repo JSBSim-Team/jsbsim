@@ -65,6 +65,12 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Simgear>
   $<TARGET_OBJECTS:GeographicLib>
   )
+target_include_directories(
+  libJSBSim
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 add_coverage(libJSBSim)
 
 if(EXPAT_FOUND)
