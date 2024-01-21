@@ -378,12 +378,12 @@ jobs:
           repository: JSBSim-Team/jsbsim-logo
           path: jsbsim-logo
       - name: Download binary file for JSBSim.iss
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Matlab-SFunction-Windows.binaries
           path: build
       - name: Download JSBSim library and executable
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Windows.binaries
       - name: Update the version of JSBSim in matlab/README.md
@@ -545,7 +545,7 @@ jobs:
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macOS.binaries
       - name: Build Python module from sources (Linux & MacOSX)
@@ -608,7 +608,7 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Download source package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macOS.binaries
       - name: Configure JSBSim (BSD/Unix)
@@ -747,7 +747,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Download files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Prepare files
         run: |
           mkdir dist
@@ -781,7 +781,7 @@ jobs:
       id-token: write  # Mandatory for PyPI trusted publishing
     steps:
       - name: Download files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Prepare files for deployment
         run: |
           find . -type f -name MSVC_version.txt -exec cp {} . \;
@@ -913,7 +913,7 @@ jobs:
           mkdir build && cd build
           cmake ..
       - name: Download Python wheels
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ubuntu-latest-Wheels.binaries
           path: build
