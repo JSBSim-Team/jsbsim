@@ -25,6 +25,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cctype>
 #include <stdlib.h>
 
 #include "types.h"
