@@ -202,13 +202,13 @@ jobs:
       - name: Run Tests (Linux & MacOSX)
         if: runner.os != 'Windows'
         id: tests-unix
-        uses: matlab-actions/run-command@v1
+        uses: matlab-actions/run-command@v2
         with:
           command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
       - name: Run Tests (Windows)
         if: runner.os == 'Windows'
         id: tests-windows
-        uses: matlab-actions/run-command@v1
+        uses: matlab-actions/run-command@v2
         with:
           command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
 
