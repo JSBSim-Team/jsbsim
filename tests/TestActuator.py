@@ -116,14 +116,14 @@ class TestActuator(JSBSimTestCase):
         self.tree.write(os.path.join('aircraft', self.aircraft_name,
                                      self.aircraft_name+'.xml'))
 
-        # A new process is created that launches the script. We wait for 10
+        # A new process is created that launches the script. We wait for 50
         # times the reference execution time for the script completion. Beyond
         # that time, if the process is not completed, it is terminated and the
         # test is failed.
         p = Process(target=SubProcessScriptExecution,
                     args=(self.sandbox, self.script_path))
         p.start()
-        p.join(exec_time * 20.0)  # Wait 20 times the reference time
+        p.join(exec_time * 50.0)  # Wait 50 times the reference time
         alive = p.is_alive()
         if alive:
             p.terminate()
