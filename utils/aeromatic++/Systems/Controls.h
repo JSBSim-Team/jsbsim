@@ -72,7 +72,7 @@ public:
     void set(const float cg_loc[3]) override {
         _control->set(cg_loc);
     }
-    std::string system();
+    std::string system() override;
 
     std::string lift() override {
         return _control->lift();
@@ -111,7 +111,7 @@ public:
     void set(const float cg_loc[3]) override {
         _control->set(cg_loc);
     }
-    std::string system();
+    std::string system() override;
 
     std::string lift() override {
         return _control->lift();
@@ -146,7 +146,7 @@ public:
     void set(const float cg_loc[3]) override {
         _control[_ctype]->set(cg_loc);
     }
-    std::string comment();
+    std::string comment() override;
     std::string fdm() override {
         return _control[_ctype]->fdm();
     }
@@ -205,4 +205,3 @@ public:
 } /* namespace Aeromatic */
 
 #endif /* __CONTROLS_H */
-
