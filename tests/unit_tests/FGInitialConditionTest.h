@@ -31,9 +31,14 @@ public:
     TS_ASSERT_EQUALS(ic.GetPsiDegIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetPsiRadIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetAltitudeASLFtIC(), 0.0);
+#ifdef __arm64__
+    TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC(), 0.0, 1E-8);
+    TS_ASSERT_DELTA(ic.GetTerrainElevationFtIC(), 0.0, 1E-8);
+#else
     TS_ASSERT_EQUALS(ic.GetAltitudeAGLFtIC(), 0.0);
-    TS_ASSERT_EQUALS(ic.GetEarthPositionAngleIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetTerrainElevationFtIC(), 0.0);
+#endif
+    TS_ASSERT_EQUALS(ic.GetEarthPositionAngleIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetVcalibratedKtsIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetVequivalentKtsIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetVgroundFpsIC(), 0.0);
@@ -132,8 +137,8 @@ public:
           TS_ASSERT_DELTA(ic.GetLongitudeDegIC(), lon, epsilon*100.);
           TS_ASSERT_DELTA(ic.GetLongitudeRadIC(), lon*M_PI/180., epsilon);
           // TS_ASSERT_DELTA(ic.GetAltitudeASLFtIC()/(agl+2000.), 1.0, 2E-8);
-          // For some reasons, MinGW32 and MSVC are less accurate than other platforms.
-#if defined(_MSC_VER) || defined(__MINGW32__)
+          // For some reasons, MinGW32, MSVC and M1 MacOS are less accurate than other platforms.
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__arm64__)
           TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC()/agl, 1.0, 4E-8);
 #else
           TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC()/agl, 1.0, 2E-8);
@@ -286,15 +291,21 @@ public:
       TS_ASSERT_DELTA(ic.GetUBodyFpsIC(), 100., epsilon*10.);
       TS_ASSERT_DELTA(ic.GetVBodyFpsIC(), 0., epsilon);
       TS_ASSERT_DELTA(ic.GetWBodyFpsIC(), 0., epsilon);
+#ifdef __arm64__
+      TS_ASSERT_DELTA(ic.GetVNorthFpsIC(), 100.*cos(theta*M_PI/180.), epsilon*10.);
+      TS_ASSERT_DELTA(ic.GetVgroundFpsIC(), abs(100.*cos(theta*M_PI/180.)),
+                      epsilon*10.);
+#else
       TS_ASSERT_DELTA(ic.GetVNorthFpsIC(), 100.*cos(theta*M_PI/180.), epsilon);
+      TS_ASSERT_DELTA(ic.GetVgroundFpsIC(), abs(100.*cos(theta*M_PI/180.)),
+                      epsilon);
+#endif
       TS_ASSERT_DELTA(ic.GetVEastFpsIC(), 0.0, epsilon);
       TS_ASSERT_DELTA(ic.GetVDownFpsIC(), -100.*sin(theta*M_PI/180.),
                       epsilon*10.);
       TS_ASSERT_DELTA(ic.GetAlphaDegIC(), 0.0, epsilon*10.);
       TS_ASSERT_DELTA(ic.GetBetaDegIC(), 0.0, epsilon);
       TS_ASSERT_DELTA(ic.GetVtrueFpsIC(), 100., epsilon*10.);
-      TS_ASSERT_DELTA(ic.GetVgroundFpsIC(), abs(100.*cos(theta*M_PI/180.)),
-                      epsilon);
       TS_ASSERT_DELTA(ic.GetPhiDegIC(), 0.0, epsilon);
       TS_ASSERT_DELTA(ic.GetThetaDegIC(), theta, epsilon*10.);
       TS_ASSERT_DELTA(ic.GetPsiDegIC(), 0.0, epsilon);

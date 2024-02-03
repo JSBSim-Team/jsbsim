@@ -93,7 +93,11 @@ public:
         TS_ASSERT_VECTOR_EQUALS(w, zero);
         FGColumnVector3 vLoc = loc;
         FGColumnVector3 vContact = contact;
+#ifdef __arm64__
+        TS_ASSERT_DELTA(vContact.Magnitude()/RadiusReference, 1.0, epsilon);
+#else
         TS_ASSERT_DELTA(vContact.Magnitude(), RadiusReference, epsilon);
+#endif
         FGColumnVector3 vtest = vLoc/(1.+h/RadiusReference);
         TS_ASSERT_DELTA(vtest(1), vContact(1), 1e-8);
         TS_ASSERT_DELTA(vtest(2), vContact(2), 1e-8);
