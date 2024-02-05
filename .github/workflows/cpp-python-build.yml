@@ -735,7 +735,7 @@ jobs:
         working-directory: build
         run: make lcov
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           directory: build/lcov/data/capture
           files: all_targets.info
