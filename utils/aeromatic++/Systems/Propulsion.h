@@ -212,8 +212,8 @@ public:
          return _propulsion[_ptype]->_thruster->thruster();
     }
 
-    void param_reset();
-    Param* param_next();
+    void param_reset() override;
+    Param* param_next() override;
 
     char _engine_name[PARAM_MAX_STRING+1] = "";
 public:
@@ -242,4 +242,3 @@ public:
 } // namespace Aeromatic
 
 #endif /* __ENGINE_H */
-

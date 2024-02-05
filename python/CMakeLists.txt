@@ -11,7 +11,7 @@ set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pxd COPYONLY)
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
-                                                     INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src)
+                                          INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src)
 
 # Autogenerate the Python module doc strings from Doxygen docs
 if(DOXYGEN_FOUND AND BUILD_DOCS)
@@ -79,11 +79,12 @@ foreach(OBJECT ${libJSBSim_SOURCE_FILES})
   if(${OBJECT} MATCHES "TARGET_OBJECTS:([^ >]+)")
     get_target_property(TARGET_SOURCE_FILES ${CMAKE_MATCH_1} SOURCES)
     get_target_property(TARGET_SOURCE_DIRECTORY ${CMAKE_MATCH_1} TARGET_DIRECTORY)
-    file(RELATIVE_PATH TARGET_PATH ${PROJECT_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
+    file(RELATIVE_PATH TARGET_RELATIVE_PATH ${PROJECT_SOURCE_DIR} ${TARGET_SOURCE_DIRECTORY})
+    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_RELATIVE_PATH})
     file(MAKE_DIRECTORY ${TARGET_PATH})
     foreach(_FILE ${TARGET_SOURCE_FILES})
       configure_file(${TARGET_SOURCE_DIRECTORY}/${_FILE} ${TARGET_PATH}/${_FILE} COPYONLY)
-      list(APPEND SOURCE_FILES ${TARGET_PATH}/${_FILE})
+      list(APPEND SOURCE_FILES ${TARGET_RELATIVE_PATH}/${_FILE})
     endforeach()
   else()
     configure_file(${libJSBSim_DIRECTORY}/${OBJECT} ${libJSBSim_PATH}/${OBJECT} COPYONLY)
@@ -109,23 +110,25 @@ target_include_directories(_jsbsim PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_link_libraries(_jsbsim PRIVATE libJSBSim)
 set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
 
-# Output directories for MSVC
-set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${JSBSIM_TEST_PACKAGE_DIR})
-set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_TEST_PACKAGE_DIR})
-set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_TEST_PACKAGE_DIR})
-set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_TEST_PACKAGE_DIR})
+if(WIN32)
+  # Output directories for MSVC
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_TEST_PACKAGE_DIR})
+
+  # Windows needs the DLL to be copied locally for unit tests to run.
+  if(BUILD_SHARED_LIBS)
+    add_custom_command(OUTPUT ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        $<TARGET_FILE:libJSBSim>
+                        ${JSBSIM_TEST_PACKAGE_DIR})
+    add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll)
+    add_dependencies(CopyJSBSimDLL libJSBSim)
+  endif(BUILD_SHARED_LIBS)
+endif(WIN32)
 
 add_subdirectory(fpectl)
-
-# Windows needs the DLL to be copied locally for unit tests to run.
-if(WIN32 AND BUILD_SHARED_LIBS)
-  add_custom_command(OUTPUT ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll
-                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                      $<TARGET_FILE:libJSBSim>
-                      ${JSBSIM_TEST_PACKAGE_DIR})
-  add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll)
-  add_dependencies(CopyJSBSimDLL libJSBSim)
-endif(WIN32 AND BUILD_SHARED_LIBS)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)

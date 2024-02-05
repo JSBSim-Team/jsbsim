@@ -142,12 +142,14 @@ public:
   bool InitModel(void) override;
 
   /** Executes the output directives (implement the FGModel interface).
-      This method checks that the current time step matches the output
-      rate and calls the registered "pre" functions, the output
-      generation and finally the "post" functions.
+      This method checks that the current time step matches the output rate and
+      calls the registered "pre" functions, the output generation and finally
+      the "post" functions.
+      @param Holding if true, the executive has been directed to hold the sim
+                     from advancing time.
       @result false if no error.
    */
-  bool Run(void);
+  bool Run(bool Holding) override;
 
   /** Generate the output. This is a pure method so it must be implemented by
       the classes that inherits from FGOutputType. The Print name may not be
