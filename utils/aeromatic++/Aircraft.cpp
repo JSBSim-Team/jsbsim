@@ -95,7 +95,7 @@ Aircraft::get_verbose_description(int no_engines)
         if (no_engines < 0) rv += ')';
     }
 
-    snprintf(desc, 1024, "%s", rv.c_str());
+    snprintf(desc, sizeof(desc), "%s", rv.c_str());
     return desc;
 }
 
