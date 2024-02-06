@@ -1570,7 +1570,7 @@ SGPropertyNode::setIntValue (int value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    snprintf(buf, 128, "%d", value);
+    snprintf(buf, sizeof(buf), "%d", value);
     result = set_string(buf);
     break;
   }
@@ -1621,7 +1621,7 @@ SGPropertyNode::setLongValue (long value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    snprintf(buf, 128, "%ld", value);
+    snprintf(buf, sizeof(buf), "%ld", value);
     result = set_string(buf);
     break;
   }
@@ -1672,7 +1672,7 @@ SGPropertyNode::setFloatValue (float value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    snprintf(buf, 128, "%f", value);
+    snprintf(buf, sizeof(buf), "%f", value);
     result = set_string(buf);
     break;
   }
@@ -1723,7 +1723,7 @@ SGPropertyNode::setDoubleValue (double value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    snprintf(buf, 128, "%f", value);
+    snprintf(buf, sizeof(buf), "%f", value);
     result = set_string(buf);
     break;
   }
