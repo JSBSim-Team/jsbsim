@@ -430,18 +430,21 @@ jobs:
   MacOSX:
     name: C/C++ build (MacOSX)
     needs: [XML-validation, MSIS-validation]
-    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64, arm64]
+        os: [macos-12]
+        python-version: [3.8]
+        include:
+          - os: macos-14
+            python-version: '3.10'
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up Python 3.8
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
       - name: Install Python packages
-        if: matrix.arch == 'x86_64'
         run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
       - name: Checkout JSBSim
         uses: actions/checkout@v4
@@ -449,12 +452,11 @@ jobs:
         # This file is used by CTest to optimize the distribution of the tests
         # between the cores and reduce execution time.
         uses: actions/cache@v4
-        if: matrix.arch == 'x86_64'
         with:
           path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.arch == 'x86_64'
+        if: env.release == 'true' && matrix.os == 'macos-12'
         run: |
           brew install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -470,27 +472,20 @@ jobs:
       - name: Configure CxxTest
         working-directory: cxxtest/python
         run: python setup.py install
-      - name: Configure JSBSim (x86_64)
-        if: matrix.arch == 'x86_64'
+      - name: Configure JSBSim
         run: |
           mkdir -p build && cd build
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH ..
-      - name: Configure JSBSim (arm64)
-        if: matrix.arch == 'arm64'
-        run: |
-          mkdir -p build && cd build
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DCMAKE_OSX_ARCHITECTURES=${{matrix.arch}} -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
+          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH -DCMAKE_C_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build JSBSim
         working-directory: build
         run: make -j3
       - name: Test JSBSim
-        if: matrix.arch == 'x86_64'
         working-directory: build
         run: ctest -j3 --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true' && matrix.arch == 'x86_64'
+        if: env.release == 'true' && matrix.os == 'macos-12'
         working-directory: build/tests
         run: |
           echo "::group::Build the type hints stubs"
@@ -516,7 +511,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v4
-        if: env.release == 'true' && matrix.arch == 'x86_64'
+        if: env.release == 'true' && matrix.os == 'macos-12'
         with:
           name: ${{ runner.os }}.binaries
           path: |
@@ -653,7 +648,7 @@ jobs:
           CIBW_BEFORE_ALL_MACOS: |
             cd build
             rm -f CMakeCache.txt
-            cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
+            cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_BUILD_TYPE=Release ..
             cmake --build . --target libJSBSim -- -j3
           CIBW_ARCHS_MACOS: universal2
           CIBW_SKIP: cp*-musllinux_*

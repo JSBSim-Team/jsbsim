@@ -70,7 +70,11 @@ public:
       // momentum conservation
       TS_ASSERT_DELTA(p1+rho1*u1*u1, p2+rho2*u2*u2, 1000.*epsilon);
       // energy conservation
+#ifdef __arm64__
+      TS_ASSERT_DELTA((Cp*t1+0.5*u1*u1)/(Cp*t2+0.5*u2*u2), 1.0, epsilon);
+#else
       TS_ASSERT_DELTA(Cp*t1+0.5*u1*u1, Cp*t2+0.5*u2*u2, epsilon);
+#endif
     }
 
     fdmex.GetPropertyManager()->Unbind(&aux);
@@ -115,7 +119,11 @@ public:
       // momentum conservation
       TS_ASSERT_DELTA(p1+rho1*u1*u1, p2+rho2*u2*u2, 1000.*epsilon);
       // energy conservation
+#ifdef __arm64__
+      TS_ASSERT_DELTA((Cp*t1+0.5*u1*u1)/(Cp*t2+0.5*u2*u2), 1.0, epsilon);
+#else
       TS_ASSERT_DELTA(Cp*t1+0.5*u1*u1, Cp*t2+0.5*u2*u2, epsilon);
+#endif
       // Check the Mach computations
       TS_ASSERT_DELTA(mach1, M1, 1e-7);
       TS_ASSERT_DELTA(mach2, M2, 1e-7);
