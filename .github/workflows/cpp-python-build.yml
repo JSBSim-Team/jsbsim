@@ -178,6 +178,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: R2022a
+          products: Simulink
       - name: Configure JSBSim
         run: |
           mkdir build
