@@ -76,7 +76,7 @@ cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
         const string& GetName() const
         const string& GetFullyQualifiedName() const
         double getDoubleValue() const
-        void setDoubleValue(double value)
+        bool setDoubleValue(double value)
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":

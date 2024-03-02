@@ -170,14 +170,19 @@ cdef class FGPropertyNode:
         return node.__validate_node_pointer(create)
 
     def get_double_value(self) -> float:
-        """@Dox(SGPropertyNode::getDoubleValue)"""
+        """Get the property value.
+
+           :return: The property value as a double."""
         self.__intercept_invalid_pointer()
         return self.thisptr.ptr().getDoubleValue()
 
-    def set_double_value(self, value: float) -> None:
-        """@Dox(SGPropertyNode::setDoubleValue)"""
+    def set_double_value(self, value: float) -> bool:
+        """Set the property value.
+
+           :param value: The new value.
+           :return: True if the assignment succeeded, False otherwise."""
         self.__intercept_invalid_pointer()
-        self.thisptr.ptr().setDoubleValue(value)
+        return self.thisptr.ptr().setDoubleValue(value)
 
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""
