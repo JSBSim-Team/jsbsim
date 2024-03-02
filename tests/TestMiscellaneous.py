@@ -132,9 +132,19 @@ class TestMiscellaneous(JSBSimTestCase):
         class FGFDMExecWithExtraArgs(jsbsim.FGFDMExec):
             def __init__(self, root_dir, pm_root, extra):
                 self.extra = extra
-                super().__init__()
 
-        fdm = FGFDMExecWithExtraArgs(os.path.join(self.sandbox(), ""), None, True)
+        pm = jsbsim.FGPropertyManager()
+        root_node = pm.get_node("root", True)
+        self.assertFalse(pm.hasNode("/root/fdm/jsbsim"))
+        fdm = FGFDMExecWithExtraArgs(
+            self.sandbox(), jsbsim.FGPropertyManager(root_node), True
+        )
+        self.assertEqual(fdm.get_root_dir(), self.sandbox())
+        self.assertEqual(
+            fdm.get_property_manager().get_node().get_fully_qualified_name(),
+            "/root/fdm/jsbsim",
+        )
+        self.assertTrue(pm.hasNode("/root/fdm/jsbsim"))
         self.assertTrue(fdm.extra)
 
     def test_invalid_pointer_wont_crash(self):
