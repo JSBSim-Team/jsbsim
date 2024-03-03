@@ -23,7 +23,7 @@ Features include:
 
 JSBSim also includes the following bindings:
 
-* A [Python](https://www.python.org) module which provides the exact same features than the C++ library
+* A [Python](https://www.python.org) module which provides the exact same features as the C++ library
 * A [Matlab S-Function](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab) that interfaces JSBSim with [MATLAB Simulink](https://fr.mathworks.com/products/simulink.html).
 * An [Unreal Engine plugin](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/) to build a connection between the flight dynamics model from JSBSim and the entire virtual environment provided by [Unreal engine](https://www.unrealengine.com).
 
