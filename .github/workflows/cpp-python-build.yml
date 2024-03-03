@@ -720,7 +720,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF ..
+          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
       - name: Build JSBSim
         working-directory: build
         run: make -j2
@@ -733,8 +733,9 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
         with:
-          directory: build/lcov/data/capture
-          files: all_targets.info
+          file: ./build/lcov/data/capture/all_targets.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   Rolling-Release:
     needs: [Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
