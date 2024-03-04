@@ -199,7 +199,7 @@ public:
 	FAircraftState AircraftState;
 
   // Events
-  UPROPERTY(VisibleAnywhere, BlueprintAssignable)
+  UPROPERTY(VisibleAnywhere, BlueprintAssignable, Category = "State")
   FDelegateAircraftCrashed AircraftCrashed;
 
 
@@ -225,7 +225,7 @@ public:
   *   -Returns names of all properties that JSBSim created/loaded
   *   -Currently not very useful other than to see what exists
   *   -Returns a big list, probably should not call often  */
-	UFUNCTION(BlueprintCallable, DisplayName = "Property Manager Get Catalog")
+	UFUNCTION(BlueprintCallable, DisplayName = "Property Manager Get Catalog", Category = "Property")
     void PropertyManagerNode(TArray<FString> & Catalog);
 
 	/**Command Input & Output from Property Manger
@@ -233,7 +233,7 @@ public:
   *   -OutValue of blank/empty means property name does not exist.
   *   -InValue of blank/empty if you wish to only lookup a property value,
   *     otherwise you will override the system value!*/
-	UFUNCTION(BlueprintCallable, DisplayName = "Command Console")
+	UFUNCTION(BlueprintCallable, DisplayName = "Command Console", Category = "Command")
     void CommandConsole(FString Property, FString InValue, FString & OutValue);
 
 	/**Command Inputs & Outputs in Batch to Property Manger
@@ -241,7 +241,7 @@ public:
   *   -OutValue of blank/empty means property name does not exist.
   *   -InValue of blank/empty if you wish to only lookup a property value,
   *     otherwise you will override the system value! */
-	UFUNCTION(BlueprintCallable, DisplayName = "Command Console Batch")
+	UFUNCTION(BlueprintCallable, DisplayName = "Command Console Batch", Category = "Command")
     void CommandConsoleBatch(TArray<FString> Property, TArray<FString> InValue, TArray<FString>& OutValue);
 
 

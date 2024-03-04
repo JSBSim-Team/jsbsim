@@ -2,7 +2,7 @@
 
 
 #include "JSBSimModule.h"
-#include "Core.h"
+//#include "Core.h"
 #include "Modules/ModuleManager.h"
 
 
