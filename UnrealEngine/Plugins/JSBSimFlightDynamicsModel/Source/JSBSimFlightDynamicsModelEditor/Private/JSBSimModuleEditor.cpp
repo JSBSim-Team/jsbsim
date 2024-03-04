@@ -2,7 +2,8 @@
 
 
 #include "JSBSimModuleEditor.h"
-#include "UnrealEd.h"
+#include "Editor/UnrealEdEngine.h"
+#include "Editor/UnrealEd/Public/UnrealEdGlobals.h"
 #include "JSBSimMovementCompVisualizer.h"
 #include "JSBSimMovementComponent.h"
 

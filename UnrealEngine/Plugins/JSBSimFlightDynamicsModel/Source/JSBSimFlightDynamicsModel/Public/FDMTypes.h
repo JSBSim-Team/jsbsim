@@ -25,20 +25,20 @@ struct FTank
 	}
 
 	// Editable in Initial Conditions
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InitialConditions")
 		double FuelDensityPoundsPerGallon = 6.6;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InitialConditions")
 		double ContentGallons = 300;
 
 
 	// Basic Properties
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 		double CapacityGallons = 300;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 		double FillPercentage = 100;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "C")
 		double TemperatureCelcius = 0;
 
 	// Possible Other Functions - Fill, Drain... 
@@ -63,45 +63,45 @@ struct FGear
 	/**
 	 * 1 = Down, 0 = up
 	*/
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "GearProperties")
 	double NormalizedPosition = 1;
 
     /*
     * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations 
     */
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
+    UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "GearProperties")
 	bool IsFrontBogey = false;
 
     /*
     * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations
     */
-    UPROPERTY(BlueprintReadOnly, EditAnywhere)
+    UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "GearProperties")
 	bool IsRearBogey = false;
 
 
 	// Basic Properties from JSBSim - Read Only
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	FString Name = "";
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	bool IsBogey = false;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	bool HasWeightOnWheel = false;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	double WheelRollLinearVelocityMetersPerSec = 0.0f;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	bool IsUp = false;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	bool IsDown = true;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	FVector RelativeLocation = FVector(FVector::ZeroVector);
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Properties")
 	FVector Force = FVector(FVector::ZeroVector);
 
 	// Possible Other Functions - Steering, Compression... 
@@ -149,44 +149,44 @@ struct FEngineCommand
 	// Common Engine Commands
 
     /* Normalized [0..1] value expected */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	double Throttle = 0.0f;
 	
     /* Normalized [0..1] value expected */
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	double Mixture = 0.0f;
 	
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Starter = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Running = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	double PropellerAdvance = 0.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool PropellerFeather = false;
 
 	// Piston Engine Commands
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
     EMagnetosMode Magnetos = EMagnetosMode::Off;
 
 	// Turbine Engine Commands
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Augmentation = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Injection = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	int32 Ignition = 0;
 	
 	// Turbine & TurboPropeller Engine Commands
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Reverse = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool CutOff = false;
 	
 	// TurboPropeller Engine Commands
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool GeneratorPower = false;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "EngineCommands")
 	bool Condition = false;
 
 
@@ -210,40 +210,40 @@ struct FEngineState
 	}
 
 	// Type
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	EEngineType EngineType = EEngineType::Turbine;
 
 	// Common Engine States
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Starter = false;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Running = false;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	double Thrust = 0;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	double EngineRPM = 0;
 	
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	double N1 = 0; // Turbine
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	double N2 = 0; // Turbine
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Augmentation = false; // Turbine
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Reversed = false; // Turbine + TurboProp
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Injection = false; // Turbine
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool CutOff = false; // Turbine + TurboProp
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	int Ignition = 0; // Turbine + 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool GeneratorPower = false; // TurboProp
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
 	bool Condition = false; // TurboProp
 
-    UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-    EMagnetosMode Magnetos = EMagnetosMode::Off; // Piston
+  UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "EngineState")
+  EMagnetosMode Magnetos = EMagnetosMode::Off; // Piston
     
 	FString GetDebugMessage()
 	{
