@@ -229,8 +229,8 @@ jobs:
             build/matlab/JSBSimSimulinkCompile.m
             build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
 
-  Windows-MinGW32:
-    name: C/C++ build (MinGW32)
+  Windows-MinGW:
+    name: C/C++ build (MinGW)
     needs: XML-validation
     runs-on: windows-2019
     strategy:
@@ -277,7 +277,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: Windows_MinGW32.logs
+          name: Windows_MinGW.logs
           path: build/Testing/Temporary
 
   Windows-MSVC:
@@ -720,7 +720,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF ..
+          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
       - name: Build JSBSim
         working-directory: build
         run: make -j2
@@ -733,11 +733,12 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
         with:
-          directory: build/lcov/data/capture
-          files: all_targets.info
+          file: ./build/lcov/data/capture/all_targets.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   Rolling-Release:
-    needs: [Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
+    needs: [Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
     name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -769,7 +770,7 @@ jobs:
   Stable-Release:
     name: Deploy Stable Release
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW32, Windows-installer]
+    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
     runs-on: ubuntu-latest
     environment: release
     permissions:
