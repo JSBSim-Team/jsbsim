@@ -79,6 +79,13 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
 
+  property_name = base_property_name + "/x-position";
+  PropertyManager->Tie(property_name.c_str(), (FGForce*)this, &FGForce::GetLocationX, &FGForce::SetLocationX);
+  property_name = base_property_name + "/y-position";
+  PropertyManager->Tie(property_name.c_str(), (FGForce*)this, &FGForce::GetLocationY, &FGForce::SetLocationY);
+  property_name = base_property_name + "/z-position";
+  PropertyManager->Tie(property_name.c_str(), (FGForce*)this, &FGForce::GetLocationZ, &FGForce::SetLocationZ);
+
   element = thruster_element->FindElement("pointing");
   if (element)  {
 
