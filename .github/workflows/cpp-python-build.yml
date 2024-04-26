@@ -53,7 +53,7 @@ jobs:
           cmake ../src/models/atmosphere/MSIS
       - name: Build the JSBSim test program
         working-directory: build
-        run: make -j2
+        run: make --jobs=3
       - name: Run the NRLMSIS-00 C package
         working-directory: src/models/atmosphere/MSIS
         run: |
@@ -125,7 +125,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Build JSBSim
         working-directory: build
-        run: make -j2
+        run: make --jobs=$(nproc)
       - name: Test with Valgrind
         run: |
           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
@@ -136,7 +136,7 @@ jobs:
         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -R fpectl -V
       - name: Test JSBSim
         working-directory: build
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
+        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest --parallel $(nproc) --output-on-failure
       - name: Build Ubuntu packages
         if: env.static_link == 'true'
         working-directory: build
@@ -186,7 +186,7 @@ jobs:
           cmake -DBUILD_MATLAB_SFUNCTION=ON ..
       - name: Build JSBSim S-Function
         working-directory: build
-        run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction
+        run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction --parallel 3
       - name: Prepare Tests
         working-directory: matlab
         # The script will be run from the directory 'matlab' so we need to copy
@@ -263,14 +263,14 @@ jobs:
           cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=ON -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
       - name: Build JSBSim
         working-directory: build
-        run: mingw32-make -j2
+        run: mingw32-make --jobs=$Env:NUMBER_OF_PROCESSORS
       - name: Test executable
         run: build/src/JSBSim.exe scripts/c1721.xml
       - name: Run JSBSim tests
         working-directory: build
         run: |
           cp src/libJSBSim.* julia/.
-          ctest -j2 --output-on-failure
+          ctest --parallel $Env:NUMBER_OF_PROCESSORS --output-on-failure
 
     # Upload files
       - name: On failure - Upload logs
@@ -335,13 +335,13 @@ jobs:
           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
       - name: Build JSBSim
         working-directory: build
-        run: cmake --build . --config RelWithDebInfo
+        run: cmake --build . --config RelWithDebInfo --parallel $Env:NUMBER_OF_PROCESSORS
       - name: Test the Display of the Stack Trace when an FPE is raised
         working-directory: build
         run: ctest -R fpectl --build-config RelWithDebInfo -V
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j2 --build-config RelWithDebInfo --output-on-failure
+        run: ctest -- parallel $Env:NUMBER_OF_PROCESSORS --build-config RelWithDebInfo --output-on-failure
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -483,10 +483,10 @@ jobs:
           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH -DCMAKE_C_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_BUILD_TYPE=Debug ..
       - name: Build JSBSim
         working-directory: build
-        run: make -j3
+        run: make --jobs=$(sysctl -n hw.logicalcpu)
       - name: Test JSBSim
         working-directory: build
-        run: ctest -j3 --output-on-failure
+        run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
         if: env.release == 'true' && matrix.os == 'macos-12'
         working-directory: build/tests
@@ -630,12 +630,12 @@ jobs:
           New-Item -Path .\build -ItemType Directory -Force
           cd build
           cmake ..
-          cmake --build . --target libJSBSim --config RelWithDebInfo
+          cmake --build . --target libJSBSim --config RelWithDebInfo --parallel $Env:NUMBER_OF_PROCESSORS
           echo "::endgroup::"
 
           echo "::group::Get Python package sources"
           New-Item python\jsbsim\py.typed
-          cd ..\python/dist
+          cd ..\python\dist
           $PyPackage = Get-ChildItem .\*.tar.gz -Name
           tar zxvf $PyPackage
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
@@ -647,12 +647,12 @@ jobs:
             cd build
             rm -f CMakeCache.txt
             cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
-            cmake --build . --target libJSBSim -- -j2
+            cmake --build . --target libJSBSim --parallel $(nproc)
           CIBW_BEFORE_ALL_MACOS: |
             cd build
             rm -f CMakeCache.txt
             cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_BUILD_TYPE=Release ..
-            cmake --build . --target libJSBSim -- -j3
+            cmake --build . --target libJSBSim --parallel $(sysctl -n hw.logicalcpu)
           CIBW_ARCHS_MACOS: universal2
           CIBW_SKIP: cp*-musllinux_*
           CIBW_ARCHS_WINDOWS: native
@@ -725,7 +725,7 @@ jobs:
           cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
       - name: Build JSBSim
         working-directory: build
-        run: make -j2
+        run: make --jobs=$(nproc)
       - name: Run JSBSim tests
         working-directory: build
         run: ctest -R Test1 --output-on-failure
