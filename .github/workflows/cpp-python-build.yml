@@ -737,6 +737,7 @@ jobs:
         with:
           file: ./build/lcov/data/capture/all_targets.info
           token: ${{ secrets.CODECOV_TOKEN }}
+          disable_search: true
           fail_ci_if_error: true
 
   Rolling-Release:

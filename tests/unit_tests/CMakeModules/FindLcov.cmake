@@ -293,11 +293,12 @@ function (lcov_capture_tgt TNAME)
 	# Add target for generating html output for this target only.
 	file(MAKE_DIRECTORY ${LCOV_HTML_PATH}/${TNAME})
 	add_custom_target(${TNAME}-genhtml
-		COMMAND ${GENHTML_BIN} --quiet --sort --prefix ${PROJECT_SOURCE_DIR}
+		COMMAND ${GENHTML_BIN} --quiet --sort ${GENHTML_CPPFILT_FLAG}
+                        --prefix ${PROJECT_SOURCE_DIR}
 			--baseline-file ${LCOV_DATA_PATH_INIT}/${TNAME}.info
 			--output-directory ${LCOV_HTML_PATH}/${TNAME}
 			--title "${CMAKE_PROJECT_NAME} - target ${TNAME}"
-			${GENHTML_CPPFILT_FLAG} ${OUTFILE}
+			${OUTFILE}
 		DEPENDS ${TNAME}-geninfo ${TNAME}-capture-init
 	)
 endfunction (lcov_capture_tgt)
@@ -326,11 +327,11 @@ function (lcov_capture)
 	if (NOT TARGET lcov)
 		file(MAKE_DIRECTORY ${LCOV_HTML_PATH}/all_targets)
 		add_custom_target(lcov
-			COMMAND ${GENHTML_BIN} --quiet --sort
+			COMMAND ${GENHTML_BIN} --quiet --sort ${GENHTML_CPPFILT_FLAG}
 				--baseline-file ${LCOV_DATA_PATH_INIT}/all_targets.info
 				--output-directory ${LCOV_HTML_PATH}/all_targets
 				--title "${CMAKE_PROJECT_NAME}" --prefix "${PROJECT_SOURCE_DIR}"
-				${GENHTML_CPPFILT_FLAG} ${OUTFILE}
+				${OUTFILE}
 			DEPENDS lcov-geninfo-init lcov-geninfo
 		)
 	endif ()
