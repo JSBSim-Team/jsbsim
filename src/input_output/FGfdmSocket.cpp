@@ -320,6 +320,7 @@ void FGfdmSocket::Close(void)
 #else
   close(sckt_in);
 #endif
+sckt_in = INVALID_SOCKET;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
