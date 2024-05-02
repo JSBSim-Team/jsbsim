@@ -31,8 +31,19 @@
 /* Define if you have the <unistd.h> header file.  */
 #define HAVE_UNISTD_H 1
 
+#if ! defined(_WIN32)
+/* Define to include code reading entropy from `/dev/urandom'. */
+#define XML_DEV_URANDOM
+#endif
+
+/* Define to make XML Namespaces functionality available. */
 #define XML_NS
+
+/* Define to make parameter entity parsing functionality available. */
 #define XML_DTD
+
+/* Enable support for general entities. */
+#define XML_GE 1
 
 #ifdef WORDS_BIGENDIAN
 #define XML_BYTE_ORDER 21
