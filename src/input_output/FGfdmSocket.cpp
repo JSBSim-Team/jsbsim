@@ -251,10 +251,11 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 FGfdmSocket::~FGfdmSocket()
 {
   // Release the file descriptors to the OS.
-  if (sckt_in != INVALID_SOCKET) shutdown(sckt_in, SHUT_RDWR);
 #ifdef _WIN32
+  if (sckt_in != INVALID_SOCKET) shutdown(sckt_in, SD_BOTH);
   if (sckt != INVALID_SOCKET) closesocket(sckt);
 #else
+  if (sckt_in != INVALID_SOCKET) shutdown(sckt_in, SHUT_RDWR);
   if (sckt != INVALID_SOCKET) close(sckt);
 #endif
   Debug(1);
