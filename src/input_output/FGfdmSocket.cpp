@@ -269,7 +269,8 @@ string FGfdmSocket::Receive(void)
         int flags = fcntl(sckt_in, F_GETFL, 0);
         fcntl(sckt_in, F_SETFL, flags | O_NONBLOCK);
 #endif
-        send(sckt_in, "Connected to JSBSim server\n\rJSBSim> ", 36, 0);
+        if (send(sckt_in, "Connected to JSBSim server\n\rJSBSim> ", 36, 0) == SOCKET_ERROR)
+          PrintSocketError();
       }
     }
 
@@ -278,7 +279,9 @@ string FGfdmSocket::Receive(void)
 
     while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
       data.append(buf, num_chars);
-      }
+    }
+
+    if (num_chars == SOCKET_ERROR) PrintSocketError();
 
 #ifdef _WIN32
       // when nothing received and the error isn't "would block"
@@ -301,6 +304,7 @@ string FGfdmSocket::Receive(void)
     socklen_t fromlen = sizeof addr;
     int num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
     if (num_chars > 0) data.append(buf, num_chars);
+    if (num_chars == SOCKET_ERROR) PrintSocketError();
   }
 
   return data;
@@ -314,6 +318,7 @@ int FGfdmSocket::Reply(const string& text)
 
   if (sckt_in != INVALID_SOCKET) {
     num_chars_sent = send(sckt_in, text.c_str(), text.size(), 0);
+    if (num_chars_sent == SOCKET_ERROR) PrintSocketError();
     send(sckt_in, "JSBSim> ", 8, 0);
   } else {
     cerr << "Socket reply must be to a valid socket" << endl;
@@ -383,11 +388,13 @@ void FGfdmSocket::Send(void)
 void FGfdmSocket::Send(const char *data, int length)
 {
   if (Protocol == ptTCP && sckt_in != INVALID_SOCKET) {
-    if ((send(sckt_in,data,length,0)) > 0) return;
+    if ((send(sckt_in, data, length, 0)) == SOCKET_ERROR) PrintSocketError();
+    return;
   }
 
   if (Protocol == ptUDP && sckt != INVALID_SOCKET) {
-    if ((send(sckt,data,length,0)) > 0) return;
+    if ((send(sckt, data, length, 0)) == SOCKET_ERROR) PrintSocketError();
+    return;
   }
 
   cerr << "Data sending must be to a valid socket" << endl;
@@ -412,6 +419,11 @@ void FGfdmSocket::WaitUntilReadable(void)
     } else if (result != SOCKET_ERROR)
       return;
 
+    PrintSocketError();
+}
+
+void FGfdmSocket::PrintSocketError(void)
+{
     // An error has occurred, display the error message.
     cerr << "Socket error: ";
 #ifdef _WIN32

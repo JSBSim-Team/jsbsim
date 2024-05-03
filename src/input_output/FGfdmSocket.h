@@ -189,6 +189,7 @@ private:
   std::ostringstream buffer;
   int precision;
   bool connected;
+  void PrintSocketError(void);
   void Debug(int from);
 };
 }
