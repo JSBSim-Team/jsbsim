@@ -62,11 +62,12 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+// Defines that make BSD/Unix sockets and Windows sockets syntax look alike.
 #ifndef _WIN32
-// On BSD/Unix, defining the flags INVALID_SOCKET and SOCKET_ERROR to -1 allows
-// using the same syntax for Windows and BSD/Unix platforms.
+#define closesocket close
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
+#define SD_BOTH SHUT_RDWR
 #endif
 
 namespace JSBSim {
@@ -219,22 +220,14 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 #endif
           sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
         } else {
-#ifdef _WIN32
           closesocket(sckt);
-#else
-          close(sckt);
-#endif
           sckt = INVALID_SOCKET;
           cerr << "Could not listen ..." << endl;
         }
       } else
         connected = true;
     } else {                // unsuccessful
-#ifdef _WIN32
       closesocket(sckt);
-#else
-      close(sckt);
-#endif
       sckt = INVALID_SOCKET;
       cerr << "Could not bind to " << ProtocolName << " input socket, error = "
            << errno << endl;
@@ -251,13 +244,8 @@ FGfdmSocket::FGfdmSocket(int port, int protocol, int precision)
 FGfdmSocket::~FGfdmSocket()
 {
   // Release the file descriptors to the OS.
-#ifdef _WIN32
   if (sckt_in != INVALID_SOCKET) shutdown(sckt_in, SD_BOTH);
   if (sckt != INVALID_SOCKET) closesocket(sckt);
-#else
-  if (sckt_in != INVALID_SOCKET) shutdown(sckt_in, SHUT_RDWR);
-  if (sckt != INVALID_SOCKET) close(sckt);
-#endif
   Debug(1);
 }
 
@@ -338,11 +326,7 @@ int FGfdmSocket::Reply(const string& text)
 
 void FGfdmSocket::Close(void)
 {
-#ifdef _WIN32
   closesocket(sckt_in);
-#else
-  close(sckt_in);
-#endif
   sckt_in = INVALID_SOCKET;
 }
 
@@ -417,23 +401,29 @@ void FGfdmSocket::WaitUntilReadable(void)
   if (sckt_in == INVALID_SOCKET) return;
 
   fd_set fds;
-  FD_ZERO(&fds);
-  FD_SET(sckt_in, &fds);
+    FD_ZERO(&fds);
+    FD_SET(sckt_in, &fds);
+
+    int result = select(FD_SETSIZE, &fds, nullptr, nullptr, nullptr);
+
+    if (result == 0) {
+      cerr << "Socket timeout." << endl;
+      return;
+    } else if (result != SOCKET_ERROR)
+      return;
+
+    // An error has occurred, display the error message.
+    cerr << "Socket error: ";
 #ifdef _WIN32
-  select(0, &fds, nullptr, nullptr, nullptr);
+    LPSTR errorMessage = nullptr;
+    DWORD errorCode = WSAGetLastError();
+    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                  nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errorMessage, 0, nullptr);
+    cerr << errorMessage << endl;
+    LocalFree(errorMessage);
 #else
-  select(sckt_in+1, &fds, nullptr, nullptr, nullptr);
+    cerr << strerror(errno) << endl;
 #endif
-
-  /*
-    If you want to check select return status:
-
-    int recVal = select(sckt_in+1, &fds, nullptr, nullptr, nullptr);
-    recVal: received value
-    0,             if socket timeout
-    -1,            if socket error
-    anithing else, if socket is readable
-  */
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
