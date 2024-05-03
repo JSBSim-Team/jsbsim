@@ -270,7 +270,7 @@ string FGfdmSocket::Receive(void)
         fcntl(sckt_in, F_SETFL, flags | O_NONBLOCK);
 #endif
         if (send(sckt_in, "Connected to JSBSim server\n\rJSBSim> ", 36, 0) == SOCKET_ERROR)
-          PrintSocketError();
+          PrintSocketError("Receive - TCP connection acknowledgement");
       }
     }
 
@@ -281,7 +281,7 @@ string FGfdmSocket::Receive(void)
       data.append(buf, num_chars);
     }
 
-    if (num_chars == SOCKET_ERROR) PrintSocketError();
+    if (num_chars == SOCKET_ERROR) PrintSocketError("Receive - TCP data reception");
 
 #ifdef _WIN32
       // when nothing received and the error isn't "would block"
@@ -304,7 +304,7 @@ string FGfdmSocket::Receive(void)
     socklen_t fromlen = sizeof addr;
     int num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
     if (num_chars > 0) data.append(buf, num_chars);
-    if (num_chars == SOCKET_ERROR) PrintSocketError();
+    if (num_chars == SOCKET_ERROR) PrintSocketError("Receive - UDP data reception");
   }
 
   return data;
@@ -318,7 +318,7 @@ int FGfdmSocket::Reply(const string& text)
 
   if (sckt_in != INVALID_SOCKET) {
     num_chars_sent = send(sckt_in, text.c_str(), text.size(), 0);
-    if (num_chars_sent == SOCKET_ERROR) PrintSocketError();
+    if (num_chars_sent == SOCKET_ERROR) PrintSocketError("Reply");
     send(sckt_in, "JSBSim> ", 8, 0);
   } else {
     cerr << "Socket reply must be to a valid socket" << endl;
@@ -388,12 +388,12 @@ void FGfdmSocket::Send(void)
 void FGfdmSocket::Send(const char *data, int length)
 {
   if (Protocol == ptTCP && sckt_in != INVALID_SOCKET) {
-    if ((send(sckt_in, data, length, 0)) == SOCKET_ERROR) PrintSocketError();
+    if ((send(sckt_in, data, length, 0)) == SOCKET_ERROR) PrintSocketError("Send - TCP data sending");
     return;
   }
 
   if (Protocol == ptUDP && sckt != INVALID_SOCKET) {
-    if ((send(sckt, data, length, 0)) == SOCKET_ERROR) PrintSocketError();
+    if ((send(sckt, data, length, 0)) == SOCKET_ERROR) PrintSocketError("Send - UDP data sending");
     return;
   }
 
@@ -419,22 +419,24 @@ void FGfdmSocket::WaitUntilReadable(void)
     } else if (result != SOCKET_ERROR)
       return;
 
-    PrintSocketError();
+    PrintSocketError("WaitUntilReadable");
 }
 
-void FGfdmSocket::PrintSocketError(void)
+void FGfdmSocket::PrintSocketError(const std::string& msg)
 {
-    // An error has occurred, display the error message.
-    cerr << "Socket error: ";
+  if (debug_lvl <= 0) return;
+
+  // An error has occurred, display the error message.
+  cerr << "Socket error in " << msg << ": ";
 #ifdef _WIN32
-    LPSTR errorMessage = nullptr;
-    DWORD errorCode = WSAGetLastError();
-    FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                  nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errorMessage, 0, nullptr);
-    cerr << errorMessage << endl;
-    LocalFree(errorMessage);
+  LPSTR errorMessage = nullptr;
+  DWORD errorCode = WSAGetLastError();
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                nullptr, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errorMessage, 0, nullptr);
+  cerr << errorMessage << endl;
+  LocalFree(errorMessage);
 #else
-    cerr << strerror(errno) << endl;
+  cerr << strerror(errno) << endl;
 #endif
 }
 
