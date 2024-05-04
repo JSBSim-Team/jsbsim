@@ -281,7 +281,14 @@ string FGfdmSocket::Receive(void)
       data.append(buf, num_chars);
     }
 
-    if (num_chars == SOCKET_ERROR) PrintSocketError("Receive - TCP data reception");
+    if (num_chars == SOCKET_ERROR) {
+#ifdef _WIN32
+      if (WSAGetLastError() != WSAEWOULDBLOCK)
+#else
+      if (errno != EWOULDBLOCK)
+#endif
+        PrintSocketError("Receive - TCP data reception");
+    }
 
 #ifdef _WIN32
       // when nothing received and the error isn't "would block"
@@ -339,7 +346,7 @@ void FGfdmSocket::Close(void)
 
 void FGfdmSocket::Clear(void)
 {
-  buffer.clear();
+  buffer.str("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,10 +429,10 @@ void FGfdmSocket::WaitUntilReadable(void)
     PrintSocketError("WaitUntilReadable");
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGfdmSocket::PrintSocketError(const std::string& msg)
 {
-  if (debug_lvl <= 0) return;
-
   // An error has occurred, display the error message.
   cerr << "Socket error in " << msg << ": ";
 #ifdef _WIN32
