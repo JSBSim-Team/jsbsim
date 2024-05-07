@@ -270,38 +270,31 @@ string FGfdmSocket::Receive(void)
         fcntl(sckt_in, F_SETFL, flags | O_NONBLOCK);
 #endif
         if (send(sckt_in, "Connected to JSBSim server\n\rJSBSim> ", 36, 0) == SOCKET_ERROR)
-          PrintSocketError("Receive - TCP connection acknowledgement");
+          LogSocketError("Receive - TCP connection acknowledgement");
       }
     }
 
     if (sckt_in != INVALID_SOCKET) {
-    int num_chars;
+      int num_chars;
 
-    while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0) {
-      data.append(buf, num_chars);
-    }
+      while ((num_chars = recv(sckt_in, buf, sizeof buf, 0)) > 0)
+        data.append(buf, num_chars);
 
-    if (num_chars == SOCKET_ERROR) {
+      if (num_chars == SOCKET_ERROR || num_chars == 0) {
 #ifdef _WIN32
-      if (WSAGetLastError() != WSAEWOULDBLOCK)
+        if (WSAGetLastError() != WSAEWOULDBLOCK)
 #else
-      if (errno != EWOULDBLOCK)
+        if (errno != EWOULDBLOCK)
 #endif
-        PrintSocketError("Receive - TCP data reception");
-    }
-
-#ifdef _WIN32
-      // when nothing received and the error isn't "would block"
-      // then assume that the client has closed the socket.
-      if (num_chars == 0) {
-        DWORD err = WSAGetLastError();
-        if (err != WSAEWOULDBLOCK) {
+        {
+          LogSocketError("Receive - TCP data reception");
+          // when nothing received and the error isn't "would block"
+          // then assume that the client has closed the socket.
           cout << "Socket Closed. Back to listening" << endl;
           closesocket(sckt_in);
           sckt_in = INVALID_SOCKET;
         }
       }
-#endif
     }
   }
 
@@ -311,7 +304,14 @@ string FGfdmSocket::Receive(void)
     socklen_t fromlen = sizeof addr;
     int num_chars = recvfrom(sckt, buf, sizeof buf, 0, (struct sockaddr*)&addr, &fromlen);
     if (num_chars > 0) data.append(buf, num_chars);
-    if (num_chars == SOCKET_ERROR) PrintSocketError("Receive - UDP data reception");
+    if (num_chars == SOCKET_ERROR) {
+#ifdef _WIN32
+      if (WSAGetLastError() != WSAEWOULDBLOCK)
+#else
+      if (errno != EWOULDBLOCK)
+#endif
+        LogSocketError("Receive - UDP data reception");
+    }
   }
 
   return data;
@@ -322,11 +322,12 @@ string FGfdmSocket::Receive(void)
 int FGfdmSocket::Reply(const string& text)
 {
   int num_chars_sent=0;
+  assert(Protocol == ptTCP);
 
   if (sckt_in != INVALID_SOCKET) {
     num_chars_sent = send(sckt_in, text.c_str(), text.size(), 0);
-    if (num_chars_sent == SOCKET_ERROR) PrintSocketError("Reply");
-    send(sckt_in, "JSBSim> ", 8, 0);
+    if (num_chars_sent == SOCKET_ERROR) LogSocketError("Reply - Send data");
+    if (send(sckt_in, "JSBSim> ", 8, 0) == SOCKET_ERROR) LogSocketError("Reply - Prompt");
   } else {
     cerr << "Socket reply must be to a valid socket" << endl;
     return -1;
@@ -338,6 +339,7 @@ int FGfdmSocket::Reply(const string& text)
 
 void FGfdmSocket::Close(void)
 {
+  assert(Protocol == ptTCP);
   closesocket(sckt_in);
   sckt_in = INVALID_SOCKET;
 }
@@ -395,12 +397,12 @@ void FGfdmSocket::Send(void)
 void FGfdmSocket::Send(const char *data, int length)
 {
   if (Protocol == ptTCP && sckt_in != INVALID_SOCKET) {
-    if ((send(sckt_in, data, length, 0)) == SOCKET_ERROR) PrintSocketError("Send - TCP data sending");
+    if ((send(sckt_in, data, length, 0)) == SOCKET_ERROR) LogSocketError("Send - TCP data sending");
     return;
   }
 
   if (Protocol == ptUDP && sckt != INVALID_SOCKET) {
-    if ((send(sckt, data, length, 0)) == SOCKET_ERROR) PrintSocketError("Send - UDP data sending");
+    if ((send(sckt, data, length, 0)) == SOCKET_ERROR) LogSocketError("Send - UDP data sending");
     return;
   }
 
@@ -415,23 +417,23 @@ void FGfdmSocket::WaitUntilReadable(void)
   if (sckt_in == INVALID_SOCKET) return;
 
   fd_set fds;
-    FD_ZERO(&fds);
-    FD_SET(sckt_in, &fds);
+  FD_ZERO(&fds);
+  FD_SET(sckt_in, &fds);
 
-    int result = select(FD_SETSIZE, &fds, nullptr, nullptr, nullptr);
+  int result = select(FD_SETSIZE, &fds, nullptr, nullptr, nullptr);
 
-    if (result == 0) {
-      cerr << "Socket timeout." << endl;
-      return;
-    } else if (result != SOCKET_ERROR)
-      return;
+  if (result == 0) {
+    cerr << "Socket timeout." << endl;
+    return;
+  } else if (result != SOCKET_ERROR)
+    return;
 
-    PrintSocketError("WaitUntilReadable");
+  LogSocketError("WaitUntilReadable");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGfdmSocket::PrintSocketError(const std::string& msg)
+void FGfdmSocket::LogSocketError(const std::string& msg)
 {
   // An error has occurred, display the error message.
   cerr << "Socket error in " << msg << ": ";
