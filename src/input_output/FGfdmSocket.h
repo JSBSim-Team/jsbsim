@@ -58,10 +58,14 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Encapsulates an object that enables JSBSim to communicate via socket (input
-    and/or output).
-    
-  */
+/**
+ * @brief The FGfdmSocket class enables JSBSim to communicate via sockets.
+ *
+ * This class provides functionality for sending and receiving data over a socket
+ * connection.
+ * It can behave as both a client and/or a server, depending on the constructor used.
+ * The socket can use either UDP or TCP protocol for communication.
+ */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -70,26 +74,107 @@ CLASS DECLARATION
 class FGfdmSocket : public FGJSBBase
 {
 public:
+  /**
+   * @brief Construct a client socket.
+   *
+   * @param address The IP address or hostname of the server to connect to.
+   * @param port The port number to connect to.
+   * @param protocol The protocol to use for communication (ptUDP or ptTCP).
+   * @param precision The precision to use for floating-point numbers (default is 7).
+   */
   FGfdmSocket(const std::string& address, int port, int protocol, int precision = 7);
-  FGfdmSocket(int port, int protocol, int precision = 7);
-  ~FGfdmSocket();
-  void Send(void);
-  void Send(const char *data, int length);
 
+  /**
+   * @brief Construct a server socket.
+   *
+   * @param port The port number to listen on.
+   * @param protocol The protocol to use for communication (ptUDP or ptTCP).
+   * @param precision The precision to use for floating-point numbers (default is 7).
+   */
+  FGfdmSocket(int port, int protocol, int precision = 7);
+
+  ~FGfdmSocket();
+
+  /// Send the internal buffer over the socket connection.
+  void Send(void);
+
+  /**
+   * @brief Send the specified data over the socket connection.
+   *
+   * @param data The data to send.
+   * @param length The length of the data.
+   */
+  void Send(const char *data, int length);
+  void Send(const std::string& data) { Send(data.c_str(), data.length()); }
+
+  /**
+   * @brief Receive data from the socket connection.
+   *
+   * @return The received data as a string.
+   */
   std::string Receive(void);
+
+  /**
+   * @brief Send a reply to the client ending by a prompt "JSBSim>"
+   *
+   * @param text The reply text to send.
+   * @return The number of bytes sent.
+   */
   int Reply(const std::string& text);
+
+  /**
+   * @brief Append the specified string to the internal buffer.
+   *
+   * @param s The string to append.
+   */
   void Append(const std::string& s) {Append(s.c_str());}
+
+  /**
+   * @brief Append the specified C-style string to the internal buffer.
+   *
+   * @param s The C-style string to append.
+   */
   void Append(const char*);
-  void Append(double);
-  void Append(long);
+
+  /**
+   * @brief Append the specified double value to the internal buffer.
+   *
+   * @param value The double value to append.
+   */
+  void Append(double value);
+
+  /**
+   * @brief Append the specified long value to the internal buffer.
+   *
+   * @param value The long value to append.
+   */
+  void Append(long value);
+
+  /// Clear the internal buffer.
   void Clear(void);
+
+  /**
+   * @brief Clear the internal buffer and appends the specified string.
+   *
+   * @param s The string to append after clearing the buffer.
+   */
   void Clear(const std::string& s);
+
+  /// Close the socket connection if the protocol is TCP.
   void Close(void);
+
+  /**
+   * @brief Return the connection status of the socket.
+   *
+   * @return True if the socket is connected, false otherwise.
+   */
   bool GetConnectStatus(void) {return connected;}
+
+  /// Wait until the TCP socket is readable.
   void WaitUntilReadable(void);
 
   enum ProtocolType {ptUDP, ptTCP};
- 
+
 private:
 #if defined(_MSC_VER) || defined(__MINGW32__)
   SOCKET sckt;
@@ -104,6 +189,7 @@ private:
   std::ostringstream buffer;
   int precision;
   bool connected;
+  void LogSocketError(const std::string& msg);
   void Debug(int from);
 };
 }

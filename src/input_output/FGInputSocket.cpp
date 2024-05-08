@@ -243,7 +243,7 @@ void FGInputSocket::Read(bool Holding)
       } else if (command == "quit") {               // QUIT
 
         // close the socket connection
-        socket->Reply("Closing connection\r\n");
+        socket->Send("Closing connection\r\n");
         socket->Close();
 
       } else if (command == "info") {               // INFO
