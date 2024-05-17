@@ -590,6 +590,11 @@ void FGInitialCondition::SetWindDownKtsIC(double wD)
   calcAeroAngles(_vt_NED);
 }
 
+void FGInitialCondition::SetWindMagFpsIC(double mag)
+{
+  SetWindMagKtsIC(mag*fpstokts);
+}
+
 //******************************************************************************
 // Modifies the wind velocity (in knots) while keeping its direction unchanged.
 // The vertical component (in local NED frame) is unmodified. The aircraft
@@ -1519,7 +1524,8 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
   PropertyManager->Tie("ic/vw-down-fps", this,
                        &FGInitialCondition::GetWindDFpsIC);
   PropertyManager->Tie("ic/vw-mag-fps", this,
-                       &FGInitialCondition::GetWindFpsIC);
+                       &FGInitialCondition::GetWindFpsIC,
+                       &FGInitialCondition::SetWindMagFpsIC);
   PropertyManager->Tie("ic/vw-dir-deg", this,
                        &FGInitialCondition::GetWindDirDegIC,
                        &FGInitialCondition::SetWindDirDegIC);

@@ -444,6 +444,10 @@ public:
   void SetWindNEDFpsIC(double wN, double wE, double wD);
 
   /** Sets the initial total wind speed.
+      @param mag Initial wind velocity magnitude in feet/second */
+  void SetWindMagFpsIC(double mag);
+
+  /** Sets the initial total wind speed.
       @param mag Initial wind velocity magnitude in knots */
   void SetWindMagKtsIC(double mag);
 
