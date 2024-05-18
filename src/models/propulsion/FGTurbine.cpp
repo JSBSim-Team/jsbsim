@@ -115,9 +115,6 @@ void FGTurbine::Calculate(void)
   if (ThrottlePos > 1.0) {
     AugmentCmd = ThrottlePos - 1.0;
     ThrottlePos -= AugmentCmd;
-    if (AugmentCmd > 1.0) {
-      AugmentCmd = 1.0;
-    }
   } else {
     AugmentCmd = 0.0;
   }
@@ -246,7 +243,7 @@ double FGTurbine::Run()
     if (AugmentCmd > 0.0) {
       Augmentation = true;
       double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
-      thrust += (tdiff * AugmentCmd);
+      thrust += (tdiff * std::min(AugmentCmd, 1.0));
       FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC->GetValue(), 5000.0, 10000.0);
       NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
     } else {
@@ -368,7 +365,7 @@ double FGTurbine::Trim()
     if (AugMethod == 2) {
       if (AugmentCmd > 0.0) {
         double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
-        thrust += (tdiff * AugmentCmd);
+        thrust += (tdiff * std::min(AugmentCmd, 1.0));
       }
     }
 
