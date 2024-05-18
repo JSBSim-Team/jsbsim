@@ -542,8 +542,10 @@ void FGLGear::ReportTakeoffOrLanding(void)
 
   if (lastWOW != WOW)
   {
-    cout << "GEAR_CONTACT: " << fdmex->GetSimTime() << " seconds: " << name
-         << " " << WOW << endl;
+    if (debug_lvl > 0) {
+      cout << "GEAR_CONTACT: " << fdmex->GetSimTime() << " seconds: " << name
+           << " " << WOW << endl;
+    }
   }
 }
 
@@ -557,7 +559,10 @@ void FGLGear::CrashDetect(void)
       GetMoments().Magnitude() > 5000000000.0 ||
       SinkRate > 1.4666*30 ) && !fdmex->IntegrationSuspended())
   {
-    cout << "*CRASH DETECTED* " << fdmex->GetSimTime() << " seconds: " << name;
+    if (debug_lvl > 0) {
+      cout << "*CRASH DETECTED* " << fdmex->GetSimTime() << " seconds: " << name;
+    }
+
     // fdmex->SuspendIntegration();
   }
 }
