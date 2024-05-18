@@ -445,7 +445,7 @@ public:
 
   /** Sets the initial total wind speed.
       @param mag Initial wind velocity magnitude in feet/second */
-  void SetWindMagFpsIC(double mag);
+  void SetWindMagFpsIC(double mag) { SetWindMagKtsIC(mag * fpstokts); }
 
   /** Sets the initial total wind speed.
       @param mag Initial wind velocity magnitude in knots */
@@ -509,7 +509,7 @@ public:
 
   /** Gets the initial total wind velocity in feet/sec.
       @return Initial wind velocity in feet/second */
-  double GetWindFpsIC(void) const;
+  double GetWindMagFpsIC(void) const;
 
   /** Gets the initial wind direction.
       @return Initial wind direction in feet/second */

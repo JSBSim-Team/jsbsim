@@ -369,5 +369,10 @@ public:
     TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 3.5*sqrt(3.0)*ktstofps, epsilon);
     TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 3.5*ktstofps, epsilon);
     TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
+
+    ic.SetWindMagFpsIC(7.0);
+    TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 3.5 * sqrt(3.0), epsilon);
+    TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 3.5, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
   }
 };
