@@ -115,6 +115,9 @@ void FGTurbine::Calculate(void)
   if (ThrottlePos > 1.0) {
     AugmentCmd = ThrottlePos - 1.0;
     ThrottlePos -= AugmentCmd;
+    if (AugmentCmd > 1.0) {
+      AugmentCmd = 1.0;
+    }
   } else {
     AugmentCmd = 0.0;
   }
