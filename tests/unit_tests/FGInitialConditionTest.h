@@ -52,7 +52,7 @@ public:
     TS_ASSERT_EQUALS(ic.GetBetaDegIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetBetaDegIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetBetaRadIC(), 0.0);
-    TS_ASSERT_EQUALS(ic.GetWindFpsIC(), 0.0);
+    TS_ASSERT_EQUALS(ic.GetWindMagFpsIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetWindDirDegIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetWindUFpsIC(), 0.0);
     TS_ASSERT_EQUALS(ic.GetWindVFpsIC(), 0.0);
@@ -356,10 +356,10 @@ public:
     TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 1.0, epsilon);
     TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 2.0, epsilon);
     TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
-    TS_ASSERT_DELTA(ic.GetWindFpsIC(), sqrt(5.0), epsilon);
+    TS_ASSERT_DELTA(ic.GetWindMagFpsIC(), sqrt(5.0), epsilon);
     TS_ASSERT_DELTA(ic.GetWindDirDegIC(), atan2(2.0, 1.0)*180./M_PI, epsilon);
 
-    double mag = ic.GetWindFpsIC();
+    double mag = ic.GetWindMagFpsIC();
     ic.SetWindDirDegIC(30.);
     TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 0.5*mag*sqrt(3.0), epsilon);
     TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 0.5*mag, epsilon);
@@ -368,6 +368,11 @@ public:
     ic.SetWindMagKtsIC(7.0);
     TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 3.5*sqrt(3.0)*ktstofps, epsilon);
     TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 3.5*ktstofps, epsilon);
+    TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
+
+    ic.SetWindMagFpsIC(7.0);
+    TS_ASSERT_DELTA(ic.GetWindNFpsIC(), 3.5 * sqrt(3.0), epsilon);
+    TS_ASSERT_DELTA(ic.GetWindEFpsIC(), 3.5, epsilon);
     TS_ASSERT_DELTA(ic.GetWindDFpsIC(), 3.0, epsilon);
   }
 };
