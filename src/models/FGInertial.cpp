@@ -255,7 +255,7 @@ void FGInertial::SetGravityType(int gt)
 
 void FGInertial::bind(void)
 {
-  PropertyManager->Tie("inertial/sea-level-radius_ft", &in.Position,
+  PropertyManager->Tie("inertial/sea-level-radius-ft", &in.Position,
                        &FGLocation::GetSeaLevelRadius);
   PropertyManager->Tie("simulation/gravity-model", this, &FGInertial::GetGravityType,
                        &FGInertial::SetGravityType);
