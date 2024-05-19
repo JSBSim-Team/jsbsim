@@ -1398,25 +1398,28 @@ void FGFDMExec::Debug(int from)
 {
   if (debug_lvl <= 0) return;
 
+  FGLogging log(Log, LogLevel::DEBUG);
+
   if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "\n\n     "
-           << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
-      cout << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
-      cout << "JSBSim startup beginning ...\n\n";
-      if (disperse == 1) cout << "Dispersions are ON." << endl << endl;
+      log << "\n\n     "
+          << "JSBSim Flight Dynamics Model v" << JSBSim_version << endl;
+      log << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
+      log << "JSBSim startup beginning ...\n\n";
+      if (disperse == 1) log << "Dispersions are ON." << endl << endl;
     } else if (from == 3) {
-      cout << "\n\nJSBSim startup complete\n\n";
+      log << "\n\nJSBSim startup complete\n\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGFDMExec" << endl;
-    if (from == 1) cout << "Destroyed:    FGFDMExec" << endl;
+    if (from == 0) log << "Instantiated: FGFDMExec" << endl;
+    if (from == 1) log << "Destroyed:    FGFDMExec" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
     if (from == 2) {
-      cout << "================== Frame: " << Frame << "  Time: "
-           << sim_time << " dt: " << dT << endl;
+      FGLogging log(Log, LogLevel::DEBUG);
+      log << "================== Frame: " << Frame << "  Time: "
+          << sim_time << " dt: " << dT << endl;
     }
   }
   if (debug_lvl & 8 ) { // Runtime state variables
