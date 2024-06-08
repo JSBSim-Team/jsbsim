@@ -43,6 +43,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -268,11 +269,9 @@ void FGMassBalance::AddPointMass(Element* el)
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
-    stringstream s;
-    s << el->ReadFrom() << "Pointmass " << pointmass_name
-         << " has no location.";
-    cerr << endl << s.str() << endl;
-    throw BaseException(s.str());
+    FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::FATAL);
+    log << "Pointmass " << pointmass_name << " has no location." << endl;
+    throw BaseException(log.str());
   }
 
   double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
@@ -451,45 +450,44 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  cout << endl << fgblue << highint
-       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
-       << reset << endl;
-  cout << "                                  " << underon << "    Weight    CG-X    CG-Y"
-       << "    CG-Z         Ixx         Iyy         Izz"
-       << "         Ixy         Ixz         Iyz" << underoff << endl;
-  cout.precision(1);
-  cout << highint << setw(34) << left << "    Base Vehicle " << normint
-       << right << setw(12) << EmptyWeight
-       << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
-       << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
-       << setw(12) << baseJ(1,2) << setw(12) << baseJ(1,3) << setw(12) << baseJ(2,3) << endl;
+  FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
+  log << endl << LogFormat::BLUE << LogFormat::BOLD
+      << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
+      << LogFormat::RESET << endl;
+  log << "                                  " << underon << "    Weight    CG-X    CG-Y"
+      << "    CG-Z         Ixx         Iyy         Izz"
+      << "         Ixy         Ixz         Iyz" << underoff << endl;
+  log << setprecision(1);
+  log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << normint
+      << right << setw(12) << EmptyWeight
+      << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
+      << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
+      << setw(12) << baseJ(1,2) << setw(12) << baseJ(1,3) << setw(12) << baseJ(2,3) << endl;
 
   for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
-    cout << highint << left << setw(4) << i << setw(30) << pm->GetName() << normint
-         << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
-         << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
-         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
-         << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;
+    log << LogFormat::BOLD << left << setw(4) << i << setw(30) << pm->GetName() << normint
+        << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
+        << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
+        << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
+        << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;
   }
 
-  cout << FDMExec->GetPropulsionTankReport();
+  log << FDMExec->GetPropulsionTankReport();
 
-  cout << "    " << underon << setw(136) << " " << underoff << endl;
-  cout << highint << left << setw(30) << "    Total: " << right << setw(14) << Weight
-       << setw(8) << vXYZcg(eX)
-       << setw(8) << vXYZcg(eY)
-       << setw(8) << vXYZcg(eZ)
-       << setw(12) << mJ(1,1)
-       << setw(12) << mJ(2,2)
-       << setw(12) << mJ(3,3)
-       << setw(12) << mJ(1,2)
-       << setw(12) << mJ(1,3)
-       << setw(12) << mJ(2,3)
-       << normint << endl;
-
-  cout.setf(ios_base::fixed);
+  log << "    " << underon << setw(136) << " " << underoff << endl;
+  log << LogFormat::BOLD << left << setw(30) << "    Total: " << right << setw(14) << Weight
+      << setw(8) << vXYZcg(eX)
+      << setw(8) << vXYZcg(eY)
+      << setw(8) << vXYZcg(eZ)
+      << setw(12) << mJ(1,1)
+      << setw(12) << mJ(2,2)
+      << setw(12) << mJ(3,3)
+      << setw(12) << mJ(1,2)
+      << setw(12) << mJ(1,3)
+      << setw(12) << mJ(2,3)
+      << LogFormat::NORMAL << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -517,18 +515,19 @@ void FGMassBalance::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
-      cout << endl << "  Mass and Balance:" << endl;
-      cout << "    baseIxx: " << baseJ(1,1) << " slug-ft2" << endl;
-      cout << "    baseIyy: " << baseJ(2,2) << " slug-ft2" << endl;
-      cout << "    baseIzz: " << baseJ(3,3) << " slug-ft2" << endl;
-      cout << "    baseIxy: " << baseJ(1,2) << " slug-ft2" << endl;
-      cout << "    baseIxz: " << baseJ(1,3) << " slug-ft2" << endl;
-      cout << "    baseIyz: " << baseJ(2,3) << " slug-ft2" << endl;
-      cout << "    Empty Weight: " << EmptyWeight << " lbm" << endl;
-      cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << endl << "  Mass and Balance:" << endl;
+      log << "    baseIxx: " << baseJ(1,1) << " slug-ft2" << endl;
+      log << "    baseIyy: " << baseJ(2,2) << " slug-ft2" << endl;
+      log << "    baseIzz: " << baseJ(3,3) << " slug-ft2" << endl;
+      log << "    baseIxy: " << baseJ(1,2) << " slug-ft2" << endl;
+      log << "    baseIxz: " << baseJ(1,3) << " slug-ft2" << endl;
+      log << "    baseIyz: " << baseJ(2,3) << " slug-ft2" << endl;
+      log << "    Empty Weight: " << EmptyWeight << " lbm" << endl;
+      log << "    CG (x, y, z): " << vbaseXYZcg << endl;
       // ToDo: Need to add point mass outputs here
       for (unsigned int i=0; i<PointMasses.size(); i++) {
-        cout << "    Point Mass Object: " << PointMasses[i]->Weight << " lbs. at "
+        log << "    Point Mass Object: " << PointMasses[i]->Weight << " lbs. at "
                    << "X, Y, Z (in.): " << PointMasses[i]->Location(eX) << "  "
                    << PointMasses[i]->Location(eY) << "  "
                    << PointMasses[i]->Location(eZ) << endl;
@@ -536,8 +535,9 @@ void FGMassBalance::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGMassBalance" << endl;
-    if (from == 1) cout << "Destroyed:    FGMassBalance" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGMassBalance" << endl;
+    if (from == 1) log << "Destroyed:    FGMassBalance" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -545,12 +545,13 @@ void FGMassBalance::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) {
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
       if (EmptyWeight <= 0.0 || EmptyWeight > 1e9)
-        cout << "MassBalance::EmptyWeight out of bounds: " << EmptyWeight << endl;
+        log << "MassBalance::EmptyWeight out of bounds: " << EmptyWeight << endl;
       if (Weight <= 0.0 || Weight > 1e9)
-        cout << "MassBalance::Weight out of bounds: " << Weight << endl;
+        log << "MassBalance::Weight out of bounds: " << Weight << endl;
       if (Mass <= 0.0 || Mass > 1e9)
-        cout << "MassBalance::Mass out of bounds: " << Mass << endl;
+        log << "MassBalance::Mass out of bounds: " << Mass << endl;
     }
   }
   if (debug_lvl & 64) {

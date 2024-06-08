@@ -48,6 +48,7 @@ INCLUDES
 #include "input_output/FGPropertyManager.h"
 #include "FGInertial.h"
 #include "FGAtmosphere.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -444,7 +445,9 @@ void FGAuxiliary::bind(void)
 
 double FGAuxiliary::BadUnits(void) const
 {
-  cerr << "Bad units" << endl; return 0.0;
+  FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+  log << "Bad units" << endl;
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,18 +479,20 @@ void FGAuxiliary::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAuxiliary" << endl;
-    if (from == 1) cout << "Destroyed:    FGAuxiliary" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGAuxiliary" << endl;
+    if (from == 1) log << "Destroyed:    FGAuxiliary" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
     if (Mach > 100 || Mach < 0.00)
-      cout << "FGPropagate::Mach is out of bounds: " << Mach << endl;
+      log << "FGPropagate::Mach is out of bounds: " << Mach << endl;
     if (qbar > 1e6 || qbar < 0.00)
-      cout << "FGPropagate::qbar is out of bounds: " << qbar << endl;
+      log << "FGPropagate::qbar is out of bounds: " << qbar << endl;
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
