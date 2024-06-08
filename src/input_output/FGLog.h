@@ -56,9 +56,10 @@ namespace JSBSim {
 
 class Element;
 
-// The return type of std::setprecision is unspecified by the C++ standard so we
-// need some C++ magic to be able to overload the operator<< for std::setprecision
+// The return type of these functions is unspecified by the C++ standard so we
+// need some C++ magic to be able to overload the operator<< for these functions.
 using setprecision_t = decltype(std::setprecision(0));
+using setw_t = decltype(std::setw(0));
 
 enum class LogLevel {
   BULK,  // For frequent messages
@@ -115,10 +116,12 @@ public:
   virtual ~FGLogging() { Flush(); }
   FGLogging& operator<<(const char* message) { buffer << message ; return *this; }
   FGLogging& operator<<(const std::string& message) { buffer << message ; return *this; }
-  FGLogging& operator<<(unsigned int value) { buffer << value; return *this; }
+  template<typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+    FGLogging& operator<<(T value) { buffer << value; return *this; }
   FGLogging& operator<<(std::ostream& (*manipulator)(std::ostream&)) { buffer << manipulator; return *this; }
   FGLogging& operator<<(std::ios_base& (*manipulator)(std::ios_base&)) { buffer << manipulator; return *this; }
   FGLogging& operator<<(setprecision_t value) { buffer << value; return *this; }
+  FGLogging& operator<<(setw_t value) { buffer << value; return *this; }
   FGLogging& operator<<(const SGPath& path) { buffer << path; return *this; }
   FGLogging& operator<<(const FGColumnVector3& vec) { buffer << vec; return *this; }
   FGLogging& operator<<(LogFormat format);
