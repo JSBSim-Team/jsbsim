@@ -46,6 +46,7 @@ INCLUDES
 
 #include "simgear/misc/sg_path.hxx"
 #include "FGJSBBase.h"
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,8 +117,10 @@ public:
   FGLogging& operator<<(const std::string& message) { buffer << message ; return *this; }
   FGLogging& operator<<(unsigned int value) { buffer << value; return *this; }
   FGLogging& operator<<(std::ostream& (*manipulator)(std::ostream&)) { buffer << manipulator; return *this; }
+  FGLogging& operator<<(std::ios_base& (*manipulator)(std::ios_base&)) { buffer << manipulator; return *this; }
   FGLogging& operator<<(setprecision_t value) { buffer << value; return *this; }
   FGLogging& operator<<(const SGPath& path) { buffer << path; return *this; }
+  FGLogging& operator<<(const FGColumnVector3& vec) { buffer << vec; return *this; }
   FGLogging& operator<<(LogFormat format);
   std::string str(void) const { return buffer.str(); }
   void Flush(void);

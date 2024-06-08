@@ -41,6 +41,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGFDMExec.h"
 #include "input_output/FGModelLoader.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -66,14 +67,14 @@ FGModel::FGModel(FGFDMExec* fdmex)
   exe_ctr     = 1;
   rate        = 1;
 
-  if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGModel::~FGModel()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,14 +89,14 @@ bool FGModel::InitModel(void)
 
 bool FGModel::Run(bool Holding)
 {
-  if (debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
-
   if (rate == 1) return false; // Fast exit if nothing to do
 
   if (exe_ctr >= rate) exe_ctr = 0;
 
   if (exe_ctr++ == 1) return false;
   else              return true;
+
+  Debug(2);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,9 +116,9 @@ bool FGModel::Upload(Element* el, bool preLoad)
   if (!document) return false;
 
   if (document->GetName() != el->GetName()) {
-    cerr << el->ReadFrom()
-         << " Read model '" << document->GetName()
-         << "' while expecting model '" << el->GetName() << "'" << endl;
+    FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::ERROR);
+    log << " Read model '" << document->GetName()
+        << "' while expecting model '" << el->GetName() << "'" << endl;
     return false;
   }
 
@@ -177,10 +178,13 @@ void FGModel::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGModel" << endl;
-    if (from == 1) cout << "Destroyed:    FGModel" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGModel" << endl;
+    if (from == 1) log << "Destroyed:    FGModel" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    log << "Entering Run() for model " << Name << endl;
   }
   if (debug_lvl & 8 ) { // Runtime state variables
   }

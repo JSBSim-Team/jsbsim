@@ -37,10 +37,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
+#include "FGFDMExec.h"
 #include "FGModelLoader.h"
 #include "FGXMLFileRead.h"
 #include "models/FGModel.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -67,8 +68,8 @@ Element_ptr FGModelLoader::Open(Element *el)
     else {
       document = XMLFileRead.LoadXMLDocument(path);
       if (document == 0L) {
-        cerr << endl << el->ReadFrom()
-             << "Could not open file: " << fname << endl;
+        FGXMLLogging log(model->GetExec()->GetLogger(), el, LogLevel::ERROR);
+        log << "Could not open file: " << fname << endl;
         return NULL;
       }
       CachedFiles[path.utf8Str()] = document;
@@ -82,6 +83,8 @@ Element_ptr FGModelLoader::Open(Element *el)
 
   return document;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 SGPath CheckPathName(const SGPath& path, const SGPath& filename) {
   SGPath fullName = path/filename.utf8Str();

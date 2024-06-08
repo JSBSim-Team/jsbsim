@@ -44,6 +44,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
+#include "input_output/FGLog.h"
 
 namespace JSBSim {
 
@@ -104,8 +105,9 @@ double FGAtmosphere::ValidatePressure(double p, const string& msg, bool quiet) c
   const double MinPressure = ConvertToPSF(1E-15, ePascals);
   if (p < MinPressure) {
     if (!quiet) {
-      cerr << msg << " " << p << " is too low." << endl
-           << msg << " is capped to " << MinPressure << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+      log << msg << " " << p << " is too low." << endl
+          << msg << " will be capped to " << MinPressure << endl;
     }
     return MinPressure;
   }
@@ -124,8 +126,9 @@ double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet
 
   if (t < minUniverseTemperature) {
     if (!quiet) {
-      cerr << msg << " " << t << " is too low." << endl
-           << msg << " is capped to " << minUniverseTemperature << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+      log << msg << " " << t << " is too low." << endl
+          << msg << " will be capped to " << minUniverseTemperature << endl;
     }
     return minUniverseTemperature;
   }
@@ -354,8 +357,9 @@ void FGAtmosphere::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) std::cout << "Instantiated: FGAtmosphere" << std::endl;
-    if (from == 1) std::cout << "Destroyed:    FGAtmosphere" << std::endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGAtmosphere" << std::endl;
+    if (from == 1) log << "Destroyed:    FGAtmosphere" << std::endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

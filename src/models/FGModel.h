@@ -90,12 +90,12 @@ public:
   /// Set the ouput rate for the model in frames
   void SetRate(unsigned int tt) {rate = tt;}
   /// Get the output rate for the model in frames
-  unsigned int GetRate(void)   {return rate;}
-  FGFDMExec* GetExec(void)     {return FDMExec;}
+  unsigned int GetRate(void) const { return rate; }
+  FGFDMExec* GetExec(void) const { return FDMExec; }
 
   void SetPropertyManager(std::shared_ptr<FGPropertyManager> fgpm) { PropertyManager=fgpm;}
   virtual SGPath FindFullPathName(const SGPath& path) const;
-  const std::string& GetName(void) { return Name; }
+  const std::string& GetName(void) const { return Name; }
   virtual bool Load(Element* el) { return true; }
 
 protected:
