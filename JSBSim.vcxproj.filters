@@ -335,6 +335,9 @@
     <ClCompile Include="src\models\atmosphere\MSIS\nrlmsise-00_data.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\input_output\FGLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_output\FGInputSocket.h">
@@ -692,6 +695,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\atmosphere\MSIS\nrlmsise-00.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input_output\FGLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

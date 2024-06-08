@@ -69,6 +69,7 @@ class FGInertial;
 class FGInput;
 class FGPropulsion;
 class FGMassBalance;
+class FGLogger;
 
 class TrimFailureException : public BaseException {
   public:
@@ -479,7 +480,7 @@ public:
    * You must trim first to get an accurate state-space model
    */
   void DoLinearization(int);
-  
+
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
@@ -507,6 +508,9 @@ public:
   void ResetToInitialConditions(int mode);
   /// Sets the debug level.
   void SetDebugLevel(int level) {debug_lvl = level;}
+
+  void SetLogger(std::shared_ptr<FGLogger> logger) {Log = logger;}
+  std::shared_ptr<FGLogger> GetLogger(void) const {return Log;}
 
   struct PropertyCatalogStructure {
     /// Name of the property.
@@ -692,6 +696,8 @@ private:
   std::vector <std::shared_ptr<childData>> ChildFDMList;
   std::vector <std::shared_ptr<FGModel>> Models;
   std::map<std::string, FGTemplateFunc_ptr> TemplateFunctions;
+
+  std::shared_ptr<FGLogger> Log;
 
   bool ReadFileHeader(Element*);
   bool ReadChild(Element*);

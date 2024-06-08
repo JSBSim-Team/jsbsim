@@ -15,7 +15,8 @@ set(SOURCES FGGroundCallback.cpp
             FGInputType.cpp
             FGInputSocket.cpp
             FGUDPInputSocket.cpp
-            string_utilities.cpp)
+            string_utilities.cpp
+            FGLog.cpp)
 
 set(HEADERS FGGroundCallback.h
             FGPropertyManager.h
@@ -35,7 +36,8 @@ set(HEADERS FGGroundCallback.h
             FGModelLoader.h
             FGInputType.h
             FGInputSocket.h
-            FGUDPInputSocket.h)
+            FGUDPInputSocket.h
+            FGLog.h)
 
 add_library(InputOutput OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(InputOutput PROPERTIES TARGET_DIRECTORY

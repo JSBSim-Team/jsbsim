@@ -232,6 +232,7 @@
     <ClInclude Include="src\initialization\FGLinearization.h" />
     <ClInclude Include="src\input_output\FGInputSocket.h" />
     <ClInclude Include="src\input_output\FGInputType.h" />
+    <ClInclude Include="src\input_output\FGLog.h" />
     <ClInclude Include="src\input_output\fgmodelloader.h" />
     <ClInclude Include="src\input_output\fgoutputfg.h" />
     <ClInclude Include="src\input_output\fgoutputfile.h" />
@@ -356,6 +357,7 @@
     <ClCompile Include="src\initialization\FGLinearization.cpp" />
     <ClCompile Include="src\input_output\FGInputSocket.cpp" />
     <ClCompile Include="src\input_output\FGInputType.cpp" />
+    <ClCompile Include="src\input_output\FGLog.cpp" />
     <ClCompile Include="src\input_output\FGModelLoader.cpp" />
     <ClCompile Include="src\input_output\FGOutputFG.cpp" />
     <ClCompile Include="src\input_output\FGOutputFile.cpp" />
