@@ -142,7 +142,7 @@ void FGTurbine::Calculate(void)
 
   // start
   if ((Starter == true) || (in.qbar > 30.0)) {
-    if (!Running && !Cutoff && (N2 > 15.0)) phase = tpStart;
+    if (!Running && !Cutoff) phase = tpStart;
   }
 
   if (Cutoff && (phase != tpSpinUp)) phase = tpOff;
@@ -289,7 +289,7 @@ double FGTurbine::SpinUp(void)
 
 double FGTurbine::Start(void)
 {
-  if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
+  if (!Starved) { // Not checking for N2 to be greater than 15%
     Cranking = true;                   // provided for sound effects signal
     if (N2 < IdleN2) {
       N2 = Seek(&N2, IdleN2, N2_start_rate, N2/2.0);
