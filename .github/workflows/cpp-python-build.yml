@@ -895,6 +895,13 @@ jobs:
     needs: Stable-Release
     name: Deploy Documentation
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.pages_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Install Ubuntu packages
         run: |
@@ -923,10 +930,13 @@ jobs:
           pip install jsbsim --no-index -f .
           touch documentation/html/.nojekyll
           sphinx-build -b html documentation documentation/html/python
-      - name: Publish docs to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          target_branch: gh-pages
-          build_dir: build/documentation/html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # upload entire directory
+          path: 'build/documentation/html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
