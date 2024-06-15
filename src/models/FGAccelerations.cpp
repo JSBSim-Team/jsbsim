@@ -155,11 +155,11 @@ void FGAccelerations::CalculatePQRdot(void)
     // The rotational acceleration in ECI is calculated so that the rotational
     // acceleration is zero in the body frame.
     vPQRdot.InitMatrix();
-    vPQRidot = in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
+    vPQRidot = vPQRdot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
   }
   else {
     vPQRidot = in.Jinv * (in.Moment - in.vPQRi * (in.J * in.vPQRi));
-    vPQRdot = vPQRidot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
+    vPQRdot = vPQRidot + in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
   }
 }
 
@@ -211,8 +211,8 @@ void FGAccelerations::SetHoldDown(bool hd)
   if (hd) {
     vUVWidot = in.vOmegaPlanet * (in.vOmegaPlanet * in.vInertialPosition);
     vUVWdot.InitMatrix();
-    vPQRidot = in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
     vPQRdot.InitMatrix();
+    vPQRidot = vPQRdot - in.vPQRi * (in.Ti2b * in.vOmegaPlanet);
   }
 }
 

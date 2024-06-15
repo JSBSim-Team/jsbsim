@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.1 2009/04/14 19:33:22 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
 
-    Copyright (C) 2007 - 2009  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2007 - 2024  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,13 +25,13 @@
 
   <!-- INTERFACE PROPERTIES -->
   <property>ap/yaw-damper-active</property>
-  <property>ap/pitch-setpoint-degrees</property>
+  <property>ap/pitch-setpoint-deg</property>
   <property>ap/pitch-hold-active</property>
 
   <!-- SENSORS -->
 
   <!-- CHANNELS -->
-
+  <property value="0.0">ap/rudder-cmd-norm</property>
   <channel name="Rudder">
 
     <pid name="ap/yaw-damper-pid"> 
@@ -53,32 +52,33 @@
     <switch name="ap/heading-switch">
       <default value="0.0"/>
       <test logic="AND" value="ap/heading-sum">
-            ap/yaw-damper-active == 1
-            fcs/rudder-cmd-norm gt -0.1
-            fcs/rudder-cmd-norm lt 0.1
+            ap/yaw-damper-active GT 0.99
+            fcs/rudder-cmd-norm GT -0.1
+            fcs/rudder-cmd-norm LT 0.1
       </test>
       <output>ap/rudder-cmd-norm</output>
     </switch>
 
   </channel>
 
+  <property value="0.0">ap/elevator-cmd-norm</property>
   <channel name="Elevator">
 
     <pure_gain name="ap/pitch-setpoint-rad">
-      <input> ap/pitch-setpoint-degrees </input>
+      <input> ap/pitch-setpoint-deg </input>
       <gain> 0.017453 </gain>
     </pure_gain>
 
     <summer name="ap/pitch-error-rad">
-      <input> attitude/theta-rad</input>
+      <input> attitude/theta-rad </input>
       <input> -ap/pitch-setpoint-rad </input>
     </summer>
 
-    <pid name="ap/elevator-pid"> 
+    <pid name="ap/elevator-pid">
       <input> ap/pitch-error-rad </input>
       <kp>   5.00 </kp>
-      <ki>   0.00 </ki>
-      <kd>   0.01 </kd>
+      <ki>   0.01 </ki>
+      <kd>   0.00 </kd>
       <clipto>
         <min>-1.0</min>
         <max> 1.0</max>
@@ -88,68 +88,10 @@
     <switch name="ap/elevator-switch">
       <default value="0.0"/>
       <test logic="AND" value="ap/elevator-pid">
-            ap/pitch-hold-active == 1
+            ap/pitch-hold-active GT 0.99
       </test>
       <output>ap/elevator-cmd-norm</output>
     </switch>
-
-  </channel>
-
-  <channel name="Static trim via ballonets">
-
-   <pid name="ap/ballonet-trim-pid"> 
-    <input> ap/pitch-error-rad </input>
-    <kp>  40.00 </kp>
-    <ki>   0.00 </ki>
-    <kd>   0.00 </kd>
-    <clipto>
-     <min>-1.0</min>
-     <max> 1.0</max>
-    </clipto> 
-   </pid>
-
-   <switch name="ap/ballonet-switch">
-    <!-- greater than 0 means trim towards nose heavy. -->
-    <default value="0.0"/>
-    <test logic="AND" value="ap/ballonet-trim-pid">
-     ap/pitch-hold-active == 1
-    </test>
-    <output>ap/ballonet-trim-cmd-norm</output>
-   </switch>
-
-   <fcs_function name="ap/ballonet-valve-cmd-norm[0]">
-    <function>
-     <product>
-      <value>-1.0</value>
-      <min>
-       <value> 0.0 </value>
-       <property>ap/ballonet-trim-cmd-norm</property>
-      </min>
-     </product>
-    </function>
-   </fcs_function>
-
-   <fcs_function name="ap/ballonet-valve-cmd-norm[1]">
-    <function>
-     <product>
-      <value>1.0</value>
-      <max>
-       <value> 0.0 </value>
-       <property>ap/ballonet-trim-cmd-norm</property>
-      </max>
-     </product>
-    </function>
-   </fcs_function>
-
-  </channel>
-
-  <channel name="Envelope pressure">
-
-   <fcs_function name="ap/gas-valve-cmd-norm">
-    <function>
-     <value>0.0</value>
-    </function>
-   </fcs_function>
 
   </channel>
 

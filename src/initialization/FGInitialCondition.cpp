@@ -936,7 +936,7 @@ FGColumnVector3 FGInitialCondition::GetWindNEDFpsIC(void) const {
 
 //******************************************************************************
 
-double FGInitialCondition::GetWindFpsIC(void) const
+double FGInitialCondition::GetWindMagFpsIC(void) const
 {
   const FGMatrix33& Tb2l = orientation.GetTInv();
   FGColumnVector3 _vt_NED = Tb2l * Tw2b * FGColumnVector3(vt, 0., 0.);
@@ -1519,7 +1519,8 @@ void FGInitialCondition::bind(FGPropertyManager* PropertyManager)
   PropertyManager->Tie("ic/vw-down-fps", this,
                        &FGInitialCondition::GetWindDFpsIC);
   PropertyManager->Tie("ic/vw-mag-fps", this,
-                       &FGInitialCondition::GetWindFpsIC);
+                       &FGInitialCondition::GetWindMagFpsIC,
+                       &FGInitialCondition::SetWindMagFpsIC);
   PropertyManager->Tie("ic/vw-dir-deg", this,
                        &FGInitialCondition::GetWindDirDegIC,
                        &FGInitialCondition::SetWindDirDegIC);

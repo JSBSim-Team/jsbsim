@@ -3,22 +3,23 @@
 
   Hydrodynamics section for JSBSim.
 
-    Copyright (C) 2008 - 2012  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2023  Anders Gidenstam  (anders(at)gidenstam.org)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-  
-    This program is distributed in the hope that it will be useful,
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-  
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+    USA
+
 -->
 <system name="hydrodynamics">
 
@@ -26,7 +27,7 @@
   This system computes forces and moments due to the hull's interaction
   with water, both hydrostatic and hydrodynamic, with respect to the
   hydrodynamic reference point (HRP).
-  
+
   The coordinate frame used to define the forces and moments is similar to
   the body frame but is always aligned with the water surface (which is
   assumed to be horizontal). Forces can also be defined in a "wind" frame.
@@ -38,7 +39,7 @@
   - Fbz  - local up (the same as -Z in the local frame).
   - Drag - opposing the relative water flow.
   - Side - 90 degrees right from the relative water flow in the surface plane.
-  The moments are split into the hydrodynamic body frame channels
+  The moments are split into the body frame channels
   (with the same sense as the normal body frame moments):
   - Pitch
   - Yaw
@@ -62,7 +63,7 @@
   Include this system in your aircraft.
 
   Define the following properties in a system of your aircraft:
-  
+
   - Hydrodynamics reference point:
     <property value="...">metrics/hydro-rp-x-in</property>
     <property value="...">metrics/hydro-rp-y-in</property>
@@ -78,12 +79,13 @@
     Unused properties also have to be declared (and set to zero).
 
   - Functions computing the moments in the hydrodynamic body frame.
-    FIXME: Yaw is applied in the standard body frame.
+    FIXME(?): All moments are applied in the standard body frame.
     - hydro/yaw-moment-lbsft
     - hydro/pitch-moment-lbsft
     - hydro/roll-moment-lbsft
 
-  Define the following external forces in the main FDM file of your aircraft:
+  Define the following external forces and moments in the main FDM file of
+  your aircraft:
 
     <force name="hydro-X" frame="LOCAL">
      <location unit="M">
@@ -115,6 +117,31 @@
       <z>-1.0 </z>
      </direction>
     </force>
+
+    <moment name="hydro-pitch" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 0.0 </x>
+      <y> 1.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </moment>
+    <moment name="hydro-roll" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 1.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+     </direction>
+    </moment>
+    <moment name="hydro-yaw" frame="BODY" unit="LBSFT">
+     <direction>
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 1.0 </z>
+     </direction>
+    </moment>
+
+  The old deprecated force based external moment implementation below is still
+  supported. Beware of reference frame differences for the moments.
 
     <force name="hydro-pitch[0]" frame="LOCAL">
      <location unit="M">
@@ -196,15 +223,25 @@
  <!-- Inputs -->
 
  <!-- Environment -->
- <property value="0.0">hydro/water-level-ft</property>
- <property value="63.5">hydro/rho-lbs_ft3</property>
- <property value="1.9736403">hydro/rho-slug_ft3</property>
+ <property value="0.0">hydro/environment/water-level-ft</property>
+ <property value="1.9736403">hydro/environment/rho-slug_ft3</property>
+ <property value="0.000011302106">hydro/environment/kinematic-viscosity-ft2_sec</property> <!-- Sea water at 20 degC. -->
+
+ <property value="0.0">hydro/environment/current-from-north-fps</property>
+ <property value="0.0">hydro/environment/current-from-east-fps</property>
+
+ <property value="40.0">hydro/environment/waves-from-deg</property>
+ <property value="0.0">hydro/environment/wave-amplitude-ft</property>
+ <property value="150.0">hydro/environment/wave-length-ft</property>
 
  <!-- Model parameters -->
  <!--   HRP location. Must be defined.
         - metrics/hydro-rp-x-in
         - metrics/hydro-rp-y-in
         - metrics/hydro-rp-z-in
+
+        - metrics/hydro-beam-ft
+        - metrics/hydro-length-ft
  -->
 
  <!-- Input forces in the hydrodynamic body frame.
@@ -225,6 +262,353 @@
         - hydro/pitch-moment-lbsft
         - hydro/roll-moment-lbsft
  -->
+
+ <channel name="Environment">
+
+  <fcs_function name="hydro/environment/rho-lbs_ft3">
+   <function>
+    <product>
+     <value>32.174049</value>
+     <property>hydro/environment/rho-slug_ft3</property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/gravity-ft_sec2">
+   <function>
+    <quotient>
+     <property>inertia/weight-lbs</property>
+     <property>inertia/mass-slugs</property>
+    </quotient>
+   </function>
+  </fcs_function>
+
+ </channel>
+
+ <channel name="Environment - Waves">
+
+  <fcs_function name="hydro/environment/wave/relative-heading-rad">
+   <description>
+    The difference in heading between the hull and the wave.
+   </description>
+   <function>
+    <difference>
+     <sum>
+      <value>3.1415927</value>
+      <product>
+       <value>0.017453293</value>
+       <property>hydro/environment/waves-from-deg</property>
+      </product>
+     </sum>
+     <property>attitude/psi-rad</property>
+    </difference>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/hull-x-factor">
+   <description>
+    The result of dot(Dwave, (1,0)), i.e. the cosine of the angle
+    between the wave heading and the hull heading.
+   </description>
+   <function>
+    <cos>
+     <property>hydro/environment/wave/relative-heading-rad</property>
+    </cos>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/hull-y-factor">
+   <description>
+    The result of dot(Dwave, (0,1)), i.e. the sine of the angle
+    between the wave heading and the hull heading.
+   </description>
+   <function>
+    <sin>
+     <property>hydro/environment/wave/relative-heading-rad</property>
+    </sin>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/hull-angular-frequency-rad_sec">
+   <description>
+    Hull speed in the wave's direction expressed in the wave's
+    angular frequency.
+   </description>
+   <function>
+    <product>
+     <value>6.2831853</value>
+     <quotient>
+      <sum>
+       <product>
+        <property>hydro/vbx-fps</property>
+        <property>hydro/environment/wave/hull-x-factor</property>
+       </product>
+       <product>
+        <property>hydro/vby-fps</property>
+        <property>hydro/environment/wave/hull-y-factor</property>
+       </product>
+      </sum>
+      <max>
+       <value>0.001</value>
+       <property>hydro/environment/wave-length-ft</property>
+      </max>
+     </quotient>
+    </product>
+   </function>
+  </fcs_function>
+
+  <integrator name="hydro/environment/wave/hull-angular-offset-rad">
+   <description>
+    The hull's angular offset at its present position.
+   </description>
+   <input>hydro/environment/wave/hull-angular-frequency-rad_sec</input>
+   <c1>1.0</c1>
+  </integrator>
+
+  <fcs_function name="hydro/environment/wave/angular-frequency-rad_sec">
+   <description>
+    The angular frequency of the wave.
+   </description>
+   <function>
+    <sum>
+     <!-- Deep water gravity wave. -->
+     <product>
+      <value>-1.0</value> <!-- Note: Set to 0 to make the waves stationary. -->
+      <pow>
+       <quotient>
+        <product>
+         <value>6.2831853</value>
+         <property>hydro/environment/gravity-ft_sec2</property>
+        </product>
+        <max>
+         <value>0.001</value>
+         <property>hydro/environment/wave-length-ft</property>
+        </max>
+       </quotient>
+       <value>0.5</value>
+      </pow>
+     </product>
+     <!-- Mix in hull-angular-offset-rad to simplify uses below. -->
+     <quotient>
+      <property>hydro/environment/wave/hull-angular-offset-rad</property>
+      <max> <!-- To avoid divison by 0 at time 0. -->
+       <value>0.1</value>
+       <property>simulation/sim-time-sec</property>
+      </max>
+     </quotient>
+    </sum>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/wave-number-rad_ft">
+   <description>
+    The wave number of the wave.
+   </description>
+   <function>
+    <quotient>
+     <value>6.2831853</value>
+     <max>
+      <value>0.001</value>
+      <property>hydro/environment/wave-length-ft</property>
+     </max>
+    </quotient>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/level-change-ft">
+   <description>
+    The water level change due to the waves. Guessed.
+    Integrated over -0.5 * hydro-length-ft to 0.5 * hydro-length-ft.
+   </description>
+   <function>
+    <quotient>
+     <sum>
+      <product>
+       <property>hydro/environment/wave-amplitude-ft</property>
+       <sin>
+        <difference>
+         <product>
+          <value>0.5</value>
+          <property>metrics/hydro-length-ft</property>
+          <property>hydro/environment/wave/hull-x-factor</property>
+          <property>hydro/environment/wave/wave-number-rad_ft</property>
+         </product>
+         <product>
+          <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+          <property>simulation/sim-time-sec</property>
+         </product>
+        </difference>
+       </sin>
+      </product>
+      <product>
+       <property>hydro/environment/wave-amplitude-ft</property>
+       <sin>
+        <difference>
+         <product>
+          <value>-0.5</value>
+          <property>metrics/hydro-length-ft</property>
+          <property>hydro/environment/wave/hull-x-factor</property>
+          <property>hydro/environment/wave/wave-number-rad_ft</property>
+         </product>
+         <product>
+          <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+          <property>simulation/sim-time-sec</property>
+         </product>
+        </difference>
+       </sin>
+      </product>
+     </sum>
+     <product>
+      <property>hydro/environment/wave/hull-x-factor</property>
+      <property>hydro/environment/wave/wave-number-rad_ft</property>
+      <property>metrics/hydro-length-ft</property>
+     </product>
+    </quotient>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/level-at-hrp-ft">
+   <description>
+    The water level change at the HRP location. For debugging.
+   </description>
+   <function>
+    <product>
+     <property>hydro/environment/wave-amplitude-ft</property>
+     <cos>
+      <product>
+       <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+       <property>simulation/sim-time-sec</property>
+      </product>
+     </cos>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/level-fwd-ft">
+   <description>
+    The water level change at 0.5 * metrics/hydro-length-ft forward of
+    the HRP location.
+   </description>
+   <function>
+    <product>
+     <property>hydro/environment/wave-amplitude-ft</property>
+     <cos>
+      <difference>
+       <product>
+        <value>0.5</value>
+        <property>metrics/hydro-length-ft</property>
+        <property>hydro/environment/wave/hull-x-factor</property>
+        <property>hydro/environment/wave/wave-number-rad_ft</property>
+       </product>
+       <product>
+        <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+        <property>simulation/sim-time-sec</property>
+       </product>
+      </difference>
+     </cos>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/environment/wave/level-aft-ft">
+   <description>
+    The water level change at 0.5 * metrics/hydro-length-ft aft of
+    the HRP location.
+   </description>
+   <function>
+    <product>
+     <property>hydro/environment/wave-amplitude-ft</property>
+     <cos>
+      <difference>
+       <product>
+        <value>-0.5</value>
+        <property>metrics/hydro-length-ft</property>
+        <property>hydro/environment/wave/hull-x-factor</property>
+        <property>hydro/environment/wave/wave-number-rad_ft</property>
+       </product>
+       <product>
+        <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+        <property>simulation/sim-time-sec</property>
+       </product>
+      </difference>
+     </cos>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/orientation/wave-pitch-trim-change-deg">
+   <description>
+    The pitch trim change due to the waves. Guessed.
+   </description>
+   <!-- deltaTrim = atan2(water line at bow - water line at stern, LWL) -->
+   <function>
+    <product>
+     <value>57.29578</value>
+     <atan2>
+      <difference>
+       <property>hydro/environment/wave/level-fwd-ft</property>
+       <property>hydro/environment/wave/level-aft-ft</property>
+      </difference>
+      <property>metrics/hydro-length-ft</property>
+     </atan2>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/orientation/wave-roll-trim-change-deg">
+   <description>
+    The roll trim change due to the waves. Guessed.
+   </description>
+   <!-- deltaTrim =
+          atan2(water line at starboard side - water line at port side, beam)
+   -->
+   <function>
+    <product>
+     <value>57.29578</value>
+     <atan2>
+      <difference>
+       <product>
+        <property>hydro/environment/wave-amplitude-ft</property>
+        <cos>
+         <difference>
+          <product>
+           <value>-0.5</value>
+           <property>metrics/hydro-beam-ft</property>
+           <property>hydro/environment/wave/hull-y-factor</property>
+           <property>hydro/environment/wave/wave-number-rad_ft</property>
+          </product>
+          <product>
+           <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+           <property>simulation/sim-time-sec</property>
+          </product>
+         </difference>
+        </cos>
+       </product>
+       <product>
+        <property>hydro/environment/wave-amplitude-ft</property>
+        <cos>
+         <difference>
+          <product>
+           <value>0.5</value>
+           <property>metrics/hydro-beam-ft</property>
+           <property>hydro/environment/wave/hull-y-factor</property>
+           <property>hydro/environment/wave/wave-number-rad_ft</property>
+          </product>
+          <product>
+           <property>hydro/environment/wave/angular-frequency-rad_sec</property>
+           <property>simulation/sim-time-sec</property>
+          </product>
+         </difference>
+        </cos>
+       </product>
+      </difference>
+      <property>metrics/hydro-beam-ft</property>
+     </atan2>
+    </product>
+   </function>
+  </fcs_function>
+
+ </channel>
 
  <channel name ="Hull position">
 
@@ -257,8 +641,18 @@
         <property> attitude/pitch-rad </property>
        </cos>
       </product>
+      <product>
+       <value> -0.083333333 </value>
+       <difference>
+        <property> metrics/hydro-rp-y-in </property>
+        <property> inertia/cg-y-in </property>
+       </difference>
+       <sin>
+        <property> attitude/roll-rad </property>
+       </sin>
+      </product>
      </sum>
-     <property> hydro/water-level-ft </property>
+     <property> hydro/environment/water-level-ft </property>
     </difference>
    </function>
   </fcs_function>
@@ -266,6 +660,32 @@
  </channel>
 
  <channel name ="Hull orientation">
+
+  <fcs_function name="hydro/true-course-rad">
+   <!-- The course made good by the hull. -->
+   <function>
+    <atan2>
+     <sum>
+      <property>velocities/v-east-fps</property>
+      <property>hydro/environment/current-from-east-fps</property>
+     </sum>
+     <sum>
+      <property>velocities/v-north-fps</property>
+      <property>hydro/environment/current-from-north-fps</property>
+     </sum>
+    </atan2>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/true-course-deg">
+   <!-- The course made good by the hull. -->
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> hydro/true-course-rad </property>
+    </product>
+   </function>
+  </fcs_function>
 
   <fcs_function name="hydro/pitch-deg">
    <function>
@@ -285,15 +705,56 @@
    </function>
   </fcs_function>
 
+  <fcs_function name="hydro/alpha-rad">
+   <function>
+    <sum>
+     <property>attitude/pitch-rad</property>
+     <atan2>
+      <property>velocities/v-down-fps</property>
+      <property>hydro/v-fps</property>
+     </atan2>
+    </sum>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/alpha-deg">
+   <function>
+    <product>
+     <value> 57.29578 </value>
+     <property> hydro/alpha-rad </property>
+    </product>
+   </function>
+  </fcs_function>
+
+  <fcs_function name="hydro/tmp/beta-rad">
+   <!-- Needed to normalize the beta range to +/-PI. -->
+   <function>
+    <difference>
+     <property> hydro/true-course-rad </property>
+     <property> attitude/psi-rad </property>
+    </difference>
+   </function>
+  </fcs_function>
+
   <fcs_function name="hydro/beta-rad">
    <function>
-    <!-- mod -->
-     <difference>
-      <property> flight-path/psi-gt-rad </property>
-      <property> attitude/psi-rad </property>
-     </difference>
-     <!-- value> 3.1415927 </value>
-    </mod -->
+    <sum>
+     <property>hydro/tmp/beta-rad</property>
+     <product>
+      <lt>
+       <property>hydro/tmp/beta-rad</property>
+       <value>-3.1415927</value>
+      </lt>
+      <value>6.2831853</value>
+     </product>
+     <product>
+      <gt>
+       <property>hydro/tmp/beta-rad</property>
+       <value>3.1415927</value>
+      </gt>
+      <value>-6.2831853</value>
+     </product>
+    </sum>
    </function>
   </fcs_function>
 
@@ -302,16 +763,6 @@
     <product>
      <value> 57.29578 </value>
      <property> hydro/beta-rad </property>
-    </product>
-   </function>
-  </fcs_function>
-  
-  <fcs_function name="hydro/true-course-deg">
-   <!-- (Currently) the course made good by the hull. -->
-   <function>
-    <product>
-     <value> 57.29578 </value>
-     <property> flight-path/psi-gt-rad </property>
     </product>
    </function>
   </fcs_function>
@@ -325,11 +776,17 @@
     <pow>
      <sum>
       <pow>
-       <property> velocities/v-north-fps </property>
+       <sum>
+        <property> velocities/v-north-fps </property>
+        <property> hydro/environment/current-from-north-fps </property>
+       </sum>
        <value> 2.0 </value>
       </pow>
       <pow>
-       <property> velocities/v-east-fps </property>
+       <sum>
+        <property> velocities/v-east-fps </property>
+        <property> hydro/environment/current-from-east-fps </property>
+       </sum>
        <value> 2.0 </value>
       </pow>
      </sum>
@@ -372,9 +829,9 @@
    <function>
     <product>
      <value> 0.50 </value>
-     <property>hydro/rho-slug_ft3</property>
-     <property> hydro/v-fps </property>
-     <property> hydro/v-fps </property>
+     <property>hydro/environment/rho-slug_ft3</property>
+     <property>hydro/v-fps</property>
+     <property>hydro/v-fps</property>
     </product>
    </function>
   </fcs_function>
@@ -383,9 +840,9 @@
    <function>
     <product>
      <value> 0.50 </value>
-     <property>hydro/rho-slug_ft3</property>
-     <property> hydro/vbx-fps </property>
-     <abs><property> hydro/vbx-fps </property></abs>
+     <property>hydro/environment/rho-slug_ft3</property>
+     <property>hydro/vbx-fps</property>
+     <abs><property>hydro/vbx-fps</property></abs>
     </product>
    </function>
   </fcs_function>
@@ -394,9 +851,9 @@
    <function>
     <product>
      <value> 0.50 </value>
-     <property>hydro/rho-slug_ft3</property>
-     <property> hydro/vby-fps </property>
-     <abs><property> hydro/vby-fps </property></abs>
+     <property>hydro/environment/rho-slug_ft3</property>
+     <property>hydro/vby-fps</property>
+     <abs><property>hydro/vby-fps</property></abs>
     </product>
    </function>
   </fcs_function>
@@ -425,14 +882,14 @@
      <product>
       <value> -1.0 </value>
       <cos>
-       <property> flight-path/psi-gt-rad </property>
+       <property> hydro/true-course-rad </property>
       </cos>
       <property> hydro/fdrag-lbs </property>
      </product>
      <product>
       <value> -1.0 </value>
       <sin>
-       <property> flight-path/psi-gt-rad </property>
+       <property> hydro/true-course-rad </property>
       </sin>
       <property> hydro/fside-lbs </property>
      </product>
@@ -463,13 +920,13 @@
      <product>
       <value> -1.0 </value>
       <sin>
-       <property> flight-path/psi-gt-rad </property>
+       <property> hydro/true-course-rad </property>
       </sin>
       <property> hydro/fdrag-lbs </property>
      </product>
      <product>
       <cos>
-       <property> flight-path/psi-gt-rad </property>
+       <property> hydro/true-course-rad </property>
       </cos>
       <property> hydro/fside-lbs </property>
      </product>
@@ -489,6 +946,11 @@
 
  <channel name="Implementation Pitch Moment">
 
+  <pure_gain name="hydro/pitch-moment/moment-lbsft">
+   <input>hydro/pitch-moment-lbsft</input>
+   <gain>1.0</gain>
+   <output>external_reactions/hydro-pitch/magnitude-lbsft</output>
+  </pure_gain>
   <pure_gain name="hydro/pitch-moment/force-lbs[0]">
    <input> hydro/pitch-moment-lbsft </input>
    <gain> 0.5</gain>
@@ -504,6 +966,11 @@
 
  <channel name="Implementation Roll Moment">
 
+  <pure_gain name="hydro/roll-moment/moment-lbsft">
+   <input>hydro/roll-moment-lbsft</input>
+   <gain>1.0</gain>
+   <output>external_reactions/hydro-roll/magnitude-lbsft</output>
+  </pure_gain>
   <pure_gain name="hydro/roll-moment/force-lbs[0]">
    <input> hydro/roll-moment-lbsft </input>
    <gain> 0.5</gain>
@@ -519,6 +986,11 @@
 
  <channel name="Implementation Yaw Moment">
 
+  <pure_gain name="hydro/yaw-moment/moment-lbsft">
+   <input>hydro/yaw-moment-lbsft</input>
+   <gain>1.0</gain>
+   <output>external_reactions/hydro-yaw/magnitude-lbsft</output>
+  </pure_gain>
   <pure_gain name="hydro/yaw-moment/force-lbs[0]">
    <input> hydro/yaw-moment-lbsft </input>
    <gain> 0.5</gain>

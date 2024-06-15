@@ -65,8 +65,11 @@ public:
   }
 
 private:
-  /** FGTemplateFunc must not be bound to the property manager. The bind method
-      is therefore made private and overloaded as a no-op */
+  /* Direct calls to FGFunction::GetValue are meaningless from the public interface.
+     The method is therefore made private. */
+  using FGFunction::GetValue;
+  /* FGTemplateFunc must not be bound to the property manager. The bind method
+     is therefore made private and overloaded as a no-op */
   void bind(Element*, const std::string&) override {}
   FGPropertyValue_ptr var;
 };

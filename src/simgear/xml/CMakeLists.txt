@@ -2,8 +2,6 @@ set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
 if(NOT EXPAT_FOUND)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
   list(APPEND SOURCES xmlparse.c
                       xmltok.c
                       xmlrole.c)
@@ -26,6 +24,7 @@ if(NOT EXPAT_FOUND)
 endif()
 
 add_library(Xml OBJECT ${HEADERS} ${SOURCES})
+target_include_directories(Xml PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(Xml PROPERTIES TARGET_DIRECTORY
                           ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -9,7 +9,7 @@
  </description>
 
  <use aircraft="Short_S23" initialize="reset01"/>
- <run start="0.0" end="300" dt="0.00833333">
+ <run start="0.0" end="300" dt="0.0010416667">
 
   <!--
 
@@ -157,10 +157,10 @@
    <condition>
      simulation/sim-time-sec GT 1.0
    </condition>
-   <set name="fcs/throttle-cmd-norm[0]"  value="0.765"/>
-   <set name="fcs/throttle-cmd-norm[1]"  value="0.765"/>
-   <set name="fcs/throttle-cmd-norm[2]"  value="0.765"/>
-   <set name="fcs/throttle-cmd-norm[3]"  value="0.765"/>
+   <set name="fcs/throttle-cmd-norm[0]"  value="0.77"/>
+   <set name="fcs/throttle-cmd-norm[1]"  value="0.77"/>
+   <set name="fcs/throttle-cmd-norm[2]"  value="0.77"/>
+   <set name="fcs/throttle-cmd-norm[3]"  value="0.77"/>
    <!-- Close the speed valves of the unneeded channels. -->
    <set name="sperry-autopilot/heading-speed-valve-cmd-norm" value="0.0"/>
    <set name="sperry-autopilot/pitch-speed-valve-cmd-norm" value="0.0"/>

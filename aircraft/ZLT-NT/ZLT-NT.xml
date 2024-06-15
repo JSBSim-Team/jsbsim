@@ -3,7 +3,7 @@
 
   ZLT NT airship flight model for JSBSim.
 
-    Copyright (C) 2008 - 2015  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2023  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-06-10</filecreationdate>
-  <version>$Id: ZLT-NT.xml,v 1.4 2015/05/20 20:31:47 andgi Exp $</version>
+  <version>2023-12-07</version>
 
   <description>JSBSim model of a NT-07 airship.</description>
 
   <license>
-   <licenseName>GPL</licenseName>
-   <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
+   <licenseName>GPL v2+</licenseName>
+   <licenseURL>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</licenseURL>
   </license>
   <note>
    This model was created using publicly available data, publicly available
@@ -102,6 +102,9 @@
 
   <documentation>
    Some general data from http://www.zeppelinflug.de/seiten/D/zeppnt_techn.htm
+   Note: My 2 view drawing is of a smaller NT-01 (6.5m shorter).
+         It looks like these 6.5 meters were added in the center section
+         aft of the car and engines. I'll add 6.5 meters to the aft locations.
 
    NT-07
      Luftschiff neuer Technologie
@@ -755,11 +758,7 @@
       <max>
        <value> 0.0 </value>
        <difference>
-         <!--value> 1.5708 </value-->
-         <product name="test/half_pi">
-           <pi/>
-           <v> 0.5 </v>
-         </product>
+        <value> 1.5708 </value> <!-- pi/2 -->
         <property> environment/sun-angle-rad </property>
        </difference>
       </max>
@@ -962,6 +961,8 @@
  ==== Flight control system =================================================
  -->
 
+ <!-- system file="dual-control-jsbsim"/ --><!-- Dual-control setup for FlightGear. -->
+
  <system file="instrumentation"/> <!-- Instruments and sensors. -->
  <system file="engine-control"/>  <!-- Engine and thrust vectoring. -->
 
@@ -1119,7 +1120,7 @@
    <switch name="fcs/rear-side-thrust-cmd-switch">
     <default value="0.0"/>
     <test value="fcs/rear-side-thrust-cmd-norm">
-      propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
+     propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
     </test>
    </switch>
 
@@ -1327,6 +1328,8 @@
  </system>
 
  <system file="airship_added_mass"/>
+
+ <!-- system file="shadow-jsbsim"/ -->
 
  <!-- aerodynamics file="Systems/gerris_aero"/ -->
  <aerodynamics file="Systems/datcom_aero"/>

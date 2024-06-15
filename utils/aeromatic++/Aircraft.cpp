@@ -95,7 +95,7 @@ Aircraft::get_verbose_description(int no_engines)
         if (no_engines < 0) rv += ')';
     }
 
-    snprintf(desc, 1024, "%s", rv.c_str());
+    snprintf(desc, sizeof(desc), "%s", rv.c_str());
     return desc;
 }
 
@@ -118,7 +118,7 @@ Aeromatic::Aeromatic() : Aircraft()
 
     /* general information */
     _general_order.push_back("systemFiles");
-    _general["systemFiles"] = new Param("Use dedicates System files?", "Select no to keep all systems in the aircraft configuration file", _system_files);
+    _general["systemFiles"] = new Param("Use dedicated system files?", "Select no to keep all systems in the aircraft configuration file", _system_files);
     Param* units = new Param("Select a system of measurement", "The options affects all units for length, surface area, speed and thrust/power", _metric);
     _general_order.push_back("units");
     _general["units"] = units;

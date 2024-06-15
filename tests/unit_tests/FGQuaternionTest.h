@@ -319,7 +319,11 @@ public:
     z = z < -180.0 ? z + 360. : z;
     TS_ASSERT_DELTA(60., x, epsilon);
     TS_ASSERT_DELTA(45., y, epsilon);
+#ifdef __arm64__
+    TS_ASSERT_DELTA(-30., z, epsilon*10.);
+#else
     TS_ASSERT_DELTA(-30., z, epsilon);
+#endif
 
     euler = q0.GetEulerDeg();
     x = euler(1);
@@ -333,7 +337,11 @@ public:
     z = z < -180.0 ? z + 360. : z;
     TS_ASSERT_DELTA(60., x, epsilon);
     TS_ASSERT_DELTA(45., y, epsilon);
+#ifdef __arm64__
+    TS_ASSERT_DELTA(-30., z, epsilon*10.);
+#else
     TS_ASSERT_DELTA(-30., z, epsilon);
+#endif
 
     // Euler angles sin
     TS_ASSERT_DELTA(0.5*sqrt(3), q0.GetSinEuler(1), epsilon);

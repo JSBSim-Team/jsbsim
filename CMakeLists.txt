@@ -114,7 +114,6 @@ endif(BUILD_MATLAB_SFUNCTION)
 find_package(CxxTest)
 
 if (CXXTEST_FOUND)
-  include_directories(${PROJECT_SOURCE_DIR}/src)
   enable_testing()
   add_subdirectory(tests/unit_tests)
   list(APPEND LCOV_REMOVE_PATTERNS "'*/JSBSim.cpp'")

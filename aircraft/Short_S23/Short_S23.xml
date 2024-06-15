@@ -3,7 +3,7 @@
 
   Short S.23 flying boat flight model for JSBSim.
 
-    Copyright (C) 2008 - 2013  Anders Gidenstam  (anders(at)gidenstam.org)
+    Copyright (C) 2008 - 2023  Anders Gidenstam  (anders(at)gidenstam.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
   <email>anders at gidenstam dot org</email>
 
   <filecreationdate>2008-11-05</filecreationdate>
-  <version>$Id: Short_S23.xml,v 1.13 2013/09/16 20:39:32 andgi Exp $</version>
+  <version>$Id: Short_S23.xml,v 1.48 2018/11/12 19:51:36 anders Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
@@ -78,6 +78,10 @@
              author="http://www.enginehistory.org/Accessories/Carburetion/Carburetion.shtml"
              title="Carburetion as Applied to Bristol Aero Engines"
              date="1943"/>
+  <reference refID="Cassidy:OWM:2013"
+             author="Brian Cassidy"
+             title="Empire Flying Boat  Owner's Workshop Manual"
+             date="2013"/>
 
  </fileheader>
 
@@ -357,42 +361,8 @@
 
  <ground_reactions>
   <documentation>
-   The hydrostatic interactions of the hull are modelled by external forces.
-
-   Total bouyancy of Type 2 float is 5000lb.
+   The hydrodynamic interactions of the hull are modelled by external forces.
   </documentation>
-
-  <contact type="BOGEY" name="LEFT_FLOAT">
-   <location unit="M">
-    <x>  8.50 </x>
-    <y> -9.75 </y>
-    <z> -0.50 </z>
-   </location>
-   <static_friction>  0.0 </static_friction>
-   <dynamic_friction> 0.8 </dynamic_friction>
-   <rolling_friction> 0.0 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      1200.0 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 1000.0 </damping_coeff>
-   <max_steer unit="DEG">0</max_steer>
-   <brake_group>NONE</brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="BOGEY" name="RIGHT_FLOAT">
-   <location unit="M">
-    <x>  8.50 </x>
-    <y>  9.75 </y>
-    <z> -0.50 </z>
-   </location>
-   <static_friction>  0.0 </static_friction>
-   <dynamic_friction> 0.8 </dynamic_friction>
-   <rolling_friction> 0.0 </rolling_friction>
-   <spring_coeff unit="LBS/FT">      1200.0 </spring_coeff>
-   <damping_coeff unit="LBS/FT/SEC"> 1000.0 </damping_coeff>
-   <max_steer unit="DEG">0</max_steer>
-   <brake_group>NONE</brake_group>
-   <retractable>0</retractable>
-  </contact>
 
   <contact type="STRUCTURE" name="NOSE">
    <location unit="M">
@@ -911,136 +881,68 @@
    </direction>
   </force>
 
-  <force name="hydro-pitch[0]" frame="LOCAL">
-   <location unit="M">
-    <x> 8.3752 </x>
-    <y> 0.00 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z>-1.0 </z>
-   </direction>
-  </force>
-  <force name="hydro-pitch[1]" frame="LOCAL">
-   <location unit="M">
-    <x> 8.9848 </x>
-    <y> 0.00 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z>-1.0 </z>
-   </direction>
-  </force>
-
-  <force name="hydro-yaw[0]" frame="BODY">
-   <location unit="M">
-    <x> 8.68 </x>
-    <y> -0.3048 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="hydro-yaw[1]" frame="BODY">
-   <location unit="M">
-    <x> 8.68 </x>
-    <y> 0.3048 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-
-
-  <force name="hydro-roll[0]" frame="LOCAL">
-   <location unit="M">
-    <x> 8.68 </x>
-    <y>-0.3048 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z>-1.0 </z>
-   </direction>
-  </force>
-  <force name="hydro-roll[1]" frame="LOCAL">
-   <location unit="M">
-    <x> 8.68 </x>
-    <y> 0.3048 </y>
-    <z> 0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z>-1.0 </z>
-   </direction>
-  </force>
-
-  <!--Forces from the floats. -->
-  <force name="left-float-X" frame="LOCAL">
-   <location unit="M">
-    <x>  9.00 </x>
-    <y> -9.75 </y>
-    <z> -0.50 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="left-float-Y" frame="LOCAL">
-   <location unit="M">
-    <x>  9.00 </x>
-    <y> -9.75 </y>
-    <z> -0.50 </z>
-   </location>
+  <moment name="hydro-pitch" frame="BODY" unit="LBSFT">
    <direction>
     <x> 0.0 </x>
     <y> 1.0 </y>
     <z> 0.0 </z>
    </direction>
-  </force>
-
-  <force name="right-float-X" frame="LOCAL">
-   <location unit="M">
-    <x>  9.00 </x>
-    <y>  9.75 </y>
-    <z> -0.50 </z>
-   </location>
+  </moment>
+  <moment name="hydro-roll" frame="BODY" unit="LBSFT">
    <direction>
     <x> 1.0 </x>
     <y> 0.0 </y>
     <z> 0.0 </z>
    </direction>
-  </force>
-  <force name="right-float-Y" frame="LOCAL">
-   <location unit="M">
-    <x>  9.00 </x>
-    <y>  9.75 </y>
-    <z> -0.50 </z>
-   </location>
+  </moment>
+  <moment name="hydro-yaw" frame="BODY" unit="LBSFT">
    <direction>
     <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
+    <y> 0.0 </y>
+    <z> 1.0 </z>
    </direction>
-  </force>
+  </moment>
 
  </external_reactions>
 
  <system file="hydrodynamics"/>
+ <system file="hydrodynamic-planing-floats">
+  <!-- Parameters defining the planing surfaces of the wing tip floats. -->
+  <!-- NOTE: Coordinates in the frame with
+             origin at hydro RP and x/y/z = aft/right/up
+  -->
+  <property value="7.38">hydro/planing-floats/forebody-length-ft[0]</property>
+  <property value="3.48">hydro/planing-floats/forebody-beam-ft[0]</property>
+  <property value="-32.09">hydro/planing-floats/forebody-keel-y-ft[0]</property>
+  <property value="-1.71">hydro/planing-floats/forebody-keel-z-ft[0]</property>
+  <property value="4.72">hydro/planing-floats/forebody-end-x-ft[0]</property>
+  <property value="5.31">hydro/planing-floats/afterbody-length-ft[0]</property>
+  <property value="3.40">hydro/planing-floats/afterbody-beam-ft[0]</property>
+  <property value="-32.09">hydro/planing-floats/afterbody-keel-y-ft[0]</property>
+  <property value="-1.64">hydro/planing-floats/afterbody-keel-z-ft[0]</property>
+  <property value="10.04">hydro/planing-floats/afterbody-end-x-ft[0]</property>
+
+  <property value="0.40">hydro/planing-floats/forebody-normal-force-factor[0]</property>
+  <property value="0.30">hydro/planing-floats/afterbody-normal-force-factor[0]</property>
+  <property value="0.0010">hydro/planing-floats/forebody-skin-friction-coefficient[0]</property>
+  <property value="0.0010">hydro/planing-floats/afterbody-skin-friction-coefficient[0]</property>
+
+  <property value="7.38">hydro/planing-floats/forebody-length-ft[1]</property>
+  <property value="3.48">hydro/planing-floats/forebody-beam-ft[1]</property>
+  <property value="32.09">hydro/planing-floats/forebody-keel-y-ft[1]</property>
+  <property value="-1.71">hydro/planing-floats/forebody-keel-z-ft[1]</property>
+  <property value="4.72">hydro/planing-floats/forebody-end-x-ft[1]</property>
+  <property value="5.31">hydro/planing-floats/afterbody-length-ft[1]</property>
+  <property value="3.40">hydro/planing-floats/afterbody-beam-ft[1]</property>
+  <property value="32.09">hydro/planing-floats/afterbody-keel-y-ft[1]</property>
+  <property value="-1.64">hydro/planing-floats/afterbody-keel-z-ft[1]</property>
+  <property value="10.04">hydro/planing-floats/afterbody-end-x-ft[1]</property>
+
+  <property value="0.40">hydro/planing-floats/forebody-normal-force-factor[1]</property>
+  <property value="0.30">hydro/planing-floats/afterbody-normal-force-factor[1]</property>
+  <property value="0.0010">hydro/planing-floats/forebody-skin-friction-coefficient[1]</property>
+  <property value="0.0010">hydro/planing-floats/afterbody-skin-friction-coefficient[1]</property>
+ </system>
  <system file="Short_S23-hydrodynamics"/>
 
  <!-- Sperry A-2 autopilot. -->

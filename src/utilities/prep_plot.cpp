@@ -177,7 +177,7 @@ int main(int argc, char **argv)
     nokey = true;
     while (1) {
       new_filename=filename;
-      sprintf(num,"%d",file_ctr);
+      snprintf(num,sizeof(num),"%d",file_ctr);
       new_filename.replace(new_filename.find("#"),1,num);
       infile2.open(new_filename.c_str());
       if (!infile2.is_open()) {

@@ -109,46 +109,50 @@
 
       <function name="aero/function/ground-effect-factor-lift">
          <description>Change in lift due to ground effect factor</description>
-         <table>
-           <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
-           <tableData>
-             0.0  1.203
-             0.1  1.127
-             0.15 1.090
-             0.2  1.073
-             0.3  1.046
-             0.4  1.055
-             0.5  1.019
-             0.6  1.013
-             0.7  1.008
-             0.8  1.006
-             0.9  1.003
-             1.0  1.002
-             1.1  1.0
-           </tableData>
-         </table>
+         <product>
+            <table>
+               <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
+               <tableData>
+                  0.0  1.203
+                  0.1  1.127
+                  0.15 1.090
+                  0.2  1.073
+                  0.3  1.046
+                  0.4  1.055
+                  0.5  1.019
+                  0.6  1.013
+                  0.7  1.008
+                  0.8  1.006
+                  0.9  1.003
+                  1.0  1.002
+                  1.1  1.0
+               </tableData>
+            </table>
+         </product>
       </function>
 
       <function name="aero/function/ground-effect-factor-drag">
          <description>Change in drag due to ground effect</description>
-         <table>
-           <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
-           <tableData>
-             0.0  0.480
-             0.1  0.515
-             0.15 0.629
-             0.2  0.709
-             0.3  0.815
-             0.4  0.882
-             0.5  0.928
-             0.6  0.962
-             0.7  0.988
-             0.8  1.0
-             0.9  1.0
-             1.0  1.0
-             1.1  1.0
-           </tableData>
-         </table>
+         <product>
+            <table>
+               <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
+               <tableData>
+                  0.0  0.480
+                  0.1  0.515
+                  0.15 0.629
+                  0.2  0.709
+                  0.3  0.815
+                  0.4  0.882
+                  0.5  0.928
+                  0.6  0.962
+                  0.7  0.988
+                  0.8  1.0
+                  0.9  1.0
+                  1.0  1.0
+                  1.1  1.0
+               </tableData>
+            </table>
+         </product>
       </function>
 
 
@@ -364,7 +368,7 @@
                <property>aero/function/ground-effect-factor-drag</property>
                <property>aero/qbar-psf</property>
                <property>metrics/Sw-sqft</property>
-               <value>1.30</value> <!-- Adjusted for climb time. -->
+               <value>1.23</value> <!-- Adjusted for climb time. -->
                <table>
                   <independentVar lookup="row">aero/alpha-rad</independentVar>
                   <tableData>

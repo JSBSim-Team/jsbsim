@@ -3,7 +3,7 @@
  <!--
    This run is for testing lighter-than-air aircraft at the mooring mast.
 
-   If you visualize it in FlightGear start with -lat=37.420 -lon=-122.044
+   If you visualize it in FlightGear start with -lat=37.00 -lon=-122.000
    to get the mast truck appropriately placed.
 
    Unfortunately, the native-fdm protocol appears to send the CG position
@@ -12,7 +12,7 @@
  -->
 
  <use aircraft="ZLT-NT" initialize="reset00"/>
- <run start="0.0" end="240" dt="0.00833333">
+ <run start="0.0" end="240" dt="0.0010416667">
 
   <property value="0">simulation/notify-time-trigger</property>
 
@@ -49,8 +49,8 @@
     <property>mooring/total-distance-ft</property>
    </notify>
    <!-- Mooring mast position. -->
-   <set name="mooring/latitude-deg" value="37.420540"/>
-   <set name="mooring/longitude-deg" value="-122.044"/>
+   <set name="mooring/latitude-deg" value="37.00"/>
+   <set name="mooring/longitude-deg" value="-122.00"/>
    <set name="mooring/altitude-ft" value="69.0"/>
   </event>
 
@@ -66,6 +66,9 @@
     <property>position/vrp-latitude-deg</property>
     <property>position/vrp-longitude-deg</property>
     <property>position/vrp-altitude-ft</property>
+    <property>mooring/latitude-deg</property>
+    <property>mooring/longitude-deg</property>
+    <property>mooring/altitude-ft</property>
     <property>mooring/total-distance-ft</property>
    </notify>
    <!-- Connect the mooring. -->

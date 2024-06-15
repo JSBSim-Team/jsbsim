@@ -540,7 +540,7 @@ find_node (SGPropertyNode * current,
   using namespace boost;
   typedef split_iterator<typename range_result_iterator<Range>::type>
     PathSplitIterator;
-  
+
   PathSplitIterator itr
     = make_split_iterator(path, first_finder("/", is_equal()));
   if (*path.begin() == '/')
@@ -878,7 +878,7 @@ SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
   }
   switch (_type) {
   case props::BOOL:
-    set_bool(node.get_bool());    
+    set_bool(node.get_bool());
     break;
   case props::INT:
     set_int(node.get_int());
@@ -1305,7 +1305,7 @@ SGPropertyNode::getType () const
 }
 
 
-bool 
+bool
 SGPropertyNode::getBoolValue () const
 {
 				// Shortcut for common case
@@ -1338,7 +1338,7 @@ SGPropertyNode::getBoolValue () const
   }
 }
 
-int 
+int
 SGPropertyNode::getIntValue () const
 {
 				// Shortcut for common case
@@ -1371,7 +1371,7 @@ SGPropertyNode::getIntValue () const
   }
 }
 
-long 
+long
 SGPropertyNode::getLongValue () const
 {
 				// Shortcut for common case
@@ -1404,7 +1404,7 @@ SGPropertyNode::getLongValue () const
   }
 }
 
-float 
+float
 SGPropertyNode::getFloatValue () const
 {
 				// Shortcut for common case
@@ -1437,7 +1437,7 @@ SGPropertyNode::getFloatValue () const
   }
 }
 
-double 
+double
 SGPropertyNode::getDoubleValue () const
 {
 				// Shortcut for common case
@@ -1570,7 +1570,7 @@ SGPropertyNode::setIntValue (int value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    sprintf(buf, "%d", value);
+    snprintf(buf, sizeof(buf), "%d", value);
     result = set_string(buf);
     break;
   }
@@ -1621,7 +1621,7 @@ SGPropertyNode::setLongValue (long value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    sprintf(buf, "%ld", value);
+    snprintf(buf, sizeof(buf), "%ld", value);
     result = set_string(buf);
     break;
   }
@@ -1672,7 +1672,7 @@ SGPropertyNode::setFloatValue (float value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    sprintf(buf, "%f", value);
+    snprintf(buf, sizeof(buf), "%f", value);
     result = set_string(buf);
     break;
   }
@@ -1723,7 +1723,7 @@ SGPropertyNode::setDoubleValue (double value)
   case props::STRING:
   case props::UNSPECIFIED: {
     char buf[128];
-    sprintf(buf, "%f", value);
+    snprintf(buf, sizeof(buf), "%f", value);
     result = set_string(buf);
     break;
   }
@@ -2558,7 +2558,7 @@ template<>
 std::ostream& SGRawBase<SGVec4d>::printOn(std::ostream& stream) const
 {
     const SGVec4d vec
-        = static_cast<const SGRawValue<SGVec4d>*>(this)->getValue();    
+        = static_cast<const SGRawValue<SGVec4d>*>(this)->getValue();
     for (int i = 0; i < 4; ++i) {
         stream << vec[i];
         if (i < 3)
