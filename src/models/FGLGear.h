@@ -366,6 +366,7 @@ private:
   bool Castered;
   bool StaticFriction;
   std::string name;
+  double AGL;
 
   BrakeGroup  eBrakeGrp;
   ContactType eContactType;

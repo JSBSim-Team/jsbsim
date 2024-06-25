@@ -284,21 +284,24 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
   vFn.InitMatrix();
 
+  // Compute AGL
+  FGColumnVector3 normal, terrainVel, dummy;
+  FGLocation gearLoc, contact;
+  FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
+
+  vLocalGear = in.Tb2l * vWhlBodyVec; // Get local frame wheel location
+  gearLoc = in.Location.LocalToLocation(vLocalGear);
+
+  // Compute the height of the theoretical location of the wheel (if strut is
+  // not compressed) with respect to the ground level
+  double height = fdmex->GetInertial()->GetContactPoint(gearLoc, contact,
+    normal, terrainVel, dummy);
+
+  AGL = height;
+
   if (isRetractable) gearPos = GetGearUnitPos();
 
   if (gearPos > 0.99) { // Gear DOWN
-    FGColumnVector3 normal, terrainVel, dummy;
-    FGLocation gearLoc, contact;
-    FGColumnVector3 vWhlBodyVec = Ts2b * (vXYZn - in.vXYZcg);
-
-    vLocalGear = in.Tb2l * vWhlBodyVec; // Get local frame wheel location
-    gearLoc = in.Location.LocalToLocation(vLocalGear);
-
-    // Compute the height of the theoretical location of the wheel (if strut is
-    // not compressed) with respect to the ground level
-    double height = fdmex->GetInertial()->GetContactPoint(gearLoc, contact,
-                                                          normal, terrainVel,
-                                                          dummy);
 
     if (!fdmex->GetTrimStatus())
       height -= GroundReactions->GetBumpHeight();
@@ -785,6 +788,8 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
     return;
   }
 
+  property_name = base_property_name + "/AGL";
+  PropertyManager->Tie(property_name.c_str(), &AGL);
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );
   property_name = base_property_name + "/x-position";
