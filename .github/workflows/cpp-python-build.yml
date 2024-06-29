@@ -617,7 +617,7 @@ jobs:
           touch python/jsbsim/py.typed
           cd ../python/dist
           tar zxvf *.tar.gz
-          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+          cp -R jsbsim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
           echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
