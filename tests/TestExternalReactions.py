@@ -64,7 +64,7 @@ class TestExternalReactions(JSBSimTestCase):
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
             mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*parachute_area
-            f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
+            f = Tw2b * np.matrix([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
             self.assertAlmostEqual(fdm['forces/fbz-external-lbs'], f[2, 0])
@@ -103,7 +103,7 @@ class TestExternalReactions(JSBSimTestCase):
         dz = 0.01
         fhook = np.array([dx, 0.0, dz])
         fhook /= np.linalg.norm(fhook)
-        
+
         self.assertAlmostEqual(fdm['external_reactions/hook/x'], fhook[0])
         self.assertAlmostEqual(fdm['external_reactions/hook/y'], fhook[1])
         self.assertAlmostEqual(fdm['external_reactions/hook/z'], fhook[2])
@@ -241,12 +241,12 @@ class TestExternalReactions(JSBSimTestCase):
         while fdm.run():
             Tw2b = fdm.get_auxiliary().get_Tw2b()
             mag = fdm['aero/qbar-psf'] * fdm['fcs/parachute_reef_pos_norm']*parachute_area
-            f = Tw2b * np.mat([-1.0, 0.0, 0.0]).T * mag
+            f = Tw2b * np.matrix([-1.0, 0.0, 0.0]).T * mag
             self.assertAlmostEqual(fdm['forces/fbx-external-lbs'], f[0, 0])
             self.assertAlmostEqual(fdm['forces/fby-external-lbs'], f[1, 0])
             self.assertAlmostEqual(fdm['forces/fbz-external-lbs'], f[2, 0])
 
-            m = -3.5 * Tw2b * np.mat(mDir).T
+            m = -3.5 * Tw2b * np.matrix(mDir).T
             fm = np.cross(self.getLeverArm(fdm,'parachute'),
                           np.array([f[0,0], f[1,0], f[2, 0]]))
             self.assertAlmostEqual(fdm['moments/l-external-lbsft'], m[0, 0] + fm[0])
