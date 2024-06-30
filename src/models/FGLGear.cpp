@@ -293,11 +293,13 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
   gearLoc = in.Location.LocalToLocation(vLocalGear);
 
   // Compute the height of the theoretical location of the wheel (if strut is
-  // not compressed) with respect to the ground level
+  // not compressed) with respect to the ground level (AGL)
   double height = fdmex->GetInertial()->GetContactPoint(gearLoc, contact,
     normal, terrainVel, dummy);
 
-  AGL = height;
+  // Don't want strut compression when in contact with the ground to return 
+  // a negative AGL
+  AGL = max(height, 0.0);
 
   if (isRetractable) gearPos = GetGearUnitPos();
 
@@ -788,7 +790,7 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
     return;
   }
 
-  property_name = base_property_name + "/AGL";
+  property_name = base_property_name + "/AGL-ft";
   PropertyManager->Tie(property_name.c_str(), &AGL);
   property_name = base_property_name + "/WOW";
   PropertyManager->Tie( property_name.c_str(), &WOW );
