@@ -34,7 +34,7 @@
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.27 $ </version>
         <description> T-37 trainer </description>
       <note>

@@ -9,16 +9,16 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-  
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-  
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+
 -->
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="NT07" version="2.0" release="BETA"
@@ -29,21 +29,20 @@
 
   <author>Anders Gidenstam</author>
   <email>anders at gidenstam dot org</email>
+  <license
+   licenseName="GPL v2+"
+   licenseURL="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"/>
 
   <filecreationdate>2008-06-10</filecreationdate>
   <version>2023-12-07</version>
 
   <description>JSBSim model of a NT-07 airship.</description>
 
-  <license>
-   <licenseName>GPL v2+</licenseName>
-   <licenseURL>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</licenseURL>
-  </license>
   <note>
    This model was created using publicly available data, publicly available
    technical reports, textbooks, and guesses. It contains no proprietary or
    restricted data. It has been validated only to the extent that it may seem
-   to "fly right", and possibly to comply to published, publicly known, 
+   to "fly right", and possibly to comply to published, publicly known,
    performance data (maximum speed, endurance, etc.).
 
    This model is distributed in the hope that it will be useful,
@@ -90,7 +89,7 @@
 
  <metrics>
 
-  <documentation>
+  <description>
    NOTE: The center of the mooring coupler at bow of the hull is the
          origo of the body coordinate system.
          x/y/z = back/right/up
@@ -98,9 +97,7 @@
    According to [FAA:2008:AS1CE] the datum of the Construction
    Coordinate System is 5.000 m ahead of the nose of the ship with the
    horizontal reference line running parallel to the airship center line.
-  </documentation>
 
-  <documentation>
    Some general data from http://www.zeppelinflug.de/seiten/D/zeppnt_techn.htm
    Note: My 2 view drawing is of a smaller NT-01 (6.5m shorter).
          It looks like these 6.5 meters were added in the center section
@@ -149,7 +146,7 @@
 
    [PV2007_7879.pdf]
      Propeller diameter 2700mm.
-  </documentation>
+  </description>
 
   <wingarea unit="M2"> 1000.0 </wingarea>  <!-- Planfold area (approximated).-->
   <wingspan unit="M">   14.1  </wingspan>  <!-- Envelope diameter. -->
@@ -188,7 +185,7 @@
 
  <mass_balance>
 
-  <documentation>
+  <description>
    Maximum weights according to [FAA:2008:AS1CE] and [EASA:2008:TC_LZ_N07]:
      Maximum airship equilibrium (normal condition) weight 16,865 lbs (7650 kg)
      Maximum car (gondola) gross weight                     5,390 lbs (2690 kg)
@@ -196,8 +193,7 @@
        In Flight                                            1,102 lbs (500 kg)
        Take off and landing                                   882 lbs (400 kg)
        Maximum static lightness                              -441 lbs (-200 kg)
-  </documentation>
-  <documentation>
+
    C.G. Range according to [FAA:2008:AS1CE]:
      Take off and Landing
        Maximum Forward         39.150 m (1344.5 GE /fdm/jsbsim/inertia/cg-x-in)
@@ -207,19 +203,13 @@
        Maximum Aft             39.900 m
    Note: C.G locations in the Construction Coordinate System with reference
          datum 5.000 m ahead of the nose of the ship.
-  </documentation>
 
-  <emptywt unit="KG"> 1500 </emptywt>
-
-  <documentation>
    The empty weight is estimated to consist of:
     - The weight of the envelope and frame, guesstimated to 1500 kg.
     - The frame weighs ~1000kg.
 
    The car and engines etc will be added as point masses.
-  </documentation>
 
-  <documentation>
    % Very rough estimation model of the empty weight CG and inertia tensor.
    % Assume the empty weight of is to 100% a cylindrical shell.
 
@@ -238,7 +228,7 @@
 
    % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
    Ixx = m * r^2
-         
+
    Iyy = 1/2*m * r^2 + 1/12*m*l^2
 
    Izz = 1/2*m * r^2 + 1/12*m*l^2
@@ -247,7 +237,7 @@
    Ixz = 0
    Iyz = 0
 
-  </documentation>
+  </description>
 
   <ixx unit="KG*M2">  74554.0 </ixx>
   <iyy unit="KG*M2"> 740400.0 </iyy>
@@ -255,6 +245,7 @@
   <ixy unit="KG*M2">      0.0 </ixy>
   <ixz unit="KG*M2">      0.0 </ixz>
   <iyz unit="KG*M2">      0.0 </iyz>
+  <emptywt unit="KG"> 1500 </emptywt>
 
   <location name="CG" unit="M">
    <x> 37.500 </x>
@@ -265,7 +256,7 @@
   <!--
   === Ballast ================================================
   -->
-  <documentation>
+  <!--
    Ballast according to [FAA:2008:AS1CE]:
      In Flight:
        1543 lbs (700 kg) of water at 25.6 m
@@ -275,17 +266,17 @@
        441 lbs (200 kg) at 24.1 m. (Gondola locker forward)
        661 lbs (300 kg) at 26.9 m. (Gondola locker aft)
        397 lbs (180 kg) at 63.2 m. (Landing gear aft)
-  </documentation>
+  -->
 
   <!-- Experimental ballast setup. -->
   <!-- Center initial weigh-off ballast n=0 -->
   <pointmass name="Ballast_Center">
+   <weight unit="KG"> 2000 </weight>
    <location unit="M">
     <x>  37.5 </x>
     <y>   0.0 </y>
     <z> -8.70 </z>
    </location>
-   <weight unit="KG"> 2000 </weight>
   </pointmass>
 
   <!--
@@ -294,31 +285,30 @@
   -->
   <!-- Forward ballast n=1 -->
   <pointmass name="Ballast_Forward">
+   <weight unit="LBS"> 500 </weight>
    <location unit="M">
     <x> 0.0 </x>
     <y> 0.0 </y>
     <z> -1.0 </z>
    </location>
-   <weight unit="LBS"> 500 </weight>
   </pointmass>
   <!-- Aft ballast n=2 -->
-  <pointmass type="Ballast_Aft">
+  <pointmass name="Ballast_Aft">
+   <weight unit="LBS"> 500 </weight>
    <location unit="M">
     <x> 75.0 </x>
     <y>  0.0 </y>
     <z> -1.0 </z>
    </location>
-   <weight unit="LBS"> 500 </weight>
   </pointmass>
 
-  <!-- 
+  <!--
   === Crew and payload =======================================
   -->
-  <documentation>
+  <!--
    Payload according to [EASA:2008:TC_LZ_N07]:
      Max gondola payload: 1,040 kg
-  </documentation>
-  <documentation>
+
    Seats according to [FAA:2008:AS1CE]: (Recall the 5.00m difference in origin)
      2 (flight deck) at gondola station 22.38 m
      1 passenger LH  at gondola station 23.31 m
@@ -334,10 +324,10 @@
      1 passenger RH  at gondola station 27.00 m
      1 passenger RH  at gondola station 27.77 m
      1 passenger RH  at gondola station 28.53 m
-  </documentation>
+  -->
   <pointmass name="Pilot"> <!-- n=3 -->
    <weight unit="KG"> 85.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 17.38 </x>
     <y> -0.45 </y>
     <z> -8.25 </z>
@@ -345,7 +335,7 @@
   </pointmass>
   <pointmass name="Pilot"> <!-- n=4 -->
    <weight unit="KG"> 85.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 17.38 </x>
     <y>  0.45 </y>
     <z> -8.25 </z>
@@ -353,20 +343,20 @@
   </pointmass>
   <pointmass name="Cabin payload"> <!-- n=5 -->
    <weight unit="KG"> 500.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 21.0 </x>
     <y>  0.0 </y>
     <z> -8.5 </z>
    </location>
   </pointmass>
 
-  <!-- 
+  <!--
   === Engines ================================================
   -->
   <!-- IO360: dry weight ~130kg. -->
   <pointmass name="Left_Engine">
    <weight unit="KG"> 250.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 26.4 </x>
     <y> -6.6 </y>
     <z> -3.4 </z>
@@ -374,7 +364,7 @@
   </pointmass>
   <pointmass name="Right_Engine">
    <weight unit="KG"> 250.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 26.4 </x>
     <y>  6.6 </y>
     <z> -3.4 </z>
@@ -382,21 +372,21 @@
   </pointmass>
   <pointmass name="Aft_Engine">
    <weight unit="KG"> 250.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 73.0 </x>
     <y>  0.0 </y>
     <z>  0.0 </z>
    </location>
   </pointmass>
 
-  <!-- 
+  <!--
   === Structure ==============================================
   -->
 
   <pointmass name="Mooring cone">
    <!-- Pure guess. -->
    <weight unit="KG"> 60.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x>  0.0 </x>
     <y>  0.0 </y>
     <z>  0.0 </z>
@@ -405,7 +395,7 @@
   <pointmass name="Car">
    <!-- Pure guess. -->
    <weight unit="KG"> 1650.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 22.0 </x>
     <y>  0.0 </y>
     <z> -8.7 </z>
@@ -414,7 +404,7 @@
   <pointmass name="Upper_fin">
    <!-- Pure guess. -->
    <weight unit="KG"> 180.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 63.2 </x>
     <y>  0.0 </y>
     <z>  5.0 </z>
@@ -423,7 +413,7 @@
   <pointmass name="Left_fin">
    <!-- Pure guess. -->
    <weight unit="KG"> 180.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 63.2 </x>
     <y> -4.5 </y>
     <z> -2.1 </z>
@@ -432,7 +422,7 @@
   <pointmass name="Right_fin">
    <!-- Pure guess. -->
    <weight unit="KG"> 180.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 63.2 </x>
     <y>  4.5 </y>
     <z> -2.1 </z>
@@ -535,615 +525,6 @@
   </contact>
 
  </ground_reactions>
-
- <!--
- ==== Propulsion ============================================================
- -->
-
- <propulsion>
- 
-  <!--
-  === Engine ================================================
-  -->
-  <!-- Left engine -->
-  <engine file="engIO360C">
-   <feed>0</feed>
-   <thruster file="propHO-V373-D">
-    <location unit="M">
-     <x> 25.5 </x>
-     <y> -8.6 </y>
-     <z> -3.5 </z>
-    </location>
-    <orient unit="DEG">
-     <roll>  0.0 </roll>
-     <pitch> 0.0 </pitch>
-     <yaw>   0.0 </yaw>
-    </orient>
-   </thruster>
-  </engine>
-  <!-- Right engine -->
-  <engine file="engIO360C">
-   <feed>1</feed>
-   <thruster file="propHO-V373-D">
-    <location unit="M">
-     <x> 25.5 </x>
-     <y>  8.6 </y>
-     <z> -3.5 </z>
-    </location>
-    <orient unit="DEG">
-     <roll>  0.0 </roll>
-     <pitch> 0.0 </pitch>
-     <yaw>   0.0 </yaw>
-    </orient>
-   </thruster>
-  </engine>
-  <!-- Aft engine -->
-  <engine file="engIO360C">
-   <feed>2</feed>
-   <thruster file="propHO-V373-D">
-    <location unit="M">
-     <x> 74.9 </x>
-     <y>  0.0 </y>
-     <z>  0.0 </z>
-    </location>
-    <orient unit="DEG">
-     <roll>  0.0 </roll>
-     <pitch> 0.0 </pitch>
-     <yaw>   0.0 </yaw>
-    </orient>
-   </thruster>
-  </engine>
-
-  <!-- Aft auxilliary engine -->
-  <engine file="electric147kW">
-   <thruster file="prop_Clark_Y7570">
-    <location unit="M">
-     <x> 73.64 </x>
-     <y> -1.10 </y>
-     <z>  0.20 </z>
-    </location>
-    <orient unit="DEG">
-     <roll>   0.0 </roll>
-     <pitch>  0.0 </pitch>
-     <yaw>  -90.0 </yaw>
-    </orient>
-   </thruster>
-  </engine>
-
-  <!--
-  === Fuel tanks ============================================
-  -->
-  <documentation>
-   Fuel capacity according to [FAA:2008:AS1CE]:
-     110.95 (US)gallons usable at gondola station 29.3 m (LH)
-     110.95 (US)gallons usable at gondola station 29.3 m (RH)
-      84.57 (US)gallons usable at gondola station 76.6 m (Aft)
-   The unusable fuel is included in the empty weight.
-   (NOTE: Account for it here, anyway)
-  </documentation>
-
-  <tank type="FUEL">
-   <location unit="M">
-    <x> 26.4 </x>
-    <y> -6.6 </y>
-    <z> -3.4 </z>
-   </location>
-   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
-   <capacity unit="KG"> 275.0 </capacity>
-   <contents unit="KG"> 250.0 </contents>
-  </tank>
-  <tank type="FUEL">
-   <location unit="M">
-    <x> 26.4 </x>
-    <y>  6.6 </y>
-    <z> -3.4 </z>
-   </location>
-   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
-   <capacity unit="KG"> 275.0 </capacity>
-   <contents unit="KG"> 250.0 </contents>
-  </tank>
-  <tank type="FUEL">
-   <location unit="M">
-    <x> 70.0 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
-   <capacity unit="KG"> 275.0 </capacity>
-   <contents unit="KG"> 250.0 </contents>
-  </tank>
-
- </propulsion>
-
- <!--
- === Gas cell ==============================================================
- -->
-
- <buoyant_forces>
-  <documentation>
-   Envelope and ballonet according to [EASA:2008:TC_LZ_N07]:
-     Volume  envelope      8,450 m^3
-             ballonet fwd  600 m^3, or
-                           410 m^3 (Option B10/20)
-             ballonet aft  1,600 m^3, or
-                           1,065 m^3 (Option B10/20)
-     Length                75.1 m
-     Diameter              14.2 m
-     Maximum width         19.5 m
-     Height                19.4 m
-
-   Buoyancy Centre         34.15 m aft of bow.
-  </documentation>
-  <documentation>
-   Envelope and ballonet according to [FAA:2008:AS1CE]:
-     Envelope
-       Volume              298,409 ft^3 (8450 m^3)
-       Maximum pressure    2.4 inH2O (600 Pa)
-       Minimum pressure    1.2 inH2O (300 Pa)
-
-     Ballonets (2)
-       Volume              21,189 ft^3 or with Option B10 14,479ft^3 forward
-       Volume              56,504 ft^3 aft
-
-     Lifting Gas           Helium, recommended minimum purity 94%
-  </documentation>
-  <limitations>
-   NOTE: The ballonets are placed based on a guess.
-  </limitations>
-
-  <!-- External environment properties -->
-  <property> environment/sun-angle-rad </property>
-  <property> environment/sun-radiation-norm </property>
-
-  <!-- Ballonet system interface properties -->
-  <property> buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm </property>
-  <property> buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm </property>
-
-  <gas_cell type="HELIUM">
-   <location unit="M">
-    <x> 34.15 </x>
-    <y>  0.00 </y>
-    <z>  0.00 </z>
-   </location>
-   <x_radius unit="M"> 40.50 </x_radius>
-   <y_radius unit="M">  7.05 </y_radius>
-   <z_radius unit="M">  7.05 </z_radius>
-   <max_overpressure unit="PA"> 600.0 </max_overpressure> 
-   <valve_coefficient unit="M4*SEC/KG"> 0.0075 </valve_coefficient>
-   <fullness>0.95</fullness>
-
-   <!-- heat exchange with the environment. [lb ft / sec] -->
-   <!-- Note: The surface area of an ellipsiod is approximately
-              4*pi*((a^p*b^p + a^p*c^p + b^p*c^p)/3)^(1/p)
-              where p=1.6075
-   -->
-   <heat>
-    <!-- Heat transfer due to temperature difference. -->
-    <function name="buoyant_forces/gas-cell/dU_conduction">
-     <product>
-      <value> 28309.08 </value> <!-- Surface area [ft2] -->
-      <value>     0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
-      <difference>
-       <property> atmosphere/T-R </property>
-       <property> buoyant_forces/gas-cell/temp-R </property>
-      </difference>
-     </product>
-    </function>
-    <function name="buoyant_forces/gas-cell/dU_radiation">
-     <product>
-      <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
-                                      [Btu / (h ft^2 R^4)] -->
-      <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
-      <value>  28309.08 </value> <!-- Surface area [ft2] -->
-      <difference>
-       <pow>
-        <property> atmosphere/T-R </property>
-        <value> 4.0 </value>
-       </pow>
-       <pow>
-        <property> buoyant_forces/gas-cell/temp-R </property>
-        <value> 4.0 </value>
-       </pow>
-      </difference>
-     </product>
-    </function>
-    <!-- Heat gain due to solar radiation. Pure guess work. -->
-    <function name="buoyant_forces/gas-cell/dU_sun">
-     <product>
-      <value>   7.2330 </value> <!-- Conversion to [lb ft / s] -->
-      <value>   775.19 </value> <!-- Estimated projected surface area [m2] -->
-      <value>  1300.00 </value> <!-- Solar energy flow [W/m2] -->
-      <value>     0.01 </value> <!-- Guess -->
-      <property> environment/sun-radiation-norm </property>
-      <max>
-       <value> 0.0 </value>
-       <difference>
-        <value> 1.5708 </value> <!-- pi/2 -->
-        <property> environment/sun-angle-rad </property>
-       </difference>
-      </max>
-     </product>
-    </function>    
-
-   </heat>
-
-   <!-- Fore ballonet -->
-   <ballonet type="AIR">
-    <location unit="M">
-     <x> 13.0 </x>
-     <y>  0.0 </y>
-     <z> -3.5 </z>
-    </location>
-    <x_radius unit="M">  15.0 </x_radius>
-    <y_radius unit="M">  5.00 </y_radius>
-    <z_radius unit="M">  3.50 </z_radius>
-    <max_overpressure unit="PA"> 550.0 </max_overpressure> 
-    <valve_coefficient unit="M4*SEC/KG"> 0.01 </valve_coefficient>
-    <fullness>0.8</fullness>
-    <heat>
-     <!-- Heat transfer due to temperature difference. -->
-     <function name="buoyant_forces/gas-cell/ballonet[0]/dU_conduction">
-      <product>
-       <value> 7020.33 </value> <!-- Surface area [ft2] -->
-       <value>    0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
-       <difference>
-        <property> buoyant_forces/gas-cell/temp-R </property>
-        <property> buoyant_forces/gas-cell/ballonet[0]/temp-R </property>
-       </difference>
-      </product>
-     </function>
-     <function name="buoyant_forces/gas-cell/ballonet[0]/dU_radiation">
-      <product>
-       <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
-                                       [Btu / (h ft^2 R^4)] -->
-       <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
-       <value>   7020.33 </value> <!-- Surface area [ft2] -->
-       <difference>
-        <pow>
-         <property> buoyant_forces/gas-cell/temp-R </property>
-         <value> 4.0 </value>
-        </pow>
-        <pow>
-         <property> buoyant_forces/gas-cell/ballonet[0]/temp-R </property>
-         <value> 4.0 </value>
-        </pow>
-       </difference>
-      </product>
-     </function>
-    </heat>
-    <blower_input>
-     <function name="buoyant_forces/gas-cell/ballonet[0]/in-flow-ft3ps">
-      <product>
-       <value> 100.0 </value>
-       <property>buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm</property>
-      </product>
-     </function>
-    </blower_input>
-   </ballonet>
-   <!-- Aft ballonet -->
-   <ballonet type="AIR">
-    <location unit="M">
-     <x> 56.5 </x>
-     <y>  0.0 </y>
-     <z> -3.5 </z>
-    </location>
-    <x_radius unit="M">  15.0 </x_radius>
-    <y_radius unit="M">  5.00 </y_radius>
-    <z_radius unit="M">  3.50 </z_radius>
-    <max_overpressure unit="PA"> 550.0 </max_overpressure> 
-    <valve_coefficient unit="M4*SEC/KG"> 0.01 </valve_coefficient>
-    <fullness>0.8</fullness>
-    <heat>
-     <!-- Heat transfer due to temperature difference. -->
-     <function name="buoyant_forces/gas-cell/ballonet[1]/dU_conduction">
-      <product>
-       <value> 7020.33 </value> <!-- Surface area [ft2] -->
-       <value>    0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
-       <difference>
-        <property> buoyant_forces/gas-cell/temp-R </property>
-        <property> buoyant_forces/gas-cell/ballonet[1]/temp-R </property>
-       </difference>
-      </product>
-     </function>
-     <function name="buoyant_forces/gas-cell/ballonet[1]/dU_radiation">
-      <product>
-       <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
-                                       [Btu / (h ft^2 R^4)] -->
-       <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
-       <value>   7020.33 </value> <!-- Surface area [ft2] -->
-       <difference>
-        <pow>
-         <property> buoyant_forces/gas-cell/temp-R </property>
-         <value> 4.0 </value>
-        </pow>
-        <pow>
-         <property> buoyant_forces/gas-cell/ballonet[1]/temp-R </property>
-         <value> 4.0 </value>
-        </pow>
-       </difference>
-      </product>
-     </function>
-    </heat>
-    <blower_input>
-     <function name="buoyant_forces/gas-cell/ballonet[1]/in-flow-ft3ps">
-      <product>
-       <value> 100.0 </value>
-       <property>buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm</property>
-      </product>
-     </function>
-    </blower_input>
-   </ballonet>
-
-  </gas_cell>
-
- </buoyant_forces>
-
- <!--
- === Ballonet and gas control system ========================================
- -->
- <system file="air-and-gas-control"/>
-
- <!--
- ==== Initial static condition weigh-off ====================================
- -->
- <system name="Weigh_Off">
-  <channel name="Initial_Static_Weigh_Off">
-   <!-- This system ensures that the ship starts slightly heavy. -->
-   <!-- The weight of inertia/pointmass-weight-lbs[0] is set from Nasal. -->
-
-   <summer name="static-condition/net-lift-lbs">
-    <input> buoyant_forces/gas-cell[0]/buoyancy-lbs </input>
-    <input> -inertia/weight-lbs </input>
-   </summer>
-
-  </channel>
- </system>
-
- <!--
- === Static Trim ============================================================
- -->
- <system name="Static trim">
-  <!-- Note: static-trim-cmd-norm is for FDM development. -->
-  <property value="0.3">fcs/static-trim-cmd-norm</property>
-
-  <channel name="StaticTrim">
-   <!--
-    This is for CG tweaking.
-   -->
-
-   <summer name="fcs/static-trim-norm">
-    <input>fcs/static-trim-cmd-norm</input>
-    <clipto>
-     <min>0</min>
-     <max>1</max>
-    </clipto>
-   </summer>
-
-   <summer name="fcs/inverse-static-trim-norm">
-    <input>-fcs/static-trim-norm</input>
-    <bias>1</bias>
-    <clipto>
-     <min>0</min>
-     <max>1</max>
-    </clipto>
-   </summer>
-
-   <aerosurface_scale name="Ballast Trim Fore">
-    <input>fcs/inverse-static-trim-norm</input>
-     <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>0</min>
-     <max>500</max>
-    </range>
-    <output>inertia/pointmass-weight-lbs[1]</output>
-   </aerosurface_scale>
-
-   <aerosurface_scale name="Ballast Trim Aft">
-    <input>fcs/static-trim-norm</input>
-    <domain>
-     <min>0</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>0</min>
-     <max>500</max>
-    </range>
-    <output>inertia/pointmass-weight-lbs[2]</output>
-   </aerosurface_scale>
-
-  </channel>
- </system>
-
- <!--
- ==== Flight control system =================================================
- -->
-
- <!-- system file="dual-control-jsbsim"/ --><!-- Dual-control setup for FlightGear. -->
-
- <system file="instrumentation"/> <!-- Instruments and sensors. -->
- <system file="engine-control"/>  <!-- Engine and thrust vectoring. -->
-
- <flight_control name="NT FCS">
-
-  <documentation>
-   Controls according to [FAA:2008:AS1CE]:
-     Control Surface Movements +/- 20 degrees.
-     Vectored Thrust Movements
-       Side Engines            0 (forward horizontal) to 120 degrees up.
-       Aft Engine              0 (aft horizontal) to 90 degrees down.
-   Avoid sustained operation with forward swivel angles between
-   43 and 57 degrees during normal operation.
-  </documentation>
-
-  <!-- The pilot and copilot have independent side-sticks. -->
-  <!-- NOTE: yaw-cmd-norm is inverted. -->
-  <property value="0.0">fcs/pilot/pitch-cmd-norm</property>
-  <property value="0.0">fcs/pilot/yaw-cmd-norm</property>
-
-  <property value="0.0">fcs/copilot/pitch-cmd-norm</property>
-  <property value="0.0">fcs/copilot/yaw-cmd-norm</property>
-
-  <documentation>
-   Engine controls (from pictures of the engine panel and other sources)
-   - RPM SEL levers
-     - LH AFT RH: IDLE - ?  (to 1250RPM - max according to [FAA:2008:E8-6600])
-     - fcs/throttle-cmd-norm[0|1|2]
-   - Mixture levers
-     - LH AFT RH: LEAN - RICH
-     - the standard mixture properties
-   - Thrust (prop pitch) levers (direct propeller pitch [FAA:2008:E8-6600])
-     - LH RH AFT: REV - ZERO - T/O - CRUISE
-     - the standard propeller pitch properties
-   - Swivel levers 
-     - LH RH: 0 - 120 degrees
-     - AFT:   0 - (-)90 degrees (only 0 or -90 according to [FAA:2008:E8-6600])
-     - fcs/side-engine-swivel-cmd-norm[0|1], fcs/rear-engine-swivel-cmd-norm
-
-   See the engine-control-jsbsim system file.
-  </documentation>
-
-  <documentation>
-   I have not seen any controls for the auxilliary rear side propeller
-   so I assume that it is controlled by the FCS in response to yaw
-   requests.
-  </documentation>
-
-  <!--
-  === Pitch ==================================================
-  -->
-  <channel name="Pitch">
-
-   <summer name="fcs/pitch-trim-sum">
-    <input>fcs/pilot/pitch-cmd-norm</input>
-    <input>fcs/copilot/pitch-cmd-norm</input>
-    <input>fcs/pitch-trim-cmd-norm</input>
-    <clipto>
-     <min>-1</min>
-     <max>1</max>
-    </clipto>
-   </summer>
-
-   <aerosurface_scale name="Elevator Control">
-    <input>fcs/pitch-trim-sum</input>
-    <domain>
-     <min>-1</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>-0.3491</min>
-     <max>0.3491</max>
-    </range>
-    <output>fcs/elevator-pos-rad</output>
-   </aerosurface_scale>
-
-   <aerosurface_scale name="Elevator Position Normalized">
-    <input>fcs/elevator-pos-rad</input>
-    <domain>
-     <min>-0.3491</min>
-     <max>0.3491</max>
-    </domain>
-    <range>
-     <min>-1</min>
-     <max>1</max>
-    </range>
-    <output>fcs/elevator-pos-norm</output>
-   </aerosurface_scale>
-  </channel>
-
-  <!--
-  === Yaw ====================================================
-  -->
-  <channel name="Yaw">
-   <summer name="Yaw Trim Sum">
-    <input>-fcs/pilot/yaw-cmd-norm</input>
-    <input>-fcs/copilot/yaw-cmd-norm</input>
-    <input>fcs/yaw-trim-cmd-norm</input>
-    <clipto>
-     <min>-1</min>
-     <max>1</max>
-    </clipto>
-   </summer>
-
-   <aerosurface_scale name="Rudder Control">
-    <input>fcs/yaw-trim-sum</input>
-    <domain>
-     <min>-1</min>
-     <max>1</max>
-    </domain>
-    <range>
-     <min>-0.3491</min>
-     <max>0.3491</max>
-    </range>
-    <output>fcs/rudder-pos-rad</output>
-   </aerosurface_scale>
-
-   <aerosurface_scale name="Rudder Position Normalized">
-    <input>fcs/rudder-pos-rad</input>
-    <domain>
-     <min>-0.3491</min>
-     <max>0.3491</max>
-    </domain>
-    <range>
-     <min>-1</min>
-     <max>1</max>
-    </range>
-    <output>fcs/rudder-pos-norm</output>
-   </aerosurface_scale>
-
-  </channel>
-
-  <!--
-  === Active yaw control augmentation ========================
-  -->
-  <channel name="Active yaw control augmentation">
-   <!-- Is there a similar augmentation for pitch control?
-        No, I have seen no mention of it in the FAA or EASA documents.
-   -->
-
-   <scheduled_gain name="Rear side thruster">
-    <input>fcs/yaw-trim-sum</input>
-    <gain>1.0</gain>
-    <table>
-     <independentVar>velocities/vc-kts</independentVar>
-     <tableData>
-      0.0   1.0
-      5.0   1.0
-      35.0  0.0
-     </tableData>
-    </table>
-    <output>fcs/rear-side-thrust-cmd-norm</output>
-   </scheduled_gain>
-
-   <switch name="fcs/rear-side-thrust-cmd-switch">
-    <default value="0.0"/>
-    <test value="fcs/rear-side-thrust-cmd-norm">
-     propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
-    </test>
-   </switch>
-
-   <!-- Replace with propeller pitch control later? -->
-   <switch name="Rear side thruster direction">
-    <default value="1.5708"/>
-    <test logic="AND" value="-1.5708">
-     fcs/rear-side-thrust-cmd-switch LT 0.0
-    </test>
-    <output>propulsion/engine[3]/yaw-angle-rad</output>
-   </switch>
-
-   <switch name="Rear side thruster throttle">
-    <default value="fcs/rear-side-thrust-cmd-switch"/>
-    <test logic="AND" value="-fcs/rear-side-thrust-cmd-switch">
-     fcs/rear-side-thrust-cmd-norm LT 0.0
-    </test>
-    <output>fcs/throttle-pos-norm[3]</output>
-   </switch>
-
-  </channel>
-
- </flight_control>
 
  <!--
  ==== External reactions ====================================================
@@ -1276,6 +657,611 @@
   </force>
 
  </external_reactions>
+
+ <!--
+ === Gas cell ==============================================================
+ -->
+
+ <buoyant_forces>
+  <description>
+   Envelope and ballonet according to [EASA:2008:TC_LZ_N07]:
+     Volume  envelope      8,450 m^3
+             ballonet fwd  600 m^3, or
+                           410 m^3 (Option B10/20)
+             ballonet aft  1,600 m^3, or
+                           1,065 m^3 (Option B10/20)
+     Length                75.1 m
+     Diameter              14.2 m
+     Maximum width         19.5 m
+     Height                19.4 m
+
+   Buoyancy Centre         34.15 m aft of bow.
+
+   Envelope and ballonet according to [FAA:2008:AS1CE]:
+     Envelope
+       Volume              298,409 ft^3 (8450 m^3)
+       Maximum pressure    2.4 inH2O (600 Pa)
+       Minimum pressure    1.2 inH2O (300 Pa)
+
+     Ballonets (2)
+       Volume              21,189 ft^3 or with Option B10 14,479ft^3 forward
+       Volume              56,504 ft^3 aft
+
+     Lifting Gas           Helium, recommended minimum purity 94%
+
+   NOTE: The ballonets are placed based on a guess.
+  </description>
+
+  <!-- External environment properties -->
+  <property> environment/sun-angle-rad </property>
+  <property> environment/sun-radiation-norm </property>
+
+  <!-- Ballonet system interface properties -->
+  <property> buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm </property>
+  <property> buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm </property>
+
+  <gas_cell type="HELIUM">
+   <location unit="M">
+    <x> 34.15 </x>
+    <y>  0.00 </y>
+    <z>  0.00 </z>
+   </location>
+   <x_radius unit="M"> 40.50 </x_radius>
+   <y_radius unit="M">  7.05 </y_radius>
+   <z_radius unit="M">  7.05 </z_radius>
+   <max_overpressure unit="PA"> 600.0 </max_overpressure>
+   <valve_coefficient unit="M4*SEC/KG"> 0.0075 </valve_coefficient>
+   <fullness>0.95</fullness>
+
+   <!-- heat exchange with the environment. [lb ft / sec] -->
+   <!-- Note: The surface area of an ellipsiod is approximately
+              4*pi*((a^p*b^p + a^p*c^p + b^p*c^p)/3)^(1/p)
+              where p=1.6075
+   -->
+   <heat>
+    <!-- Heat transfer due to temperature difference. -->
+    <function name="buoyant_forces/gas-cell/dU_conduction">
+     <product>
+      <value> 28309.08 </value> <!-- Surface area [ft2] -->
+      <value>     0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
+      <difference>
+       <property> atmosphere/T-R </property>
+       <property> buoyant_forces/gas-cell/temp-R </property>
+      </difference>
+     </product>
+    </function>
+    <function name="buoyant_forces/gas-cell/dU_radiation">
+     <product>
+      <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
+                                      [Btu / (h ft^2 R^4)] -->
+      <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
+      <value>  28309.08 </value> <!-- Surface area [ft2] -->
+      <difference>
+       <pow>
+        <property> atmosphere/T-R </property>
+        <value> 4.0 </value>
+       </pow>
+       <pow>
+        <property> buoyant_forces/gas-cell/temp-R </property>
+        <value> 4.0 </value>
+       </pow>
+      </difference>
+     </product>
+    </function>
+    <!-- Heat gain due to solar radiation. Pure guess work. -->
+    <function name="buoyant_forces/gas-cell/dU_sun">
+     <product>
+      <value>   7.2330 </value> <!-- Conversion to [lb ft / s] -->
+      <value>   775.19 </value> <!-- Estimated projected surface area [m2] -->
+      <value>  1300.00 </value> <!-- Solar energy flow [W/m2] -->
+      <value>     0.01 </value> <!-- Guess -->
+      <property> environment/sun-radiation-norm </property>
+      <max>
+       <value> 0.0 </value>
+       <difference>
+        <value> 1.5708 </value> <!-- pi/2 -->
+        <property> environment/sun-angle-rad </property>
+       </difference>
+      </max>
+     </product>
+    </function>
+
+   </heat>
+
+   <!-- Fore ballonet -->
+   <ballonet type="AIR">
+    <location unit="M">
+     <x> 13.0 </x>
+     <y>  0.0 </y>
+     <z> -3.5 </z>
+    </location>
+    <x_radius unit="M">  15.0 </x_radius>
+    <y_radius unit="M">  5.00 </y_radius>
+    <z_radius unit="M">  3.50 </z_radius>
+    <max_overpressure unit="PA"> 550.0 </max_overpressure>
+    <valve_coefficient unit="M4*SEC/KG"> 0.01 </valve_coefficient>
+    <fullness>0.8</fullness>
+    <heat>
+     <!-- Heat transfer due to temperature difference. -->
+     <function name="buoyant_forces/gas-cell/ballonet[0]/dU_conduction">
+      <product>
+       <value> 7020.33 </value> <!-- Surface area [ft2] -->
+       <value>    0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
+       <difference>
+        <property> buoyant_forces/gas-cell/temp-R </property>
+        <property> buoyant_forces/gas-cell/ballonet[0]/temp-R </property>
+       </difference>
+      </product>
+     </function>
+     <function name="buoyant_forces/gas-cell/ballonet[0]/dU_radiation">
+      <product>
+       <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
+                                       [Btu / (h ft^2 R^4)] -->
+       <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
+       <value>   7020.33 </value> <!-- Surface area [ft2] -->
+       <difference>
+        <pow>
+         <property> buoyant_forces/gas-cell/temp-R </property>
+         <value> 4.0 </value>
+        </pow>
+        <pow>
+         <property> buoyant_forces/gas-cell/ballonet[0]/temp-R </property>
+         <value> 4.0 </value>
+        </pow>
+       </difference>
+      </product>
+     </function>
+    </heat>
+    <blower_input>
+     <function name="buoyant_forces/gas-cell/ballonet[0]/in-flow-ft3ps">
+      <product>
+       <value> 100.0 </value>
+       <property>buoyant_forces/gas-cell/ballonet[0]/blower-cmd-norm</property>
+      </product>
+     </function>
+    </blower_input>
+   </ballonet>
+   <!-- Aft ballonet -->
+   <ballonet type="AIR">
+    <location unit="M">
+     <x> 56.5 </x>
+     <y>  0.0 </y>
+     <z> -3.5 </z>
+    </location>
+    <x_radius unit="M">  15.0 </x_radius>
+    <y_radius unit="M">  5.00 </y_radius>
+    <z_radius unit="M">  3.50 </z_radius>
+    <max_overpressure unit="PA"> 550.0 </max_overpressure>
+    <valve_coefficient unit="M4*SEC/KG"> 0.01 </valve_coefficient>
+    <fullness>0.8</fullness>
+    <heat>
+     <!-- Heat transfer due to temperature difference. -->
+     <function name="buoyant_forces/gas-cell/ballonet[1]/dU_conduction">
+      <product>
+       <value> 7020.33 </value> <!-- Surface area [ft2] -->
+       <value>    0.05 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
+       <difference>
+        <property> buoyant_forces/gas-cell/temp-R </property>
+        <property> buoyant_forces/gas-cell/ballonet[1]/temp-R </property>
+       </difference>
+      </product>
+     </function>
+     <function name="buoyant_forces/gas-cell/ballonet[1]/dU_radiation">
+      <product>
+       <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
+                                       [Btu / (h ft^2 R^4)] -->
+       <value>       0.2 </value> <!-- Emissivity [0,1] (Guess) -->
+       <value>   7020.33 </value> <!-- Surface area [ft2] -->
+       <difference>
+        <pow>
+         <property> buoyant_forces/gas-cell/temp-R </property>
+         <value> 4.0 </value>
+        </pow>
+        <pow>
+         <property> buoyant_forces/gas-cell/ballonet[1]/temp-R </property>
+         <value> 4.0 </value>
+        </pow>
+       </difference>
+      </product>
+     </function>
+    </heat>
+    <blower_input>
+     <function name="buoyant_forces/gas-cell/ballonet[1]/in-flow-ft3ps">
+      <product>
+       <value> 100.0 </value>
+       <property>buoyant_forces/gas-cell/ballonet[1]/blower-cmd-norm</property>
+      </product>
+     </function>
+    </blower_input>
+   </ballonet>
+
+  </gas_cell>
+
+ </buoyant_forces>
+
+ <!--
+ ==== Propulsion ============================================================
+ -->
+
+ <propulsion>
+
+  <!--
+  === Engine ================================================
+  -->
+  <!-- Left engine -->
+  <engine file="engIO360C">
+   <feed>0</feed>
+   <thruster file="propHO-V373-D">
+    <location unit="M">
+     <x> 25.5 </x>
+     <y> -8.6 </y>
+     <z> -3.5 </z>
+    </location>
+    <orient unit="DEG">
+     <roll>  0.0 </roll>
+     <pitch> 0.0 </pitch>
+     <yaw>   0.0 </yaw>
+    </orient>
+   </thruster>
+  </engine>
+  <!-- Right engine -->
+  <engine file="engIO360C">
+   <feed>1</feed>
+   <thruster file="propHO-V373-D">
+    <location unit="M">
+     <x> 25.5 </x>
+     <y>  8.6 </y>
+     <z> -3.5 </z>
+    </location>
+    <orient unit="DEG">
+     <roll>  0.0 </roll>
+     <pitch> 0.0 </pitch>
+     <yaw>   0.0 </yaw>
+    </orient>
+   </thruster>
+  </engine>
+  <!-- Aft engine -->
+  <engine file="engIO360C">
+   <feed>2</feed>
+   <thruster file="propHO-V373-D">
+    <location unit="M">
+     <x> 74.9 </x>
+     <y>  0.0 </y>
+     <z>  0.0 </z>
+    </location>
+    <orient unit="DEG">
+     <roll>  0.0 </roll>
+     <pitch> 0.0 </pitch>
+     <yaw>   0.0 </yaw>
+    </orient>
+   </thruster>
+  </engine>
+
+  <!-- Aft auxilliary engine -->
+  <engine file="electric147kW">
+   <thruster file="prop_Clark_Y7570">
+    <location unit="M">
+     <x> 73.64 </x>
+     <y> -1.10 </y>
+     <z>  0.20 </z>
+    </location>
+    <orient unit="DEG">
+     <roll>   0.0 </roll>
+     <pitch>  0.0 </pitch>
+     <yaw>  -90.0 </yaw>
+    </orient>
+   </thruster>
+  </engine>
+
+  <!--
+  === Fuel tanks ============================================
+  -->
+  <!--
+   Fuel capacity according to [FAA:2008:AS1CE]:
+     110.95 (US)gallons usable at gondola station 29.3 m (LH)
+     110.95 (US)gallons usable at gondola station 29.3 m (RH)
+      84.57 (US)gallons usable at gondola station 76.6 m (Aft)
+   The unusable fuel is included in the empty weight.
+   (NOTE: Account for it here, anyway)
+  -->
+
+  <tank type="FUEL">
+   <location unit="M">
+    <x> 26.4 </x>
+    <y> -6.6 </y>
+    <z> -3.4 </z>
+   </location>
+   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
+   <capacity unit="KG"> 275.0 </capacity>
+   <contents unit="KG"> 250.0 </contents>
+  </tank>
+  <tank type="FUEL">
+   <location unit="M">
+    <x> 26.4 </x>
+    <y>  6.6 </y>
+    <z> -3.4 </z>
+   </location>
+   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
+   <capacity unit="KG"> 275.0 </capacity>
+   <contents unit="KG"> 250.0 </contents>
+  </tank>
+  <tank type="FUEL">
+   <location unit="M">
+    <x> 70.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <!-- 275 kg AVGAS, density 0.72 kg/liter. -->
+   <capacity unit="KG"> 275.0 </capacity>
+   <contents unit="KG"> 250.0 </contents>
+  </tank>
+
+ </propulsion>
+
+ <!--
+ === Ballonet and gas control system ========================================
+ -->
+ <system file="air-and-gas-control"/>
+
+ <!--
+ ==== Initial static condition weigh-off ====================================
+ -->
+ <system name="Weigh_Off">
+  <channel name="Initial_Static_Weigh_Off">
+   <!-- This system ensures that the ship starts slightly heavy. -->
+   <!-- The weight of inertia/pointmass-weight-lbs[0] is set from Nasal. -->
+
+   <summer name="static-condition/net-lift-lbs">
+    <input> buoyant_forces/gas-cell[0]/buoyancy-lbs </input>
+    <input> -inertia/weight-lbs </input>
+   </summer>
+
+  </channel>
+ </system>
+
+ <!--
+ === Static Trim ============================================================
+ -->
+ <system name="Static trim">
+  <!-- Note: static-trim-cmd-norm is for FDM development. -->
+  <property value="0.3">fcs/static-trim-cmd-norm</property>
+
+  <channel name="StaticTrim">
+   <!--
+    This is for CG tweaking.
+   -->
+
+   <summer name="fcs/static-trim-norm">
+    <input>fcs/static-trim-cmd-norm</input>
+    <clipto>
+     <min>0</min>
+     <max>1</max>
+    </clipto>
+   </summer>
+
+   <summer name="fcs/inverse-static-trim-norm">
+    <input>-fcs/static-trim-norm</input>
+    <bias>1</bias>
+    <clipto>
+     <min>0</min>
+     <max>1</max>
+    </clipto>
+   </summer>
+
+   <aerosurface_scale name="Ballast Trim Fore">
+    <input>fcs/inverse-static-trim-norm</input>
+     <domain>
+     <min>0</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>0</min>
+     <max>500</max>
+    </range>
+    <output>inertia/pointmass-weight-lbs[1]</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Ballast Trim Aft">
+    <input>fcs/static-trim-norm</input>
+    <domain>
+     <min>0</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>0</min>
+     <max>500</max>
+    </range>
+    <output>inertia/pointmass-weight-lbs[2]</output>
+   </aerosurface_scale>
+
+  </channel>
+ </system>
+
+ <!--
+ ==== Flight control system =================================================
+ -->
+
+ <!-- system file="dual-control-jsbsim"/ --><!-- Dual-control setup for FlightGear. -->
+
+ <system file="instrumentation"/> <!-- Instruments and sensors. -->
+ <system file="engine-control"/>  <!-- Engine and thrust vectoring. -->
+
+ <flight_control name="NT FCS">
+
+  <description>
+   Controls according to [FAA:2008:AS1CE]:
+     Control Surface Movements +/- 20 degrees.
+     Vectored Thrust Movements
+       Side Engines            0 (forward horizontal) to 120 degrees up.
+       Aft Engine              0 (aft horizontal) to 90 degrees down.
+   Avoid sustained operation with forward swivel angles between
+   43 and 57 degrees during normal operation.
+  </description>
+
+  <!-- The pilot and copilot have independent side-sticks. -->
+  <!-- NOTE: yaw-cmd-norm is inverted. -->
+  <property value="0.0">fcs/pilot/pitch-cmd-norm</property>
+  <property value="0.0">fcs/pilot/yaw-cmd-norm</property>
+
+  <property value="0.0">fcs/copilot/pitch-cmd-norm</property>
+  <property value="0.0">fcs/copilot/yaw-cmd-norm</property>
+
+  <!--
+   Engine controls (from pictures of the engine panel and other sources)
+   - RPM SEL levers
+     - LH AFT RH: IDLE - ?  (to 1250RPM - max according to [FAA:2008:E8-6600])
+     - fcs/throttle-cmd-norm[0|1|2]
+   - Mixture levers
+     - LH AFT RH: LEAN - RICH
+     - the standard mixture properties
+   - Thrust (prop pitch) levers (direct propeller pitch [FAA:2008:E8-6600])
+     - LH RH AFT: REV - ZERO - T/O - CRUISE
+     - the standard propeller pitch properties
+   - Swivel levers
+     - LH RH: 0 - 120 degrees
+     - AFT:   0 - (-)90 degrees (only 0 or -90 according to [FAA:2008:E8-6600])
+     - fcs/side-engine-swivel-cmd-norm[0|1], fcs/rear-engine-swivel-cmd-norm
+
+   See the engine-control-jsbsim system file.
+
+   I have not seen any controls for the auxilliary rear side propeller
+   so I assume that it is controlled by the FCS in response to yaw
+   requests.
+  -->
+
+  <!--
+  === Pitch ==================================================
+  -->
+  <channel name="Pitch">
+
+   <summer name="fcs/pitch-trim-sum">
+    <input>fcs/pilot/pitch-cmd-norm</input>
+    <input>fcs/copilot/pitch-cmd-norm</input>
+    <input>fcs/pitch-trim-cmd-norm</input>
+    <clipto>
+     <min>-1</min>
+     <max>1</max>
+    </clipto>
+   </summer>
+
+   <aerosurface_scale name="Elevator Control">
+    <input>fcs/pitch-trim-sum</input>
+    <domain>
+     <min>-1</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>-0.3491</min>
+     <max>0.3491</max>
+    </range>
+    <output>fcs/elevator-pos-rad</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Elevator Position Normalized">
+    <input>fcs/elevator-pos-rad</input>
+    <domain>
+     <min>-0.3491</min>
+     <max>0.3491</max>
+    </domain>
+    <range>
+     <min>-1</min>
+     <max>1</max>
+    </range>
+    <output>fcs/elevator-pos-norm</output>
+   </aerosurface_scale>
+  </channel>
+
+  <!--
+  === Yaw ====================================================
+  -->
+  <channel name="Yaw">
+   <summer name="Yaw Trim Sum">
+    <input>-fcs/pilot/yaw-cmd-norm</input>
+    <input>-fcs/copilot/yaw-cmd-norm</input>
+    <input>fcs/yaw-trim-cmd-norm</input>
+    <clipto>
+     <min>-1</min>
+     <max>1</max>
+    </clipto>
+   </summer>
+
+   <aerosurface_scale name="Rudder Control">
+    <input>fcs/yaw-trim-sum</input>
+    <domain>
+     <min>-1</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>-0.3491</min>
+     <max>0.3491</max>
+    </range>
+    <output>fcs/rudder-pos-rad</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="Rudder Position Normalized">
+    <input>fcs/rudder-pos-rad</input>
+    <domain>
+     <min>-0.3491</min>
+     <max>0.3491</max>
+    </domain>
+    <range>
+     <min>-1</min>
+     <max>1</max>
+    </range>
+    <output>fcs/rudder-pos-norm</output>
+   </aerosurface_scale>
+
+  </channel>
+
+  <!--
+  === Active yaw control augmentation ========================
+  -->
+  <channel name="Active yaw control augmentation">
+   <!-- Is there a similar augmentation for pitch control?
+        No, I have seen no mention of it in the FAA or EASA documents.
+   -->
+
+   <scheduled_gain name="Rear side thruster">
+    <input>fcs/yaw-trim-sum</input>
+    <table>
+     <independentVar>velocities/vc-kts</independentVar>
+     <tableData>
+      0.0   1.0
+      5.0   1.0
+      35.0  0.0
+     </tableData>
+    </table>
+    <gain>1.0</gain>
+    <output>fcs/rear-side-thrust-cmd-norm</output>
+   </scheduled_gain>
+
+   <switch name="fcs/rear-side-thrust-cmd-switch">
+    <default value="0.0"/>
+    <test value="fcs/rear-side-thrust-cmd-norm">
+     propulsion/engine[2]/fuel-flow-rate-pps GT 0.0
+    </test>
+   </switch>
+
+   <!-- Replace with propeller pitch control later? -->
+   <switch name="Rear side thruster direction">
+    <default value="1.5708"/>
+    <test logic="AND" value="-1.5708">
+     fcs/rear-side-thrust-cmd-switch LT 0.0
+    </test>
+    <output>propulsion/engine[3]/yaw-angle-rad</output>
+   </switch>
+
+   <switch name="Rear side thruster throttle">
+    <default value="fcs/rear-side-thrust-cmd-switch"/>
+    <test logic="AND" value="-fcs/rear-side-thrust-cmd-switch">
+     fcs/rear-side-thrust-cmd-norm LT 0.0
+    </test>
+    <output>fcs/throttle-pos-norm[3]</output>
+   </switch>
+
+  </channel>
+
+ </flight_control>
 
  <system file="visual-reference-point-extensions"/>
  <system file="airship-mooring">

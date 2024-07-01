@@ -1,9 +1,37 @@
 <?xml version="1.0"?>
 <fdm_config name="ah1s-jsbsim" release="ALPHA" version="2.0">
-  
+
   <fileheader>
     <author> Thomas Kreitler </author>
     <email> t.kreitler at web 056 de </email>
+    <license
+      licenseName="GPL"
+      licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+      <!--
+        DISCLAIMER:
+        This model was created using publicly available data, publicly available
+        technical reports, textbooks, and guesses. It contains no proprietary or
+        restricted data. It has been validated only to the extent that it may seem
+        to "fly right", and possibly to comply to published, publicly known,
+        performance data (maximum speed, endurance, etc.).
+
+        This model is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+      -->
+
+      <!--
+
+        And to avoid unneeded 'friction-losses':
+
+                              -= ALTERNATIVE LICENSE =-
+        In case the model is used in conjunction with additional program code,
+        3D-models, or forms a basis for derived models, and you are publishing
+        your work as 'open source', it is also allowed to use and/or distribute
+        the model under a CC-BY-NC-SA licence (http://creativecommons.org)
+
+      -->
     <filecreationdate>2010-10-07</filecreationdate>
     <version>$Revision: 1.5 $</version>
     <description> Models a Bell209/AH1S helicopter. </description>
@@ -33,39 +61,8 @@
 
     <limitation> Estimation of fuselage moments is rather fair. </limitation>
 
-    <license>
-      <licenseName>GPL</licenseName>
-      <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-      <!--
-        DISCLAIMER:
-        This model was created using publicly available data, publicly available
-        technical reports, textbooks, and guesses. It contains no proprietary or
-        restricted data. It has been validated only to the extent that it may seem
-        to "fly right", and possibly to comply to published, publicly known, 
-        performance data (maximum speed, endurance, etc.).
-
-        This model is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-      -->
-
-      <!--
-      
-        And to avoid unneeded 'friction-losses':
-      
-                              -= ALTERNATIVE LICENSE =-
-        In case the model is used in conjunction with additional program code,
-        3D-models, or forms a basis for derived models, and you are publishing
-        your work as 'open source', it is also allowed to use and/or distribute
-        the model under a CC-BY-NC-SA licence (http://creativecommons.org)
-
-      -->
-
-    </license>
-
   </fileheader>
-  
+
   <metrics>
     <wingarea unit="FT2">         16.60 </wingarea>         <!-- metrics/Sw-sqft  -->
     <wingspan unit="FT">          10.75 </wingspan>         <!-- metrics/bw-ft    -->
@@ -93,7 +90,7 @@
       <z>   0.0 </z>
     </location>
   </metrics>
-  
+
   <mass_balance>
     <ixx unit="SLUG*FT2">    2593.0 </ixx>
     <iyy unit="SLUG*FT2">   14320.0 </iyy>
@@ -107,7 +104,7 @@
       <z>    75.0 </z>
     </location>
   </mass_balance>
-  
+
   <ground_reactions>
     <contact type="BOGEY" name="skid_front_left">
       <location unit="IN">
@@ -178,10 +175,10 @@
       <damping_coeff unit="LBS/FT/SEC">    2000.0 </damping_coeff>
     </contact>
   </ground_reactions>
-  
+
   <propulsion>
     <!-- should become avco_lycoming_t53 turbo-shaft engine -->
-    <engine file="electric_1500hp"> 
+    <engine file="electric_1500hp">
       <feed>0</feed>
       <feed>1</feed>
       <thruster file="ah1s_rotor">
@@ -195,7 +192,7 @@
           <pitch> 90.0 </pitch>
           <yaw>    0.0 </yaw>
         </orient>
-        <sense> 1 </sense>
+<sense> 1 </sense>
       </thruster>
     </engine>
     <!-- dummy-engine, used for linkage -->
@@ -213,7 +210,7 @@
           <pitch> 0.0 </pitch>
           <yaw>  90.0 </yaw>
         </orient>
-        <sense> 1 </sense>
+<sense> 1 </sense>
       </thruster>
     </engine>
     <!--
@@ -241,17 +238,17 @@
       <type>JP-5</type>
     </tank>
   </propulsion>
-  
+
   <system file="rpm_governor"/>
-  
+
   <system file="rotor_control"/>
-  
+
   <system file="afcs"/>
-  
+
   <system file="steady_flight_data"/>
-  
+
   <system file="trim_control"/>
-  
+
   <system name="misc support">
     <channel name="climb/approach angle">
 
@@ -299,11 +296,11 @@
             <value> -7.33 </value>
           </sum>
         </function>
-        <output>/rotors/main/torque-sensor-psi</output> 
+        <output>/rotors/main/torque-sensor-psi</output>
       </fcs_function>
     </channel>
   </system>
-  
+
   <flight_control name="ah1s fcs">
 
     <channel name="tailplane">
@@ -369,7 +366,7 @@
     </channel>
 
   </flight_control>
-  
+
   <aerodynamics>
 
 
@@ -494,7 +491,7 @@
     </function>
 
     <function name="aero/downwash-window-wing">
-      <description> 
+      <description>
          Turns to one if wing is immersed in downwash. (Note, the window is
          currently a simple square, not a circle)
       </description>
@@ -589,7 +586,7 @@
     <function name="aero/alpha-downwash-rad">
       <description>
          Transform dw-theta to 'alpha' for usage with CL table.
-         alpha_dw = - (theta_dw+90). 
+         alpha_dw = - (theta_dw+90).
          Here the helicopter specific shaft angle is 90 deg.
       </description>
       <difference>
@@ -679,10 +676,10 @@
            Coefficients
          ============================================================ -->
 
-    <property value="0.105"> aero/coefficient/CD0_fus   </property>
+<property value="0.105"> aero/coefficient/CD0_fus   </property>
     <property value="0.600"> aero/coefficient/CDa90_fus </property>
     <property value="1.826"> aero/coefficient/CDb90_fus </property>
-    <!-- 
+    <!--
           NOTES: CDx_fus = (projected-area) / (aero/ref/area-ft2) * (0.5 .. 1.0)
                  CD0_fus = 0.1  yield to approx. 170kts at 5000ft and 0.066 to approx. 185kts.
     -->
@@ -1132,7 +1129,7 @@
         </product>
       </function>
     </axis>
-    
+
     <!-- no ROLL contributions calculated -->
 
     <axis name="PITCH">
@@ -1220,5 +1217,5 @@
     </axis>
 
   </aerodynamics>
-  
+
 </fdm_config>

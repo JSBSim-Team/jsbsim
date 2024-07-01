@@ -174,7 +174,7 @@ class TestActuator(JSBSimTestCase):
 
         # Remove the hysteresis. We want to make sure we are measuring the
         # rate_limit and just that.
-        hysteresis_element = actuator_element.find('hysteresis')
+        hysteresis_element = actuator_element.find('hysteresis_width')
         actuator_element.remove(hysteresis_element)
         input_element = actuator_element.find('input')
         self.input_prop = actuator_element.attrib['name'].split('-')

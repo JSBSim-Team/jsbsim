@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Unknown </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.18 $ </version>
         <description> Piper PA-28 general aviation aircraft </description>
       <note>
@@ -60,7 +60,7 @@
         </location>
         <pointmass name="name">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 81.6 </x>
                 <y> -9.6 </y>
                 <z> 0 </z>
