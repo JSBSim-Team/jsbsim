@@ -962,7 +962,7 @@ double FGFunction::GetValue(void) const
   if (cached) return cachedValue;
   std::cout << "computing value for " << this->GetName() << endl;
 
-    for (size_t i = 1; i < Parameters.size(); ++i) {
+  for (size_t i = 0; i < Parameters.size(); ++i) {
       std::cout << "The parameter is " << Parameters[i]->GetName() << endl;
   }
 
