@@ -961,7 +961,7 @@ double FGFunction::GetValue(void) const
 {
   if (cached) return cachedValue;
   std::cout << "computing value for " << this->GetName() << endl;
-  if (this->GetName() == "aero/coefficient/Clb") {
+  if (this->GetName() == "aero/coefficient/CD") {
     // This line is here for a breakpoint.
   }
   for (size_t i = 0; i < Parameters.size(); ++i) {
