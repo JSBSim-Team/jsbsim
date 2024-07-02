@@ -967,6 +967,7 @@ double FGFunction::GetValue(void) const
   }
 
   double val = Parameters[0]->GetValue();
+  std::cout << "Value is: " << val << endl;
 
   if (pCopyTo) pCopyTo->setDoubleValue(val);
 
