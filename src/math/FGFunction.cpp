@@ -684,7 +684,6 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
                                                      var, MaxArgs));
     } else if (operation == "interpolate1d") {
-      printf("In the interpolate function\n");
       auto f = [](const decltype(Parameters)& p)->double {
                  // This is using the bisection algorithm. Special care has been
                  // taken to evaluate each parameter only once.
