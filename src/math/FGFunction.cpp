@@ -971,6 +971,14 @@ double FGFunction::GetValue(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+bool FGFunction::IsCached(void) const
+{
+  return cached;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 string FGFunction::GetValueAsString(void) const
 {
   ostringstream buffer;
