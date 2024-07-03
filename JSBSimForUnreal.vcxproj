@@ -86,19 +86,6 @@
       </DataExecutionPrevention>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
-robocopy $(SolutionDir)src UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include *.h *.hxx /E
-echo supresses errors 1, 2, and 4 which are not really errors.
-set/A errlev="%ERRORLEVEL% &amp;amp; 24"
-
-echo Copy Aircrafts, Engines and Systems in the plugin resources folder
-robocopy $(SolutionDir)aircraft UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\aircraft /E
-robocopy $(SolutionDir)engine UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\engine /E
-robocopy $(SolutionDir)systems UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems /E
-
-exit/B %errlev%</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,19 +128,6 @@ exit/B %errlev%</Command>
     <Xdcmake>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </Xdcmake>
-    <PostBuildEvent>
-      <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
-robocopy $(SolutionDir)src UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include *.h *.hxx /E
-echo supresses errors 1, 2, and 4 which are not really errors.
-set/A errlev="%ERRORLEVEL% &amp;amp; 24"
-
-echo Copy Aircrafts, Engines and Systems in the plugin resources folder
-robocopy $(SolutionDir)aircraft UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\aircraft /E
-robocopy $(SolutionDir)engine UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\engine /E
-robocopy $(SolutionDir)systems UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems /E
-
-exit/B %errlev%</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\initialization\FGLinearization.h" />
@@ -410,3 +384,25 @@ exit/B %errlev%</Command>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
+  <ItemDefinitionGroup>
+    <PostBuildEvent>
+        <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
+  
+  robocopy "$(SolutionDir)src" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include" *.h *.hxx /E
+  
+  echo supresses errors 1, 2, and 4 which are not really errors.
+  
+  set/A errlev="%ERRORLEVEL% &amp;amp; 24"
+  
+  
+  echo Copy Aircrafts, Engines and Systems in the plugin resources folder
+  
+  robocopy "$(SolutionDir)aircraft" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\aircraft" /E
+  
+  robocopy "$(SolutionDir)engine" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\engine" /E
+  
+  robocopy "$(SolutionDir)systems" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems" /E
+  
+  exit/B %errlev%</Command>
+      </PostBuildEvent>
+  </ItemDefinitionGroup>
