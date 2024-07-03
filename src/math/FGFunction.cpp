@@ -688,8 +688,11 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  // This is using the bisection algorithm. Special care has been
                  // taken to evaluate each parameter only once.
                  size_t n = p.size();
+                 printf("First Call\n");
                  double x = p[0]->GetValue();
+                 printf("Got Xl\n");
                  double xmin = p[1]->GetValue();
+                 printf("Got X min. \n");
                  double ymin = p[2]->GetValue();
                  if (x <= xmin) return ymin;
 
