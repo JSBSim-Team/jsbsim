@@ -355,7 +355,7 @@ private:
   double maximumForce = DBL_MAX;
   double bumpiness = 0.0;
   bool isSolid = true;
-  bool WOW;
+  bool WOW; // Weight On Wheel
   bool lastWOW;
   bool FirstContact;
   bool StartedGroundRun;
@@ -366,6 +366,7 @@ private:
   bool Castered;
   bool StaticFriction;
   std::string name;
+  double AGL; // Height above ground level
 
   BrakeGroup  eBrakeGrp;
   ContactType eContactType;
