@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGLogger
+class JSBSIM_API FGLogger
 {
 public:
   virtual ~FGLogger() {}
@@ -104,7 +104,7 @@ protected:
   LogLevel min_level = LogLevel::INFO;
 };
 
-class FGLogging
+class JSBSIM_API FGLogging
 {
 public:
   FGLogging(std::shared_ptr<FGLogger> logger, LogLevel level)
@@ -126,13 +126,13 @@ protected:
   std::ostringstream buffer;
 };
 
-class FGXMLLogging : public FGLogging
+class JSBSIM_API FGXMLLogging : public FGLogging
 {
 public:
   FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLevel level);
 };
 
-class FGLogConsole : public FGLogger
+class JSBSIM_API FGLogConsole : public FGLogger
 {
 public:
   FGLogConsole() : out(std::cout.rdbuf()) {}
