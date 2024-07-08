@@ -129,7 +129,7 @@ void FGMatrix::Print() const {
   for (const auto& row : matrix) {
     for (const auto& val : row) {
       std::ostringstream temp;
-      temp << std::setprecision(6) << val << " ";  // Added space after each value
+      temp << std::setprecision(6) << val;  // Added space after each value
       max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
     }
   }
@@ -137,7 +137,7 @@ void FGMatrix::Print() const {
   // Print the matrix with aligned columns
   for (const auto& row : matrix) {
     for (const auto& val : row) {
-      std::cout << std::setw(max_width + 2) << std::setprecision(6) << val;
+      std::cout << std::setw(max_width + 2) << std::setprecision(6) << val << " ";
     }
     std::cout << std::endl;
   }
