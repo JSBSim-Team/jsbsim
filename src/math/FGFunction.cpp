@@ -80,7 +80,6 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
       matrix.push_back(row);
     }
   }
-
   // Verify that all rows have the same number of columns
   if (!matrix.empty()) {
     size_t cols = matrix[0].size();
