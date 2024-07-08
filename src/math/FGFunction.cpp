@@ -43,6 +43,35 @@ INCLUDES
 using namespace std;
 
 namespace JSBSim {
+class FGMatrixValue : public FGParameter {
+public:
+  FGMatrixValue(Element* el) : name("MatrixValue") {
+    string data = el->GetDataLine();
+    // Parse the data string into a 2D vector
+    // This is a placeholder implementation
+    // You'll need to implement the actual parsing logic here
+  }
+
+  double GetValue() const override {
+    // This method might not be used directly for a matrix
+    // You might want to return a specific value or throw an exception
+    return 0.0;
+  }
+
+  std::string GetName() const override {
+    return name;
+  }
+
+  bool IsConstant() const override {
+    return true;  // Assuming the matrix doesn't change after initialization
+  }
+
+  const vector<vector<double>>& GetMatrix() const { return matrix; }
+
+private:
+  vector<vector<double>> matrix;
+  std::string name;
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -1104,19 +1133,3 @@ void FGFunction::Debug(int from)
 }
 
 }
-
-
-class FGMatrixValue : public FGParameter {
-public:
-  FGMatrixValue(Element* el) {
-    string data = el->GetDataLine();
-    // Parse the data string into a 2D vector
-  }
-  double GetValue() const override {
-    // This method might not be used directly for a matrix
-    return 0.0;
-  }
-  const vector<vector<double>>& GetMatrix() const { return matrix; }
-private:
-  vector<vector<double>> matrix;
-};
