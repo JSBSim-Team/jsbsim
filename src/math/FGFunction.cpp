@@ -65,20 +65,27 @@ private:
 // Implementation
 
 FGMatrix::FGMatrix(Element* el) : name("Matrix") {
-  string data = el->GetDataLine();
-  // Parse the data string into a 2D vector
-  std::istringstream iss(data);
-  vector<double> row;
-  double value;
-  while (iss >> value) {
-    row.push_back(value);
-    if (iss.peek() == '\n') {
-      matrix.push_back(row);
-      row.clear();
-    }
+  Element* matrix_el = el->FindElement("matrix");
+  if (!matrix_el) {
+    throw std::runtime_error("No matrix element found");
   }
-  if (!row.empty()) {
-    matrix.push_back(row);
+
+  std::string data = matrix_el->GetDataLine();
+  std::istringstream iss(data);
+  std::string line;
+
+  while (std::getline(iss, line)) {
+    std::istringstream line_stream(line);
+    std::vector<double> row;
+    double value;
+
+    while (line_stream >> value) {
+      row.push_back(value);
+    }
+
+    if (!row.empty()) {
+      matrix.push_back(row);
+    }
   }
 
   // Verify that all rows have the same number of columns
@@ -90,6 +97,8 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
       }
     }
     num_dimensions = cols - 1;  // Last column is the function value
+  } else {
+    throw std::runtime_error("Empty matrix");
   }
 }
 
