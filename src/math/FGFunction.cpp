@@ -727,7 +727,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
        auto f = [](const decltype(Parameters)& p)->double {
                 size_t n = p.size();
                 return 0.0;
-       }
+       };
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
