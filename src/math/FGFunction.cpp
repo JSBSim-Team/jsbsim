@@ -728,7 +728,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                 size_t n = p.size();
                 return 0.0;
        };
-      Parameters.push_back(new aFunc<decltype(f), 5>(f, fdmex, element, Prefix,
+      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
                                               var, MaxArgs));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
