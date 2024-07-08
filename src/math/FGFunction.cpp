@@ -55,9 +55,9 @@ public:
   size_t GetNumDimensions() const;
 
   void Print() const;  // Declare the Print function here
+  vector<vector<double>> matrix;
 
 private:
-  vector<vector<double>> matrix;
   std::string name;
   size_t num_dimensions;
 };
