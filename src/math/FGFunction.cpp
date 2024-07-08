@@ -45,81 +45,97 @@ using namespace std;
 namespace JSBSim {
 class FGMatrix : public FGParameter {
 public:
-  FGMatrix(Element* el) : name("Matrix") {
-    string data = el->GetDataLine();
-    // Parse the data string into a 2D vector
-    std::istringstream iss(data);
-    vector<double> row;
-    double value;
-    while (iss >> value) {
-      row.push_back(value);
-      if (iss.peek() == '\n') {
-        matrix.push_back(row);
-        row.clear();
-      }
-    }
-    if (!row.empty()) {
-      matrix.push_back(row);
-    }
+  FGMatrix(Element* el);
+  
+  double GetValue() const override;
+  std::string GetName() const override;
+  bool IsConstant() const override;
 
-    // Verify that all rows have the same number of columns
-    if (!matrix.empty()) {
-      size_t cols = matrix[0].size();
-      for (const auto& row : matrix) {
-        if (row.size() != cols) {
-          throw std::runtime_error("Inconsistent number of columns in matrix");
-        }
-      }
-      num_dimensions = cols - 1;  // Last column is the function value
-    }
-  }
+  const vector<vector<double>>& GetMatrix() const;
+  size_t GetNumDimensions() const;
 
-  double GetValue() const override {
-    // This method might not be used directly for a matrix
-    // You might want to return a specific value or throw an exception
-    return 0.0;
-  }
-
-  std::string GetName() const override {
-    return name;
-  }
-
-  bool IsConstant() const override {
-    return true;  // Assuming the matrix doesn't change after initialization
-  }
-
-  const vector<vector<double>>& GetMatrix() const { return matrix; }
-  size_t GetNumDimensions() const { return num_dimensions; }
-
-  void Print() const {
-    std::cout << "Matrix: " << name << std::endl;
-    std::cout << "Dimensions: " << num_dimensions << std::endl;
-    std::cout << "Data:" << std::endl;
-
-    // Find the maximum width needed for formatting
-    size_t max_width = 0;
-    for (const auto& row : matrix) {
-      for (const auto& val : row) {
-        std::ostringstream temp;
-        temp << std::setprecision(6) << val;
-        max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
-      }
-    }
-
-    // Print the matrix with aligned columns
-    for (const auto& row : matrix) {
-      for (const auto& val : row) {
-        std::cout << std::setw(max_width + 2) << std::setprecision(6) << val;
-      }
-      std::cout << std::endl;
-    }
-  }
+  void Print() const;  // Declare the Print function here
 
 private:
   vector<vector<double>> matrix;
   std::string name;
   size_t num_dimensions;
 };
+
+// Implementation
+
+FGMatrix::FGMatrix(Element* el) : name("Matrix") {
+  string data = el->GetDataLine();
+  // Parse the data string into a 2D vector
+  std::istringstream iss(data);
+  vector<double> row;
+  double value;
+  while (iss >> value) {
+    row.push_back(value);
+    if (iss.peek() == '\n') {
+      matrix.push_back(row);
+      row.clear();
+    }
+  }
+  if (!row.empty()) {
+    matrix.push_back(row);
+  }
+
+  // Verify that all rows have the same number of columns
+  if (!matrix.empty()) {
+    size_t cols = matrix[0].size();
+    for (const auto& row : matrix) {
+      if (row.size() != cols) {
+        throw std::runtime_error("Inconsistent number of columns in matrix");
+      }
+    }
+    num_dimensions = cols - 1;  // Last column is the function value
+  }
+}
+
+double FGMatrix::GetValue() const {
+  return 0.0;  // This method might not be used directly for a matrix
+}
+
+std::string FGMatrix::GetName() const {
+  return name;
+}
+
+bool FGMatrix::IsConstant() const {
+  return true;  // Assuming the matrix doesn't change after initialization
+}
+
+const vector<vector<double>>& FGMatrix::GetMatrix() const {
+  return matrix;
+}
+
+size_t FGMatrix::GetNumDimensions() const {
+  return num_dimensions;
+}
+
+void FGMatrix::Print() const {
+  std::cout << "Matrix: " << name << std::endl;
+  std::cout << "Dimensions: " << num_dimensions << std::endl;
+  std::cout << "Data:" << std::endl;
+
+  // Find the maximum width needed for formatting
+  size_t max_width = 0;
+  for (const auto& row : matrix) {
+    for (const auto& val : row) {
+      std::ostringstream temp;
+      temp << std::setprecision(6) << val;
+      max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
+    }
+  }
+
+  // Print the matrix with aligned columns
+  for (const auto& row : matrix) {
+    for (const auto& val : row) {
+      std::cout << std::setw(max_width + 2) << std::setprecision(6) << val;
+    }
+    std::cout << std::endl;
+  }
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
