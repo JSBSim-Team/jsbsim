@@ -374,6 +374,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       }
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
+    } else if (operation == "matrix") {
+      Parameters.push_back(new FGMatrixValue(element));
     } else if (operation == "product") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = 1.0;
@@ -726,8 +728,9 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "interpolatend") {
        auto f = [](const decltype(Parameters)& p)->double {
                 size_t n = p.size();
+                std::cout << "Param size: " << n << endl;
 
-                 for (int i = 0; i < n; i++) {
+                for (int i = 0; i < n; i++) {
                   string name_property = p[i]->GetName();
                  }
 
@@ -1101,3 +1104,19 @@ void FGFunction::Debug(int from)
 }
 
 }
+
+
+class FGMatrixValue : public FGParameter {
+public:
+  FGMatrixValue(Element* el) {
+    string data = el->GetDataLine();
+    // Parse the data string into a 2D vector
+  }
+  double GetValue() const override {
+    // This method might not be used directly for a matrix
+    return 0.0;
+  }
+  const vector<vector<double>>& GetMatrix() const { return matrix; }
+private:
+  vector<vector<double>> matrix;
+};
