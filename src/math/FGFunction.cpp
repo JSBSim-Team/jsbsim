@@ -102,7 +102,7 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
       row.push_back(value);
     }
 
-    if (row.size() != num_dimensions) {
+    if (row.size() - 1 != num_dimensions) {
       throw std::runtime_error("Inconsistent number of columns in matrix at row " + std::to_string(i + 1));
     }
 
