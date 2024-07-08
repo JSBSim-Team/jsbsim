@@ -91,7 +91,7 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
     throw std::runtime_error("Invalid matrix data: empty first row");
   }
 
-  num_dimensions = first_row.size();
+  num_dimensions = first_row.size() - 1;
   matrix.push_back(std::move(first_row));
 
   // Parse the rest of the lines
