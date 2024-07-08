@@ -140,7 +140,7 @@ void FGMatrix::Print() const {
   for (const auto& row : matrix) {
     for (const auto& val : row) {
       std::ostringstream temp;
-      temp << std::setprecision(6) << val;
+      temp << std::setprecision(6) << val << " ";  // Added space after each value
       max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
     }
   }
