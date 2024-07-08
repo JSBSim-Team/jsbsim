@@ -68,18 +68,17 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
   string data = el->GetDataLine();
   // Parse the data string into a 2D vector
   std::istringstream iss(data);
-  vector<double> row;
-  double value;
-  while (iss >> value) {
-    row.push_back(value);
-    if (iss.peek() == '\n') {
-      matrix.push_back(row);
-      row.clear();
-      iss.ignore(); // Skip the newline character
+  string line;
+  while (std::getline(iss, line)) {
+    std::istringstream lineStream(line);
+    vector<double> row;
+    double value;
+    while (lineStream >> value) {
+      row.push_back(value);
     }
-  }
-  if (!row.empty()) {
-    matrix.push_back(row);
+    if (!row.empty()) {
+      matrix.push_back(row);
+    }
   }
 
   // Verify that all rows have the same number of columns
