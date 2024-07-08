@@ -726,6 +726,11 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "interpolatend") {
        auto f = [](const decltype(Parameters)& p)->double {
                 size_t n = p.size();
+
+                 for (int i = 0; i < n; i++) {
+                  string name_property = p[i]->GetName();
+                 }
+
                 return 0.0;
        };
       Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
