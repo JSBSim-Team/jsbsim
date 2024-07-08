@@ -842,7 +842,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                 }
 
                 const auto& matrix_data = matrix->GetMatrix();
-
+                std::cout << "some stuff" << endl;
                 // Perform n-dimensional interpolation here
                 // Use matrix_data and independent_vars
 
