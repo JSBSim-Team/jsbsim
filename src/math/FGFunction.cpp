@@ -43,13 +43,35 @@ INCLUDES
 using namespace std;
 
 namespace JSBSim {
-class FGMatrixValue : public FGParameter {
+class FGMatrix : public FGParameter {
 public:
-  FGMatrixValue(Element* el) : name("MatrixValue") {
+  FGMatrix(Element* el) : name("Matrix") {
     string data = el->GetDataLine();
     // Parse the data string into a 2D vector
-    // This is a placeholder implementation
-    // You'll need to implement the actual parsing logic here
+    std::istringstream iss(data);
+    vector<double> row;
+    double value;
+    while (iss >> value) {
+      row.push_back(value);
+      if (iss.peek() == '\n') {
+        matrix.push_back(row);
+        row.clear();
+      }
+    }
+    if (!row.empty()) {
+      matrix.push_back(row);
+    }
+
+    // Verify that all rows have the same number of columns
+    if (!matrix.empty()) {
+      size_t cols = matrix[0].size();
+      for (const auto& row : matrix) {
+        if (row.size() != cols) {
+          throw std::runtime_error("Inconsistent number of columns in matrix");
+        }
+      }
+      num_dimensions = cols - 1;  // Last column is the function value
+    }
   }
 
   double GetValue() const override {
@@ -67,10 +89,36 @@ public:
   }
 
   const vector<vector<double>>& GetMatrix() const { return matrix; }
+  size_t GetNumDimensions() const { return num_dimensions; }
+
+  void Print(std::ostream& os = std::cout) const {
+    os << "Matrix: " << name << std::endl;
+    os << "Dimensions: " << num_dimensions << std::endl;
+    os << "Data:" << std::endl;
+
+    // Find the maximum width needed for formatting
+    size_t max_width = 0;
+    for (const auto& row : matrix) {
+      for (const auto& val : row) {
+        std::ostringstream temp;
+        temp << std::setprecision(6) << val;
+        max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
+      }
+    }
+
+    // Print the matrix with aligned columns
+    for (const auto& row : matrix) {
+      for (const auto& val : row) {
+        os << std::setw(max_width + 2) << std::setprecision(6) << val;
+      }
+      os << std::endl;
+    }
+  }
 
 private:
   vector<vector<double>> matrix;
   std::string name;
+  size_t num_dimensions;
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -404,7 +452,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
     } else if (operation == "matrix") {
-      Parameters.push_back(new FGMatrixValue(element));
+      Parameters.push_back(new FGMatrix(element));
     } else if (operation == "product") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = 1.0;
@@ -755,18 +803,37 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       Parameters.push_back(new aFunc<decltype(f), 5>(f, fdmex, element, Prefix,
                                                      var, MaxArgs, OddEven::Odd));
     } else if (operation == "interpolatend") {
-       auto f = [](const decltype(Parameters)& p)->double {
-                size_t n = p.size();
-                std::cout << "Param size: " << n << endl;
+        auto f = [](const decltype(Parameters)& p)->double {
+                const FGMatrix* matrix = nullptr;
+                vector<double> independent_vars;
 
-                for (int i = 0; i < n; i++) {
-                  string name_property = p[i]->GetName();
-                 }
+                for (auto param : p) {
+                    if (auto mat = dynamic_cast<FGMatrix*>(param.ptr())) {
+                        matrix = mat;
+                    } else {
+                        independent_vars.push_back(param->GetValue());
+                    }
+                }
 
-                return 0.0;
-       };
-      Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
-                                              var, MaxArgs));
+                if (!matrix) {
+                    cerr << "Error: No matrix found for interpolatend" << endl;
+                    return 0.0;
+                }
+
+                if (independent_vars.size() != matrix->GetNumDimensions()) {
+                    cerr << "Error: Number of independent variables does not match matrix dimensions" << endl;
+                    return 0.0;
+                }
+
+                const auto& matrix_data = matrix->GetMatrix();
+
+                // Perform n-dimensional interpolation here
+                // Use matrix_data and independent_vars
+
+                return 0.0;  // Replace with actual interpolated value
+        };
+        Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
+                                                var, MaxArgs));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
