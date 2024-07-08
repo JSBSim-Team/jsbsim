@@ -96,7 +96,7 @@ FGMatrix::FGMatrix(Element* el) : name("Matrix") {
     matrix.push_back(std::move(row));
   }
 
-  num_dimensions = matrix[0].size();
+  num_dimensions = matrix[0].size() - 1;
 }
 
 double FGMatrix::GetValue() const {
