@@ -65,12 +65,49 @@ private:
 // Implementation
 
 FGMatrix::FGMatrix(Element* el) : name("Matrix") {
-  string data = el->GetDataLine();
-  vector<double> row;
-  row.push_back(0.0);
-  matrix.push_back(row);
+  std::vector<std::string> data_lines;
+  std::string line;
+  unsigned int i = 0;
+  
+  // Collect all data lines
+  while (!(line = el->GetDataLine(i++)).empty()) {
+    data_lines.push_back(line);
+    std::cout << line << " line" << endl;
+  }
+  
+  if (data_lines.empty()) {
+    throw std::runtime_error("Empty matrix data");
+  }
 
-  std::cout << data << " data" << endl;
+  // Parse the first line to determine the number of columns
+  std::istringstream iss(data_lines[0]);
+  std::vector<double> first_row;
+  double value;
+  while (iss >> value) {
+    first_row.push_back(value);
+  }
+
+  if (first_row.empty()) {
+    throw std::runtime_error("Invalid matrix data: empty first row");
+  }
+
+  num_dimensions = first_row.size();
+  matrix.push_back(std::move(first_row));
+
+  // Parse the rest of the lines
+  for (size_t i = 1; i < data_lines.size(); ++i) {
+    std::istringstream row_iss(data_lines[i]);
+    std::vector<double> row;
+    while (row_iss >> value) {
+      row.push_back(value);
+    }
+
+    if (row.size() != num_dimensions) {
+      throw std::runtime_error("Inconsistent number of columns in matrix at row " + std::to_string(i + 1));
+    }
+
+    matrix.push_back(std::move(row));
+  }
 }
 
 double FGMatrix::GetValue() const {
