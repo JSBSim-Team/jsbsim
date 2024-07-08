@@ -850,12 +850,12 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                 if (!matrix) {
                     cerr << "Error: No matrix found for interpolatend" << endl;
-                    return 0.0;
+                    throw("Fatal Error");
                 }
 
                 if (independent_vars.size() != matrix->GetNumDimensions()) {
                     cerr << "Error: Number of independent variables does not match matrix dimensions" << endl;
-                    return 0.0;
+                    throw("Fatal Error");
                 }
 
                 const auto& matrix_data = matrix->GetMatrix();
