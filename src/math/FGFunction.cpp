@@ -66,6 +66,10 @@ private:
 
 FGMatrix::FGMatrix(Element* el) : name("Matrix") {
   string data = el->GetDataLine();
+  vector<double> row;
+  row.push_back(0.0);
+  matrix.push_back(row);
+
   std::cout << data << " data" << endl;
 }
 
