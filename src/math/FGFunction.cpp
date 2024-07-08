@@ -65,56 +65,8 @@ private:
 // Implementation
 
 FGMatrix::FGMatrix(Element* el) : name("Matrix") {
-  Element* matrixData = el->FindElement("matrix");
-  if (!matrixData) {
-    throw std::runtime_error("FGMatrix: <matrix> element is missing");
-  }
-  else if (matrixData->GetNumDataLines() == 0) {
-    throw std::runtime_error("<matrix> is empty.");
-  }
-
-  stringstream buf;
-  for (unsigned int i=0; i<matrixData->GetNumDataLines(); i++) {
-    string line = matrixData->GetDataLine(i);
-    if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos) {
-      cerr << " In file " << matrixData->GetFileName() << endl
-           << "   Illegal character found in line "
-           << matrixData->GetLineNumber() + i + 1 << ": " << endl << line << endl;
-      throw std::runtime_error("Illegal character in matrix data");
-    }
-    buf << line << " ";
-  }
-
-  std::istringstream iss(buf.str());
-  double value;
-  vector<double> row;
-  unsigned int cols = 0;
-
-  while (iss >> value) {
-    row.push_back(value);
-    if (iss.peek() == '\n' || iss.peek() == EOF) {
-      if (cols == 0) {
-        cols = row.size();
-      } else if (row.size() != cols) {
-        throw std::runtime_error("Inconsistent number of columns in matrix");
-      }
-      matrix.push_back(row);
-      row.clear();
-    }
-  }
-
-  if (!row.empty()) {
-    if (row.size() != cols) {
-      throw std::runtime_error("Inconsistent number of columns in matrix");
-    }
-    matrix.push_back(row);
-  }
-
-  if (matrix.empty()) {
-    throw std::runtime_error("Empty matrix");
-  }
-
-  num_dimensions = cols - 1;  // Last column is the function value
+  string data = el->GetDataLine();
+  std::cout << data << " data" << endl;
 }
 
 double FGMatrix::GetValue() const {
