@@ -91,10 +91,10 @@ public:
   const vector<vector<double>>& GetMatrix() const { return matrix; }
   size_t GetNumDimensions() const { return num_dimensions; }
 
-  void Print(std::ostream& os = std::cout) const {
-    os << "Matrix: " << name << std::endl;
-    os << "Dimensions: " << num_dimensions << std::endl;
-    os << "Data:" << std::endl;
+  void Print() const {
+    std::cout << "Matrix: " << name << std::endl;
+    std::cout << "Dimensions: " << num_dimensions << std::endl;
+    std::cout << "Data:" << std::endl;
 
     // Find the maximum width needed for formatting
     size_t max_width = 0;
@@ -109,9 +109,9 @@ public:
     // Print the matrix with aligned columns
     for (const auto& row : matrix) {
       for (const auto& val : row) {
-        os << std::setw(max_width + 2) << std::setprecision(6) << val;
+        std::cout << std::setw(max_width + 2) << std::setprecision(6) << val;
       }
-      os << std::endl;
+      std::cout << std::endl;
     }
   }
 
