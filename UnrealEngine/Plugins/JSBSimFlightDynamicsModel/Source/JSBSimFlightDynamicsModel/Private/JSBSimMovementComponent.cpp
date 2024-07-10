@@ -209,7 +209,7 @@ double UJSBSimMovementComponent::GetAGLevel(const FVector& StartECEFLocation, FV
 
   // Compute the raycast end point
   // Estimate raycast length - Altitude + 5% of ellipsoid radius in case of negative altitudes
-  FVector LineCheckEnd = StartEngineLocation - (AircraftState.AltitudeASLFt * FEET_TO_METER + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; 
+  FVector LineCheckEnd = StartEngineLocation - (AircraftState.AltitudeASLFt * FEET_TO_CENTIMETER + 0.05 * GeoReferencingSystem->GetGeographicEllipsoidMaxRadius()) * Up; 
 
   // Prepare collision query  
   FHitResult HitResult = FHitResult();
