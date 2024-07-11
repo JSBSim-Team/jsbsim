@@ -17,6 +17,9 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
     while (!(line = el->GetDataLine(i++)).empty()) {
         data_lines.push_back(line);
     }
+    for (const auto& line : data_lines) {
+        std::cout << line << std::endl;
+    }
 
     if (data_lines.empty()) {
         throw std::runtime_error("Empty matrix data");
@@ -46,16 +49,16 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
 
             throw std::runtime_error("Inconsistent number of columns in matrix");
         } else {
-            std::cout << "Row added: ";
-            for (double num : row) {
-                std::cout << num << " ";
-            }
-            std::cout << std::endl;
+            // std::cout << "Row added: ";
+            // for (double num : row) {
+            //     std::cout << num << " ";
+            // }
+            // std::cout << std::endl;
         }
 
         temp_matrix.push_back(std::move(row));
         rows_left--;
-        std::cout << "Rows left to add: " << rows_left << std::endl;
+        // std::cout << "Rows left to add: " << rows_left << std::endl;
     }
 
     matrix = std::move(temp_matrix);
