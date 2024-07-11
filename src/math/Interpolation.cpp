@@ -5,18 +5,6 @@
 #include <set>
 #include <unordered_map>
 
-namespace std {
-    template<>
-    struct hash<vector<double>> {
-        size_t operator()(const vector<double>& v) const {
-            size_t seed = v.size();
-            for (const auto& i : v) {
-                seed ^= hash<double>()(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-            }
-            return seed;
-        }
-    };
-}
 
 double findLowerBound(const std::vector<double>& vec, double value) {
     auto it = std::lower_bound(vec.begin(), vec.end(), value);
