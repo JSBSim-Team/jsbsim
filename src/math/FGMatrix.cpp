@@ -22,6 +22,9 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
         throw std::runtime_error("Empty matrix data");
     }
     // Parse the data lines into a 2D vector of doubles
+    size_t total_rows = data_lines.size();
+    size_t rows_left = total_rows;
+
     for (const auto& data_line : data_lines) {
         std::istringstream iss(data_line);
         std::vector<double> row;
@@ -40,14 +43,16 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
             std::cout << "Expected row size: " << matrix[0].size() << std::endl;
             throw std::runtime_error("Inconsistent number of columns in matrix");
         } else {
-        std::cout << "Row added: ";
-        for (double num : row) {
-            std::cout << num << " ";
-        }
-        std::cout << std::endl;
+            std::cout << "Row added: ";
+            for (double num : row) {
+                std::cout << num << " ";
+            }
+            std::cout << std::endl;
         }
 
         matrix.push_back(std::move(row));
+        rows_left--;
+        std::cout << "Rows left to add: " << rows_left << std::endl;
     }
 
     num_dimensions = matrix[0].size() - 1;
