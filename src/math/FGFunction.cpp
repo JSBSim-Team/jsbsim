@@ -38,110 +38,12 @@ INCLUDES
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGFunctionValue.h"
-
+#include "FGMatrix.h"
+#include "Interpolation.h"
 
 using namespace std;
 
 namespace JSBSim {
-class FGMatrix : public FGParameter {
-public:
-  FGMatrix(Element* el);
-  
-  double GetValue() const override;
-  std::string GetName() const override;
-  bool IsConstant() const override;
-
-  const vector<vector<double>>& GetMatrix() const;
-  size_t GetNumDimensions() const;
-
-  void Print() const;  // Declare the Print function here
-  vector<vector<double>> matrix;
-
-private:
-  std::string name;
-  size_t num_dimensions;
-};
-
-// Implementation
-
-FGMatrix::FGMatrix(Element* el) : name("Matrix") {
-  std::vector<std::string> data_lines;
-  std::vector<std::vector<double>> data;
-  std::string line;
-  unsigned int i = 0;
-  
-  // Collect all data lines
-  while (!(line = el->GetDataLine(i++)).empty()) {
-    data_lines.push_back(line);
-  }
-  
-  if (data_lines.empty()) {
-    throw std::runtime_error("Empty matrix data");
-  }
-
-  // Parse the data lines into a 2D vector of doubles
-  for (const auto& data_line : data_lines) {
-    std::istringstream iss(data_line);
-    std::vector<double> row;
-    double value;
-    while (iss >> value) {
-      std::cout << "Value is: " << value << endl;
-      row.push_back(value);
-    }
-
-    if (!matrix.empty() && row.size() != matrix[0].size()) {
-      throw std::runtime_error("Inconsistent number of columns in matrix");
-    }
-
-    matrix.push_back(std::move(row));
-  }
-
-  num_dimensions = matrix[0].size() - 1;
-}
-
-double FGMatrix::GetValue() const {
-  return 0.0;  // This method might not be used directly for a matrix
-}
-
-std::string FGMatrix::GetName() const {
-  return name;
-}
-
-bool FGMatrix::IsConstant() const {
-  return true;  // Assuming the matrix doesn't change after initialization
-}
-
-const vector<vector<double>>& FGMatrix::GetMatrix() const {
-  return matrix;
-}
-
-size_t FGMatrix::GetNumDimensions() const {
-  return num_dimensions;
-}
-
-void FGMatrix::Print() const {
-  std::cout << "Matrix: " << name << std::endl;
-  std::cout << "Dimensions: " << num_dimensions << std::endl;
-  std::cout << "Data:" << std::endl;
-
-  // Find the maximum width needed for formatting
-  size_t max_width = 0;
-  for (const auto& row : matrix) {
-    for (const auto& val : row) {
-      std::ostringstream temp;
-      temp << std::setprecision(6) << val;  // Added space after each value
-      max_width = std::max(max_width, static_cast<size_t>(temp.str().length()));
-    }
-  }
-
-  // Print the matrix with aligned columns
-  for (const auto& row : matrix) {
-    for (const auto& val : row) {
-      std::cout << std::setw(max_width + 2) << std::setprecision(6) << val << " ";
-    }
-    std::cout << std::endl;
-  }
-}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -474,6 +376,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
     } else if (operation == "matrix") {
+      std::cout << "adding matrix" << endl;
       Parameters.push_back(new FGMatrix(element));
     } else if (operation == "product") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
@@ -851,8 +754,8 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                 std::cout << "some stuff" << endl;
                 // Perform n-dimensional interpolation here
                 // Use matrix_data and independent_vars
-
-                return 0.0;  // Replace with actual interpolated value
+                // Perform n-dimensional interpolation using the stored PointCloud
+                return interpolate(independent_vars, matrix->pointCloud);
         };
         Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
                                                 var, MaxArgs));
