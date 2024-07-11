@@ -15,20 +15,16 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
 
     // Collect all data lines
     std::cout << "Name of the element is: " << el->GetName() << endl;
-    while (!(line = el->GetDataLine(i++)).empty()) {
+    while (!(line = el->GetDataLine(i++)).empty() && line != "end") {
         data_lines.push_back(line);
-
-    }
-    for (const auto& line : data_lines) {
-        std::cout << line << std::endl;
     }
 
     if (data_lines.empty()) {
         throw std::runtime_error("Empty matrix data");
     }
+
     // Parse the data lines into a 2D vector of doubles
     size_t total_rows = data_lines.size();
-    size_t rows_left = total_rows;
     std::vector<std::vector<double>> temp_matrix;
 
     for (const auto& data_line : data_lines) {
@@ -40,27 +36,13 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
         }
 
         if (!temp_matrix.empty() && row.size() != temp_matrix[0].size()) {
-            std::cout << "Current row content: ";
-            std::cout << "Current data line: " << data_line << std::endl;
-            for (const auto& num : row) {
-                std::cout << num << " ";
-            }
-            std::cout << std::endl;
             std::cout << "Current row size: " << row.size() << std::endl;
             std::cout << "Expected row size: " << temp_matrix[0].size() << std::endl;
 
             throw std::runtime_error("Inconsistent number of columns in matrix");
-        } else {
-            // std::cout << "Row added: ";
-            // for (double num : row) {
-            //     std::cout << num << " ";
-            // }
-            // std::cout << std::endl;
         }
 
         temp_matrix.push_back(std::move(row));
-        rows_left--;
-        // std::cout << "Rows left to add: " << rows_left << std::endl;
     }
 
     matrix = std::move(temp_matrix);
