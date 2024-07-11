@@ -191,11 +191,6 @@ bool FGAerodynamics::Run(bool Holding)
       // being requested for output, the functions do not get calculated again
       // in a context that might have changed, but instead use the values that
       // have already been calculated for this frame.
-      if (!(*f)->IsCached()) {
-        std::cout << "The following value is not cached for: " << (*f)->GetName() << endl;
-      } else {
-         std::cout << "The following funciton is cached: " << (*f)->GetName() << endl;
-      }
       (*f)->cacheValue(true);
       vFnative(axis_ctr+1) += (*f)->GetValue();
     }

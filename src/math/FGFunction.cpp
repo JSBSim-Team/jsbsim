@@ -997,19 +997,10 @@ double FGFunction::GetValue(void) const
   if (cached) return cachedValue;
 
   double val = Parameters[0]->GetValue();
-  std::cout << "Value is: " << val << endl;
 
   if (pCopyTo) pCopyTo->setDoubleValue(val);
 
   return val;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-bool FGFunction::IsCached(void) const
-{
-  return cached;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
