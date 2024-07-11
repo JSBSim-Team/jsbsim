@@ -802,9 +802,6 @@ public:
     constant parameters) ? */
   bool IsConstant(void) const override;
 
-
-  bool IsCached(void) const;
-
 /** Specifies whether to cache the value of the function, so it is calculated
     only once per frame.
     If shouldCache is true, then the value of the function is calculated, and a
