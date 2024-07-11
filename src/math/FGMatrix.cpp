@@ -39,6 +39,12 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
             std::cout << "Current row size: " << row.size() << std::endl;
             std::cout << "Expected row size: " << matrix[0].size() << std::endl;
             throw std::runtime_error("Inconsistent number of columns in matrix");
+        } else {
+        std::cout << "Row added: ";
+        for (double num : row) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
         }
 
         matrix.push_back(std::move(row));
