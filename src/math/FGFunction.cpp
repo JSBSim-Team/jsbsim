@@ -749,7 +749,6 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                     cerr << "Error: Number of independent variables does not match matrix dimensions" << endl;
                     throw("Fatal Error");
                 }
-                std::cout << "some stuff" << endl;
                 // Perform n-dimensional interpolation using the stored PointCloud
                 return interpolate(independent_vars, matrix->pointCloud);
         };
