@@ -8,7 +8,7 @@
 
 using namespace std;
 
-FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
+FGMatrix::FGMatrix(Element* el) : name("Matrix") {
     std::vector<std::string> data_lines;
     std::string line;
     unsigned int i = 0;

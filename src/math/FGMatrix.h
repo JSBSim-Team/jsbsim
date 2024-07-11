@@ -7,6 +7,7 @@
 #include "input_output/FGXMLElement.h"
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
+using namespace JSBSim;
 
 struct PointND {
     std::vector<double> coordinates;
@@ -21,9 +22,9 @@ struct PointCloud {
     std::unordered_map<std::vector<double>, double> pointMap; // Point map
 };
 
-class FGMatrix {
+class FGMatrix : public FGParameter {
 public:
-    FGMatrix(JSBSim::Element* el);
+    FGMatrix(Element* el);
     double GetValue() const;
     std::string GetName() const;
     bool IsConstant() const;
