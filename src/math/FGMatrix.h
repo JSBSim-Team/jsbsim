@@ -7,6 +7,8 @@
 #include "input_output/FGXMLElement.h"
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
+#include "VectorHash.h"  // Include the new header file
+
 using namespace JSBSim;
 
 struct PointND {
