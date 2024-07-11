@@ -36,6 +36,7 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
 
         if (!temp_matrix.empty() && row.size() != temp_matrix[0].size()) {
             std::cout << "Current row content: ";
+            std::cout << "Current data line: " << data_line << std::endl;
             for (const auto& num : row) {
                 std::cout << num << " ";
             }
