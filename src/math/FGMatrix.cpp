@@ -24,6 +24,7 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
     // Parse the data lines into a 2D vector of doubles
     size_t total_rows = data_lines.size();
     size_t rows_left = total_rows;
+    std::vector<std::vector<double>> temp_matrix;
 
     for (const auto& data_line : data_lines) {
         std::istringstream iss(data_line);
@@ -33,14 +34,23 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
             row.push_back(value);
         }
 
-        if (!matrix.empty() && row.size() != matrix[0].size()) {
+        if (!temp_matrix.empty() && row.size() != temp_matrix[0].size()) {
             std::cout << "Current row content: ";
             for (const auto& num : row) {
                 std::cout << num << " ";
             }
             std::cout << std::endl;
             std::cout << "Current row size: " << row.size() << std::endl;
-            std::cout << "Expected row size: " << matrix[0].size() << std::endl;
+            std::cout << "Expected row size: " << temp_matrix[0].size() << std::endl;
+
+            // Print all rows before throwing the error
+            std::cout << "All rows before error:" << std::endl;
+            for (const auto& r : temp_matrix) {
+                for (const auto& num : r) {
+                    std::cout << num << " ";
+                }
+                std::cout << std::endl;
+            }
             throw std::runtime_error("Inconsistent number of columns in matrix");
         } else {
             std::cout << "Row added: ";
@@ -50,11 +60,12 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
             std::cout << std::endl;
         }
 
-        matrix.push_back(std::move(row));
+        temp_matrix.push_back(std::move(row));
         rows_left--;
         std::cout << "Rows left to add: " << rows_left << std::endl;
     }
 
+    matrix = std::move(temp_matrix);
     num_dimensions = matrix[0].size() - 1;
     populatePointCloud();  // Populate the PointCloud
 }
