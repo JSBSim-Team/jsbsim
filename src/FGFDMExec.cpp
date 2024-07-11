@@ -432,11 +432,7 @@ bool FGFDMExec::Run(void)
     LoadInputs(i);
     Models[i]->Run(holding);
   }
-  printf("Alpha: %f\n", Auxiliary->Getalpha(inDegrees));
-  printf("Beta: %f\n", Auxiliary->Getbeta(inDegrees));
-  printf("Right Aileron: %f\n", FCS->GetDaRPos());
-  printf("Left Aileron: %f\n", FCS->GetDaLPos()); // assuming symmetric ailerons
-  printf("Rudder: %f\n\n", FCS->GetDrPos());
+
   if (Terminate) success = false;
 
   return success;
