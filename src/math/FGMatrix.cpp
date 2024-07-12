@@ -14,11 +14,12 @@ FGMatrix::FGMatrix(JSBSim::Element* el) : name("Matrix") {
     unsigned int i = 0;
 
     // Collect all data lines
-    std::cout << "Name of the element is: " << el->GetName() << endl;
     while (!(line = el->GetDataLine(i++)).empty() && line != "end") {
         data_lines.push_back(line);
     }
-
+    for (const auto& line : data_lines) {
+        std::cout << line << std::endl;
+    }
     if (data_lines.empty()) {
         throw std::runtime_error("Empty matrix data");
     }
