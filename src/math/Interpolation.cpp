@@ -8,10 +8,14 @@
 #include <execinfo.h>
 #include <cxxabi.h>
 
-// Add this function at the top of the file, outside any other function
+// Constants
+const int MAX_CALLSTACK_DEPTH = 128;
+const double EPSILON = 1e-10;
+
+// Function to get a stack trace for debugging purposes
 std::string getStackTrace(int skip = 1) {
-    void* callstack[128];
-    int frames = backtrace(callstack, 128);
+    void* callstack[MAX_CALLSTACK_DEPTH];
+    int frames = backtrace(callstack, MAX_CALLSTACK_DEPTH);
     char** strs = backtrace_symbols(callstack, frames);
     std::ostringstream traceStream;
     for (int i = skip; i < frames; ++i) {
@@ -34,6 +38,7 @@ std::string getStackTrace(int skip = 1) {
     return traceStream.str();
 }
 
+// Function to find the lower bound in a sorted vector
 double findLowerBound(const std::vector<double>& vec, double value) {
     auto it = std::lower_bound(vec.begin(), vec.end(), value);
     if (it == vec.end() || (it != vec.begin() && *it > value)) {
@@ -42,17 +47,15 @@ double findLowerBound(const std::vector<double>& vec, double value) {
     return *it;
 }
 
+// Function to get the value at a specific point in the point cloud
 double getValueAtPoint(const PointCloud& points, const std::vector<double>& queryCoords) {
-    const double epsilon = 1e-10;  // Define a small epsilon value
-
     // Adjust query coordinates values within epsilon to zero
     std::vector<double> adjustedQueryCoords = queryCoords;
     for (auto& value : adjustedQueryCoords) {
-        if (std::abs(value) < epsilon) {
+        if (std::abs(value) < EPSILON) {
             value = 0.0;
         }
     }
-
     auto it = points.pointMap.find(adjustedQueryCoords);
     if (it != points.pointMap.end()) {
         return it->second;
@@ -75,6 +78,7 @@ double getValueAtPoint(const PointCloud& points, const std::vector<double>& quer
     throw std::runtime_error(errorMsg.str());
 }
 
+// Recursive function to perform interpolation
 double interpolateRecursive(const std::vector<double>& queryPoint, const PointCloud& points, size_t dim) {
     try {
         if (dim == 0) {
@@ -106,6 +110,7 @@ double interpolateRecursive(const std::vector<double>& queryPoint, const PointCl
     }
 }
 
+// Function to perform interpolation
 double interpolate(const std::vector<double>& queryPoint, const PointCloud& points) {
     return interpolateRecursive(queryPoint, points, points.numDimensions);
 }
