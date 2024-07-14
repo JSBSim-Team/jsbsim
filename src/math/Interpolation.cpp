@@ -43,7 +43,17 @@ double findLowerBound(const std::vector<double>& vec, double value) {
 }
 
 double getValueAtPoint(const PointCloud& points, const std::vector<double>& queryCoords) {
-    auto it = points.pointMap.find(queryCoords);
+    const double epsilon = 1e-10;  // Define a small epsilon value
+
+    // Adjust query coordinates values within epsilon to zero
+    std::vector<double> adjustedQueryCoords = queryCoords;
+    for (auto& value : adjustedQueryCoords) {
+        if (std::abs(value) < epsilon) {
+            value = 0.0;
+        }
+    }
+
+    auto it = points.pointMap.find(adjustedQueryCoords);
     if (it != points.pointMap.end()) {
         return it->second;
     }
