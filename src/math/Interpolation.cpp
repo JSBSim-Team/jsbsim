@@ -4,7 +4,7 @@
 #include <iostream>
 #include <set>
 #include <unordered_map>
-
+#include <sstream>
 
 double findLowerBound(const std::vector<double>& vec, double value) {
     auto it = std::lower_bound(vec.begin(), vec.end(), value);
@@ -19,7 +19,21 @@ double getValueAtPoint(const PointCloud& points, const std::vector<double>& quer
     if (it != points.pointMap.end()) {
         return it->second;
     }
-    throw std::runtime_error("Value not found for given point");
+    
+    // Prepare error message with query point details
+    std::ostringstream errorMsg;
+    errorMsg << "Value not found for query point: (";
+    for (size_t i = 0; i < queryCoords.size(); ++i) {
+        errorMsg << queryCoords[i];
+        if (i < queryCoords.size() - 1) errorMsg << ", ";
+    }
+    errorMsg << ")";
+    
+    // Log error details
+    std::cerr << "Error in getValueAtPoint: " << errorMsg.str() << std::endl;
+    
+    // Throw exception with detailed message
+    throw std::runtime_error(errorMsg.str());
 }
 
 double interpolateRecursive(const std::vector<double>& queryPoint, const PointCloud& points, size_t dim) {
