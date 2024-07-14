@@ -5,6 +5,34 @@
 #include <set>
 #include <unordered_map>
 #include <sstream>
+#include <execinfo.h>
+#include <cxxabi.h>
+
+// Add this function at the top of the file, outside any other function
+std::string getStackTrace(int skip = 1) {
+    void* callstack[128];
+    int frames = backtrace(callstack, 128);
+    char** strs = backtrace_symbols(callstack, frames);
+    std::ostringstream traceStream;
+    for (int i = skip; i < frames; ++i) {
+        char* demangled = nullptr;
+        int status;
+        char* begin = nullptr;
+        char* end = nullptr;
+        for (char* p = strs[i]; *p; ++p) {
+            if (*p == '(') begin = p;
+            else if (*p == '+') end = p;
+        }
+        if (begin && end) {
+            *end = '\0';
+            demangled = abi::__cxa_demangle(begin + 1, nullptr, nullptr, &status);
+        }
+        traceStream << i - skip << ": " << (demangled ? demangled : strs[i]) << "\n";
+        free(demangled);
+    }
+    free(strs);
+    return traceStream.str();
+}
 
 double findLowerBound(const std::vector<double>& vec, double value) {
     auto it = std::lower_bound(vec.begin(), vec.end(), value);
@@ -29,8 +57,9 @@ double getValueAtPoint(const PointCloud& points, const std::vector<double>& quer
     }
     errorMsg << ")";
     
-    // Log error details
+    // Log error details with stack trace
     std::cerr << "Error in getValueAtPoint: " << errorMsg.str() << std::endl;
+    std::cerr << "Stack trace:\n" << getStackTrace() << std::endl;
     
     // Throw exception with detailed message
     throw std::runtime_error(errorMsg.str());
