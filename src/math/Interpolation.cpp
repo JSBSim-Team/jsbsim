@@ -66,22 +66,34 @@ double getValueAtPoint(const PointCloud& points, const std::vector<double>& quer
 }
 
 double interpolateRecursive(const std::vector<double>& queryPoint, const PointCloud& points, size_t dim) {
-    if (dim == 0) {
-        return getValueAtPoint(points, queryPoint);
+    try {
+        if (dim == 0) {
+            return getValueAtPoint(points, queryPoint);
+        }
+
+        double lower = findLowerBound(points.uniqueValues[dim - 1], queryPoint[dim - 1]);
+        double upper = *std::upper_bound(points.uniqueValues[dim - 1].begin(), points.uniqueValues[dim - 1].end(), lower);
+
+        std::vector<double> lowerCoords = queryPoint;
+        std::vector<double> upperCoords = queryPoint;
+        lowerCoords[dim - 1] = lower;
+        upperCoords[dim - 1] = upper;
+
+        double lowerValue = interpolateRecursive(lowerCoords, points, dim - 1);
+        double upperValue = interpolateRecursive(upperCoords, points, dim - 1);
+
+        return (upper - queryPoint[dim - 1]) / (upper - lower) * lowerValue + (queryPoint[dim - 1] - lower) / (upper - lower) * upperValue;
+    } catch (const std::exception& e) {
+        // Log the parameters if an error has occurred
+        std::cerr << "interpolateRecursive called with queryPoint: (";
+        for (size_t i = 0; i < queryPoint.size(); ++i) {
+            std::cerr << queryPoint[i];
+            if (i < queryPoint.size() - 1) std::cerr << ", ";
+        }
+        std::cerr << "), dim: " << dim << std::endl;
+        // Rethrow the exception to propagate it up the call stack
+        throw;
     }
-
-    double lower = findLowerBound(points.uniqueValues[dim - 1], queryPoint[dim - 1]);
-    double upper = *std::upper_bound(points.uniqueValues[dim - 1].begin(), points.uniqueValues[dim - 1].end(), lower);
-
-    std::vector<double> lowerCoords = queryPoint;
-    std::vector<double> upperCoords = queryPoint;
-    lowerCoords[dim - 1] = lower;
-    upperCoords[dim - 1] = upper;
-
-    double lowerValue = interpolateRecursive(lowerCoords, points, dim - 1);
-    double upperValue = interpolateRecursive(upperCoords, points, dim - 1);
-
-    return (upper - queryPoint[dim - 1]) / (upper - lower) * lowerValue + (queryPoint[dim - 1] - lower) / (upper - lower) * upperValue;
 }
 
 double interpolate(const std::vector<double>& queryPoint, const PointCloud& points) {
