@@ -36,8 +36,9 @@ jobs:
       - name: Configure CMake
         working-directory: ./build
         run: |
-          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
-          # Add any Julia-specific configuration here if needed
+          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
+          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
+          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17 -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH
 
       - name: Build
         working-directory: ./build
@@ -55,7 +56,6 @@ jobs:
             ./tests/unit_tests/Release/InterpolationTest1.exe
           else
             ./tests/unit_tests/InterpolationTest1
-          fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
