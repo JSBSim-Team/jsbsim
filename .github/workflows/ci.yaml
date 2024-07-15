@@ -36,16 +36,16 @@ jobs:
       - name: Configure CMake
         working-directory: ./build
         run: |
-          cmake .. -DBUILD_TESTS=ON
+          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
           # Add any Julia-specific configuration here if needed
 
       - name: Build
         working-directory: ./build
         run: |
           if [ "${{ runner.os }}" == "Windows" ]; then
-            cmake --build . --config Release
+            cmake --build . --config Release -- /p:CxxFlags="/std:c++17"
           else
-            make
+            CXXFLAGS="-std=c++17" make
           fi
 
       - name: Run tests
