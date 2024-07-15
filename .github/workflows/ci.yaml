@@ -1,55 +1,65 @@
-name: Continuous integration
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies (Ubuntu)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake cxxtest
 
-      - name: Install cxxtest on macOS
+      - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install cxxtest
+        run: |
+          brew install cmake cxxtest
 
-      - name: Install cxxtest on Windows
+      - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
         run: |
-          Invoke-WebRequest -Uri "https://sourceforge.net/projects/cxxtest/files/cxxtest/4.4/cxxtest-4.4.zip/download" -OutFile cxxtest.zip
-          Expand-Archive cxxtest.zip -DestinationPath C:\
-          echo "C:\cxxtest-4.4" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          choco install cmake
+          # Add Windows-specific cxxtest installation if needed
+
+      - name: Install Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: "1.6" # Specify the Julia version you need
 
       - name: Create build directory
-        run: mkdir build
+        run: mkdir -p build
 
       - name: Configure CMake
         working-directory: ./build
-        run: cmake .. -DBUILD_TESTS=ON
+        run: |
+          cmake .. -DBUILD_TESTS=ON
+          # Add any Julia-specific configuration here if needed
 
       - name: Build
         working-directory: ./build
-        run: make
+        run: |
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            cmake --build . --config Release
+          else
+            make
+          fi
 
       - name: Run tests
         working-directory: ./build
         run: |
-          ./tests/unit_tests/InterpolationTest1
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            ./tests/unit_tests/Release/InterpolationTest1.exe
+          else
+            ./tests/unit_tests/InterpolationTest1
+          fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-results
+          name: test-results-${{ matrix.os }}
           path: build/Testing/Temporary/LastTest.log
