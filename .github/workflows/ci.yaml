@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install cmake cxxtest
+          brew install cmake cxxtest julia
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
@@ -36,9 +36,7 @@ jobs:
       - name: Configure CMake
         working-directory: ./build
         run: |
-          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
-          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17 -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH
+          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
 
       - name: Build
         working-directory: ./build
@@ -56,6 +54,7 @@ jobs:
             ./tests/unit_tests/Release/InterpolationTest1.exe
           else
             ./tests/unit_tests/InterpolationTest1
+          fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
