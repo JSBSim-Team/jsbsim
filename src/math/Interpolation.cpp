@@ -5,38 +5,12 @@
 #include <set>
 #include <unordered_map>
 #include <sstream>
-#include <execinfo.h>
 #include <cxxabi.h>
 
 // Constants
 const int MAX_CALLSTACK_DEPTH = 128;
 const double EPSILON = 1e-10;
 
-// Function to get a stack trace for debugging purposes
-std::string getStackTrace(int skip = 1) {
-    void* callstack[MAX_CALLSTACK_DEPTH];
-    int frames = backtrace(callstack, MAX_CALLSTACK_DEPTH);
-    char** strs = backtrace_symbols(callstack, frames);
-    std::ostringstream traceStream;
-    for (int i = skip; i < frames; ++i) {
-        char* demangled = nullptr;
-        int status;
-        char* begin = nullptr;
-        char* end = nullptr;
-        for (char* p = strs[i]; *p; ++p) {
-            if (*p == '(') begin = p;
-            else if (*p == '+') end = p;
-        }
-        if (begin && end) {
-            *end = '\0';
-            demangled = abi::__cxa_demangle(begin + 1, nullptr, nullptr, &status);
-        }
-        traceStream << i - skip << ": " << (demangled ? demangled : strs[i]) << "\n";
-        free(demangled);
-    }
-    free(strs);
-    return traceStream.str();
-}
 
 // Function to find the lower bound in a sorted vector
 double findLowerBound(const std::vector<double>& vec, double value) {
@@ -72,7 +46,6 @@ double getValueAtPoint(const PointCloud& points, const std::vector<double>& quer
     
     // Log error details with stack trace
     std::cerr << "Error in getValueAtPoint: " << errorMsg.str() << std::endl;
-    std::cerr << "Stack trace:\n" << getStackTrace() << std::endl;
     
     // Throw exception with detailed message
     throw std::runtime_error(errorMsg.str());
