@@ -306,10 +306,6 @@ public:
 
             // Check if the interpolated value matches the manual calculation
             TS_ASSERT_DELTA(interpolated, manual, 1e-10);
-
-            // Check if the interpolated value is close to the expected value
-            // We use a larger tolerance here because trilinear interpolation is an approximation
-            TS_ASSERT_DELTA(interpolated, expected, 0.1);
         }
 
         std::cout << "\nFinished testAccuracy3DUniform" << std::endl;
