@@ -1,0 +1,44 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake cxxtest
+
+      - name: Create build directory
+        run: mkdir build
+
+      - name: Configure CMake
+        working-directory: ./build
+        run: cmake .. -DBUILD_TESTS=ON
+
+      - name: Build
+        working-directory: ./build
+        run: make
+
+      - name: Run tests
+        working-directory: ./build
+        run: |
+          ./tests/unit_tests/InterpolationTest1
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: build/Testing/Temporary/LastTest.log
