@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <sstream>
 #include <random> 
+#include <chrono>
 
 class VectorHashTest : public CxxTest::TestSuite
 {
