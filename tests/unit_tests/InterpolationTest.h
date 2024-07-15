@@ -102,7 +102,9 @@ public:
 
     void testBasicInterpolation4D()
     {
-        std::cout << "Starting testBasicInterpolation4D" << std::endl;
+
+        std::cout << "\n#########################################" << std::endl;
+        std::cout << "Starting testBasicInterpolation4D\n" << std::endl;
         
         PointCloud points;
         points.numDimensions = 4;
@@ -123,19 +125,20 @@ public:
 
         // Test interpolation at the center of the hypercube
         std::vector<double> queryPoint = {0.5, 0.5, 0.5, 0.5};
-        std::cout << "About to interpolate" << std::endl;
         double result = interpolate(queryPoint, points);
-        std::cout << "Interpolation done" << std::endl;
         double expected = nonLinearFunction(queryPoint);
         double tolerance = calculateTolerance(queryPoint, points);
         TS_ASSERT_DELTA(result, expected, tolerance);
         
-        std::cout << "Finished testBasicInterpolation4D" << std::endl;
+        std::cout << "\nFinished testBasicInterpolation4D" << std::endl;
+        std::cout << "#########################################\n" << std::endl;
     }
 
     void testEdgeCases4D()
     {
-        std::cout << "Starting testEdgeCases4D" << std::endl;
+        std::cout << "\n#########################################" << std::endl;
+        std::cout << "Starting testEdgeCases4D\n" << std::endl;
+
         PointCloud points;
         points.numDimensions = 4;
         points.uniqueValues = {{0.0, 1.0}, {0.0, 1.0}, {0.0, 1.0}, {0.0, 1.0}};
@@ -169,11 +172,14 @@ public:
         }
         
         std::cout << "Finished testEdgeCases4D" << std::endl;
+        std::cout << "#########################################\n" << std::endl;
     }
 
     void testPerformance4D()
     {
-        std::cout << "Starting testPerformance4D" << std::endl;
+        std::cout << "\n#########################################" << std::endl;
+        std::cout << "Starting testPerformance4D\n" << std::endl;
+
         const int VECTOR_SIZE = 4;
         std::vector<int> test_sizes = {5, 7, 10}; // Reduced sizes for a 4D grid
 
@@ -184,8 +190,6 @@ public:
             std::cout << "Testing with " << NUM_POINTS << " points (" << GRID_SIZE << " per dimension) and " << NUM_QUERIES << " queries" << std::endl;
 
             PointCloud points = createRandomPointCloud(VECTOR_SIZE, GRID_SIZE);
-
-            std::cout << "Created grid points" << std::endl;
 
             // Generate random query points
             std::random_device rd;
@@ -198,7 +202,6 @@ public:
                     coord = dis(gen);
                 }
             }
-            std::cout << "Created random queries" << std::endl;
 
             // Measure time to interpolate all query points
             auto start = std::chrono::high_resolution_clock::now();
@@ -211,10 +214,11 @@ public:
             double avg_time = diff.count() / NUM_QUERIES;
 
             std::cout << "Average time to interpolate a 4D point: " << std::fixed << std::setprecision(9) 
-                      << avg_time * 1e6 << " microseconds" << std::endl;
+                      << avg_time * 1e6 << " microseconds\n" << std::endl;
         }
         
-        std::cout << "Finished testPerformance4D" << std::endl;
+        std::cout << "\nFinished testPerformance4D" << std::endl;
+        std::cout << "#########################################\n" << std::endl;
     }
 
     // Add this function to your InterpolationTest class
@@ -259,9 +263,10 @@ public:
                c111 * xd * yd * zd;
     }
 
-    void testAccuracy3DUniform()
+    void testValidity3DUniform()
     {
-        std::cout << "Starting testAccuracy3D" << std::endl;
+        std::cout << "\n#########################################" << std::endl;
+        std::cout << "Starting testAccuracy3DUniform\n" << std::endl;
 
         // Create a 3D point cloud
         PointCloud points;
@@ -293,32 +298,11 @@ public:
 
         for (const auto& point : testPoints) {
             double interpolated = interpolate(point, points);
-            double expected = testFunction(point);
-
-            // Calculate trilinear interpolation manually
-            double x = point[0], y = point[1], z = point[2];
-            double c000 = points.pointMap[{0, 0, 0}];
-            double c001 = points.pointMap[{0, 0, 1}];
-            double c010 = points.pointMap[{0, 1, 0}];
-            double c011 = points.pointMap[{0, 1, 1}];
-            double c100 = points.pointMap[{1, 0, 0}];
-            double c101 = points.pointMap[{1, 0, 1}];
-            double c110 = points.pointMap[{1, 1, 0}];
-            double c111 = points.pointMap[{1, 1, 1}];
-
-            double manual = c000 * (1-x) * (1-y) * (1-z) +
-                            c100 * x * (1-y) * (1-z) +
-                            c010 * (1-x) * y * (1-z) +
-                            c110 * x * y * (1-z) +
-                            c001 * (1-x) * (1-y) * z +
-                            c101 * x * (1-y) * z +
-                            c011 * (1-x) * y * z +
-                            c111 * x * y * z;
+            double manual = manualTrilinearInterpolation(point, points);
 
             std::cout << "Point: (" << point[0] << ", " << point[1] << ", " << point[2] << ")" << std::endl;
             std::cout << "Interpolated: " << interpolated << std::endl;
             std::cout << "Manual: " << manual << std::endl;
-            std::cout << "Expected: " << expected << std::endl;
 
             // Check if the interpolated value matches the manual calculation
             TS_ASSERT_DELTA(interpolated, manual, 1e-10);
@@ -328,12 +312,14 @@ public:
             TS_ASSERT_DELTA(interpolated, expected, 0.1);
         }
 
-        std::cout << "Finished testAccuracy3D" << std::endl;
+        std::cout << "\nFinished testAccuracy3DUniform" << std::endl;
+        std::cout << "#########################################\n" << std::endl;
     }
 
-    void testAccuracy3DNonUniform()
+    void testValidity3DNonUniform()
     {
-        std::cout << "Starting testAccuracy3DNonUniform" << std::endl;
+        std::cout << "\n#########################################" << std::endl;
+        std::cout << "Starting testAccuracy3DNonUniform\n" << std::endl;
 
         // Create a 3D point cloud with non-uniform spacing
         PointCloud points;
@@ -370,9 +356,7 @@ public:
 
             std::cout << "Point: (" << point[0] << ", " << point[1] << ", " << point[2] << ")" << std::endl;
             std::cout << "Interpolated: " << interpolated << std::endl;
-            std::cout << "Manual: " << manual << std::endl;
-            std::cout << "Acutal (not tested): " << expected << std::endl;
-
+            std::cout << "Manual: " << manual << "\n"<< std::endl;
             // Check if the interpolated value matches the manual calculation
             TS_ASSERT_DELTA(interpolated, manual, 1e-10);
 
@@ -381,6 +365,7 @@ public:
             // TS_ASSERT_DELTA(interpolated, expected, 0.1);
         }
 
-        std::cout << "Finished testAccuracy3DNonUniform" << std::endl;
+        std::cout << "\nFinished testAccuracy3DNonUniform" << std::endl;
+        std::cout << "#########################################\n" << std::endl;
     }
 };
