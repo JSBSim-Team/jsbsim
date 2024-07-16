@@ -1,3 +1,13 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build-and-test:
     strategy:
@@ -17,7 +27,7 @@ jobs:
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install cmake cxxtest julia
+          brew install cmake cxxtest
 
       - name: Install dependencies (Windows)
         if: runner.os == 'Windows'
