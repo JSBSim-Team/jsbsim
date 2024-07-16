@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Interpolation Test
         working-directory: ./build
-        run: ./tests/unit_tests/VectorHashTest.h
+        run: ./tests/unit_tests/VectorHashTest1
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
