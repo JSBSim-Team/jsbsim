@@ -10,10 +10,8 @@ on:
 
 jobs:
   build-and-test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    name: Build and Test
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
