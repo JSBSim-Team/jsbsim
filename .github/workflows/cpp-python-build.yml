@@ -456,6 +456,11 @@ jobs:
         with:
           path: build/Testing/Temporary/CTestCostData.txt
           key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+        - name: Install Julia
+          if: runner.os == 'macOS'
+          run: |
+            brew update
+            brew install julia
       - name: Install & Configure Doxygen
         if: env.release == 'true' && matrix.os == 'macos-12'
         run: |
