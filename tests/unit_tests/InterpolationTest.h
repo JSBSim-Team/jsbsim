@@ -364,4 +364,63 @@ public:
         std::cout << "\nFinished testAccuracy3DNonUniform" << std::endl;
         std::cout << "#########################################\n" << std::endl;
     }
+
+void testOutOfBoundsInterpolation()
+{
+    std::cout << "\n#########################################" << std::endl;
+    std::cout << "Starting testOutOfBoundsInterpolation\n" << std::endl;
+
+    // Create a 3D point cloud
+    PointCloud points;
+    points.numDimensions = 3;
+    points.uniqueValues = {{0.0, 1.0, 2.0}, {0.0, 1.0, 2.0}, {0.0, 1.0, 2.0}};
+
+    // Set up the 3D grid
+    for (double x : points.uniqueValues[0]) {
+        for (double y : points.uniqueValues[1]) {
+            for (double z : points.uniqueValues[2]) {
+                std::vector<double> point = {x, y, z};
+                points.pointMap[point] = x * y + z; // Simple function for point values
+            }
+        }
+    }
+
+    // Test interpolation at various out-of-bounds points
+    std::vector<std::vector<double>> testPoints = {
+        {-1.0, 0.5, 0.5},  // Out of bounds in x (low)
+        {3.0, 0.5, 0.5},   // Out of bounds in x (high)
+        {0.5, -1.0, 0.5},  // Out of bounds in y (low)
+        {0.5, 3.0, 0.5},   // Out of bounds in y (high)
+        {0.5, 0.5, -1.0},  // Out of bounds in z (low)
+        {0.5, 0.5, 3.0},   // Out of bounds in z (high)
+        {-1.0, -1.0, -1.0},// Out of bounds in all dimensions (low)
+        {3.0, 3.0, 3.0}    // Out of bounds in all dimensions (high)
+    };
+
+    for (const auto& point : testPoints) {
+        double outOfBoundsResult = interpolate(point, points);
+        
+        // Create an in-bounds point by clamping coordinates to the grid boundaries
+        std::vector<double> inBoundsPoint = point;
+        for (size_t i = 0; i < point.size(); ++i) {
+            inBoundsPoint[i] = std::max(points.uniqueValues[i].front(), 
+                               std::min(point[i], points.uniqueValues[i].back()));
+        }
+        
+        double inBoundsResult = interpolate(inBoundsPoint, points);
+
+        std::cout << "Out-of-bounds point: (" << point[0] << ", " << point[1] << ", " << point[2] << ")" << std::endl;
+        std::cout << "In-bounds point: (" << inBoundsPoint[0] << ", " << inBoundsPoint[1] << ", " << inBoundsPoint[2] << ")" << std::endl;
+        std::cout << "Out-of-bounds result: " << outOfBoundsResult << std::endl;
+        std::cout << "In-bounds result: " << inBoundsResult << std::endl;
+
+        // Check if the out-of-bounds interpolation matches the in-bounds interpolation
+        TS_ASSERT_DELTA(outOfBoundsResult, inBoundsResult, 1e-10);
+        
+        std::cout << std::endl;
+    }
+
+    std::cout << "Finished testOutOfBoundsInterpolation" << std::endl;
+    std::cout << "#########################################\n" << std::endl;
+}
 };

@@ -83,7 +83,21 @@ double interpolateRecursive(const std::vector<double>& queryPoint, const PointCl
     }
 }
 
+// Function to clamp a value between a minimum and maximum
+double clamp(double value, double min, double max) {
+    return std::max(min, std::min(value, max));
+}
+
 // Function to perform interpolation
 double interpolate(const std::vector<double>& queryPoint, const PointCloud& points) {
-    return interpolateRecursive(queryPoint, points, points.numDimensions);
+    std::vector<double> clampedQueryPoint = queryPoint;
+    
+    // Clamp the query point coordinates to the valid range
+    for (size_t i = 0; i < points.numDimensions; ++i) {
+        clampedQueryPoint[i] = clamp(queryPoint[i], 
+                                     points.uniqueValues[i].front(), 
+                                     points.uniqueValues[i].back());
+    }
+    
+    return interpolateRecursive(clampedQueryPoint, points, points.numDimensions);
 }
