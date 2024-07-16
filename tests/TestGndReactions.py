@@ -87,10 +87,10 @@ class TestGndReactions(JSBSimTestCase):
         f_total_gear = np.array([[fdm['forces/fbx-gear-lbs'],
                                   fdm['forces/fby-gear-lbs'],
                                   fdm['forces/fbz-gear-lbs']]])
-        Tb2l = np.asmatrixrix([[ math.cos(theta), 0.0, math.sin(theta)],
+        Tb2l = np.asmatrix([[ math.cos(theta), 0.0, math.sin(theta)],
                           [             0.0, 1.0,             0.0],
                           [-math.sin(theta), 0.0, math.cos(theta)]])
-        Ts2b = np.asmatrixrix([[-1.0, 0.0,  0.0],
+        Ts2b = np.asmatrix([[-1.0, 0.0,  0.0],
                           [ 0.0, 1.0,  0.0],
                           [ 0.0, 0.0, -1.0]])
         f_total_gear = Tb2l*f_total_gear.T
