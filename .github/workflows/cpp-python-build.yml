@@ -3,7 +3,7 @@
 # on:
 #   push:
 #     branches-ignore:
-#       - "dependabot/**"
+#       - 'dependabot/**'
 #   pull_request:
 
 # env:
@@ -90,7 +90,7 @@
 #       - name: Set up Python 3.8
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.8"
+#           python-version: '3.8'
 #       - name: Install Python packages
 #         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
 #       - name: Configure Julia
@@ -107,7 +107,7 @@
 #         uses: actions/checkout@v4
 #         with:
 #           repository: bombela/backward-cpp
-#           ref: "v1.6"
+#           ref: 'v1.6'
 #           path: backward-cpp
 #       - name: Configure Backward-cpp
 #         if: steps.BackwardCppCheckout.outcome == 'success'
@@ -142,7 +142,7 @@
 #         working-directory: build
 #         run: cpack
 
-#       # On failure, upload logs
+#     # On failure, upload logs
 #       - name: On failure - Upload logs
 #         uses: actions/upload-artifact@v4
 #         if: failure()
@@ -165,11 +165,11 @@
 
 #   Matlab-SFunction:
 #     name: Matlab S-Function
-#     needs: [Linux, MacOSX, Windows-MSVC]
+#     needs: [ Linux, MacOSX, Windows-MSVC ]
 #     strategy:
 #       fail-fast: false
 #       matrix:
-#         os: [macos-latest, ubuntu-22.04, windows-latest]
+#         os: [ macos-latest, ubuntu-22.04, windows-latest ]
 #     runs-on: ${{ matrix.os }}
 #     steps:
 #       - name: Checkout JSBSim
@@ -196,8 +196,7 @@
 #           cp -R ../engine .
 #           cp -R ../systems .
 #           cp -R ../scripts .
-#       - name:
-#           Force Matlab using the system libstdc++ rather than its own (Linux)
+#       - name: Force Matlab using the system libstdc++ rather than its own (Linux)
 #           # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
 #         if: runner.os == 'Linux'
 #         run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
@@ -242,16 +241,16 @@
 #       - name: Set up Python 3.10
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.10"
+#           python-version: '3.10'
 #       - name: Checkout JSBSim
 #         uses: actions/checkout@v4
 #       - name: Checkout CxxTest
 #         uses: actions/checkout@v4
 #         with:
 #           repository: CxxTest/cxxtest
-#           ref: "4.4"
+#           ref: '4.4'
 #           path: cxxtest
-#       - name: Configure CxxTest
+#       - name : Configure CxxTest
 #         working-directory: cxxtest
 #         run: |
 #           cp python/python3/cxxtest/*.py cxxtest/.
@@ -273,7 +272,7 @@
 #           cp src/libJSBSim.* julia/.
 #           ctest -j2 --output-on-failure
 
-#       # Upload files
+#     # Upload files
 #       - name: On failure - Upload logs
 #         uses: actions/upload-artifact@v4
 #         if: failure()
@@ -293,7 +292,7 @@
 #       - name: Set up Python 3.8
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.8"
+#           python-version: '3.8'
 #       - name: Install Python packages
 #         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
 #       - name: Checkout JSBSim
@@ -311,9 +310,9 @@
 #         uses: actions/checkout@v4
 #         with:
 #           repository: CxxTest/cxxtest
-#           ref: "4.4"
+#           ref: '4.4'
 #           path: cxxtest
-#       - name: Configure CxxTest
+#       - name : Configure CxxTest
 #         working-directory: cxxtest
 #         run: |
 #           cp python/python3/cxxtest/*.py cxxtest/.
@@ -322,7 +321,7 @@
 #         uses: actions/checkout@v4
 #         with:
 #           repository: bombela/backward-cpp
-#           ref: "v1.6"
+#           ref: 'v1.6'
 #           path: backward-cpp
 #       - name: MSVC version
 #         run: |
@@ -344,7 +343,7 @@
 #         working-directory: build
 #         run: ctest -j2 --build-config RelWithDebInfo --output-on-failure
 
-#       # On failure, upload logs
+#     # On failure, upload logs
 #       - name: On failure - Upload logs
 #         uses: actions/upload-artifact@v4
 #         if: failure()
@@ -439,7 +438,7 @@
 #         python-version: [3.8]
 #         include:
 #           - os: macos-14
-#             python-version: "3.10"
+#             python-version: '3.10'
 #     runs-on: ${{ matrix.os }}
 #     steps:
 #       - name: Set up Python
@@ -457,11 +456,11 @@
 #         with:
 #           path: build/Testing/Temporary/CTestCostData.txt
 #           key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
-#       - name: Install Julia
-#         if: runner.os == 'macOS'
-#         run: |
-#           brew update
-#           brew install julia
+#         - name: Install Julia
+#           if: runner.os == 'macOS'
+#           run: |
+#             brew update
+#             brew install julia
 #       - name: Install & Configure Doxygen
 #         if: env.release == 'true' && matrix.os == 'macos-12'
 #         run: |
@@ -474,7 +473,7 @@
 #         uses: actions/checkout@v4
 #         with:
 #           repository: CxxTest/cxxtest
-#           ref: "4.4"
+#           ref: '4.4'
 #           path: cxxtest
 #       - name: Configure CxxTest
 #         working-directory: cxxtest/python
@@ -506,7 +505,7 @@
 #           python -m build --sdist
 #           echo "::endgroup::"
 
-#       # On failure, upload logs
+#     # On failure, upload logs
 #       - name: On failure - Upload logs
 #         uses: actions/upload-artifact@v4
 #         if: failure()
@@ -589,7 +588,7 @@
 #       - name: Set up Python 3.8
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.8"
+#           python-version: '3.8'
 #       - name: Install Python packages
 #         run: pip install -U cython 'numpy>=1.20' mypy
 #       - name: Install Doxygen (Linux)
@@ -776,18 +775,12 @@
 #   Stable-Release:
 #     name: Deploy Stable Release
 #     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-#     needs:
-#       [
-#         Python-Wheels,
-#         Test-Build-PyPackage-From-Source,
-#         Windows-MinGW,
-#         Windows-installer,
-#       ]
+#     needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
 #     runs-on: ubuntu-latest
 #     environment: release
 #     permissions:
-#       contents: write # Needed for the GitHub release
-#       id-token: write # Mandatory for PyPI trusted publishing
+#       contents: write  # Needed for the GitHub release
+#       id-token: write  # Mandatory for PyPI trusted publishing
 #     steps:
 #       - name: Download files
 #         uses: actions/download-artifact@v4
@@ -805,11 +798,11 @@
 #       - name: Set up Python 3.8
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.8"
+#           python-version: '3.8'
 #       - name: PyPI deployment
 #         uses: pypa/gh-action-pypi-publish@release/v1
 
-#       # Deploy stable release to GitHub
+#     # Deploy stable release to GitHub
 #       - name: Get JSBSim version
 #         run: |
 #           pip install -U 'numpy>=1.20'
@@ -817,7 +810,7 @@
 #           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
 #           echo "VERSION=$VERSION" >> $GITHUB_ENV
 #       - name: Get MSVC version
-#         run: |
+#         run : |
 #           export MSVC_VERSION=`cat MSVC_version.txt`
 #           echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
 #       - name: GitHub release
@@ -912,7 +905,7 @@
 #       - name: Set up Python 3.8
 #         uses: actions/setup-python@v5
 #         with:
-#           python-version: "3.8"
+#           python-version: '3.8'
 #       - name: Install Python packages
 #         run: pip install -U 'numpy>=1.20' sphinx cython
 #       - name: Checkout JSBSim
