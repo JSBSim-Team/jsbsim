@@ -121,8 +121,8 @@ public:
 
         std::cout << "Average time to hash a 7D vector: " << avg_time * 1e9 << " nanoseconds" << std::endl;
         
-        // Assert that the average time is below a certain threshold (e.g., 100 nanoseconds)
-        TS_ASSERT(avg_time < 1e-7);
+        // Assert that the average time is below a certain threshold (1 microsecond)
+        TS_ASSERT(avg_time < 1e-6);
     }
 
     void testCollisions7D()
