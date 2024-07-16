@@ -16,57 +16,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies (Ubuntu)
-        if: runner.os == 'Linux'
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake cxxtest
-
-      - name: Install dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install cmake cxxtest
-
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install cmake
-          # Add Windows-specific cxxtest installation if needed
-
-      - name: Install Julia
-        uses: julia-actions/setup-julia@v1
-        with:
-          version: "1.6" # Specify the Julia version you need
 
       - name: Create build directory
         run: mkdir -p build
 
       - name: Configure CMake
         working-directory: ./build
-        run: |
-          cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
+        run: cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
 
       - name: Build
         working-directory: ./build
-        run: |
-          if [ "${{ runner.os }}" == "Windows" ]; then
-            cmake --build . --config Release -- /p:CxxFlags="/std:c++17"
-          else
-            CXXFLAGS="-std=c++17" make
-          fi
+        run: make
 
       - name: Run tests
         working-directory: ./build
-        run: |
-          if [ "${{ runner.os }}" == "Windows" ]; then
-            ./tests/unit_tests/Release/InterpolationTest1.exe
-          else
-            ./tests/unit_tests/InterpolationTest1
-          fi
+        run: ./tests/unit_tests/InterpolationTest1
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results
           path: build/Testing/Temporary/LastTest.log
