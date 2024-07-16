@@ -269,13 +269,13 @@ class TestFunctions(JSBSimTestCase):
         b = beta*math.pi/180.
         c = gamma*math.pi/180.
 
-        Ma = np.asmatrix([[ math.cos(a), 0.0, math.sin(a)],
+        Ma = np.array([[ math.cos(a), 0.0, math.sin(a)],
                         [              0.0, 1.0,     0.0],
                         [ -math.sin(a), 0.0,  math.cos(a)]])
-        Mb = np.asmatrix([[  math.cos(b), math.sin(b), 0.0],
+        Mb = np.array([[  math.cos(b), math.sin(b), 0.0],
                         [ -math.sin(b), math.cos(b), 0.0],
                         [          0.0,         0.0, 1.0]])
-        Mc = np.asmatrix([[ 1.0,         0.0,          0.0],
+        Mc = np.array([[ 1.0,         0.0,          0.0],
                         [ 0.0, math.cos(c), -math.sin(c)],
                         [ 0.0, math.sin(c),  math.cos(c)]])
 
