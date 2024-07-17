@@ -7,10 +7,6 @@
 #include <sstream>
 #include <cxxabi.h>
 
-// Constants
-const int MAX_CALLSTACK_DEPTH = 128;
-const double EPSILON = 1e-10;
-
 
 // Function to find the lower bound in a sorted vector
 double findLowerBound(const std::vector<double>& vec, double value) {

@@ -7,7 +7,7 @@
 #include "input_output/FGXMLElement.h"
 #include "FGParameter.h"
 #include "input_output/FGPropertyManager.h"
-#include "VectorHash.h"  // Include the new header file
+#include "VectorHash.h"
 
 using namespace JSBSim;
 
@@ -33,7 +33,8 @@ public:
     const std::vector<std::vector<double>>& GetMatrix() const;
     size_t GetNumDimensions() const;
     void Print() const;
-    PointCloud pointCloud;  // Store the PointCloud here
+    PointCloud pointCloud;
+    static constexpr int PRINT_PRECISION = 8;
 
 private:
     std::string name;
