@@ -51,6 +51,7 @@ FGPropertyValue::FGPropertyValue(const std::string& propName,
 
   if (PropertyManager->HasNode(PropertyName)) {
     PropertyNode = PropertyManager->GetNode(PropertyName);
+    Parameter_Name = PropertyName;
 
     assert(PropertyNode);
     XML_def = nullptr; // Now that the property is bound, we no longer need that.

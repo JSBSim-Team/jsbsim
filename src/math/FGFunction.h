@@ -814,6 +814,10 @@ public:
 
   enum class OddEven {Either, Odd, Even};
 
+  const std::vector <FGParameter_ptr> GetParameters(void) const { return Parameters; }
+  const FGPropertyNode_ptr GetFGPropertyNode(void) const { return pNode; }
+  const std::string GetFunctionOperation(void) const { return Function_Operation; }
+
 protected:
   bool cached;
   double cachedValue;
@@ -828,6 +832,9 @@ protected:
   void CheckMaxArguments(Element* el, unsigned int _max);
   void CheckOddOrEvenArguments(Element* el, OddEven odd_even);
   std::string CreateOutputNode(Element* el, const std::string& Prefix);
+
+protected:
+  std::string Function_Operation = "";
 
 private:
   std::string Name;

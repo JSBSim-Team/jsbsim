@@ -560,7 +560,7 @@ void FGLGear::CrashDetect(void)
       SinkRate > 1.4666*30 ) && !fdmex->IntegrationSuspended())
   {
     if (debug_lvl > 0) {
-      cout << "*CRASH DETECTED* " << fdmex->GetSimTime() << " seconds: " << name;
+      cout << "*CRASH DETECTED* " << fdmex->GetSimTime() << " seconds: " << name << endl;
     }
 
     // fdmex->SuspendIntegration();

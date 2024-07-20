@@ -309,6 +309,19 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                       const string& Prefix)
 {
   Name = el->GetAttributeValue("name");
+  JSBSim::Element* parent = el->GetParent();
+  std::string parent_name = parent->GetAttributeValue("name");
+  Parameter_Name = parent->GetName();
+  if (parent_name.size() > 0) {
+    Parameter_Name += "_" + parent_name;
+  }
+  Parameter_Name += "_" + el->GetName();
+  if (Name.size() > 0) {
+    Parameter_Name += "_" + Name;
+  }
+
+  Parameter_Description = el->GetAttributeValue("description");
+  Parameter_LineNumber = el->GetLineNumber();
   Element* element = el->GetElement();
       
   auto sum = [](const decltype(Parameters)& Parameters)->double {
@@ -322,6 +335,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
   
   while (element) {
     string operation = element->GetName();
+    Function_Operation = operation;
 
     // data types
     if (operation == "property" || operation == "p") {

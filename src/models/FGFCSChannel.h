@@ -87,7 +87,7 @@ public:
     FCSComponents.clear();
   }
   /// Retrieves the name of the channel
-  std::string GetName() {return Name;}
+  std::string GetName() const {return Name;}
 
   /// Adds a component to a channel
   void Add(FGFCSComponent* comp) {
@@ -137,6 +137,8 @@ public:
   }
   /// Get the channel rate
   int GetRate(void) const { return ExecRate; }
+
+  const FCSCompVec GetFCSComponents(void) const { return FCSComponents; }
 
   private:
     FGFCS* fcs;

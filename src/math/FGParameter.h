@@ -63,10 +63,19 @@ public:
   virtual ~FGParameter(void) {};
   virtual double GetValue(void) const = 0;
   virtual std::string GetName(void) const = 0;
+
+  virtual std::string GetParameterName(void) const { return Parameter_Name; }
+  virtual std::string GetParameterDescription(void) const { return Parameter_Description; }
+  virtual int GetParameterLineNumber(void) const { return Parameter_LineNumber; }
   virtual bool IsConstant(void) const { return false; }
 
   // SGPropertyNode impersonation.
   double getDoubleValue(void) const { return GetValue(); }
+
+protected:
+  std::string Parameter_Name = "";
+  std::string Parameter_Description = ""; 
+  int Parameter_LineNumber = 0;
 };
 
 typedef SGSharedPtr<FGParameter> FGParameter_ptr;

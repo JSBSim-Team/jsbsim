@@ -97,6 +97,10 @@ public:
   virtual double GetOutputPct(void) const { return 0; }
   virtual void ResetPastStates(void);
 
+  const std::vector <FGPropertyValue_ptr>& GetInitNodes(void) const { return InitNodes;}
+  const std::vector <FGPropertyValue_ptr>& GetInputNodes(void) const { return InputNodes; }
+  const std::vector <FGPropertyNode_ptr>& GetOutputNodes(void) const { return OutputNodes; }
+
 protected:
   FGFCS* fcs;
   std::vector <FGPropertyNode_ptr> OutputNodes;

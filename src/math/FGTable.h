@@ -38,7 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGParameter.h"
+#include "FGFunction.h"
 #include "math/FGPropertyValue.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,7 +230,7 @@ combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class JSBSIM_API FGTable : public FGParameter, public FGJSBBase
+class JSBSIM_API FGTable : public FGFunction
 {
 public:
   /// Destructor
@@ -308,13 +308,24 @@ public:
   { lookupProperty[eColumn] = new FGPropertyValue(node); }
 
   unsigned int GetNumRows() const {return nRows;}
+  const std::vector<FGPropertyValue_ptr> GetLookupProperty(void) const {
+    auto v = std::vector<FGPropertyValue_ptr>();
+    for (unsigned int i = 0; i < 3; i++) {
+      v.push_back(lookupProperty[i]);
+    }
+    return v;
+  }
 
   void Print(void);
 
   std::string GetName(void) const {return Name;}
 
+  enum type {tt1D, tt2D,tt3D};
+
+  type GetType(void) const { return Type; }
+
 private:
-  enum type {tt1D, tt2D, tt3D} Type;
+  type Type;
   enum axis {eRow=0, eColumn, eTable};
   bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.

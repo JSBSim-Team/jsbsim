@@ -194,6 +194,12 @@ public:
 
   void ResetEvents(void);
 
+  std::string GetScriptName() { return ScriptName; }
+
+  double GetStartTime() { return StartTime; }
+
+  double GetEndTime() { return EndTime; }
+
 private:
   enum eAction {
     FG_RAMP  = 1,

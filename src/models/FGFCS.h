@@ -369,6 +369,10 @@ public:
       @return a string containing the descriptive names for all components */
   std::string GetComponentStrings(const std::string& delimiter) const;
 
+  typedef std::vector <FGFCSChannel*> Channels;
+
+  const Channels GetSystemChannels(void) const { return SystemChannels; }
+
   /** Retrieves all component outputs for inclusion in output stream
       @param delimiter either a tab or comma string depending on output type
       @return a string containing the numeric values for the current set of
@@ -589,7 +593,6 @@ private:
   int ChannelRate;
   FGFDMExec* fdmex;
 
-  typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;
   void bind(void);
   void bindThrottle(unsigned int);

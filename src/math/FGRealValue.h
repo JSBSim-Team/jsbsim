@@ -58,7 +58,9 @@ class JSBSIM_API FGRealValue : public FGParameter
 {
 public:
 
-  explicit FGRealValue(double val) : Value(val) {}
+  explicit FGRealValue(double val) : Value(val) {
+    Parameter_Name = "constant value :" + std::to_string(val);
+  }
 
   double GetValue(void) const override { return Value; };
   std::string GetName(void) const override;

@@ -119,6 +119,20 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // Is this an internal lookup table?
 
   Name = el->GetAttributeValue("name"); // Allow this table to be named with a property
+  JSBSim::Element* parent = el->GetParent();
+  std::string parent_name = parent->GetAttributeValue("name");
+  Parameter_Name = parent->GetName();
+  if (parent_name.size() > 0) {
+    Parameter_Name += "_" + parent_name;
+  }
+  Parameter_Name += "_" + el->GetName();
+  if (Name.size() > 0) {
+    Parameter_Name += "_" + Name;
+  }
+
+  Parameter_Description = el->GetAttributeValue("description");
+  Parameter_LineNumber = el->GetLineNumber();
+  Function_Operation = "table";
   string call_type = el->GetAttributeValue("type");
   if (call_type == "internal") {
     internal = true;
@@ -159,6 +173,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
       FGPropertyValue_ptr node = new FGPropertyValue(property_string,
                                                      PropertyManager, axisElement);
+      Parameters.push_back(node);
       string lookup_axis = axisElement->GetAttributeValue("lookup");
       if (lookup_axis == string("row")) {
         lookupProperty[eRow] = node;
