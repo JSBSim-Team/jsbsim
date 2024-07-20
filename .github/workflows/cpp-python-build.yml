@@ -341,7 +341,7 @@ jobs:
         run: ctest -R fpectl --build-config RelWithDebInfo -V
       - name: Test JSBSim
         working-directory: build
-        run: ctest -- parallel $Env:NUMBER_OF_PROCESSORS --build-config RelWithDebInfo --output-on-failure
+        run: ctest --parallel $Env:NUMBER_OF_PROCESSORS --build-config RelWithDebInfo --output-on-failure
 
     # On failure, upload logs
       - name: On failure - Upload logs
@@ -621,7 +621,7 @@ jobs:
           touch python/jsbsim/py.typed
           cd ../python/dist
           tar zxvf *.tar.gz
-          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+          cp -R jsbsim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
           echo "::endgroup::"
       - name: Configure JSBSim (Windows)
         if: runner.os == 'Windows'
@@ -641,7 +641,7 @@ jobs:
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
           echo "::endgroup::"
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16
+        uses: pypa/cibuildwheel@v2.19
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
@@ -847,8 +847,9 @@ jobs:
           # Extract from CMake the project version number at the next release.
           echo "message(STATUS \"JSBSIM_VERSION:\${PROJECT_VERSION}\")" >> src/CMakeLists.txt
           export FUTURE_VERSION=`cmake . | grep JSBSIM_VERSION | awk -F':' '{print $2}'`
+          echo "FUTURE_VERSION=$FUTURE_VERSION" >> $GITHUB_ENV
           # Extract the project old version number
-          export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
+          export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}' | sed 's/\./\\\\./g'`
           echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_ENV
           # Update references to the current stable version in README.md
           sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
@@ -895,6 +896,13 @@ jobs:
     needs: Stable-Release
     name: Deploy Documentation
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.pages_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Install Ubuntu packages
         run: |
@@ -923,10 +931,13 @@ jobs:
           pip install jsbsim --no-index -f .
           touch documentation/html/.nojekyll
           sphinx-build -b html documentation documentation/html/python
-      - name: Publish docs to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          target_branch: gh-pages
-          build_dir: build/documentation/html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # upload entire directory
+          path: 'build/documentation/html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
