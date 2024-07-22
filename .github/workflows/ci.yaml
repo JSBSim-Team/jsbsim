@@ -1,0 +1,48 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake cxxtest
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Configure CMake
+        working-directory: ./build
+        run: cmake .. -DBUILD_TESTS=ON -DCMAKE_CXX_STANDARD=17
+
+      - name: Build
+        working-directory: ./build
+        run: make
+
+      - name: Run Interpolation Test
+        working-directory: ./build
+        run: ./tests/unit_tests/InterpolationTest1
+
+      - name: Run Interpolation Test
+        working-directory: ./build
+        run: ./tests/unit_tests/VectorHashTest1
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: build/Testing/Temporary/LastTest.log

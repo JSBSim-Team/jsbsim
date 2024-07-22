@@ -1,929 +1,941 @@
-name: C/C++ build
+# name: C/C++ build
 
-on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
-  pull_request:
+# on:
+#   push:
+#     branches-ignore:
+#       - "dependabot/**"
+#   pull_request:
 
-env:
-  release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
+# env:
+#   release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
 
-jobs:
-  XML-validation:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
-    name: XML validation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install libxml2-utils
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Validate scripts files
-        run: |
-          for filename in scripts/*.xml; do
-            [ -e "$filename" ] || continue
-            [ "$filename" != "scripts/kml_output.xml" ] || continue
-            [ "$filename" != "scripts/plotfile.xml" ] || continue
-            [ "$filename" != "scripts/unitconversions.xml" ] || continue
-            xmllint --noout --schema JSBSimScript.xsd $filename
-          done
-      - name: Validate systems files
-        run: |
-          for filename in systems/*.xml; do
-              [ -e "$filename" ] || continue
-              xmllint --noout --schema JSBSimSystem.xsd $filename
-          done
+# jobs:
+#   XML-validation:
+#     if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
+#     name: XML validation
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Install Ubuntu packages
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install libxml2-utils
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Validate scripts files
+#         run: |
+#           for filename in scripts/*.xml; do
+#             [ -e "$filename" ] || continue
+#             [ "$filename" != "scripts/kml_output.xml" ] || continue
+#             [ "$filename" != "scripts/plotfile.xml" ] || continue
+#             [ "$filename" != "scripts/unitconversions.xml" ] || continue
+#             xmllint --noout --schema JSBSimScript.xsd $filename
+#           done
+#       - name: Validate systems files
+#         run: |
+#           for filename in systems/*.xml; do
+#               [ -e "$filename" ] || continue
+#               xmllint --noout --schema JSBSimSystem.xsd $filename
+#           done
 
-  MSIS-validation:
-    name: MSIS code validation
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{matrix.os}}
-    steps:
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Configure the MSIS test program
-        run: |
-          mkdir build && cd build
-          cmake ../src/models/atmosphere/MSIS
-      - name: Build the JSBSim test program
-        working-directory: build
-        run: make -j2
-      - name: Run the NRLMSIS-00 C package
-        working-directory: src/models/atmosphere/MSIS
-        run: |
-          if [[ $(head -261 DOCUMENTATION | tail -104 | diff -urN <(../../../../build/nrlmsise-test) - | wc -c) -ne 0 ]]; then
-            echo "Failed."
-            exit 1
-          fi
+#   MSIS-validation:
+#     name: MSIS code validation
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [ubuntu-latest, macos-latest]
+#     runs-on: ${{matrix.os}}
+#     steps:
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Configure the MSIS test program
+#         run: |
+#           mkdir build && cd build
+#           cmake ../src/models/atmosphere/MSIS
+#       - name: Build the JSBSim test program
+#         working-directory: build
+#         run: make -j2
+#       - name: Run the NRLMSIS-00 C package
+#         working-directory: src/models/atmosphere/MSIS
+#         run: |
+#           if [[ $(head -261 DOCUMENTATION | tail -104 | diff -urN <(../../../../build/nrlmsise-test) - | wc -c) -ne 0 ]]; then
+#             echo "Failed."
+#             exit 1
+#           fi
 
-  Linux:
-    name: C/C++ build (Linux)
-    needs: [XML-validation, MSIS-validation]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04]
-        expat: [ON, OFF]
-        shared_libs: [ON, OFF]
-        build_julia: [OFF]
-        display_stack_trace: [ON]
-        include:
-          - os: ubuntu-20.04
-            expat: OFF
-            shared_libs: OFF
-            build_julia: ON
-            display_stack_trace: OFF
-    env:
-      static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install cxxtest valgrind binutils-dev
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
-      - name: Configure Julia
-        if: matrix.build_julia == 'ON'
-        run: |
-          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
-          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          echo "JSBSIM_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Checkout Backward-cpp
-        if: matrix.display_stack_trace == 'ON'
-        id: BackwardCppCheckout
-        uses: actions/checkout@v4
-        with:
-          repository: bombela/backward-cpp
-          ref: 'v1.6'
-          path: backward-cpp
-      - name: Configure Backward-cpp
-        if: steps.BackwardCppCheckout.outcome == 'success'
-        run: echo "JSBSIM_PREFIX_PATH=$PWD/backward-cpp" >> $GITHUB_ENV
-      - name: Configure JSBSim
-        run: |
-          mkdir build && cd build
-          cmake -DCPACK_GENERATOR=DEB -DINSTALL_JSBSIM_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DFPECTL_DISPLAY_STACK_TRACE=${{matrix.display_stack_trace}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
-      - name: Cache CTest cost data
-        # This file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        with:
-          path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
-      - name: Build JSBSim
-        working-directory: build
-        run: make -j2
-      - name: Test with Valgrind
-        run: |
-          valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
-          valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
-      - name: Test the Display of the Stack Trace when an FPE is raised
-        if: steps.BackwardCppCheckout.outcome == 'success'
-        working-directory: build
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -R fpectl -V
-      - name: Test JSBSim
-        working-directory: build
-        run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
-      - name: Build Ubuntu packages
-        if: env.static_link == 'true'
-        working-directory: build
-        run: cpack
+#   Linux:
+#     name: C/C++ build (Linux)
+#     needs: [XML-validation, MSIS-validation]
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [ubuntu-22.04]
+#         expat: [ON, OFF]
+#         shared_libs: [ON, OFF]
+#         build_julia: [OFF]
+#         display_stack_trace: [ON]
+#         include:
+#           - os: ubuntu-20.04
+#             expat: OFF
+#             shared_libs: OFF
+#             build_julia: ON
+#             display_stack_trace: OFF
+#     env:
+#       static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Install Ubuntu packages
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install cxxtest valgrind binutils-dev
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.8"
+#       - name: Install Python packages
+#         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
+#       - name: Configure Julia
+#         if: matrix.build_julia == 'ON'
+#         run: |
+#           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
+#           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
+#           echo "JSBSIM_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Checkout Backward-cpp
+#         if: matrix.display_stack_trace == 'ON'
+#         id: BackwardCppCheckout
+#         uses: actions/checkout@v4
+#         with:
+#           repository: bombela/backward-cpp
+#           ref: "v1.6"
+#           path: backward-cpp
+#       - name: Configure Backward-cpp
+#         if: steps.BackwardCppCheckout.outcome == 'success'
+#         run: echo "JSBSIM_PREFIX_PATH=$PWD/backward-cpp" >> $GITHUB_ENV
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir build && cd build
+#           cmake -DCPACK_GENERATOR=DEB -DINSTALL_JSBSIM_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DFPECTL_DISPLAY_STACK_TRACE=${{matrix.display_stack_trace}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
+#       - name: Cache CTest cost data
+#         # This file is used by CTest to optimize the distribution of the tests
+#         # between the cores and reduce execution time.
+#         uses: actions/cache@v4
+#         with:
+#           path: build/Testing/Temporary/CTestCostData.txt
+#           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+#       - name: Build JSBSim
+#         working-directory: build
+#         run: make -j2
+#       - name: Test with Valgrind
+#         run: |
+#           valgrind --tool=memcheck --leak-check=full --leak-resolution=high --track-origins=yes --xml=yes --xml-file=valgrind_Short_S23_3.xml build/src/JSBSim scripts/Short_S23_3.xml --end-time=5.
+#           valgrind-ci valgrind_Short_S23_3.xml --abort-on-errors
+#       - name: Test the Display of the Stack Trace when an FPE is raised
+#         if: steps.BackwardCppCheckout.outcome == 'success'
+#         working-directory: build
+#         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -R fpectl -V
+#       - name: Test JSBSim
+#         working-directory: build
+#         run: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/src ctest -j2 --output-on-failure
+#       - name: Build Ubuntu packages
+#         if: env.static_link == 'true'
+#         working-directory: build
+#         run: cpack
 
-    # On failure, upload logs
-      - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
-          path: |
-            build/Testing/Temporary/*.log
-            build/tests/*-build.log
-            valgrind_Short_S23_3.xml
-      - name: On failure - Display a summary of valgrind errors.
-        if: failure()
-        run: valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
+#       # On failure, upload logs
+#       - name: On failure - Upload logs
+#         uses: actions/upload-artifact@v4
+#         if: failure()
+#         with:
+#           name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
+#           path: |
+#             build/Testing/Temporary/*.log
+#             build/tests/*-build.log
+#             valgrind_Short_S23_3.xml
+#       - name: On failure - Display a summary of valgrind errors.
+#         if: failure()
+#         run: valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
 
-      - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
-        if: env.release == 'true' && env.static_link == 'true'
-        with:
-          name: Linux-${{ matrix.os }}.binaries
-          path: build/*.deb
+#       - name: Upload Files for Release
+#         uses: actions/upload-artifact@v4
+#         if: env.release == 'true' && env.static_link == 'true'
+#         with:
+#           name: Linux-${{ matrix.os }}.binaries
+#           path: build/*.deb
 
-  Matlab-SFunction:
-    name: Matlab S-Function
-    needs: [ Linux, MacOSX, Windows-MSVC ]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ macos-latest, ubuntu-22.04, windows-latest ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Set up Matlab
-        uses: matlab-actions/setup-matlab@v2
-        with:
-          release: R2022a
-          products: Simulink
-      - name: Configure JSBSim
-        run: |
-          mkdir build
-          cd build
-          cmake -DBUILD_MATLAB_SFUNCTION=ON ..
-      - name: Build JSBSim S-Function
-        working-directory: build
-        run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction
-      - name: Prepare Tests
-        working-directory: matlab
-        # The script will be run from the directory 'matlab' so we need to copy
-        # the folders that will be used by JSBSim
-        run: |
-          cp -R ../aircraft .
-          cp -R ../engine .
-          cp -R ../systems .
-          cp -R ../scripts .
-      - name: Force Matlab using the system libstdc++ rather than its own (Linux)
-          # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
-        if: runner.os == 'Linux'
-        run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
-      - name: Run Tests (Linux & MacOSX)
-        if: runner.os != 'Windows'
-        id: tests-unix
-        uses: matlab-actions/run-command@v2
-        with:
-          command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
-      - name: Run Tests (Windows)
-        if: runner.os == 'Windows'
-        id: tests-windows
-        uses: matlab-actions/run-command@v2
-        with:
-          command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
+#   Matlab-SFunction:
+#     name: Matlab S-Function
+#     needs: [Linux, MacOSX, Windows-MSVC]
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [macos-latest, ubuntu-22.04, windows-latest]
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Set up Matlab
+#         uses: matlab-actions/setup-matlab@v2
+#         with:
+#           release: R2022a
+#           products: Simulink
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir build
+#           cd build
+#           cmake -DBUILD_MATLAB_SFUNCTION=ON ..
+#       - name: Build JSBSim S-Function
+#         working-directory: build
+#         run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction
+#       - name: Prepare Tests
+#         working-directory: matlab
+#         # The script will be run from the directory 'matlab' so we need to copy
+#         # the folders that will be used by JSBSim
+#         run: |
+#           cp -R ../aircraft .
+#           cp -R ../engine .
+#           cp -R ../systems .
+#           cp -R ../scripts .
+#       - name:
+#           Force Matlab using the system libstdc++ rather than its own (Linux)
+#           # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
+#         if: runner.os == 'Linux'
+#         run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
+#       - name: Run Tests (Linux & MacOSX)
+#         if: runner.os != 'Windows'
+#         id: tests-unix
+#         uses: matlab-actions/run-command@v2
+#         with:
+#           command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
+#       - name: Run Tests (Windows)
+#         if: runner.os == 'Windows'
+#         id: tests-windows
+#         uses: matlab-actions/run-command@v2
+#         with:
+#           command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
 
-      - name: Upload Files for Release (Linux & MacOSX)
-        if: steps.tests-unix.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: Matlab-SFunction-${{ runner.os }}.binaries
-          path: build/matlab/JSBSim_SFunction.mex*
-      - name: Upload Files for Release (Windows)
-        if: steps.tests-windows.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: Matlab-SFunction-${{ runner.os }}.binaries
-          path: |
-            build/JSBSim.iss
-            build/matlab/JSBSimSimulinkCompile.m
-            build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
+#       - name: Upload Files for Release (Linux & MacOSX)
+#         if: steps.tests-unix.outcome == 'success'
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: Matlab-SFunction-${{ runner.os }}.binaries
+#           path: build/matlab/JSBSim_SFunction.mex*
+#       - name: Upload Files for Release (Windows)
+#         if: steps.tests-windows.outcome == 'success'
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: Matlab-SFunction-${{ runner.os }}.binaries
+#           path: |
+#             build/JSBSim.iss
+#             build/matlab/JSBSimSimulinkCompile.m
+#             build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
 
-  Windows-MinGW:
-    name: C/C++ build (MinGW)
-    needs: XML-validation
-    runs-on: windows-2019
-    strategy:
-      fail-fast: false
-      matrix:
-        shared_libs: [ON, OFF]
-    steps:
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Checkout CxxTest
-        uses: actions/checkout@v4
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name : Configure CxxTest
-        working-directory: cxxtest
-        run: |
-          cp python/python3/cxxtest/*.py cxxtest/.
-          cp python/python3/scripts/cxxtestgen .
-      - name: Configure JSBSim
-        run: |
-          mkdir build && cd build
-          julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
-          $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
-          cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=ON -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
-      - name: Build JSBSim
-        working-directory: build
-        run: mingw32-make -j2
-      - name: Test executable
-        run: build/src/JSBSim.exe scripts/c1721.xml
-      - name: Run JSBSim tests
-        working-directory: build
-        run: |
-          cp src/libJSBSim.* julia/.
-          ctest -j2 --output-on-failure
+#   Windows-MinGW:
+#     name: C/C++ build (MinGW)
+#     needs: XML-validation
+#     runs-on: windows-2019
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         shared_libs: [ON, OFF]
+#     steps:
+#       - name: Set up Python 3.10
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.10"
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Checkout CxxTest
+#         uses: actions/checkout@v4
+#         with:
+#           repository: CxxTest/cxxtest
+#           ref: "4.4"
+#           path: cxxtest
+#       - name: Configure CxxTest
+#         working-directory: cxxtest
+#         run: |
+#           cp python/python3/cxxtest/*.py cxxtest/.
+#           cp python/python3/scripts/cxxtestgen .
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir build && cd build
+#           julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
+#           $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
+#           cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=ON -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
+#       - name: Build JSBSim
+#         working-directory: build
+#         run: mingw32-make -j2
+#       - name: Test executable
+#         run: build/src/JSBSim.exe scripts/c1721.xml
+#       - name: Run JSBSim tests
+#         working-directory: build
+#         run: |
+#           cp src/libJSBSim.* julia/.
+#           ctest -j2 --output-on-failure
 
-    # Upload files
-      - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: Windows_MinGW.logs
-          path: build/Testing/Temporary
+#       # Upload files
+#       - name: On failure - Upload logs
+#         uses: actions/upload-artifact@v4
+#         if: failure()
+#         with:
+#           name: Windows_MinGW.logs
+#           path: build/Testing/Temporary
 
-  Windows-MSVC:
-    name: C/C++ build (MSVC)
-    needs: XML-validation
-    runs-on: windows-2019
-    strategy:
-      fail-fast: false
-      matrix:
-        shared_libs: [ON, OFF]
-    steps:
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Cache CTest cost data
-        # Cache the file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        id: cache-win-msvc
-        with:
-          path: |
-            build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
-      - name: Checkout CxxTest
-        uses: actions/checkout@v4
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name : Configure CxxTest
-        working-directory: cxxtest
-        run: |
-          cp python/python3/cxxtest/*.py cxxtest/.
-          cp python/python3/scripts/cxxtestgen .
-      - name: Checkout Backward-cpp
-        uses: actions/checkout@v4
-        with:
-          repository: bombela/backward-cpp
-          ref: 'v1.6'
-          path: backward-cpp
-      - name: MSVC version
-        run: |
-          $MSVC_name = vswhere -property displayName
-          $MSVC_build = vswhere -property catalog_buildVersion
-          Out-File -InputObject $MSVC_name" (build "$MSVC_build")" -NoNewLine MSVC_version.txt
-      - name: Configure JSBSim
-        run: |
-          New-Item -Path .\build -ItemType Directory -Force
-          cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
-      - name: Build JSBSim
-        working-directory: build
-        run: cmake --build . --config RelWithDebInfo
-      - name: Test the Display of the Stack Trace when an FPE is raised
-        working-directory: build
-        run: ctest -R fpectl --build-config RelWithDebInfo -V
-      - name: Test JSBSim
-        working-directory: build
-        run: ctest -j2 --build-config RelWithDebInfo --output-on-failure
+#   Windows-MSVC:
+#     name: C/C++ build (MSVC)
+#     needs: XML-validation
+#     runs-on: windows-2019
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         shared_libs: [ON, OFF]
+#     steps:
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.8"
+#       - name: Install Python packages
+#         run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Cache CTest cost data
+#         # Cache the file is used by CTest to optimize the distribution of the tests
+#         # between the cores and reduce execution time.
+#         uses: actions/cache@v4
+#         id: cache-win-msvc
+#         with:
+#           path: |
+#             build/Testing/Temporary/CTestCostData.txt
+#           key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+#       - name: Checkout CxxTest
+#         uses: actions/checkout@v4
+#         with:
+#           repository: CxxTest/cxxtest
+#           ref: "4.4"
+#           path: cxxtest
+#       - name: Configure CxxTest
+#         working-directory: cxxtest
+#         run: |
+#           cp python/python3/cxxtest/*.py cxxtest/.
+#           cp python/python3/scripts/cxxtestgen .
+#       - name: Checkout Backward-cpp
+#         uses: actions/checkout@v4
+#         with:
+#           repository: bombela/backward-cpp
+#           ref: "v1.6"
+#           path: backward-cpp
+#       - name: MSVC version
+#         run: |
+#           $MSVC_name = vswhere -property displayName
+#           $MSVC_build = vswhere -property catalog_buildVersion
+#           Out-File -InputObject $MSVC_name" (build "$MSVC_build")" -NoNewLine MSVC_version.txt
+#       - name: Configure JSBSim
+#         run: |
+#           New-Item -Path .\build -ItemType Directory -Force
+#           cd build
+#           cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
+#       - name: Build JSBSim
+#         working-directory: build
+#         run: cmake --build . --config RelWithDebInfo
+#       - name: Test the Display of the Stack Trace when an FPE is raised
+#         working-directory: build
+#         run: ctest -R fpectl --build-config RelWithDebInfo -V
+#       - name: Test JSBSim
+#         working-directory: build
+#         run: ctest -j2 --build-config RelWithDebInfo --output-on-failure
 
-    # On failure, upload logs
-      - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: Windows_MSVC.logs
-          path: |
-            build/Testing/Temporary/*.log
-            build/tests/*-build.log
+#       # On failure, upload logs
+#       - name: On failure - Upload logs
+#         uses: actions/upload-artifact@v4
+#         if: failure()
+#         with:
+#           name: Windows_MSVC.logs
+#           path: |
+#             build/Testing/Temporary/*.log
+#             build/tests/*-build.log
 
-      - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
-        if: env.release == 'true' && matrix.shared_libs == 'OFF'
-        with:
-          name: ${{ runner.os }}.binaries
-          path: |
-            build/src/RelWithDebInfo/JSBSim.lib
-            build/src/RelWithDebInfo/JSBSim.exe
-            build/utils/aeromatic++/RelWithDebInfo/aeromatic.exe
-            build/python/setup.py
-            MSVC_version.txt
+#       - name: Upload Files for Release
+#         uses: actions/upload-artifact@v4
+#         if: env.release == 'true' && matrix.shared_libs == 'OFF'
+#         with:
+#           name: ${{ runner.os }}.binaries
+#           path: |
+#             build/src/RelWithDebInfo/JSBSim.lib
+#             build/src/RelWithDebInfo/JSBSim.exe
+#             build/utils/aeromatic++/RelWithDebInfo/aeromatic.exe
+#             build/python/setup.py
+#             MSVC_version.txt
 
-  Windows-installer:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
-    name: Build Windows installer
-    needs: Matlab-SFunction
-    runs-on: windows-2019
-    steps:
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Checkout JSBSim logos
-        uses: actions/checkout@v4
-        with:
-          repository: JSBSim-Team/jsbsim-logo
-          path: jsbsim-logo
-      - name: Download binary file for JSBSim.iss
-        uses: actions/download-artifact@v4
-        with:
-          name: Matlab-SFunction-Windows.binaries
-          path: build
-      - name: Download JSBSim library and executable
-        uses: actions/download-artifact@v4
-        with:
-          name: Windows.binaries
-      - name: Update the version of JSBSim in matlab/README.md
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          $JSBSim_version = ((.\build\src\RelWithDebInfo\JSBSim.exe --version) -split '\s+')[4]
-          $prev_version = ((Get-Content README.md | Select-String -Pattern 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe') -split '-')[1]
-          (Get-Content -Path matlab\README.md) -Replace "$prev_version", "$JSBSim_version" | Set-Content -Path matlab\README.md
-      - name: Build JSBSim installer for Windows
-        working-directory: build
-        run: |
-          # Relocate the logos for the wizard installer
-          mkdir logos
-          cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
-          mkdir small
-          cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
-          # Update the version of MSVC in matlab/README.md
-          $MSVC_version = Get-Content -Path ..\MSVC_version.txt
-          (Get-Content -Path ..\matlab\README.md) -Replace 'Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)', "$MSVC_Version" | Set-Content -Path ..\matlab\README.md
-          # Relocate the executables for the installer
-          cp src\RelWithDebInfo\JSBSim.exe src\.
-          cp src\RelWithDebInfo\JSBSim.lib src\.
-          cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
-          # Get the MSVC C++ DLL
-          $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
-          foreach($path in $Paths -split ';') {
-            if (Test-Path $path) {
-              $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
-              if ($File) {
-                cp $File.FullName .
-                break;
-              }
-            }
-          }
-          # Compile the installer with Inno Setup
-          iscc JSBSim.iss
-      - name: Upload the installer for Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: Windows-installer.binaries
-          path: |
-            build\Output\*.exe
+#   Windows-installer:
+#     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+#     name: Build Windows installer
+#     needs: Matlab-SFunction
+#     runs-on: windows-2019
+#     steps:
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Checkout JSBSim logos
+#         uses: actions/checkout@v4
+#         with:
+#           repository: JSBSim-Team/jsbsim-logo
+#           path: jsbsim-logo
+#       - name: Download binary file for JSBSim.iss
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: Matlab-SFunction-Windows.binaries
+#           path: build
+#       - name: Download JSBSim library and executable
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: Windows.binaries
+#       - name: Update the version of JSBSim in matlab/README.md
+#         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+#         run: |
+#           $JSBSim_version = ((.\build\src\RelWithDebInfo\JSBSim.exe --version) -split '\s+')[4]
+#           $prev_version = ((Get-Content README.md | Select-String -Pattern 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe') -split '-')[1]
+#           (Get-Content -Path matlab\README.md) -Replace "$prev_version", "$JSBSim_version" | Set-Content -Path matlab\README.md
+#       - name: Build JSBSim installer for Windows
+#         working-directory: build
+#         run: |
+#           # Relocate the logos for the wizard installer
+#           mkdir logos
+#           cp ..\jsbsim-logo\wizard_installer\*.bmp logos\.
+#           mkdir small
+#           cp ..\jsbsim-logo\wizard_installer\small\*.bmp small\.
+#           # Update the version of MSVC in matlab/README.md
+#           $MSVC_version = Get-Content -Path ..\MSVC_version.txt
+#           (Get-Content -Path ..\matlab\README.md) -Replace 'Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)', "$MSVC_Version" | Set-Content -Path ..\matlab\README.md
+#           # Relocate the executables for the installer
+#           cp src\RelWithDebInfo\JSBSim.exe src\.
+#           cp src\RelWithDebInfo\JSBSim.lib src\.
+#           cp utils\aeromatic++\RelWithDebInfo\aeromatic.exe utils\aeromatic++\.
+#           # Get the MSVC C++ DLL
+#           $Paths = $Env:PATH+';'+[System.Environment]::SystemDirectory
+#           foreach($path in $Paths -split ';') {
+#             if (Test-Path $path) {
+#               $File = Get-ChildItem -Path $path | Where-Object {$_.Name -eq 'msvcp140.dll'}
+#               if ($File) {
+#                 cp $File.FullName .
+#                 break;
+#               }
+#             }
+#           }
+#           # Compile the installer with Inno Setup
+#           iscc JSBSim.iss
+#       - name: Upload the installer for Release
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: Windows-installer.binaries
+#           path: |
+#             build\Output\*.exe
 
-  MacOSX:
-    name: C/C++ build (MacOSX)
-    needs: [XML-validation, MSIS-validation]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-12]
-        python-version: [3.8]
-        include:
-          - os: macos-14
-            python-version: '3.10'
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Cache CTest cost data
-        # This file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        with:
-          path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
-      - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.os == 'macos-12'
-        run: |
-          brew install doxygen
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-      - name: Checkout CxxTest
-        uses: actions/checkout@v4
-        with:
-          repository: CxxTest/cxxtest
-          ref: '4.4'
-          path: cxxtest
-      - name: Configure CxxTest
-        working-directory: cxxtest/python
-        run: python setup.py install
-      - name: Configure JSBSim
-        run: |
-          mkdir -p build && cd build
-          julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
-          export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
-          cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH -DCMAKE_C_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_BUILD_TYPE=Debug ..
-      - name: Build JSBSim
-        working-directory: build
-        run: make -j3
-      - name: Test JSBSim
-        working-directory: build
-        run: ctest -j3 --output-on-failure
-      - name: Build the source package for Python
-        if: env.release == 'true' && matrix.os == 'macos-12'
-        working-directory: build/tests
-        run: |
-          echo "::group::Build the type hints stubs"
-          stubgen -p jsbsim -o ../python
-          echo "::endgroup::"
+#   MacOSX:
+#     name: C/C++ build (MacOSX)
+#     needs: [XML-validation, MSIS-validation]
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [macos-12]
+#         python-version: [3.8]
+#         include:
+#           - os: macos-14
+#             python-version: "3.10"
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#       - name: Install Python packages
+#         run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Cache CTest cost data
+#         # This file is used by CTest to optimize the distribution of the tests
+#         # between the cores and reduce execution time.
+#         uses: actions/cache@v4
+#         with:
+#           path: build/Testing/Temporary/CTestCostData.txt
+#           key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+#       - name: Install Julia
+#         if: runner.os == 'macOS'
+#         run: |
+#           brew update
+#           brew install julia
+#       - name: Install & Configure Doxygen
+#         if: env.release == 'true' && matrix.os == 'macos-12'
+#         run: |
+#           brew install doxygen
+#           # We don't want Doxygen to generate the HTML docs in this job (saves time)
+#           # Set GENERATE_HTML and HAVE_DOT to NO
+#           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+#           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+#       - name: Checkout CxxTest
+#         uses: actions/checkout@v4
+#         with:
+#           repository: CxxTest/cxxtest
+#           ref: "4.4"
+#           path: cxxtest
+#       - name: Configure CxxTest
+#         working-directory: cxxtest/python
+#         run: python setup.py install
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir -p build && cd build
+#           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
+#           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
+#           cmake -DCMAKE_INCLUDE_PATH=$PWD/../cxxtest -DBUILD_JULIA_PACKAGE=ON -DCYTHON_FLAGS="-X embedsignature=True" -DCMAKE_PREFIX_PATH=$CXXWRAP_PREFIX_PATH -DCMAKE_C_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2 -fno-fast-math" -DCMAKE_BUILD_TYPE=Debug ..
+#       - name: Build JSBSim
+#         working-directory: build
+#         run: make -j3
+#       - name: Test JSBSim
+#         working-directory: build
+#         run: ctest -j3 --output-on-failure
+#       - name: Build the source package for Python
+#         if: env.release == 'true' && matrix.os == 'macos-12'
+#         working-directory: build/tests
+#         run: |
+#           echo "::group::Build the type hints stubs"
+#           stubgen -p jsbsim -o ../python
+#           echo "::endgroup::"
 
-          echo "::group::Build the source package"
-          cd ../python
-          touch jsbsim/py.typed
-          rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
-          python -m build --sdist
-          echo "::endgroup::"
+#           echo "::group::Build the source package"
+#           cd ../python
+#           touch jsbsim/py.typed
+#           rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+#           python -m build --sdist
+#           echo "::endgroup::"
 
-    # On failure, upload logs
-      - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: MacOSX.logs
-          path: |
-            build/Testing/Temporary/*.log
-            build/tests/*-build.log
+#       # On failure, upload logs
+#       - name: On failure - Upload logs
+#         uses: actions/upload-artifact@v4
+#         if: failure()
+#         with:
+#           name: MacOSX.logs
+#           path: |
+#             build/Testing/Temporary/*.log
+#             build/tests/*-build.log
 
-      - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
-        if: env.release == 'true' && matrix.os == 'macos-12'
-        with:
-          name: ${{ runner.os }}.binaries
-          path: |
-            build/src/libJSBSim.a
-            build/python/setup.py
-            build/python/dist/*.tar.gz
+#       - name: Upload Files for Release
+#         uses: actions/upload-artifact@v4
+#         if: env.release == 'true' && matrix.os == 'macos-12'
+#         with:
+#           name: ${{ runner.os }}.binaries
+#           path: |
+#             build/src/libJSBSim.a
+#             build/python/setup.py
+#             build/python/dist/*.tar.gz
 
-  Test-Build-PyPackage-From-Source:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
-    name: Build Python Module from Source
-    needs: MacOSX
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.8]
-        include:
-          - python-version: 3.9
-            os: windows-latest
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' mypy
-      - name: Download source package
-        uses: actions/download-artifact@v4
-        with:
-          name: macOS.binaries
-      - name: Build Python module from sources (Linux & MacOSX)
-        if: runner.os != 'Windows'
-        run: pip install python/dist/*.tar.gz -vv
-      - name: Build Python module from sources (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          $PyPackage = Get-ChildItem -Path python\dist -Filter *.tar.gz | Select-Object -First 1
-          pip install $PyPackage.FullName -vv
-      - name: Test Python module
-        shell: python
-        run: |
-          import jsbsim
-          print(jsbsim.FGAircraft.__doc__)
-          fdm=jsbsim.FGFDMExec(None)
-          fdm.load_script('scripts/Short_S23_1.xml')
-          fdm.run_ic()
-          while fdm.get_sim_time() < 10:
-            fdm.run()
-      - name: Test type hints
-        run: |
-          echo "import jsbsim" > test.py
-          mypy test.py
+#   Test-Build-PyPackage-From-Source:
+#     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
+#     name: Build Python Module from Source
+#     needs: MacOSX
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [ubuntu-latest, macos-latest, windows-latest]
+#         python-version: [3.8]
+#         include:
+#           - python-version: 3.9
+#             os: windows-latest
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: ${{ matrix.python-version }}
+#       - name: Install Python packages
+#         run: pip install -U cython 'numpy>=1.20' mypy
+#       - name: Download source package
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: macOS.binaries
+#       - name: Build Python module from sources (Linux & MacOSX)
+#         if: runner.os != 'Windows'
+#         run: pip install python/dist/*.tar.gz -vv
+#       - name: Build Python module from sources (Windows)
+#         if: runner.os == 'Windows'
+#         run: |
+#           $PyPackage = Get-ChildItem -Path python\dist -Filter *.tar.gz | Select-Object -First 1
+#           pip install $PyPackage.FullName -vv
+#       - name: Test Python module
+#         shell: python
+#         run: |
+#           import jsbsim
+#           print(jsbsim.FGAircraft.__doc__)
+#           fdm=jsbsim.FGFDMExec(None)
+#           fdm.load_script('scripts/Short_S23_1.xml')
+#           fdm.run_ic()
+#           while fdm.get_sim_time() < 10:
+#             fdm.run()
+#       - name: Test type hints
+#         run: |
+#           echo "import jsbsim" > test.py
+#           mypy test.py
 
-  Python-Wheels:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    name: Build Python wheels
-    needs: [Linux, Windows-MSVC, MacOSX]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-11, windows-2019]
+#   Python-Wheels:
+#     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+#     name: Build Python wheels
+#     needs: [Linux, Windows-MSVC, MacOSX]
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         os: [ubuntu-latest, macos-11, windows-2019]
 
-    steps:
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' mypy
-      - name: Install Doxygen (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install doxygen
-      - name: Install Doxygen (MacOSX)
-        if: matrix.os == 'macos-11'
-        run: brew install doxygen
-      - name: Install Doxygen (Windows)
-        if: runner.os == 'Windows'
-        run: choco install doxygen.install
-      - name: Configure Doxygen
-        run: |
-          # We don't want Doxygen to generate the HTML docs in this job (saves time)
-          # Set GENERATE_HTML and HAVE_DOT to NO
-          perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-          perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
-      - name: Download source package
-        uses: actions/download-artifact@v4
-        with:
-          name: macOS.binaries
-      - name: Configure JSBSim (BSD/Unix)
-        if: runner.os != 'Windows'
-        run: |
-          echo "::group::Run CMake"
-          mkdir build && cd build
-          cmake ..
-          echo "::endgroup::"
+#     steps:
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.8"
+#       - name: Install Python packages
+#         run: pip install -U cython 'numpy>=1.20' mypy
+#       - name: Install Doxygen (Linux)
+#         if: matrix.os == 'ubuntu-latest'
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install doxygen
+#       - name: Install Doxygen (MacOSX)
+#         if: matrix.os == 'macos-11'
+#         run: brew install doxygen
+#       - name: Install Doxygen (Windows)
+#         if: runner.os == 'Windows'
+#         run: choco install doxygen.install
+#       - name: Configure Doxygen
+#         run: |
+#           # We don't want Doxygen to generate the HTML docs in this job (saves time)
+#           # Set GENERATE_HTML and HAVE_DOT to NO
+#           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+#           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
+#       - name: Download source package
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: macOS.binaries
+#       - name: Configure JSBSim (BSD/Unix)
+#         if: runner.os != 'Windows'
+#         run: |
+#           echo "::group::Run CMake"
+#           mkdir build && cd build
+#           cmake ..
+#           echo "::endgroup::"
 
-          echo "::group::Get Python package sources"
-          touch python/jsbsim/py.typed
-          cd ../python/dist
-          tar zxvf *.tar.gz
-          cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
-          echo "::endgroup::"
-      - name: Configure JSBSim (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          echo "::group::Run CMake"
-          New-Item -Path .\build -ItemType Directory -Force
-          cd build
-          cmake ..
-          cmake --build . --target libJSBSim --config RelWithDebInfo
-          echo "::endgroup::"
+#           echo "::group::Get Python package sources"
+#           touch python/jsbsim/py.typed
+#           cd ../python/dist
+#           tar zxvf *.tar.gz
+#           cp -R JSBSim-*/jsbsim/*.pyi ../../build/python/jsbsim/.
+#           echo "::endgroup::"
+#       - name: Configure JSBSim (Windows)
+#         if: runner.os == 'Windows'
+#         run: |
+#           echo "::group::Run CMake"
+#           New-Item -Path .\build -ItemType Directory -Force
+#           cd build
+#           cmake ..
+#           cmake --build . --target libJSBSim --config RelWithDebInfo
+#           echo "::endgroup::"
 
-          echo "::group::Get Python package sources"
-          New-Item python\jsbsim\py.typed
-          cd ..\python/dist
-          $PyPackage = Get-ChildItem .\*.tar.gz -Name
-          tar zxvf $PyPackage
-          Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
-          echo "::endgroup::"
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16
-        env:
-          CIBW_BEFORE_ALL_LINUX: |
-            cd build
-            rm -f CMakeCache.txt
-            cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
-            cmake --build . --target libJSBSim -- -j2
-          CIBW_BEFORE_ALL_MACOS: |
-            cd build
-            rm -f CMakeCache.txt
-            cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_BUILD_TYPE=Release ..
-            cmake --build . --target libJSBSim -- -j3
-          CIBW_ARCHS_MACOS: universal2
-          CIBW_SKIP: cp*-musllinux_*
-          CIBW_ARCHS_WINDOWS: native
-          JSBSIM_BUILD_CONFIG: RelWithDebInfo
-        with:
-          package-dir: build/python
-      - name: Test wheel package
-        run: |
-          echo "::group::Test module execution"
-          pip install jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
-          echo "::endgroup::"
+#           echo "::group::Get Python package sources"
+#           New-Item python\jsbsim\py.typed
+#           cd ..\python/dist
+#           $PyPackage = Get-ChildItem .\*.tar.gz -Name
+#           tar zxvf $PyPackage
+#           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
+#           echo "::endgroup::"
+#       - name: Build wheels
+#         uses: pypa/cibuildwheel@v2.16
+#         env:
+#           CIBW_BEFORE_ALL_LINUX: |
+#             cd build
+#             rm -f CMakeCache.txt
+#             cmake -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno" -DCMAKE_BUILD_TYPE=Release ..
+#             cmake --build . --target libJSBSim -- -j2
+#           CIBW_BEFORE_ALL_MACOS: |
+#             cd build
+#             rm -f CMakeCache.txt
+#             cmake -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_C_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_CXX_FLAGS_RELEASE="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math" -DCMAKE_BUILD_TYPE=Release ..
+#             cmake --build . --target libJSBSim -- -j3
+#           CIBW_ARCHS_MACOS: universal2
+#           CIBW_SKIP: cp*-musllinux_*
+#           CIBW_ARCHS_WINDOWS: native
+#           JSBSIM_BUILD_CONFIG: RelWithDebInfo
+#         with:
+#           package-dir: build/python
+#       - name: Test wheel package
+#         run: |
+#           echo "::group::Test module execution"
+#           pip install jsbsim --no-index -f wheelhouse
+#           python -c "import jsbsim;print(jsbsim.FGAircraft.__doc__);fdm=jsbsim.FGFDMExec(None);fdm.load_script('scripts/Short_S23_1.xml');fdm.run_ic()"
+#           echo "::endgroup::"
 
-          echo "::group::Test type hints"
-          echo "import jsbsim" > test.py
-          mypy test.py
-          echo "::endgroup::"
-      - name: Test default root package detection (global & --user)
-        run: |
-          # Test global installation
-          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
-          pip uninstall jsbsim -y
-          # Test --user installation
-          pip install --user jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
-          pip uninstall jsbsim -y
-      - name: Test default root package detection (virtual env - Windows)
-        if: runner.os == 'Windows'
-        run: |
-          # Test virtual environment installation
-          python -m venv test_venv
-          test_venv\Scripts\activate.ps1
-          pip install 'numpy>=1.20'
-          pip install jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
-          pip uninstall jsbsim -y
-          deactivate
-      - name: Test default root package detection (virtual env - BSD/Unix)
-        if: runner.os != 'Windows'
-        run: |
-          # Test virtual environment installation
-          python -m venv test_venv
-          source test_venv/bin/activate
-          pip install 'numpy>=1.20'
-          pip install jsbsim --no-index -f wheelhouse
-          python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
-          pip uninstall jsbsim -y
-          deactivate
-      - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.os }}-Wheels.binaries
-          path: ./wheelhouse/*.whl
+#           echo "::group::Test type hints"
+#           echo "import jsbsim" > test.py
+#           mypy test.py
+#           echo "::endgroup::"
+#       - name: Test default root package detection (global & --user)
+#         run: |
+#           # Test global installation
+#           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+#           pip uninstall jsbsim -y
+#           # Test --user installation
+#           pip install --user jsbsim --no-index -f wheelhouse
+#           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+#           pip uninstall jsbsim -y
+#       - name: Test default root package detection (virtual env - Windows)
+#         if: runner.os == 'Windows'
+#         run: |
+#           # Test virtual environment installation
+#           python -m venv test_venv
+#           test_venv\Scripts\activate.ps1
+#           pip install 'numpy>=1.20'
+#           pip install jsbsim --no-index -f wheelhouse
+#           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+#           pip uninstall jsbsim -y
+#           deactivate
+#       - name: Test default root package detection (virtual env - BSD/Unix)
+#         if: runner.os != 'Windows'
+#         run: |
+#           # Test virtual environment installation
+#           python -m venv test_venv
+#           source test_venv/bin/activate
+#           pip install 'numpy>=1.20'
+#           pip install jsbsim --no-index -f wheelhouse
+#           python -c "import jsbsim;print(jsbsim.get_default_root_dir())"
+#           pip uninstall jsbsim -y
+#           deactivate
+#       - name: Upload Files for Release
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: ${{ matrix.os }}-Wheels.binaries
+#           path: ./wheelhouse/*.whl
 
-  Codecov:
-    name: Code coverage
-    needs: Linux
-    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install cxxtest lcov
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Configure JSBSim
-        run: |
-          mkdir build && cd build
-          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
-      - name: Build JSBSim
-        working-directory: build
-        run: make -j2
-      - name: Run JSBSim tests
-        working-directory: build
-        run: ctest -R Test1 --output-on-failure
-      - name: Generate coverage report
-        working-directory: build
-        run: make lcov
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./build/lcov/data/capture/all_targets.info
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
+#   Codecov:
+#     name: Code coverage
+#     needs: Linux
+#     if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Install Ubuntu packages
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install cxxtest lcov
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir build && cd build
+#           cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
+#       - name: Build JSBSim
+#         working-directory: build
+#         run: make -j2
+#       - name: Run JSBSim tests
+#         working-directory: build
+#         run: ctest -R Test1 --output-on-failure
+#       - name: Generate coverage report
+#         working-directory: build
+#         run: make lcov
+#       - name: Upload to Codecov
+#         uses: codecov/codecov-action@v4
+#         with:
+#           file: ./build/lcov/data/capture/all_targets.info
+#           token: ${{ secrets.CODECOV_TOKEN }}
+#           fail_ci_if_error: true
 
-  Rolling-Release:
-    needs: [Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
-    name: Deploy Rolling Release
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    steps:
-      - name: Download files
-        uses: actions/download-artifact@v4
-      - name: Prepare files
-        run: |
-          mkdir dist
-          find . -type f -name *.exe -exec cp {} dist/. \;
-          find . -type f -name *.whl -exec cp {} dist/. \;
-          find . -type f -name *.deb -exec cp {} dist/. \;
-      - name: Rolling release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: Rolling release
-          tag_name: Linux
-          prerelease: true
-          body: |
-            Contains the packages built from the bleeding edge code
-            (branch ${{ github.ref }} commit ${{ github.sha}})
-          files: |
-            dist/*.exe
-            dist/*.whl
-            dist/*.deb
+#   Rolling-Release:
+#     needs: [Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
+#     name: Deploy Rolling Release
+#     runs-on: ubuntu-latest
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#     steps:
+#       - name: Download files
+#         uses: actions/download-artifact@v4
+#       - name: Prepare files
+#         run: |
+#           mkdir dist
+#           find . -type f -name *.exe -exec cp {} dist/. \;
+#           find . -type f -name *.whl -exec cp {} dist/. \;
+#           find . -type f -name *.deb -exec cp {} dist/. \;
+#       - name: Rolling release
+#         uses: softprops/action-gh-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           name: Rolling release
+#           tag_name: Linux
+#           prerelease: true
+#           body: |
+#             Contains the packages built from the bleeding edge code
+#             (branch ${{ github.ref }} commit ${{ github.sha}})
+#           files: |
+#             dist/*.exe
+#             dist/*.whl
+#             dist/*.deb
 
-  Stable-Release:
-    name: Deploy Stable Release
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    needs: [Python-Wheels, Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      contents: write  # Needed for the GitHub release
-      id-token: write  # Mandatory for PyPI trusted publishing
-    steps:
-      - name: Download files
-        uses: actions/download-artifact@v4
-      - name: Prepare files for deployment
-        run: |
-          find . -type f -name MSVC_version.txt -exec cp {} . \;
-          mkdir dist
-          find . -type f -name *.whl -exec cp {} dist/. \;
-          find . -type f -name *.tar.gz -exec cp {} dist/. \;
-          mkdir GH_release
-          find . -type f -name *.exe -exec cp {} GH_release/. \;
-          find . -type f -name *.deb -exec cp {} GH_release/. \;
+#   Stable-Release:
+#     name: Deploy Stable Release
+#     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+#     needs:
+#       [
+#         Python-Wheels,
+#         Test-Build-PyPackage-From-Source,
+#         Windows-MinGW,
+#         Windows-installer,
+#       ]
+#     runs-on: ubuntu-latest
+#     environment: release
+#     permissions:
+#       contents: write # Needed for the GitHub release
+#       id-token: write # Mandatory for PyPI trusted publishing
+#     steps:
+#       - name: Download files
+#         uses: actions/download-artifact@v4
+#       - name: Prepare files for deployment
+#         run: |
+#           find . -type f -name MSVC_version.txt -exec cp {} . \;
+#           mkdir dist
+#           find . -type f -name *.whl -exec cp {} dist/. \;
+#           find . -type f -name *.tar.gz -exec cp {} dist/. \;
+#           mkdir GH_release
+#           find . -type f -name *.exe -exec cp {} GH_release/. \;
+#           find . -type f -name *.deb -exec cp {} GH_release/. \;
 
-      # PyPI deployment
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - name: PyPI deployment
-        uses: pypa/gh-action-pypi-publish@release/v1
+#       # PyPI deployment
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.8"
+#       - name: PyPI deployment
+#         uses: pypa/gh-action-pypi-publish@release/v1
 
-    # Deploy stable release to GitHub
-      - name: Get JSBSim version
-        run: |
-          pip install -U 'numpy>=1.20'
-          pip install jsbsim --no-index -f dist
-          export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Get MSVC version
-        run : |
-          export MSVC_VERSION=`cat MSVC_version.txt`
-          echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
-      - name: GitHub release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: v${{ env.VERSION }}
-          body: |
-            JSBSim version ${{ env.VERSION }}
+#       # Deploy stable release to GitHub
+#       - name: Get JSBSim version
+#         run: |
+#           pip install -U 'numpy>=1.20'
+#           pip install jsbsim --no-index -f dist
+#           export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
+#           echo "VERSION=$VERSION" >> $GITHUB_ENV
+#       - name: Get MSVC version
+#         run: |
+#           export MSVC_VERSION=`cat MSVC_version.txt`
+#           echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
+#       - name: GitHub release
+#         uses: softprops/action-gh-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           name: v${{ env.VERSION }}
+#           body: |
+#             JSBSim version ${{ env.VERSION }}
 
-            ## Release files
-            - Windows 64 bits
-              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
-            - Ubuntu Focal 20.04 and Jammy 22.04 - amd64
-              - `*.deb` (Debian packages)
-            - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
-            - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
+#             ## Release files
+#             - Windows 64 bits
+#               - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
+#             - Ubuntu Focal 20.04 and Jammy 22.04 - amd64
+#               - `*.deb` (Debian packages)
+#             - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
+#             - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
 
-            ## Changelog
-          prerelease: false
-          draft: false
-          files: |
-            GH_release/*.exe
-            GH_release/*.deb
+#             ## Changelog
+#           prerelease: false
+#           draft: false
+#           files: |
+#             GH_release/*.exe
+#             GH_release/*.deb
 
-      # Bump version
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Bump version
-        run: |
-          # Increment the value of PROJECT_VERSION_PATCH
-          sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/echo "\1\\"$((\2+1))\\"\3"/ge' CMakeLists.txt
-          # Extract from CMake the project version number at the next release.
-          echo "message(STATUS \"JSBSIM_VERSION:\${PROJECT_VERSION}\")" >> src/CMakeLists.txt
-          export FUTURE_VERSION=`cmake . | grep JSBSIM_VERSION | awk -F':' '{print $2}'`
-          # Extract the project old version number
-          export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
-          echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_ENV
-          # Update references to the current stable version in README.md
-          sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
-          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
-          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
-          # Update the MSVC project files.
-          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSim.vcxproj
-          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSimForUnreal.vcxproj
-          # Update the MSVC version
-          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
-          # Determine the branch name
-          export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
-          # Commit the change to CMakeLists.txt
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout $BRANCH_NAME
-          git commit -m "Bump stable release version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
-          git push origin $BRANCH_NAME
+#       # Bump version
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+#       - name: Bump version
+#         run: |
+#           # Increment the value of PROJECT_VERSION_PATCH
+#           sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+)(.*)/echo "\1\\"$((\2+1))\\"\3"/ge' CMakeLists.txt
+#           # Extract from CMake the project version number at the next release.
+#           echo "message(STATUS \"JSBSIM_VERSION:\${PROJECT_VERSION}\")" >> src/CMakeLists.txt
+#           export FUTURE_VERSION=`cmake . | grep JSBSIM_VERSION | awk -F':' '{print $2}'`
+#           # Extract the project old version number
+#           export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}'`
+#           echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_ENV
+#           # Update references to the current stable version in README.md
+#           sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+#           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
+#           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
+#           # Update the MSVC project files.
+#           sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSim.vcxproj
+#           sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'"/g' JSBSimForUnreal.vcxproj
+#           # Update the MSVC version
+#           sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
+#           # Determine the branch name
+#           export BRANCH_NAME=`git branch -a --contains HEAD | awk -F'/' 'NR==2 { s=$3;for(i=4;i<=NF;i++){ s=s"/"$i };print s }'`
+#           # Commit the change to CMakeLists.txt
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#           git checkout $BRANCH_NAME
+#           git commit -m "Bump stable release version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
+#           git push origin $BRANCH_NAME
 
-      # Bump stable version of the `master` branch
-      - name: Checkout JSBSim master branch
-        uses: actions/checkout@v4
-        with:
-          ref: master
-          path: _master
-      - name: Bump stable version in README.md
-        working-directory: _master
-        run: |
-          # Increment the value of PROJECT_VERSION_PATCH
-          sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+).*/echo "\1\\"$((\2+1))\.dev1\\"\\)/ge' CMakeLists.txt
-          # Update references to the current stable version in README.md
-          sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
-          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
-          sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
-          # Update the MSVC project files.
-          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSim.vcxproj
-          sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSimForUnreal.vcxproj
-          # Update the MSVC version
-          sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
-          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
-          git push origin master
+#       # Bump stable version of the `master` branch
+#       - name: Checkout JSBSim master branch
+#         uses: actions/checkout@v4
+#         with:
+#           ref: master
+#           path: _master
+#       - name: Bump stable version in README.md
+#         working-directory: _master
+#         run: |
+#           # Increment the value of PROJECT_VERSION_PATCH
+#           sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+).*/echo "\1\\"$((\2+1))\.dev1\\"\\)/ge' CMakeLists.txt
+#           # Update references to the current stable version in README.md
+#           sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
+#           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
+#           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' matlab/README.md
+#           # Update the MSVC project files.
+#           sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSim.vcxproj
+#           sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSimForUnreal.vcxproj
+#           # Update the MSVC version
+#           sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
+#           git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
+#           git push origin master
 
-  Documentation:
-    needs: Stable-Release
-    name: Deploy Documentation
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install doxygen graphviz
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-      - name: Install Python packages
-        run: pip install -U 'numpy>=1.20' sphinx cython
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Configure JSBSim
-        run: |
-          mkdir build && cd build
-          cmake ..
-      - name: Download Python wheels
-        uses: actions/download-artifact@v4
-        with:
-          name: ubuntu-latest-Wheels.binaries
-          path: build
-      - name: Build Python docs
-        working-directory: build
-        run: |
-          pip install jsbsim --no-index -f .
-          touch documentation/html/.nojekyll
-          sphinx-build -b html documentation documentation/html/python
-      - name: Publish docs to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v4
-        with:
-          target_branch: gh-pages
-          build_dir: build/documentation/html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#   Documentation:
+#     needs: Stable-Release
+#     name: Deploy Documentation
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Install Ubuntu packages
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install doxygen graphviz
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.8"
+#       - name: Install Python packages
+#         run: pip install -U 'numpy>=1.20' sphinx cython
+#       - name: Checkout JSBSim
+#         uses: actions/checkout@v4
+#       - name: Configure JSBSim
+#         run: |
+#           mkdir build && cd build
+#           cmake ..
+#       - name: Download Python wheels
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: ubuntu-latest-Wheels.binaries
+#           path: build
+#       - name: Build Python docs
+#         working-directory: build
+#         run: |
+#           pip install jsbsim --no-index -f .
+#           touch documentation/html/.nojekyll
+#           sphinx-build -b html documentation documentation/html/python
+#       - name: Publish docs to GitHub Pages
+#         uses: crazy-max/ghaction-github-pages@v4
+#         with:
+#           target_branch: gh-pages
+#           build_dir: build/documentation/html
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

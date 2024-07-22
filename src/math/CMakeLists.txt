@@ -10,7 +10,9 @@ set(SOURCES FGColumnVector3.cpp
             FGRungeKutta.cpp
             FGModelFunctions.cpp
             FGTemplateFunc.cpp
-            FGStateSpace.cpp)
+            FGStateSpace.cpp
+            FGMatrix.cpp
+            Interpolation.cpp)
 
 set(HEADERS FGColumnVector3.h
             FGFunction.h
@@ -28,7 +30,9 @@ set(HEADERS FGColumnVector3.h
             FGTemplateFunc.h
             FGFunctionValue.h
             FGParameterValue.h
-            FGStateSpace.h)
+            FGStateSpace.h
+            FGMatrix.h
+            Interpolation.h)
 
 add_library(Math OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Math PROPERTIES TARGET_DIRECTORY

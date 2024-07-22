@@ -38,7 +38,8 @@ INCLUDES
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGFunctionValue.h"
-
+#include "FGMatrix.h"
+#include "Interpolation.h"
 
 using namespace std;
 
@@ -310,7 +311,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
-      
+
   auto sum = [](const decltype(Parameters)& Parameters)->double {
                double temp = 0.0;
 
@@ -319,7 +320,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                return temp;
              };
-  
+
   while (element) {
     string operation = element->GetName();
 
@@ -374,6 +375,9 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       }
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
+    } else if (operation == "matrix") {
+      std::cout << "adding matrix" << endl;
+      Parameters.push_back(new FGMatrix(element));
     } else if (operation == "product") {
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = 1.0;
@@ -720,6 +724,33 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 5>(f, fdmex, element, Prefix,
                                                      var, MaxArgs, OddEven::Odd));
+    } else if (operation == "interpolatend") {
+        auto f = [](const decltype(Parameters)& p)->double {
+                const FGMatrix* matrix = nullptr;
+                vector<double> independent_vars;
+
+                for (auto param : p) {
+                    if (auto mat = dynamic_cast<FGMatrix*>(param.ptr())) {
+                        matrix = mat;
+                    } else {
+                        independent_vars.push_back(param->GetValue());
+                    }
+                }
+
+                if (!matrix) {
+                    cerr << "Error: No matrix found for interpolatend" << endl;
+                    throw("Fatal Error");
+                }
+
+                if (independent_vars.size() != matrix->GetNumDimensions()) {
+                    cerr << "Error: Number of independent variables does not match matrix dimensions" << endl;
+                    throw("Fatal Error");
+                }
+                // Perform n-dimensional interpolation using the stored PointCloud
+                return interpolate(independent_vars, matrix->pointCloud);
+        };
+        Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix,
+                                                var, MaxArgs));
     } else if (operation == "rotation_alpha_local") {
       // Calculates local angle of attack for skydiver body component.
       // Euler angles from the intermediate body frame to the local body frame
@@ -767,10 +798,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  double sina = sin(alpha_local);
                  double cosb;
 
-                 if (fabs(cosa) > fabs(sina)) 
+                 if (fabs(cosa) > fabs(sina))
                    cosb = wind_local(eX) / cosa;
                  else
-                   cosb = wind_local(eZ) / sina;  
+                   cosb = wind_local(eZ) / sina;
 
                  return atan2(wind_local(eY), cosb)*radtodeg;
                };
@@ -954,7 +985,7 @@ void FGFunction::cacheValue(bool cache)
     cached = true;
   }
 }
-  
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGFunction::GetValue(void) const
