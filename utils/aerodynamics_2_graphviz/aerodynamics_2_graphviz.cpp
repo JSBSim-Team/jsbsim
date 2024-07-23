@@ -11,7 +11,10 @@ std::string aerodynamics_2_graphviz::GetVersion()
     return version;
 }
 
-void aerodynamics_2_graphviz::graph_jsbsim_fdm_aerodynamics(std::shared_ptr<JSBSim::FGFDMExec> fdm, const std::string output_filename)
+void aerodynamics_2_graphviz::graph_jsbsim_fdm_aerodynamics(std::shared_ptr<JSBSim::FGFDMExec> fdm
+  , const std::string output_filename
+  , bool show_table_png
+)
 {
   auto model_name = fdm->GetModelName();
   if (model_name.size() == 0) {
@@ -22,32 +25,63 @@ void aerodynamics_2_graphviz::graph_jsbsim_fdm_aerodynamics(std::shared_ptr<JSBS
   auto aero_dynamics = fdm->GetAerodynamics();
   auto aero_functions = aero_dynamics->GetAeroFunctions();
 
-  gvpp::Graph<> g(true, model_name);
-  g.set(gvpp::AttrType::GRAPH, "nodesep", "0.1");
-  g.set(gvpp::AttrType::GRAPH, "rankdir", "LR");
+  gvpp::Graph<> all_axis_graph(true, model_name);
+  all_axis_graph.set(gvpp::AttrType::GRAPH, "nodesep", "0.1");
+  all_axis_graph.set(gvpp::AttrType::GRAPH, "rankdir", "LR");
+  if (imagepath.size() > 0) {
+    all_axis_graph.set(gvpp::AttrType::GRAPH, "imagepath", imagepath);
+  }
 
   for (unsigned int axis_index = 0; axis_index < 6; axis_index++) {
+    gvpp::Graph<> axis_graph(true, model_name);
+    axis_graph.set(gvpp::AttrType::GRAPH, "nodesep", "0.1");
+    axis_graph.set(gvpp::AttrType::GRAPH, "rankdir", "LR");
+    if (imagepath.size() > 0) {
+      axis_graph.set(gvpp::AttrType::GRAPH, "imagepath", imagepath);
+    }
+
     auto axis_functions = &aero_functions[axis_index];
     auto subgraph_name = std::to_string(axis_index);
-    auto& add_subgraph = g.addSubGraph(subgraph_name, true, subgraph_name);
-    jsbsim_subgraphs[axis_index] = &add_subgraph;
+    auto& all_axis_subgraph = all_axis_graph.addSubGraph(subgraph_name, true, subgraph_name);
+    auto& axis_subgraph = axis_graph.addSubGraph(subgraph_name, true, subgraph_name);
+    jsbsim_subgraphs[axis_index] = &all_axis_subgraph;
     for (auto function : *axis_functions) {
-      add_function_edges(axis_index, &add_subgraph, function);
+      add_function_edges(axis_index, &all_axis_subgraph, function,show_table_png);
+
+      add_function_edges(axis_index, &axis_subgraph, function,show_table_png);
+
     }
+    
+    std::string axis_file_name = "";
+    if (output_filename.size() > 0) {
+      axis_file_name = output_filename + "_" + std::to_string(axis_index) + ".dot";
+    }
+    else {
+      axis_file_name = model_name + "_" + std::to_string(axis_index) + ".dot";
+    }
+    write_dot_file(axis_graph, axis_file_name);
+    //gvpp::renderToFile(axis_graph, "dot","png", axis_file_name);
   }
 
-  add_common_nodes_and_edges(&g);
+  add_common_nodes_and_edges(&all_axis_graph);
 
+  std::string all_axis_file_name = "";
   if (output_filename.size() > 0) {
-    gvpp::renderToFile(g, "dot", output_filename + ".dot");
+    all_axis_file_name =  output_filename + ".dot";
   }
   else {
-    gvpp::renderToFile(g, "dot", model_name + ".dot");
+    all_axis_file_name = model_name + ".dot";
   }
+  write_dot_file(all_axis_graph, all_axis_file_name);
+  //gvpp::renderToFile(all_axis_graph, "dot","png", all_axis_file_name);
 
 }
 
-void aerodynamics_2_graphviz::add_function_edges(int axis_index, gvpp::SubGraph<>* graph, const JSBSim::FGFunction* function)
+void aerodynamics_2_graphviz::add_function_edges(int axis_index
+  , gvpp::SubGraph<>* graph
+  , const JSBSim::FGFunction* function
+  , bool show_table_png
+)
 {
   if (function == NULL) {
     return;
@@ -114,6 +148,13 @@ void aerodynamics_2_graphviz::add_function_edges(int axis_index, gvpp::SubGraph<
             add_parameter_node.set("fillcolor", "green");
             break;
           }
+
+          if (show_table_png) {
+            auto image_name = "\"" +parameter_2_table->GetName() + ".png\"";
+            if (image_name.size() > 0) {
+              add_parameter_node.set("image",image_name);
+            }
+          }
         }
       }
 
@@ -130,7 +171,7 @@ void aerodynamics_2_graphviz::add_function_edges(int axis_index, gvpp::SubGraph<
 
     auto parameter_2_function = dynamic_cast<const JSBSim::FGFunction*>(parameter.ptr());
     if (parameter_2_function != NULL) {
-      add_function_edges(axis_index, graph, parameter_2_function);
+      add_function_edges(axis_index, graph, parameter_2_function, show_table_png);
     }
   }
 }
@@ -249,4 +290,23 @@ void aerodynamics_2_graphviz::config_parameter_node_by_name(gvpp::Node<>* node, 
 //#TODO: gen subgraphs for each axis
 void aerodynamics_2_graphviz::graph_jsbsim_fdm_subgraphs()
 {
+}
+
+void aerodynamics_2_graphviz::set_imagepath(const std::string imagepath)
+{
+  this->imagepath = "\"" + imagepath + "\"";
+}
+
+void aerodynamics_2_graphviz::write_dot_file(gvpp::Graph<>& graph, const std::string file_name)
+{
+  std::fstream file;
+  file.open(file_name, std::ios::out); // 以输出模式打开文件
+
+  if (!file) {
+    std::cerr << "Unable to open file!" << std::endl;
+  }
+
+  file << graph;
+  file.flush();
+  file.close(); // 关闭文件
 }

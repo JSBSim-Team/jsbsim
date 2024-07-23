@@ -10,6 +10,8 @@ SGPath RootDir;
 SGPath ScriptName;
 string AircraftName;
 string outputfile;
+string imagepath;
+bool show_table_png;
 std::shared_ptr<JSBSim::FGFDMExec> FDMExec;
 aerodynamics_2_graphviz* viz;
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,6 +28,8 @@ void PrintHelp(void)
   cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
   cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
   cout << "    --script=<filename>  specifies a script to run" << endl;
+  cout << "    --show_table_png=on/off  specifies whether show table png" << endl;
+  cout << "    --imagepath=<path>  specifies table png root directory" << endl;
 
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;
   cout << "        an option is followed by a filename" << endl << endl;
@@ -100,6 +104,29 @@ bool options(int count, char** arg)
         exit(1);
       }
     }
+    else if (keyword == "--show_table_png") {
+      if (n != string::npos) {
+        if (value == "on") {
+          show_table_png = true;
+        }
+        else {
+          show_table_png = false;
+        }
+      }
+      else {
+        gripe;
+        exit(1);
+      }
+    }
+    else if (keyword == "--imagepath") {
+      if (n != string::npos) {
+        imagepath = value;
+      }
+      else {
+        gripe;
+        exit(1);
+      }
+    }
     else //Unknown keyword so print the help file, the bad keyword and abort
     {
       PrintHelp();
@@ -166,5 +193,6 @@ int main(int argc, char* argv[])
   }
   
   viz = new aerodynamics_2_graphviz();
-  viz->graph_jsbsim_fdm_aerodynamics(FDMExec, outputfile);
+  viz->set_imagepath(imagepath);
+  viz->graph_jsbsim_fdm_aerodynamics(FDMExec, outputfile,show_table_png);
 }
