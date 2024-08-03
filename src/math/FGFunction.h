@@ -121,7 +121,7 @@ An operation is defined in the configuration file as in the following example:
 A full function definition, such as is used in the aerodynamics section of a
 configuration file includes the function element, and other elements. It should
 be noted that there can be only one non-optional (non-documentation) element -
-that is, one operation element - in the top-level function definition.
+that is, one operation element or one table element - in the top-level function definition.
 Multiple value and/or property elements cannot be immediate child
 members of the function element. Almost always, the first operation within the
 function element will be a product or sum. For example:
