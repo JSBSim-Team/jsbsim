@@ -1,6 +1,6 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Module:       FGFCS.cpp 
+ Module:       FGFCS.cpp
  Author:       Jon Berndt
  Date started: 12/12/98
  Purpose:      Model the flight controls
@@ -82,7 +82,7 @@ FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm), ChannelRate(1)
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   BrakePos.resize(FGLGear::bgNumBrakeGroups);
-  TailhookPos = WingFoldPos = 0.0; 
+  TailhookPos = WingFoldPos = 0.0;
 
   bind();
   for (i=0;i<NForms;i++) {
@@ -501,14 +501,14 @@ bool FGFCS::Load(Element* document)
   Debug(2);
 
   Element* channel_element = document->FindElement("channel");
-  
+
   while (channel_element) {
-  
+
     FGFCSChannel* newChannel = 0;
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
-    
+
     if (!channel_element->GetAttributeValue("execrate").empty())
       ChannelRate = channel_element->GetAttributeValueAsNumber("execrate");
     else
@@ -522,7 +522,7 @@ bool FGFCS::Load(Element* document)
             << "The On/Off property, " << sOnOffProperty << " specified for channel "
             << channel_element->GetAttributeValue("name") << " is undefined or not "
             << "understood. The simulation will abort" << LogFormat::RESET << endl;
-        throw("Bad system definition");
+        throw BaseException(log.str());
       } else
         newChannel = new FGFCSChannel(this, sChannelName, ChannelRate,
                                       OnOffPropertyNode);
@@ -536,7 +536,7 @@ bool FGFCS::Load(Element* document)
       log << endl << LogFormat::BOLD << LogFormat::BLUE << "    Channel "
           << LogFormat::NORMAL << channel_element->GetAttributeValue("name") << LogFormat::RESET << endl;
     }
-  
+
     Element* component_element = channel_element->GetElement();
     while (component_element) {
       try {
@@ -567,8 +567,10 @@ bool FGFCS::Load(Element* document)
           // <integrator> is equivalent to <pid type="trap">
           Element* c1_el = component_element->FindElement("c1");
           if (!c1_el) {
-            throw("INTEGRATOR component " + component_element->GetAttributeValue("name")
-                  + " does not provide the parameter <c1>");
+            FGXMLLogging log(FDMExec->GetLogger(), component_element, LogLevel::FATAL);
+            log << "INTEGRATOR component " << component_element->GetAttributeValue("name")
+                << " does not provide the parameter <c1>" << endl;
+            throw BaseException(log.str());
           }
           c1_el->ChangeName("ki");
           if (!c1_el->HasAttribute("type"))
