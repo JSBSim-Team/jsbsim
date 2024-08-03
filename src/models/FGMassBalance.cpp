@@ -454,9 +454,9 @@ void FGMassBalance::GetMassPropertiesReport(int i)
   log << endl << LogFormat::BLUE << LogFormat::BOLD
       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
       << LogFormat::RESET << endl;
-  log << "                                  " << underon << "    Weight    CG-X    CG-Y"
+  log << "                                  " << LogFormat::UNDERLINE_ON << "    Weight    CG-X    CG-Y"
       << "    CG-Z         Ixx         Iyy         Izz"
-      << "         Ixy         Ixz         Iyz" << underoff << endl;
+      << "         Ixy         Ixz         Iyz" << LogFormat::UNDERLINE_OFF << endl;
   log << setprecision(1);
   log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << normint
       << right << setw(12) << EmptyWeight
@@ -476,7 +476,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
 
   log << FDMExec->GetPropulsionTankReport();
 
-  log << "    " << underon << setw(136) << " " << underoff << endl;
+  log << "    " << LogFormat::UNDERLINE_ON << setw(136) << " " << LogFormat::UNDERLINE_OFF << endl;
   log << LogFormat::BOLD << left << setw(30) << "    Total: " << right << setw(14) << Weight
       << setw(8) << vXYZcg(eX)
       << setw(8) << vXYZcg(eY)
