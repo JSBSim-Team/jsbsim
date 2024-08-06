@@ -9,16 +9,16 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-  
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-  
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+
 -->
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="Short S.23" version="2.0" release="BETA"
@@ -28,21 +28,20 @@
  <fileheader>
   <author>Anders Gidenstam / DATCOM+ / Aeromatic v 0.9</author>
   <email>anders at gidenstam dot org</email>
+  <license
+   licenseName="GPL"
+   licenseURL="http://www.gnu.org/licenses/gpl.html"/>
 
   <filecreationdate>2008-11-05</filecreationdate>
   <version>$Id: Short_S23.xml,v 1.48 2018/11/12 19:51:36 anders Exp $</version>
 
   <description>Models a Short S.23 flying boat.</description>
 
-  <license>
-   <licenseName>GPL</licenseName>
-   <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-  </license>
   <note>
    This model was created using publicly available data, publicly available
    technical reports, textbooks, and guesses. It contains no proprietary or
    restricted data. It has been validated only to the extent that it may seem
-   to "fly right", and possibly to comply to published, publicly known, 
+   to "fly right", and possibly to comply to published, publicly known,
    performance data (maximum speed, endurance, etc.). Thus, this model is
    meant for educational and entertainment purposes only.
 
@@ -112,13 +111,13 @@
 
 -->
 
- <documentation>
+ <!--
   The origin of the structural frame is at the nose of the aircraft.
   The coordinate system is aligned with the hull datum line.
   "The line of the keel from Frame 10 aft to Frames 20/21 formed the
    hull datum line." [Cassidy:2004:FE]
   Cf. also the 3d model coordinate system in the model XML file.
- </documentation>
+ -->
 
  <metrics>
   <!-- Numbers from DATCOM. Appears to be the theoretical values where not
@@ -159,7 +158,7 @@
  </metrics>
 
  <mass_balance>
-  <documentation>
+  <description>
    The inertia was estimated by Aeromatic.
    CG location X-coordinate is based on [Short:RN-3-1-37].
    However, the document is not very clear. My assumption is that the
@@ -181,7 +180,7 @@
 
    Tare weight according to [Short:RN-3-1-37]: 27845 lbs
    (including passenger compartments and some equipment.
-  </documentation>
+  </description>
   <ixx unit="SLUG*FT2">    251174 </ixx>
   <iyy unit="SLUG*FT2">    180055 </iyy>
   <izz unit="SLUG*FT2">    426351 </izz>
@@ -192,9 +191,9 @@
    <z> 1.10 </z>
   </location>
 
-  <documentation>
+  <!--
    Adjustable payload pointmasses located according to [Short:RN-3-1-37].
-  </documentation>
+  -->
   <!-- Crew -->
   <pointmass name="Pilot">
    <weight unit="KG"> 85 </weight>
@@ -360,9 +359,9 @@
  </mass_balance>
 
  <ground_reactions>
-  <documentation>
+  <description>
    The hydrodynamic interactions of the hull are modelled by external forces.
-  </documentation>
+  </description>
 
   <contact type="STRUCTURE" name="NOSE">
    <location unit="M">
@@ -414,19 +413,81 @@
 
  </ground_reactions>
 
+ <external_reactions>
+
+  <force name="hydro-X" frame="LOCAL">
+   <location unit="M">
+    <x>  8.68 </x>
+    <y>  0.00 </y>
+    <z>  0.00 </z>
+   </location>
+   <direction>
+    <x> 1.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="hydro-Y" frame="LOCAL">
+   <location unit="M">
+    <x>  8.68 </x>
+    <y>  0.00 </y>
+    <z>  0.00 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 1.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="hydro-Z" frame="LOCAL">
+   <location unit="M">
+    <x>  8.68 </x>
+    <y>  0.00 </y>
+    <z>  0.00 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z>-1.0 </z>
+   </direction>
+  </force>
+
+  <moment name="hydro-pitch" frame="BODY">
+   <direction>
+    <x> 0.0 </x>
+    <y> 1.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </moment>
+  <moment name="hydro-roll" frame="BODY">
+   <direction>
+    <x> 1.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </moment>
+  <moment name="hydro-yaw" frame="BODY">
+   <direction>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 1.0 </z>
+   </direction>
+  </moment>
+
+ </external_reactions>
+
  <propulsion>
-  <documentation>
+  <description>
    Propeller location from the plans by [Cassidy:2004:FE].
    Fuel tank location and capacity according to [Cassidy:2004:FE].
 
    Mainplane incidence to thrust line:     1 deg 52 min. [Short:RN-3-1-37]
    Mainplane incidence to hull datum line: 3 deg.        [Short:RN-3-1-37]
-  </documentation>
+  </description>
 
   <engine file="eng_PegasusXc">
    <feed>8</feed>
    <thruster file="prop_deHavilland5000">
-    <sense>-1</sense>
     <location unit="M">
      <x>  6.30 </x>
      <y> -7.50 </y>
@@ -437,13 +498,13 @@
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
+    <sense>-1</sense>
    </thruster>
   </engine>
 
   <engine file="eng_PegasusXc">
    <feed>9</feed>
    <thruster file="prop_deHavilland5000">
-    <sense>-1</sense>
     <location unit="M">
      <x>  6.00 </x>
      <y> -3.98 </y>
@@ -454,13 +515,13 @@
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
+    <sense>-1</sense>
    </thruster>
   </engine>
 
   <engine file="eng_PegasusXc">
    <feed>10</feed>
    <thruster file="prop_deHavilland5000">
-    <sense>-1</sense>
     <location unit="M">
      <x>  6.00 </x>
      <y>  3.98 </y>
@@ -471,13 +532,13 @@
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
+    <sense>-1</sense>
    </thruster>
   </engine>
 
   <engine file="eng_PegasusXc">
    <feed>11</feed>
    <thruster file="prop_deHavilland5000">
-    <sense>-1</sense>
     <location unit="M">
      <x>  6.30 </x>
      <y>  7.50 </y>
@@ -488,13 +549,14 @@
      <roll>  0.00 </roll>
      <yaw>   0.00 </yaw>
     </orient>
+    <sense>-1</sense>
    </thruster>
   </engine>
 
-  <documentation>
+  <!--
     The S.23 'boats as delivered (with a few exceptions) came with one of
     3 different fuel system types. [Cassidy:2004:FE]
-    
+
     Mk.I (1D) standard:
       one 326 gallon tank in each wing.
     Mk.II (1A/1C) Cavalier, Centarus:
@@ -512,7 +574,7 @@
       Mk.I   four  13 1/2 gals.
       Mk.II  four  22 gals.
       Mk.III eight 18 gals.
-  </documentation>
+  -->
 
   <!-- Centre tanks. Present in all 3 fuel systems. -->
   <tank type="FUEL" number="0">
@@ -659,7 +721,7 @@
  </propulsion>
 
  <flight_control name="FCS: Short S.23">
-  <documentation>
+  <description>
    The flight control system creates the properties needed by the
    Aeromatic generated aerodynamic section as well as those needed by the
    DATCOM+ generated aerodynamic section.
@@ -669,7 +731,7 @@
      Elevator : +/-18 deg
      Rudder   : +/-22.5 deg
 
-  </documentation>
+  </description>
 
   <!-- FlightGear multiplayer dual control properties. -->
   <!-- Also used by the take-off autopilot. -->
@@ -809,7 +871,7 @@
      <max>  1.0 </max>
     </clipto>
    </summer>
-   
+
    <aerosurface_scale name="fcs/rudder/pos-rad">
     <input>fcs/rudder/cmd-sum-norm</input>
     <range>
@@ -841,69 +903,6 @@
   </channel>
 
  </flight_control>
-
- <external_reactions>
-
-  <force name="hydro-X" frame="LOCAL">
-   <location unit="M">
-    <x>  8.68 </x>
-    <y>  0.00 </y>
-    <z>  0.00 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="hydro-Y" frame="LOCAL">
-   <location unit="M">
-    <x>  8.68 </x>
-    <y>  0.00 </y>
-    <z>  0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="hydro-Z" frame="LOCAL">
-   <location unit="M">
-    <x>  8.68 </x>
-    <y>  0.00 </y>
-    <z>  0.00 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z>-1.0 </z>
-   </direction>
-  </force>
-
-  <moment name="hydro-pitch" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </moment>
-  <moment name="hydro-roll" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </moment>
-  <moment name="hydro-yaw" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 1.0 </z>
-   </direction>
-  </moment>
-
- </external_reactions>
 
  <system file="hydrodynamics"/>
  <system file="hydrodynamic-planing-floats">

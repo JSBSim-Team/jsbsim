@@ -12,7 +12,7 @@
     stall speed:   74.00kts
     max weight:    12500.00 lb
     length:        51.75 ft
-    wing: 
+    wing:
      span:         65.00 ft
      area:         422.50 sq-ft
      mean chord:   6.47 ft
@@ -44,7 +44,7 @@
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate> 2003-01-01 </filecreationdate>
+        <filecreationdate>2003-01-01</filecreationdate>
         <version> $Id: DHC6.xml,v 1.24 2016/11/29 17:38:48 ehofman Exp $ </version>
         <description> DeHavilland DHC-6 </description>
       <reference title="http://www.aoc.noaa.gov/aircraft_otter.htm"/>
@@ -107,7 +107,7 @@
         </location>
         <pointmass name="name">
             <weight unit="LBS"> 230 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 93.6 </x>
                 <y> -18.2 </y>
                 <z> 8.4 </z>
@@ -222,7 +222,7 @@
 
     <flight_control name="FCS: DHC-6 Twin Otter">
     </flight_control>
- 
+
     <aerodynamics>
 
         <axis name="DRAG">
@@ -690,7 +690,7 @@
         </axis>
 
         <axis name="YAW">
-            <function name="aero/coefficient/Cnb"> 
+            <function name="aero/coefficient/Cnb">
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
                     <property>aero/qbar-psf</property>

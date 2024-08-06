@@ -7,7 +7,7 @@
  <fileheader>
   <author> Aeromatic v 0.9 </author>
    <author> David Culp </author>
-  <filecreationdate> 2007-01-16 </filecreationdate>
+  <filecreationdate>2007-01-16</filecreationdate>
   <version> 0.0 </version>
   <description> Models a F4N. </description>
       <note>
@@ -167,7 +167,7 @@
  </ground_reactions>
 
   <external_reactions>
-    
+
     <force name="catapult" frame="LOCAL">
       <location unit="IN">
         <x> -260.0 </x>
@@ -180,7 +180,7 @@
         <z>    0.0 </z>
       </direction>
     </force>
-    
+
     <force name="holdback" frame="BODY">
       <location unit="IN">
         <x> -250.0 </x>
@@ -193,7 +193,7 @@
         <z>    0.0 </z>
       </direction>
     </force>
-    
+
     <force name="hook" frame="LOCAL">
       <location unit="IN">
         <x>  230.0 </x>
@@ -206,9 +206,9 @@
         <z>   0.01 </z>
       </direction>
     </force>
-    
+
   </external_reactions>
-  
+
   <propulsion>
 
    <engine file="J79-GE-11A">
@@ -261,8 +261,8 @@
  <system file="catapult"/>
  <system file="BLC"/>
 <!-- <system file="refuel"/> -->
- <system file="gear"/> 
- <system file="flaps"/> 
+ <system file="gear"/>
+ <system file="flaps"/>
  <system file="speedbrakes"/>
  <system file="FCS-pitch"/>
  <system file="FCS-roll"/>

@@ -93,7 +93,7 @@
    </location>
    <pointmass name="pilot">
      <weight unit="LBS"> 230 </weight>
-     <location name="POINTMASS" unit="IN">
+     <location unit="IN">
        <x> 122.04 </x>
        <y> -30.0 </y>
        <z>  66.0 </z>
@@ -101,7 +101,7 @@
    </pointmass>
    <pointmass name="copilot">
      <weight unit="LBS"> 230 </weight>
-     <location name="POINTMASS" unit="IN">
+     <location unit="IN">
        <x> 122.04 </x>
        <y>  30.0 </y>
        <z>  66.0 </z>
@@ -109,7 +109,7 @@
    </pointmass>
    <pointmass name="steward">
      <weight unit="LBS"> 400 </weight>
-     <location name="POINTMASS" unit="IN">
+     <location unit="IN">
        <x>  218 </x>
        <y>  32.0 </y>
        <z>  66.0 </z>
@@ -550,7 +550,7 @@
   </channel>
  </flight_control>
 
-    <aerodynamics>  
+    <aerodynamics>
 
         <function name="aero/function/kCDge">
             <description>Change_in_drag_due_to_ground_effect</description>
@@ -787,7 +787,7 @@
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
                           <tableData>
-                                     0.000  25.0   42.0 
+                                     0.000  25.0   42.0
                                0.00  0.217  0.837  1.269
                                0.17  1.109  1.701  2.173
                                0.21  1.270  1.827  2.308

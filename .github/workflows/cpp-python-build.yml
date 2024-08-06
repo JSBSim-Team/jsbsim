@@ -36,6 +36,16 @@ jobs:
               [ -e "$filename" ] || continue
               xmllint --noout --schema JSBSimSystem.xsd $filename
           done
+      - name: Valide aircraft files
+        run: |
+          for dir in $(ls -d aircraft/*); do
+            base=$(basename $dir)
+            [ "$base" != "blank" ] || continue
+            filename="${dir}/${base}.xml"
+            if [ -f "$filename" ]; then
+                xmllint --noout --schema JSBSim.xsd $filename
+            fi
+          done
 
   MSIS-validation:
     name: MSIS code validation

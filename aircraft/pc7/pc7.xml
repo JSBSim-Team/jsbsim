@@ -7,7 +7,7 @@
 
  <fileheader>
   <author> Aeromatic v 3.3.0 </author>
-  <filecreationdate> 06 Jun 2016 </filecreationdate>
+  <filecreationdate>2016-06-06</filecreationdate>
   <version>$Revision: 1.18 $</version>
   <description> Models a PC-7. </description>
   <note>
@@ -31,7 +31,7 @@
     stall speed:   75.05kts
     max weight:    5953.50 lb
     length:        32.09 ft
-    wing: 
+    wing:
      span:         34.12 ft
      area:         178.68 sq-ft
      mean chord:   5.25 ft
@@ -97,56 +97,15 @@
      <z>    -9.63 </z>
    </location>
    <pointmass name="Payload">
-    <description> 2294.52 LBS should bring model up to entered max weight </description>
+    <!-- 2294.52 LBS should bring model up to entered max weight -->
     <weight unit="LBS"> 1147.26 </weight>
-    <location name="POINTMASS" unit="IN">
+    <location unit="IN">
      <x>   154.02 </x>
      <y>     0.00 </y>
      <z>    -9.63 </z>
    </location>
   </pointmass>
  </mass_balance>
-
- <propulsion>
-
-   <engine file="PT6A">
-    <feed> 0 </feed>
-
-    <thruster file="Propeller">
-     <sense> 1 </sense>
-     <location unit="IN">
-       <x>    36.00 </x>
-       <y>     0.00 </y>
-       <z>     0.00 </z>
-     </location>
-     <orient unit="DEG">
-       <pitch>     0.00 </pitch>
-	<roll>     0.00 </roll>
-	 <yaw>     0.00 </yaw>
-     </orient>
-    </thruster>
-  </engine>
-
-  <tank type="FUEL" number="0">
-     <location unit="IN">
-       <x>   154.02 </x>
-       <y>     0.00 </y>
-       <z>    -9.63 </z>
-     </location>
-     <capacity unit="LBS"> 363.16 </capacity>
-     <contents unit="LBS"> 181.58 </contents>
-  </tank>
-  <tank type="FUEL" number="1">
-     <location unit="IN">
-       <x>   154.02 </x>
-       <y>     0.00 </y>
-       <z>    -9.63 </z>
-     </location>
-     <capacity unit="LBS"> 363.16 </capacity>
-     <contents unit="LBS"> 181.58 </contents>
-  </tank>
-
- </propulsion>
 
  <ground_reactions>
 
@@ -223,6 +182,47 @@
   </contact>
 
  </ground_reactions>
+
+ <propulsion>
+
+   <engine file="PT6A">
+    <feed> 0 </feed>
+
+    <thruster file="Propeller">
+     <location unit="IN">
+       <x>    36.00 </x>
+       <y>     0.00 </y>
+       <z>     0.00 </z>
+     </location>
+     <orient unit="DEG">
+       <pitch>     0.00 </pitch>
+	<roll>     0.00 </roll>
+	 <yaw>     0.00 </yaw>
+     </orient>
+     <sense> 1 </sense>
+    </thruster>
+  </engine>
+
+  <tank type="FUEL" number="0">
+     <location unit="IN">
+       <x>   154.02 </x>
+       <y>     0.00 </y>
+       <z>    -9.63 </z>
+     </location>
+     <capacity unit="LBS"> 363.16 </capacity>
+     <contents unit="LBS"> 181.58 </contents>
+  </tank>
+  <tank type="FUEL" number="1">
+     <location unit="IN">
+       <x>   154.02 </x>
+       <y>     0.00 </y>
+       <z>    -9.63 </z>
+     </location>
+     <capacity unit="LBS"> 363.16 </capacity>
+     <contents unit="LBS"> 181.58 </contents>
+  </tank>
+
+ </propulsion>
 
  <system file="Conventional Controls.xml"/>
  <system file="Landing Gear.xml"/>
@@ -805,8 +805,4 @@
   </axis>
 
  </aerodynamics>
-
- <external_reactions>
- </external_reactions>
-
 </fdm_config>

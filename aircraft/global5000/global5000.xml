@@ -90,14 +90,14 @@
      <z> -29.07 </z>
    </location>
    <pointmass name="Payload">
-    <description> 15172 LBS + full (24293 LBS) fuel should bring model up to entered max weight</description>
+    <!-- 15172 LBS + full (24293 LBS) fuel should bring model up to entered max weight -->
     <weight unit="LBS">   7586.0 </weight>
-    <location name="POINTMASS" unit="IN">
+    <location unit="IN">
       <x> 790.80 </x>
       <y>   0.00 </y>
       <z> -29.07 </z>
     </location>
-  </pointmass> 
+  </pointmass>
  </mass_balance>
 
  <ground_reactions>
@@ -244,14 +244,14 @@
 
  </propulsion>
 
- 
+
  <system file="GNCUtilities" />
 
  <system file="Autopilot">
       <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
  </system>
- 
+
  <autopilot file="global5000ap" />
 
 
@@ -260,7 +260,7 @@
   <channel name="Pitch">
 
    <summer name="Pitch Trim Sum">
-      <input>ap/elevator_cmd</input> 
+      <input>ap/elevator_cmd</input>
       <input>fcs/elevator-cmd-norm</input>
       <input>fcs/pitch-trim-cmd-norm</input>
       <clipto>
@@ -504,7 +504,7 @@
                 </tableData>
             </table>
         </function>
- 
+
 	 <function name="aero/function/kCLge">
 	    <description>Change_in_lift_due_to_ground_effect</description>
 	    <table>
@@ -891,31 +891,30 @@
  </aerodynamics>
 
     <output name="global5000.csv" rate="60" type="CSV">
-	<property> aero/alphadot-deg_sec </property>
-	<property> aero/betadot-deg_sec  </property>
-	<property> velocities/ve-kts </property>
-	<property> velocities/vc-kts </property>
-	<property> velocities/mach </property>
-	<property> aero/beta-deg </property>
-	<property> aero/alpha-deg </property>
-	<property> velocities/vtrue-kts </property>
-	<property> gear/gear-cmd-norm </property>
-	<property> aero/coefficient/CLalpha </property>
-	<property> position/h-agl-ft </property>
+      <rates>            OFF  </rates>
+      <velocities>       OFF </velocities>
+      <position>         OFF  </position>
+      <atmosphere>       OFF </atmosphere>
+      <fcs>              OFF  </fcs>
+      <ground_reactions> OFF </ground_reactions>
+      <propulsion>       ON </propulsion>
+      <simulation>       OFF </simulation>
+      <massprops>        OFF </massprops>
+      <forces>           OFF </forces>
+      <moments>          OFF </moments>
+      <aerosurfaces>     OFF  </aerosurfaces>
+      <coefficients>     OFF </coefficients>
 
-
-	<simulation>       OFF </simulation>
-	<atmosphere>       OFF </atmosphere>
-	<massprops>        OFF </massprops>
-	<aerosurfaces>     OFF  </aerosurfaces>
-	<rates>            OFF  </rates>
-	<velocities>       OFF </velocities>
-	<forces>           OFF </forces>
-	<moments>          OFF </moments>
-	<position>         OFF  </position>
-	<coefficients>     OFF </coefficients>
-	<ground_reactions> OFF </ground_reactions>
-	<fcs>              OFF  </fcs>
-	<propulsion>       ON </propulsion>
+      <property> aero/alphadot-deg_sec </property>
+      <property> aero/betadot-deg_sec  </property>
+      <property> velocities/ve-kts </property>
+      <property> velocities/vc-kts </property>
+      <property> velocities/mach </property>
+      <property> aero/beta-deg </property>
+      <property> aero/alpha-deg </property>
+      <property> velocities/vtrue-kts </property>
+      <property> gear/gear-cmd-norm </property>
+      <property> aero/coefficient/CLalpha </property>
+      <property> position/h-agl-ft </property>
     </output>
 </fdm_config>

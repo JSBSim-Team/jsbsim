@@ -7,7 +7,7 @@
 
  <fileheader>
   <author> Erik Hofman using Aeromatic v 3.2.0 </author>
-  <filecreationdate> 18 Dec 2015 </filecreationdate>
+  <filecreationdate>2015-12-18</filecreationdate>
   <version>$Revision: 1.3 $</version>
   <description> Models a J3Cub. </description>
   <note>
@@ -32,7 +32,7 @@
     stall speed:   33.00kts
     max weight:    1220.00 lb
     length:        22.42 ft
-    wing: 
+    wing:
      span:         35.25 ft
      area:         178.50 sq-ft
      chord:        5.25 ft
@@ -106,47 +106,15 @@
      <z>   -22.83 </z>
    </location>
    <pointmass name="Pilot">
-    <description> 274.44 LBS should bring model up to max weight </description>
+    <!-- 274.44 LBS should bring model up to max weight -->
     <weight unit="LBS"> 137.22 </weight>
-    <location name="POINTMASS" unit="IN">
+    <location unit="IN">
      <x>    20.87 </x>
      <y>     0.00 </y>
      <z>   -36.22 </z>
    </location>
   </pointmass>
  </mass_balance>
-
- <propulsion>
-
-   <engine file="Continental A-65-8">
-    <feed> 0 </feed>
-
-    <thruster file="CM7445 MCCauley">
-     <sense> 1 </sense>
-     <location unit="IN">
-       <x>   -68.90 </x>
-       <y>     0.00 </y>
-       <z>   -24.41 </z>
-     </location>
-     <orient unit="DEG">
-       <pitch>     0.00 </pitch>
-        <roll>     0.00 </roll>
-         <yaw>     0.00 </yaw>
-     </orient>
-    </thruster>
-  </engine>
-
-  <tank type="FUEL" number="0">
-     <location unit="IN">
-       <x>     0.00 </x>
-       <y>     0.00 </y>
-       <z>     0.00 </z>
-     </location>
-     <capacity unit="LBS"> 75.00 </capacity>
-     <contents unit="LBS"> 65.00 </contents>
-  </tank>
-
- </propulsion>
 
  <ground_reactions>
 
@@ -161,7 +129,6 @@
     <rolling_friction> 0.02 </rolling_friction>
     <spring_coeff  unit="LBS/FT">     220.00 </spring_coeff>
     <damping_coeff unit="LBS/FT/SEC"> 110.00 </damping_coeff>
-    <steerability> STEERABLE </steerability>
     <max_steer unit="DEG"> -30.00 </max_steer>
     <brake_group> NONE </brake_group>
     <retractable> 0 </retractable>
@@ -226,6 +193,38 @@
   </contact>
 
  </ground_reactions>
+
+ <propulsion>
+
+   <engine file="Continental A-65-8">
+    <feed> 0 </feed>
+
+    <thruster file="CM7445 MCCauley">
+     <location unit="IN">
+       <x>   -68.90 </x>
+       <y>     0.00 </y>
+       <z>   -24.41 </z>
+     </location>
+     <orient unit="DEG">
+       <pitch>     0.00 </pitch>
+        <roll>     0.00 </roll>
+         <yaw>     0.00 </yaw>
+     </orient>
+     <sense> 1 </sense>
+    </thruster>
+  </engine>
+
+  <tank type="FUEL" number="0">
+     <location unit="IN">
+       <x>     0.00 </x>
+       <y>     0.00 </y>
+       <z>     0.00 </z>
+     </location>
+     <capacity unit="LBS"> 75.00 </capacity>
+     <contents unit="LBS"> 65.00 </contents>
+  </tank>
+
+ </propulsion>
 
  <system file="Conventional Controls.xml"/>
 
@@ -309,7 +308,7 @@
       <property>propulsion/engine/prop-induced-velocity_fps</property>
     </sum>
   </function>
- 
+
   <function name="aero/function/qbar-induced-psf">
     <description> q bar including the propulsion induced velocity.</description>
     <product>
@@ -789,8 +788,4 @@
   </axis>
 
  </aerodynamics>
-
- <external_reactions>
- </external_reactions>
-
 </fdm_config>

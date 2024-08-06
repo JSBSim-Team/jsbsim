@@ -6,7 +6,7 @@
 
 <fileheader>
   <author> Narendran Muraleedharan, Dwayne Gable and Nicky Ivy</author>
-  <filecreationdate> 2011-12-29 </filecreationdate>
+  <filecreationdate>2011-12-29</filecreationdate>
   <version>$Revision: 1.10 $</version>
   <description> Flight Dynamics Model for the Boeing 787-8 </description>
 </fileheader>
@@ -64,7 +64,7 @@
 
 	<pointmass name="Crew">
 		<weight unit="LBS">350</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>-898.32</x>
 			<y>0</y>
 			<z>51.22</z>
@@ -76,7 +76,7 @@
 
 	<pointmass name="first-class">
 		<weight unit="LBS">1800</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>-591</x>
 			<y>0</y>
 			<z>78.8</z>
@@ -87,7 +87,7 @@
 
 	<pointmass name="business-class">
 		<weight unit="LBS">6400</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>-216.7</x>
 			<y>0</y>
 			<z>78.8</z>
@@ -98,7 +98,7 @@
 
 	<pointmass name="economy-class">
 		<weight unit="LBS">25000</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>157.6</x>
 			<y>0</y>
 			<z>78.8</z>
@@ -110,7 +110,7 @@
 
 	<pointmass name="forward-cargo">
 		<weight unit="LBS">10000</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>-394</x>
 			<y>0</y>
 			<z>-39.4</z>
@@ -121,7 +121,7 @@
 
 	<pointmass name="forward-cargo">
 		<weight unit="LBS">5000</weight>
-		<location name="POINTMASS" unit="IN">
+		<location unit="IN">
 			<x>157.6</x>
 			<y>0</y>
 			<z>-39.4</z>
@@ -244,6 +244,21 @@
 </contact>
 
 </ground_reactions>
+
+	<external_reactions>
+		<force name="pushback" frame="BODY">
+			<location unit="IN">
+				<x>-612.06718</x>
+				<y>0</y>
+				<z>-100</z>
+			</location>
+			<direction>
+				<x>1</x>
+				<y>0</y>
+				<z>0</z>
+			</direction>
+		</force>
+	</external_reactions>
 
 <propulsion>
 
@@ -422,8 +437,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    3.0000   0.0000   
-                    11.0000   2.0000   
+                    3.0000   0.0000
+                    11.0000   2.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -433,8 +448,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    3.0000   0.0000   
-                    11.0000   0.0000   
+                    3.0000   0.0000
+                    11.0000   0.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -453,8 +468,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    2.9900   0.0000   
-                    3.0000   1.0000   
+                    2.9900   0.0000
+                    3.0000   1.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -566,19 +581,17 @@
 <!-- Lift due to ground effects to make the take off faster -->
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
-            <product>
-                  <table>
-                      <independentVar>aero/h_b-mac-ft</independentVar>
-                      <tableData>
-                          0.0000	1.3000	
-                          0.1000	1.2500	
-                          0.1500	1.1000	
-                          0.2000	1.1200	
-                          1.1000	1.1000
-                          1.2000        1.0000
-                      </tableData>
-                  </table>
-            </product>
+            <table>
+                <independentVar>aero/h_b-mac-ft</independentVar>
+                <tableData>
+                    0.0000	1.3000
+                    0.1000	1.2500
+                    0.1500	1.1000
+                    0.2000	1.1200
+                    1.1000	1.1000
+                    1.2000        1.0000
+                </tableData>
+            </table>
         </function>
 
   <axis name="LIFT">
@@ -893,8 +906,8 @@
           <table>
             <independentVar lookup="row">velocities/mach</independentVar>
             <tableData>
-                              0.0000	-1.3000	
-                              2.0000	-0.3200	
+                              0.0000	-1.3000
+                              2.0000	-0.3200
             </tableData>
           </table>
        </product>
@@ -976,20 +989,5 @@
   </axis>
 
 </aerodynamics>
-
-	<external_reactions>
-		<force name="pushback" frame="BODY">
-			<location unit="IN">
-				<x>-612.06718</x>
-				<y>0</y>
-				<z>-100</z>
-			</location>
-			<direction>
-				<x>1</x>
-				<y>0</y>
-				<z>0</z>
-			</direction>
-		</force>
-	</external_reactions>
 
 </fdm_config>

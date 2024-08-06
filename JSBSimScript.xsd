@@ -21,64 +21,19 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
-        <xs:element name="use" maxOccurs="1">
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
+        <xs:element name="use">
           <xs:complexType>
             <xs:attribute name="aircraft" type="xs:token" use="required"/>
             <xs:attribute name="initialize" type="xs:token" use="required"/>
           </xs:complexType>
         </xs:element>
-        <xs:element ref="run" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="unbounded">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="rates" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="velocities" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="position" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="atmosphere" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="fcs" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="ground_reactions" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="propulsion" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="simulation" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="massprops" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="forces" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="moments" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="aerosurfaces" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="coefficients" type="ON-OFF" minOccurs="0"/>
-              <xs:element name="property" type="property-with-caption" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-            <xs:attribute name="name" type="xs:token" use="required"/>
-            <xs:attribute name="type" use="required">
-              <xs:annotation><xs:documentation>
-                The format in which the data output will be issued.
-              </xs:documentation></xs:annotation>
-              <xs:simpleType>
-                <xs:restriction base="xs:token">
-                  <xs:enumeration value="CSV"/>
-                  <xs:enumeration value="TABULAR"/>
-                  <xs:enumeration value="SOCKET"/>
-                  <xs:enumeration value="FLIGHTGEAR"/>
-                  <xs:enumeration value="TERMINAL"/>
-                  <xs:enumeration value="NONE"/>
-                </xs:restriction>
-              </xs:simpleType>
-            </xs:attribute>
-            <xs:attribute name="rate" type="xs:decimal" use="required"/>
-            <xs:attribute name="file" type="xs:token" use="optional"/>
-          </xs:complexType>
-        </xs:element>
+        <xs:element ref="run"/>
+        <xs:element name="output" minOccurs="0" maxOccurs="unbounded" type="output"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:token" use="required"/>
     </xs:complexType>
   </xs:element>
-
-  <xs:complexType name="property-with-caption">
-    <xs:simpleContent>
-      <xs:extension base="property">
-        <xs:attribute name="caption" type="xs:string"/>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
 
   <xs:element name="run">
     <xs:annotation><xs:documentation>
@@ -91,7 +46,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
           <xs:annotation><xs:documentation>
             A property element placed within the run element (in a sort of
@@ -108,19 +63,19 @@
         </xs:element>
         <xs:element ref="event" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="start" type="xs:decimal" use="optional">
+      <xs:attribute name="start" type="positive-number" use="optional">
         <xs:annotation><xs:documentation>
           This attribute is not currently used. A script will always begin
           execution at time 0.0.
         </xs:documentation></xs:annotation>
       </xs:attribute>
-      <xs:attribute name="end" type="xs:decimal" use="required">
+      <xs:attribute name="end" type="positive-number" use="required">
         <xs:annotation><xs:documentation>
           Since script execution always begins at time 0.0, the "end" attribute
           is essentially the same thing as the duration of the script.
         </xs:documentation></xs:annotation>
       </xs:attribute>
-      <xs:attribute name="dt" type="xs:decimal" use="required">
+      <xs:attribute name="dt" type="positive-number" use="required">
         <xs:annotation><xs:documentation>
           The dt attribute is simply the frame time, or the times step size.
         </xs:documentation></xs:annotation>
@@ -136,12 +91,12 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:choice maxOccurs="unbounded">
-          <xs:element ref="condition" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="condition" minOccurs="0"/>
           <xs:element ref="set" maxOccurs="unbounded" minOccurs="0"/>
-          <xs:element ref="notify" minOccurs="1" maxOccurs="1"/>
-          <xs:element name="delay" type="xs:decimal" minOccurs="0" maxOccurs="1">
+          <xs:element ref="notify"/>
+          <xs:element name="delay" type="positive-number" minOccurs="0">
             <xs:annotation><xs:documentation>
               The delay element represents the number of seconds to delay in
               executing the set actions for an event once the conditions have
@@ -207,7 +162,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="description" minOccurs="0" type="xs:string"/>
         <xs:element name="property" type="property-with-caption"/>
       </xs:sequence>
       <xs:attribute name="format" use="optional">
@@ -231,7 +186,7 @@
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:all minOccurs="0">
-        <xs:element minOccurs="0" ref="function"/>
+        <xs:element name="function" minOccurs="0" type="function"/>
       </xs:all>
       <xs:attribute name="name" type="xs:token" use="required"/>
       <xs:attribute name="action" use="optional" default="FG_STEP">
@@ -275,32 +230,4 @@
       <xs:attribute name="logic" type="AND-OR" default="AND"/>
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="table">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="independentVar" />
-        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded" />
-      </xs:sequence>
-      <xs:attribute name="name" use="optional" type="xs:token" />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="independentVar">
-    <xs:complexType mixed="true">
-      <xs:attribute name="lookup" type="xs:token" />
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="tableData">
-    <xs:simpleType>
-      <xs:list itemType="xs:decimal"/>
-    </xs:simpleType>
-    <!-- <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute name="breakPoint" type="xs:double" use="optional" />
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType> -->
-  </xs:element>
-
 </xs:schema>

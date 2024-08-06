@@ -6,15 +6,14 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 11 September 2009 </filecreationdate>
+        <license
+          licenseName="GPL (General Public License)"
+          licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <filecreationdate>2009-09-11</filecreationdate>
         <version> 1.05 </version>
 
         <description> Boeing314A </description>
 
-        <license>
-          <licenseName>GPL (General Public License)</licenseName>
-          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
         <note>
             This model was created using publicly available data, publicly available
             technical reports, textbooks, and guesses. It contains no proprietary or
@@ -93,26 +92,26 @@
          - Artificial coefficients start by A.
         </note>
 
-        <documentation>
+        <note>
          Not possible :
          - buoyancy by weak spring, because that can rear up at rest
-           (and speed makes water as hard as concrete). 
+           (and speed makes water as hard as concrete).
          - rebound by hard spring, because static can be unstable with empty weight.
-        </documentation>
+        </note>
 
         <reference
           refID="FAA certificate, TC704, B-314"
           author="FAA"
           title="http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet"
           date="25 January 1939"/>
-        <documentation>
+        <note>
          Engine limits :   * maximum except take-off (straight line manifold pressure variation) :
                              33.2 in. hg. 2100 rpm (1200 hp) at 5400 ft,
                              35.0 in. hg. 2100 rpm (1200 hp) at sea level.
                            * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
          Airspeed limits : * level flight or climb 178 mph (155 kt) true, glide or dive 212 mph (184 kt) true.
                            * flaps extended (40 or less) 121 mph (105 kt) true.
-                           * flaps extended (more than 40) 105 mph (91 kt) true. 
+                           * flaps extended (more than 40) 105 mph (91 kt) true.
          Weight limits :   landing 80000 lb, take-off 84000 lb.
          Fuel capacity :   5448 gallons (32688 lb) :
                              2 tanks at 600 gallons (3600 lb) each, in wing stubs;
@@ -146,13 +145,13 @@
                        diameter 14'9-3/8" maximum 14'5-5/8" minimum (1928 lb).
                      * Hamilton standard 3 blade constant speed, 6159A-0 to 6159A-3 inclusive,
                        diameter 14'3/8" maximum 13'8-3/4" minimum (1819 lb).
-        </documentation>
+        </note>
         <reference
           refID="FAA certificate, TC704, B-314A"
           author="FAA"
           title="http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet"
           date="2 May 1941"/>
-        <documentation>
+        <note>
          Same model as B-314, except for engine, powerplane installation, engine mount,
          and inner structural details.
 
@@ -171,8 +170,8 @@
 
          Propeller : Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive,
                      diameter 14'9-3/8" maximum 14'5-5/8" minimum (1928 lb).
-        </documentation>
-        <documentation>
+        </note>
+        <note>
          - http://case.pr.erau.edu/reports/US_reports/1940/1943.02.22_PanAmericanAirways_Boeing-314.pdf
            (crash - 22 february 1943 Lisbon, Portugal) :
 
@@ -217,7 +216,7 @@
          Normal range : 3500 miles.
 
          - http://www.flyingclippers.com/B314.html/
-  
+
          Ceiling : cruise 13400 ft, maximum 19600 ft, climb 562 ft/min.
          Crew : 6-10.
          Payload : 40-74 (36 night) passengers.
@@ -236,7 +235,7 @@
 
          - http://www.southernoregonwarbirds.org/fa3.html/
          (Franck Varnum flew during WWII).
- 
+
          The sponsons (the short fins sticking out of the sides of the fuselage) provide lateral stability
          on the water. They were filled with gasoline and as a result were not at all that buoyant.
          If you had to taxi to downwind, on the turn to downwind the wind could get under the upwind wing
@@ -262,7 +261,7 @@
 
          - http://www.pilotfriend.com/flight_training/frames2/seaplane_main_frame.htm/ :
          How to fly seaplanes and amphibians.
-        </documentation>
+        </note>
         <reference
           refID="A complete tank test of the hull of the Sikorsky S-40 flying-boat - American clipper class"
           author="John R. Dawson"
@@ -286,7 +285,7 @@
     </fileheader>
 
     <metrics>
-        <documentation>
+        <description>
          Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
          X, Y, Z, in inches
 
@@ -300,11 +299,11 @@
          Add ac_wingincidence : 1/20 of wing chord.
 
          Htailarm : distance from CG to horizontal tail tip.
-        </documentation>
+        </description>
         <wingarea unit="FT2"> 2867 </wingarea>
         <wingspan unit="FT"> 152 </wingspan>
-        <chord unit="FT"> 21.57 </chord>                                                 <!-- aeromatic 18.86 -->
         <wing_incidence unit="DEG"> 2.86 </wing_incidence>                               <!-- added to help the take-off -->
+        <chord unit="FT"> 21.57 </chord>                                                 <!-- aeromatic 18.86 -->
         <htailarea unit="FT2"> 458.72 </htailarea>
         <htailarm unit="FT"> 22.91 </htailarm>                                           <!-- aeromatic 53.00 -->
         <vtailarea unit="FT2"> 516.06 </vtailarea>
@@ -328,13 +327,13 @@
     </metrics>
 
     <mass_balance>
-        <documentation>
+        <description>
          Center of gravity location, empty weight, in aircraft's own structural coord
          system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
          right wing.
 
          Put in comment payload, to test at empty weight.
-        </documentation>
+        </description>
         <ixx unit="SLUG*FT2"> 2.31442e+06 </ixx>
         <iyy unit="SLUG*FT2"> 1.34649e+06 </iyy>
         <izz unit="SLUG*FT2"> 3.59608e+06 </izz>
@@ -349,7 +348,7 @@
         </location>
         <pointmass name="payload">
             <weight unit="LBS"> 1500 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 460.0 </x>
                 <y> 0 </y>
                 <z> -31.8 </z>
@@ -358,7 +357,7 @@
     </mass_balance>
 
     <ground_reactions>
-        <documentation>
+        <description>
          Left/right sponsons at 70% MAC and 1/4 wing : higher at 3/4 hull height (tilt at rest).
 
          The hump and step gears replaces the nose and rear gears, when the hull raises on the step.
@@ -372,7 +371,7 @@
          Disabling the filters restores the brakes.
 
          CAUTION : changing gear height or spring affects rest h_b-mac-ft !
-        </documentation>
+        </description>
         <contact type="BOGEY" name="HUMP_LG">
             <location unit="IN">
                 <x> 66.4 </x>
@@ -465,12 +464,30 @@
         </contact>
     </ground_reactions>
 
+    <external_reactions>
+        <description>
+          anchor at nose tip.
+        </description>
+        <force name="anchor" frame="BODY">
+            <location unit="IN">
+                <x>0 </x>
+                <y>0 </y>
+                <z>0 </z>
+            </location>
+            <direction>
+                <x>-1</x>
+                <y>0</y>
+                <z>-1</z>
+            </direction>
+        </force>
+    </external_reactions>
+
     <propulsion>
-        <documentation>
+        <description>
          propeller at 1/5 of length, 1/10 and 2/10 of wing span.
 
          1 tank feeds 1 engine, plus floor and sponson (left or right).
-        </documentation>
+        </description>
         <engine file="WrightGR-2600">
             <feed>0</feed>
             <feed>4</feed>
@@ -539,15 +556,13 @@
                 </orient>
             </thruster>
         </engine>
-        <documentation>
+        <!--
          radius : lb => kg => divide by 0.792 (depends of fuel density) => liter => radius of sphere.
 
          all tanks are 40 % of MAC.
-        </documentation>
+        -->
         <tank type="FUEL">    <!-- Tank number 0 -->
-            <documentation>
-              wing tanks behind the engines.
-            </documentation>
+            <!-- wing tanks behind the engines. -->
             <location unit="IN">
                 <x> 502 </x>                                                              <!-- aeromatic 636 -->
                 <y> -364.8 </y>                                                           <!-- aeromatic 0 -->
@@ -585,9 +600,7 @@
             <contents unit="LBS"> 3600 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 4 -->
-            <documentation>
-              inboard tank (floor).
-            </documentation>
+            <!-- inboard tank (floor). -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> 0 </y>
@@ -597,9 +610,7 @@
             <contents unit="LBS"> 5760 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 5 -->
-            <documentation>
-              ouboard tanks (hydro-stabilizer).
-            </documentation>
+            <!-- ouboard tanks (hydro-stabilizer). -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> -182.4 </y>
@@ -622,15 +633,13 @@
     <system name="Hull">
      <property>systems/hull/anchor</property>
 
-     <documentation>
-       anchor opposes to propeller and inertia.
-     </documentation>
+     <!-- anchor opposes to propeller and inertia. -->
 
      <channel name="Anchor">
 
         <pure_gain name="systems/hull/gear-lbs">
-            <gain>-1</gain>
             <input>forces/fbx-gear-lbs</input>
+            <gain>-1</gain>
         </pure_gain>
 
         <summer name="systems/hull/total-lbs">
@@ -663,9 +672,7 @@
             <input>fcs/pitch-trim-sum</input>
             <gain>0.01745</gain>
             <range>
-                <documentation>
-                  replaced -0.35/0.30 by real -25/25 deg.
-                </documentation>
+                <!-- replaced -0.35/0.30 by real -25/25 deg. -->
                 <min>-25</min>
                 <max>25</max>
             </range>
@@ -761,9 +768,7 @@
         <kinematic name="Flaps Control">
             <input>fcs/flap-cmd-norm</input>
             <traverse>
-                <documentation>
-                  changed 15/30 deg to 15/40/55 (real is above 40).
-                </documentation>
+                <!-- changed 15/30 deg to 15/40/55 (real is above 40). -->
                 <setting>
                     <position>0</position>
                     <time>0</time>
@@ -814,7 +819,7 @@
     </flight_control>
 
     <aerodynamics>
-        <documentation>
+        <description>
              Hydrodynamics depends of 4 coefficients, related to gear height and spring.
 
              h_b-mac-ft at rest (with the 84000 lbs/ft spring) :
@@ -827,9 +832,7 @@
 
              0.0690 is also 0.0490 + 0.020,
              where 3.04' (from the keel to step) / wing span (152') = 0.020;
-        </documentation>
 
-        <documentation>
              Hull resistance in water until the step :
              - maximum at 42 % of takeoff speed : hump at 42 kt full load (100 kt) and
                34 kt empty load (80 kt).
@@ -867,7 +870,7 @@
            -  96.0/106,  7.0/59.
            -  99.5/106,  5.0/59.
            - 106.0/106,  0.0/59. (lift-off)
-        </documentation>
+        </description>
         <function name="aero/function/kHDhull">
             <description>Hull_resistance</description>
             <table>
@@ -927,19 +930,19 @@
             </table>
         </function>
 
-        <documentation>
-             The hull goes on its step :
-             - hydrodynamic lift.
-             - 80 % when going out of water.
-             - 1st altitude = h_b-mac-ft at rest.
-             - 2nd altitude : in the middle.
-             - 3rd altitude : 3.04' (from the keel) / wing span (152') = 0.020;
-             the planing layer is thin.
+        <!--
+            The hull goes on its step :
+            - hydrodynamic lift.
+            - 80 % when going out of water.
+            - 1st altitude = h_b-mac-ft at rest.
+            - 2nd altitude : in the middle.
+            - 3rd altitude : 3.04' (from the keel) / wing span (152') = 0.020;
+            the planing layer is thin.
 
-             Not implemented :
-             - drag when the bow plunges into a wave hump (nose down).
-             - drag when after body digs the water (nose up).
-        </documentation>
+            Not implemented :
+            - drag when the bow plunges into a wave hump (nose down).
+            - drag when after body digs the water (nose up).
+        -->
         <function name="aero/function/kHLstep">
             <description>Step_lift</description>
             <table>
@@ -961,13 +964,13 @@
             </table>
         </function>
 
-        <documentation>
-             The hull goes on its step :
-             - as sponson gets out water, additional lift.
-             - sponson in water reduces lift : 0.02/0.029 rad at rest.
-             - on step, the possible roll is higher (sponson touching water).
-             - after lift off, no loss by water.
-        </documentation>
+        <!--
+            The hull goes on its step :
+            - as sponson gets out water, additional lift.
+            - sponson in water reduces lift : 0.02/0.029 rad at rest.
+            - on step, the possible roll is higher (sponson touching water).
+            - after lift off, no loss by water.
+        -->
         <function name="aero/function/kHLsponson">
             <description>Sponson_lift</description>
             <table>
@@ -999,17 +1002,17 @@
             </table>
         </function>
 
-        <documentation>
-             The bow climbs over the wave hump :
-             - strong pitch (positiv moment) until the hump (nose up on the hump),
-             then light nose down (negativ moment).
-             - the center of buoyancy shifts with speed :
-             near center of gravity (step) at rest, then aft the step (afterbody)
-             when ploughing the wave hump; finally forwards the step (forebody), once planing on the step.
-             - 80 % when going out of water.
+        <!--
+            The bow climbs over the wave hump :
+            - strong pitch (positiv moment) until the hump (nose up on the hump),
+            then light nose down (negativ moment).
+            - the center of buoyancy shifts with speed :
+            near center of gravity (step) at rest, then aft the step (afterbody)
+            when ploughing the wave hump; finally forwards the step (forebody), once planing on the step.
+            - 80 % when going out of water.
 
-             similar to  NACA TN 512, figure 13.
-        </documentation>
+            similar to  NACA TN 512, figure 13.
+        -->
         <function name="aero/function/kHmstep">
             <description>Step_moment</description>
             <table>
@@ -1035,9 +1038,7 @@
             </table>
         </function>
 
-        <documentation>
-            created to help the takeoff at full load.
-        </documentation>
+        <!-- created to help the takeoff at full load. -->
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
             <table>
@@ -1052,15 +1053,15 @@
             </table>
         </function>
 
-        <documentation>
-             Compensates compression of nose gear by speed :
-             - enough strong to make rise the bow, and have an effect on flight commands.
-             - 80 % when going out of water.
-             - hydrodynamic lift indirectly provides weathervaning if wing has enough alpha.
-             In reality, cross wind applied on the center of gravity (CG), is opposed by the water acting on a sinking float.
-             Hence a momment around the center of buoyancy (CB).
-             - gear reaction code seems not appropriate in this case.
-        </documentation>
+        <!--
+            Compensates compression of nose gear by speed :
+            - enough strong to make rise the bow, and have an effect on flight commands.
+            - 80 % when going out of water.
+            - hydrodynamic lift indirectly provides weathervaning if wing has enough alpha.
+            In reality, cross wind applied on the center of gravity (CG), is opposed by the water acting on a sinking float.
+            Hence a momment around the center of buoyancy (CB).
+            - gear reaction code seems not appropriate in this case.
+        -->
         <function name="aero/function/kAmgear">
             <description>Compression_correction</description>
             <table>
@@ -1086,18 +1087,18 @@
             </table>
         </function>
 
-        <documentation>
-              NACA report 1103 (rebound on touch-down ) :
-              - figure 2, khi 3 and 15 deg.
-              gamma, velocity angle over water : 0 - 80 deg, horizontal is 0. 
-              - figure 6, tau 6 deg (used as 3 deg) and tau 12 deg (used as 15 deg). 
-              tau, bow pitch over water : 3 - 15 deg, horizontal is 0.
+        <!--
+            NACA report 1103 (rebound on touch-down ) :
+            - figure 2, khi 3 and 15 deg.
+            gamma, velocity angle over water : 0 - 80 deg, horizontal is 0.
+            - figure 6, tau 6 deg (used as 3 deg) and tau 12 deg (used as 15 deg).
+            tau, bow pitch over water : 3 - 15 deg, horizontal is 0.
 
-              khi = (sin(tau) / sin(gamma)) x cos(tau + gamma) :
-              - no rebound when flight path near vertical (energy absorbed by water).
-              - maximum near planing condition.
-              - favoured by bow pitch.
-        </documentation>
+            khi = (sin(tau) / sin(gamma)) x cos(tau + gamma) :
+            - no rebound when flight path near vertical (energy absorbed by water).
+            - maximum near planing condition.
+            - favoured by bow pitch.
+        -->
         <function name="aero/function/kHmkhi">
             <description>Rebound_due_to_khi</description>
             <table>
@@ -1124,11 +1125,11 @@
         </function>
 
         <axis name="DRAG">
-            <documentation>
-              - more drag inside water than air (ratio 7/1).
-              - increases the takeoff distance.
-              - could depend of weight.
-            </documentation>
+            <!--
+                - more drag inside water than air (ratio 7/1).
+                - increases the takeoff distance.
+                - could depend of weight.
+            -->
             <function name="aero/coefficient/HDhull0">
                 <description>Drag_at_hump</description>
                 <product>
@@ -1139,9 +1140,7 @@
                 </product>
             </function>
 
-            <documentation>
-               added.
-            </documentation>
+            <!-- added. -->
             <function name="aero/coefficient/CDo">
                 <description>Drag_at_zero_lift</description>
                 <product>
@@ -1150,10 +1149,10 @@
                     <value>0.0274</value>
                 </product>
             </function>
-            <documentation>
-              - renamed from CDo.
-              - substracted Cdo 0.0274.
-            </documentation>
+            <!--
+                - renamed from CDo.
+                - substracted Cdo 0.0274.
+            -->
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
                 <product>
@@ -1172,9 +1171,7 @@
                 </product>
             </function>
 
-            <documentation>
-               1/10 of wing.
-            </documentation>
+            <!-- 1/10 of wing. -->
             <function name="aero/coefficient/CDsponsono">
                 <description>Sponson_drag_at_zero_lift</description>
                 <product>
@@ -1184,9 +1181,7 @@
                     <value>0.0027</value>
                 </product>
             </function>
-            <documentation>
-               1/10 of wing.
-            </documentation>
+            <!-- 1/10 of wing. -->
             <function name="aero/coefficient/CDsponson">
                 <description>Drag_due_to_sponson</description>
                 <product>
@@ -1266,10 +1261,10 @@
                       </table>
                 </product>
             </function>
-            <documentation>
-              - drag is always positiv.
-              - divide by 10.
-            </documentation>
+            <!--
+                - drag is always positiv.
+                - divide by 10.
+            -->
             <function name="aero/coefficient/CDde">
                 <description>Drag_due_to_Elevator_Deflection</description>
                 <product>
@@ -1296,10 +1291,10 @@
         </axis>
 
         <axis name="LIFT">
-            <documentation>
-              - and missing lift for flaps.
-              - introducing roll quickly reduces lift at landing.
-            </documentation>
+            <!--
+                - and missing lift for flaps.
+                - introducing roll quickly reduces lift at landing.
+            -->
             <function name="aero/coefficient/HLstep0">
                 <description>Lift_at_step</description>
                 <product>
@@ -1311,9 +1306,7 @@
                 </product>
             </function>
 
-            <documentation>
-               created.
-            </documentation>
+            <!-- created. -->
             <function name="aero/coefficient/CLo">
                 <description>Lift_at_zero_alpha</description>
                 <product>
@@ -1323,9 +1316,7 @@
                     <value>0.2400</value>
                 </product>
             </function>
-            <documentation>
-               substracted CLo 0.240.
-            </documentation>
+            <!-- substracted CLo 0.240. -->
             <function name="aero/coefficient/CLalpha">
                 <description>Lift_due_to_alpha</description>
                 <product>
@@ -1344,10 +1335,10 @@
                 </product>
             </function>
 
-            <documentation>
-              - and missing lift for flaps.
-              - 1/10 of wing.
-            </documentation>
+            <!--
+                - and missing lift for flaps.
+                - 1/10 of wing.
+            -->
             <function name="aero/coefficient/CLsponsono">
                 <description>Sponson_lift_at_zero_alpha</description>
                 <product>
@@ -1358,10 +1349,10 @@
                     <value>0.0240</value>
                 </product>
             </function>
-            <documentation>
-              - and missing lift for flaps.
-              - 1/10 of wing.
-            </documentation>
+            <!--
+                - and missing lift for flaps.
+                - 1/10 of wing.
+            -->
             <function name="aero/coefficient/CLsponson">
                 <description>Lift_due_to_sponson</description>
                 <product>
@@ -1381,10 +1372,10 @@
                 </product>
             </function>
 
-            <documentation>
-              - unchanged.
-              - 0.9 is the value to takeoff at 2/3 full load; water provides the missing lift.
-            </documentation>
+            <!--
+                - unchanged.
+                - 0.9 is the value to takeoff at 2/3 full load; water provides the missing lift.
+            -->
             <function name="aero/coefficient/dCLflap">
                 <description>Delta_Lift_due_to_flaps</description>
                 <product>
@@ -1488,9 +1479,7 @@
                 </product>
             </function>
 
-            <documentation>
-               could depend of weight.
-            </documentation>
+            <!-- could depend of weight. -->
             <function name="aero/coefficient/Amgear0">
                 <description>Compression</description>
                 <product>
@@ -1502,11 +1491,11 @@
                 </product>
             </function>
 
-            <documentation>
-             - rest 0 ft/min.
-             - maximum 700 ft/min.
-             - before hydrodynamic lift.
-            </documentation>
+            <!--
+                - rest 0 ft/min.
+                - maximum 700 ft/min.
+                - before hydrodynamic lift.
+            -->
             <function name="aero/coefficient/Hmrebound0">
                 <description>Rebound_due_to_vertical_speed</description>
                 <product>
@@ -1626,23 +1615,4 @@
             </function>
         </axis>
     </aerodynamics>
-        
-    <external_reactions>
-        <documentation>
-          anchor at nose tip.
-        </documentation>
-        <force name="anchor" frame="BODY">
-            <location unit="IN">
-                <x>0 </x>
-                <y>0 </y>
-                <z>0 </z>
-            </location>
-            <direction>
-                <x>-1</x>
-                <y>0</y>
-                <z>-1</z>
-            </direction>
-        </force>
-    </external_reactions>
-
 </fdm_config>
