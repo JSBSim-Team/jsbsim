@@ -478,6 +478,11 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("disable-windmill"))
     disableWindmill = el->FindElementValueAsBoolean("disable-windmill");
   string property_prefix = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  if (el->FindElement("idle-fuel-flow"))
+    IdleFF = el->FindElementValueAsNumberConvertTo("idle-fuel-flow","LBS/MIN")*60.0f;
+  else
+    IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
+
 
   IdleThrustLookup = GetPreFunction(property_prefix+"/IdleThrust");
   MilThrustLookup = GetPreFunction(property_prefix+"/MilThrust");
@@ -522,7 +527,6 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = in.TAT_c + 273.0;
-  IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
   bindmodel(exec->GetPropertyManager().get());
   return true;
