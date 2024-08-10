@@ -306,6 +306,24 @@ void testXMLLogging() {
   TS_ASSERT_EQUALS(buffer.str(), "\nIn file name.xml: line 42\n");
 }
 
+void testMinLevel() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  logger->SetMinLevel(JSBSim::LogLevel::DEBUG);
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::BULK);
+    log << "BULK";
+  }
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << "INFO";
+  }
+  std::cout.rdbuf(cout_buffer);
+  TS_ASSERT_EQUALS(buffer.str(), "INFO");
+}
+
 void testRedFormat() {
   auto logger = std::make_shared<JSBSim::FGLogConsole>();
   std::ostringstream buffer;

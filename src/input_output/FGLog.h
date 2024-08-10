@@ -99,13 +99,11 @@ public:
   virtual ~FGLogger() {}
   virtual void SetLevel(LogLevel l) { level = l; }
   virtual void FileLocation(const std::string& filename, int line) {}
-  void SetMinLevel(LogLevel level) { min_level = level; }
   virtual void Message(const std::string& message) = 0;
   virtual void Format(LogFormat format) {}
   virtual void Flush(void) {}
 protected:
   LogLevel level = LogLevel::BULK;
-  LogLevel min_level = LogLevel::INFO;
 };
 
 class JSBSIM_API FGLogging
@@ -147,18 +145,20 @@ public:
 class JSBSIM_API FGLogConsole : public FGLogger
 {
 public:
+  void SetMinLevel(LogLevel level) { min_level = level; }
   void FileLocation(const std::string& filename, int line) override
   { buffer << std::endl << "In file " << filename << ": line " << line << std::endl; }
   void Format(LogFormat format) override;
   void Flush(void) override;
 
   void Message(const std::string& message) override {
-    // if (level < min_level) return;
+    if (level < min_level) return;
     buffer << message;
   }
 
 private:
   std::ostringstream buffer;
+  LogLevel min_level = LogLevel::BULK;
 };
 } // namespace JSBSim
 #endif
