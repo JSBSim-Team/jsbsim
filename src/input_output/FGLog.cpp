@@ -48,18 +48,28 @@ CLASS IMPLEMENTATION
 
 void FGLogging::Flush(void)
 {
-  logger->Message(buffer.str());
-  buffer.str("");
-  logger->Format(LogFormat::RESET);
-  logger->Flush();
+  std::string message = buffer.str();
+
+  if (!message.empty()) {
+    logger->Message(message);
+    buffer.str("");
+    logger->Format(LogFormat::RESET);
+    logger->Flush();
+  }
+
   buffer.clear();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLogging& FGLogging::operator<<(LogFormat format) {
-  logger->Message(buffer.str());
-  buffer.str("");
+  std::string message = buffer.str();
+
+  if (!message.empty()) {
+    logger->Message(message);
+    buffer.str("");
+  }
+
   logger->Format(format);
   return *this;
 }

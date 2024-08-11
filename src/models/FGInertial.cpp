@@ -35,8 +35,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGFDMExec.h"
 #include "FGInertial.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 #include "GeographicLib/Geodesic.hpp"
 
 using namespace std;
@@ -119,10 +121,11 @@ bool FGInertial::Load(Element* el)
 
   // Messages to warn the user about possible inconsistencies.
   if (debug_lvl > 0) {
+    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
     if (a != b && J2 == 0.0)
-      cout << "Gravitational constant J2 is null for a non-spherical planet." << endl;
+      log << "Gravitational constant J2 is null for a non-spherical planet." << endl;
     if (a == b && J2 != 0.0)
-      cout << "Gravitational constant J2 is non-zero for a spherical planet." << endl;
+      log << "Gravitational constant J2 is non-zero for a spherical planet." << endl;
   }
 
   Debug(2);
@@ -239,15 +242,16 @@ void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
 void FGInertial::SetGravityType(int gt)
 {
   // Messages to warn the user about possible inconsistencies.
+  FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
   switch (gt)
   {
   case eGravType::gtStandard:
     if (a != b)
-      cout << "Warning: Standard gravity model has been set for a non-spherical planet" << endl;
+      log << "Standard gravity model has been set for a non-spherical planet" << endl;
     break;
   case eGravType::gtWGS84:
     if (J2 == 0.0)
-      cout << "Warning: WGS84 gravity model has been set without specifying the J2 gravitational constant." << endl;
+      log << "WGS84 gravity model has been set without specifying the J2 gravitational constant." << endl;
   }
 
   gravType = gt;
@@ -287,19 +291,21 @@ void FGInertial::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
     if (from == 0) {} // Constructor
     if (from == 2) { // Loading
-      cout << endl << "  Planet " << Name << endl;
-      cout << "    Semi major axis: " << a << endl;
-      cout << "    Semi minor axis: " << b << endl;
-      cout << "    Rotation rate  : " << scientific << vOmegaPlanet(eZ) << endl;
-      cout << "    GM             : " << GM << endl;
-      cout << "    J2             : " << J2 << endl << defaultfloat << endl;
+      log << endl << "  Planet " << Name << endl
+          << "    Semi major axis: " << a << endl
+          << "    Semi minor axis: " << b << endl
+          << "    Rotation rate  : " << scientific << vOmegaPlanet(eZ) << endl
+          << "    GM             : " << GM << endl
+          << "    J2             : " << J2 << endl << defaultfloat << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGInertial" << endl;
-    if (from == 1) cout << "Destroyed:    FGInertial" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGInertial" << endl;
+    if (from == 1) log << "Destroyed:    FGInertial" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

@@ -43,6 +43,7 @@ INCLUDES
 #include "input_output/FGUDPInputSocket.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGModelLoader.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -91,7 +92,10 @@ bool FGInput::Load(Element* el)
   string type = element->GetAttributeValue("type");
   FGInputType* Input = 0;
 
-  if (debug_lvl > 0) cout << endl << "  Input data set: " << idx << "  " << endl;
+  if (debug_lvl > 0) {
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    log << endl << "  Input data set: " << idx << "  " << endl;
+  }
 
   type = to_upper(type);
 
@@ -100,8 +104,8 @@ bool FGInput::Load(Element* el)
   } else if (type == "QTJSBSIM") {
     Input = new FGUDPInputSocket(FDMExec);
   } else if (type != string("NONE")) {
-    cerr << element->ReadFrom()
-         << "Unknown type of input specified in config file" << endl;
+    FGXMLLogging log(FDMExec->GetLogger(), element, LogLevel::ERROR);
+    log << "Unknown type of input specified in config file" << endl;
   }
 
   if (!Input) return false;
@@ -153,14 +157,16 @@ bool FGInput::SetDirectivesFile(const SGPath& fname)
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);
   if (!document) {
-    stringstream s;
-    s << "Could not read directive file: " << fname;
-    throw BaseException(s.str());
+    FGLogging log(FDMExec->GetLogger(), LogLevel::FATAL);
+    log << "Could not read directive file: " << fname << endl;
+    throw BaseException(log.str());
   }
   bool result = Load(document);
 
-  if (!result)
-    cerr << endl << "Aircraft input element has problems in file " << fname << endl;
+  if (!result) {
+    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    log << endl << "Aircraft input element has problems in file " << fname << endl;
+  }
 
   return result;
 }
@@ -229,8 +235,9 @@ void FGInput::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGInput" << endl;
-    if (from == 1) cout << "Destroyed:    FGInput" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGInput" << endl;
+    if (from == 1) log << "Destroyed:    FGInput" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

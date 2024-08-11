@@ -46,6 +46,7 @@ INCLUDES
 #include "FGWinds.h"
 #include "FGFDMExec.h"
 #include "math/FGTable.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -594,8 +595,9 @@ void FGWinds::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGWinds" << endl;
-    if (from == 1) cout << "Destroyed:    FGWinds" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGWinds" << endl;
+    if (from == 1) log << "Destroyed:    FGWinds" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
