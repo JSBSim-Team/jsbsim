@@ -83,7 +83,6 @@ CLASS IMPLEMENTATION
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
   : FGModel(fdmex)
 {
-  Debug(0);
   Name = "FGPropagate";
 
   Inertial = FDMExec->GetInertial();
@@ -707,7 +706,7 @@ void FGPropagate::DumpState(void)
   log << endl;
   log << LogFormat::BLUE
       << "------------------------------------------------------------------" << LogFormat::RESET << endl;
-  log << LogFormat::BOLD
+  log << LogFormat::BOLD << fixed
       << "State Report at sim time: " << FDMExec->GetSimTime() << " seconds" << LogFormat::RESET << endl;
   log << "  " << LogFormat::UNDERLINE_ON
       << "Position" << LogFormat::UNDERLINE_OFF << endl;
@@ -945,7 +944,7 @@ void FGPropagate::Debug(int from)
   }
   if (debug_lvl & 8 && from == 2) { // Runtime state variables
     FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-    log << endl << LogFormat::BLUE << LogFormat::BOLD << left
+    log << endl << LogFormat::BLUE << LogFormat::BOLD << left << fixed
         << "  Propagation Report (English units: ft, degrees) at simulation time " << FDMExec->GetSimTime() << " seconds"
         << LogFormat::RESET << endl;
     log << endl;
@@ -1032,8 +1031,6 @@ void FGPropagate::Debug(int from)
     log << LogFormat::BOLD << "    Associated Euler angles (deg): " << setw(8)
         << setprecision(3) << LogFormat::RESET << (Tl2i.GetQuaternion().GetEuler()*radtodeg)
                   << endl << endl;
-
-    log << setprecision(6); // reset the output stream
   }
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) { // State sanity checking

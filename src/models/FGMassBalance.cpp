@@ -457,7 +457,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
   log << "                                  " << LogFormat::UNDERLINE_ON << "    Weight    CG-X    CG-Y"
       << "    CG-Z         Ixx         Iyy         Izz"
       << "         Ixy         Ixz         Iyz" << LogFormat::UNDERLINE_OFF << endl;
-  log << setprecision(1);
+  log << fixed << setprecision(1);
   log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << normint
       << right << setw(12) << EmptyWeight
       << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
@@ -516,7 +516,7 @@ void FGMassBalance::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
       FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-      log << endl << "  Mass and Balance:" << endl;
+      log << endl << "  Mass and Balance:" << endl << fixed;
       log << "    baseIxx: " << baseJ(1,1) << " slug-ft2" << endl;
       log << "    baseIyy: " << baseJ(2,2) << " slug-ft2" << endl;
       log << "    baseIzz: " << baseJ(3,3) << " slug-ft2" << endl;

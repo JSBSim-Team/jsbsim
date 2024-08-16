@@ -53,7 +53,6 @@ void FGLogging::Flush(void)
   if (!message.empty()) {
     logger->Message(message);
     buffer.str("");
-    logger->Format(LogFormat::RESET);
     logger->Flush();
   }
 

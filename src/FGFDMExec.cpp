@@ -1417,8 +1417,7 @@ void FGFDMExec::Debug(int from)
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
     if (from == 2) {
-      FGLogging log(Log, LogLevel::DEBUG);
-      log << "================== Frame: " << Frame << "  Time: "
+      log << "================== Frame: " << Frame << "  Time: " << fixed
           << sim_time << " dt: " << dT << endl;
     }
   }
