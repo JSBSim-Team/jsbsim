@@ -89,14 +89,14 @@ bool FGModel::InitModel(void)
 
 bool FGModel::Run(bool Holding)
 {
+  FGModel::Debug(2);
+
   if (rate == 1) return false; // Fast exit if nothing to do
 
   if (exe_ctr >= rate) exe_ctr = 0;
 
   if (exe_ctr++ == 1) return false;
   else              return true;
-
-  Debug(2);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ void FGModel::Debug(int from)
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
     FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-    log << "Entering Run() for model " << Name << endl;
+    if (from ==2) log << "Entering Run() for model " << Name << endl;
   }
   if (debug_lvl & 8 ) { // Runtime state variables
   }

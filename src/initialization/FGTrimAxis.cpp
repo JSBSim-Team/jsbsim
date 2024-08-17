@@ -293,7 +293,7 @@ void FGTrimAxis::AxisReport(void) {
   std::ios_base::fmtflags originalFormat = cout.flags();
   std::streamsize originalPrecision = cout.precision();
   std::streamsize originalWidth = cout.width();
-  cout << "  " << setw(20) << GetControlName() << ": ";
+  cout << "  " << left << setw(20) << GetControlName() << ": ";
   cout << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
   cout << setw(5) << GetStateName() << ": ";
   cout << setw(9) << setprecision(2) << scientific << GetState()+state_target;
