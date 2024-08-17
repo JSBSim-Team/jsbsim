@@ -39,7 +39,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAircraft.h"
+#include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -222,23 +224,25 @@ void FGAircraft::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
-      cout << endl << "  Aircraft Metrics:" << endl;
-      cout << "    WingArea: " << WingArea  << endl;
-      cout << "    WingSpan: " << WingSpan  << endl;
-      cout << "    Incidence: " << WingIncidence << endl;
-      cout << "    Chord: " << cbar << endl;
-      cout << "    H. Tail Area: " << HTailArea << endl;
-      cout << "    H. Tail Arm: " << HTailArm << endl;
-      cout << "    V. Tail Area: " << VTailArea << endl;
-      cout << "    V. Tail Arm: " << VTailArm << endl;
-      cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
-      cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
-      cout << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << endl << "  Aircraft Metrics:" << endl << fixed;
+      log << "    WingArea: " << WingArea  << endl;
+      log << "    WingSpan: " << WingSpan  << endl;
+      log << "    Incidence: " << WingIncidence << endl;
+      log << "    Chord: " << cbar << endl;
+      log << "    H. Tail Area: " << HTailArea << endl;
+      log << "    H. Tail Arm: " << HTailArm << endl;
+      log << "    V. Tail Area: " << VTailArea << endl;
+      log << "    V. Tail Arm: " << VTailArm << endl;
+      log << "    Eyepoint (x, y, z): " << vXYZep << endl;
+      log << "    Ref Pt (x, y, z): " << vXYZrp << endl;
+      log << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAircraft" << endl;
-    if (from == 1) cout << "Destroyed:    FGAircraft" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGAircraft" << endl;
+    if (from == 1) log << "Destroyed:    FGAircraft" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
