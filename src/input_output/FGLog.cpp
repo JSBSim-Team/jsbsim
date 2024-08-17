@@ -53,10 +53,9 @@ void FGLogging::Flush(void)
   if (!message.empty()) {
     logger->Message(message);
     buffer.str("");
-    logger->Flush();
   }
 
-  buffer.clear();
+  logger->Flush();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,29 +103,29 @@ void FGLogConsole::Format(LogFormat format) {
   switch (format)
   {
   case LogFormat::RED:
-    out << FGJSBBase::fgred;
+    buffer << FGJSBBase::fgred;
     break;
   case LogFormat::BLUE:
-    out << FGJSBBase::fgblue;
+    buffer << FGJSBBase::fgblue;
     break;
   case LogFormat::BOLD:
-    out << FGJSBBase::highint;
+    buffer << FGJSBBase::highint;
     break;
   case LogFormat::NORMAL:
-    out << FGJSBBase::normint;
+    buffer << FGJSBBase::normint;
     break;
   case LogFormat::UNDERLINE_ON:
-    out << FGJSBBase::underon;
+    buffer << FGJSBBase::underon;
     break;
   case LogFormat::UNDERLINE_OFF:
-    out << FGJSBBase::underoff;
+    buffer << FGJSBBase::underoff;
     break;
   case LogFormat::DEFAULT:
-    out << FGJSBBase::fgdef;
+    buffer << FGJSBBase::fgdef;
     break;
   case LogFormat::RESET:
   default:
-    out << FGJSBBase::reset;
+    buffer << FGJSBBase::reset;
     break;
   }
 }
