@@ -37,6 +37,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <iostream>
+
 #include "FGLog.h"
 #include "input_output/FGXMLElement.h"
 
@@ -82,19 +84,22 @@ FGXMLLogging::FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLev
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGLogConsole::SetLevel(LogLevel level) {
-  FGLogger::SetLevel(level);
+void FGLogConsole::Flush(void) {
   switch (level)
   {
   case LogLevel::BULK:
   case LogLevel::DEBUG:
   case LogLevel::INFO:
-    out.tie(&std::cout);
+    std::cout << buffer.str();
+    std::cout.flush(); // Force the message to be immediately displayed in the console
     break;
   default:
-    out.tie(&std::cerr);
+    std::cerr << buffer.str();
+    std::cerr.flush(); // Force the message to be immediately displayed in the console
     break;
   }
+
+  buffer.str("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
