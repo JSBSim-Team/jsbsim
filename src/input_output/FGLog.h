@@ -39,7 +39,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iomanip>
-#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -148,24 +147,18 @@ public:
 class JSBSIM_API FGLogConsole : public FGLogger
 {
 public:
-  FGLogConsole() : out(std::cout.rdbuf()) {}
-
-  void SetLevel(LogLevel level) override;
   void FileLocation(const std::string& filename, int line) override
-  { out << std::endl << "In file " << filename << ": line" << line << std::endl; }
+  { buffer << std::endl << "In file " << filename << ": line" << line << std::endl; }
   void Format(LogFormat format) override;
-  void Flush(void) override {
-    out.flush();
-    out.clear();
-  }
+  void Flush(void) override;
 
   void Message(const std::string& message) override {
     // if (level < min_level) return;
-    out << message;
+    buffer << message;
   }
 
 private:
-  std::ostream out;
+  std::ostringstream buffer;
 };
 } // namespace JSBSim
 #endif
