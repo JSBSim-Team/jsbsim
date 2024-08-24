@@ -85,7 +85,7 @@ FGXMLLogging::FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLev
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLogConsole::Flush(void) {
-  switch (level)
+  switch (log_level)
   {
   case LogLevel::BULK:
   case LogLevel::DEBUG:

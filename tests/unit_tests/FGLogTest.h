@@ -5,7 +5,7 @@
 class DummyLogger : public JSBSim::FGLogger
 {
 public:
-  JSBSim::LogLevel GetLogLevel() const { return level; }
+  JSBSim::LogLevel GetLogLevel() const { return log_level; }
   void Message(const std::string& message) override { buffer.append(message); }
   void FileLocation(const std::string& filename, int line) override {
     buffer.append(filename);
