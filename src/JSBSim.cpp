@@ -68,6 +68,11 @@ INCLUDES
 #  include <sys/time.h>
 #endif
 
+// The flag ENABLE_VIRTUAL_TERMINAL_PROCESSING is not defined for MinGW < 7.0.0
+#if defined(__MINGW64_VERSION_MAJOR) && __MINGW64_VERSION_MAJOR < 7
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x4
+#endif
+
 #include <iostream>
 #include <cstdlib>
 
@@ -361,7 +366,7 @@ int real_main(int argc, char* argv[])
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
   // Check whether to disable console highlighting output on Windows.
-  // Support was added to Windows for Virtual Terminal codes by a particular 
+  // Support was added to Windows for Virtual Terminal codes by a particular
   // Windows 10 release.
 #ifdef _WIN32
   HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
