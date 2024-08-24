@@ -104,6 +104,7 @@ void FGLogConsole::Flush(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#ifndef _WIN32
 void FGLogConsole::Format(LogFormat format) {
   switch (format)
   {
@@ -134,4 +135,5 @@ void FGLogConsole::Format(LogFormat format) {
     break;
   }
 }
+#endif
 }

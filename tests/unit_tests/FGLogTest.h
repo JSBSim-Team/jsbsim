@@ -261,3 +261,162 @@ void testXMLLogging() {
   TS_ASSERT_EQUALS(logger->buffer, "file.xml:42");
 }
 };
+
+class FGLogConsoleTest : public CxxTest::TestSuite
+{
+public:
+void testNormalMessage() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::DEBUG);
+    log << "Hello, World!";
+  }
+  std::cout.rdbuf(cout_buffer);
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+}
+
+void testErrorMessage() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cerr_buffer = std::cerr.rdbuf();
+  std::cerr.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::ERROR);
+    log << "Hello, World!";
+  }
+  std::cerr.rdbuf(cerr_buffer);
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+}
+
+void testXMLLogging() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  JSBSim::Element el("element");
+  el.SetFileName("name.xml");
+  el.SetLineNumber(42);
+  {
+    JSBSim::FGXMLLogging log(logger, &el, JSBSim::LogLevel::DEBUG);
+  }
+  std::cout.rdbuf(cout_buffer);
+  TS_ASSERT_EQUALS(buffer.str(), "\nIn file name.xml: line 42\n");
+}
+
+void testRedFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::RED;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::RESET;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[31mHello, World!\033[0m");
+#endif
+}
+
+void testCyanFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::BLUE;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::RESET;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[34mHello, World!\033[0m");
+#endif
+}
+
+void testBoldFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::BOLD;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::RESET;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[1mHello, World!\033[0m");
+#endif
+}
+
+void testNormalFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::NORMAL;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::RESET;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[22mHello, World!\033[0m");
+#endif
+}
+
+void testUnderlineFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::UNDERLINE_ON;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::UNDERLINE_OFF;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[4mHello, World!\033[24m");
+#endif
+}
+
+void testDefaultFormat() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << JSBSim::LogFormat::DEFAULT;
+    log << "Hello, World!";
+    log << JSBSim::LogFormat::RESET;
+  }
+  std::cout.rdbuf(cout_buffer);
+#ifdef _WIN32
+  TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
+#else
+  TS_ASSERT_EQUALS(buffer.str(), "\033[39mHello, World!\033[0m");
+#endif
+}
+};

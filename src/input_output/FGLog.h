@@ -148,8 +148,10 @@ class JSBSIM_API FGLogConsole : public FGLogger
 {
 public:
   void FileLocation(const std::string& filename, int line) override
-  { buffer << std::endl << "In file " << filename << ": line" << line << std::endl; }
+  { buffer << std::endl << "In file " << filename << ": line " << line << std::endl; }
+#ifndef _WIN32
   void Format(LogFormat format) override;
+#endif
   void Flush(void) override;
 
   void Message(const std::string& message) override {
