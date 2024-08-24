@@ -318,7 +318,7 @@ void testRedFormat() {
     log << JSBSim::LogFormat::RESET;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[31mHello, World!\033[0m");
@@ -337,7 +337,7 @@ void testCyanFormat() {
     log << JSBSim::LogFormat::RESET;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[34mHello, World!\033[0m");
@@ -356,7 +356,7 @@ void testBoldFormat() {
     log << JSBSim::LogFormat::RESET;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[1mHello, World!\033[0m");
@@ -375,7 +375,7 @@ void testNormalFormat() {
     log << JSBSim::LogFormat::RESET;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[22mHello, World!\033[0m");
@@ -394,7 +394,7 @@ void testUnderlineFormat() {
     log << JSBSim::LogFormat::UNDERLINE_OFF;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[4mHello, World!\033[24m");
@@ -413,7 +413,7 @@ void testDefaultFormat() {
     log << JSBSim::LogFormat::RESET;
   }
   std::cout.rdbuf(cout_buffer);
-#ifdef _WIN32
+#ifdef _MSC_VER
   TS_ASSERT_EQUALS(buffer.str(), "Hello, World!");
 #else
   TS_ASSERT_EQUALS(buffer.str(), "\033[39mHello, World!\033[0m");
