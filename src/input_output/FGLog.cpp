@@ -1,9 +1,9 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Module:       FGOutputType.cpp
+ Module:       FGLog.cpp
  Author:       Bertrand Coconnier
  Date started: 05/03/24
- Purpose:      Manage output of sim parameters to file or stdout
+ Purpose:      Manage the logging of messages
 
   ------------- Copyright (C) 2024 Bertrand Coconnier -------------
 
@@ -26,8 +26,8 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This is the place where you create output routines to dump data for perusal
-later.
+This is the place where the logging of messages is managed. The messages can be
+sent to the console, to a file, etc.
 
 HISTORY
 --------------------------------------------------------------------------------
