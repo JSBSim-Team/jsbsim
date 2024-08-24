@@ -360,7 +360,7 @@ int real_main(int argc, char* argv[])
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
-  // Check whether to enable console highlighting output on Windows or not.
+  // Check whether to disable console highlighting output on Windows.
   // Support was added to Windows for Virtual Terminal codes by a particular 
   // Windows 10 release.
 #ifdef _WIN32
