@@ -413,8 +413,8 @@ void FGAccelerations::Debug(int from)
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-    if (from == 0) log << "Instantiated: FGAccelerations" << endl;
-    if (from == 1) log << "Destroyed:    FGAccelerations" << endl;
+    if (from == 0) log << "Instantiated: FGAccelerations\n";
+    if (from == 1) log << "Destroyed:    FGAccelerations\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

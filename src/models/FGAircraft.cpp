@@ -225,24 +225,24 @@ void FGAircraft::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
       FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-      log << endl << "  Aircraft Metrics:" << endl << fixed;
-      log << "    WingArea: " << WingArea  << endl;
-      log << "    WingSpan: " << WingSpan  << endl;
-      log << "    Incidence: " << WingIncidence << endl;
-      log << "    Chord: " << cbar << endl;
-      log << "    H. Tail Area: " << HTailArea << endl;
-      log << "    H. Tail Arm: " << HTailArm << endl;
-      log << "    V. Tail Area: " << VTailArea << endl;
-      log << "    V. Tail Arm: " << VTailArm << endl;
-      log << "    Eyepoint (x, y, z): " << vXYZep << endl;
-      log << "    Ref Pt (x, y, z): " << vXYZrp << endl;
-      log << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
+      log << "\n  Aircraft Metrics:\n"  << fixed;
+      log << "    WingArea: " << WingArea  << "\n";
+      log << "    WingSpan: " << WingSpan  << "\n";
+      log << "    Incidence: " << WingIncidence << "\n";
+      log << "    Chord: " << cbar << "\n";
+      log << "    H. Tail Area: " << HTailArea << "\n";
+      log << "    H. Tail Arm: " << HTailArm << "\n";
+      log << "    V. Tail Area: " << VTailArea << "\n";
+      log << "    V. Tail Arm: " << VTailArm << "\n";
+      log << "    Eyepoint (x, y, z): " << vXYZep << "\n";
+      log << "    Ref Pt (x, y, z): " << vXYZrp << "\n";
+      log << "    Visual Ref Pt (x, y, z): " << vXYZvrp << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-    if (from == 0) log << "Instantiated: FGAircraft" << endl;
-    if (from == 1) log << "Destroyed:    FGAircraft" << endl;
+    if (from == 0) log << "Instantiated: FGAircraft\n";
+    if (from == 1) log << "Destroyed:    FGAircraft\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

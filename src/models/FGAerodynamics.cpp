@@ -233,8 +233,8 @@ bool FGAerodynamics::Run(bool Holding)
   default:
     {
       FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-      log << endl << "  A proper axis type has NOT been selected. Check "
-          << "your aerodynamics definition." << endl;
+      log << "\n  A proper axis type has NOT been selected. Check "
+          << "your aerodynamics definition.\n";
       throw BaseException(log.str());
     }
   }
@@ -279,8 +279,8 @@ bool FGAerodynamics::Run(bool Holding)
   default:
     {
       FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-      log << endl << "  A proper axis type has NOT been selected. Check "
-          << "your aerodynamics definition." << endl;
+      log << "\n  A proper axis type has NOT been selected. Check "
+          << "your aerodynamics definition.\n";
       throw BaseException(log.str());
     }
   }
@@ -381,20 +381,18 @@ bool FGAerodynamics::Load(Element *document)
       try {
         ca.push_back( new FGFunction(FDMExec, function_element) );
       } catch (const string& str) {
-        FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
-        log << endl << axis_element->ReadFrom()
-            << endl << LogFormat::RED << "Error loading aerodynamic function in "
-            << current_func_name << ":" << str << " Aborting." << LogFormat::RESET << endl;
+        FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::ERROR);
+        log << LogFormat::RED << "\nError loading aerodynamic function in "
+            << current_func_name << ":" << str << " Aborting.\n" << LogFormat::RESET;
         return false;
       }
       } else {
         try {
           ca_atCG.push_back( new FGFunction(FDMExec, function_element) );
         } catch (const string& str) {
-          FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
-          log << endl << axis_element->ReadFrom()
-              << endl << LogFormat::RED << "Error loading aerodynamic function in "
-              << current_func_name << ":" << str << " Aborting." << LogFormat::RESET << endl;
+          FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::ERROR);
+          log << LogFormat::RED << "\nError loading aerodynamic function in "
+              << current_func_name << ":" << str << " Aborting.\n" << LogFormat::RESET;
           return false;
         }
       }
@@ -467,26 +465,26 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
       if (forceAxisType == atNone) forceAxisType = atWind;
       else if (forceAxisType != atWind) {
         FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::WARN);
-        log << endl << "  Mixed aerodynamic axis systems have been used in the"
-            << " aircraft config file. (LIFT DRAG)" << endl;
+        log << "\n  Mixed aerodynamic axis systems have been used in the"
+            << " aircraft config file. (LIFT DRAG)\n";
       }
     } else if (axis == "SIDE") {
       if (forceAxisType != atNone && forceAxisType != atWind && forceAxisType != atBodyAxialNormal) {
         FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::WARN);
-        log << endl << "  Mixed aerodynamic axis systems have been used in the"
-            << " aircraft config file. (SIDE)" << endl;
+        log << "\n  Mixed aerodynamic axis systems have been used in the"
+            << " aircraft config file. (SIDE)\n";
       }
     } else if (axis == "AXIAL" || axis == "NORMAL") {
       if (forceAxisType == atNone) forceAxisType = atBodyAxialNormal;
       else if (forceAxisType != atBodyAxialNormal) {
         FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::WARN);
-        log << endl << "  Mixed aerodynamic axis systems have been used in the"
-            << " aircraft config file. (NORMAL AXIAL)" << endl;
+        log << "\n  Mixed aerodynamic axis systems have been used in the"
+            << " aircraft config file. (NORMAL AXIAL)\n";
       }
     } else { // error
       FGXMLLogging log(FDMExec->GetLogger(), axis_element, LogLevel::FATAL);
-      log << endl << "  An unknown axis type, " << axis << " has been specified"
-          << " in the aircraft configuration file." << endl;
+      log << "\n  An unknown axis type, " << axis << " has been specified"
+          << " in the aircraft configuration file.\n";
       throw BaseException(log.str());
     }
     axis_element = document->FindNextElement("axis");
@@ -495,14 +493,14 @@ void FGAerodynamics::DetermineAxisSystem(Element* document)
   if (forceAxisType == atNone) {
     forceAxisType = atWind;
     FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
-    log << endl << "  The aerodynamic axis system has been set by default"
-        << " to the Lift/Side/Drag system." << endl;
+    log << "\n  The aerodynamic axis system has been set by default"
+        << " to the Lift/Side/Drag system.\n";
   }
   if (momentAxisType == atNone) {
     momentAxisType = atBodyXYZ;
     FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
-    log << endl << "  The aerodynamic moment axis system has been set by default"
-        << " to the bodyXYZ system." << endl;
+    log << "\n  The aerodynamic moment axis system has been set by default"
+        << " to the bodyXYZ system.\n";
   }
 }
 
@@ -516,29 +514,29 @@ void FGAerodynamics::ProcessAxesNameAndFrame(eAxisType& axisType, const string& 
     if (axisType == atNone) axisType = atBodyXYZ;
     else if (axisType != atBodyXYZ) {
       FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::WARN);
-      log << endl << " Mixed aerodynamic axis systems have been used in the "
-          << " aircraft config file." << validNames << " - BODY" << endl;
+      log << "\n Mixed aerodynamic axis systems have been used in the "
+          << " aircraft config file." << validNames << " - BODY\n";
     }
   }
   else if (frame == "STABILITY") {
     if (axisType == atNone) axisType = atStability;
     else if (axisType != atStability) {
       FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::WARN);
-      log << endl << " Mixed aerodynamic axis systems have been used in the "
-          << " aircraft config file." << validNames << " - STABILITY" << endl;
+      log << "\n Mixed aerodynamic axis systems have been used in the "
+          << " aircraft config file." << validNames << " - STABILITY\n";
     }
   }
   else if (frame == "WIND") {
     if (axisType == atNone) axisType = atWind;
     else if (axisType != atWind){
       FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::WARN);
-      log << endl << " Mixed aerodynamic axis systems have been used in the "
-          << " aircraft config file." << validNames << " - WIND" << endl;
+      log << "\n Mixed aerodynamic axis systems have been used in the "
+          << " aircraft config file." << validNames << " - WIND\n";
     }
   }
   else {
     FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::FATAL);
-    log << endl << " Unknown axis frame type of - " << frame << endl;
+    log << "\n Unknown axis frame type of - " << frame << "\n";
     throw BaseException(log.str());
   }
 }
@@ -703,27 +701,27 @@ void FGAerodynamics::Debug(int from)
       FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
       switch (forceAxisType) {
       case (atWind):
-        log << endl << "  Aerodynamics (Lift|Side|Drag axes):" << endl << endl;
+        log << "\n  Aerodynamics (Lift|Side|Drag axes):\n\n";
         break;
       case (atBodyAxialNormal):
-        log << endl << "  Aerodynamics (Axial|Side|Normal axes):" << endl << endl;
+        log << "\n  Aerodynamics (Axial|Side|Normal axes):\n\n";
         break;
       case (atBodyXYZ):
-        log << endl << "  Aerodynamics (Body X|Y|Z axes):" << endl << endl;
+        log << "\n  Aerodynamics (Body X|Y|Z axes):\n\n";
         break;
       case (atStability):
-        log << endl << "  Aerodynamics (Stability X|Y|Z axes):" << endl << endl;
+        log << "\n  Aerodynamics (Stability X|Y|Z axes):\n\n";
         break;
       case (atNone):
-        log << endl << "  Aerodynamics (undefined axes):" << endl << endl;
+        log << "\n  Aerodynamics (undefined axes):\n\n";
         break;
       }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
-    if (from == 0) log << "Instantiated: FGAerodynamics" << endl;
-    if (from == 1) log << "Destroyed:    FGAerodynamics" << endl;
+    if (from == 0) log << "Instantiated: FGAerodynamics\n";
+    if (from == 1) log << "Destroyed:    FGAerodynamics\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

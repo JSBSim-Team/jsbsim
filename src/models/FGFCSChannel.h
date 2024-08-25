@@ -101,7 +101,7 @@ public:
       return FCSComponents[i];
     } else {
       FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
-      log << "Tried to get nonexistent component" << std::endl;
+      log << "Tried to get nonexistent component\n";
       return nullptr;
     }
   }

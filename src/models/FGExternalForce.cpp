@@ -95,8 +95,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   if (sFrame.empty()) {
     FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
     log << "No frame specified for external " << el->GetName() << ", \""
-        << Name << "\"." << endl
-        << "Frame set to Body" << endl;
+        << Name << "\".\nFrame set to Body\n";
     ttype = tNone;
   } else if (sFrame == "BODY") {
     ttype = tNone;
@@ -109,8 +108,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   } else {
     FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
     log << "Invalid frame specified for external " << el->GetName() << ", \""
-        << Name << "\"." << endl
-        << "Frame set to Body" << endl;
+        << Name << "\".\nFrame set to Body\n";
     ttype = tNone;
   }
 
@@ -118,7 +116,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   if (!direction_element) {
     FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
     log << "No direction element specified in " << el->GetName()
-        << " object. Default is (0,0,0)." << endl;
+        << " object. Default is (0,0,0).\n";
   } else {
     FGColumnVector3 direction = direction_element->FindElementTripletConvertTo("IN");
     direction.Normalize();
@@ -156,7 +154,7 @@ void FGExternalForce::setForce(Element *el)
   Element* location_element = el->FindElement("location");
   if (!location_element) {
     FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
-    log << "No location element specified in force object." << endl;
+    log << "No location element specified in force object.\n";
   } else {
     FGColumnVector3 location = location_element->FindElementTripletConvertTo("IN");
     SetLocation(location);
@@ -231,8 +229,8 @@ void FGExternalForce::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
-      log << "    " << Name << endl;
-      log << "    Frame: ";
+      log << "    " << Name;
+      log << "\n    Frame: ";
       switch(ttype) {
       case tNone:
         log << "BODY";
@@ -249,13 +247,14 @@ void FGExternalForce::Debug(int from)
       default:
         log << "ERROR/UNKNOWN";
       }
-      log << endl << "    Location: (" << vXYZn(eX) << ", " << vXYZn(eY) << ", " << vXYZn(eZ) << ")" << endl;
+      log << "\n    Location: (" << fixed << vXYZn(eX) << ", " << vXYZn(eY)
+          << ", " << vXYZn(eZ) << ")\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
-    if (from == 0) log << "Instantiated: FGExternalForce" << endl;
-    if (from == 1) log << "Destroyed:    FGExternalForce" << endl;
+    if (from == 0) log << "Instantiated: FGExternalForce\n";
+    if (from == 1) log << "Destroyed:    FGExternalForce\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
