@@ -147,7 +147,7 @@ class JSBSIM_API FGLogConsole : public FGLogger
 public:
   void SetMinLevel(LogLevel level) { min_level = level; }
   void FileLocation(const std::string& filename, int line) override
-  { buffer << std::endl << "In file " << filename << ": line " << line << std::endl; }
+  { buffer << "\nIn file " << filename << ": line " << line << "\n"; }
   void Format(LogFormat format) override;
   void Flush(void) override;
 
