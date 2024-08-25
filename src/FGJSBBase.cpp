@@ -46,31 +46,17 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef _MSC_VER
-    char FGJSBBase::highint[5]  = {27, '[', '1', 'm', '\0'      };
-    char FGJSBBase::halfint[5]  = {27, '[', '2', 'm', '\0'      };
-    char FGJSBBase::normint[6]  = {27, '[', '2', '2', 'm', '\0' };
-    char FGJSBBase::reset[5]    = {27, '[', '0', 'm', '\0'      };
-    char FGJSBBase::underon[5]  = {27, '[', '4', 'm', '\0'      };
-    char FGJSBBase::underoff[6] = {27, '[', '2', '4', 'm', '\0' };
-    char FGJSBBase::fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
-    char FGJSBBase::fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
-    char FGJSBBase::fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
-    char FGJSBBase::fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
-    char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
-#else
-    char FGJSBBase::highint[5]  = {'\0' };
-    char FGJSBBase::halfint[5]  = {'\0' };
-    char FGJSBBase::normint[6]  = {'\0' };
-    char FGJSBBase::reset[5]    = {'\0' };
-    char FGJSBBase::underon[5]  = {'\0' };
-    char FGJSBBase::underoff[6] = {'\0' };
-    char FGJSBBase::fgblue[6]   = {'\0' };
-    char FGJSBBase::fgcyan[6]   = {'\0' };
-    char FGJSBBase::fgred[6]    = {'\0' };
-    char FGJSBBase::fggreen[6]  = {'\0' };
-    char FGJSBBase::fgdef[6]    = {'\0' };
-#endif
+char FGJSBBase::highint[5]  = {27, '[', '1', 'm', '\0'      };
+char FGJSBBase::halfint[5]  = {27, '[', '2', 'm', '\0'      };
+char FGJSBBase::normint[6]  = {27, '[', '2', '2', 'm', '\0' };
+char FGJSBBase::reset[5]    = {27, '[', '0', 'm', '\0'      };
+char FGJSBBase::underon[5]  = {27, '[', '4', 'm', '\0'      };
+char FGJSBBase::underoff[6] = {27, '[', '2', '4', 'm', '\0' };
+char FGJSBBase::fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
+char FGJSBBase::fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
+char FGJSBBase::fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
+char FGJSBBase::fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
+char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 
 const string FGJSBBase::needed_cfg_version = "2.0";
 const string FGJSBBase::JSBSim_version = JSBSIM_VERSION " " __DATE__ " " __TIME__ ;
