@@ -10,7 +10,6 @@ double interpolate(const std::vector<double>& queryPoint, const PointCloud& poin
 // Function prototypes
 double findLowerBound(const std::vector<double>& vec, double value);
 double getValueAtPoint(const PointCloud& points, const std::vector<double>& queryCoords);
-double interpolateRecursive(const std::vector<double>& queryPoint, const PointCloud& points, size_t dim);
 double clamp(double value, double min, double max);
 
 // Constants

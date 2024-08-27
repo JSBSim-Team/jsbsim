@@ -1,99 +1,137 @@
 #include "Interpolation.h"
 #include <algorithm>
-#include <stdexcept>
+#include <cmath>
+#include <iomanip>
 #include <iostream>
-#include <set>
-#include <unordered_map>
+#include <numeric>
 #include <sstream>
-#include <cxxabi.h>
+#include <stdexcept>
 
+// Logging macro
+#define LOG(level, message)                                                    \
+  std::cout << "[" << level << "] " << __FILE__ << ":" << __LINE__ << " - "    \
+            << message << std::endl
+
+// Utility function to convert vector to string for logging
+std::string vectorToString(const std::vector<double> &vec) {
+  std::ostringstream oss;
+  oss << std::setprecision(6) << std::fixed;
+  oss << "(";
+  for (size_t i = 0; i < vec.size(); ++i) {
+    oss << vec[i];
+    if (i < vec.size() - 1)
+      oss << ", ";
+  }
+  oss << ")";
+  return oss.str();
+}
 
 // Function to find the lower bound in a sorted vector
-double findLowerBound(const std::vector<double>& vec, double value) {
-    auto it = std::lower_bound(vec.begin(), vec.end(), value);
-    if (it == vec.end() || (it != vec.begin() && *it > value)) {
-        --it;
-    }
-    return *it;
+double findLowerBound(const std::vector<double> &vec, double value) {
+  auto it = std::lower_bound(vec.begin(), vec.end(), value);
+  if (it == vec.end() || (it != vec.begin() && *it > value)) {
+    --it;
+  }
+  return *it;
 }
 
 // Function to get the value at a specific point in the point cloud
-double getValueAtPoint(const PointCloud& points, const std::vector<double>& queryCoords) {
-    // Adjust query coordinates values within epsilon to zero
-    std::vector<double> adjustedQueryCoords = queryCoords;
-    for (auto& value : adjustedQueryCoords) {
-        if (std::abs(value) < EPSILON) {
-            value = 0.0;
-        }
+double getValueAtPoint(const PointCloud &points,
+                       const std::vector<double> &queryCoords) {
+
+  // Adjust query coordinates values within epsilon to zero
+  std::vector<double> adjustedQueryCoords = queryCoords;
+  for (auto &value : adjustedQueryCoords) {
+    if (std::abs(value) < EPSILON) {
+      value = 0.0;
     }
-    auto it = points.pointMap.find(adjustedQueryCoords);
-    if (it != points.pointMap.end()) {
-        return it->second;
-    }
-    
-    // Prepare error message with query point details
-    std::ostringstream errorMsg;
-    errorMsg << "Value not found for query point: (";
-    for (size_t i = 0; i < queryCoords.size(); ++i) {
-        errorMsg << queryCoords[i];
-        if (i < queryCoords.size() - 1) errorMsg << ", ";
-    }
-    errorMsg << ")";
-    
-    // Log error details with stack trace
-    std::cerr << "Error in getValueAtPoint: " << errorMsg.str() << std::endl;
-    
-    // Throw exception with detailed message
-    throw std::runtime_error(errorMsg.str());
-}
+  }
 
-// Recursive function to perform interpolation
-double interpolateRecursive(const std::vector<double>& queryPoint, const PointCloud& points, size_t dim) {
-    try {
-        if (dim == 0) {
-            return getValueAtPoint(points, queryPoint);
-        }
+  auto it = points.pointMap.find(adjustedQueryCoords);
+  if (it != points.pointMap.end()) {
+    return it->second;
+  }
 
-        double lower = findLowerBound(points.uniqueValues[dim - 1], queryPoint[dim - 1]);
-        double upper = *std::upper_bound(points.uniqueValues[dim - 1].begin(), points.uniqueValues[dim - 1].end(), lower);
+  // Prepare error message with query point details
+  std::ostringstream errorMsg;
+  errorMsg << "Value not found for query point: "
+           << vectorToString(queryCoords);
 
-        std::vector<double> lowerCoords = queryPoint;
-        std::vector<double> upperCoords = queryPoint;
-        lowerCoords[dim - 1] = lower;
-        upperCoords[dim - 1] = upper;
+  LOG("ERROR", errorMsg.str());
 
-        double lowerValue = interpolateRecursive(lowerCoords, points, dim - 1);
-        double upperValue = interpolateRecursive(upperCoords, points, dim - 1);
-
-        return (upper - queryPoint[dim - 1]) / (upper - lower) * lowerValue + (queryPoint[dim - 1] - lower) / (upper - lower) * upperValue;
-    } catch (const std::exception& e) {
-        // Log the parameters if an error has occurred
-        std::cerr << "interpolateRecursive called with queryPoint: (";
-        for (size_t i = 0; i < queryPoint.size(); ++i) {
-            std::cerr << queryPoint[i];
-            if (i < queryPoint.size() - 1) std::cerr << ", ";
-        }
-        std::cerr << "), dim: " << dim << std::endl;
-        // Rethrow the exception to propagate it up the call stack
-        throw;
-    }
+  // Throw exception with detailed message
+  throw std::runtime_error(errorMsg.str());
 }
 
 // Function to clamp a value between a minimum and maximum
 double clamp(double value, double min, double max) {
-    return std::max(min, std::min(value, max));
+  return std::max(min, std::min(value, max));
 }
 
-// Function to perform interpolation
-double interpolate(const std::vector<double>& queryPoint, const PointCloud& points) {
-    std::vector<double> clampedQueryPoint = queryPoint;
-    
-    // Clamp the query point coordinates to the valid range
-    for (size_t i = 0; i < points.numDimensions; ++i) {
-        clampedQueryPoint[i] = clamp(queryPoint[i], 
-                                     points.uniqueValues[i].front(), 
-                                     points.uniqueValues[i].back());
+// Function to generate all vertices of a hypercube
+void generateHypercubeVertices(
+    const std::vector<std::pair<double, double>> &bounds, size_t dim,
+    std::vector<double> current, std::vector<std::vector<double>> &vertices) {
+  if (dim == bounds.size()) {
+    vertices.push_back(current);
+    return;
+  }
+
+  current.push_back(bounds[dim].first);
+  generateHypercubeVertices(bounds, dim + 1, current, vertices);
+  current.back() = bounds[dim].second;
+  generateHypercubeVertices(bounds, dim + 1, current, vertices);
+}
+
+// Function to calculate Euclidean distance between two points
+double euclideanDistance(const std::vector<double> &a,
+                         const std::vector<double> &b) {
+  return std::sqrt(
+      std::inner_product(a.begin(), a.end(), b.begin(), 0.0, std::plus<>(),
+                         [](double x, double y) { return (x - y) * (x - y); }));
+}
+
+// Main interpolation function using linear interpolation with inverse distance
+// weighting
+double interpolate(const std::vector<double> &queryPoint,
+                   const PointCloud &points) {
+
+  std::vector<double> clampedQueryPoint = queryPoint;
+  for (size_t i = 0; i < points.numDimensions; ++i) {
+    clampedQueryPoint[i] = clamp(queryPoint[i], points.uniqueValues[i].front(),
+                                 points.uniqueValues[i].back());
+  }
+
+  // Find the hypercube containing the query point
+  std::vector<std::pair<double, double>> bounds(points.numDimensions);
+  for (size_t i = 0; i < points.numDimensions; ++i) {
+    bounds[i].first =
+        findLowerBound(points.uniqueValues[i], clampedQueryPoint[i]);
+    bounds[i].second =
+        *std::upper_bound(points.uniqueValues[i].begin(),
+                          points.uniqueValues[i].end(), bounds[i].first);
+  }
+
+  // Generate all vertices of the hypercube
+  std::vector<std::vector<double>> vertices;
+  generateHypercubeVertices(bounds, 0, std::vector<double>(), vertices);
+
+  // Interpolate using inverse distance weighting
+  double weightedSum = 0.0;
+  double weightSum = 0.0;
+
+  for (const auto &vertex : vertices) {
+    double distance = euclideanDistance(clampedQueryPoint, vertex);
+    if (distance < EPSILON) {
+      double value = getValueAtPoint(points, vertex);
+      return value;
     }
-    
-    return interpolateRecursive(clampedQueryPoint, points, points.numDimensions);
+    double weight = 1.0 / distance;
+    double value = getValueAtPoint(points, vertex);
+    weightedSum += weight * value;
+    weightSum += weight;
+  }
+
+  double result = weightedSum / weightSum;
+  return result;
 }
