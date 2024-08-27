@@ -385,7 +385,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
   <ItemDefinitionGroup>
     <PostBuildEvent>
         <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
@@ -408,3 +407,4 @@
   exit/B %errlev%</Command>
       </PostBuildEvent>
   </ItemDefinitionGroup>
+</Project>
