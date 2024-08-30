@@ -26,15 +26,6 @@ std::string vectorToString(const std::vector<double> &vec) {
   return oss.str();
 }
 
-// Function to find the lower bound in a sorted vector
-double findLowerBound(const std::vector<double> &vec, double value) {
-  auto it = std::lower_bound(vec.begin(), vec.end(), value);
-  if (it == vec.end() || (it != vec.begin() && *it > value)) {
-    --it;
-  }
-  return *it;
-}
-
 // Function to get the value at a specific point in the point cloud
 double getValueAtPoint(const PointCloud &points,
                        const std::vector<double> &queryCoords) {
@@ -68,70 +59,79 @@ double clamp(double value, double min, double max) {
   return std::max(min, std::min(value, max));
 }
 
-// Function to generate all vertices of a hypercube
-void generateHypercubeVertices(
-    const std::vector<std::pair<double, double>> &bounds, size_t dim,
-    std::vector<double> current, std::vector<std::vector<double>> &vertices) {
-  if (dim == bounds.size()) {
-    vertices.push_back(current);
-    return;
+// Helper function for multi-linear interpolation
+double interpolateRecursive(
+    const std::vector<double> &queryPoint, const PointCloud &points,
+    const std::vector<std::vector<double>::const_iterator> &lowerBounds,
+    const std::vector<std::vector<double>::const_iterator> &upperBounds,
+    size_t dimension) {
+  if (dimension == points.numDimensions) {
+    std::vector<double> point(points.numDimensions);
+    for (size_t i = 0; i < points.numDimensions; ++i) {
+      point[i] = *lowerBounds[i];
+    }
+    return getValueAtPoint(points, point);
   }
 
-  current.push_back(bounds[dim].first);
-  generateHypercubeVertices(bounds, dim + 1, current, vertices);
-  current.back() = bounds[dim].second;
-  generateHypercubeVertices(bounds, dim + 1, current, vertices);
+  double lowerValue = *lowerBounds[dimension];
+  double upperValue = *upperBounds[dimension];
+
+  // Handle the case where lower and upper bounds are the same
+  if (std::abs(upperValue - lowerValue) < EPSILON) {
+    std::vector<std::vector<double>::const_iterator> nextBounds = lowerBounds;
+    return interpolateRecursive(queryPoint, points, nextBounds, nextBounds,
+                                dimension + 1);
+  }
+
+  double t = (queryPoint[dimension] - lowerValue) / (upperValue - lowerValue);
+
+  std::vector<std::vector<double>::const_iterator> nextLowerBounds =
+      lowerBounds;
+  std::vector<std::vector<double>::const_iterator> nextUpperBounds =
+      upperBounds;
+
+  nextUpperBounds[dimension] = lowerBounds[dimension];
+  double v1 = interpolateRecursive(queryPoint, points, nextLowerBounds,
+                                   nextUpperBounds, dimension + 1);
+
+  nextLowerBounds[dimension] = upperBounds[dimension];
+  double v2 = interpolateRecursive(queryPoint, points, nextLowerBounds,
+                                   nextUpperBounds, dimension + 1);
+
+  return v1 * (1 - t) + v2 * t;
 }
 
-// Function to calculate Euclidean distance between two points
-double euclideanDistance(const std::vector<double> &a,
-                         const std::vector<double> &b) {
-  return std::sqrt(
-      std::inner_product(a.begin(), a.end(), b.begin(), 0.0, std::plus<>(),
-                         [](double x, double y) { return (x - y) * (x - y); }));
-}
-
-// Main interpolation function using linear interpolation with inverse distance
-// weighting
 double interpolate(const std::vector<double> &queryPoint,
                    const PointCloud &points) {
+  if (queryPoint.size() != points.numDimensions) {
+    throw std::runtime_error(
+        "Query point dimension does not match PointCloud dimension");
+  }
 
   std::vector<double> clampedQueryPoint = queryPoint;
+  std::vector<std::vector<double>::const_iterator> lowerBounds(
+      points.numDimensions);
+  std::vector<std::vector<double>::const_iterator> upperBounds(
+      points.numDimensions);
+
   for (size_t i = 0; i < points.numDimensions; ++i) {
     clampedQueryPoint[i] = clamp(queryPoint[i], points.uniqueValues[i].front(),
                                  points.uniqueValues[i].back());
-  }
 
-  // Find the hypercube containing the query point
-  std::vector<std::pair<double, double>> bounds(points.numDimensions);
-  for (size_t i = 0; i < points.numDimensions; ++i) {
-    bounds[i].first =
-        findLowerBound(points.uniqueValues[i], clampedQueryPoint[i]);
-    bounds[i].second =
-        *std::upper_bound(points.uniqueValues[i].begin(),
-                          points.uniqueValues[i].end(), bounds[i].first);
-  }
-
-  // Generate all vertices of the hypercube
-  std::vector<std::vector<double>> vertices;
-  generateHypercubeVertices(bounds, 0, std::vector<double>(), vertices);
-
-  // Interpolate using inverse distance weighting
-  double weightedSum = 0.0;
-  double weightSum = 0.0;
-
-  for (const auto &vertex : vertices) {
-    double distance = euclideanDistance(clampedQueryPoint, vertex);
-    if (distance < EPSILON) {
-      double value = getValueAtPoint(points, vertex);
-      return value;
+    lowerBounds[i] =
+        std::lower_bound(points.uniqueValues[i].begin(),
+                         points.uniqueValues[i].end(), clampedQueryPoint[i]);
+    if (lowerBounds[i] != points.uniqueValues[i].begin() &&
+        *lowerBounds[i] > clampedQueryPoint[i]) {
+      --lowerBounds[i];
     }
-    double weight = 1.0 / distance;
-    double value = getValueAtPoint(points, vertex);
-    weightedSum += weight * value;
-    weightSum += weight;
+
+    upperBounds[i] = std::next(lowerBounds[i]);
+    if (upperBounds[i] == points.uniqueValues[i].end()) {
+      upperBounds[i] = lowerBounds[i];
+    }
   }
 
-  double result = weightedSum / weightSum;
-  return result;
+  return interpolateRecursive(clampedQueryPoint, points, lowerBounds,
+                              upperBounds, 0);
 }
