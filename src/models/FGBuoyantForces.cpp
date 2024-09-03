@@ -39,6 +39,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGBuoyantForces.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -126,7 +127,7 @@ bool FGBuoyantForces::Load(Element *document)
     Cells.push_back(new FGGasCell(FDMExec, gas_cell_element, Cells.size(), in));
     gas_cell_element = document->FindNextElement("gas_cell");
   }
-  
+
   PostLoad(document, FDMExec);
 
   if (!NoneDefined) {
@@ -165,7 +166,7 @@ const FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
 const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
 {
   size_t size = Cells.size();
-  
+
   if (size == 0) return gasCellJ;
 
   gasCellJ.InitMatrix();
@@ -173,7 +174,7 @@ const FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
   for (unsigned int i=0; i < size; i++) {
     gasCellJ += Cells[i]->GetInertia();
   }
-  
+
   return gasCellJ;
 }
 
@@ -281,12 +282,14 @@ void FGBuoyantForces::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      cout << endl << "  Buoyant Forces: " << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << "\n  Buoyant Forces: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGBuoyantForces" << endl;
-    if (from == 1) cout << "Destroyed:    FGBuoyantForces" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGBuoyantForces\n";
+    if (from == 1) log << "Destroyed:    FGBuoyantForces\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

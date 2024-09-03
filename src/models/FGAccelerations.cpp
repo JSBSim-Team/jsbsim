@@ -55,6 +55,7 @@ INCLUDES
 
 #include "FGAccelerations.h"
 #include "FGFDMExec.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -411,8 +412,9 @@ void FGAccelerations::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAccelerations" << endl;
-    if (from == 1) cout << "Destroyed:    FGAccelerations" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGAccelerations\n";
+    if (from == 1) log << "Destroyed:    FGAccelerations\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

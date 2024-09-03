@@ -53,12 +53,12 @@ CLASS DOCUMENTATION
   /** Represents a <channel> in a control system definition.
       The <channel> may be defined within a <system>, <autopilot> or <flight_control>
       element. Channels are a way to group sets of components that perform
-      a specific purpose or algorithm. 
+      a specific purpose or algorithm.
       Created within a <system> tag, the channel is defined as follows
       <channel name="name" [execute="property"] [execrate="rate"]>
       name is the name of the channel - in the old way this would also be used to bind elements
       execute [optional] is the property that defines when to execute this channel; an on/off switch
-      execrate [optional] is the rate at which the channel should execute. 
+      execrate [optional] is the rate at which the channel should execute.
                A value of 0 or 1 will execute the channel every frame, a value of 2
                every other frame (half rate), a value of 4 is every 4th frame (quarter rate)
       */
@@ -97,11 +97,12 @@ public:
   size_t GetNumComponents() {return FCSComponents.size();}
   /// Retrieves a specific component.
   FGFCSComponent* GetComponent(unsigned int i) {
-    if (i >= GetNumComponents()) {
-      std::cerr << "Tried to get nonexistent component" << std::endl;
-      return 0;
-    } else {
+    if (i < GetNumComponents()) {
       return FCSComponents[i];
+    } else {
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      log << "Tried to get nonexistent component\n";
+      return nullptr;
     }
   }
   /// Reset the components that can be reset
@@ -131,7 +132,7 @@ public:
     // channel will be run at rate 1 if trimming, or when the next execrate
     // frame is reached
     if (fcs->GetTrimStatus() || ExecFrameCountSinceLastRun >= ExecRate) {
-      for (unsigned int i=0; i<FCSComponents.size(); i++) 
+      for (unsigned int i=0; i<FCSComponents.size(); i++)
         FCSComponents[i]->Run();
     }
   }

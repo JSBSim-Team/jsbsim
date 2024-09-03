@@ -458,7 +458,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
       << "    CG-Z         Ixx         Iyy         Izz"
       << "         Ixy         Ixz         Iyz" << LogFormat::UNDERLINE_OFF << endl;
   log << fixed << setprecision(1);
-  log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << normint
+  log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << LogFormat::NORMAL
       << right << setw(12) << EmptyWeight
       << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
       << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
@@ -467,7 +467,7 @@ void FGMassBalance::GetMassPropertiesReport(int i)
   for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
-    log << LogFormat::BOLD << left << setw(4) << i << setw(30) << pm->GetName() << normint
+    log << LogFormat::BOLD << left << setw(4) << i << setw(30) << pm->GetName() << LogFormat::NORMAL
         << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
         << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)

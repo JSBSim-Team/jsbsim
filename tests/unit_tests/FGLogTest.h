@@ -5,7 +5,7 @@
 class DummyLogger : public JSBSim::FGLogger
 {
 public:
-  JSBSim::LogLevel GetLogLevel() const { return level; }
+  JSBSim::LogLevel GetLogLevel() const { return log_level; }
   void Message(const std::string& message) override { buffer.append(message); }
   void FileLocation(const std::string& filename, int line) override {
     buffer.append(filename);
@@ -304,6 +304,24 @@ void testXMLLogging() {
   }
   std::cout.rdbuf(cout_buffer);
   TS_ASSERT_EQUALS(buffer.str(), "\nIn file name.xml: line 42\n");
+}
+
+void testMinLevel() {
+  auto logger = std::make_shared<JSBSim::FGLogConsole>();
+  logger->SetMinLevel(JSBSim::LogLevel::DEBUG);
+  std::ostringstream buffer;
+  auto cout_buffer = std::cout.rdbuf();
+  std::cout.rdbuf(buffer.rdbuf());
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::BULK);
+    log << "BULK";
+  }
+  {
+    JSBSim::FGLogging log(logger, JSBSim::LogLevel::INFO);
+    log << "INFO";
+  }
+  std::cout.rdbuf(cout_buffer);
+  TS_ASSERT_EQUALS(buffer.str(), "INFO");
 }
 
 void testRedFormat() {
