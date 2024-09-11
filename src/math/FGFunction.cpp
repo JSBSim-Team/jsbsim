@@ -53,19 +53,19 @@ constexpr unsigned int MaxArgs = 9999;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-class WrongNumberOfArguments : public runtime_error
+class WrongNumberOfArguments : public BaseException
 {
 public:
   WrongNumberOfArguments(const string &msg, const vector<FGParameter_ptr> &p,
                          Element* el)
-    : runtime_error(msg), Parameters(p), element(el) {}
+    : BaseException(msg), Parameters(p), element(el) {}
   size_t NumberOfArguments(void) const { return Parameters.size(); }
   FGParameter* FirstParameter(void) const { return *(Parameters.cbegin()); }
   const Element* GetElement(void) const { return element; }
 
 private:
   const vector<FGParameter_ptr> Parameters;
-  const Element* element;
+  const Element_ptr element;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +158,7 @@ bool GetBinary(double val, const string &ctxMsg)
     cerr << ctxMsg << FGJSBBase::fgred << FGJSBBase::highint
          << "Malformed conditional check in function definition."
          << FGJSBBase::reset << endl;
-    throw("Fatal Error.");
+    throw BaseException("Fatal Error.");
   }
 }
 
@@ -197,7 +197,7 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
       return e.FirstParameter();
     }
     else
-      throw e.what();
+      throw e;
   }
 }
 
@@ -272,7 +272,7 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
       cerr << el->ReadFrom() << fgred << highint
            << "<" << el->GetName() << "> must have an even number of arguments."
            << reset << endl;
-      throw("Fatal Error");
+      throw BaseException("Fatal Error");
     }
     break;
   case OddEven::Odd:
@@ -280,7 +280,7 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
       cerr << el->ReadFrom() << fgred << highint
            << "<" << el->GetName() << "> must have an odd number of arguments."
            << reset << endl;
-      throw("Fatal Error");
+      throw BaseException("Fatal Error");
     }
     break;
   default:
@@ -310,7 +310,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 {
   Name = el->GetAttributeValue("name");
   Element* element = el->GetElement();
-      
+
   auto sum = [](const decltype(Parameters)& Parameters)->double {
                double temp = 0.0;
 
@@ -319,7 +319,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
                return temp;
              };
-  
+
   while (element) {
     string operation = element->GetName();
 
@@ -338,7 +338,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
             cerr << element->ReadFrom()
                  << fgred << "Illegal use of the special character '#'"
                  << reset << endl;
-            throw("Fatal Error.");
+            throw BaseException("Fatal Error.");
           }
         }
 
@@ -665,7 +665,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                    cerr << ctxMsg << fgred << highint
                         << "The switch function index (" << temp
                         << ") is negative." << reset << endl;
-                   throw("Fatal error");
+                   throw BaseException("Fatal error");
                  }
                  size_t n = p.size()-1;
                  size_t i = static_cast<size_t>(temp+0.5);
@@ -678,7 +678,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                         << ") selected a value above the range of supplied values"
                         << "[0:" << n-1 << "]"
                         << " - not enough values were supplied." << reset << endl;
-                   throw("Fatal error");
+                   throw BaseException("Fatal error");
                  }
                };
       Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
@@ -767,10 +767,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  double sina = sin(alpha_local);
                  double cosb;
 
-                 if (fabs(cosa) > fabs(sina)) 
+                 if (fabs(cosa) > fabs(sina))
                    cosb = wind_local(eX) / cosa;
                  else
-                   cosb = wind_local(eZ) / sina;  
+                   cosb = wind_local(eZ) / sina;
 
                  return atan2(wind_local(eY), cosb)*radtodeg;
                };
@@ -839,7 +839,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                    cerr << ctxMsg << fgred << highint
                         << "The index must be one of the integer value 1, 2 or 3."
                         << reset << endl;
-                   throw("Fatal error");
+                   throw BaseException("Fatal error");
                  }
 
                  FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
@@ -867,7 +867,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                    cerr << ctxMsg << fgred << highint
                         << "The index must be one of the integer value 1, 2 or 3."
                         << reset << endl;
-                   throw("Fatal error");
+                   throw BaseException("Fatal error");
                  }
 
                  FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
@@ -954,7 +954,7 @@ void FGFunction::cacheValue(bool cache)
     cached = true;
   }
 }
-  
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGFunction::GetValue(void) const
@@ -1007,7 +1007,7 @@ string FGFunction::CreateOutputNode(Element* el, const string& Prefix)
     if (pNode->isTied()) {
       cerr << el->ReadFrom()
            << "Property " << nName << " has already been successfully bound (late)." << endl;
-      throw("Failed to bind the property to an existing already tied node.");
+      throw BaseException("Failed to bind the property to an existing already tied node.");
     }
   }
 
