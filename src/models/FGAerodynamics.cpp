@@ -372,29 +372,18 @@ bool FGAerodynamics::Load(Element *document)
     axis = axis_element->GetAttributeValue("name");
     function_element = axis_element->FindElement("function");
     while (function_element) {
-      string current_func_name = function_element->GetAttributeValue("name");
-      bool apply_at_cg = false;
-      if (function_element->HasAttribute("apply_at_cg")) {
-        if (function_element->GetAttributeValue("apply_at_cg") == "true") apply_at_cg = true;
-      }
-      if (!apply_at_cg) {
       try {
-        ca.push_back( new FGFunction(FDMExec, function_element) );
-      } catch (const string& str) {
-        cerr << endl << axis_element->ReadFrom()
-             << endl << fgred << "Error loading aerodynamic function in "
-             << current_func_name << ":" << str << " Aborting." << reset << endl;
-        return false;
-      }
-      } else {
-        try {
-          ca_atCG.push_back( new FGFunction(FDMExec, function_element) );
-        } catch (const string& str) {
+        if (function_element->HasAttribute("apply_at_cg") &&
+            function_element->GetAttributeValue("apply_at_cg") == "true")
+          ca_atCG.push_back(new FGFunction(FDMExec, function_element));
+        else
+          ca.push_back(new FGFunction(FDMExec, function_element));
+      } catch (BaseException& e) {
+          string current_func_name = function_element->GetAttributeValue("name");
           cerr << endl << axis_element->ReadFrom()
                << endl << fgred << "Error loading aerodynamic function in "
-               << current_func_name << ":" << str << " Aborting." << reset << endl;
+               << current_func_name << ":" << e.what() << " Aborting." << reset << endl;
           return false;
-        }
       }
       function_element = axis_element->FindNextElement("function");
     }
