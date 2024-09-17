@@ -313,6 +313,8 @@ public:
 
   std::string GetName(void) const {return Name;}
 
+  static constexpr double EPSILON = 1e-9;
+
 private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};

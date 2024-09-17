@@ -509,8 +509,7 @@ double FGTable::GetValue(double key) const
   double Span = Data[2*r] - x0;
   assert(Span > 0.0);
   double Factor = (key - x0) / Span;
-  const double epsilon = 1e-9;
-  assert(Factor >= -epsilon && Factor <= 1.0 + epsilon);
+  assert(Factor >= -EPSILON && Factor <= 1.0 + EPSILON);
 
 
   double y0 = Data[2*r-1];
