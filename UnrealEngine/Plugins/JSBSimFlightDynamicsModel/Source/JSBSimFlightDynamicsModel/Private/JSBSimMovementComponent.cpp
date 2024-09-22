@@ -291,13 +291,6 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             // Get the results from JSBSim
 			CopyFromJSBSim();
 
-            // Basic debugging string and symbols
-			if (DrawDebug)
-			{
-				DrawDebugMessage();
-				DrawDebugObjects();
-			}
-
             // Transform the aircraft coordinates from ECEF Frame to UE Frame, using the georeferencing plugin.
 			if (Parent)
 			{
@@ -322,6 +315,14 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 				// Apply the transform to the Parent actor			
 				Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
 			}
+
+      // Basic debugging string and symbols
+      if (DrawDebug)
+      {
+        DrawDebugMessage();
+        DrawDebugObjects();
+      }
+
 		}
 	}
 
