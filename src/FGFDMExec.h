@@ -637,7 +637,7 @@ private:
   unsigned int Frame;
   unsigned int IdFDM;
   int disperse;
-  unsigned short Terminate;
+  bool Terminate;
   double dT;
   double saved_dT;
   double sim_time;
