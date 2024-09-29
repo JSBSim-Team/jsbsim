@@ -9,16 +9,16 @@
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-  
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-  
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
+
 -->
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="SubmarineScout" version="2.0" release="ALPHA"
@@ -26,19 +26,17 @@
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
  <fileheader>
-
-  <description>Submarine Scout Zero class airship for JSBSim.</description>
-
   <author>Anders Gidenstam</author>
   <email>anders at gidenstam dot org</email>
+  <license
+   licenseName="GPL v2+"
+   licenseURL="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"/>
 
   <filecreationdate>2007-02-11</filecreationdate>
   <version>2024-01-10</version>
 
-  <license>
-   <licenseName>GPL v2+</licenseName>
-   <licenseURL>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</licenseURL>
-  </license>
+  <description>Submarine Scout Zero class airship for JSBSim.</description>
+
   <note>
    This model was created using publicly available data, publicly available
    technical reports, textbooks, and guesses. It contains no proprietary or
@@ -84,17 +82,15 @@
 
  <metrics>
 
-  <documentation>
+  <description>
    NOTE: The center of the bow of the envelope is the origo of
          the body coordinate system.
          x/y/z = back/right/up
 
          The nose of the car is at (13.70, 0.0, -6.85) m
-  </documentation>
 
-  <documentation>
    According to [Whale:1919:BA] the horizontal and vertical fins of a
-   S.S. B.E.2C ship were of the same size and measured 16' by 8'6" and 
+   S.S. B.E.2C ship were of the same size and measured 16' by 8'6" and
    the rudder/elevators measured 4' by 8'6" each.
    The vertical fin of a S.S. Zero might be longer.
 
@@ -107,9 +103,7 @@
       - S.S. Zero               45 mph
     - Endurance
       - S.S. Zero:              expected 17 hours. Record: 50:55
-  </documentation>
 
-  <documentation>
    From [AHT,
    http://www.aht.ndirect.co.uk/airships/Technical%20Spec/SSZ%20Airship.htm]:
 
@@ -130,7 +124,7 @@
     Top speed               53 mph
     Climb                   1,200 feet per minute
     Turning circle          40 seconds minimum, 230 diameter
-  </documentation>
+  </description>
 
   <wingarea unit="M2">  65.0 </wingarea>  <!-- Cross-sectional area.-->
   <wingspan unit="M">    9.1 </wingspan>  <!-- Envelope diameter. -->
@@ -168,17 +162,12 @@
  -->
 
  <mass_balance>
-
-  <documentation>
+  <description>
    According to [VentryKo:1982:AS] the SS Zero class had a useful lift
    of 1344lbs (~610kg). Considering that the lift of 1 m^3 hydrogen
    approximately is 1 kg that leaves 1370kg of lift for the structure
    itself.
-  </documentation>
 
-  <emptywt unit="KG"> 733.50 </emptywt>
-
-  <documentation>
    The empty weight is estimated to consist of:
     - The weight of the envelope (70000 ft^3),
       which according to [ADA:1917:Handbook] consists of
@@ -193,9 +182,7 @@
    Total with 4 planes    2009 lb
 
    The car, engine and planes will be added as point masses.
-  </documentation>
 
-  <documentation>
    % Very rough estimation model of the empty weight CG and inertia tensor.
    % Assume the empty weight of is to 100% a cylindrical shell.
 
@@ -214,7 +201,7 @@
 
    % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
    Ixx = m * r^2
-         
+
    Iyy = 1/2*m * r^2 + 1/12*m*l^2
 
    Izz = 1/2*m * r^2 + 1/12*m*l^2
@@ -222,8 +209,7 @@
    Ixy = 0
    Ixz = 0
    Iyz = 0
-
-  </documentation>
+  </description>
 
   <ixx unit="KG*M2">  14853.0 </ixx>
   <iyy unit="KG*M2"> 124160.0 </iyy>
@@ -231,7 +217,7 @@
   <ixy unit="KG*M2">      0.0 </ixy>
   <ixz unit="KG*M2">      0.0 </ixz>
   <iyz unit="KG*M2">      0.0 </iyz>
-
+  <emptywt unit="KG"> 733.50 </emptywt>
   <location name="CG" unit="M">
    <x> 21.850 </x>
    <y>  0.000 </y>
@@ -241,23 +227,23 @@
   <!--
   === Ballast ================================================
   -->
-  <documentation>
+  <!--
    Ballast for a S.S. B.E.2C according to [Whale:1919:BA]:
     - Water ballast tank
       - Located immediatly behind pilot
       - Capacity 14 gallons.
-  </documentation>
+  -->
 
   <!-- Experimental ballast setup. -->
   <!-- Center ballast -->
   <pointmass name="Ballast_Center">
    <!-- According to the AHT this should be max 100 kg -->
+   <weight unit="KG"> 100 </weight>
    <location unit="M">
     <x> 17.22 </x>
     <y>  0.0  </y>
     <z> -7.20 </z>
    </location>
-   <weight unit="KG"> 100 </weight>
   </pointmass>
 
   <!--
@@ -268,27 +254,27 @@
   -->
   <!-- Forward ballast -->
   <pointmass name="Ballast_Forward">
+   <weight unit="KG"> 0.0 </weight>
    <location unit="M">
     <x> 0.0 </x>
     <y> 0.0 </y>
     <z> -1.0 </z>
    </location>
-   <weight unit="KG"> 0.0 </weight>
   </pointmass>
   <!-- Aft ballast -->
-  <pointmass type="Ballast_Aft">
+  <pointmass name="Ballast_Aft">
+   <weight unit="KG"> 0.0 </weight>
    <location unit="M">
     <x> 43.7 </x>
     <y> 0.0 </y>
     <z> -1.0 </z>
    </location>
-   <weight unit="KG"> 0.0 </weight>
   </pointmass>
 
   <!--
   === Armament ===============================================
   -->
-  <documentation>
+  <!--
    According to [VentryKo:1982:AS] page 44 these ships normally carried
    two 65lb bombs set as depth charges.
 
@@ -297,10 +283,10 @@
 
    The inspiration for my bomb model appears to be a 110lb bomb
    from a photo of the car of SSZ.27.
-  </documentation>
+  -->
   <pointmass name="Bomb1">
    <weight unit="LBS"> 110.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 17.00 </x>
     <y> -0.57 </y>
     <z> -7.35 </z>
@@ -308,7 +294,7 @@
   </pointmass>
   <pointmass name="Bomb2">
    <weight unit="LBS"> 110.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 17.00 </x>
     <y>  0.57 </y>
     <z> -7.35 </z>
@@ -320,7 +306,7 @@
   -->
   <pointmass name="Crew 1 Observer">
    <weight unit="KG"> 85.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 14.9  </x>
     <y>  0.0  </y>
     <z> -6.85 </z>
@@ -328,7 +314,7 @@
   </pointmass>
   <pointmass name="Crew 2 Pilot">
    <weight unit="KG"> 85.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 16.17 </x>
     <y>  0.0  </y>
     <z> -6.85 </z>
@@ -336,7 +322,7 @@
   </pointmass>
   <pointmass name="Crew 3 Mechanic">
    <weight unit="KG"> 85.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 17.22 </x>
     <y>  0.0  </y>
     <z> -6.85 </z>
@@ -346,35 +332,34 @@
   <!--
   === Other point masses =====================================
   -->
-  <documentation>
+  <!--
    According to [Whale:1919:BA] the engine of a S.S. B.E.2C
    (also 75h.p. but air cooled) weighed 438lb.
-  </documentation>
-  <documentation>
+
    According to [ADA:1917:Handbook] the water cooled 100hp Green engine
    of the S.S. Armstrong-Whitworth was 601 lb including carburettor,
    exhaust pipe, radiator and cooling water. 714 lb complete including
    fuel tanks (and propeller a 46 lb?).
-  </documentation>
+  -->
 
   <pointmass name="Engine">
    <weight unit="LBS"> 601.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 18.60 </x>
     <y>  0.00 </y>
     <z> -6.10 </z>
    </location>
   </pointmass>
 
-  <documentation>
+  <!--
    According to [ADA:1917:Handbook] the empty weight of a complete car of a
    S.S. Maurice Farman was 1150 lb including engine (516 + 35 lb),
    wireless and bomb racks.
-  </documentation>
+  -->
 
   <pointmass name="Car">
    <weight unit="LBS"> 599.0 </weight>
-   <location name="POINTMASS" unit="M">
+   <location unit="M">
     <x> 16.20 </x>
     <y>  0.00 </y>
     <z> -7.85 </z>
@@ -384,16 +369,247 @@
  </mass_balance>
 
  <!--
+ ==== Ground reactions ======================================================
+ -->
+
+ <ground_reactions>
+
+  <!--
+  === Landing gears ===================================================
+  -->
+  <contact type="BOGEY" name="CAR_KEEL_FRONT">
+   <location unit="M">
+    <x>  14.7 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="BOGEY" name="CAR_KEEL_MIDDLE">
+   <location unit="M">
+    <x>  16.6 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="BOGEY" name="CAR_KEEL_AFT">
+   <location unit="M">
+    <x>  18.4 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <!--
+  === Other contact points ============================================
+  -->
+  <!-- These should induce structural failure. -->
+  <contact type="STRUCTURE" name="NOSE">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="STRUCTURE" name="TAIL">
+   <location unit="M">
+    <x> 43.7 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="STRUCTURE" name="TAIL_FIN">
+   <location unit="M">
+    <x> 35.6 </x>
+    <y>  0.0 </y>
+    <z> -5.6 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+  <contact type="BOGEY" name="CAR_FRONT">
+   <location unit="M">
+    <x>  13.7 </x>
+    <y>   0.0 </y>
+    <z>  -6.85 </z>
+   </location>
+   <static_friction>  0.5 </static_friction>
+   <dynamic_friction> 0.5 </dynamic_friction>
+   <rolling_friction> 0.5 </rolling_friction>
+   <spring_coeff unit="N/M"> 25000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
+
+ </ground_reactions>
+
+ <!--
+ ==== External reactions ====================================================
+ -->
+
+ <external_reactions>
+
+  <!-- Note: these forces are applied to the wrong location. -->
+  <force name="guy-wire-north" frame="LOCAL">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <direction>
+    <x> 1.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="guy-wire-east" frame="LOCAL">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 1.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="guy-wire-down" frame="LOCAL">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 1.0 </z>
+   </direction>
+  </force>
+
+  <force name="added-mass-bx" frame="BODY">
+   <location unit="M">
+    <x> 20.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <direction>
+    <x> 1.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="added-mass-by" frame="BODY">
+   <location unit="M">
+    <x> 20.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 1.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </force>
+  <force name="added-mass-bz" frame="BODY">
+   <location unit="M">
+    <x> 20.0 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <direction>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 1.0 </z>
+   </direction>
+  </force>
+
+  <moment name="added-mass-pitch" frame="BODY">
+   <direction>
+    <x> 0.0 </x>
+    <y> 1.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </moment>
+  <moment name="added-mass-roll" frame="BODY">
+   <direction>
+    <x> 1.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </direction>
+  </moment>
+  <moment name="added-mass-yaw" frame="BODY">
+   <direction>
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 1.0 </z>
+   </direction>
+  </moment>
+
+ </external_reactions>
+
+ <!--
  === Gas cell ==============================================================
  -->
  <buoyant_forces>
 
-  <documentation>
+  <description>
    NOTE: The cell is placed based on the envelope centroid location
          as computed by BRLCAD.
          The automatic valves are implemented using a system.
-  </documentation>
-  <documentation>
+
    Envelope and gas control for a S.S. B.E.2C according to [Whale:1919:BA]:
     - Ripping panel at the top of the envelope towards the front
       - 14'5" by 8'
@@ -404,12 +620,11 @@
     - 2 gas valves one at the bottom and one at the top of the envelope
       - Bottom valve automatically opens at 30 - 35mm water pressure.
       - Top valve is manual only
-  </documentation>
-  <documentation>
+
    Envelope and ballonet volumes according to [Mowthrope:1998:Battlebags]:
     - Envelope    70,000 feet^3
     - 2 Ballonets  9,800 feet^3 each
-  </documentation>
+  </description>
 
   <!-- External environment properties -->
   <property> environment/sun-angle-rad </property>
@@ -593,143 +808,16 @@
  </buoyant_forces>
 
  <!--
- ==== Ground reactions ======================================================
- -->
-
- <ground_reactions>
-
-  <!--
-  === Landing gears ===================================================
-  -->
-  <contact type="BOGEY" name="CAR_KEEL_FRONT">
-   <location unit="M">
-    <x>  14.7 </x>
-    <y>   0.0 </y>
-    <z>  -8.2 </z>
-   </location>
-   <static_friction>  1.0 </static_friction>
-   <dynamic_friction> 2.0 </dynamic_friction>
-   <rolling_friction> 0.8 </rolling_friction>
-   <spring_coeff unit="N/M"> 50000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="BOGEY" name="CAR_KEEL_MIDDLE">
-   <location unit="M">
-    <x>  16.6 </x>
-    <y>   0.0 </y>
-    <z>  -8.2 </z>
-   </location>
-   <static_friction>  1.0 </static_friction>
-   <dynamic_friction> 2.0 </dynamic_friction>
-   <rolling_friction> 0.8 </rolling_friction>
-   <spring_coeff unit="N/M"> 50000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="BOGEY" name="CAR_KEEL_AFT">
-   <location unit="M">
-    <x>  18.4 </x>
-    <y>   0.0 </y>
-    <z>  -8.2 </z>
-   </location>
-   <static_friction>  1.0 </static_friction>
-   <dynamic_friction> 2.0 </dynamic_friction>
-   <rolling_friction> 0.8 </rolling_friction>
-   <spring_coeff unit="N/M"> 50000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <!--
-  === Other contact points ============================================
-  -->
-  <!-- These should induce structural failure. -->
-  <contact type="STRUCTURE" name="NOSE">
-   <location unit="M">
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </location>
-   <static_friction>  0.2 </static_friction>
-   <dynamic_friction> 0.2 </dynamic_friction>
-   <rolling_friction> 0.2 </rolling_friction>
-   <spring_coeff unit="N/M">      100000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="STRUCTURE" name="TAIL">
-   <location unit="M">
-    <x> 43.7 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <static_friction>  0.2 </static_friction>
-   <dynamic_friction> 0.2 </dynamic_friction>
-   <rolling_friction> 0.2 </rolling_friction>
-   <spring_coeff unit="N/M">      100000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="STRUCTURE" name="TAIL_FIN">
-   <location unit="M">
-    <x> 35.6 </x>
-    <y>  0.0 </y>
-    <z> -5.6 </z>
-   </location>
-   <static_friction>  0.2 </static_friction>
-   <dynamic_friction> 0.2 </dynamic_friction>
-   <rolling_friction> 0.2 </rolling_friction>
-   <spring_coeff unit="N/M">      100000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
-  <contact type="BOGEY" name="CAR_FRONT">
-   <location unit="M">
-    <x>  13.7 </x>
-    <y>   0.0 </y>
-    <z>  -6.85 </z>
-   </location>
-   <static_friction>  0.5 </static_friction>
-   <dynamic_friction> 0.5 </dynamic_friction>
-   <rolling_friction> 0.5 </rolling_friction>
-   <spring_coeff unit="N/M"> 25000 </spring_coeff>
-   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-   <max_steer unit="DEG"> 0.0 </max_steer>
-   <brake_group> NONE </brake_group>
-   <retractable>0</retractable>
-  </contact>
-
- </ground_reactions>
-
- <!--
  ==== Propulsion ============================================================
  -->
 
  <propulsion>
- 
+
   <!--
   === Engine ================================================
   -->
-  
-  <documentation>
+
+  <description>
    Propulsion installation information for S.S. Zero from [Whale:1919:BA]:
     - Water-cooled Rolls Royce Hawk
       - 75hp
@@ -745,7 +833,7 @@
       - Capacity? S.S. B.E.2C: 60 (UK?) gallons.
       - 2 tanks. Total capacity 120 (UK?) gallons [AHT, www.aht.ndirect.co.uk].
       - 2, 4 or 6 tanks for S.S.Zero [Mowthrope:1998:Battlebags] (at 60 gal UK?)
-  </documentation>
+  </description>
 
   <!-- Engine -->
   <engine file="eng_RRhawk">
@@ -796,7 +884,7 @@
  -->
  <system name="Instrumentation">
 
-  <documentation>
+  <description>
    Instrumentation for a S.S. B.E.2C according to [Whale:1919:BA]:
    Pilot:
     - watch
@@ -819,8 +907,8 @@
 
    Observer/Wireless operator:
     - radio w. range up to 50-60 miles.
-    - Lewis machine gun 
-  </documentation>
+    - Lewis machine gun
+  </description>
 
   <channel name="Instruments">
 
@@ -878,16 +966,16 @@
  ==== Flight control system =================================================
  -->
  <system file="Submarine_Scout_crew_ap">
-  <limitation>
+  <description>
    The real aircraft did not have any autopilot. This autopilot is
    mostly intended for scripted flights in JSBSim/standalone.
    The autopilot is only minimally tuned.
-  </limitation>
+  </description>
  </system>
 
  <system file="air-and-gas-control">
 
-  <documentation>
+  <description>
    "Two ballonets are provided, one forward and one aft, the capacity
    of each being 6,375 cubic feet.  The supply of air for filling
    these is taken from the propeller draught by a slanting aluminium
@@ -912,11 +1000,10 @@
    "One ripping panel is fitted, which is situated on the top of the
    envelope towards the nose.  It has a length of 14 feet 5 inches and
    a breadth of about 8 inches."  [Whale:1919:BA] on the S.S.B.E. 2C.
-  </documentation>
-  <limitation>
+
    The slip stream pressure calculation does not take the direction of the
    relative wind into account.
-  </limitation>
+  </description>
 
  </system>
 
@@ -1084,111 +1171,6 @@
 
   </channel>
  </system>
-
- <!--
- ==== External reactions ====================================================
- -->
-
- <external_reactions>
-
-  <!-- Note: these forces are applied to the wrong location. -->
-  <force name="guy-wire-north" frame="LOCAL">
-   <location unit="M">
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="guy-wire-east" frame="LOCAL">
-   <location unit="M">
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="guy-wire-down" frame="LOCAL">
-   <location unit="M">
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 1.0 </z>
-   </direction>
-  </force>
-
-  <force name="added-mass-bx" frame="BODY">
-   <location unit="M">
-    <x> 20.0 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="added-mass-by" frame="BODY">
-   <location unit="M">
-    <x> 20.0 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </force>
-  <force name="added-mass-bz" frame="BODY">
-   <location unit="M">
-    <x> 20.0 </x>
-    <y>  0.0 </y>
-    <z>  0.0 </z>
-   </location>
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 1.0 </z>
-   </direction>
-  </force>
-
-  <moment name="added-mass-pitch" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 0.0 </x>
-    <y> 1.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </moment>
-  <moment name="added-mass-roll" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 1.0 </x>
-    <y> 0.0 </y>
-    <z> 0.0 </z>
-   </direction>
-  </moment>
-  <moment name="added-mass-yaw" frame="BODY" unit="LBSFT">
-   <direction>
-    <x> 0.0 </x>
-    <y> 0.0 </y>
-    <z> 1.0 </z>
-   </direction>
-  </moment>
-
- </external_reactions>
 
  <!--
  ==== Mooring force calculation =============================================

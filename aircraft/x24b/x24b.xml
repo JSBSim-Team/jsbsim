@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Jon Berndt </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.14 $ </version>
         <description> X-24B research aircraft </description>
       <note>
@@ -170,7 +170,6 @@
 
             <scheduled_gain name="Pitch Scheduled Gain 1">
                 <input>fcs/pitch-gain-1</input>
-                <gain>0.017</gain>
                 <table>
                     <independentVar>fcs/elevator-pos-rad</independentVar>
                     <tableData>
@@ -198,6 +197,7 @@
                          0.697 -33.433
                     </tableData>
                 </table>
+                <gain>0.017</gain>
             </scheduled_gain>
 
             <pure_gain name="Pitch SAS Feedback">

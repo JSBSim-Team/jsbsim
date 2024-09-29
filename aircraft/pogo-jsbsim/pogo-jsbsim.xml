@@ -6,7 +6,7 @@
 
 <fileheader>
   <author> Aeromatic v 0.91 </author>
-  <filecreationdate> 2009-07-24 </filecreationdate>
+  <filecreationdate>2009-07-24</filecreationdate>
   <version>$Revision: 1.2 $</version>
   <description> Models a Pogo. </description>
   <note>
@@ -722,7 +722,7 @@
                0.35   -0.175
                0.7    -0.175
                1.57    0.0
-               2.36    0.175 
+               2.36    0.175
                3.14159 0.0
              </tableData>
            </table>
@@ -823,19 +823,19 @@
 
  </aerodynamics>
  <output name="pogo.csv"  type="CSV" rate="20">
-        <simulation> OFF </simulation>
-        <atmosphere> OFF </atmosphere>
-        <massprops> OFF</massprops>
-        <aerosurfaces> OFF </aerosurfaces>
         <rates> OFF </rates>
-        <forces> OFF </forces>
-        <moments> ON </moments>
-        <position> ON </position>
-        <propulsion> ON </propulsion>
         <velocities> OFF </velocities>
+        <position> ON </position>
+        <atmosphere> OFF </atmosphere>
         <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>
+        <propulsion> ON </propulsion>
+        <simulation> OFF </simulation>
+        <massprops> OFF</massprops>
+        <forces> OFF </forces>
+        <moments> ON </moments>
+        <aerosurfaces> OFF </aerosurfaces>
         <coefficients> OFF </coefficients>
         <!--property> moments/l-prop-lbsft </property-->
-  </output>  
+  </output>
 </fdm_config>
