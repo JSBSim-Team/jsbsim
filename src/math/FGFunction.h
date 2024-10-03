@@ -88,6 +88,7 @@ A function definition consists of an operation, a value, a table, or a property
 - floor (takes 1 arg)
 - ceil (takes 1 arg)
 - fmod (takes 2 args)
+- roundmultiple (takes 2 args)
 - lt (less than, takes 2 args)
 - le (less equal, takes 2 args)
 - gt (greater than, takes 2 args)
@@ -511,6 +512,15 @@ refers to one or more instances of a property, value, or table.
     </fmod>
     @endcode
     Example: fmod(18.5, 4.2) evaluates to 1.7
+- @b roundmultiple returns the floating-point rounding of X to a multiple of M.
+                   round(X/M) * M
+    @code
+    <roundmultiple>
+      {property, value, table, or other function element}
+      {property, value, table, or other function element}
+    </roundmultiple>
+    @endcode
+    Example: roundmultiple(93.43, 5.0) evaluates to 95.0
 - @b lt returns a 1 if the value of the first immediate child element is less
         than the value of the second immediate child element, returns 0
         otherwise
