@@ -533,7 +533,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                  return round((p[0]->GetValue() / multiple)) * multiple;
                };
       if (element->GetNumElements() == 1)
-        Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var));
+        Parameters.push_back(make_MathFn(round, fdmex, element, Prefix, var));
       else
         Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "atan2") {
