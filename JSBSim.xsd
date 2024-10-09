@@ -1426,6 +1426,7 @@
       <xs:element name="random"/>
       <xs:element name="urandom"/>
       <xs:element name="pi"/>
+      <xs:element name="roundmultiple"/>
       <!--xs:element ref="rotation_alpha_local" /-->
       <!--xs:element ref="rotation_beta_local" /-->
       <!--xs:element ref="rotation_gamma_local" /-->
@@ -1625,7 +1626,15 @@
     </xs:complexType>
   </xs:element>
   <xs:element name="value" type="xs:double" />
-
+  <xs:element name="roundmultiple">
+    <xs:complexType>
+	  <xs:choice maxOccurs="2" minOccurs="1">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="mod">
     <xs:complexType>
       <xs:choice maxOccurs="2" minOccurs="2">
