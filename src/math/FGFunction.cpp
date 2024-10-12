@@ -528,14 +528,15 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
                };
       Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix, var));
     } else if (operation == "roundmultiple") {
-      auto f = [](const decltype(Parameters)& p)->double {
-                 double multiple = p.size() == 1 ? 1.0 : p[1]->GetValue();
-                 return round((p[0]->GetValue() / multiple)) * multiple;
-               };
       if (element->GetNumElements() == 1)
         Parameters.push_back(make_MathFn(round, fdmex, element, Prefix, var));
-      else
+      else {
+        auto f = [](const decltype(Parameters)& p)->double {
+                   double multiple = p[1]->GetValue();
+                   return round((p[0]->GetValue() / multiple)) * multiple;
+                 };
         Parameters.push_back(new aFunc<decltype(f), 1>(f, fdmex, element, Prefix, var, 2));
+      }
     } else if (operation == "atan2") {
       auto f = [](const decltype(Parameters)& p)->double {
                  return atan2(p[0]->GetValue(), p[1]->GetValue());
