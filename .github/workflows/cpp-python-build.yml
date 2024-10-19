@@ -87,20 +87,31 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install cxxtest valgrind binutils-dev
+      - name: Checkout JSBSim
+        uses: actions/checkout@v4
+      - name: Cache Python packages & CTest cost data
+        # CTestCostData.txt is used by CTest to optimize the distribution of the
+        # tests between the CPU cores and reduce execution time.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            build/Testing/Temporary/CTestCostData.txt
+          key: ${{ runner.os }}-3.8-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python 3.8
         uses: actions/setup-python@v5
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel valgrindci 'setuptools>=60.0.0'
+        run: |
+          pip install -r python/requirements.txt
+          pip install valgrindci
       - name: Configure Julia
         if: matrix.build_julia == 'ON'
         run: |
           julia -e "import Pkg;Pkg.add(\"CxxWrap\")"
           export CXXWRAP_PREFIX_PATH=`julia -e "using CxxWrap;print(CxxWrap.prefix_path())"`
           echo "JSBSIM_PREFIX_PATH=$CXXWRAP_PREFIX_PATH" >> $GITHUB_ENV
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
       - name: Checkout Backward-cpp
         if: matrix.display_stack_trace == 'ON'
         id: BackwardCppCheckout
@@ -114,15 +125,8 @@ jobs:
         run: echo "JSBSIM_PREFIX_PATH=$PWD/backward-cpp" >> $GITHUB_ENV
       - name: Configure JSBSim
         run: |
-          mkdir build && cd build
+          mkdir -p build && cd build
           cmake -DCPACK_GENERATOR=DEB -DINSTALL_JSBSIM_PYTHON_MODULE=ON -DCMAKE_C_FLAGS_DEBUG="-g -O2" -DCMAKE_CXX_FLAGS_DEBUG="-g -O2" -DCMAKE_BUILD_TYPE=Debug -DSYSTEM_EXPAT=${{matrix.expat}} -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=${{matrix.build_julia}} -DFPECTL_DISPLAY_STACK_TRACE=${{matrix.display_stack_trace}} -DCMAKE_PREFIX_PATH=$JSBSIM_PREFIX_PATH -DCMAKE_INSTALL_PREFIX=/usr ..
-      - name: Cache CTest cost data
-        # This file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        with:
-          path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Build JSBSim
         working-directory: build
         run: make --jobs=$(nproc)
@@ -289,23 +293,23 @@ jobs:
       matrix:
         shared_libs: [ON, OFF]
     steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v4
+      - name: Cache Python packages & CTest cost data
+        # CTestCostData.txt is used by CTest to optimize the distribution of the
+        # tests between the CPU cores and reduce execution time.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\AppData\Local\pip\Cache
+            build\Testing\Temporary\CTestCostData.txt
+          key: ${{ runner.os }}-3.8-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
       - name: Set up Python 3.8
         uses: actions/setup-python@v5
         with:
           python-version: '3.8'
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy wheel pywin32 'setuptools>=60.0.0'
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Cache CTest cost data
-        # Cache the file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        id: cache-win-msvc
-        with:
-          path: |
-            build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
+        run: pip install -r python/requirements.txt
       - name: Checkout CxxTest
         uses: actions/checkout@v4
         with:
@@ -441,23 +445,25 @@ jobs:
             python-version: '3.10'
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v4
+      - name: Cache Python packages & CTest cost data
+        # CTestCostData.txt is used by CTest to optimize the distribution of the
+        # tests between the CPU cores and reduce execution time.
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/pip
+            build/Testing/Temporary/CTestCostData.txt
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Python packages
-        run: pip install -U cython 'numpy>=1.20' pandas scipy build 'setuptools>=60.0.0' mypy
+        run: pip install -r python/requirements.txt
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Cache CTest cost data
-        # This file is used by CTest to optimize the distribution of the tests
-        # between the cores and reduce execution time.
-        uses: actions/cache@v4
-        with:
-          path: build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
         if: env.release == 'true' && matrix.os == 'macos-12'
         run: |
