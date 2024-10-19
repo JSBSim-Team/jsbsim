@@ -41,6 +41,7 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGAccelerations.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -272,12 +273,14 @@ void FGGroundReactions::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
-      cout << endl << "  Ground Reactions: " << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << "\n  Ground Reactions: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGGroundReactions" << endl;
-    if (from == 1) cout << "Destroyed:    FGGroundReactions" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGGroundReactions\n";
+    if (from == 1) log << "Destroyed:    FGGroundReactions\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
