@@ -41,6 +41,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGParameterValue.h"
 #include "models/FGFCS.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -319,7 +320,7 @@ void FGActuator::InitializeLagCoefficients()
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -336,27 +337,30 @@ void FGActuator::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << fixed
+          << setprecision(4) << "\n";
 
       if (!OutputNodes.empty()) {
         for (auto node: OutputNodes)
-          cout << "      OUTPUT: " << node->GetName() << endl;
+          log << "      OUTPUT: " << node->GetName() << "\n";
       }
-      if (bias != 0.0) cout << "      Bias: " << bias << endl;
+      if (bias != 0.0) log << "      Bias: " << bias << "\n";
       if (rate_limit_incr != 0) {
-        cout << "      Increasing rate limit: " << rate_limit_incr->GetName() << endl;
+        log << "      Increasing rate limit: " << rate_limit_incr->GetName() << "\n";
       }
       if (rate_limit_decr != 0) {
-        cout << "      Decreasing rate limit: " << rate_limit_decr->GetName() << endl;
+        log << "      Decreasing rate limit: " << rate_limit_decr->GetName() << "\n";
       }
-      if (lag != 0) cout << "      Actuator lag: " << lag->GetName() << endl;
-      if (hysteresis_width != 0) cout << "      Hysteresis width: " << hysteresis_width << endl;
-      if (deadband_width != 0) cout << "      Deadband width: " << deadband_width << endl;
+      if (lag != 0) log << "      Actuator lag: " << lag->GetName() << "\n";
+      if (hysteresis_width != 0) log << "      Hysteresis width: " << hysteresis_width << "\n";
+      if (deadband_width != 0) log << "      Deadband width: " << deadband_width << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGActuator" << endl;
-    if (from == 1) cout << "Destroyed:    FGActuator" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGActuator\n";
+    if (from == 1) log << "Destroyed:    FGActuator\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

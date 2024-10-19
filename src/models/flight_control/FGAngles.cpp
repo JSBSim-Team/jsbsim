@@ -39,7 +39,7 @@ COMMENTS, REFERENCES,  and NOTES
   from the current heading. The sense of the rotation to get to that angle is
   also calculated (positive 1 for a clockwise rotation, negative 1 for counter-
   clockwise).
-  
+
   The angle to the heading is calculated as follows:
 
   Given an angle phi:
@@ -70,6 +70,7 @@ INCLUDES
 #include "FGAngles.h"
 #include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -167,7 +168,7 @@ bool FGAngles::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -187,8 +188,9 @@ void FGAngles::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAngles" << endl;
-    if (from == 1) cout << "Destroyed:    FGAngles" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGAngles\n";
+    if (from == 1) log << "Destroyed:    FGAngles\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

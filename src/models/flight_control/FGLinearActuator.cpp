@@ -40,6 +40,7 @@ INCLUDES
 #include "FGLinearActuator.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -94,9 +95,10 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("module")) {
     module = element->FindElementValueAsNumber("module");
     if (module < 0) {
-      cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
-           << " <module> parameter is forced from " << module
-           << " value to 1.0 value" << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
+          << " <module> parameter is forced from " << fixed << module
+          << " value to 1.0 value\n";
       module = 1.0;
     }
   }
@@ -104,9 +106,10 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("hysteresis")) {
     hysteresis = element->FindElementValueAsNumber("hysteresis");
     if (hysteresis < 0) {
-      cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
-           << " <hysteresis> parameter is forced from " << hysteresis
-           << " value to 0.0 value" << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
+          << " <hysteresis> parameter is forced from " << fixed << hysteresis
+          << " value to 0.0 value\n";
       hysteresis = 0.0;
     }
   }
@@ -120,9 +123,10 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
       previousLagInput = previousLagOutput = 0.0;
     } else {
       if (lag < 0) {
-        cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
-             << " <lag> parameter is forced from "
-             << lag << " value to 0.0 value" << endl;
+        FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+        log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
+            << " <lag> parameter is forced from " << fixed << lag
+            << " value to 0.0 value\n";
         lag = 0;
       }
     }
@@ -131,9 +135,10 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("rate")) {
     rate = element->FindElementValueAsNumber("rate");
     if (rate <= 0 || rate > 1.0) {
-      cout << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
-           << " <rate> parameter is forced from " << rate
-           << " value to 0.5 value" << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
+          << " <rate> parameter is forced from " << fixed << rate
+          << " value to 0.5 value\n";
       rate = 0.5;
     }
   }
@@ -225,7 +230,7 @@ bool FGLinearActuator::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -241,26 +246,28 @@ void FGLinearActuator::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
-      cout << "   inputMem: " << inputMem << endl;
-      cout << "       bias: " << bias << endl;
-      cout << "     module: " << module << endl;
-      cout << " hysteresis: " << hysteresis << endl;
-      cout << "       rate: " << rate << endl;
-      cout << "     versus: " << versus << endl;
-      cout << "  direction: " << direction << endl;
-      cout << "  countSpin: " << countSpin << endl;
-      cout << "        Lag: " << lag << endl;
-      cout << "       Gain: " << gain << endl;
-      cout << "        set: " << set << endl;
-      cout << "      reset: " << reset << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << fixed << "\n";
+      log << "   inputMem: " << inputMem << "\n";
+      log << "       bias: " << bias << "\n";
+      log << "     module: " << module << "\n";
+      log << " hysteresis: " << hysteresis << "\n";
+      log << "       rate: " << rate << "\n";
+      log << "     versus: " << versus << "\n";
+      log << "  direction: " << direction << "\n";
+      log << "  countSpin: " << countSpin << "\n";
+      log << "        Lag: " << lag << "\n";
+      log << "       Gain: " << gain << "\n";
+      log << "        set: " << set << "\n";
+      log << "      reset: " << reset << "\n";
       for (auto node: OutputNodes)
-        cout << "     OUTPUT: " << node->GetName() << endl;
+        log << "     OUTPUT: " << node->GetName() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGLinearActuator" << endl;
-    if (from == 1) cout << "Destroyed:    FGLinearActuator" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGLinearActuator\n";
+    if (from == 1) log << "Destroyed:    FGLinearActuator\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

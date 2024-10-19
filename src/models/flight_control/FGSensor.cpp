@@ -40,6 +40,7 @@ INCLUDES
 #include "FGSensor.h"
 #include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -102,8 +103,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       NoiseType = eAbsolute;
     } else {
       NoiseType = ePercent;
-      cerr << "Unknown noise type in sensor: " << Name << endl;
-      cerr << "  defaulting to PERCENT." << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      log << "Unknown noise type in sensor: " << Name
+          << "\n  defaulting to PERCENT.\n";
     }
     string distribution = element->FindElement("noise")->GetAttributeValue("distribution");
     if (distribution == "UNIFORM") {
@@ -112,8 +114,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       DistributionType = eGaussian;
     } else {
       DistributionType = eUniform;
-      cerr << "Unknown random distribution type in sensor: " << Name << endl;
-      cerr << "  defaulting to UNIFORM." << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      log << "Unknown random distribution type in sensor: " << Name
+          << "\n  defaulting to UNIFORM.\n";
     }
   }
 
@@ -261,15 +264,15 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
   PropertyManager->Tie( tmp_low, this, &FGSensor::GetFailLow, &FGSensor::SetFailLow);
   PropertyManager->Tie( tmp_high, this, &FGSensor::GetFailHigh, &FGSensor::SetFailHigh);
   PropertyManager->Tie( tmp_stuck, this, &FGSensor::GetFailStuck, &FGSensor::SetFailStuck);
-  
+
   if (!quant_property.empty()) {
     if (quant_property.find("/") == string::npos) { // not found
       string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
       FGPropertyNode* node = PropertyManager->GetNode(qprop, true);
       if (node->isTied()) {
-        cerr << el->ReadFrom()
-             << "Property " << tmp << " has already been successfully bound (late)." << endl;
-        throw("Failed to bind the property to an existing already tied node.");
+        FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::FATAL);
+        log << "Property " << tmp << " has already been successfully bound (late).\n";
+        throw BaseException(log.str());
       }
       else
         PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);
@@ -286,7 +289,7 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -302,45 +305,48 @@ void FGSensor::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
     if (from == 0) { // Constructor
       if (!InputNodes.empty())
-        cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
+        log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << fixed
+            << setprecision(4) << "\n";
       if (bits != 0) {
         if (quant_property.empty())
-          cout << "      Quantized output" << endl;
+          log << "      Quantized output\n";
         else
-          cout << "      Quantized output (property: " << quant_property << ")" << endl;
+          log << "      Quantized output (property: " << quant_property << ")\n";
 
-        cout << "        Bits: " << bits << endl;
-        cout << "        Min value: " << min << endl;
-        cout << "        Max value: " << max << endl;
-        cout << "          (span: " << span << ", granularity: " << granularity << ")" << endl;
+        log << "        Bits: " << bits << "\n";
+        log << "        Min value: " << min << "\n";
+        log << "        Max value: " << max << "\n";
+        log << "          (span: " << span << ", granularity: " << granularity << ")\n";
       }
-      if (bias != 0.0) cout << "      Bias: " << bias << endl;
-      if (gain != 0.0) cout << "      Gain: " << gain << endl;
-      if (drift_rate != 0) cout << "      Sensor drift rate: " << drift_rate << endl;
-      if (lag != 0) cout << "      Sensor lag: " << lag << endl;
+      if (bias != 0.0) log << "      Bias: " << bias << " \n";
+      if (gain != 0.0) log << "      Gain: " << gain << " \n";
+      if (drift_rate != 0) log << "      Sensor drift rate: " << drift_rate << " \n";
+      if (lag != 0) log << "      Sensor lag: " << lag << " \n";
       if (noise_variance != 0) {
         if (NoiseType == eAbsolute) {
-          cout << "      Noise variance (absolute): " << noise_variance << endl;
+          log << "      Noise variance (absolute): " << noise_variance << " \n";
         } else if (NoiseType == ePercent) {
-          cout << "      Noise variance (percent): " << noise_variance << endl;
+          log << "      Noise variance (percent): " << noise_variance << " \n";
         } else {
-          cout << "      Noise variance type is invalid" << endl;
+          log << "      Noise variance type is invalid\n";
         }
         if (DistributionType == eUniform) {
-          cout << "      Random noise is uniformly distributed." << endl;
+          log << "      Random noise is uniformly distributed.\n";
         } else if (DistributionType == eGaussian) {
-          cout << "      Random noise is gaussian distributed." << endl;
+          log << "      Random noise is gaussian distributed.\n";
         }
       }
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getNameString() << endl;
+        log << "      OUTPUT: " << node->getNameString() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGSensor" << endl;
-    if (from == 1) cout << "Destroyed:    FGSensor" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGSensor\n";
+    if (from == 1) log << "Destroyed:    FGSensor\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
