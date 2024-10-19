@@ -40,6 +40,7 @@ INCLUDES
 #include "FGDeadBand.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -110,7 +111,7 @@ bool FGDeadBand::Run(void)
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -127,17 +128,19 @@ void FGDeadBand::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
-      cout << "      DEADBAND WIDTH: " << Width->GetName() << endl;
-      cout << "      GAIN: " << gain << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "      INPUT: " << InputNodes[0]->GetName() << "\n";
+      log << "      DEADBAND WIDTH: " << Width->GetName() << "\n";
+      log << "      GAIN: " << fixed << setprecision(4) << gain << "\n";
 
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getNameString() << endl;
+        log << "      OUTPUT: " << node->getNameString() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGDeadBand" << endl;
-    if (from == 1) cout << "Destroyed:    FGDeadBand" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGDeadBand\n";
+    if (from == 1) log << "Destroyed:    FGDeadBand\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

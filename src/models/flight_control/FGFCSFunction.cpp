@@ -40,6 +40,7 @@ INCLUDES
 #include "FGFCSFunction.h"
 #include "models/FGFCS.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -59,9 +60,9 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
   if (function_element)
     function = new FGFunction(fcs->GetExec(), function_element);
   else {
-    cerr << element->ReadFrom()
-         << "FCS Function should contain a \"function\" element" << endl;
-    throw("Malformed FCS function specification.");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "FCS Function should contain a \"function\" element\n";
+    throw BaseException(log.str());
   }
 
   bind(element, fcs->GetPropertyManager().get());
@@ -101,7 +102,7 @@ bool FGFCSFunction::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -118,15 +119,17 @@ void FGFCSFunction::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
       if (!InputNodes.empty())
-        cout << "      INPUT: " << InputNodes[0]->GetName() << endl;
+        log << "      INPUT: " << InputNodes[0]->GetName() << "\n";
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getNameString() << endl;
+        log << "      OUTPUT: " << node->getNameString() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGFCSFunction" << endl;
-    if (from == 1) cout << "Destroyed:    FGFCSFunction" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGFCSFunction\n";
+    if (from == 1) log << "Destroyed:    FGFCSFunction\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

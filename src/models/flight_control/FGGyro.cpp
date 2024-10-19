@@ -48,8 +48,9 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGGyro::FGGyro(FGFCS* fcs, Element* element) : FGSensor(fcs, element),
-                                               FGSensorOrientation(element)
+FGGyro::FGGyro(FGFCS* fcs, Element* element)
+  : FGSensor(fcs, element),
+    FGSensorOrientation(element, fcs->GetExec()->GetLogger())
 {
   Propagate = fcs->GetExec()->GetPropagate();
 
@@ -92,7 +93,7 @@ bool FGGyro::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -110,13 +111,15 @@ void FGGyro::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
     if (from == 0) { // Constructor
-      cout << "        Axis: " << ax[axis] << endl;
+      log << "        Axis: " << ax[axis] << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGGyro" << endl;
-    if (from == 1) cout << "Destroyed:    FGGyro" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGGyro\n";
+    if (from == 1) log << "Destroyed:    FGGyro\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
