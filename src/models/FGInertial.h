@@ -85,7 +85,7 @@ public:
   }
   double GetSemimajor(void) const {return a;}
   double GetSemiminor(void) const {return b;}
-  double GetGM(void) {return GM;}
+  double GetGM(void) const {return GM;}
 
   /** @name Functions that rely on the ground callback
       The following functions allow to set and get the vehicle position above
