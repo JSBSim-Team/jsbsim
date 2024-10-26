@@ -206,7 +206,7 @@ namespace GeographicLib {
     // check, e.g., on verifying quadrants in atan2.  In addition, this
     // enforces some symmetries in the results returned.
 
-    real sbet1, cbet1, sbet2, cbet2, s12x, m12x;
+    real sbet1, cbet1, sbet2, cbet2, s12x, m12x = Math::NaN();
 
     Math::sincosd(lat1, sbet1, cbet1); sbet1 *= _f1;
     // Ensure cbet1 = +epsilon at poles; doing the fix on beta means that sig12
