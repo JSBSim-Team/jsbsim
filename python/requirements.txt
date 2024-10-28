@@ -1,0 +1,6 @@
+# Dependencies for CI/CD
+numpy>=1.20
+cython
+pandas
+scipy
+setuptools>=60.0.0
