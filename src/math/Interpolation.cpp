@@ -57,6 +57,7 @@ double getValueAtPoint(const PointCloud &points,
 // Function to clamp a value between a minimum and maximum
 double clamp(double value, double min, double max) {
   return std::max(min, std::min(value, max));
+
 }
 
 // Helper function for multi-linear interpolation
@@ -72,6 +73,7 @@ double interpolateRecursive(
     }
     return getValueAtPoint(points, point);
   }
+
 
   double lowerValue = *lowerBounds[dimension];
   double upperValue = *upperBounds[dimension];
@@ -98,6 +100,8 @@ double interpolateRecursive(
   double v2 = interpolateRecursive(queryPoint, points, nextLowerBounds,
                                    nextUpperBounds, dimension + 1);
 
+  // TODO: Handle cases where we clamp one and not the other
+  // Distance should be based on the clamped value, not the true query point
   return v1 * (1 - t) + v2 * t;
 }
 
@@ -115,8 +119,10 @@ double interpolate(const std::vector<double> &queryPoint,
       points.numDimensions);
 
   for (size_t i = 0; i < points.numDimensions; ++i) {
-    clampedQueryPoint[i] = clamp(queryPoint[i], points.uniqueValues[i].front(),
-                                 points.uniqueValues[i].back());
+    double clampMax = std::max(points.uniqueValues[i].front(), points.uniqueValues[i].back());
+    double clampMin = std::min(points.uniqueValues[i].front(), points.uniqueValues[i].back());
+
+    clampedQueryPoint[i] = clamp(queryPoint[i], clampMin, clampMax);
 
     lowerBounds[i] =
         std::lower_bound(points.uniqueValues[i].begin(),
@@ -128,6 +134,7 @@ double interpolate(const std::vector<double> &queryPoint,
 
     upperBounds[i] = std::next(lowerBounds[i]);
     if (upperBounds[i] == points.uniqueValues[i].end()) {
+
       upperBounds[i] = lowerBounds[i];
     }
   }
