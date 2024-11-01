@@ -57,7 +57,6 @@ double getValueAtPoint(const PointCloud &points,
 // Function to clamp a value between a minimum and maximum
 double clamp(double value, double min, double max) {
   return std::max(min, std::min(value, max));
-
 }
 
 // Helper function for multi-linear interpolation
@@ -73,7 +72,6 @@ double interpolateRecursive(
     }
     return getValueAtPoint(points, point);
   }
-
 
   double lowerValue = *lowerBounds[dimension];
   double upperValue = *upperBounds[dimension];
@@ -119,8 +117,10 @@ double interpolate(const std::vector<double> &queryPoint,
       points.numDimensions);
 
   for (size_t i = 0; i < points.numDimensions; ++i) {
-    double clampMax = std::max(points.uniqueValues[i].front(), points.uniqueValues[i].back());
-    double clampMin = std::min(points.uniqueValues[i].front(), points.uniqueValues[i].back());
+    double clampMax =
+        std::max(points.uniqueValues[i].front(), points.uniqueValues[i].back());
+    double clampMin =
+        std::min(points.uniqueValues[i].front(), points.uniqueValues[i].back());
 
     clampedQueryPoint[i] = clamp(queryPoint[i], clampMin, clampMax);
 
