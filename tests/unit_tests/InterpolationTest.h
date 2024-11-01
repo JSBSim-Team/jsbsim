@@ -347,9 +347,6 @@ public:
     // Expected value calculated directly
     double expectedValue = nonLinearFunction(queryPoint);
 
-    double expected_zero_zz = nonLinearFunction({0.25, 0.75, 0.5, 0.0});
-    double expected_p5_zz = nonLinearFunction({0.25, 0.75, 0.5, -0.5});
-
     // Perform interpolation
     double interpolatedValue = interpolate(queryPoint, points);
 
