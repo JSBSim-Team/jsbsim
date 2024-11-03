@@ -309,4 +309,52 @@ public:
     std::cout << "Finished testOutOfBoundsInterpolation" << std::endl;
     std::cout << "#########################################\n" << std::endl;
   }
+
+  void testClampingIssue() {
+    std::cout << "\n#########################################" << std::endl;
+    std::cout << "Starting testClampingIssue\n" << std::endl;
+
+    // Create a 4D grid with more points per dimension
+    PointCloud points;
+    points.numDimensions = 4;
+    points.uniqueValues = {
+        {0.0, 0.5, 1.0},  // x-values
+        {0.0, 0.5, 1.0},  // y-values
+        {0.0, 0.5, 1.0},  // z-values
+        {-1.0, -0.5, 0.0} // zz-values
+    };
+
+    // Define a non-linear function: f(x, y, z) = x * y + y * z + z * x
+    auto nonLinearFunction = [](const std::vector<double> &x) {
+      return x[0] * x[1] + x[1] * x[2] + x[2] * x[0] + x[3];
+    };
+
+    // Populate the point map with function values
+    for (double x : points.uniqueValues[0]) {
+      for (double y : points.uniqueValues[1]) {
+        for (double z : points.uniqueValues[2]) {
+          for (double zz : points.uniqueValues[3]) {
+            std::vector<double> point = {x, y, z, zz};
+            points.pointMap[point] = nonLinearFunction(point);
+          }
+        }
+      }
+    }
+
+    // Choose a query point that requires interpolation
+    std::vector<double> queryPoint = {0.25, 0.75, 0.5, -0.25};
+
+    // Expected value calculated directly
+    double expectedValue = nonLinearFunction(queryPoint);
+
+    // Perform interpolation
+    double interpolatedValue = interpolate(queryPoint, points);
+
+    // Use a reasonable tolerance
+    double tolerance = 1e-4;
+    TS_ASSERT_DELTA(interpolatedValue, expectedValue, tolerance);
+
+    std::cout << "\nFinished testClampingIssue" << std::endl;
+    std::cout << "#########################################\n" << std::endl;
+  }
 };
