@@ -50,7 +50,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/systems DESTINATION jsbsim COMPONENT whe
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION jsbsim COMPONENT wheel)
 
 # Build the Python module
-python3_add_library(_jsbsim MODULE ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/PyLog.cxx)
+python3_add_library(_jsbsim MODULE ${JSBSIM_CXX} ${CMAKE_CURRENT_SOURCE_DIR}/PyLogger.cxx)
 target_include_directories(_jsbsim PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/python)
 target_link_libraries(_jsbsim PRIVATE libJSBSim)
 set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})

@@ -25,7 +25,7 @@
 */
 
 #include <cassert>
-#include "PyLog.h"
+#include "PyLogger.h"
 
 namespace JSBSim {
 // These pointers are initialized in jsbsim.pyx
