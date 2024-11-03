@@ -28,6 +28,7 @@
    @DoxMainPage"""
 
 from cython.operator cimport dereference as deref
+from libcpp.memory cimport shared_ptr, make_shared
 from typing import Optional
 
 import enum
@@ -86,6 +87,76 @@ cdef _convertToNumpyMat(const c_FGMatrix33& m):
 
 cdef _convertToNumpyVec(const c_FGColumnVector3& v):
     return numpy.matrix([v.Entry(1), v.Entry(2), v.Entry(3)]).T
+
+
+class LogLevel(enum.Enum):
+    """Enumeration of log levels."""
+    BULK = 0  # For frequent messages
+    DEBUG = 1 # Less frequent debug type messages
+    INFO = 2  # Informatory messages
+    WARN = 3  # Possible impending problem
+    ERROR = 4 # Problem that can be recovered
+    FATAL = 5 # Fatal problem => an exception will be thrown
+
+
+class LogFormat(enum.Enum):
+    """Enumeration of log formats."""
+    RESET = 0
+    RED = 1
+    BLUE = 2
+    CYAN = 3
+    GREEN = 4
+    DEFAULT = 5
+    BOLD = 6
+    NORMAL = 7
+    UNDERLINE_ON = 8
+    UNDERLINE_OFF = 9
+
+
+cdef class FGLogger:
+    """@Dox(JSBSim::FGLogger)"""
+    cdef shared_ptr[c_PyLogger] thisptr
+    log_level = LogLevel.BULK
+
+    def set_level(self, level: LogLevel) -> None:
+        """@Dox(JSBSim::FGLogger::SetLevel)"""
+        self.log_level = level
+    def file_location(self, filename: str, line: int) -> None:
+        """@Dox(JSBSim::FGLogger::FileLocation)"""
+        pass
+    def message(self, message: str) -> None:
+        """@Dox(JSBSim::FGLogger::Message)"""
+        pass
+    def format(self, format: LogFormat) -> None:
+        """@Dox(JSBSim::FGLogger::Format)"""
+        pass
+    def flush(self) -> None:
+        """@Dox(JSBSim::FGLogger::Flush)"""
+        pass
+
+
+# Initializing pointers for the C++ interface
+FGLogger_PyClass = <PyObject*>FGLogger
+LogLevel_PyClass = <PyObject*>LogLevel
+LogFormat_PyClass = <PyObject*>LogFormat
+
+
+def inherit_docstring(cls):
+    for name, func in cls.__dict__.items():
+        if not func.__doc__:
+            func.__doc__ = getattr(super(cls, cls), name).__doc__
+    return cls
+
+
+@inherit_docstring
+class DefaultLogger(FGLogger):
+    """Default logger: print messages to stdout without formatting."""
+    def set_level(self, level: LogLevel) -> None:
+        super().set_level(level)
+    def file_location(self, filename: str, line: int) -> None:
+        print(f"\nIn file {filename}: line {line}", end='')
+    def message(self, message: str) -> None:
+        print(f"{message}", end='')
 
 
 cdef class FGPropagate:
@@ -738,6 +809,7 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_engine_path("engine")
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
+        self.set_logger(DefaultLogger())
 
         self.properties_cache = { }
 
@@ -1061,3 +1133,8 @@ cdef class FGFDMExec(FGJSBBase):
         propulsion = FGPropulsion(None)
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
+
+    def set_logger(self, logger: FGLogger) -> None:
+        """@Dox(JSBSim::FGFDMExec::SetLogger)"""
+        logger.thisptr = make_shared[c_PyLogger](<PyObject*>logger)
+        self.thisptr.SetLogger(logger.thisptr)
