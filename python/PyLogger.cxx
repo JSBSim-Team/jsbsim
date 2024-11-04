@@ -77,8 +77,8 @@ void PyLogger::SetLevel(LogLevel level) {
     break;
   }
 
-  PyObject* result = CallMethod1("set_level", py_level);
-  if (result == Py_None) FGLogger::SetLevel(level);
+  bool success = CallPythonMethodWithArguments("set_level", py_level);
+  if (success) FGLogger::SetLevel(level);
   Py_DECREF(py_level);
 }
 
@@ -89,7 +89,7 @@ void PyLogger::FileLocation(const std::string& filename, int line)
   PyObject* py_filename = PyUnicode_FromString(filename.c_str());
   PyObject* py_line = PyLong_FromLong(line);
   PyObject* args = PyTuple_Pack(2, py_filename, py_line);
-  CallMethod("file_location", args);
+  CallPythonMethodWithTuple("file_location", args);
   Py_DECREF(args);
   Py_DECREF(py_filename);
   Py_DECREF(py_line);
@@ -100,7 +100,7 @@ void PyLogger::FileLocation(const std::string& filename, int line)
 void PyLogger::Message(const std::string& message)
 {
   PyObject* msg = PyUnicode_FromString(message.c_str());
-  CallMethod1("message", msg);
+  CallPythonMethodWithArguments("message", msg);
   Py_DECREF(msg);
 }
 
@@ -144,32 +144,36 @@ void PyLogger::Format(LogFormat format)
     break;
   }
 
-  CallMethod1("format", py_format);
+  CallPythonMethodWithArguments("format", py_format);
   Py_DECREF(py_format);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-PyObject* PyLogger::CallMethod1(const char* method_name, PyObject* arg)
+bool PyLogger::CallPythonMethodWithArguments(const char* method_name, PyObject* arg)
 {
-  PyObject* args = PyTuple_Pack(1, arg);
-  PyObject* result = CallMethod(method_name, args);
-  Py_DECREF(args);
-  return result;
+  PyObject* tuple = PyTuple_Pack(1, arg);
+  bool success = CallPythonMethodWithTuple(method_name, tuple);
+  Py_DECREF(tuple);
+  return success;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-PyObject* PyLogger::CallMethod(const char* method_name, PyObject* args)
+bool PyLogger::CallPythonMethodWithTuple(const char* method_name, PyObject* tuple)
 {
   PyObject* method = PyObject_GetAttrString(logger_pyclass, method_name);
   assert(method); // This should not fail as the constructor has checked the type of logger_pyclass.
 
-  PyObject* result = PyObject_CallObject(method, args);
-  if (!result) PyErr_Print();
+  PyObject* result = PyObject_CallObject(method, tuple);
   Py_DECREF(method);
 
-  return result;
-}
+  if (result) {
+    Py_DECREF(result);
+    return true;
+  }
 
+  PyErr_Print();
+  return false;
+}
 } // namespace JSBSim

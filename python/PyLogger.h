@@ -45,11 +45,11 @@ public:
   void FileLocation(const std::string& filename, int line) override;
   void Message(const std::string& message) override;
   void Format(LogFormat format) override;
-  void Flush(void) override { CallMethod("flush", nullptr); }
+  void Flush(void) override { CallPythonMethodWithTuple("flush", nullptr); }
 
 private:
-  PyObject* CallMethod(const char* method_name, PyObject* args);
-  PyObject* CallMethod1(const char* method_name, PyObject* arg);
+  bool CallPythonMethodWithTuple(const char* method_name, PyObject* tuple);
+  bool CallPythonMethodWithArguments(const char* method_name, PyObject* arg);
 
   PyObject* logger_pyclass = nullptr;
 };

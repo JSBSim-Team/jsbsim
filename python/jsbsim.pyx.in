@@ -113,9 +113,8 @@ class LogFormat(enum.Enum):
     UNDERLINE_OFF = 9
 
 
-cdef class FGLogger:
+class FGLogger:
     """@Dox(JSBSim::FGLogger)"""
-    cdef shared_ptr[c_PyLogger] thisptr
     log_level = LogLevel.BULK
 
     def set_level(self, level: LogLevel) -> None:
@@ -151,8 +150,6 @@ def inherit_docstring(cls):
 @inherit_docstring
 class DefaultLogger(FGLogger):
     """Default logger: print messages to stdout without formatting."""
-    def set_level(self, level: LogLevel) -> None:
-        super().set_level(level)
     def file_location(self, filename: str, line: int) -> None:
         print(f"\nIn file {filename}: line {line}", end='')
     def message(self, message: str) -> None:
@@ -782,6 +779,7 @@ cdef class FGFDMExec(FGJSBBase):
     """@Dox(JSBSim::FGFDMExec)"""
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
+    cdef shared_ptr[c_PyLogger] logger # hold the logger instance that is used by FGFDMEexec
     cdef dict properties_cache     # Dictionary cache of property nodes
 
     def __cinit__(self, root_dir, FGPropertyManager pm_root=None, *args,
@@ -1136,5 +1134,5 @@ cdef class FGFDMExec(FGJSBBase):
 
     def set_logger(self, logger: FGLogger) -> None:
         """@Dox(JSBSim::FGFDMExec::SetLogger)"""
-        logger.thisptr = make_shared[c_PyLogger](<PyObject*>logger)
-        self.thisptr.SetLogger(logger.thisptr)
+        self.logger = make_shared[c_PyLogger](<PyObject*>logger)
+        self.thisptr.SetLogger(self.logger)
