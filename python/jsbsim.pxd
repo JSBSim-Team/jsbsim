@@ -93,7 +93,7 @@ cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
         c_SGPropertyNode* GetNode(const string& path, bool create)
         bool HasNode(const string& path) except +convertJSBSimToPyExc
 
-cdef extern from "PyLog.h" namespace "JSBSim":
+cdef extern from "PyLogger.h" namespace "JSBSim":
     cdef PyObject* FGLogger_PyClass
     cdef PyObject* LogLevel_PyClass
     cdef PyObject* LogFormat_PyClass
