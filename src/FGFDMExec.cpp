@@ -692,19 +692,27 @@ void FGFDMExec::ResetToInitialConditions(int mode)
 {
   if (Constructing) return;
 
-  // mode flags
-
   if (mode & START_NEW_OUTPUT) Output->SetStartNewOutput();
 
-  InitializeModels();
-
-  if (Script)
-    Script->ResetEvents();
-  else
-    Setsim_time(0.0);
-
-  if (!(mode & DONT_EXECUTE_RUN_IC))
+  // mode flags
+  if (mode & RESET_TO_IC) {
+    // print out reset message
+    cout << endl << fgblue << highint
+         << "Resetting to initial conditions." << reset << endl;
     RunIC();
+  }
+  else
+  {
+    InitializeModels();
+
+    if (Script)
+      Script->ResetEvents();
+    else
+      Setsim_time(0.0);
+
+    if (!(mode & DONT_EXECUTE_RUN_IC))
+    RunIC();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -479,7 +479,7 @@ public:
    * You must trim first to get an accurate state-space model
    */
   void DoLinearization(int);
-  
+
   /// Disables data logging to all outputs.
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
@@ -497,6 +497,7 @@ public:
   /// Mode flags for ResetToInitialConditions
   static const int START_NEW_OUTPUT    = 0x1;
   static const int DONT_EXECUTE_RUN_IC = 0x2;
+  static const int RESET_TO_IC         = 0x4;
   /** Resets the initial conditions object and prepares the simulation to run
       again. If the mode's first bit is set the output instances will take special actions
       such as closing the current output file and open a new one with a different name.
