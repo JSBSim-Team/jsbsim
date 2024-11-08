@@ -36,11 +36,65 @@ extern PyObject* FGLogger_PyClass;
 extern PyObject* LogLevel_PyClass;
 extern PyObject* LogFormat_PyClass;
 
+// Helper class to manage the reference count of a PyObject.
+class PyObjectPtr {
+public:
+  PyObjectPtr(PyObject* obj = nullptr) noexcept
+    : object(obj) {}
+
+  // Copy constructor
+  PyObjectPtr(const PyObjectPtr& other) noexcept {
+    object = other.object;
+    Py_XINCREF(object);
+  }
+
+  // Move constructor
+  PyObjectPtr(PyObjectPtr&& other) noexcept
+    : object(other.object)
+  {
+    other.object = nullptr;
+  }
+
+  // Copy assignment operator
+  PyObjectPtr& operator=(const PyObjectPtr& other) noexcept {
+    if (this != &other) {
+      Py_XDECREF(object); // Decrement the reference count of the current object
+      object = other.object;
+      Py_XINCREF(object); // Increment the reference count of the new object
+    }
+    return *this;
+  }
+
+  PyObjectPtr& operator=(PyObject* src) noexcept {
+    Py_XDECREF(object);
+    object = src;
+    return *this;
+  }
+
+  // Move assignment operator
+  PyObjectPtr& operator=(PyObjectPtr&& other) noexcept {
+    if (this != &other) {
+      Py_XDECREF(object); // Decrement the reference count of the current object
+      object = other.object;
+      other.object = nullptr; // Prevent the source from decrementing the reference count
+    }
+    return *this;
+  }
+
+  ~PyObjectPtr() noexcept { Py_XDECREF(object); }
+
+  PyObject* get() const noexcept { return object; }
+  operator bool() const noexcept { return object != nullptr; }
+
+protected:
+  PyObject* object;
+};
+
+
 class PyLogger : public FGLogger
 {
 public:
   explicit PyLogger(PyObject* logger);
-  ~PyLogger() override { Py_XDECREF(logger_pyclass); }
   void SetLevel(LogLevel level) override;
   void FileLocation(const std::string& filename, int line) override;
   void Message(const std::string& message) override;
@@ -48,10 +102,10 @@ public:
   void Flush(void) override { CallPythonMethodWithTuple("flush", nullptr); }
 
 private:
-  bool CallPythonMethodWithTuple(const char* method_name, PyObject* tuple);
-  bool CallPythonMethodWithArguments(const char* method_name, PyObject* arg);
+  PyObjectPtr CallPythonMethodWithTuple(const char* method_name, const PyObjectPtr& tuple);
+  PyObjectPtr CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg);
 
-  PyObject* logger_pyclass = nullptr;
+  PyObjectPtr logger_pyclass;
 };
 }
 #endif

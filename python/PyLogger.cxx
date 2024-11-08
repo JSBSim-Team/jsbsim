@@ -41,7 +41,7 @@ PyLogger::PyLogger(PyObject* logger)
 {
   if (PyObject_IsInstance(logger, FGLogger_PyClass)) {
     logger_pyclass = logger;
-    Py_INCREF(logger_pyclass);
+    Py_INCREF(logger);
   } else {
     PyErr_SetString(PyExc_TypeError, "The logger must be an instance of FGLogger");
   }
@@ -50,7 +50,7 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  PyObject* py_level;
+  PyObjectPtr py_level;
 
   switch (level)
   {
@@ -77,38 +77,33 @@ void PyLogger::SetLevel(LogLevel level) {
     break;
   }
 
-  bool success = CallPythonMethodWithArguments("set_level", py_level);
-  if (success) FGLogger::SetLevel(level);
-  Py_DECREF(py_level);
+  PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
+  if (result) FGLogger::SetLevel(level);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::FileLocation(const std::string& filename, int line)
 {
-  PyObject* py_filename = PyUnicode_FromString(filename.c_str());
-  PyObject* py_line = PyLong_FromLong(line);
-  PyObject* args = PyTuple_Pack(2, py_filename, py_line);
+  PyObjectPtr py_filename = PyUnicode_FromString(filename.c_str());
+  PyObjectPtr py_line = PyLong_FromLong(line);
+  PyObjectPtr args = PyTuple_Pack(2, py_filename.get(), py_line.get());
   CallPythonMethodWithTuple("file_location", args);
-  Py_DECREF(args);
-  Py_DECREF(py_filename);
-  Py_DECREF(py_line);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::Message(const std::string& message)
 {
-  PyObject* msg = PyUnicode_FromString(message.c_str());
+  PyObjectPtr msg = PyUnicode_FromString(message.c_str());
   CallPythonMethodWithArguments("message", msg);
-  Py_DECREF(msg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::Format(LogFormat format)
 {
-  PyObject* py_format;
+  PyObjectPtr py_format;
 
   switch (format)
   {
@@ -145,35 +140,27 @@ void PyLogger::Format(LogFormat format)
   }
 
   CallPythonMethodWithArguments("format", py_format);
-  Py_DECREF(py_format);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool PyLogger::CallPythonMethodWithArguments(const char* method_name, PyObject* arg)
+PyObjectPtr PyLogger::CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg)
 {
-  PyObject* tuple = PyTuple_Pack(1, arg);
-  bool success = CallPythonMethodWithTuple(method_name, tuple);
-  Py_DECREF(tuple);
-  return success;
+  PyObjectPtr tuple = PyTuple_Pack(1, arg.get());
+  return CallPythonMethodWithTuple(method_name, tuple);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool PyLogger::CallPythonMethodWithTuple(const char* method_name, PyObject* tuple)
+PyObjectPtr PyLogger::CallPythonMethodWithTuple(const char* method_name, const PyObjectPtr& tuple)
 {
-  PyObject* method = PyObject_GetAttrString(logger_pyclass, method_name);
+  PyObjectPtr method = PyObject_GetAttrString(logger_pyclass.get(), method_name);
   assert(method); // This should not fail as the constructor has checked the type of logger_pyclass.
 
-  PyObject* result = PyObject_CallObject(method, tuple);
-  Py_DECREF(method);
+  PyObjectPtr result = PyObject_CallObject(method.get(), tuple.get());
 
-  if (result) {
-    Py_DECREF(result);
-    return true;
-  }
+  if (!result) PyErr_Print();
 
-  PyErr_Print();
-  return false;
+  return result;
 }
 } // namespace JSBSim
