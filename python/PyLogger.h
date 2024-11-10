@@ -24,6 +24,7 @@
  found on the world wide web at http://www.gnu.org.
 */
 
+#include <map>
 #include <Python.h>
 #include "input_output/FGLog.h"
 
@@ -106,6 +107,8 @@ private:
   PyObjectPtr CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg);
 
   PyObjectPtr logger_pyclass;
+  std::map<LogLevel, PyObjectPtr> convert_level_enums;
+  std::map<LogFormat, PyObjectPtr> convert_format_enums;
 };
 }
 #endif

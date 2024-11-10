@@ -42,6 +42,25 @@ PyLogger::PyLogger(PyObject* logger)
   if (PyObject_IsInstance(logger, FGLogger_PyClass)) {
     logger_pyclass = logger;
     Py_INCREF(logger);
+
+    convert_level_enums[LogLevel::BULK] = PyObject_GetAttrString(LogLevel_PyClass, "BULK");
+    convert_level_enums[LogLevel::DEBUG] = PyObject_GetAttrString(LogLevel_PyClass, "DEBUG");
+    convert_level_enums[LogLevel::INFO] = PyObject_GetAttrString(LogLevel_PyClass, "INFO");
+    convert_level_enums[LogLevel::WARN] = PyObject_GetAttrString(LogLevel_PyClass, "WARN");
+    convert_level_enums[LogLevel::ERROR] = PyObject_GetAttrString(LogLevel_PyClass, "ERROR");
+    convert_level_enums[LogLevel::FATAL] = PyObject_GetAttrString(LogLevel_PyClass, "FATAL");
+    convert_level_enums[LogLevel::STDOUT] = PyObject_GetAttrString(LogLevel_PyClass, "STDOUT");
+
+    convert_format_enums[LogFormat::RESET] = PyObject_GetAttrString(LogFormat_PyClass, "RESET");
+    convert_format_enums[LogFormat::RED] = PyObject_GetAttrString(LogFormat_PyClass, "RED");
+    convert_format_enums[LogFormat::BLUE] = PyObject_GetAttrString(LogFormat_PyClass, "BLUE");
+    convert_format_enums[LogFormat::CYAN] = PyObject_GetAttrString(LogFormat_PyClass, "CYAN");
+    convert_format_enums[LogFormat::GREEN] = PyObject_GetAttrString(LogFormat_PyClass, "GREEN");
+    convert_format_enums[LogFormat::DEFAULT] = PyObject_GetAttrString(LogFormat_PyClass, "DEFAULT");
+    convert_format_enums[LogFormat::BOLD] = PyObject_GetAttrString(LogFormat_PyClass, "BOLD");
+    convert_format_enums[LogFormat::NORMAL] = PyObject_GetAttrString(LogFormat_PyClass, "NORMAL");
+    convert_format_enums[LogFormat::UNDERLINE_ON] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_ON");
+    convert_format_enums[LogFormat::UNDERLINE_OFF] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_OFF");
   } else {
     PyErr_SetString(PyExc_TypeError, "The logger must be an instance of FGLogger");
   }
@@ -50,33 +69,8 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  PyObjectPtr py_level;
-
-  switch (level)
-  {
-  case LogLevel::BULK:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "BULK");
-    break;
-  case LogLevel::DEBUG:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "DEBUG");
-    break;
-  case LogLevel::INFO:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "INFO");
-    break;
-  case LogLevel::WARN:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "WARN");
-    break;
-  case LogLevel::ERROR:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "ERROR");
-    break;
-  case LogLevel::FATAL:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "FATAL");
-    break;
-  case LogLevel::STDOUT:
-    py_level = PyObject_GetAttrString(LogLevel_PyClass, "STDOUT");
-    break;
-  }
-
+  assert(convert_level_enums.find(level) != convert_level_enums.end());
+  PyObjectPtr py_level = convert_level_enums[level];
   PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
   if (result) FGLogger::SetLevel(level);
 }
@@ -103,42 +97,8 @@ void PyLogger::Message(const std::string& message)
 
 void PyLogger::Format(LogFormat format)
 {
-  PyObjectPtr py_format;
-
-  switch (format)
-  {
-  case LogFormat::RESET:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "RESET");
-    break;
-  case LogFormat::RED:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "RED");
-    break;
-  case LogFormat::BLUE:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "BLUE");
-    break;
-  case LogFormat::CYAN:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "CYAN");
-    break;
-  case LogFormat::GREEN:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "GREEN");
-    break;
-  case LogFormat::DEFAULT:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "DEFAULT");
-    break;
-  case LogFormat::BOLD:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "BOLD");
-    break;
-  case LogFormat::NORMAL:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "NORMAL");
-    break;
-  case LogFormat::UNDERLINE_ON:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_ON");
-    break;
-  case LogFormat::UNDERLINE_OFF:
-    py_format = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_OFF");
-    break;
-  }
-
+  assert(convert_format_enums.find(format) != convert_format_enums.end());
+  PyObjectPtr py_format = convert_format_enums[format];
   CallPythonMethodWithArguments("format", py_format);
 }
 

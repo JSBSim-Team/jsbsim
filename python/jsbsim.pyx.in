@@ -151,7 +151,7 @@ def inherit_docstring(cls):
 class DefaultLogger(FGLogger):
     """Default logger: print messages to stdout without formatting."""
     def file_location(self, filename: str, line: int) -> None:
-        print(f"\nIn file {filename}: line {line}", end='')
+        print(f"\nIn file {filename}: line {line}")
     def message(self, message: str) -> None:
         print(f"{message}", end='')
 
