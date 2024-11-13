@@ -40,54 +40,48 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void FGXMLParse::reset(void)
-{
+void FGXMLParse::reset(void) {
   current_element = document = nullptr;
   working_string.erase();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::dumpDataLines(void)
-{
+void FGXMLParse::dumpDataLines(void) {
   if (!working_string.empty()) {
     size_t index = 0;
     index = working_string.find('\n');
-    if(index != std::string::npos && index != 0)
-    {
+    if (index != std::string::npos && index != 0) {
       size_t curr = 0;
       std::string temp = "";
-      while(curr < working_string.length())
-      {
-        if(working_string[curr] == '\n') {
+      while (curr < working_string.length()) {
+        if (working_string[curr] == '\n') {
           trim(temp);
           current_element->AddData(temp);
           temp = "";
-        }
-        else
+        } else {
           temp.push_back(working_string[curr]);
+        }
         curr++;
       }
-    }
-    else{
+    } else {
       trim(working_string);
       current_element->AddData(working_string);
     }
-  working_string.erase();
+    working_string.erase();
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
-{
+void FGXMLParse::startElement(const char *name, const XMLAttributes &atts) {
   if (!document) {
     document = new Element(name);
     current_element = document;
   } else {
     dumpDataLines();
 
-    Element* temp_element = new Element(name);
+    Element *temp_element = new Element(name);
     if (temp_element) {
       temp_element->SetParent(current_element);
       current_element->AddChildElement(temp_element);
@@ -104,30 +98,27 @@ void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
   current_element->SetLineNumber(getLine());
   current_element->SetFileName(getPath());
 
-  for (int i=0; i<atts.size();i++) {
+  for (int i = 0; i < atts.size(); i++) {
     current_element->AddAttribute(atts.getName(i), atts.getValue(i));
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::endElement (const char * name)
-{
+void FGXMLParse::endElement(const char *name) {
   dumpDataLines();
   current_element = current_element->GetParent();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::data (const char * s, int length)
-{
+void FGXMLParse::data(const char *s, int length) {
   working_string += string(s, length);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGXMLParse::warning (const char * message, int line, int column)
-{
+void FGXMLParse::warning(const char *message, int line, int column) {
   cerr << "Warning: " << message << " line: " << line << " column: " << column
        << endl;
 }
