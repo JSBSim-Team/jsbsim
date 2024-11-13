@@ -50,12 +50,12 @@ void FGXMLParse::reset(void) {
 void FGXMLParse::dumpDataLines(void) {
 
   if (!working_string.empty()) {
-    //The following change was made to the XML parse
+    //The following change was made by Mach:
     // 1. This implemenation iterates over the input string in O(n) time.
     //    where n is the length of the input string.
     // 2. The built in JSBSim split() method runs in O(n^2) for n is the string size, with an additional
     //  O(m) [for m = n/rows of a matrix] from the outer for loop.
-    //  Overall it runs in  O(n^3) time making parsing inviable for files around 100MB in size.
+    //  Overall it runs in  O(n^3) time making parsing inviable for files around 90MB+ in size.
     //  Regression tested against 2 jsbsims with identical inputs, and validated no difference
     //    within epsilon = 1E-8.
     size_t index = 0;
