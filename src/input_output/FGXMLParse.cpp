@@ -77,8 +77,8 @@ void FGXMLParse::dumpDataLines(void) {
       trim(working_string);
       current_element->AddData(working_string);
     }
-    working_string.erase();
   }
+  working_string.erase();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
