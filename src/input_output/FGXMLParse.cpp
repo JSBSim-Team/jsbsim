@@ -51,10 +51,30 @@ void FGXMLParse::reset(void)
 void FGXMLParse::dumpDataLines(void)
 {
   if (!working_string.empty()) {
-    for (auto s: split(working_string, '\n'))
-      current_element->AddData(s);
-  }
+    size_t index = 0;
+    index = working_string.find('\n');
+    if(index != std::string::npos && index != 0)
+    {
+      size_t curr = 0;
+      std::string temp = "";
+      while(curr < working_string.length())
+      {
+        if(working_string[curr] == '\n') {
+          trim(temp);
+          current_element->AddData(temp);
+          temp = "";
+        }
+        else
+          temp.push_back(working_string[curr]);
+        curr++;
+      }
+    }
+    else{
+      trim(working_string);
+      current_element->AddData(working_string);
+    }
   working_string.erase();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
