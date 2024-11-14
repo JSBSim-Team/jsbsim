@@ -78,8 +78,7 @@ double interpolateRecursive(
 
   // Handle the case where lower and upper bounds are the same
   if (std::abs(upperValue - lowerValue) < EPSILON) {
-    std::vector<std::vector<double>::const_iterator> nextBounds = lowerBounds;
-    return interpolateRecursive(queryPoint, points, nextBounds, nextBounds,
+    return interpolateRecursive(queryPoint, points, lowerBounds, upperBounds,
                                 dimension + 1);
   }
 
