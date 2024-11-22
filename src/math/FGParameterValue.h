@@ -64,13 +64,13 @@ public:
   FGParameterValue(Element* el, std::shared_ptr<FGPropertyManager> pm)
   : FGParameterValue(el->GetDataLine(), pm, el)
   {
-    string value = el->GetDataLine();
+    std::string value = el->GetDataLine();
 
     if (el->GetNumDataLines() != 1 || value.empty()) {
-      cerr << el->ReadFrom()
-           << "The element <" << el->GetName()
-           << "> must either contain a value number or a property name."
-           << endl;
+      std::cerr << el->ReadFrom()
+                << "The element <" << el->GetName()
+                << "> must either contain a value number or a property name."
+                << std::endl;
       throw BaseException("FGParameterValue: Illegal argument defining: " + el->GetName());
     }
   }

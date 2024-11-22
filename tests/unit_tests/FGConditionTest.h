@@ -11,12 +11,12 @@ class FGConditionTest : public CxxTest::TestSuite
 {
 public:
   void testXMLEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x == 1.0 </dummy>",
-                                "<dummy> x EQ 1.0 </dummy>",
-                                "<dummy> x eq 1.0 </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x == 1.0 </dummy>",
+                                         "<dummy> x EQ 1.0 </dummy>",
+                                         "<dummy> x eq 1.0 </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -28,10 +28,10 @@ public:
   }
 
   void testEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x == 1.0", "x EQ 1.0", "x eq 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x == 1.0", "x EQ 1.0", "x eq 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -42,12 +42,12 @@ public:
   }
 
   void testXMLNotEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x != 1.0 </dummy>",
-                                "<dummy> x NE 1.0 </dummy>",
-                                "<dummy> x ne 1.0 </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x != 1.0 </dummy>",
+                                         "<dummy> x NE 1.0 </dummy>",
+                                         "<dummy> x ne 1.0 </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -59,10 +59,10 @@ public:
   }
 
   void testNotEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x != 1.0", "x NE 1.0", "x ne 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x != 1.0", "x NE 1.0", "x ne 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -73,12 +73,12 @@ public:
   }
 
   void testXMLGreaterThanConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x &gt; 1.0 </dummy>",
+    const std::array<std::string, 3> XML{"<dummy> x &gt; 1.0 </dummy>",
                                 "<dummy> x GT 1.0 </dummy>",
                                 "<dummy> x gt 1.0 </dummy>"};
-    for(const string& line: XML) {
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -92,10 +92,10 @@ public:
   }
 
   void testGreaterThanConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x > 1.0", "x GT 1.0", "x gt 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x > 1.0", "x GT 1.0", "x gt 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -108,12 +108,12 @@ public:
   }
 
   void testXMLGreaterOrEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x &gt;= 1.0 </dummy>",
+    const std::array<std::string, 3> XML{"<dummy> x &gt;= 1.0 </dummy>",
                                 "<dummy> x GE 1.0 </dummy>",
                                 "<dummy> x ge 1.0 </dummy>"};
-    for(const string& line: XML) {
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -127,10 +127,10 @@ public:
   }
 
   void testGreaterOrEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x >= 1.0", "x GE 1.0", "x ge 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x >= 1.0", "x GE 1.0", "x ge 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -143,12 +143,12 @@ public:
   }
 
   void testXMLLowerThanConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x &lt; 1.0 </dummy>",
+    const std::array<std::string, 3> XML{"<dummy> x &lt; 1.0 </dummy>",
                                 "<dummy> x LT 1.0 </dummy>",
                                 "<dummy> x lt 1.0 </dummy>"};
-    for(const string& line: XML) {
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -162,10 +162,10 @@ public:
   }
 
   void testLowerThanConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x < 1.0", "x LT 1.0", "x lt 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x < 1.0", "x LT 1.0", "x lt 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -178,12 +178,12 @@ public:
   }
 
   void testXMLLowerOrEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> XML{"<dummy> x &lt;= 1.0 </dummy>",
-                                "<dummy> x LE 1.0 </dummy>",
-                                "<dummy> x le 1.0 </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x &lt;= 1.0 </dummy>",
+                                         "<dummy> x LE 1.0 </dummy>",
+                                         "<dummy> x le 1.0 </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -197,10 +197,10 @@ public:
   }
 
   void testLowerOrEqualConstant() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
-    const array<string, 3> conditions{"x <= 1.0", "x LE 1.0", "x le 1.0"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x <= 1.0", "x LE 1.0", "x le 1.0"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -213,13 +213,13 @@ public:
   }
 
   void testXMLEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x == y </dummy>",
-                                "<dummy> x EQ y </dummy>",
-                                "<dummy> x eq y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x == y </dummy>",
+                                         "<dummy> x EQ y </dummy>",
+                                         "<dummy> x eq y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -238,11 +238,11 @@ public:
   }
 
   void testEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x == y", "x EQ y", "x eq y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x == y", "x EQ y", "x eq y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -260,13 +260,13 @@ public:
   }
 
   void testXMLNotEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x != y </dummy>",
-                                "<dummy> x NE y </dummy>",
-                                "<dummy> x ne y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x != y </dummy>",
+                                         "<dummy> x NE y </dummy>",
+                                         "<dummy> x ne y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -285,11 +285,11 @@ public:
   }
 
   void testNotEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x != y", "x NE y", "x ne y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x != y", "x NE y", "x ne y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(0.0);
@@ -307,13 +307,13 @@ public:
   }
 
   void testXMLGreaterThanProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x &gt; y </dummy>",
-                                "<dummy> x GT y </dummy>",
-                                "<dummy> x gt y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x &gt; y </dummy>",
+                                         "<dummy> x GT y </dummy>",
+                                         "<dummy> x gt y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -336,11 +336,11 @@ public:
   }
 
   void testGreaterThanProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x > y", "x GT y", "x gt y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x > y", "x GT y", "x gt y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(-1.0);
@@ -362,13 +362,13 @@ public:
   }
 
   void testXMLGreaterOrEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x &gt;= y </dummy>",
-                                "<dummy> x GE y </dummy>",
-                                "<dummy> x ge y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x &gt;= y </dummy>",
+                                         "<dummy> x GE y </dummy>",
+                                         "<dummy> x ge y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -391,11 +391,11 @@ public:
   }
 
   void testGreaterOrEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x >= y", "x GE y", "x ge y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x >= y", "x GE y", "x ge y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(-1.0);
@@ -417,13 +417,13 @@ public:
   }
 
   void testXMLLowerThanProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x &lt; y </dummy>",
-                                "<dummy> x LT y </dummy>",
-                                "<dummy> x lt y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x &lt; y </dummy>",
+                                         "<dummy> x LT y </dummy>",
+                                         "<dummy> x lt y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -446,11 +446,11 @@ public:
   }
 
   void testLowerThanProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x < y", "x LT y", "x lt y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x < y", "x LT y", "x lt y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(-1.0);
@@ -472,13 +472,13 @@ public:
   }
 
   void testXMLLowerOrEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> XML{"<dummy> x &lt;= y </dummy>",
-                                "<dummy> x LE y </dummy>",
-                                "<dummy> x le y </dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 3> XML{"<dummy> x &lt;= y </dummy>",
+                                         "<dummy> x LE y </dummy>",
+                                         "<dummy> x le y </dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -501,11 +501,11 @@ public:
   }
 
   void testLowerOrEqualProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 3> conditions{"x <= y", "x LE y", "x le y"};
-    for(const string& line: conditions) {
+    const std::array<std::string, 3> conditions{"x <= y", "x LE y", "x le y"};
+    for(const std::string& line: conditions) {
       FGCondition cond(line, pm, nullptr);
 
       x->setDoubleValue(-1.0);
@@ -527,13 +527,13 @@ public:
   }
 
   void testAND() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto onoff = pm->GetNode("on-off", true);
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
-    const array<string, 2> XML{"<dummy> on-off == 1\nx GE y</dummy>",
-                                "<dummy logic=\"AND\"> on-off == 1\nx GE y</dummy>"};
-    for(const string& line: XML) {
+    const std::array<std::string, 2> XML{"<dummy> on-off == 1\nx GE y</dummy>",
+                                         "<dummy logic=\"AND\"> on-off == 1\nx GE y</dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -558,10 +558,10 @@ public:
   }
 
   void testANDLateBound() {
-    auto pm = make_shared<FGPropertyManager>();
-    const array<string, 2> XML{"<dummy> on-off == 1\nx GE y</dummy>",
-                                "<dummy logic=\"AND\"> on-off == 1\nx GE y</dummy>"};
-    for(const string& line: XML) {
+    auto pm = std::make_shared<FGPropertyManager>();
+    const std::array<std::string, 2> XML{"<dummy> on-off == 1\nx GE y</dummy>",
+                                         "<dummy logic=\"AND\"> on-off == 1\nx GE y</dummy>"};
+    for(const std::string& line: XML) {
       Element_ptr elm = readFromXML(line);
       FGCondition cond(elm, pm);
 
@@ -590,7 +590,7 @@ public:
   }
 
   void testOR() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto onoff = pm->GetNode("on-off", true);
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -620,7 +620,7 @@ public:
   }
 
   void testNested() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto onoff = pm->GetNode("on-off", true);
     auto x = pm->GetNode("x", true);
     auto y = pm->GetNode("y", true);
@@ -656,7 +656,7 @@ public:
   }
 
   void testIllegalLOGIC() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy logic=\"XOR\">"
                                   "  on-off == 1\n"
                                   "  x GE y"
@@ -665,7 +665,7 @@ public:
   }
 
   void testWrongNumberOfElements() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy> on-off == </dummy>");
     TS_ASSERT_THROWS(FGCondition cond(elm, pm), BaseException&);
 
@@ -680,7 +680,7 @@ public:
   }
 
   void testIllegalNested() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy>"
                                   "  on-off == 1"
                                   "  <crash logic=\"AND\">"
@@ -692,7 +692,7 @@ public:
   }
 
   void testIllegalOperation() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy> on-off # 0.0 </dummy>");
     TS_ASSERT_THROWS(FGCondition cond(elm, pm), BaseException&);
   }

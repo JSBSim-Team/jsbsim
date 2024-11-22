@@ -102,7 +102,7 @@ public:
   }
 
   void testLookupProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto node = pm->GetNode("x", true);
     FGTable t(2);
     t << 1.0 << -1.0
@@ -162,7 +162,7 @@ public:
   }
 
   void testLoadInternalFromXML() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm0 = readFromXML("<dummy>"
@@ -225,7 +225,7 @@ public:
   }
 
   void testLoadIndepVarFromXML() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -304,7 +304,7 @@ public:
   }
 
   void testLoadWithNumericPrefix() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x2", true);
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -336,7 +336,7 @@ public:
   }
 
   void testLoadWithStringPrefix() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto x = pm->GetNode("x", true);
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -368,7 +368,7 @@ public:
   }
 
   void testMonoticallyIncreasingRows() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -615,7 +615,7 @@ public:
   }
 
   void testLookupProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y", true);
     FGTable t_2x2(2,2);
@@ -688,7 +688,7 @@ public:
   }
 
   void testLoadInternalFromXML() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm0h = readFromXML("<dummy>"
@@ -788,7 +788,7 @@ public:
   }
 
   void testLoadIndepVarFromXML() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y", true);
     // FGTable expects <table> to be the child of another XML element, hence the
@@ -1076,7 +1076,7 @@ public:
   }
 
   void testLoadWithNumericPrefix() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y2", true);
     // FGTable expects <table> to be the child of another XML element, hence the
@@ -1116,7 +1116,7 @@ public:
   }
 
   void testLoadWithStringPrefix() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y", true);
     // FGTable expects <table> to be the child of another XML element, hence the
@@ -1156,7 +1156,7 @@ public:
   }
 
   void testMonoticallyIncreasingRows() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1175,7 +1175,7 @@ public:
   }
 
   void testMonoticallyIncreasingColumns() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1197,7 +1197,7 @@ class FGTable3DTest : public CxxTest::TestSuite
 {
 public:
   void testLoadIndepVarFromXML() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y", true);
     auto table = pm->GetNode("z", true);
@@ -1337,7 +1337,7 @@ public:
   }
 
   void testCopyConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto row = pm->GetNode("x", true);
     auto column = pm->GetNode("y", true);
     auto table = pm->GetNode("z", true);
@@ -1411,7 +1411,7 @@ class FGTableErrorsTest : public CxxTest::TestSuite
 {
 public:
   void testTypeError() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1428,7 +1428,7 @@ public:
   }
 
   void testLookupNameError() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1448,7 +1448,7 @@ public:
   }
 
   void testMalformedData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1465,7 +1465,7 @@ public:
   }
 
   void testPropertyAlreadyTied() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     static double value = 0;
     pm->Tie("test", &value);
 
@@ -1486,7 +1486,7 @@ public:
   }
 
   void testUnexpectedPrefix() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
 
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
@@ -1505,7 +1505,7 @@ public:
   }
 
   void test1DInternalMissingTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1518,7 +1518,7 @@ public:
   }
 
   void test1DInternalEmptyTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1532,7 +1532,7 @@ public:
   }
 
   void test1DMissingTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1546,7 +1546,7 @@ public:
   }
 
   void test1DEmptyTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1567,7 +1567,7 @@ public:
   }
 
   void test1DMissingLookupAxis() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1584,7 +1584,7 @@ public:
   }
 
   void test1DBadNumberOfColumns() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm0 = readFromXML("<dummy>"
@@ -1660,7 +1660,7 @@ public:
   }
 
   void test2DMissingColumnLookupAxis1() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1679,7 +1679,7 @@ public:
   }
 
   void test2DMissingColumnLookupAxis2() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1698,7 +1698,7 @@ public:
   }
 
   void test2DMissingRowLookupAxis() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1717,7 +1717,7 @@ public:
   }
 
   void test2DMissingTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1732,7 +1732,7 @@ public:
   }
 
   void test2DEmptyTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1761,7 +1761,7 @@ public:
   }
 
   void testXMLRowsNotIncreasing() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1778,7 +1778,7 @@ public:
   }
 
   void testXMLColumnsNotIncreasing() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1798,7 +1798,7 @@ public:
   }
 
   void testBreakpointsNotIncreasing() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1824,7 +1824,7 @@ public:
   }
 
   void test3DMissingRowLookupAxis() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1849,7 +1849,7 @@ public:
   }
 
   void test3DMissingColumnLookupAxis() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1874,7 +1874,7 @@ public:
   }
 
   void test3DMissingTableLookupAxis() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1899,7 +1899,7 @@ public:
   }
 
   void test3DMissingTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1915,7 +1915,7 @@ public:
   }
 
   void test3DEmptyTableData() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"
@@ -1932,7 +1932,7 @@ public:
   }
 
   void test3DEmptyTableData2() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
     // <dummy> element.
     Element_ptr elm = readFromXML("<dummy>"

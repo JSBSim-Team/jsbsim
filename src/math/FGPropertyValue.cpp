@@ -33,6 +33,8 @@ INCLUDES
 
 #include "FGPropertyValue.h"
 
+using namespace std;
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

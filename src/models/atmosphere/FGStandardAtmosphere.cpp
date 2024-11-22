@@ -51,6 +51,8 @@ INCLUDES
 #include "FGStandardAtmosphere.h"
 #include "input_output/FGLog.h"
 
+using namespace std;
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
