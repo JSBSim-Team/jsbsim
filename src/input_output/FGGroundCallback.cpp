@@ -56,6 +56,13 @@ double FGDefaultGroundCallback::GetAGLevel(double t, const FGLocation& loc,
   return l.GetGeodAltitude() - mTerrainElevation;
 }
 
+double FGDefaultGroundCallback::GetAGLevel(const FGLocation& loc) const
+{
+  FGLocation l = loc;
+  l.SetEllipse(a, b);
+  return l.GetGeodAltitude() - mTerrainElevation;
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 } // namespace JSBSim

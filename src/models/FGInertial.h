@@ -113,10 +113,7 @@ public:
       @param location Location at which the AGL is evaluated.
       @see SetGroundCallback */
   double GetAltitudeAGL(const FGLocation& location) const {
-    FGLocation lDummy;
-    FGColumnVector3 vDummy;
-    return GroundCallback->GetAGLevel(location, lDummy, vDummy, vDummy,
-                                      vDummy);
+    return GroundCallback->GetAGLevel(location);
   }
 
   /** Set the altitude above ground level.

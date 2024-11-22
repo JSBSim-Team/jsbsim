@@ -95,6 +95,13 @@ public:
                             FGColumnVector3& w) const
   { return GetAGLevel(time, location, contact, normal, v, w); }
 
+  virtual double GetAGLevel(const FGLocation& location) const
+  {
+    FGLocation lDummy;
+    FGColumnVector3 vDummy;
+    return GetAGLevel(location, lDummy, vDummy, vDummy, vDummy);
+  }
+
   /** Set the terrain elevation.
       Only needs to be implemented if JSBSim should be allowed
       to modify the local terrain radius (see the default implementation)
@@ -132,6 +139,8 @@ public:
                     FGLocation& contact,
                     FGColumnVector3& normal, FGColumnVector3& v,
                     FGColumnVector3& w) const override;
+
+  double GetAGLevel(const FGLocation& location) const override;
 
   void SetTerrainElevation(double h) override
   { mTerrainElevation = h; }
