@@ -106,6 +106,20 @@ FGLocation::FGLocation(const FGColumnVector3& lv)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGLocation::FGLocation(const FGColumnVector3& lv, double semimajor, double semiminor)
+  : mECLoc(lv), mCacheValid(false)
+{
+  SetEllipse(semimajor, semiminor);
+
+  mLon = mLat = mRadius = 0.0;
+  mGeodLat = GeodeticAltitude = 0.0;
+
+  mTl2ec.InitMatrix();
+  mTec2l.InitMatrix();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGLocation::FGLocation(const FGLocation& l)
   : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
 {

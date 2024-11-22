@@ -165,7 +165,16 @@ public:
       (X,Y,Z) contained in the input FGColumnVector3. Distances are in feet,
       the position is expressed in the ECEF frame.
       @param lv vector that contain the cartesian coordinates*/
-  FGLocation(const FGColumnVector3& lv);
+  explicit FGLocation(const FGColumnVector3& lv);
+
+  /** Constructor to initialize the location with the cartesian coordinates
+      (X,Y,Z) contained in the input FGColumnVector3. Distances are in feet,
+      the position is expressed in the ECEF frame. Sets the semimajor and
+      semiminor axis lengths for this planet as if SetEllipse() was called.
+      @param lv vector that contain the cartesian coordinates
+      @param semimajor planet semi-major axis in ft.
+      @param semiminor planet semi-minor axis in ft.*/
+  FGLocation(const FGColumnVector3& lv, double semimajor, double semiminor);
 
   /** Copy constructor. */
   FGLocation(const FGLocation& l);
@@ -324,7 +333,7 @@ public:
       @param lvec Vector in the local horizontal coordinate frame
       @return The location in the earth centered and fixed frame */
   FGLocation LocalToLocation(const FGColumnVector3& lvec) const {
-    ComputeDerived(); return mTl2ec*lvec + mECLoc;
+    ComputeDerived(); return FGLocation(mTl2ec*lvec + mECLoc);
   }
 
   /** Conversion from a location in the earth centered and fixed frame
@@ -416,6 +425,12 @@ public:
     return *this;
   }
 
+  const FGLocation& operator+=(const FGColumnVector3& l) {
+    mCacheValid = false;
+    mECLoc += l;
+    return *this;
+  }
+
   /** This operator substracts the ECEF position vectors.
       The cartesian coordinates of the supplied vector (right side) are
       substracted from the ECEF position vector on the left side of the
@@ -423,6 +438,12 @@ public:
   const FGLocation& operator-=(const FGLocation &l) {
     mCacheValid = false;
     mECLoc -= l.mECLoc;
+    return *this;
+  }
+
+  const FGLocation& operator-=(const FGColumnVector3& l) {
+    mCacheValid = false;
+    mECLoc -= l;
     return *this;
   }
 
