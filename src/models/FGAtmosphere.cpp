@@ -137,6 +137,16 @@ double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGAtmosphere::GetAltitudeDependentValues(AltitudeDependentValues& values, double altitude) const
+{
+  values.Temperature = GetTemperature(altitude);
+  values.Pressure = GetPressure(altitude);
+  values.Density = (values.Pressure / (Reng * values.Temperature));
+  values.SoundSpeed = sqrt(SHRatio * Reng * values.Temperature);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGAtmosphere::Calculate(double altitude)
 {
   FGPropertyNode* node = PropertyManager->GetNode();

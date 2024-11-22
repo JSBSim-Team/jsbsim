@@ -82,6 +82,13 @@ public:
   /// Enums for specifying pressure units.
   enum ePressure {eNoPressUnit=0, ePSF, eMillibars, ePascals, eInchesHg};
 
+  typedef struct AltitudeDependentValues {
+    double Temperature = 0.0;
+    double Pressure = 0.0;
+    double Density = 0.0;
+    double SoundSpeed = 0.0;
+  } AltitudeDependentValues;
+
   /// Constructor
   FGAtmosphere(FGFDMExec*);
 
@@ -205,6 +212,8 @@ public:
   virtual double GetDensityAltitude() const {return DensityAltitude;}
 
   virtual double GetPressureAltitude() const {return PressureAltitude;}
+
+  virtual void GetAltitudeDependentValues(AltitudeDependentValues& values, double altitude) const;
 
   struct Inputs {
     double altitudeASL;
