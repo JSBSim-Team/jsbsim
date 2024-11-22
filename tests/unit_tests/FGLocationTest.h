@@ -115,6 +115,9 @@ public:
 
     lv3.SetEllipse(1., 1.);
     CheckLocation(lv3, v);
+
+    JSBSim::FGLocation lv4(v, 1., 1.);
+    CheckLocation(lv3, v);
   }
 
   void testCopyConstructor() {
