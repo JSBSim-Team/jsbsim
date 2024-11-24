@@ -315,7 +315,7 @@ void FGFCS::SetDspPos( int form , double pos )
 
 void FGFCS::SetThrottleCmd(int engineNum, double setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)ThrottleCmd.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<ThrottleCmd.size(); ctr++)
         ThrottleCmd[ctr] = setting;
@@ -351,7 +351,7 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
 
 double FGFCS::GetThrottleCmd(int engineNum) const
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)ThrottleCmd.size()) {
     if (engineNum < 0) {
        cerr << "Cannot get throttle value for ALL engines" << endl;
     } else {
@@ -387,7 +387,7 @@ double FGFCS::GetThrottlePos(int engineNum) const
 
 void FGFCS::SetMixtureCmd(int engineNum, double setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)MixtureCmd.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<MixtureCmd.size(); ctr++)
         MixtureCmd[ctr] = setting;
@@ -401,7 +401,7 @@ void FGFCS::SetMixtureCmd(int engineNum, double setting)
 
 void FGFCS::SetMixturePos(int engineNum, double setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)MixturePos.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<MixtureCmd.size(); ctr++)
         MixturePos[ctr] = MixtureCmd[ctr];
@@ -415,7 +415,7 @@ void FGFCS::SetMixturePos(int engineNum, double setting)
 
 void FGFCS::SetPropAdvanceCmd(int engineNum, double setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)PropAdvanceCmd.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<PropAdvanceCmd.size(); ctr++)
         PropAdvanceCmd[ctr] = setting;
@@ -429,7 +429,7 @@ void FGFCS::SetPropAdvanceCmd(int engineNum, double setting)
 
 void FGFCS::SetPropAdvance(int engineNum, double setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)PropAdvance.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<PropAdvanceCmd.size(); ctr++)
         PropAdvance[ctr] = PropAdvanceCmd[ctr];
@@ -443,7 +443,7 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 
 void FGFCS::SetFeatherCmd(int engineNum, bool setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)PropFeatherCmd.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<PropFeatherCmd.size(); ctr++)
         PropFeatherCmd[ctr] = setting;
@@ -457,7 +457,7 @@ void FGFCS::SetFeatherCmd(int engineNum, bool setting)
 
 void FGFCS::SetPropFeather(int engineNum, bool setting)
 {
-  if (engineNum < (int)ThrottlePos.size()) {
+  if (engineNum < (int)PropFeather.size()) {
     if (engineNum < 0) {
       for (unsigned int ctr=0; ctr<PropFeatherCmd.size(); ctr++)
         PropFeather[ctr] = PropFeatherCmd[ctr];
