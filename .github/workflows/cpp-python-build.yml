@@ -165,7 +165,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-12, ubuntu-22.04, windows-latest ]
+        os: [ macos-13, ubuntu-22.04, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
@@ -430,7 +430,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
+        os: [macos-13]
         python-version: [3.8]
         include:
           - os: macos-14
@@ -455,7 +455,7 @@ jobs:
           path: build/Testing/Temporary/CTestCostData.txt
           key: ${{ matrix.os }}-${{ hashFiles('tests/CMakeLists.txt') }}
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.os == 'macos-12'
+        if: env.release == 'true' && matrix.os == 'macos-13'
         run: |
           brew install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -484,7 +484,7 @@ jobs:
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true' && matrix.os == 'macos-12'
+        if: env.release == 'true' && matrix.os == 'macos-13'
         working-directory: build/tests
         run: |
           echo "::group::Build the type hints stubs"
@@ -510,7 +510,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v4
-        if: env.release == 'true' && matrix.os == 'macos-12'
+        if: env.release == 'true' && matrix.os == 'macos-13'
         with:
           name: ${{ runner.os }}.binaries
           path: |
@@ -573,7 +573,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-12, windows-2019]
+        os: [ubuntu-latest, macos-13, windows-2019]
 
     steps:
       - name: Checkout JSBSim
@@ -590,7 +590,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen
       - name: Install Doxygen (MacOSX)
-        if: matrix.os == 'macos-12'
+        if: matrix.os == 'macos-13'
         run: brew install doxygen
       - name: Install Doxygen (Windows)
         if: runner.os == 'Windows'
