@@ -468,15 +468,15 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        cerr << "Could not get or create property " << name << endl;
+        std::cerr << "Could not get or create property " << name << std::endl;
         return;
       }
 
       if (!property->tie(SGRawValuePointer<T>(pointer), false))
-        cerr << "Failed to tie property " << name << " to a pointer" << endl;
+          std::cerr << "Failed to tie property " << name << " to a pointer" << std::endl;
       else {
         tied_properties.push_back(PropertyState(property, nullptr));
-        if (FGJSBBase::debug_lvl & 0x20) cout << name << endl;
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
 

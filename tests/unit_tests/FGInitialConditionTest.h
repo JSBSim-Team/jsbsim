@@ -273,6 +273,8 @@ public:
   }
 
   void testBodyVelocity() {
+    using namespace std;
+
     FGFDMExec fdmex;
     FGInitialCondition ic(&fdmex);
 

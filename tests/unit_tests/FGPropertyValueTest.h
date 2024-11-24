@@ -46,7 +46,7 @@ public:
   }
 
   void testConstant_ness() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGPropertyNode_ptr node = pm->GetNode("x", true);
     FGPropertyValue property(node);
 
@@ -58,7 +58,7 @@ public:
   void testTiedPropertiesAreNotConstant() {
     // Check that tied properties are not constant even if the underlying
     // property is set to READ ONLY.
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     double value = 0.0;
     FGPropertyNode_ptr node = pm->GetNode("x", true);
     FGPropertyValue property(node);
@@ -86,7 +86,7 @@ public:
   }
 
   void testConstructorLateBound() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGPropertyValue property("x", pm, nullptr);
 
     TS_ASSERT_EQUALS(property.IsLateBound(), true);
@@ -102,7 +102,7 @@ public:
   }
 
   void testInstantiateLateBound() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGPropertyValue property("x", pm, nullptr);
 
     TS_ASSERT_EQUALS(property.IsLateBound(), true);
@@ -124,7 +124,7 @@ public:
   }
 
   void testSignedProperty() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGPropertyValue property("-x", pm, nullptr);
 
     TS_ASSERT_EQUALS(property.IsLateBound(), true);

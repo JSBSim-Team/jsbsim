@@ -268,12 +268,12 @@ protected:
   /// Check that the pressure is within plausible boundaries.
   /// @param msg Message to display if the pressure is out of boundaries
   /// @param quiet Don't display the message if set to true
-  double ValidatePressure(double p, const string& msg, bool quiet=false) const;
+  double ValidatePressure(double p, const std::string& msg, bool quiet=false) const;
 
   /// Check that the temperature is within plausible boundaries.
   /// @param msg Message to display if the pressure is out of boundaries
   /// @param quiet Don't display the message if set to true
-  double ValidateTemperature(double t, const string& msg, bool quiet=false) const;
+  double ValidateTemperature(double t, const std::string& msg, bool quiet=false) const;
 
   /// @name ISA constants
   //@{

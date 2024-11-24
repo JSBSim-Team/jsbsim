@@ -40,7 +40,7 @@ class JSBSIM_API FGLinearization
 {
     Vector2D<double> A,B,C,D;
     std::vector<double> x0, u0, y0;
-    std::vector<string> x_names, u_names, y_names, x_units, u_units, y_units;
+    std::vector<std::string> x_names, u_names, y_names, x_units, u_units, y_units;
     std::string aircraft_name;
 public:
     /**

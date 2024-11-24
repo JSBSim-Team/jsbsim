@@ -110,7 +110,7 @@ CLASS DOCUMENTATION
     fgic->SetAltitudeFtIC(1000);
     fgic->SetClimbRate(500);
     if( !fgt.DoTrim() ) {
-      cout << "Trim Failed" << endl;
+      std::cout << "Trim Failed" << std::endl;
     }
     fgt.Report();
     @endcode
