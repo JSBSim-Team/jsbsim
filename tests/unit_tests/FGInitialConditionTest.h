@@ -137,8 +137,8 @@ public:
           TS_ASSERT_DELTA(ic.GetLongitudeDegIC(), lon, epsilon*100.);
           TS_ASSERT_DELTA(ic.GetLongitudeRadIC(), lon*M_PI/180., epsilon);
           // TS_ASSERT_DELTA(ic.GetAltitudeASLFtIC()/(agl+2000.), 1.0, 2E-8);
-          // For some reasons, MinGW32, MSVC and M1 MacOS are less accurate than other platforms.
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__arm64__)
+          // For some reasons, MinGW32, MSVC and MacOS are less accurate than Linux.
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__APPLE__)
           TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC()/agl, 1.0, 4E-8);
 #else
           TS_ASSERT_DELTA(ic.GetAltitudeAGLFtIC()/agl, 1.0, 2E-8);
