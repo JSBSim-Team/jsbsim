@@ -81,7 +81,7 @@ JSBSimInterface::~JSBSimInterface(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-bool JSBSimInterface::OpenAircraft(const string& acName)
+bool JSBSimInterface::OpenAircraft(const std::string& acName)
 {
 
 	if (!fdmExec->GetAircraft()->GetAircraftName().empty()) return false;

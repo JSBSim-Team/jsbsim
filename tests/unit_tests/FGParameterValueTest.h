@@ -9,7 +9,7 @@ class FGParameterValueTest : public CxxTest::TestSuite
 {
 public:
   void testRealConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGParameterValue x("1.2", pm, nullptr);
 
     TS_ASSERT(x.IsConstant());
@@ -19,7 +19,7 @@ public:
   }
 
   void testPropertyConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto node = pm->GetNode("x", true);
     FGParameterValue x("x", pm, nullptr);
 
@@ -34,7 +34,7 @@ public:
   }
 
   void testLateBoundPropertyConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGParameterValue x("x", pm, nullptr);
 
     TS_ASSERT(!x.IsConstant());
@@ -50,7 +50,7 @@ public:
   }
 
   void testLateBoundPropertyIllegalAccess() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     FGParameterValue x("x", pm, nullptr);
 
     TS_ASSERT(!x.IsConstant());
@@ -60,7 +60,7 @@ public:
   }
 
   void testXMLRealConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy> 1.2 </dummy>");
     FGParameterValue x(elm, pm);
 
@@ -71,7 +71,7 @@ public:
   }
 
   void testXMLPropertyConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     auto node = pm->GetNode("x", true);
     Element_ptr elm = readFromXML("<dummy> x </dummy>");
     FGParameterValue x(elm, pm);
@@ -87,7 +87,7 @@ public:
   }
 
   void testXMLLateBoundPropertyConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy> x </dummy>");
     FGParameterValue x(elm, pm);
 
@@ -104,7 +104,7 @@ public:
   }
 
   void testXMLLateBoundPropertyIllegalAccess() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy> x </dummy>");
     FGParameterValue x(elm, pm);
 
@@ -115,13 +115,13 @@ public:
   }
 
   void testXMLEmptyNameConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy/>");
     TS_ASSERT_THROWS(FGParameterValue x(elm, pm), BaseException&);
   }
 
   void testXMLMultiLinesConstructor() {
-    auto pm = make_shared<FGPropertyManager>();
+    auto pm = std::make_shared<FGPropertyManager>();
     Element_ptr elm = readFromXML("<dummy>x\ny</dummy>");
     TS_ASSERT_THROWS(FGParameterValue x(elm, pm), BaseException&);
   }

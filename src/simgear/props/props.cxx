@@ -52,6 +52,7 @@ using std::vector;
 using std::stringstream;
 
 using namespace simgear;
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////
 // Local classes.

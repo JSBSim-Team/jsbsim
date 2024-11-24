@@ -656,6 +656,8 @@ public:
 
   void testNavigationOnOblateEarth()
   {
+    using namespace std;
+
     const double a = 20925646.32546; // WGS84 semimajor axis length in feet
     const double b = 20855486.5951;  // WGS84 semiminor axis length in feet
     JSBSim::FGLocation l;

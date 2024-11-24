@@ -52,9 +52,9 @@ public:
 
   FGFDMExec fdmex;
   std::shared_ptr<FGAtmosphere> std_atm;
-  vector<unsigned int> MSIS_iyd, MSIS_sec;
-  vector<double> MSIS_alt, MSIS_glat, MSIS_glon, MSIS_f107a, MSIS_f107, MSIS_ap,
-                 MSIS_T, MSIS_rho, MSIS_mair;
+  std::vector<unsigned int> MSIS_iyd, MSIS_sec;
+  std::vector<double> MSIS_alt, MSIS_glat, MSIS_glon, MSIS_f107a, MSIS_f107, MSIS_ap,
+                      MSIS_T, MSIS_rho, MSIS_mair;
 
   FGMSISTest() {
     std_atm = fdmex.GetAtmosphere();
@@ -254,7 +254,7 @@ public:
       s << "<dummy>"
         << "  <day>" << MSIS_iyd[i] << "</day>"
         << "  <utc>" << MSIS_sec[i] << "</utc>"
-        << "</dummy>" << endl;
+        << "</dummy>" << std::endl;
 
       Element_ptr elm = readFromXML(s.str());
       TS_ASSERT(atm.Load(elm));

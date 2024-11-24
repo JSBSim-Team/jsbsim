@@ -45,6 +45,8 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 
+using namespace std;
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
