@@ -49,6 +49,8 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGPropulsion.h"
+#include "input_output/FGModelLoader.h"
+#include "input_output/FGLog.h"
 #include "models/FGMassBalance.h"
 #include "models/propulsion/FGRocket.h"
 #include "models/propulsion/FGTurbine.h"
@@ -56,7 +58,6 @@ INCLUDES
 #include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
-#include "input_output/FGModelLoader.h"
 #include "models/propulsion/FGBrushLessDCMotor.h"
 
 
@@ -365,7 +366,8 @@ bool FGPropulsion::Load(Element* el)
     if (tank->GetType() == FGTank::ttFUEL)
       FuelDensity = tank->GetDensity();
     else if (tank->GetType() != FGTank::ttOXIDIZER) {
-      cerr << "Unknown tank type specified." << endl;
+      FGXMLLogging log(FDMExec->GetLogger(), tank_element, LogLevel::ERROR);
+      log << "Unknown tank type specified.\n";
       return false;
     }
     numTanks++;
@@ -405,11 +407,13 @@ bool FGPropulsion::Load(Element* el)
         Engines.push_back(make_shared<FGBrushLessDCMotor>(FDMExec, element, numEngines, in));
       }
       else {
-        cerr << engine_element->ReadFrom() << " Unknown engine type" << endl;
+        FGXMLLogging log(FDMExec->GetLogger(), engine_element, LogLevel::ERROR);
+        log << " Unknown engine type\n";
         return false;
       }
     } catch (std::string& str) {
-      cerr << endl << fgred << str << reset << endl;
+      FGXMLLogging log(FDMExec->GetLogger(), engine_element, LogLevel::ERROR);
+      log << "\n" << LogFormat::RED << str << LogFormat::RESET << "\n";
       return false;
     }
 
@@ -541,7 +545,7 @@ string FGPropulsion::GetPropulsionTankReport()
       << right << setw(12) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
       << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
       << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()
-      << setw(12) << tank->GetIzz() << endl;
+      << setw(12) << tank->GetIzz() << "\n";
   }
   return outstream.str();
 }
@@ -854,12 +858,14 @@ void FGPropulsion::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      cout << endl << "  Propulsion:" << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << "\n  Propulsion:\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGPropulsion" << endl;
-    if (from == 1) cout << "Destroyed:    FGPropulsion" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGPropulsion\n";
+    if (from == 1) log << "Destroyed:    FGPropulsion\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
