@@ -34,6 +34,9 @@ string::find() functions were formerly used.
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#ifdef __CYGWIN__
+#define _GNU_SOURCE 1
+#endif
 #include <errno.h>
 #include <iostream>
 #include <sstream>
