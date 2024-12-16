@@ -577,6 +577,24 @@ public:
     TS_ASSERT_EQUALS(Z(3), 1.0);
   }
 
+  void testSqrMagnitude(void) {
+    JSBSim::FGColumnVector3 v0;
+    JSBSim::FGColumnVector3 v(3.0, 4.0, 0.0);
+
+    TS_ASSERT_EQUALS(v0.SqrMagnitude(), 0.0);
+    TS_ASSERT_EQUALS(v.SqrMagnitude(), 25.0);
+    TS_ASSERT_EQUALS(DotProduct(v,v), v.SqrMagnitude());
+
+    // Verify that the operands are not modified
+    TS_ASSERT_EQUALS(v0(1), 0.0);
+    TS_ASSERT_EQUALS(v0(2), 0.0);
+    TS_ASSERT_EQUALS(v0(3), 0.0);
+
+    TS_ASSERT_EQUALS(v(1), 3.0);
+    TS_ASSERT_EQUALS(v(2), 4.0);
+    TS_ASSERT_EQUALS(v(3), 0.0);
+  }
+
   void testMagnitude(void) {
     JSBSim::FGColumnVector3 v0;
     JSBSim::FGColumnVector3 v(3.0, 4.0, 0.0);

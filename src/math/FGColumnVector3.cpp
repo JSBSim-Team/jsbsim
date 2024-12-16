@@ -42,7 +42,6 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <cmath>
 
 using namespace std;
 
@@ -102,13 +101,6 @@ FGColumnVector3& FGColumnVector3::operator/=(const double scalar)
       object " << data[0] << " , " << data[1] << " , " << data[2] << endl;
 
   return *this;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGColumnVector3::Magnitude(void) const
-{
-  return sqrt( data[0]*data[0] +  data[1]*data[1] +  data[2]*data[2] );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
