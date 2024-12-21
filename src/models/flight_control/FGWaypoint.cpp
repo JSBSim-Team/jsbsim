@@ -43,6 +43,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "models/FGInertial.h"
 #include "initialization/FGInitialCondition.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -77,10 +78,9 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    cerr << element->ReadFrom() << endl
-         << "Target latitude is required for waypoint component: " << Name
-         << endl;
-    throw("Malformed waypoint definition");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "Target latitude is required for waypoint component: " << Name << "\n";
+    throw BaseException(log.str());
   }
 
   if (element->FindElement("target_longitude") ) {
@@ -92,10 +92,9 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    cerr << element->ReadFrom() << endl
-         << "Target longitude is required for waypoint component: " << Name
-         << endl;
-    throw("Malformed waypoint definition");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "Target longitude is required for waypoint component: " << Name << "\n";
+    throw BaseException(log.str());
   }
 
   if (element->FindElement("source_latitude") ) {
@@ -107,10 +106,9 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    cerr << element->ReadFrom() << endl
-         << "Source latitude is required for waypoint component: " << Name
-         << endl;
-    throw("Malformed waypoint definition");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "Source latitude is required for waypoint component: " << Name << "\n";
+    throw BaseException(log.str());
   }
 
   if (element->FindElement("source_longitude") ) {
@@ -122,10 +120,9 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    cerr << element->ReadFrom() << endl
-         << "Source longitude is required for waypoint component: " << Name
-         << endl;
-    throw("Malformed waypoint definition");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "Source longitude is required for waypoint component: " << Name << "\n";
+    throw BaseException(log.str());
   }
 
   unit = element->GetAttributeValue("unit");
@@ -134,10 +131,9 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       if      (unit == "DEG") eUnit = eDeg;
       else if (unit == "RAD") eUnit = eRad;
       else {
-        cerr << element->ReadFrom() << endl
-             << "Unknown unit " << unit << " in HEADING waypoint component, "
-             << Name << endl;
-        throw("Malformed waypoint definition");
+        FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+        log << "Unknown unit " << unit << " in HEADING waypoint component, " << "\n";
+        throw BaseException(log.str());
       }
     } else {
       eUnit = eRad; // Default is radians if unspecified
@@ -147,10 +143,10 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       if      (unit == "FT") eUnit = eFeet;
       else if (unit == "M")  eUnit = eMeters;
       else {
-        cerr << element->ReadFrom() << endl
-             << "Unknown unit " << unit << " in DISTANCE waypoint component, "
-             << Name << endl;
-        throw("Malformed waypoint definition");
+        FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+        log << "Unknown unit " << unit << " in DISTANCE waypoint component, "
+            << Name << "\n";
+        throw BaseException(log.str());
       }
     } else {
       eUnit = eFeet; // Default is feet if unspecified
@@ -179,19 +175,19 @@ bool FGWaypoint::Run(void )
   source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (fabs(target_latitude_rad) > M_PI/2.0) {
-    cerr << endl;
-    cerr << "Target latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
-    cerr << "(is longitude being mistakenly supplied?)" << endl;
-    cerr << endl;
-    throw("Waypoint target latitude exceeded 90 degrees.");
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::FATAL);
+    log << "\nTarget latitude in waypoint \"" << Name
+        << "\" must be less than or equal to 90 degrees.\n"
+        << "(is longitude being mistakenly supplied?)\n\n";
+    throw BaseException(log.str());
   }
 
   if (fabs(source_latitude_rad) > M_PI/2.0) {
-    cerr << endl;
-    cerr << "Source latitude in waypoint \"" << Name << "\" must be less than or equal to 90 degrees." << endl;
-    cerr << "(is longitude being mistakenly supplied?)" << endl;
-    cerr << endl;
-    throw("Source latitude exceeded 90 degrees.");
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::FATAL);
+    log << "\nSource latitude in waypoint \"" << Name
+        << "\" must be less than or equal to 90 degrees.\n"
+        << "(is longitude being mistakenly supplied?)\n\n";
+    throw BaseException(log.str());
   }
 
   if (WaypointType == eHeading) {     // Calculate Heading
@@ -225,7 +221,7 @@ bool FGWaypoint::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -245,8 +241,9 @@ void FGWaypoint::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGWaypoint" << endl;
-    if (from == 1) cout << "Destroyed:    FGWaypoint" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGWaypoint\n";
+    if (from == 1) log << "Destroyed:    FGWaypoint\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

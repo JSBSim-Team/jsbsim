@@ -36,9 +36,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGFDMExec.h"
 #include "FGExternalForce.h"
 #include "FGExternalReactions.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -173,12 +175,14 @@ void FGExternalReactions::Debug(int from)
     if (from == 0) { // Constructor - loading and initialization
     }
     if (from == 2) { // Loading
-      cout << endl << "  External Reactions: " << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << "\n  External Reactions: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGExternalReactions" << endl;
-    if (from == 1) cout << "Destroyed:    FGExternalReactions" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGExternalReactions\n";
+    if (from == 1) log << "Destroyed:    FGExternalReactions\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

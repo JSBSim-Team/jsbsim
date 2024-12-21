@@ -39,10 +39,8 @@ INCLUDES
 #include "models/FGMassBalance.h"
 #include "FGGasCell.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
-using std::cerr;
-using std::endl;
-using std::cout;
 using std::string;
 using std::max;
 
@@ -86,9 +84,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    const string s("Fatal Error: No location found for this gas cell.");
-    cerr << el->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
+    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
+    log << "\nFatal Error: No location found for this gas cell.\n";
+    throw BaseException(log.str());
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -126,7 +124,8 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
       // Cylindrical volume.
       MaxVolume = M_PI * Yradius * Zradius * Xwidth;
     } else {
-      cerr << "Warning: Unsupported gas cell shape." << endl;
+      FGXMLLogging log(exec->GetLogger(), el, LogLevel::WARN);
+      log << "Unsupported gas cell shape.\n";
       MaxVolume =
         (4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
          M_PI * Yradius * Zradius * Xwidth +
@@ -138,9 +137,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    const string s("Fatal Error: Gas cell shape must be given.");
-    cerr << el->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
+    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
+    log << "\nGas cell shape must be given.\n";
+    throw BaseException(log.str());
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -151,7 +150,8 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
     if (0 <= Fullness) {
       Volume = Fullness * MaxVolume;
     } else {
-      cerr << "Warning: Invalid initial gas cell fullness value." << endl;
+      FGXMLLogging log(exec->GetLogger(), el, LogLevel::WARN);
+      log << "Invalid initial gas cell fullness value.\n";
     }
   }
   if (el->FindElement("valve_coefficient")) {
@@ -448,38 +448,38 @@ void FGGasCell::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "    Gas cell holds " << Contents << " mol " <<
-        type << endl;
-      cout << "      Cell location (X, Y, Z) (in.): " << vXYZ(eX) << ", " <<
-        vXYZ(eY) << ", " << vXYZ(eZ) << endl;
-      cout << "      Maximum volume: " << MaxVolume << " ft3" << endl;
-      cout << "      Relief valve release pressure: " << MaxOverpressure <<
-        " lbs/ft2" << endl;
-      cout << "      Manual valve coefficient: " << ValveCoefficient <<
-        " ft4*sec/slug" << endl;
-      cout << "      Initial temperature: " << Temperature << " Rankine" <<
-        endl;
-      cout << "      Initial pressure: " << Pressure << " lbs/ft2" << endl;
-      cout << "      Initial volume: " << Volume << " ft3" << endl;
-      cout << "      Initial mass: " << GetMass() << " slug mass" << endl;
-      cout << "      Initial weight: " << GetMass()*slugtolb << " lbs force" <<
-        endl;
-      cout << "      Heat transfer: " << endl;
+      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      log << "    Gas cell holds " << std::fixed << Contents << " mol " << type << "\n";
+      log << "      Cell location (X, Y, Z) (in.): " << vXYZ(eX) << ", "
+          << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
+      log << "      Maximum volume: " << MaxVolume << " ft3\n";
+      log << "      Relief valve release pressure: " << MaxOverpressure
+          << " lbs/ft2\n";
+      log << "      Manual valve coefficient: " << ValveCoefficient
+          << " ft4*sec/slug\n";
+      log << "      Initial temperature: " << Temperature << " Rankine\n";
+      log << "      Initial pressure: " << Pressure << " lbs/ft2\n";
+      log << "      Initial volume: " << Volume << " ft3\n";
+      log << "      Initial mass: " << GetMass() << " slug mass\n";
+      log << "      Initial weight: " << GetMass()*slugtolb << " lbs force\n";
+      log << "      Heat transfer: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGGasCell" << endl;
-    if (from == 1) cout << "Destroyed:    FGGasCell" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGGasCell\n";
+    if (from == 1) log << "Destroyed:    FGGasCell\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 ) { // Runtime state variables
-      cout << "      " << type << " cell holds " << Contents << " mol " << endl;
-      cout << "      Temperature: " << Temperature << " Rankine" << endl;
-      cout << "      Pressure: " << Pressure << " lbs/ft2" << endl;
-      cout << "      Volume: " << Volume << " ft3" << endl;
-      cout << "      Mass: " << GetMass() << " slug mass" << endl;
-      cout << "      Weight: " << GetMass()*slugtolb << " lbs force" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    log << "      " << type << " cell holds " << std::fixed << Contents << " mol\n";
+    log << "      Temperature: " << Temperature << " Rankine\n";
+    log << "      Pressure: " << Pressure << " lbs/ft2\n";
+    log << "      Volume: " << Volume << " ft3\n";
+    log << "      Mass: " << GetMass() << " slug mass\n";
+    log << "      Weight: " << GetMass()*slugtolb << " lbs force\n";
   }
   if (debug_lvl & 16) { // Sanity checking
   }
@@ -519,9 +519,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    const string s("Fatal Error: No location found for this ballonet.");
-    cerr << el->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
+    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
+    log << "\nFatal Error: No location found for this ballonet.\n";
+    throw BaseException(log.str());
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -559,7 +559,8 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
       // Cylindrical volume.
       MaxVolume = M_PI * Yradius * Zradius * Xwidth;
     } else {
-      cerr << "Warning: Unsupported ballonet shape." << endl;
+      FGXMLLogging log(exec->GetLogger(), el, LogLevel::WARN);
+      log << "Unsupported ballonet shape.\n";
       MaxVolume =
         (4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
          M_PI * Yradius * Zradius * Xwidth +
@@ -571,9 +572,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    const string s("Fatal Error: Ballonet shape must be given.");
-    cerr << el->ReadFrom() << endl << s << endl;
-    throw BaseException(s);
+    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
+    log << "\nFatal Error: Ballonet shape must be given.\n";
+    throw BaseException(log.str());
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -584,7 +585,8 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
     if (0 <= Fullness) {
       Volume = Fullness * MaxVolume;
     } else {
-      cerr << "Warning: Invalid initial ballonet fullness value." << endl;
+      FGXMLLogging log(exec->GetLogger(), el, LogLevel::WARN);
+      log << "Invalid initial ballonet fullness value.\n";
     }
   }
   if (el->FindElement("valve_coefficient")) {
@@ -798,38 +800,39 @@ void FGBallonet::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      Ballonet holds " << Contents << " mol air" << endl;
-      cout << "        Location (X, Y, Z) (in.): " << vXYZ(eX) << ", " <<
-        vXYZ(eY) << ", " << vXYZ(eZ) << endl;
-      cout << "        Maximum volume: " << MaxVolume << " ft3" << endl;
-      cout << "        Relief valve release pressure: " << MaxOverpressure <<
-        " lbs/ft2" << endl;
-      cout << "        Relief valve coefficient: " << ValveCoefficient <<
-        " ft4*sec/slug" << endl;
-      cout << "        Initial temperature: " << Temperature << " Rankine" <<
-        endl;
-      cout << "        Initial pressure: " << Pressure << " lbs/ft2" << endl;
-      cout << "        Initial volume: " << Volume << " ft3" << endl;
-      cout << "        Initial mass: " << GetMass() << " slug mass" << endl;
-      cout << "        Initial weight: " << GetMass()*slugtolb <<
-        " lbs force" << endl;
-      cout << "        Heat transfer: " << endl;
+      FGLogging log(MassBalance->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "      Ballonet holds " << std::fixed << Contents << " mol air\n";
+      log << "        Location (X, Y, Z) (in.): " << vXYZ(eX) << ", "
+          << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
+      log << "        Maximum volume: " << MaxVolume << " ft3\n";
+      log << "        Relief valve release pressure: " << MaxOverpressure
+          << " lbs/ft2\n";
+      log << "        Relief valve coefficient: " << ValveCoefficient
+          << " ft4*sec/slug\n";
+      log << "        Initial temperature: " << Temperature << " Rankine\n";
+      log << "        Initial pressure: " << Pressure << " lbs/ft2\n";
+      log << "        Initial volume: " << Volume << " ft3\n";
+      log << "        Initial mass: " << GetMass() << " slug mass\n";
+      log << "        Initial weight: " << GetMass()*slugtolb
+          << " lbs force\n";
+      log << "        Heat transfer: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGBallonet" << endl;
-    if (from == 1) cout << "Destroyed:    FGBallonet" << endl;
+    FGLogging log(MassBalance->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGBallonet\n";
+    if (from == 1) log << "Destroyed:    FGBallonet\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 ) { // Runtime state variables
-      cout << "        Ballonet holds " << Contents <<
-        " mol air" << endl;
-      cout << "        Temperature: " << Temperature << " Rankine" << endl;
-      cout << "        Pressure: " << Pressure << " lbs/ft2" << endl;
-      cout << "        Volume: " << Volume << " ft3" << endl;
-      cout << "        Mass: " << GetMass() << " slug mass" << endl;
-      cout << "        Weight: " << GetMass()*slugtolb << " lbs force" << endl;
+    FGLogging log(MassBalance->GetExec()->GetLogger(), LogLevel::DEBUG);
+    log << "        Ballonet holds " << std::fixed << Contents << " mol air\n";
+    log << "        Temperature: " << Temperature << " Rankine\n";
+    log << "        Pressure: " << Pressure << " lbs/ft2\n";
+    log << "        Volume: " << Volume << " ft3\n";
+    log << "        Mass: " << GetMass() << " slug mass\n";
+    log << "        Weight: " << GetMass()*slugtolb << " lbs force\n";
   }
   if (debug_lvl & 16) { // Sanity checking
   }
