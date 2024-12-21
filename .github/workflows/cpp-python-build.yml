@@ -743,7 +743,7 @@ jobs:
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
-          file: ./build/lcov/data/capture/all_targets.info
+          files: ./build/lcov/data/capture/all_targets.info
           token: ${{ secrets.CODECOV_TOKEN }}
           disable_search: true
           fail_ci_if_error: true
