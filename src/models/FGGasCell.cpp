@@ -449,7 +449,7 @@ void FGGasCell::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
-      log << "    Gas cell holds " << fixed << Contents << " mol " << type << "\n";
+      log << "    Gas cell holds " << std::fixed << Contents << " mol " << type << "\n";
       log << "      Cell location (X, Y, Z) (in.): " << vXYZ(eX) << ", "
           << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
       log << "      Maximum volume: " << MaxVolume << " ft3\n";
@@ -474,7 +474,7 @@ void FGGasCell::Debug(int from)
   }
   if (debug_lvl & 8 ) { // Runtime state variables
     FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
-    log << "      " << type << " cell holds " << fixed << Contents << " mol\n";
+    log << "      " << type << " cell holds " << std::fixed << Contents << " mol\n";
     log << "      Temperature: " << Temperature << " Rankine\n";
     log << "      Pressure: " << Pressure << " lbs/ft2\n";
     log << "      Volume: " << Volume << " ft3\n";
@@ -801,7 +801,7 @@ void FGBallonet::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       FGLogging log(MassBalance->GetExec()->GetLogger(), LogLevel::DEBUG);
-      log << "      Ballonet holds " << fixed << Contents << " mol air\n";
+      log << "      Ballonet holds " << std::fixed << Contents << " mol air\n";
       log << "        Location (X, Y, Z) (in.): " << vXYZ(eX) << ", "
           << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
       log << "        Maximum volume: " << MaxVolume << " ft3\n";
@@ -827,7 +827,7 @@ void FGBallonet::Debug(int from)
   }
   if (debug_lvl & 8 ) { // Runtime state variables
     FGLogging log(MassBalance->GetExec()->GetLogger(), LogLevel::DEBUG);
-    log << "        Ballonet holds " << fixed << Contents << " mol air\n";
+    log << "        Ballonet holds " << std::fixed << Contents << " mol air\n";
     log << "        Temperature: " << Temperature << " Rankine\n";
     log << "        Pressure: " << Pressure << " lbs/ft2\n";
     log << "        Volume: " << Volume << " ft3\n";
