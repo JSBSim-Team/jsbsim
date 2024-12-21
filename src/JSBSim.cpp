@@ -183,15 +183,24 @@ public:
   }
 };
 
+/** The Timer class measures the elapsed real time and can be paused and resumed.
+    It inherits from SGPropertyChangeListener to restart the timer whenever a
+    property change is detected. */
 class Timer : public SGPropertyChangeListener {
 public:
-  Timer() : SGPropertyChangeListener(), isPaused(false) { initialize(); }
-  void initialize(void) { initial_seconds = getcurrentseconds(); }
+  Timer() : SGPropertyChangeListener(), isPaused(false) { start(); }
+  void start(void) { initial_seconds = getcurrentseconds(); }
+
+  /// Restart the timer when the listened property is modified.
   void valueChanged(SGPropertyNode* prop) override {
-    initialize();
+    start();
     if (isPaused) pause_start_seconds = initial_seconds;
   }
+  /// Get the elapsed real time in seconds since the timer was started.
   double getElapsedTime(void) { return getcurrentseconds() - initial_seconds; }
+
+  /** Pause the timer if the `paused` parameter is true and resume it if the
+      `paused` parameter is false. */
   void pause(bool paused) {
     if (paused) {
       if (!isPaused) {
@@ -202,7 +211,7 @@ public:
       if (isPaused) {
         isPaused = false;
         double pause_duration = getcurrentseconds() - pause_start_seconds;
-        initial_seconds += pause_duration;
+        initial_seconds += pause_duration; // Shift the initial time to account for the pause duration.
       }
     }
   }
@@ -567,7 +576,7 @@ int real_main(int argc, char* argv[])
   else          sleep_nseconds = (sleep_period )*1e9;           // 0.01 seconds
 
   tzset();
-  timer.initialize();
+  timer.start();
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result && FDMExec->GetSimTime() <= end_time) {
