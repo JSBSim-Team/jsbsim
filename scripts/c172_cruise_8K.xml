@@ -6,8 +6,8 @@
   <description>This run is for testing the C172 altitude hold autopilot and cruise performance</description>
   <use aircraft="c172x" initialize="reset01"/>
 
-  <run start="0.0" end="50" dt="0.0083333">
-  
+  <run start="0.0" end="40" dt="0.0083333">
+
     <property value="0" persistent="true"> simulation/run_id </property>
 
     <event name="Set Temperature">
@@ -26,17 +26,17 @@
       </set>
       <set name="ap/altitude_setpoint" value="4000.0"/>
     </event>
-    
+
     <event name="Start engine">
       <condition>
         simulation/sim-time-sec  ge  0.01
       </condition>
       <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.50" tc="0.05"/>
-      <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="1.0" tc="0.05"/> 
+      <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="1.0" tc="0.05"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
       <notify/>
-    </event> 
+    </event>
 
     <event name="Trim">
       <condition>
@@ -102,8 +102,8 @@
 
     <event name="Reset">
       <condition logic="AND">
-        simulation/sim-time-sec >= 30.0
-        simulation/terminate != 1
+        simulation/sim-time-sec >= 25.0
+        simulation/run_id lt 2
       </condition>
       <set name="ap/heading_setpoint" value="0"/>
 <!--      <set name="ap/altitude_setpoint" value="0"/> -->
@@ -115,16 +115,5 @@
         <property> simulation/run_id </property>
       </notify>
     </event>
-
-    <event name="Terminate on run ID">
-      <condition>
-        simulation/run_id  ge  3
-      </condition>
-      <set name="simulation/terminate" value="1"/>
-      <notify>
-        <property caption="Terminate: "> simulation/terminate </property>
-      </notify>
-    </event>
-
   </run>
 </runscript>
