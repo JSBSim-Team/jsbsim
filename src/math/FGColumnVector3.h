@@ -39,6 +39,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <cmath>
 #include <iosfwd>
 #include <string>
 
@@ -236,7 +237,11 @@ public:
 
   /** Length of the vector.
       Compute and return the euclidean norm of this vector.   */
-  double Magnitude(void) const;
+  double Magnitude(void) const { return std::sqrt(SqrMagnitude()); }
+
+  /** Square of the length of the vector.
+      Compute and return the square of the euclidean norm of this vector.   */
+  double SqrMagnitude(void) const { return data[0]*data[0] + data[1]*data[1] + data[2]*data[2]; }
 
   /** Length of the vector in a coordinate axis plane.
       Compute and return the euclidean norm of this vector projected into
