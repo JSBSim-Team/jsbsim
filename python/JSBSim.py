@@ -125,7 +125,7 @@ if args.simulation_rate:
 
 args.simulation_rate = fdm.get_delta_t()
 
-if args.planetfile:
+if args.planet:
     fdm.load_planet(args.planetfile, False)
 
 if args.property:
