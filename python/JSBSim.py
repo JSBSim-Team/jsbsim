@@ -53,7 +53,7 @@ parser.add_argument("--suspend", default=False, action="store_true",
                     help="specifies to suspend the simulation after initialization")
 parser.add_argument("--initfile", metavar="<filename>",
                     help="specifies an initialization file")
-parser.add_argument("--planetfile", metavar="<filename>",
+parser.add_argument("--planet", metavar="<filename>",
                     help="specifies a planet definition file")
 parser.add_argument("--catalog", default=False, action="store_true",
                     help="specifies that all properties for this aircraft model should be printed")
@@ -125,7 +125,7 @@ if args.simulation_rate:
 
 args.simulation_rate = fdm.get_delta_t()
 
-if args.planetfile:
+if args.planet:
     fdm.load_planet(args.planetfile, False)
 
 if args.property:
