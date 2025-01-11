@@ -156,11 +156,10 @@ private:
     void setTestValue(const std::string &value, const std::string &Name,
                       std::shared_ptr<FGPropertyManager> pm, Element* el)
     {
-      if (value.empty()) {
-        std::cerr << "No VALUE supplied for switch component: " << Name
-                  << std::endl;
-      } else
+      if (!value.empty())
         OutputValue = new FGParameterValue(value, pm, el);
+      else
+        throw BaseException("No VALUE supplied for switch component: " + Name);
     }
 
     std::string GetOutputName(void) const {return OutputValue->GetName();}

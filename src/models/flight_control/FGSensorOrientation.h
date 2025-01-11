@@ -41,6 +41,7 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "math/FGColumnVector3.h"
 #include "math/FGMatrix33.h"
+#include "input_output/FGLog.h"
 
 #include <iostream>
 
@@ -69,7 +70,7 @@ CLASS DECLARATION
 class FGSensorOrientation  : public FGJSBBase
 {
 public:
-  FGSensorOrientation(Element* element)
+  FGSensorOrientation(Element* element, std::shared_ptr<FGLogger> logger)
   {
     Element* orient_element = element->FindElement("orientation");
     if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
@@ -78,7 +79,7 @@ public:
 
     Element* axis_element = element->FindElement("axis");
     if (axis_element) {
-      std::string sAxis = element->FindElementValue("axis");
+      std::string sAxis = axis_element->GetDataLine();
       if (sAxis == "X" || sAxis == "x") {
         axis = 1;
       } else if (sAxis == "Y" || sAxis == "y") {
@@ -88,15 +89,14 @@ public:
       }
     }
 
-    if (!axis) {
-      std::cerr << "  Incorrect/no axis specified for this sensor; assuming X axis" << std::endl;
+    if (axis == 0) {
+      FGXMLLogging log(logger, element, LogLevel::WARN);
+      log << "  Incorrect/no axis specified for this sensor; assuming X axis\n";
       axis = 1;
     }
 
     CalculateTransformMatrix();
   }
-
-//  ~FGSensorOrientation();
 
 protected:
   FGColumnVector3 vOrient;

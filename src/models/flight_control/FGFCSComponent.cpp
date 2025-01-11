@@ -40,6 +40,7 @@ INCLUDES
 #include "FGFCSComponent.h"
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -131,9 +132,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     bool node_exists = PropertyManager->HasNode(output_node_name);
     FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
     if (!OutputNode) {
-      cerr << out_elem->ReadFrom() << "  Unable to process property: "
-           << output_node_name << endl;
-      throw(string("Invalid output property name in flight control definition"));
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), out_elem, LogLevel::FATAL);
+      log << "  Unable to process property: " << output_node_name << "\n";
+      throw BaseException(log.str());
     }
     OutputNodes.push_back(OutputNode);
     // If the node has just been created then it must be initialized to a
@@ -157,7 +158,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       } else if (delayType == "frames") {
         delay = (unsigned int)delay_time;
       } else {
-        cerr << "Unallowed delay type" << endl;
+        FGXMLLogging log(fcs->GetExec()->GetLogger(), delay_elem, LogLevel::ERROR);
+        log << "Unallowed delay type\n";
       }
     } else {
       delay = (unsigned int)(delay_time / dt);
@@ -170,8 +172,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   if (clip_el) {
     Element* el = clip_el->FindElement("min");
     if (!el) {
-      cerr << clip_el->ReadFrom()
-           << "Element <min> is missing, <clipto> is ignored." << endl;
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), clip_el, LogLevel::ERROR);
+      log << "Element <min> is missing, <clipto> is ignored.\n";
       return;
     }
 
@@ -179,8 +181,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
     el = clip_el->FindElement("max");
     if (!el) {
-      cerr << clip_el->ReadFrom()
-           << "Element <max> is missing, <clipto> is ignored." << endl;
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), clip_el, LogLevel::ERROR);
+      log << "Element <max> is missing, <clipto> is ignored.\n";
       ClipMin = nullptr;
       return;
     }
@@ -219,20 +221,19 @@ void FGFCSComponent::CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* 
   size_t num = InputNodes.size();
 
   if (num < MinNodes) {
-    cerr << el->ReadFrom()
-         << "    Not enough <input> nodes are provided" << endl
-         << "    Expecting " << MinNodes << " while " << num
-         << " are provided." << endl;
-    throw("Some inputs are missing.");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::FATAL);
+    log << "    Not enough <input> nodes are provided\n"
+        << "    Expecting " << MinNodes << " while " << num
+        << " are provided.\n";
+    throw BaseException(log.str());
   }
 
   if (num > MaxNodes) {
-    cerr << el->ReadFrom()
-         << "    Too many <input> nodes are provided" << endl
-         << "    Expecting " << MaxNodes << " while " << num
-         << " are provided." << endl
-         << "    The last " << num-MaxNodes << " input nodes will be ignored."
-         << endl;
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::ERROR);
+    log << "    Too many <input> nodes are provided\n"
+        << "    Expecting " << MaxNodes << " while " << num
+        << " are provided.\n"
+        << "    The last " << num-MaxNodes << " input nodes will be ignored.\n";
   }
 }
 
@@ -271,10 +272,11 @@ void FGFCSComponent::Clip(void)
     double range = vmax - vmin;
 
     if (range < 0.0) {
-      cerr << "Trying to clip with a max value (" << vmax << ") from "
-           << ClipMax->GetName() << " lower than the min value (" << vmin
-           << ") from " << ClipMin->GetName() << "." << endl
-           << "Clipping is ignored." << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      log << "Trying to clip with a max value (" << fixed << vmax << ") from "
+          << ClipMax->GetName() << " lower than the min value (" << vmin
+          << ") from " << ClipMin->GetName() << ".\n"
+          << "Clipping is ignored.\n";
       return;
     }
 
@@ -319,8 +321,8 @@ void FGFCSComponent::bind(Element* el, FGPropertyManager* PropertyManager)
       node->setDoubleValue(Output);
   }
   else {
-    cerr << el->ReadFrom()
-         << "Could not get or create property " << tmp << endl;
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::ERROR);
+    log << "Could not get or create property " << tmp << "\n";
   }
 }
 
@@ -332,7 +334,7 @@ void FGFCSComponent::bind(Element* el, FGPropertyManager* PropertyManager)
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -349,20 +351,22 @@ void FGFCSComponent::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) {
-      cout << endl << "    Loading Component \"" << Name
-                   << "\" of type: " << Type << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "\n    Loading Component \"" << Name << fixed
+          << "\" of type: " << Type << "\n";
 
       if (clip) {
-        cout << "      Minimum limit: " << ClipMin->GetName() << endl;
-        cout << "      Maximum limit: " << ClipMax->GetName() << endl;
+        log << "      Minimum limit: " << ClipMin->GetName() << "\n";
+        log << "      Maximum limit: " << ClipMax->GetName() << "\n";
       }
-      if (delay > 0) cout <<"      Frame delay: " << delay
-                                   << " frames (" << delay*dt << " sec)" << endl;
+      if (delay > 0) log <<"      Frame delay: " << delay << fixed
+                         << setprecision(4) << " frames (" << delay*dt << " sec)\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGFCSComponent" << endl;
-    if (from == 1) cout << "Destroyed:    FGFCSComponent" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGFCSComponent\n";
+    if (from == 1) log << "Destroyed:    FGFCSComponent\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
