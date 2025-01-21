@@ -1,4 +1,4 @@
-#include "FDMTypes.h"
+﻿#include "FDMTypes.h"
 
 const FSimpleWindState FSimpleWindState::Calm = FSimpleWindState();
 const FSimpleWindState FSimpleWindState::StandardEastZephyr = FSimpleWindState(ETurbType::Standard, 0.0, 0.0, FVector::RightVector, 0.0);
