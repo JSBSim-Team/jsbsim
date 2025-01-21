@@ -52,20 +52,21 @@ CLASS IMPLEMENTATION
 
 
 FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
-  : FGSensor(fcs, element), FGSensorOrientation(element), counter(0),
-    INERTIAL_UPDATE_RATE(1000)
+  : FGSensor(fcs, element),
+    FGSensorOrientation(element, fcs->GetExec()->GetLogger()),
+    counter(0), INERTIAL_UPDATE_RATE(1000)
 {
   Propagate = fcs->GetExec()->GetPropagate();
   MassBalance = fcs->GetExec()->GetMassBalance();
   Inertial = fcs->GetExec()->GetInertial();
-  
+
   Element* location_element = element->FindElement("location");
   if (location_element)
     vLocation = location_element->FindElementTripletConvertTo("IN");
   else {
-    cerr << element->ReadFrom()
-         << "No location given for magnetometer. " << endl;
-    throw("Malformed magnetometer specification.");
+    FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+    log << "No location given for magnetometer.\n";
+    throw BaseException(log.str());
   }
 
   vRadius = MassBalance->StructuralToBody(vLocation);
@@ -127,7 +128,7 @@ void FGMagnetometer::updateInertialMag(void)
 bool FGMagnetometer::Run(void )
 {
   // There is no input assumed. This is a dedicated magnetic field sensor.
-  
+
   vRadius = MassBalance->StructuralToBody(vLocation);
 
   updateInertialMag();
@@ -137,7 +138,7 @@ bool FGMagnetometer::Run(void )
 
   // Allow for sensor orientation
   vMag = mT * vMag;
-  
+
   Input = vMag(axis);
 
   ProcessSensorSignal();
@@ -155,7 +156,7 @@ bool FGMagnetometer::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -173,13 +174,15 @@ void FGMagnetometer::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
     if (from == 0) { // Constructor
-      cout << "        Axis: " << ax[axis] << endl;
+      log << "        Axis: " << ax[axis] << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGMagnetometer" << endl;
-    if (from == 1) cout << "Destroyed:    FGMagnetometer" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGMagnetometer\n";
+    if (from == 1) log << "Destroyed:    FGMagnetometer\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

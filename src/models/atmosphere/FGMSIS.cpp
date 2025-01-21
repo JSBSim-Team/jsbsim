@@ -60,6 +60,7 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGMSIS.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -212,7 +213,7 @@ void FGMSIS::Compute(double altitude, double& pressure, double& temperature,
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -230,14 +231,16 @@ void FGMSIS::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) {} // Constructor
     if (from == 3) { // Loading
-      cout << "    NRLMSIS atmosphere model" << endl;
-      cout << "      day: " << day_of_year << endl;
-      cout << "      UTC: " << seconds_in_day << endl << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      log << "    NRLMSIS atmosphere model\n" << fixed;
+      log << "      day: " << day_of_year << "\n";
+      log << "      UTC: " << seconds_in_day << "\n\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) std::cout << "Instantiated: MSIS" << std::endl;
-    if (from == 1) std::cout << "Destroyed:    MSIS" << std::endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: MSIS\n";
+    if (from == 1) log << "Destroyed:    MSIS\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

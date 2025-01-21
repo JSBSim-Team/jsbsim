@@ -64,6 +64,7 @@ INCLUDES
 #include "FGSwitch.h"
 #include "models/FGFCS.h"
 #include "math/FGCondition.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -83,26 +84,39 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
                                         // definition for a sample-and-hold
   Element* test_element = element->FindElement("default");
   if (test_element) {
-    current_test = new Test;
-    value = test_element->GetAttributeValue("value");
-    current_test->setTestValue(value, Name, PropertyManager, test_element);
-    current_test->Default = true;
-    if (delay > 0 && is_number(trim(value))) {  // If there is a delay, initialize the
-      double v = atof_locale_c(value);
-      for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
-        output_array[i] = v;                    // for the switch if that value is a number.
+    try {
+      current_test = new Test;
+      value = test_element->GetAttributeValue("value");
+      current_test->setTestValue(value, Name, PropertyManager, test_element);
+      current_test->Default = true;
+      if (delay > 0 && is_number(trim(value))) {  // If there is a delay, initialize the
+        double v = atof_locale_c(value);
+        for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
+          output_array[i] = v;                    // for the switch if that value is a number.
+        }
       }
+      tests.push_back(current_test);
+    } catch (const BaseException& e) {
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
+      log << e.what() << "\n"
+          << "    Default value IGNORED.\n";
     }
-    tests.push_back(current_test);
   }
 
   test_element = element->FindElement("test");
   while (test_element) {
-    current_test = new Test;
-    current_test->condition = new FGCondition(test_element, PropertyManager);
-    value = test_element->GetAttributeValue("value");
-    current_test->setTestValue(value, Name, PropertyManager, test_element);
-    tests.push_back(current_test);
+    try {
+      current_test = new Test;
+      current_test->condition = new FGCondition(test_element, PropertyManager);
+      value = test_element->GetAttributeValue("value");
+      current_test->setTestValue(value, Name, PropertyManager, test_element);
+      tests.push_back(current_test);
+    } catch (const BaseException& e) {
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
+      log << e.what() << "\n"
+          << "    Test IGNORED.\n";
+    }
+
     test_element = element->FindNextElement("test");
   }
 
@@ -147,7 +161,7 @@ bool FGSwitch::Run(void )
       break;
     }
   }
-  
+
   if (!pass) Output = default_output;
 
   if (delay != 0) Delay();
@@ -177,7 +191,7 @@ void FGSwitch::VerifyProperties(void)
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -194,25 +208,27 @@ void FGSwitch::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
       unsigned int i = 0;
       for (auto test: tests) {
         if (test->Default) {
-          cout << "      Switch default value is: " << test->GetOutputName();
+          log << "      Switch default value is: " << test->GetOutputName();
         } else {
-          cout << "      Switch takes test " << i << " value (" << test->GetOutputName() << ")" << endl;
+          log << "      Switch takes test " << i << " value (" << test->GetOutputName() << ")\n";
 
           test->condition->PrintCondition("      ");
         }
-        cout << endl;
+        log << "\n";
         ++i;
       }
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getNameString() << endl;
+        log << "      OUTPUT: " << node->getNameString() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGSwitch" << endl;
-    if (from == 1) cout << "Destroyed:    FGSwitch" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGSwitch\n";
+    if (from == 1) log << "Destroyed:    FGSwitch\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -227,4 +243,3 @@ void FGSwitch::Debug(int from)
 }
 
 } //namespace JSBSim
-

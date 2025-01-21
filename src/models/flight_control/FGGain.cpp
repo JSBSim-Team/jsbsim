@@ -41,6 +41,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "math/FGParameterValue.h"
 #include "math/FGTable.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -62,9 +63,8 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
-      cerr << element->ReadFrom()
-           << highint << "      No GAIN specified (default: 1.0)" << normint
-           << endl;
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::ERROR);
+      log << LogFormat::BOLD << "      No GAIN specified (default: 1.0)\n";
     }
   }
 
@@ -92,10 +92,10 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       OutMax = scale_element->FindElementValueAsNumber("max");
       OutMin = scale_element->FindElementValueAsNumber("min");
     } else {
-      cerr << scale_element->ReadFrom()
-           << "Maximum and minimum output values must be supplied for the "
-              "aerosurface scale component" << endl;
-      throw("Some inputs are missing.");
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), scale_element, LogLevel::FATAL);
+      log << "Maximum and minimum output values must be supplied for the "
+             "aerosurface scale component\n";
+      throw BaseException(log.str());
     }
     ZeroCentered = true;
     Element* zero_centered = element->FindElement("zero_centered");
@@ -112,10 +112,9 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if (element->FindElement("table")) {
       Table = new FGTable(PropertyManager, element->FindElement("table"));
     } else {
-      cerr << element->ReadFrom()
-           << "A table must be provided for the scheduled gain component"
-           << endl;
-      throw("Some inputs are missing.");
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
+      log << "A table must be provided for the scheduled gain component\n";
+      throw BaseException(log.str());
     }
   }
 
@@ -179,7 +178,7 @@ bool FGGain::Run(void )
 //       variable is not set, debug_lvl is set to 1 internally
 //    0: This requests JSBSim not to output any messages
 //       whatsoever.
-//    1: This value explicity requests the normal JSBSim
+//    1: This value explicitly requests the normal JSBSim
 //       startup messages
 //    2: This value asks for a message to be printed out when
 //       a class is instantiated
@@ -196,28 +195,30 @@ void FGGain::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->GetNameWithSign() << endl;
-      cout << "      GAIN: " << Gain->GetName() << endl;
+      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << "\n";
+      log << "      GAIN: " << Gain->GetName() << fixed << "\n";
 
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->getNameString() << endl;
+        log << "      OUTPUT: " << node->getNameString() << "\n";
 
       if (Type == "AEROSURFACE_SCALE") {
-        cout << "      In/Out Mapping:" << endl;
-        cout << "        Input MIN: " << InMin << endl;
-        cout << "        Input MAX: " << InMax << endl;
-        cout << "        Output MIN: " << OutMin << endl;
-        cout << "        Output MAX: " << OutMax << endl;
+        log << "      In/Out Mapping:\n" << setprecision(4);
+        log << "        Input MIN: " << InMin << "\n";
+        log << "        Input MAX: " << InMax << "\n";
+        log << "        Output MIN: " << OutMin << "\n";
+        log << "        Output MAX: " << OutMax << "\n";
       }
-      if (Table != 0) {
-        cout << "      Scheduled by table: " << endl;
+      if (Table) {
+        log << "      Scheduled by table:\n";
         Table->Print();
       }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGGain" << endl;
-    if (from == 1) cout << "Destroyed:    FGGain" << endl;
+    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGGain\n";
+    if (from == 1) log << "Destroyed:    FGGain\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
