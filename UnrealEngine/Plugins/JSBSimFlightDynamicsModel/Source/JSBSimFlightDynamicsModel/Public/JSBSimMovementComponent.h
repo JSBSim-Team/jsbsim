@@ -243,8 +243,12 @@ public:
   *     otherwise you will override the system value! */
 	UFUNCTION(BlueprintCallable, DisplayName = "Command Console Batch")
     void CommandConsoleBatch(TArray<FString> Property, TArray<FString> InValue, TArray<FString>& OutValue);
-
-
+	UFUNCTION(BlueprintCallable, DisplayName = "Set Winds")
+	void SetWind(FSimpleWindState WindState);
+	/**
+	 * Set environmental wind parameters
+	 * 
+	 */
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -341,6 +345,9 @@ private:
 	void InitEnginesCommandAndStates();
 	void GetEnginesStates();
 
+
+	//aircrafts
+	void CrashedEvent();
 
 	/////////// Logging and Debugging Methods
 	void LogInitialization();

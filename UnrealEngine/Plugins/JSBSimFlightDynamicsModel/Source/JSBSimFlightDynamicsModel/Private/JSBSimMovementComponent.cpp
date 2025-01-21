@@ -151,6 +151,41 @@ void UJSBSimMovementComponent::CommandConsoleBatch(TArray<FString> Property, TAr
   //}
 }
 
+void UJSBSimMovementComponent::SetWind(FSimpleWindState WindState)
+{
+    auto ConvertUnrealWindModeToFGWindMode = [](ETurbType Unreal) {
+        switch (Unreal)
+        {
+        case ETurbType::None:
+            return JSBSim::FGWinds::ttNone;
+            break;
+        case ETurbType::Standard:
+            return JSBSim::FGWinds::ttStandard;
+            break;
+        case ETurbType::Culp:
+            return JSBSim::FGWinds::ttCulp;
+            break;
+        case ETurbType::Milspec:
+            return JSBSim::FGWinds::ttMilspec;
+            break;
+        case ETurbType::Tustin:
+            return JSBSim::FGWinds::ttTustin;
+            break;
+        default:
+            break;
+        }
+        return JSBSim::FGWinds::ttNone;
+        };
+    if (Winds)
+    {
+        Winds->SetTurbType(ConvertUnrealWindModeToFGWindMode(WindState.TurbType));
+        Winds->SetTurbGain(WindState.TurbGain);
+        Winds->SetTurbRate(WindState.TurbRate);
+        Winds->SetWindNED(*(FGColumnVector3*)&WindState.WindNED);
+        Winds->SetProbabilityOfExceedence(WindState.ProbabilityOfExceedence);
+    }
+}
+
 
 
 void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
@@ -312,8 +347,16 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
         // Update the ForwardHorizontal vector used for the PFD
         AircraftState.UEForwardHorizontal = ENUTransform.TransformVector(ECEFForwardHorizontal);
 
-        // Apply the transform to the Parent actor			
-        Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
+        // Apply the transform to the Parent actor
+        if (EngineLocation.ContainsNaN() || EngineRotationQuat.ContainsNaN())
+        {
+            CrashedEvent();
+        }
+        else
+        {
+            Parent->SetActorLocationAndRotation(EngineLocation, EngineRotationQuat);
+
+        }
       }
 
       // Basic debugging string and symbols
@@ -694,9 +737,7 @@ void UJSBSimMovementComponent::CopyFromJSBSim()
   AircraftState.AltitudeAGLFt = Propagate->GetDistanceAGL();
   // force a sim crashed if crashed (altitude AGL < 0)
   if (AircraftState.AltitudeAGLFt < -10.0 || AircraftState.AltitudeASLFt < -10.0) {
-    Exec->SuspendIntegration();
-    AircraftState.Crashed = true;
-    AircraftCrashed.Broadcast();
+      CrashedEvent();
   }
 
   // Copy the fuel levels from JSBSim if fuel
@@ -1044,6 +1085,13 @@ void UJSBSimMovementComponent::GetEnginesStates()
 }
 
 /////////// Logging and Debugging Methods
+
+void UJSBSimMovementComponent::CrashedEvent()
+{
+    Exec->SuspendIntegration();
+    AircraftState.Crashed = true;
+    AircraftCrashed.Broadcast();
+}
 
 void UJSBSimMovementComponent::LogInitialization()
 {
