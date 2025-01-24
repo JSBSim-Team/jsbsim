@@ -439,15 +439,15 @@ UENUM(BlueprintType)
 enum class ETurbType:uint8
 {
 	//No turbulence model is used. The aircraft will not experience any random wind effects. This mode can be beneficial for initial testing or when the influence of wind needs to be simplified.
-	None = 0 UMETA(ToolTip = "turbulence disabled"),
+	None = 0 UMETA(DisplayName ="turbulence disabled"),
 	//A basic turbulence model that uses standard statistical characteristics to simulate wind fluctuations. This model is generally used for simple flight simulations.
-	Standard UMETA(ToolTip = "Ordinary turbulence"),
+	Standard UMETA(DisplayName = "Ordinary turbulence"),
 	//The Culp turbulence model typically provides a more detailed simulation of turbulence (considering factors such as turbulence intensity and frequency). The Culp model adapts well to different aircraft and flight conditions, making it suitable for more complex simulations.
-	Culp UMETA(ToolTip = "Culp turbulence model"),
+	Culp UMETA(DisplayName = "Culp turbulence model"),
 	//This model uses the Dryden spectrum to simulate turbulence, adhering to the guidelines set in the MIL-F-8785C document. The parameters are designed differently for flights at altitudes below 1000 feet and above 2000 feet, with linear interpolation applied for altitudes in between. This model is well-suited for military applications and scenarios where specific turbulence characteristics are required.
-	Milspec UMETA(ToolTip = "Milspec turbulence model (Dryden spectrum)"),
+	Milspec UMETA(DisplayName = "Milspec turbulence model (Dryden spectrum)"),
 	//Similar to ttMilspec, this model also uses the Dryden spectrum. The main difference lies in how the transfer functions are implemented based on the specifications in the military document. It helps in simulating realistic turbulence under similar conditions as the Milspec model.
-	Tustin UMETA(ToolTip = "Tustin turbulence model (Dryden spectrum)") ,
+	Tustin UMETA(DisplayName = "Tustin turbulence model (Dryden spectrum)") ,
 	
 };
 /*
