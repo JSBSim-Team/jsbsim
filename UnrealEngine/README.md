@@ -21,23 +21,21 @@ Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsb
 Windows users continue below:
 
 ### 1. Install Unreal Engine 5.x
-The project is currently compatible with UE5.0 to UE5.5+.
+The project is compatible with engine versions UE5.5 - UE5.0
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
-In order to build C++ plugins for Unreal, each Unreal Engine Version tends to require a specific MSVC toolchain, Windows SDK, and .NET. 
-It is recommended to set up Visual Studio for Unreal using the following procedure:
+In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. You can setup Visual Studio and the required tools for Unreal using the following procedure:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 
-UE5.5 - UE5.4 currently require toolchain MSVC v14.38, which is not the default tool in the newest Visual Studio download and it must be manually selected to install. `MSVC v143 x64/x86 build tools (v14.38-17.X)`
+UE5.5 - UE5.4 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
 
-Visual Studio Community can be used.
-For UE5.3+, Visual Studio 2022 is required. Visual Studio 2022 and 2019 can be used with UE5.0-UE5.2.
+Visual Studio Community can be used (It's free).
+UE5.3 - UE5.5 require Visual Studio 2022. Visual Studio 2022 and 2019 can be used with UE5.0 - UE5.2.
 
-Optional:
+Optional extension setup:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
-Please Note: This sample project has since been partially maintained & updated by the community. As time continues, requirements can change with each version of engine, Visual Studio, and toolchain. If you experience build errors check your logs and use an internet search to see if there is a common solution. Typically solutions are found on the Unreal Engine Forums.
 
 ### 2. Build JSBSim as Dynamic libraries and stage Model files (Windows)
 
@@ -147,7 +145,7 @@ Gamepad Layout
 |Time of day - Dusk Preset| PAGE UP|
 
 ## Update: version 1.01
- - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame (hence pseudo). **It's best to set the game engine to a fixed rate**, otherwise fluctuating framerates could introduce instabilities in JSBsim. (Tip: Find the min of your average framerate and use that as the game fixed framerate.)
+ - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
  - Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
 -  Added new functions and blueprint nodes to access any JSBSim property. This is useful for getting and setting commands which are not currently coded in the plugin. See the next section.
 
