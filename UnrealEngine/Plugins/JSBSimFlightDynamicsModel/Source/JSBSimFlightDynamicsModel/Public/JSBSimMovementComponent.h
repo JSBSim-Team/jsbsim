@@ -192,7 +192,7 @@ public:
 
 	// Flight Control Commands and State
 	
-	UPROPERTY(Transient, BlueprintReadWrite, EditAnywhere, Category = "Commands")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Commands")
 	FFlightControlCommands Commands;
 
 	UPROPERTY(Transient, BlueprintReadOnly, VisibleAnywhere, Category = "State")

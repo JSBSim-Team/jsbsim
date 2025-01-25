@@ -42,6 +42,7 @@
 #include "initialization/FGTrim.h"
 #include "Interfaces/IPluginManager.h"
 #include "simgear/props/props.hxx"
+#include <regex>
 
 #ifdef _MSC_VER
 #pragma warning( pop )
@@ -106,6 +107,17 @@ void UJSBSimMovementComponent::PropertyManagerNode(TArray<FString>& Catalog)
 //TODO, check if this is optimized, as we are using strings for convenience and we could probably cache the propertynode once we have it
 void UJSBSimMovementComponent::CommandConsole(FString Property, FString InValue, FString& OutValue)
 {
+
+  //Property name must be alphanumeric and limited to these four -._/ special characters. This check prevents UE5 editor crash when using invalid characters.
+#if WITH_EDITOR 
+  if (!std::regex_match((TCHAR_TO_UTF8(*Property)), std::regex("^[a-zA-Z0-9.-_/]+$")))
+  {
+    FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: Property name must be alphanumeric and limited to these -._/ four characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName()))));
+    GetWorld()->GetFirstPlayerController()->ConsoleCommand(TEXT("Exit"));
+    return;
+  }
+#endif
+
   FGPropertyNode* node = PropertyManager->GetNode(TCHAR_TO_UTF8(*Property), false);
   if (node != NULL)
   {
@@ -131,7 +143,18 @@ void UJSBSimMovementComponent::CommandConsoleBatch(TArray<FString> Property, TAr
   OutValue.SetNum(Property.Num());
   for (int i = 0; i < Property.Num(); i++)
   {
-    FGPropertyNode* node = PropertyManager->GetNode(TCHAR_TO_UTF8(*(Property[i])), false);
+
+    //Property name must be alphanumeric and limited to these four -._/ special characters. This check prevents UE5 editor crash when using invalid characters.
+  #if WITH_EDITOR 
+    if (!std::regex_match((TCHAR_TO_UTF8(*Property[i])), std::regex("^[a-zA-Z0-9.-_/]+$")))
+    {
+      FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: Property name must be alphanumeric and limited to these -._/ four characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName()))));
+      GetWorld()->GetFirstPlayerController()->ConsoleCommand(TEXT("Exit"));
+      return;
+    }
+  #endif
+
+    FGPropertyNode* node = PropertyManager->GetNode(TCHAR_TO_UTF8(*Property[i]), false);
     if (node != NULL)
     {
       //we skip setting values by using blank InValue.
@@ -549,6 +572,7 @@ void UJSBSimMovementComponent::PrepareJSBSim()
   if (bStartWithGearDown)
   {
     FCS->SetGearPos(1.0);
+    Commands.GearDown = 1.0;
   }
   else
   {
