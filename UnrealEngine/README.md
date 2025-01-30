@@ -16,40 +16,26 @@ Enjoy, and Simulation for the win!
 
 ## Building the application 
 
+Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README-Unix.md) 
+
+Windows users continue below:
+
 ### 1. Install Unreal Engine 5.x
+The project is compatible with engine versions UE5.5 - UE5.0
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
-*Note:* In order to build C++ plugins for Unreal, you'll need at least Visual Studio 2019 v16.4.3 toolchain (14.24.28315) and Windows 10 SDK (10.0.18362.0). (Visual Studio Community can also be used)
+In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. You can setup Visual Studio and the required tools for Unreal using the following procedure:
+[https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 
----
-***Important Note  for Visual Studio 2022 users***
-As of 05/12/2022, Epic Games warns that some latests updates to VS2022 toolchain might break the build of UE applications. These issues will be addressed in a further UE hotfix release. While waiting for theses fixes, the recommended approach is to use the VS2019 Toolchain to build the application. 
-You can still use VS2022 as an IDE, and don't need to have VS2019 IDE installed. Just its toolchain. 
-1. From the Visual Studio installer, make sure you have these components installed:
-- Windows 10 SDK (10.0.18362.0)
-- MSVC v142 - VS2019 C++ x64/x86 build tools (v14.29-16.11)
-2. Force Unreal Build tool to produce VS2019 projects
-- Create a file named `"BuildConfiguration.xml"` in `%APPDATA%\Unreal Engine\UnrealBuildTool`  
-   (ex: `C:\Users\JohnDoe\AppData\Roaming\Unreal Engine\UnrealBuildTool`) 
- - Edit the file so that he looks like this one with a CompilerVersion block :
+UE5.5 - UE5.4 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
 
->     <?xml version="1.0" encoding="utf-8" ?> 
->     <Configuration xmlns="https://www.unrealengine.com/BuildConfiguration">
->     <WindowsPlatform>
->         <CompilerVersion>14.29.30136</CompilerVersion>
->     </WindowsPlatform> </Configuration>
-You can learn more about this option file [here](https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/BuildTools/UnrealBuildTool/BuildConfiguration/)...
+Visual Studio Community can be used (It's free).
+UE5.3 - UE5.5 require Visual Studio 2022. Visual Studio 2022 and 2019 can be used with UE5.0 - UE5.2.
 
-3. You need to do these changes before building/opening the UEReferenceApp project (step 4 below). 
-If you already tried a build with VS2022, you'll need to clean all intermediare project files, by running the CleanProject.bat file in the UEReferenceApp root folder. 
+Optional extension setup:
+[https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
-*Thanks to Ali M. and James S. for reporting this special case issue.*
-
----
-It is also recommended to set up Visual Studio for Unreal using the following procedures
-[https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://docs.unrealengine.com/5.0/en-US/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
-[https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://docs.unrealengine.com/5.0/en-US/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
 
 ### 2. Build JSBSim as Dynamic libraries and stage Model files (Windows)
 
@@ -63,7 +49,7 @@ When the UE application will be packaged, the resources will be copied along wit
 
 To make this process easier, there is a new solution named JSBSimForUnreal.sln at the root of JSBSim repo. 
 
- - Simply open and build this solution with VS2019, in Release, (and in Debug if you want too, but this is not mandatory)
+ - Simply open and build this solution with VS2022, in Release, (and in Debug if you want too, but this is not mandatory)
  - It will take care of making a clean build, and copy all needed files at the right location
 	 - All libs and headers in `UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim`
 	 - All resource files (aircrafts/engines/systems) in *UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim*
@@ -92,7 +78,7 @@ Open it, and "Build Startup project" from the UnrealVS Extension bar.
 Note that this Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
 
 ## Learning more about Unreal Engine
-You can find many free learning resources on Unreal Engine Developper Community portal : 
+You can find many free learning resources on Unreal Engine Developer Community portal : 
 [Getting Started](https://dev.epicgames.com/community/getting-started)
 [Library of Learning Courses](https://dev.epicgames.com/community/learning)
 
@@ -159,14 +145,17 @@ Gamepad Layout
 |Time of day - Dusk Preset| PAGE UP|
 
 ## Update: version 1.01
- - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame (hence pseudo). **It's best to set the game engine to a fixed rate**, otherwise fluctuating framerates could introduce instabilities in JSBsim. (Tip: Find the min of your average framerate and use that as the game fixed framerate.)
- - Added new functions/blueprint nodes to access any JSBSim property. This is especially useful to get and set any command value. See next section for usage.
+ - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
  - Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
+-  Added new functions and blueprint nodes to access any JSBSim property. This is useful for getting and setting commands which are not currently coded in the plugin. See the next section.
 
 ## Extended Commands and Properties
  - JSBSim has a Property Manager to keep track of all properties, settings, and commands.
  - New functions and blueprint nodes were added to the UE plugin to access this Property Manager, as a general command console interface to JSBSim.
- - Example of usage: The ah1s helicopter model loads new controls at runtime. Using the new functions we can access it's controls without having to hardcode every usecase into the UE plugin.
+ - The plugin's main aircraft controls are by default hardcoded directly to JSBSim. Using the new Command Console function, you can get or set additional commands & properties without having to hardcode them.
+ - Recommend to first use the default controls already setup in the reference project. Then for new additional commands & properties you can use the Command Console, without having to hardcode everything in C++. Please note due to order of operations, the Command Console cannot override some of the main aircraft controls which are hardcoded in the plugin. (This can be changed by editing the plugin.)
+ - Example of usage: The ah1s helicopter model loads new controls at runtime. These controls cannot be hardcoded in the plugin because they don't exist yet. Using the Command Console we can now set the controls during runtime.
+
 
 ![](https://i.imgur.com/V8KDlwN.png)
 ![](https://i.imgur.com/y3q6Za2.png)
@@ -179,6 +168,5 @@ Gamepad Layout
  - The Primary Flight Display is very simple too. A pitch indicator would help too... 
  - The terrain is a sample terrain. One might use other terrain sources, as long as the georeferencing is correct! 
  - Gamepad support is limited, but can easily be improved in the Input Settings
- - Multiple instances of JSBSim components/aircrafts currently does not work. You can only run one aircraft simulation at a time.
  
 
