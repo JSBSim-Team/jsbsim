@@ -88,12 +88,9 @@ double atof_locale_c(const string& input)
   static const std::regex number_format(R"(^\s*[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\s*$)");
   const char* first = input.c_str();
 
-  while (*first) {
-    if (!isspace(*first)) break;
-    first++;
-  }
-
   // Skip leading whitespaces
+  while (isspace(*first)) ++first;
+
   if (!*first) {
     InvalidNumber e("Expecting a numeric attribute value, but only got spaces");
     cerr << e.what() << endl;
