@@ -50,6 +50,19 @@ public:
     TS_ASSERT(is_number("-1.0e+1"));
     TS_ASSERT(!is_number(empty));
     TS_ASSERT(!is_number("125x5#"));
+    TS_ASSERT(!is_number("x"));
+    TS_ASSERT(!is_number("1.0.0"));
+    TS_ASSERT(!is_number("1.0e"));
+    TS_ASSERT(!is_number("1.0e+"));
+    TS_ASSERT(!is_number("1.0e1.0"));
+    TS_ASSERT(!is_number("--1"));
+    TS_ASSERT(!is_number("++1"));
+    TS_ASSERT(!is_number("1+"));
+    TS_ASSERT(!is_number("1-"));
+    TS_ASSERT(!is_number(""));
+    TS_ASSERT(!is_number(" "));
+    TS_ASSERT(!is_number("3.14a"));
+    TS_ASSERT(!is_number("-.1e-"));
   }
 
   void testSplit() {

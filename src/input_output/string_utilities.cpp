@@ -93,6 +93,7 @@ double atof_locale_c(const string& input)
     first++;
   }
 
+  // Skip leading whitespaces
   if (!*first) {
     InvalidNumber e("Expecting a numeric attribute value, but only got spaces");
     cerr << e.what() << endl;

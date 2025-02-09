@@ -91,9 +91,9 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       current_test->setTestValue(value, Name, PropertyManager, test_element);
       current_test->Default = true;
       auto output_value = current_test->OutputValue.ptr();
-      if (delay > 0 && dynamic_cast<FGRealValue*>(output_value)) {
+      if (delay > 0 && dynamic_cast<FGRealValue*>(output_value)) { // If there is a delay
         double v = output_value->GetValue();
-        for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
+        for (unsigned int i=0; i<delay-1; i++) {  // Initialize the delay buffer to the default value
           output_array[i] = v;                    // for the switch if that value is a number.
         }
       }
