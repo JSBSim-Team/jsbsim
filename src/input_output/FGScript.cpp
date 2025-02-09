@@ -50,6 +50,7 @@ INCLUDES
 #include "models/FGInput.h"
 #include "math/FGCondition.h"
 #include "math/FGFunctionValue.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 

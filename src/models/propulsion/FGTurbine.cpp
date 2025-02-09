@@ -48,6 +48,7 @@ INCLUDES
 #include "FGTurbine.h"
 #include "FGThruster.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -487,19 +488,21 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   JSBSim::Element* tsfcElement = el->FindElement("tsfc");
   if (tsfcElement) {
     string value = tsfcElement->GetDataLine();
-    if (is_number(trim(value)))
+    try {
       TSFC = std::make_unique<FGSimplifiedTSFC>(this, atof_locale_c(value));
-    else
+    } catch (InvalidNumber&) {
       TSFC = std::make_unique<FGFunction>(FDMExec, tsfcElement, to_string(EngineNumber));
+    }
   }
 
   JSBSim::Element* atsfcElement = el->FindElement("atsfc");
   if (atsfcElement) {
     string value = atsfcElement->GetDataLine();
-    if (is_number(trim(value)))
+    try {
       ATSFC = std::make_unique<FGRealValue>(atof_locale_c(value));
-    else
+    } catch (InvalidNumber&) {
       ATSFC = std::make_unique<FGFunction>(FDMExec, atsfcElement, to_string((int)EngineNumber));
+    }
   }
 
   // Pre-calculations and initializations

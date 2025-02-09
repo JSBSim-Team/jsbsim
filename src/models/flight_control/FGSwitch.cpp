@@ -65,6 +65,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "math/FGCondition.h"
 #include "input_output/FGLog.h"
+#include "math/FGRealValue.h"
 
 using namespace std;
 
@@ -89,8 +90,9 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       value = test_element->GetAttributeValue("value");
       current_test->setTestValue(value, Name, PropertyManager, test_element);
       current_test->Default = true;
-      if (delay > 0 && is_number(trim(value))) {  // If there is a delay, initialize the
-        double v = atof_locale_c(value);
+      auto output_value = current_test->OutputValue.ptr();
+      if (delay > 0 && dynamic_cast<FGRealValue*>(output_value)) {
+        double v = output_value->GetValue();
         for (unsigned int i=0; i<delay-1; i++) {  // delay buffer to the default value
           output_array[i] = v;                    // for the switch if that value is a number.
         }

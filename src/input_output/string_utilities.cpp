@@ -56,6 +56,8 @@ typedef _locale_t locale_t;
 #define strtod_l _strtod_l
 #endif
 
+using namespace std;
+
 namespace JSBSim {
 struct CNumericLocale
 {
@@ -80,12 +82,25 @@ struct CNumericLocale
  * Whatever is the current locale of the application, atof_locale_c() reads
  * numbers assuming that the decimal point is the period (.)
  */
-double atof_locale_c(const std::string& input)
+double atof_locale_c(const string& input)
 {
-  const char* first = input.c_str();
+  if (input.empty()) {
+    InvalidNumber e("Expecting numeric attribute value, but got an empty string");
+    cerr << e.what() << endl;
+    throw e;
+  }
 
-  // Skip leading whitespaces
-  while (isspace(*first)) ++first;
+  string v = input;
+  trim(v);
+
+  if (v.find_first_not_of("+-.0123456789Ee") != std::string::npos) {
+    InvalidNumber e("Expecting numeric attribute value, but got: " + input);
+    cerr << e.what() << endl;
+    throw e;
+  }
+
+  const char* first = v.c_str();
+
   //Ignoring the leading '+' sign
   if (*first == '+') ++first;
 
@@ -104,7 +119,7 @@ double atof_locale_c(const std::string& input)
     return value;
 
   std::cerr << s.str() << std::endl;
-  throw JSBSim::BaseException(s.str());
+  throw InvalidNumber(s.str());
 }
 
 
@@ -158,8 +173,14 @@ bool is_number(const std::string& str)
 {
   if (str.empty())
     return false;
-  else
-    return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
+
+  try {
+    atof_locale_c(str);
+  } catch (InvalidNumber&) {
+    return false;
+  }
+
+  return true;
 }
 
 std::vector <std::string> split(std::string str, char d)
