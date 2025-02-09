@@ -77,7 +77,7 @@ CLASS IMPLEMENTATION
 FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   string value;
-  Test *current_test;
+  unique_ptr<Test> current_test;
   auto PropertyManager = fcs->GetPropertyManager();
 
   bind(element, PropertyManager.get()); // Bind() this component here in case it is used in its own
@@ -85,7 +85,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   Element* test_element = element->FindElement("default");
   if (test_element) {
     try {
-      current_test = new Test;
+      current_test = make_unique<Test>();
       value = test_element->GetAttributeValue("value");
       current_test->setTestValue(value, Name, PropertyManager, test_element);
       current_test->Default = true;
@@ -95,7 +95,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
           output_array[i] = v;                    // for the switch if that value is a number.
         }
       }
-      tests.push_back(current_test);
+      tests.push_back(current_test.release());
     } catch (const BaseException& e) {
       FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
       log << e.what() << "\n"
@@ -106,11 +106,11 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   test_element = element->FindElement("test");
   while (test_element) {
     try {
-      current_test = new Test;
-      current_test->condition = new FGCondition(test_element, PropertyManager);
+      current_test = make_unique<Test>();
+      current_test->condition = make_unique<FGCondition>(test_element, PropertyManager);
       value = test_element->GetAttributeValue("value");
       current_test->setTestValue(value, Name, PropertyManager, test_element);
-      tests.push_back(current_test);
+      tests.push_back(current_test.release());
     } catch (const BaseException& e) {
       FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
       log << e.what() << "\n"
@@ -127,11 +127,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGSwitch::~FGSwitch()
 {
-  for (auto test: tests) {
-    delete test->condition;
-    delete test;
-  }
-
+  for (auto test: tests) delete test;
   Debug(1);
 }
 
