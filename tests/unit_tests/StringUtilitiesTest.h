@@ -89,14 +89,60 @@ public:
   }
 
   void testAtofLocaleC() {
-    TS_ASSERT_EQUALS(atof_locale_c("+1  "), 1.0);
+    // Test legal numbers
+    TS_ASSERT_EQUALS(atof_locale_c("0.0"), 0.0);
+    TS_ASSERT_EQUALS(atof_locale_c("+1"), 1.0);
+    TS_ASSERT_EQUALS(atof_locale_c("1"), 1.0);
+    TS_ASSERT_EQUALS(atof_locale_c("-1"), -1.0);
     TS_ASSERT_EQUALS(atof_locale_c(" 123.4"), 123.4);
+    TS_ASSERT_EQUALS(atof_locale_c("123.4 "), 123.4);
+    TS_ASSERT_EQUALS(atof_locale_c(" 123.4 "), 123.4);
+    TS_ASSERT_EQUALS(atof_locale_c(".25"), 0.25);
+    TS_ASSERT_EQUALS(atof_locale_c("1.e1"), 10.);
+    TS_ASSERT_EQUALS(atof_locale_c("1e1"), 10.);
+    TS_ASSERT_EQUALS(atof_locale_c(".1e1"), 1.);
+    TS_ASSERT_EQUALS(atof_locale_c("+.1e1"), 1.);
+    TS_ASSERT_EQUALS(atof_locale_c("-.1e1"), -1.);
+    TS_ASSERT_EQUALS(atof_locale_c("31.4e1"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14e+2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14e2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14e-2"), 0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14e+2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14e2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14e-2"), 0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("-3.14e+2"), -314);
+    TS_ASSERT_EQUALS(atof_locale_c("-3.14e2"), -314);
     TS_ASSERT_EQUALS(atof_locale_c("-3.14e-2"), -0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14E+2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14E2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("+3.14E-2"), 0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14E+2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14E2"), 314);
+    TS_ASSERT_EQUALS(atof_locale_c("3.14E-2"), 0.0314);
+    TS_ASSERT_EQUALS(atof_locale_c("-3.14E+2"), -314);
+    TS_ASSERT_EQUALS(atof_locale_c("-3.14E2"), -314);
+    TS_ASSERT_EQUALS(atof_locale_c("-3.14E-2"), -0.0314);
+    // Test rounded down numbers
     TS_ASSERT_EQUALS(atof_locale_c("1E-999"), 0.0);
     TS_ASSERT_EQUALS(atof_locale_c("-1E-999"), 0.0);
-    TS_ASSERT_EQUALS(atof_locale_c("0.0"), 0.0);
-    TS_ASSERT_THROWS(atof_locale_c("1E+999"), BaseException&);
-    TS_ASSERT_THROWS(atof_locale_c("-1E+999"), BaseException&);
+    // Test invalid numbers
+    TS_ASSERT_THROWS(atof_locale_c("1E+999"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("-1E+999"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("invalid"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("1.0.0"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("1E-"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("E-2"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("."), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c(".E"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c(".E2"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c(".E-2"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("1.2E"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("1.2E+"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("1.2E1.0"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("--1"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c("++1"), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c(""), InvalidNumber&);
+    TS_ASSERT_THROWS(atof_locale_c(" "), InvalidNumber&);
   }
 
 private:
