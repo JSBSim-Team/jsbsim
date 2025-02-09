@@ -84,17 +84,17 @@ struct CNumericLocale
  */
 double atof_locale_c(const string& input)
 {
-  if (input.empty()) {
-    InvalidNumber e("Expecting numeric attribute value, but got an empty string");
+  string v = input;
+  trim(v);
+
+  if (v.empty()) {
+    InvalidNumber e("Expecting a numeric attribute value, but got an empty string");
     cerr << e.what() << endl;
     throw e;
   }
 
-  string v = input;
-  trim(v);
-
   if (v.find_first_not_of("+-.0123456789Ee") != std::string::npos) {
-    InvalidNumber e("Expecting numeric attribute value, but got: " + input);
+    InvalidNumber e("Expecting a numeric attribute value, but got: " + input);
     cerr << e.what() << endl;
     throw e;
   }
@@ -114,7 +114,7 @@ double atof_locale_c(const string& input)
   if (fabs(value) == HUGE_VAL && errno == ERANGE)
     s << "This number is too large: " << input;
   else if (fabs(value) == 0 && errno == EINVAL)
-    s << "Expecting numeric attribute value, but got: " << input;
+    s << "Expecting a numeric attribute value, but got: " << input;
   else
     return value;
 
@@ -171,9 +171,6 @@ std::string& to_lower(std::string& str)
 
 bool is_number(const std::string& str)
 {
-  if (str.empty())
-    return false;
-
   try {
     atof_locale_c(str);
   } catch (InvalidNumber&) {
