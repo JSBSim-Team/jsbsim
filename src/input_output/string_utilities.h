@@ -61,7 +61,7 @@ JSBSIM_API std::string replace(std::string str, const std::string& old, const st
 
 class JSBSIM_API InvalidNumber : public BaseException {
 public:
-  InvalidNumber(const std::string& msg) : BaseException(msg) {}
+  using BaseException::BaseException;
 };
 };
 
