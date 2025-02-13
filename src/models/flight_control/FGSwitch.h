@@ -146,7 +146,7 @@ public:
 private:
 
   struct Test {
-    FGCondition* condition;
+    std::unique_ptr<FGCondition> condition;
     bool Default;
     FGParameter_ptr OutputValue;
 
