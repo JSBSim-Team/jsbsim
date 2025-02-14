@@ -64,13 +64,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04]
         expat: [ON, OFF]
         shared_libs: [ON, OFF]
         build_julia: [OFF]
         display_stack_trace: [ON]
         include:
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             expat: OFF
             shared_libs: OFF
             build_julia: ON
