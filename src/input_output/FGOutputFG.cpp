@@ -114,30 +114,29 @@ static void htonf (float &x)
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutputFG::FGOutputFG(FGFDMExec *fdmex)
-    : FGOutputSocket(fdmex), outputOptions{false, 1e6}, net3(nullptr),
-      dataLength(0)
+FGOutputFG::FGOutputFG(FGFDMExec* fdmex) :
+  FGOutputSocket(fdmex), outputOptions{false, 1e6}
 {
-  memset(data, 0x0, s);
+  memset(&fgSockBuf, 0x0, sizeof(fgSockBuf));
 
   if (fdmex->GetDebugLevel() > 0) {
     // Engine status
-    if (Propulsion->GetNumEngines() > FG_MAX_ENGINES)
+    if (Propulsion->GetNumEngines() > FGNetFDM::FG_MAX_ENGINES)
       cerr << "This vehicle has " << Propulsion->GetNumEngines() << " engines, but the current " << endl
-           << "version of FlightGear's FGNetFDM only supports " << FG_MAX_ENGINES << " engines." << endl
-           << "Only the first " << FG_MAX_ENGINES << " engines will be used." << endl;
+           << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_ENGINES << " engines." << endl
+           << "Only the first " << FGNetFDM::FG_MAX_ENGINES << " engines will be used." << endl;
 
     // Consumables
-    if (Propulsion->GetNumTanks() > FG_MAX_TANKS)
+    if (Propulsion->GetNumTanks() > FGNetFDM::FG_MAX_TANKS)
       cerr << "This vehicle has " << Propulsion->GetNumTanks() << " tanks, but the current " << endl
-           << "version of FlightGear's FGNetFDM only supports " << FG_MAX_TANKS << " tanks." << endl
-           << "Only the first " << FG_MAX_TANKS << " tanks will be used." << endl;
+           << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_TANKS << " tanks." << endl
+           << "Only the first " << FGNetFDM::FG_MAX_TANKS << " tanks will be used." << endl;
 
     // Gear status
-    if (GroundReactions->GetNumGearUnits() > FG_MAX_WHEELS)
+    if (GroundReactions->GetNumGearUnits() > FGNetFDM::FG_MAX_WHEELS)
       cerr << "This vehicle has " << GroundReactions->GetNumGearUnits() << " bogeys, but the current " << endl
-           << "version of FlightGear's FGNetFDM only supports " << FG_MAX_WHEELS << " bogeys." << endl
-           << "Only the first " << FG_MAX_WHEELS << " bogeys will be used." << endl;
+           << "version of FlightGear's FGNetFDM only supports " << FGNetFDM::FG_MAX_WHEELS << " bogeys." << endl
+           << "Only the first " << FGNetFDM::FG_MAX_WHEELS << " bogeys will be used." << endl;
   }
 }
 
@@ -167,86 +166,64 @@ bool FGOutputFG::Load(Element* el)
       }
     }
   }
-
-  // Set the version of the FDM network protocol
-  net1->version = htonl(24);
-  net3 = (FGNetFDM3 *)(net1 + 1);
-  dataLength = sizeof(FGNetFDM1) + sizeof(FGNetFDM3);
-
-  if (el->HasAttribute("version"))
-  {
-    unsigned int version = static_cast<unsigned int>(el->GetAttributeValueAsNumber("version"));
-    switch (version)
-    {
-    case 24: // FlightGear 2020.2 and earlier
-      break;
-    case 25: // FlightGear 2020.3 and later
-      net1->version = htonl(25);
-      net3 = (FGNetFDM3 *)((char *)net3 + sizeof(FGNetFDM2));
-      dataLength += sizeof(FGNetFDM2);
-      break;
-    default:
-      cerr << "Invalid FDM protocol version: " << version << endl;
-      return false;
-    }
-  }
-
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutputFG::SocketDataFill(void)
+void FGOutputFG::SocketDataFill(FGNetFDM* net)
 {
   unsigned int i;
 
+  // Version
+  net->version = FG_NET_FDM_VERSION;
+
   // Positions
-  net1->longitude = Propagate->GetLongitude();               // longitude (radians)
-  net1->latitude = Propagate->GetGeodLatitudeRad();          // geodetic (radians)
-  net1->altitude = Propagate->GetAltitudeASL() * 0.3048;     // altitude, above sea level (meters)
-  net1->agl = (float)(Propagate->GetDistanceAGL() * 0.3048); // altitude, above ground level (meters)
+  net->longitude = Propagate->GetLongitude(); // longitude (radians)
+  net->latitude  = Propagate->GetGeodLatitudeRad(); // geodetic (radians)
+  net->altitude  = Propagate->GetAltitudeASL()*0.3048; // altitude, above sea level (meters)
+  net->agl       = (float)(Propagate->GetDistanceAGL()*0.3048); // altitude, above ground level (meters)
 
-  net1->phi = (float)(Propagate->GetEuler(ePhi));   // roll (radians)
-  net1->theta = (float)(Propagate->GetEuler(eTht)); // pitch (radians)
-  net1->psi = (float)(Propagate->GetEuler(ePsi));   // yaw or true heading (radians)
+  net->phi       = (float)(Propagate->GetEuler(ePhi)); // roll (radians)
+  net->theta     = (float)(Propagate->GetEuler(eTht)); // pitch (radians)
+  net->psi       = (float)(Propagate->GetEuler(ePsi)); // yaw or true heading (radians)
 
-  net1->alpha = (float)(Auxiliary->Getalpha()); // angle of attack (radians)
-  net1->beta = (float)(Auxiliary->Getbeta());   // side slip angle (radians)
+  net->alpha     = (float)(Auxiliary->Getalpha()); // angle of attack (radians)
+  net->beta      = (float)(Auxiliary->Getbeta()); // side slip angle (radians)
 
   // Velocities
-  net1->phidot = (float)(Auxiliary->GetEulerRates(ePhi));   // roll rate (radians/sec)
-  net1->thetadot = (float)(Auxiliary->GetEulerRates(eTht)); // pitch rate (radians/sec)
-  net1->psidot = (float)(Auxiliary->GetEulerRates(ePsi));   // yaw rate (radians/sec)
-  net1->vcas = (float)(Auxiliary->GetVcalibratedKTS());     // VCAS, knots
-  net1->climb_rate = (float)(Propagate->Gethdot());         // altitude rate, ft/sec
-  net1->v_north = (float)(Propagate->GetVel(eNorth));       // north vel in NED frame, fps
-  net1->v_east = (float)(Propagate->GetVel(eEast));         // east vel in NED frame, fps
-  net1->v_down = (float)(Propagate->GetVel(eDown));         // down vel in NED frame, fps
-                                                            //---ADD METHOD TO CALCULATE THESE TERMS---
-  net1->v_body_u = (float)(Propagate->GetUVW(1));           // ECEF speed in body axis
-  net1->v_body_v = (float)(Propagate->GetUVW(2));           // ECEF speed in body axis
-  net1->v_body_w = (float)(Propagate->GetUVW(3));           // ECEF speed in body axis
+  net->phidot     = (float)(Auxiliary->GetEulerRates(ePhi)); // roll rate (radians/sec)
+  net->thetadot   = (float)(Auxiliary->GetEulerRates(eTht)); // pitch rate (radians/sec)
+  net->psidot     = (float)(Auxiliary->GetEulerRates(ePsi)); // yaw rate (radians/sec)
+  net->vcas       = (float)(Auxiliary->GetVcalibratedKTS()); // VCAS, knots
+  net->climb_rate = (float)(Propagate->Gethdot());           // altitude rate, ft/sec
+  net->v_north    = (float)(Propagate->GetVel(eNorth));      // north vel in NED frame, fps
+  net->v_east     = (float)(Propagate->GetVel(eEast));       // east vel in NED frame, fps
+  net->v_down     = (float)(Propagate->GetVel(eDown));       // down vel in NED frame, fps
+//---ADD METHOD TO CALCULATE THESE TERMS---
+  net->v_body_u = (float)(Propagate->GetUVW(1)); // ECEF speed in body axis
+  net->v_body_v = (float)(Propagate->GetUVW(2)); // ECEF speed in body axis
+  net->v_body_w = (float)(Propagate->GetUVW(3)); // ECEF speed in body axis
 
   // Accelerations
-  net1->A_X_pilot = (float)(Auxiliary->GetPilotAccel(1)); // X body accel, ft/s/s
-  net1->A_Y_pilot = (float)(Auxiliary->GetPilotAccel(2)); // Y body accel, ft/s/s
-  net1->A_Z_pilot = (float)(Auxiliary->GetPilotAccel(3)); // Z body accel, ft/s/s
+  net->A_X_pilot   = (float)(Auxiliary->GetPilotAccel(1));    // X body accel, ft/s/s
+  net->A_Y_pilot   = (float)(Auxiliary->GetPilotAccel(2));    // Y body accel, ft/s/s
+  net->A_Z_pilot   = (float)(Auxiliary->GetPilotAccel(3));    // Z body accel, ft/s/s
 
   // Stall
-  net1->stall_warning = 0.0;                               // 0.0 - 1.0 indicating the amount of stall
-  net1->slip_deg = (float)(Auxiliary->Getbeta(inDegrees)); // slip ball deflection, deg
+  net->stall_warning = 0.0;  // 0.0 - 1.0 indicating the amount of stall
+  net->slip_deg    = (float)(Auxiliary->Getbeta(inDegrees));  // slip ball deflection, deg
 
-  net1->num_engines = min(FG_MAX_ENGINES, Propulsion->GetNumEngines()); // Number of valid engines
+  net->num_engines = min(FGNetFDM::FG_MAX_ENGINES,Propulsion->GetNumEngines()); // Number of valid engines
 
-  for (i = 0; i < net1->num_engines; i++)
-  {
+  for (i=0; i<net->num_engines; i++) {
     auto engine = Propulsion->GetEngine(i);
     if (engine->GetRunning())
-      net1->eng_state[i] = 2; // Engine state running
+      net->eng_state[i] = 2;       // Engine state running
     else if (engine->GetCranking())
-      net1->eng_state[i] = 1; // Engine state cranking
+      net->eng_state[i] = 1;       // Engine state cranking
     else
-      net1->eng_state[i] = 0; // Engine state off
+      net->eng_state[i] = 0;       // Engine state off
 
     switch (engine->GetType()) {
     case (FGEngine::etRocket):
@@ -254,15 +231,15 @@ void FGOutputFG::SocketDataFill(void)
     case (FGEngine::etPiston):
       {
         auto piston_engine = static_pointer_cast<FGPiston>(engine);
-        net1->rpm[i] = (float)(piston_engine->getRPM());
-        net1->fuel_flow[i] = (float)(piston_engine->getFuelFlow_gph());
-        net1->fuel_px[i] = 0; // Fuel pressure, psi  (N/A in current model)
-        net1->egt[i] = (float)(piston_engine->GetEGT());
-        net1->cht[i] = (float)(piston_engine->getCylinderHeadTemp_degF());
-        net1->mp_osi[i] = (float)(piston_engine->getManifoldPressure_inHg());
-        net1->oil_temp[i] = (float)(piston_engine->getOilTemp_degF());
-        net1->oil_px[i] = (float)(piston_engine->getOilPressure_psi());
-        net1->tit[i] = 0; // Turbine Inlet Temperature  (N/A for piston)
+        net->rpm[i]       = (float)(piston_engine->getRPM());
+        net->fuel_flow[i] = (float)(piston_engine->getFuelFlow_gph());
+        net->fuel_px[i]   = 0; // Fuel pressure, psi  (N/A in current model)
+        net->egt[i]       = (float)(piston_engine->GetEGT());
+        net->cht[i]       = (float)(piston_engine->getCylinderHeadTemp_degF());
+        net->mp_osi[i]    = (float)(piston_engine->getManifoldPressure_inHg());
+        net->oil_temp[i]  = (float)(piston_engine->getOilTemp_degF());
+        net->oil_px[i]    = (float)(piston_engine->getOilPressure_psi());
+        net->tit[i]       = 0; // Turbine Inlet Temperature  (N/A for piston)
       }
       break;
     case (FGEngine::etTurbine):
@@ -270,130 +247,129 @@ void FGOutputFG::SocketDataFill(void)
     case (FGEngine::etTurboprop):
       break;
     case (FGEngine::etElectric):
-      net1->rpm[i] = static_cast<float>(static_pointer_cast<FGElectric>(engine)->getRPM());
+      net->rpm[i] = static_cast<float>(static_pointer_cast<FGElectric>(engine)->getRPM());
       break;
     case (FGEngine::etUnknown):
       break;
     }
   }
 
-  net1->num_tanks = min(FG_MAX_TANKS, Propulsion->GetNumTanks()); // Max number of fuel tanks
+  net->num_tanks = min(FGNetFDM::FG_MAX_TANKS, Propulsion->GetNumTanks());   // Max number of fuel tanks
 
-  for (i = 0; i < net1->num_tanks; i++)
-    net1->fuel_quantity[i] = (float)(Propulsion->GetTank(i)->GetContents());
+  for (i=0; i<net->num_tanks; i++) {
+    net->fuel_quantity[i] = static_cast<float>(Propulsion->GetTank(i)->GetContents());
+  }
 
-  net3->num_wheels = min(FG_MAX_WHEELS, GroundReactions->GetNumGearUnits());
+  net->num_wheels  = min(FGNetFDM::FG_MAX_WHEELS, GroundReactions->GetNumGearUnits());
 
-  for (i = 0; i < net3->num_wheels; i++)
-  {
-    net3->wow[i] = GroundReactions->GetGearUnit(i)->GetWOW();
+  for (i=0; i<net->num_wheels; i++) {
+    net->wow[i]              = GroundReactions->GetGearUnit(i)->GetWOW();
     if (GroundReactions->GetGearUnit(i)->GetGearUnitDown())
-      net3->gear_pos[i] = 1; //gear down, using FCS convention
+      net->gear_pos[i]      = 1;  //gear down, using FCS convention
     else
-      net3->gear_pos[i] = 0; //gear up, using FCS convention
-    net3->gear_steer[i] = (float)(GroundReactions->GetGearUnit(i)->GetSteerNorm());
-    net3->gear_compression[i] = (float)(GroundReactions->GetGearUnit(i)->GetCompLen());
+      net->gear_pos[i]      = 0;  //gear up, using FCS convention
+    net->gear_steer[i]       = (float)(GroundReactions->GetGearUnit(i)->GetSteerNorm());
+    net->gear_compression[i] = (float)(GroundReactions->GetGearUnit(i)->GetCompLen());
   }
 
   // Environment
   if (outputOptions.useSimTime) {
     // Send simulation time with specified resolution
-    net3->cur_time = static_cast<uint32_t>(FDMExec->GetSimTime() * outputOptions.timeFactor);
+    net->cur_time    = static_cast<uint32_t>(FDMExec->GetSimTime()*outputOptions.timeFactor);
   } else {
     // Default to sending constant dummy value to ensure backwards-compatibility
-    net3->cur_time = 1234567890u;
+    net->cur_time = 1234567890u;
   }
 
-  net3->warp = 0;             // offset in seconds to unix time
-  net3->visibility = 25000.0; // visibility in meters (for env. effects)
+  net->warp        = 0;                       // offset in seconds to unix time
+  net->visibility  = 25000.0;                 // visibility in meters (for env. effects)
 
   // Control surface positions (normalized values)
-  net3->elevator = (float)(FCS->GetDePos(ofNorm));           // Norm Elevator Pos, --
-  net3->elevator_trim_tab = (float)(FCS->GetPitchTrimCmd()); // Norm Elev Trim Tab Pos, --
-  net3->left_flap = (float)(FCS->GetDfPos(ofNorm));          // Norm Flap Pos, --
-  net3->right_flap = (float)(FCS->GetDfPos(ofNorm));         // Norm Flap Pos, --
-  net3->left_aileron = (float)(FCS->GetDaLPos(ofNorm));      // Norm L Aileron Pos, --
-  net3->right_aileron = (float)(FCS->GetDaRPos(ofNorm));     // Norm R Aileron Pos, --
-  net3->rudder = (float)(FCS->GetDrPos(ofNorm));             // Norm Rudder Pos, --
-  net3->nose_wheel = (float)(FCS->GetDrPos(ofNorm));         // *** FIX ***  Using Rudder Pos for NWS, --
-  net3->speedbrake = (float)(FCS->GetDsbPos(ofNorm));        // Norm Speedbrake Pos, --
-  net3->spoilers = (float)(FCS->GetDspPos(ofNorm));          // Norm Spoiler Pos, --
+  net->elevator          = (float)(FCS->GetDePos(ofNorm));    // Norm Elevator Pos, --
+  net->elevator_trim_tab = (float)(FCS->GetPitchTrimCmd());   // Norm Elev Trim Tab Pos, --
+  net->left_flap         = (float)(FCS->GetDfPos(ofNorm));    // Norm Flap Pos, --
+  net->right_flap        = (float)(FCS->GetDfPos(ofNorm));    // Norm Flap Pos, --
+  net->left_aileron      = (float)(FCS->GetDaLPos(ofNorm));   // Norm L Aileron Pos, --
+  net->right_aileron     = (float)(FCS->GetDaRPos(ofNorm));   // Norm R Aileron Pos, --
+  net->rudder            = (float)(FCS->GetDrPos(ofNorm));    // Norm Rudder Pos, --
+  net->nose_wheel        = (float)(FCS->GetDrPos(ofNorm));    // *** FIX ***  Using Rudder Pos for NWS, --
+  net->speedbrake        = (float)(FCS->GetDsbPos(ofNorm));   // Norm Speedbrake Pos, --
+  net->spoilers          = (float)(FCS->GetDspPos(ofNorm));   // Norm Spoiler Pos, --
 
   // Convert the net buffer to network format
   if ( isLittleEndian ) {
-    htond(net1->longitude);
-    htond(net1->latitude);
-    htond(net1->altitude);
-    htonf(net1->agl);
-    htonf(net1->phi);
-    htonf(net1->theta);
-    htonf(net1->psi);
-    htonf(net1->alpha);
-    htonf(net1->beta);
+    net->version = htonl(net->version);
 
-    htonf(net1->phidot);
-    htonf(net1->thetadot);
-    htonf(net1->psidot);
-    htonf(net1->vcas);
-    htonf(net1->climb_rate);
-    htonf(net1->v_north);
-    htonf(net1->v_east);
-    htonf(net1->v_down);
-    htonf(net1->v_body_u);
-    htonf(net1->v_body_v);
-    htonf(net1->v_body_w);
+    htond(net->longitude);
+    htond(net->latitude);
+    htond(net->altitude);
+    htonf(net->agl);
+    htonf(net->phi);
+    htonf(net->theta);
+    htonf(net->psi);
+    htonf(net->alpha);
+    htonf(net->beta);
 
-    htonf(net1->A_X_pilot);
-    htonf(net1->A_Y_pilot);
-    htonf(net1->A_Z_pilot);
+    htonf(net->phidot);
+    htonf(net->thetadot);
+    htonf(net->psidot);
+    htonf(net->vcas);
+    htonf(net->climb_rate);
+    htonf(net->v_north);
+    htonf(net->v_east);
+    htonf(net->v_down);
+    htonf(net->v_body_u);
+    htonf(net->v_body_v);
+    htonf(net->v_body_w);
 
-    htonf(net1->stall_warning);
-    htonf(net1->slip_deg);
+    htonf(net->A_X_pilot);
+    htonf(net->A_Y_pilot);
+    htonf(net->A_Z_pilot);
 
-    for (i = 0; i < net1->num_engines; ++i)
-    {
-      net1->eng_state[i] = htonl(net1->eng_state[i]);
-      htonf(net1->rpm[i]);
-      htonf(net1->fuel_flow[i]);
-      htonf(net1->fuel_px[i]);
-      htonf(net1->egt[i]);
-      htonf(net1->cht[i]);
-      htonf(net1->mp_osi[i]);
-      htonf(net1->tit[i]);
-      htonf(net1->oil_temp[i]);
-      htonf(net1->oil_px[i]);
+    htonf(net->stall_warning);
+    htonf(net->slip_deg);
+
+    for (i=0; i<net->num_engines; ++i ) {
+      net->eng_state[i] = htonl(net->eng_state[i]);
+      htonf(net->rpm[i]);
+      htonf(net->fuel_flow[i]);
+      htonf(net->fuel_px[i]);
+      htonf(net->egt[i]);
+      htonf(net->cht[i]);
+      htonf(net->mp_osi[i]);
+      htonf(net->tit[i]);
+      htonf(net->oil_temp[i]);
+      htonf(net->oil_px[i]);
     }
-    net1->num_engines = htonl(net1->num_engines);
+    net->num_engines = htonl(net->num_engines);
 
-    for (i = 0; i < net1->num_tanks; ++i)
-    {
-      htonf(net1->fuel_quantity[i]);
+    for (i=0; i<net->num_tanks; ++i ) {
+      htonf(net->fuel_quantity[i]);
     }
-    net1->num_tanks = htonl(net1->num_tanks);
+    net->num_tanks = htonl(net->num_tanks);
 
-    for (i = 0; i < net3->num_wheels; ++i)
-    {
-      net3->wow[i] = htonl(net3->wow[i]);
-      htonf(net3->gear_pos[i]);
-      htonf(net3->gear_steer[i]);
-      htonf(net3->gear_compression[i]);
+    for (i=0; i<net->num_wheels; ++i ) {
+      net->wow[i] = htonl(net->wow[i]);
+      htonf(net->gear_pos[i]);
+      htonf(net->gear_steer[i]);
+      htonf(net->gear_compression[i]);
     }
-    net3->num_wheels = htonl(net3->num_wheels);
+    net->num_wheels = htonl(net->num_wheels);
 
-    net3->cur_time = htonl(net3->cur_time);
-    net3->warp = htonl(net3->warp);
-    htonf(net3->visibility);
+    net->cur_time = htonl( net->cur_time );
+    net->warp = htonl( net->warp );
+    htonf(net->visibility);
 
-    htonf(net3->elevator);
-    htonf(net3->elevator_trim_tab);
-    htonf(net3->left_flap);
-    htonf(net3->right_flap);
-    htonf(net3->left_aileron);
-    htonf(net3->right_aileron);
-    htonf(net3->rudder);
-    htonf(net3->nose_wheel);
-    htonf(net3->speedbrake);
-    htonf(net3->spoilers);
+    htonf(net->elevator);
+    htonf(net->elevator_trim_tab);
+    htonf(net->left_flap);
+    htonf(net->right_flap);
+    htonf(net->left_aileron);
+    htonf(net->right_aileron);
+    htonf(net->rudder);
+    htonf(net->nose_wheel);
+    htonf(net->speedbrake);
+    htonf(net->spoilers);
   }
 }
 
@@ -401,10 +377,12 @@ void FGOutputFG::SocketDataFill(void)
 
 void FGOutputFG::Print(void)
 {
+  int length = sizeof(fgSockBuf);
+
   if (socket == 0) return;
   if (!socket->GetConnectStatus()) return;
 
-  SocketDataFill();
-  socket->Send((char *)net1, dataLength);
+  SocketDataFill(&fgSockBuf);
+  socket->Send((char *)&fgSockBuf, length);
 }
 }
