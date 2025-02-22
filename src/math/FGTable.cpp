@@ -41,6 +41,7 @@ INCLUDES
 
 #include "FGTable.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 

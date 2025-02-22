@@ -47,7 +47,6 @@ INCLUDES
 #include <chrono>
 
 #include "JSBSim_API.h"
-#include "input_output/string_utilities.h"
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846

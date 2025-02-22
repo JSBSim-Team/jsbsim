@@ -44,6 +44,7 @@ INCLUDES
 #include "FGUDPInputSocket.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -106,15 +107,13 @@ void FGUDPInputSocket::Read(bool Holding)
 
     vector<double> values;
 
-    for (string& token : tokens) {
-      if (is_number(trim(token))) {
-        try {
-          values.push_back(atof_locale_c(token));
-        } catch(BaseException& e) {
-          return;
-        }
-      }
-     }
+    try {
+      for (string& token : tokens)
+        values.push_back(atof_locale_c(token));
+    } catch(InvalidNumber& e) {
+      cerr << e.what() << endl;
+      return;
+    }
 
     if (values[0] < oldTimeStamp) {
       return;

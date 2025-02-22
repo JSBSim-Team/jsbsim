@@ -31,12 +31,12 @@ HISTORY
 --------------------------------------------------------------------------------
 08/24/00  JSB  Created
 01/01/10  T.Kreitler test implementation
-11/15/10  T.Kreitler treated flow solver bug, flow and torque calculations 
+11/15/10  T.Kreitler treated flow solver bug, flow and torque calculations
                      simplified, tiploss influence removed from flapping angles
 01/10/11  T.Kreitler changed to single rotor model
 03/06/11  T.Kreitler added brake, clutch, and experimental free-wheeling-unit,
                      reasonable estimate for inflowlag
-02/05/12  T.Kreitler brake, clutch, and FWU now in FGTransmission, 
+02/05/12  T.Kreitler brake, clutch, and FWU now in FGTransmission,
                      downwash angles relate to shaft orientation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +50,7 @@ INCLUDES
 #include "models/FGMassBalance.h"
 #include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using std::cerr;
 using std::cout;
@@ -75,7 +76,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   : FGThruster(exec, rotor_element, num),
     rho(0.002356),                                  // environment
     Radius(0.0), BladeNum(0),                       // configuration parameters
-    Sense(1.0), NominalRPM(0.0), MinimalRPM(0.0), MaximalRPM(0.0), 
+    Sense(1.0), NominalRPM(0.0), MinimalRPM(0.0), MaximalRPM(0.0),
     ExternalRPM(0), RPMdefinition(0), ExtRPMsource(NULL), SourceGearRatio(1.0),
     BladeChord(0.0), LiftCurveSlope(0.0), BladeTwist(0.0), HingeOffset(0.0),
     BladeFlappingMoment(0.0), BladeMassMoment(0.0), PolarMoment(0.0),
@@ -107,7 +108,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   for (int i=0; i<5; i++) R[i] = 0.0;
   for (int i=0; i<5; i++) B[i] = 0.0;
 
-  // get positions 
+  // get positions
   thruster_element = rotor_element->GetParent()->FindElement("sense");
   if (thruster_element) {
     double s = thruster_element->GetDataAsNumber();
@@ -277,9 +278,9 @@ double FGRotor::Configure(Element* rotor_element)
 
   Radius = 0.5 * ConfigValueConv(rotor_element, "diameter", 42.0, "FT", yell);
   Radius = Constrain(1e-3, Radius, 1e9);
-  
+
   BladeNum = (int) ConfigValue(rotor_element, "numblades", 3 , yell);
-  
+
   GearRatio = ConfigValue(rotor_element, "gearratio", 1.0, yell);
   GearRatio = Constrain(1e-9, GearRatio, 1e9);
 
@@ -304,7 +305,7 @@ double FGRotor::Configure(Element* rotor_element)
   HingeOffset = ConfigValueConv(rotor_element, "hingeoffset", 0.05 * Radius, "FT" );
 
   estimate = sqr(BladeChord) * sqr(Radius - HingeOffset) * 0.57;
-  BladeFlappingMoment = ConfigValueConv(rotor_element, "flappingmoment", estimate, "SLUG*FT2");   
+  BladeFlappingMoment = ConfigValueConv(rotor_element, "flappingmoment", estimate, "SLUG*FT2");
   BladeFlappingMoment = Constrain(1e-9, BladeFlappingMoment, 1e9);
 
   // guess mass from moment of a thin stick, and multiply by the blades cg distance
@@ -353,7 +354,7 @@ double FGRotor::Configure(Element* rotor_element)
 // calculate control-axes components of total airspeed at the hub.
 // sets rotor orientation angle (beta) as side effect. /SH79/ eqn(19-22)
 
-FGColumnVector3 FGRotor::hub_vel_body2ca( const FGColumnVector3 &uvw, 
+FGColumnVector3 FGRotor::hub_vel_body2ca( const FGColumnVector3 &uvw,
                                                  const FGColumnVector3 &pqr,
                                                  double a_ic, double b_ic)
 {
@@ -415,7 +416,7 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
   mu = Uw/(Omega*Radius); // /SH79/ eqn(24)
   if (mu > 0.7) mu = 0.7;
   mu2 = sqr(mu);
-  
+
   ct_t0 = (1.0/3.0*B[3] + 1.0/2.0 * TipLossB*mu2 - 4.0/(9.0*M_PI) * mu*mu2 ) * theta_0;
   ct_t1 = (1.0/4.0*B[4] + 1.0/4.0 * B[2]*mu2) * BladeTwist;
 
@@ -448,7 +449,7 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// Two blade teetering rotors are often 'preconed' to a fixed angle, but the 
+// Two blade teetering rotors are often 'preconed' to a fixed angle, but the
 // calculated value is pretty close to the real one. /SH79/ eqn(29)
 
 void FGRotor::calc_coning_angle(double theta_0)
@@ -473,7 +474,7 @@ void FGRotor::calc_flapping_angles(double theta_0, const FGColumnVector3 &pqr_fu
 
   double mu2_2 = sqr(mu)/2.0;
   double t075 = theta_0 + 0.75 * BladeTwist;  // common approximation for rectangular blades
-  
+
   a_1 = 1.0/(1.0 - mu2_2) * (
                                  (2.0*lambda + (8.0/3.0)*t075)*mu
                                + pqr_fus_w(eP)/Omega
@@ -573,7 +574,7 @@ FGColumnVector3 FGRotor::body_forces(double a_ic, double b_ic)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// calculates the additional moments due to hinge offset and handles 
+// calculates the additional moments due to hinge offset and handles
 // torque and sense
 
 FGColumnVector3 FGRotor::body_moments(double a_ic, double b_ic)

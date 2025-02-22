@@ -52,6 +52,7 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "FGTrim.h"
 #include "FGFDMExec.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 

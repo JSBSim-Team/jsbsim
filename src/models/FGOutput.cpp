@@ -45,6 +45,7 @@ INCLUDES
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGModelLoader.h"
 #include "input_output/FGLog.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
