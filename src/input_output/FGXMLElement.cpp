@@ -31,8 +31,10 @@ INCLUDES
 #include <iostream>
 #include <sstream>  // for assembling the error messages / what of exceptions.
 #include <stdexcept>  // using domain_error, invalid_argument, and length_error.
+
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -293,11 +295,11 @@ double Element::GetAttributeValueAsNumber(const string& attr)
   }
   else {
     double number=0;
-    if (is_number(trim(attribute)))
+    try {
       number = atof_locale_c(attribute);
-    else {
+    } catch (InvalidNumber& e) {
       std::stringstream s;
-      s << ReadFrom() << "Expecting numeric attribute value, but got: " << attribute;
+      s << ReadFrom() << e.what();
       cerr << s.str() << endl;
       throw BaseException(s.str());
     }
@@ -347,11 +349,11 @@ double Element::GetDataAsNumber(void)
 {
   if (data_lines.size() == 1) {
     double number=0;
-    if (is_number(trim(data_lines[0])))
+    try {
       number = atof_locale_c(data_lines[0]);
-    else {
+    } catch (InvalidNumber& e) {
       std::stringstream s;
-      s << ReadFrom() << "Expected numeric value, but got: " << data_lines[0];
+      s << ReadFrom() << e.what();
       cerr << s.str() << endl;
       throw BaseException(s.str());
     }

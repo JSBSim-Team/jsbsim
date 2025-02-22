@@ -52,6 +52,7 @@ INCLUDES
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 

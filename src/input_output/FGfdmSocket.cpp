@@ -55,7 +55,9 @@ INCLUDES
 #include <sstream>
 #include <cstring>
 #include <assert.h>
+
 #include "FGfdmSocket.h"
+#include "input_output/string_utilities.h"
 
 using std::cout;
 using std::cerr;

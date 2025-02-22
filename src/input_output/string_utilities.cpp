@@ -41,6 +41,7 @@ INCLUDES
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
+#include <regex>
 #ifdef __APPLE__
 #include <xlocale.h>
 #else
@@ -55,6 +56,8 @@ typedef _locale_t locale_t;
 #define freelocale _free_locale
 #define strtod_l _strtod_l
 #endif
+
+using namespace std;
 
 namespace JSBSim {
 struct CNumericLocale
@@ -80,14 +83,19 @@ struct CNumericLocale
  * Whatever is the current locale of the application, atof_locale_c() reads
  * numbers assuming that the decimal point is the period (.)
  */
-double atof_locale_c(const std::string& input)
+double atof_locale_c(const string& input)
 {
+  static const std::regex number_format(R"(^\s*[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\s*$)");
   const char* first = input.c_str();
 
   // Skip leading whitespaces
   while (isspace(*first)) ++first;
-  //Ignoring the leading '+' sign
-  if (*first == '+') ++first;
+
+  if (!*first)
+    throw InvalidNumber("Expecting a numeric attribute value, but only got spaces");
+
+  if (!std::regex_match(input, number_format))
+    throw InvalidNumber("Expecting a numeric attribute value, but got: " + input);
 
   CNumericLocale numeric_c;
   errno = 0;          // Reset the error code
@@ -99,12 +107,11 @@ double atof_locale_c(const std::string& input)
   if (fabs(value) == HUGE_VAL && errno == ERANGE)
     s << "This number is too large: " << input;
   else if (fabs(value) == 0 && errno == EINVAL)
-    s << "Expecting numeric attribute value, but got: " << input;
+    s << "Expecting a numeric attribute value, but got: " << input;
   else
     return value;
 
-  std::cerr << s.str() << std::endl;
-  throw JSBSim::BaseException(s.str());
+  throw InvalidNumber(s.str());
 }
 
 
@@ -156,10 +163,13 @@ std::string& to_lower(std::string& str)
 
 bool is_number(const std::string& str)
 {
-  if (str.empty())
+  try {
+    atof_locale_c(str);
+  } catch (InvalidNumber&) {
     return false;
-  else
-    return (str.find_first_not_of("+-.0123456789Ee") == std::string::npos);
+  }
+
+  return true;
 }
 
 std::vector <std::string> split(std::string str, char d)
