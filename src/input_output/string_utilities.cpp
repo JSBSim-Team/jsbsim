@@ -91,17 +91,11 @@ double atof_locale_c(const string& input)
   // Skip leading whitespaces
   while (isspace(*first)) ++first;
 
-  if (!*first) {
-    InvalidNumber e("Expecting a numeric attribute value, but only got spaces");
-    cerr << e.what() << endl;
-    throw e;
-  }
+  if (!*first)
+    throw InvalidNumber("Expecting a numeric attribute value, but only got spaces");
 
-  if (!std::regex_match(input, number_format)) {
-    InvalidNumber e("Expecting a numeric attribute value, but got: " + input);
-    cerr << e.what() << endl;
-    throw e;
-  }
+  if (!std::regex_match(input, number_format))
+    throw InvalidNumber("Expecting a numeric attribute value, but got: " + input);
 
   CNumericLocale numeric_c;
   errno = 0;          // Reset the error code
@@ -117,7 +111,6 @@ double atof_locale_c(const string& input)
   else
     return value;
 
-  std::cerr << s.str() << std::endl;
   throw InvalidNumber(s.str());
 }
 
