@@ -15,5 +15,5 @@ src/jsbsim -realtime data_output/flightgear.xml scripts/c1723.xml
  
 -->
 
-<output name="localhost" type="FLIGHTGEAR" protocol="UDP" port="5550" rate="60" version="24">
+<output name="localhost" type="FLIGHTGEAR" protocol="UDP" port="5550" rate="60">
 </output>

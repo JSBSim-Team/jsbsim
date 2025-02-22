@@ -83,12 +83,8 @@ private:
     double timeFactor;
   } outputOptions;
 
-  static constexpr size_t s = sizeof(FGNetFDM1) + sizeof(FGNetFDM2) + sizeof(FGNetFDM3);
-  char data[s];
-  FGNetFDM1 * const net1 = (FGNetFDM1*)data;
-  FGNetFDM3 *net3;
-  size_t dataLength;
-  void SocketDataFill(void);
+  FGNetFDM fgSockBuf;
+  void SocketDataFill(FGNetFDM* net);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
