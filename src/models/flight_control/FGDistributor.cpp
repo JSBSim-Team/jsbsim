@@ -63,14 +63,21 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   if (type_string == "inclusive") Type = eInclusive;
   else if (type_string == "exclusive") Type = eExclusive;
   else {
-    throw("Not a known Distributor type, "+type_string);
+    throw BaseException("Not a known Distributor type, "+type_string);
   }
 
   Element* case_element = element->FindElement("case");
   while (case_element) {
     Case* current_case = new Case;
     Element* test_element = case_element->FindElement("test");
-    if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
+    try {
+      if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
+    } catch (BaseException& e) {
+      cerr << test_element->ReadFrom()
+           << fgred << e.what() << reset << endl << endl;
+      delete current_case;
+      throw;
+    }
     Element* prop_val_element = case_element->FindElement("property");
     while (prop_val_element) {
       string value_string = prop_val_element->GetAttributeValue("value");
