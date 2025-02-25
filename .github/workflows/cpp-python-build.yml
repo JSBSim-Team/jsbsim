@@ -262,7 +262,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          julia -e 'import Pkg;Pkg.add(\"CxxWrap\")'
+          julia -e 'import Pkg;Pkg.add("CxxWrap")'
           $CXXWRAP_PREFIX_PATH=julia -e 'using CxxWrap;print(CxxWrap.prefix_path())'
           cmake -G "MinGW Makefiles" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DBUILD_JULIA_PACKAGE=ON -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DCMAKE_PREFIX_PATH="$CXXWRAP_PREFIX_PATH" ..
       - name: Build JSBSim

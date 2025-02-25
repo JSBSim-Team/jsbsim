@@ -77,7 +77,6 @@ FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm), ChannelRate(1)
   Name = "FGFCS";
   systype = stFCS;
 
-  fdmex = fdm;
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
