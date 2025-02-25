@@ -43,6 +43,7 @@ INCLUDES
 #include "initialization/FGInitialCondition.h"
 #include "FGFDMExec.h"
 #include "input_output/FGXMLFileRead.h"
+#include "input_output/string_utilities.h"
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -681,7 +682,7 @@ bool options(int count, char **arg)
       play_nice = true;
       if (n != string::npos) {
         try {
-          sleep_period = atof( value.c_str() );
+          sleep_period = JSBSim::atof_locale_c( value.c_str() );
         } catch (...) {
           cerr << endl << "  Invalid sleep period given!" << endl << endl;
           result = false;
@@ -741,11 +742,17 @@ bool options(int count, char **arg)
       }
     } else if (keyword == "--property") {
       if (n != string::npos) {
-         string propName = value.substr(0,value.find("="));
-         string propValueString = value.substr(value.find("=")+1);
-         double propValue = atof(propValueString.c_str());
-         CommandLineProperties.push_back(propName);
-         CommandLinePropertyValues.push_back(propValue);
+        string propName = value.substr(0,value.find("="));
+        string propValueString = value.substr(value.find("=")+1);
+        double propValue;
+        try {
+          propValue = JSBSim::atof_locale_c(propValueString.c_str());
+        } catch (JSBSim::InvalidNumber&) {
+          gripe;
+          exit(1);
+        }
+        CommandLineProperties.push_back(propName);
+        CommandLinePropertyValues.push_back(propValue);
       } else {
         gripe;
         exit(1);
@@ -754,7 +761,7 @@ bool options(int count, char **arg)
     } else if (keyword.substr(0,5) == "--end") {
       if (n != string::npos) {
         try {
-        end_time = atof( value.c_str() );
+          end_time = JSBSim::atof_locale_c( value.c_str() );
         } catch (...) {
           cerr << endl << "  Invalid end time given!" << endl << endl;
           result = false;
@@ -767,7 +774,7 @@ bool options(int count, char **arg)
     } else if (keyword == "--simulation-rate") {
       if (n != string::npos) {
         try {
-          simulation_rate = atof( value.c_str() );
+          simulation_rate = JSBSim::atof_locale_c( value.c_str() );
           override_sim_rate = true;
         } catch (...) {
           cerr << endl << "  Invalid simulation rate given!" << endl << endl;

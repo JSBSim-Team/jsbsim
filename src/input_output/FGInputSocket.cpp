@@ -47,6 +47,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "models/FGAircraft.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -168,17 +169,13 @@ void FGInputSocket::Read(bool Holding)
           socket->Reply("Not a leaf property\r\n");
           break;
         } else {
-          if (is_number(trim(str_value))) {
-            try {
-              double value = atof_locale_c(str_value);
-              node->setDoubleValue(value);
-            } catch(BaseException& e) {
-              socket->Reply(e.what());
-              break;
-            }
-          }
-          else {
-            socket->Reply("Invalid number\r\n");
+          try {
+            double value = atof_locale_c(str_value);
+            node->setDoubleValue(value);
+          } catch(InvalidNumber& e) {
+            string msg(e.what());
+            msg += "\r\n";
+            socket->Reply(msg);
             break;
           }
         }

@@ -56,6 +56,7 @@ INCLUDES
 #include "models/atmosphere/FGWinds.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGPropertyValue.h"
+#include "input_output/string_utilities.h"
 
 using namespace std;
 
@@ -85,25 +86,25 @@ void FGOutputSocket::SetOutputName(const string& fname)
   // tokenize the output name
   size_t dot_pos = fname.find(':', 0);
   size_t slash_pos = fname.find('/', 0);
-  
+
   string name = fname.substr(0, dot_pos);
-  
+
   string proto = "TCP";
   if(dot_pos + 1 < slash_pos)
     proto = fname.substr(dot_pos + 1, slash_pos - dot_pos - 1);
-  
+
   string port = "1138";
   if(slash_pos < string::npos)
     port = fname.substr(slash_pos + 1, string::npos);
-  
+
   // set the model name
   Name = name + ":" + port + "/" + proto;
-  
+
   // set the socket params
   SockName = name;
-  
+
   SockPort = atoi(port.c_str());
-  
+
   if (to_upper(proto) == "UDP")
     SockProtocol = FGfdmSocket::ptUDP;
   else // Default to TCP

@@ -37,6 +37,7 @@
 #include "math/FGRealValue.h"
 #include "math/FGPropertyValue.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/string_utilities.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   FORWARD DECLARATIONS
@@ -77,9 +78,9 @@ public:
 
   FGParameterValue(const std::string& value, std::shared_ptr<FGPropertyManager> pm,
                    Element* el) {
-    if (is_number(value)) {
-      param = new FGRealValue(atof(value.c_str()));
-    } else {
+    try {
+      param = new FGRealValue(atof_locale_c(value.c_str()));
+    } catch (InvalidNumber&) {
       // "value" must be a property if execution passes to here.
       param = new FGPropertyValue(value, pm, el);
     }

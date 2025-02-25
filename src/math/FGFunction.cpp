@@ -38,6 +38,7 @@ INCLUDES
 #include "FGRealValue.h"
 #include "input_output/FGXMLElement.h"
 #include "math/FGFunctionValue.h"
+#include "input_output/string_utilities.h"
 
 
 using namespace std;
@@ -611,21 +612,19 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       string mean_attr = element->GetAttributeValue("mean");
       string stddev_attr = element->GetAttributeValue("stddev");
       if (!mean_attr.empty()) {
-        if (is_number(trim(mean_attr)))
+        try {
           mean = atof_locale_c(mean_attr);
-        else {
-          cerr << element->ReadFrom()
-               << "Expecting a number, but got: " << mean_attr <<endl;
-          throw BaseException("Invalid number");
+        } catch (InvalidNumber& e) {
+          cerr << element->ReadFrom() << e.what() << endl;
+          throw e;
         }
       }
       if (!stddev_attr.empty()) {
-        if (is_number(trim(stddev_attr)))
+        try {
           stddev = atof_locale_c(stddev_attr);
-        else {
-          cerr << element->ReadFrom()
-               << "Expecting a number, but got: " << stddev_attr <<endl;
-          throw BaseException("Invalid number");
+        } catch (InvalidNumber& e) {
+          cerr << element->ReadFrom() << e.what() << endl;
+          throw e;
         }
       }
       auto generator(makeRandomGenerator(element, fdmex));
@@ -641,21 +640,19 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       string lower_attr = element->GetAttributeValue("lower");
       string upper_attr = element->GetAttributeValue("upper");
       if (!lower_attr.empty()) {
-        if (is_number(trim(lower_attr)))
+        try {
           lower = atof_locale_c(lower_attr);
-        else {
-          cerr << element->ReadFrom()
-               << "Expecting a number, but got: " << lower_attr <<endl;
-          throw BaseException("Invalid number");
+        } catch (InvalidNumber &e) {
+          cerr << element->ReadFrom() << e.what() << endl;
+          throw e;
         }
       }
       if (!upper_attr.empty()) {
-        if (is_number(trim(upper_attr)))
+        try {
           upper = atof_locale_c(upper_attr);
-        else {
-          cerr << element->ReadFrom()
-               << "Expecting a number, but got: " << upper_attr <<endl;
-          throw BaseException("Invalid number");
+        } catch (InvalidNumber &e) {
+          cerr << element->ReadFrom() << e.what() << endl;
+          throw e;
         }
       }
       auto generator(makeRandomGenerator(element, fdmex));
