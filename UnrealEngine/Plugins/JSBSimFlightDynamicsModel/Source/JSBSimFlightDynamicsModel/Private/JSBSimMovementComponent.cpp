@@ -108,11 +108,11 @@ void UJSBSimMovementComponent::PropertyManagerNode(TArray<FString>& Catalog)
 void UJSBSimMovementComponent::CommandConsole(FString Property, FString InValue, FString& OutValue)
 {
 
-  //Property name must be alphanumeric and limited to these four -._/ special characters. This check prevents UE5 editor crash when using invalid characters.
+  //Property name must be alphanumeric and limited to six []-._/ special characters. This check prevents UE5 editor crash when using invalid characters.
 #if WITH_EDITOR 
-  if (!std::regex_match((TCHAR_TO_UTF8(*Property)), std::regex("^[a-zA-Z0-9.-_/]+$")))
+  if (!std::regex_match((TCHAR_TO_UTF8(*Property)), std::regex("^[a-zA-Z0-9\\[\\]\\-._/]+$")))
   {
-    FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: Property name must be alphanumeric and limited to these -._/ four characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName()))));
+    FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: *%s* Property name must be alphanumeric and limited to these []-._/ six characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName(), *Property))));
     GetWorld()->GetFirstPlayerController()->ConsoleCommand(TEXT("Exit"));
     return;
   }
@@ -144,11 +144,11 @@ void UJSBSimMovementComponent::CommandConsoleBatch(TArray<FString> Property, TAr
   for (int i = 0; i < Property.Num(); i++)
   {
 
-    //Property name must be alphanumeric and limited to these four -._/ special characters. This check prevents UE5 editor crash when using invalid characters.
+    //Property name must be alphanumeric and limited to six []-._/ special characters. This check prevents UE5 editor crash when using invalid characters.
   #if WITH_EDITOR 
-    if (!std::regex_match((TCHAR_TO_UTF8(*Property[i])), std::regex("^[a-zA-Z0-9.-_/]+$")))
+    if (!std::regex_match((TCHAR_TO_UTF8(*Property[i])), std::regex("^[a-zA-Z0-9\\[\\]\\-._/]+$")))
     {
-      FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: Property name must be alphanumeric and limited to these -._/ four characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName()))));
+      FMessageLog("PIE").Error()->AddToken(FTextToken::Create(FText::FromString(FString::Printf(TEXT("%s: JSBSim Command Console Blueprint Node Error: *%s* Property name must be alphanumeric and limited to these []-._/ six characters. Do not use parentheses *(RW)* in your property name"), *this->GetOwner()->GetName(), *Property[i]))));
       GetWorld()->GetFirstPlayerController()->ConsoleCommand(TEXT("Exit"));
       return;
     }
