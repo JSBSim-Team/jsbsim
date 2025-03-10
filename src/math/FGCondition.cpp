@@ -134,10 +134,10 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
     conditional = test_strings[1];
     TestParam2 = new FGParameterValue(test_strings[2], PropertyManager, el);
   } else {
-    stringstream s;
+    ostringstream s;
     s << "  Conditional test is invalid: \"" << test
       << "\" has " << test_strings.size() << " elements in the "
-      << "test condition." << endl;
+      << "test condition.\n";
     throw BaseException(s.str());
   }
 

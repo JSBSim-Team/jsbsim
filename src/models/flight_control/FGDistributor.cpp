@@ -73,8 +73,8 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
     try {
       if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
     } catch (BaseException& e) {
-      cerr << test_element->ReadFrom()
-           << fgred << e.what() << reset << endl << endl;
+      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::FATAL);
+      log << LogFormat::RED << e.what() << LogFormat::RESET << "\n\n";
       delete current_case;
       throw;
     }
