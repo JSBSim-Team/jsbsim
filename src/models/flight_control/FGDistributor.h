@@ -53,7 +53,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates a distributor for the flight control system.
 
-The distributor component models a distributor - 
+The distributor component models a distributor -
 
 Within a test, additional tests can be specified, which allows for
 complex groupings of logical comparisons. Each test contains
@@ -174,6 +174,7 @@ private:
 
     ~Case() {
       for (auto pair: PropValPairs) delete pair;
+      delete Test;
     }
 
     void SetTest(FGCondition* test) {Test = test;}

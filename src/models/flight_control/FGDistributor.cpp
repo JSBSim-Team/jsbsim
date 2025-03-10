@@ -68,14 +68,13 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
 
   Element* case_element = element->FindElement("case");
   while (case_element) {
-    Case* current_case = new Case;
+    auto current_case = make_unique<Case>();
     Element* test_element = case_element->FindElement("test");
     try {
       if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
     } catch (BaseException& e) {
       FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::FATAL);
       log << LogFormat::RED << e.what() << LogFormat::RESET << "\n\n";
-      delete current_case;
       throw;
     }
     Element* prop_val_element = case_element->FindElement("property");
@@ -86,7 +85,7 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
                                                    PropertyManager, prop_val_element));
       prop_val_element = case_element->FindNextElement("property");
     }
-    Cases.push_back(current_case);
+    Cases.push_back(current_case.release());
     case_element = element->FindNextElement("case");
   }
 
