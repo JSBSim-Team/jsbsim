@@ -67,25 +67,24 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
 
   Element* case_element = element->FindElement("case");
   while (case_element) {
-    Case* current_case = new Case;
+    auto current_case = make_unique<Case>();
     Element* test_element = case_element->FindElement("test");
     try {
-      if (test_element) current_case->SetTest(new FGCondition(test_element, PropertyManager));
+      if (test_element) current_case->SetTest(test_element, PropertyManager);
     } catch (BaseException& e) {
       cerr << test_element->ReadFrom()
            << fgred << e.what() << reset << endl;
-      delete current_case;
       throw;
     }
     Element* prop_val_element = case_element->FindElement("property");
     while (prop_val_element) {
       string value_string = prop_val_element->GetAttributeValue("value");
       string property_string = prop_val_element->GetDataLine();
-      current_case->AddPropValPair(new PropValPair(property_string, value_string,
-                                                   PropertyManager, prop_val_element));
+      current_case->AddPropValPair(property_string, value_string, PropertyManager,
+                                   prop_val_element);
       prop_val_element = case_element->FindNextElement("property");
     }
-    Cases.push_back(current_case);
+    Cases.push_back(std::move(current_case));
     case_element = element->FindNextElement("case");
   }
 
@@ -94,18 +93,10 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGDistributor::~FGDistributor()
-{
-  for (auto Case: Cases) delete Case;
-  Debug(1);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 bool FGDistributor::Run(void )
 {
   bool completed = false;
-  for (auto Case: Cases) { // Loop through all Cases
+  for (auto& Case: Cases) { // Loop through all Cases
     if (Case->HasTest()) {
       if (Case->GetTestResult() && !((Type == eExclusive) && completed)) {
         Case->SetPropValPairs();
@@ -145,19 +136,19 @@ void FGDistributor::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       unsigned int ctr=0;
-      for (auto Case: Cases) {
+      for (const auto& Case: Cases) {
         std::cout << "      Case: " << ctr << endl;
         if (Case->HasTest()) {
-          Case->GetTest()->PrintCondition("        ");
+          Case->GetTest().PrintCondition("        ");
         } else {
           std::cout << "        Set these properties by default: " << std::endl;
         }
         std::cout << std::endl;
-        for (auto propVal = Case->IterPropValPairs(); propVal != Case->EndPropValPairs(); ++propVal) {
-          std::cout << "        Set property " << (*propVal)->GetPropName();
-          if ((*propVal)->GetLateBoundProp()) std::cout << " (late bound)";
-          std::cout << " to " << (*propVal)->GetValString();
-          if ((*propVal)->GetLateBoundValue()) std::cout << " (late bound)";
+        for (const auto& propVal: *Case) {
+          std::cout << "        Set property " << propVal->GetPropName();
+          if (propVal->GetLateBoundProp()) std::cout << " (late bound)";
+          std::cout << " to " << propVal->GetValString();
+          if (propVal->GetLateBoundValue()) std::cout << " (late bound)";
           std::cout << std::endl;
         }
         ctr++;

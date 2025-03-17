@@ -157,7 +157,7 @@ FGCondition::FGCondition(const string& test, std::shared_ptr<FGPropertyManager> 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGCondition::Evaluate(void )
+bool FGCondition::Evaluate(void) const
 {
   bool pass = false;
 
@@ -213,7 +213,7 @@ bool FGCondition::Evaluate(void )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCondition::PrintCondition(string indent)
+void FGCondition::PrintCondition(string indent) const
 {
   string scratch;
 
