@@ -256,7 +256,7 @@ void FGInputSocket::Read(bool Holding)
       } else if (command == "help") {               // HELP
 
         socket->Reply(
-        " JSBSim Server commands:\n\r\n"
+        " JSBSim Server commands:\r\n\r\n"
         "   get {property name}\r\n"
         "   set {property name} {value}\r\n"
         "   hold\r\n"
@@ -264,7 +264,7 @@ void FGInputSocket::Read(bool Holding)
         "   iterate {value}\r\n"
         "   help\r\n"
         "   quit\r\n"
-        "   info\n\r\n");
+        "   info\r\n\r\n");
 
       } else {
         socket->Reply(string("Unknown command: ") + command + "\r\n");
