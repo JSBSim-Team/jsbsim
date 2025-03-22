@@ -168,7 +168,7 @@ for d in os.scandir('jsbsim/aircraft'):
 
 # Build & installation process for the JSBSim Python module
 setup(
-    name="${PROJECT_NAME}",
+    name="${PROJECT_NAME}".lower(),
     version="${PROJECT_VERSION}",
     url="https://github.com/JSBSim-Team/jsbsim",
     author="Jon S. Berndt et al.",
