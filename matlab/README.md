@@ -8,12 +8,12 @@ Below are the instructions to build the S-Function from JSBSim Windows installer
 
 ### Download and build JSBSim from source
 
-Download the JSBSim source from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.1).
+Download the JSBSim source from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.2).
 
 Alternatively, you can clone the source using git:
 
 ```bash
-> git clone https://github.com/JSBSim-Team/jsbsim/tree/v1.2.1
+> git clone https://github.com/JSBSim-Team/jsbsim/tree/v1.2.2
 ```
 
 Build the source following the instructions in the [JSBSim Manual](https://jsbsim-team.github.io/jsbsim-reference-manual/mypages/quickstart-building-the-program/).
@@ -65,7 +65,7 @@ the correct location.
 
 ### Download and install JSBSim
 
-A Windows installer `JSBSim-1.2.1-setup.exe` is available from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.1). Download the installer and set up JSBSim in the following local directory tree
+A Windows installer `JSBSim-1.2.2-setup.exe` is available from [JSBSim release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.2). Download the installer and set up JSBSim in the following local directory tree
 
 ```bash
 <JSBSim root>/
@@ -85,7 +85,7 @@ A Windows installer `JSBSim-1.2.1-setup.exe` is available from [JSBSim release s
 
 The exact location `<JSBSim root>/` on your system depends on where you choose to install JSBSim.
 
-> **NOTE:** The JSBSim library file located at `lib\JSBSim.lib` has been compiled with Microsoft Visual Studio Enterprise 2019 (build 16.11.35026.282)
+> **NOTE:** The JSBSim library file located at `lib\JSBSim.lib` has been compiled with Microsoft Visual Studio Enterprise 2019 (build 16.11.35731.53)
 
 ### Prepare MATLAB
 
