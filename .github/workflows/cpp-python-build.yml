@@ -840,12 +840,12 @@ jobs:
             JSBSim version ${{ env.VERSION }}
 
             ## Release files
-            - Windows 64 bits
-              - `JSBSim-${{ env.VERSION }}-setup.exe` (Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }})
-            - Ubuntu Focal 20.04 and Jammy 22.04 - amd64
-              - `*.deb` (Debian packages)
-            - Python wheel packages can be installed from [PyPI](https://pypi.org/project/JSBSim/) with the command `pip install jsbsim` or `pip install --upgrade jsbsim` when JSBSim is already installed on your system.
-            - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install this package with conda run: `conda install -c conda-forge jsbsim`
+            - Windows (64-bit)
+              - `JSBSim-${{ env.VERSION }}-setup.exe` — Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }}
+            - Ubuntu Jammy 22.04 and Noble 24.04 (amd64)
+              - `*.deb` — Debian packages
+            - Python wheel packages are available on [PyPI](https://pypi.org/project/JSBSim/) and can be installed using `pip install jsbsim`. To upgrade an existing installation, use `pip install --upgrade jsbsim`.
+            - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install via conda, run `conda install -c conda-forge jsbsim`
 
             ## Changelog
           prerelease: false

@@ -70,7 +70,7 @@ The Windows installer also contains the files needed to build the JSBSim Matlab 
 
 ### Ubuntu Linux
 
-Debian packages for Ubuntu Linux "Focal" 20.04 LTS and "Jammy" 22.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.2). There are 3 packages for each platform:
+Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.2). There are 3 packages for each platform:
 
 * `JSBSim_1.2.2-1471.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
 * `JSBSim-devel_1.2.2-1471.amd64.deb` which installs the development resources (headers and libraries)
