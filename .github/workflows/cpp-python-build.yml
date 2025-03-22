@@ -97,11 +97,11 @@ jobs:
           path: |
             ~/.cache/pip
             build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-3.8-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
-      - name: Set up Python 3.8
+          key: ${{ runner.os }}-3.9-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Install Python packages
         run: |
           pip install -r python/requirements.txt
@@ -303,11 +303,11 @@ jobs:
           path: |
             ~\AppData\Local\pip\Cache
             build\Testing\Temporary\CTestCostData.txt
-          key: ${{ runner.os }}-3.8-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
-      - name: Set up Python 3.8
+          key: ${{ runner.os }}-3.9-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Install Python packages
         run: pip install -r python/requirements.txt
       - name: Checkout CxxTest
@@ -439,7 +439,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-13]
-        python-version: [3.8]
+        python-version: [3.9]
         include:
           - os: macos-14
             python-version: '3.10'
@@ -549,16 +549,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.8]
-        include:
-          - python-version: 3.9
-            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up Python
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.9'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
@@ -601,10 +597,10 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v4
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Install Doxygen (Linux)
@@ -812,10 +808,10 @@ jobs:
           find . -type f -name *.deb -exec cp {} GH_release/. \;
 
       # PyPI deployment
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: PyPI deployment
         uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -927,10 +923,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install doxygen graphviz
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - name: Install Python packages
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim
