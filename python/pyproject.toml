@@ -4,16 +4,16 @@
 # Require setuptools >= 60.0.0 to be able to access its local copy of distutils
 # as distutils is deprecated for Python 3.10+ and will no longer be distributed
 # with Python 3.12+.
-requires = ["setuptools>=60.0.0", "cython!=0.29.26"]
+requires = ["setuptools>=60.0.0,<72.0.0", "cython!=0.29.26"]
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-manylinux-x86_64-image = "manylinux2010"
-manylinux-i686-image = "manylinux2010"
+manylinux-x86_64-image = "manylinux2014"
+manylinux-i686-image = "manylinux2014"
 # Skip building against musl libc images as JSBSim is not compatible with them.
 skip = "cp*-musllinux_*"
 
 [[tool.cibuildwheel.overrides]]
-select = "pp39-* pp310-* cp311* cp312*"
-manylinux-x86_64-image = "manylinux2014"
-manylinux-i686-image = "manylinux2014"
+select = "pp38-* cp38*"
+manylinux-x86_64-image = "manylinux2010"
+manylinux-i686-image = "manylinux2010"
