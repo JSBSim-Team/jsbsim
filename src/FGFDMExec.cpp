@@ -147,14 +147,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
     Allocate();
   }
   catch (const string& msg) {
-    FGLogging log(Log, LogLevel::FATAL);
+    LogException log(Log);
     log << endl << "Caught error: " << msg << endl;
-    throw BaseException(log.str());
-  }
-  catch (const BaseException& e) {
-    FGLogging log(Log, LogLevel::FATAL);
-    log << endl << "Caught error: " << e.what() << endl;
-    throw BaseException(log.str());
+    throw log;
   }
 
   trim_status = false;
@@ -767,15 +762,15 @@ bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    FGLogging log(Log, LogLevel::ERROR);
+    LogException log(Log);
     log << "File: " << PlanetFileName << " could not be read." << endl;
-    throw BaseException(log.str());
+    throw log;
   }
 
   if (document->GetName() != "planet") {
-    FGXMLLogging log(Log, document, LogLevel::ERROR);
+    XMLLogException log(Log, document);
     log << "File: " << PlanetFileName << " is not a planet file." << endl;
-    throw BaseException(log.str());
+    throw log;
   }
 
   bool result = LoadPlanet(document);
@@ -1284,9 +1279,9 @@ bool FGFDMExec::ReadChild(Element* el)
   if (location) {
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
-    FGXMLLogging log(Log, el, LogLevel::FATAL);
+    XMLLogException log(Log, el);
     log << "No location was found for this child object!" << endl;
-    throw BaseException(log.str());
+    throw log;
   }
 
   Element* orientation = el->FindElement("orient");

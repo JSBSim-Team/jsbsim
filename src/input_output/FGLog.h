@@ -160,5 +160,18 @@ private:
   std::ostringstream buffer;
   LogLevel min_level = LogLevel::BULK;
 };
+
+class JSBSIM_API LogException : public BaseException, public FGLogging
+{
+public:
+  LogException(std::shared_ptr<FGLogger> logger);
+  LogException(LogException& other);
+};
+
+class JSBSIM_API XMLLogException : public LogException
+{
+public:
+  XMLLogException(std::shared_ptr<FGLogger> logger, Element* el);
+};
 } // namespace JSBSim
 #endif

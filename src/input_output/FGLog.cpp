@@ -48,6 +48,60 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+class BufferLogger : public FGLogger
+{
+public:
+  BufferLogger(std::shared_ptr<FGLogger> logger) : logger(logger) {}
+  void FileLocation(const std::string& filename, int line) override {
+    this->filename = filename;
+    this->line = line;
+  }
+  void Message(const std::string& message) override;
+  void Format(LogFormat format) override { tokens.push_back({"", format}); }
+  ~BufferLogger() override;
+
+private:
+  struct MessageToken
+  {
+    std::string message;
+    LogFormat format;
+  };
+  std::vector<MessageToken> tokens;
+  std::shared_ptr<FGLogger> logger;
+  std::string filename;
+  int line = 0;
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void BufferLogger::Message(const std::string& message) {
+  if (message.empty()) return;
+
+  tokens.push_back({ message, LogFormat::DEFAULT });
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+BufferLogger::~BufferLogger()
+{
+  if (tokens.empty()) return;
+
+  logger->SetLevel(log_level);
+
+  if (!filename.empty()) logger->FileLocation(filename, line);
+
+  for (const auto& token : tokens) {
+    if (token.message.empty()) {
+      logger->Format(token.format);
+      continue;
+    }
+    logger->Message(token.message);
+  }
+  logger->Flush();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGLogging::Flush(void)
 {
   std::string message = buffer.str();
@@ -134,4 +188,22 @@ void FGLogConsole::Format(LogFormat format) {
     break;
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+LogException::LogException(std::shared_ptr<FGLogger> logger)
+: BaseException(""), FGLogging(std::make_shared<BufferLogger>(logger), LogLevel::FATAL) {}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+LogException::LogException(LogException& other)
+: BaseException(""), FGLogging(other.logger, LogLevel::FATAL) { other.Flush(); }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+XMLLogException::XMLLogException(std::shared_ptr<FGLogger> logger, Element* el)
+  : LogException(logger)
+{
+  this->logger->FileLocation(el->GetFileName(), el->GetLineNumber());
 }
+};
