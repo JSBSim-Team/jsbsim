@@ -594,7 +594,8 @@ void testThrowFormattedMessages3() {
     TS_ASSERT(logger->buffer.empty());
     TS_ASSERT_EQUALS(logger->GetLogLevel(), JSBSim::LogLevel::BULK);
     throw logException;
-  } catch (JSBSim::BaseException&) {
+  } catch (const JSBSim::BaseException& e) {
+    TS_ASSERT_EQUALS(std::string(e.what()), message1 + message2);
     TS_ASSERT(!logger->flushed);
     TS_ASSERT(logger->buffer.empty());
     TS_ASSERT_EQUALS(logger->GetLogLevel(), JSBSim::LogLevel::BULK);

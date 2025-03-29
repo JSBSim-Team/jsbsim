@@ -166,6 +166,7 @@ class JSBSIM_API LogException : public BaseException, public FGLogging
 public:
   LogException(std::shared_ptr<FGLogger> logger);
   LogException(LogException& other);
+  const char* what() const noexcept override;
 };
 
 class JSBSIM_API XMLLogException : public LogException

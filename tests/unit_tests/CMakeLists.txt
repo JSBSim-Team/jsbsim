@@ -1,5 +1,5 @@
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(UNIT_TESTS FGColumnVector3Test
                StringUtilitiesTest

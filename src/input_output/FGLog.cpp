@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <iostream>
+#include <string_view>
 
 #include "FGLog.h"
 #include "input_output/FGXMLElement.h"
@@ -57,27 +58,41 @@ public:
     this->line = line;
   }
   void Message(const std::string& message) override;
-  void Format(LogFormat format) override { tokens.push_back({"", format}); }
+  void Format(LogFormat format) override;
+  const std::string& str(void) const noexcept { return unformattedMessage; }
   ~BufferLogger() override;
 
 private:
   struct MessageToken
   {
-    std::string message;
-    LogFormat format;
+    std::string_view message;
+    LogFormat format = LogFormat::DEFAULT;
   };
+
+  std::string unformattedMessage;
   std::vector<MessageToken> tokens;
   std::shared_ptr<FGLogger> logger;
   std::string filename;
-  int line = 0;
+  int line = -1;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void BufferLogger::Message(const std::string& message) {
-  if (message.empty()) return;
+void BufferLogger::Message(const std::string& msg) {
+  if (msg.empty()) return;
 
-  tokens.push_back({ message, LogFormat::DEFAULT });
+  size_t len = unformattedMessage.size();
+  unformattedMessage += msg;
+  tokens.emplace_back();
+  tokens.back().message = std::string_view(unformattedMessage).substr(len, msg.size());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void BufferLogger::Format(LogFormat format)
+{
+  tokens.emplace_back();
+  tokens.back().format = format;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,14 +103,14 @@ BufferLogger::~BufferLogger()
 
   logger->SetLevel(log_level);
 
-  if (!filename.empty()) logger->FileLocation(filename, line);
+  if (line > 0) logger->FileLocation(filename, line);
 
   for (const auto& token : tokens) {
     if (token.message.empty()) {
       logger->Format(token.format);
       continue;
     }
-    logger->Message(token.message);
+    logger->Message(std::string(token.message));
   }
   logger->Flush();
 }
@@ -197,7 +212,17 @@ LogException::LogException(std::shared_ptr<FGLogger> logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 LogException::LogException(LogException& other)
-: BaseException(""), FGLogging(other.logger, LogLevel::FATAL) { other.Flush(); }
+: BaseException(""), FGLogging(other.logger, LogLevel::FATAL)
+{
+  other.Flush(); // Make the data buffered in `other` accessible to all copies.
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const char* LogException::what() const noexcept
+{
+  return static_cast<BufferLogger*>(logger.get())->str().c_str();
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

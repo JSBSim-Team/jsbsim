@@ -98,7 +98,7 @@ convert_CMake_list_to_Python_list = lambda s: [item.strip() for item in s.split(
 
 # `cpp_compile_flag` is used for C++ compilation only (see class `C_CxxCompiler`)
 if compiler.compiler_type == 'unix':
-    cpp_compile_flag = ['-std=c++14', '-DNDEBUG']
+    cpp_compile_flag = ['-std=c++17', '-DNDEBUG']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_UNIX_LINK_LIBRARIES}')
 elif compiler.compiler_type == 'msvc':

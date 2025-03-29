@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 find_package(JlCxx) # May modify CMAKE_CXX_STANDARD thus called after set(CMAKE_CXX_STANDARD ...)
 
 if(Julia_FOUND)
