@@ -360,7 +360,11 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
   case eBuss1:
   case eBuss2:
   case eLocalLinearization:
-    throw BaseException("Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!");
+    {
+      LogException err(FDMExec->GetLogger());
+      err << "Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!";
+      throw err;
+    }
   default:
     break;
   }

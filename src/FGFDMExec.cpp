@@ -145,11 +145,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   // this is to catch errors in binding member functions to the property tree.
   try {
     Allocate();
-  }
-  catch (const string& msg) {
-    LogException log(Log);
-    log << endl << "Caught error: " << msg << endl;
-    throw log;
+  } catch (const BaseException& e) {
+    LogException err(Log);
+    err << endl << "Caught error: " << e.what() << endl;
+    throw err;
   }
 
   trim_status = false;
@@ -762,15 +761,15 @@ bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    LogException log(Log);
-    log << "File: " << PlanetFileName << " could not be read." << endl;
-    throw log;
+    LogException err(Log);
+    err << "File: " << PlanetFileName << " could not be read." << endl;
+    throw err;
   }
 
   if (document->GetName() != "planet") {
-    XMLLogException log(Log, document);
-    log << "File: " << PlanetFileName << " is not a planet file." << endl;
-    throw log;
+    XMLLogException err(Log, document);
+    err << "File: " << PlanetFileName << " is not a planet file." << endl;
+    throw err;
   }
 
   bool result = LoadPlanet(document);
@@ -1279,9 +1278,9 @@ bool FGFDMExec::ReadChild(Element* el)
   if (location) {
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
-    XMLLogException log(Log, el);
-    log << "No location was found for this child object!" << endl;
-    throw log;
+    XMLLogException err(Log, el);
+    err << "No location was found for this child object!" << endl;
+    throw err;
   }
 
   Element* orientation = el->FindElement("orient");
