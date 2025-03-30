@@ -270,9 +270,9 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
       string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
       FGPropertyNode* node = PropertyManager->GetNode(qprop, true);
       if (node->isTied()) {
-        FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::FATAL);
-        log << "Property " << tmp << " has already been successfully bound (late).\n";
-        throw BaseException(log.str());
+        XMLLogException err(fcs->GetExec()->GetLogger(), el);
+        err << "Property " << tmp << " has already been successfully bound (late).\n";
+        throw err;
       }
       else
         PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);

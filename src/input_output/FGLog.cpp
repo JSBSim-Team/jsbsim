@@ -59,40 +59,40 @@ public:
   }
   void Message(const std::string& message) override;
   void Format(LogFormat format) override;
-  const std::string& str(void) const noexcept { return unformattedMessage; }
+  const std::string& str(void) const noexcept { return logMessageBuffer; }
   ~BufferLogger() override;
 
 private:
   struct MessageToken
   {
-    std::string_view message;
+    std::string_view messageItem;
     LogFormat format = LogFormat::DEFAULT;
   };
 
-  std::string unformattedMessage;
+  std::string logMessageBuffer;
   std::vector<MessageToken> tokens;
-  std::shared_ptr<FGLogger> logger;
+  const std::shared_ptr<FGLogger> logger;
   std::string filename;
   int line = -1;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void BufferLogger::Message(const std::string& msg) {
-  if (msg.empty()) return;
+void BufferLogger::Message(const std::string& message) {
+  if (message.empty()) return;
 
-  size_t len = unformattedMessage.size();
-  unformattedMessage += msg;
-  tokens.emplace_back();
-  tokens.back().message = std::string_view(unformattedMessage).substr(len, msg.size());
+  size_t len = logMessageBuffer.size();
+  logMessageBuffer += message;
+  auto& new_token = tokens.emplace_back();
+  new_token.messageItem = std::string_view(logMessageBuffer).substr(len, message.size());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void BufferLogger::Format(LogFormat format)
 {
-  tokens.emplace_back();
-  tokens.back().format = format;
+  auto& new_token = tokens.emplace_back();
+  new_token.format = format;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,11 +106,11 @@ BufferLogger::~BufferLogger()
   if (line > 0) logger->FileLocation(filename, line);
 
   for (const auto& token : tokens) {
-    if (token.message.empty()) {
+    if (token.messageItem.empty()) {
       logger->Format(token.format);
       continue;
     }
-    logger->Message(std::string(token.message));
+    logger->Message(std::string(token.messageItem));
   }
   logger->Flush();
 }
@@ -230,5 +230,13 @@ XMLLogException::XMLLogException(std::shared_ptr<FGLogger> logger, Element* el)
   : LogException(logger)
 {
   this->logger->FileLocation(el->GetFileName(), el->GetLineNumber());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+XMLLogException::XMLLogException(LogException& exception, Element* el)
+  : LogException(exception)
+{
+  logger->FileLocation(el->GetFileName(), el->GetLineNumber());
 }
 };

@@ -1338,7 +1338,7 @@ void FGFDMExec::DoTrim(int mode)
   if (Constructing) return;
 
   if (mode < 0 || mode > JSBSim::tNone)
-    throw("Illegal trimming mode!");
+    throw TrimFailureException("Illegal trimming mode!");
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   bool success = trim.DoTrim();

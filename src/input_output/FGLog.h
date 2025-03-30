@@ -129,7 +129,6 @@ public:
   FGLogging& operator<<(const SGPath& path) { buffer << path; return *this; }
   FGLogging& operator<<(const FGColumnVector3& vec) { buffer << vec; return *this; }
   FGLogging& operator<<(LogFormat format);
-  std::string str(void) const { return buffer.str(); }
   void Flush(void);
 protected:
   std::shared_ptr<FGLogger> logger;
@@ -173,6 +172,13 @@ class JSBSIM_API XMLLogException : public LogException
 {
 public:
   XMLLogException(std::shared_ptr<FGLogger> logger, Element* el);
+  /// This constructor can promote a LogException to an XMLLogException
+  /// by adding the file location information to the exception.
+  /// This is useful to add some context to an exception that was thrown in a
+  /// context where the file location of the error was not known.
+  /// @param exception The LogException to promote.
+  /// @param el The Element containing the file location of the error.
+  XMLLogException(LogException& exception, Element* el);
 };
 } // namespace JSBSim
 #endif
