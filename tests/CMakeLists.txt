@@ -16,6 +16,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestAccelerometer
                  CheckDebugLvl
                  TestCosineGust
+                 TestTurbulenceGustStop
                  TestScriptOutput
                  CheckSimTimeReset
                  TestHoldDown
