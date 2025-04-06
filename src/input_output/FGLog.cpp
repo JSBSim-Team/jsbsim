@@ -234,6 +234,12 @@ LogException::LogException(LogException& other)
 
 const char* LogException::what() const noexcept
 {
+  // Although using const_cast is generally discouraged, it is justified here because:
+  // 1. The what() method must be const to comply with std::exception interface
+  // 2. We need to ensure all buffered messages are flushed before returning the error message
+  // 3. Conceptually, getting the complete error message is a "logically const" operation
+  //    i.e. from the user's perspective, it doesn't modify the state of the object.
+  const_cast<LogException*>(this)->Flush();
   return static_cast<BufferLogger*>(logger.get())->c_str();
 }
 
