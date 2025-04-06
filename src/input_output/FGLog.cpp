@@ -39,6 +39,7 @@ INCLUDES
 
 #include <iostream>
 #include <string_view>
+#include <cstring>
 
 #include "FGLog.h"
 #include "input_output/FGXMLElement.h"
@@ -52,14 +53,16 @@ CLASS IMPLEMENTATION
 class BufferLogger : public FGLogger
 {
 public:
-  BufferLogger(std::shared_ptr<FGLogger> logger) : logger(logger) {}
+  BufferLogger(std::shared_ptr<FGLogger> logger) : logger(logger) {
+    logMessageBuffer[0] = '\0';
+  }
   void FileLocation(const std::string& filename, int line) override {
     this->filename = filename;
     this->line = line;
   }
   void Message(const std::string& message) override;
   void Format(LogFormat format) override;
-  const std::string& str(void) const noexcept { return logMessageBuffer; }
+  const char* c_str(void) const noexcept { return logMessageBuffer; }
   ~BufferLogger() override;
 
 private:
@@ -69,7 +72,8 @@ private:
     LogFormat format = LogFormat::DEFAULT;
   };
 
-  std::string logMessageBuffer;
+  char logMessageBuffer[1024];
+  size_t bufferUsed = 0;
   std::vector<MessageToken> tokens;
   const std::shared_ptr<FGLogger> logger;
   std::string filename;
@@ -81,10 +85,19 @@ private:
 void BufferLogger::Message(const std::string& message) {
   if (message.empty()) return;
 
-  size_t len = logMessageBuffer.size();
-  logMessageBuffer += message;
-  auto& new_token = tokens.emplace_back();
-  new_token.messageItem = std::string_view(logMessageBuffer).substr(len, message.size());
+  size_t available = sizeof(logMessageBuffer) - bufferUsed - 1;  // -1 for null terminator
+  size_t toCopy = std::min(message.size(), available); // Prevent buffer overflow
+
+  if (toCopy > 0) {
+    // Copy the message to the buffer
+    char* currentPos = logMessageBuffer + bufferUsed;
+    memcpy(currentPos, message.c_str(), toCopy);
+    bufferUsed += toCopy;
+    logMessageBuffer[bufferUsed] = '\0';
+    // Store the message in the tokens vector
+    auto& new_token = tokens.emplace_back();
+    new_token.messageItem = std::string_view(currentPos, toCopy);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,7 +234,7 @@ LogException::LogException(LogException& other)
 
 const char* LogException::what() const noexcept
 {
-  return static_cast<BufferLogger*>(logger.get())->str().c_str();
+  return static_cast<BufferLogger*>(logger.get())->c_str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
