@@ -143,7 +143,10 @@ bool FGWinds::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  if (turbType != ttNone) Turbulence(in.AltitudeASL);
+  if (turbType != ttNone) 
+    Turbulence(in.AltitudeASL);
+  else
+    vTurbulenceNED.InitMatrix();
   if (oneMinusCosineGust.gustProfile.Running) CosineGust();
 
   vTotalWindNED = vWindNED + vGustNED + vCosineGust + vTurbulenceNED;
