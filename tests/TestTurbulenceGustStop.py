@@ -28,90 +28,84 @@ class TestTurbulenceGustStop(JSBSimTestCase):
     BASELINE_WIND_EAST  = 6
     BASELINE_WIND_DOWN  = 7
 
-    def testCosineGust(self):
-        fdm = self.setup()
+    def setUp(self, *args): 
+        super().setUp(*args)
 
-        # Setup cosine gust
-        fdm["atmosphere/cosine-gust/startup-duration-sec"] = 5
-        fdm["atmosphere/cosine-gust/steady-duration-sec"] = 1
-        fdm["atmosphere/cosine-gust/end-duration-sec"] = 5
-        fdm["atmosphere/cosine-gust/magnitude-ft_sec"] = 30
-        fdm["atmosphere/cosine-gust/frame"] = 2
-        fdm["atmosphere/cosine-gust/X-velocity-ft_sec"] = -1
-        fdm["atmosphere/cosine-gust/Y-velocity-ft_sec"] = -0.5
-        fdm["atmosphere/cosine-gust/Z-velocity-ft_sec"] = 0
-        fdm["atmosphere/cosine-gust/start"] =1
-
-        while fdm.get_sim_time() < 15:
-            fdm.run()
-
-        self.checkBaselineWind(fdm)
-
-    def testGust(self):
-        fdm = self.setup()
-
-        # Setup manual gust
-        fdm["atmosphere/gust-north-fps"] = 7
-        fdm["atmosphere/gust-east-fps"] = 8
-        fdm["atmosphere/gust-down-fps"] = 9
-
-        while fdm.get_sim_time() < 15:
-            fdm.run()
-
-        # Reset manual gust
-        fdm["atmosphere/gust-north-fps"] = 0
-        fdm["atmosphere/gust-east-fps"] = 0
-        fdm["atmosphere/gust-down-fps"] = 0
-
-        fdm.run()
-
-        self.checkBaselineWind(fdm)
-
-    def testTurbulence(self):
-        fdm = self.setup()
-
-        # Setup turbulence
-        fdm["atmosphere/turb-type"] = 3
-        fdm["atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps"] = 75
-        fdm["atmosphere/turbulence/milspec/severity"] = 6
-
-        while fdm.get_sim_time() < 15:
-            fdm.run()
-
-        # Reset turbulence
-        fdm["atmosphere/turb-type"] = 0
-
-        fdm.run()
-
-        self.checkBaselineWind(fdm)
-
-    def setup(self):
-        fdm = self.create_fdm()
-        fdm.load_model('A4') 
+        self.fdm = self.create_fdm()
+        self.fdm.load_model('A4') 
 
         # Set engine running
-        fdm['propulsion/engine[0]/set-running'] = 1
+        self.fdm['propulsion/engine[0]/set-running'] = 1
 
-        fdm['ic/h-sl-ft'] = 20000
-        fdm['ic/vc-kts'] = 250
-        fdm['ic/gamma-deg'] = 0
+        self.fdm['ic/h-sl-ft'] = 20000
+        self.fdm['ic/vc-kts'] = 250
+        self.fdm['ic/gamma-deg'] = 0
 
-        fdm.run_ic()
+        self.fdm.run_ic()
 
-        fdm['simulation/do_simple_trim'] = 1
+        self.fdm['simulation/do_simple_trim'] = 1
         
         # Set baseline NED wind
-        fdm["atmosphere/wind-north-fps"] = self.BASELINE_WIND_NORTH
-        fdm["atmosphere/wind-east-fps"] = self.BASELINE_WIND_EAST
-        fdm["atmosphere/wind-down-fps"] = self.BASELINE_WIND_DOWN
+        self.fdm["atmosphere/wind-north-fps"] = self.BASELINE_WIND_NORTH
+        self.fdm["atmosphere/wind-east-fps"] = self.BASELINE_WIND_EAST
+        self.fdm["atmosphere/wind-down-fps"] = self.BASELINE_WIND_DOWN
 
-        return fdm
+    def testCosineGust(self):
+        # Setup cosine gust
+        self.fdm["atmosphere/cosine-gust/startup-duration-sec"] = 5
+        self.fdm["atmosphere/cosine-gust/steady-duration-sec"] = 1
+        self.fdm["atmosphere/cosine-gust/end-duration-sec"] = 5
+        self.fdm["atmosphere/cosine-gust/magnitude-ft_sec"] = 30
+        self.fdm["atmosphere/cosine-gust/frame"] = 2
+        self.fdm["atmosphere/cosine-gust/X-velocity-ft_sec"] = -1
+        self.fdm["atmosphere/cosine-gust/Y-velocity-ft_sec"] = -0.5
+        self.fdm["atmosphere/cosine-gust/Z-velocity-ft_sec"] = 0
+        self.fdm["atmosphere/cosine-gust/start"] =1
 
-    def checkBaselineWind(self, fdm):
+        while self.fdm.get_sim_time() < 15:
+            self.fdm.run()
+
+        self.checkBaselineWind()
+
+    def testGust(self):
+        # Setup manual gust
+        self.fdm["atmosphere/gust-north-fps"] = 7
+        self.fdm["atmosphere/gust-east-fps"] = 8
+        self.fdm["atmosphere/gust-down-fps"] = 9
+
+        while self.fdm.get_sim_time() < 15:
+            self.fdm.run()
+
+        # Reset manual gust
+        self.fdm["atmosphere/gust-north-fps"] = 0
+        self.fdm["atmosphere/gust-east-fps"] = 0
+        self.fdm["atmosphere/gust-down-fps"] = 0
+
+        self.fdm.run()
+
+        self.checkBaselineWind()
+
+    def testTurbulence(self):
+        # Setup turbulence
+        self.fdm["atmosphere/turb-type"] = 3
+        self.fdm["atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps"] = 75
+        self.fdm["atmosphere/turbulence/milspec/severity"] = 6
+
+        while self.fdm.get_sim_time() < 15:
+            self.fdm.run()
+
+        # Reset turbulence
+        self.fdm["atmosphere/turb-type"] = 0
+
+        self.fdm.run()
+
+        self.checkBaselineWind()
+
+    def checkBaselineWind(self):
         # Confirm that winds have reset to baseline values before gusts/turbulence
-        wn = fdm['atmosphere/total-wind-north-fps']
-        we = fdm['atmosphere/total-wind-east-fps']
-        wd = fdm['atmosphere/total-wind-down-fps']
+        wn = self.fdm['atmosphere/total-wind-north-fps']
+        we = self.fdm['atmosphere/total-wind-east-fps']
+        wd = self.fdm['atmosphere/total-wind-down-fps']
 
         self.assertAlmostEqual(wn, self.BASELINE_WIND_NORTH, delta=1E-8)
         self.assertAlmostEqual(we, self.BASELINE_WIND_EAST, delta=1E-8)
