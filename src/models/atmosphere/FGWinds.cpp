@@ -486,6 +486,17 @@ void FGWinds::UpDownBurst()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// User is supplying a wind specific random seed to override the random seed
+// used by FGFDMExec. So initialise a new random number generator with this
+// random seed rather than referencing the FGFDMExec random number generator.
+
+void FGWinds::SetRandomSeed(int sr)
+{
+  RandomSeed = sr;
+  generator = std::make_shared<RandomNumberGenerator>(RandomSeed);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGWinds::bind(void)
 {
@@ -565,6 +576,8 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGWinds::GetTotalWindNED);
   PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGWinds::GetTotalWindNED);
 
+  // Allow user to specify a separate random seed independent of the FDMExec random seed
+  PropertyManager->Tie("atmosphere/randomseed", this, (PMFt)&FGWinds::GetRandomSeed, &FGWinds::SetRandomSeed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
