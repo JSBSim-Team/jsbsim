@@ -102,7 +102,7 @@ if compiler.compiler_type == 'unix':
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_UNIX_LINK_LIBRARIES}')
 elif compiler.compiler_type == 'msvc':
-    cpp_compile_flag = ['/DJSBSIM_STATIC_LINK', '/DNDEBUG']
+    cpp_compile_flag = ['/DJSBSIM_STATIC_LINK', '/DNDEBUG', '/std:c++17']
     cpp_link_flags = []
     link_libraries = convert_CMake_list_to_Python_list('${JSBSIM_LINK_LIBRARIES};${JSBSIM_WINDOWS_LINK_LIBRARIES}')
 else:
@@ -134,7 +134,8 @@ else:
     # We cannot find the JSBSim library so the Python module must be built from
     # the sources.
     if compiler.compiler_type == 'msvc':
-        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS};NDEBUG;JSBSIM_STATIC_LINK')]
+        compile_flags = ['/D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_MSVC_COMPILE_DEFINITIONS};${JSBSIM_COMPILE_DEFINITIONS}')]
+        compile_flags += cpp_compile_flag
     else:
         compile_flags = ['-D'+flag for flag in convert_CMake_list_to_Python_list('${JSBSIM_COMPILE_DEFINITIONS};NDEBUG')]
 
