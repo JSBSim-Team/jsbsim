@@ -118,6 +118,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       log << "Unknown random distribution type in sensor: " << Name
           << "\n  defaulting to UNIFORM.\n";
     }
+    string randomseed = element->FindElement("noise")->GetAttributeValue("randomseed");
+    if (!randomseed.empty())
+      generator = make_shared<RandomNumberGenerator>((unsigned int)atoi(randomseed.c_str()));
   }
 
   bind(element, fcs->GetPropertyManager().get());

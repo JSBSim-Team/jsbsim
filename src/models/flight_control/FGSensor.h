@@ -60,7 +60,7 @@ Syntax:
 <sensor name="name">
   <input> property </input>
   <lag> number </lag>
-  <noise [variation="PERCENT|ABSOLUTE"] [distribution="UNIFORM|GAUSSIAN"]> number </noise>
+  <noise [variation="PERCENT|ABSOLUTE"] [distribution="UNIFORM|GAUSSIAN"] [randomseed="number"] > number </noise>
   <quantization name="name">
     <bits> number </bits>
     <min> number </min>
