@@ -183,9 +183,9 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Element* element = el->FindElement("location");
   if (element) vXYZn = element->FindElementTripletConvertTo("IN");
   else {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::FATAL);
-    log << "\nNo location given for contact " << name << "\n";
-    throw BaseException(log.str());
+    XMLLogException err(fdmex->GetLogger(), el);
+    err << "\nNo location given for contact " << name << "\n";
+    throw err;
   }
   SetTransformType(FGForce::tCustom);
 

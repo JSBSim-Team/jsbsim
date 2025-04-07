@@ -85,17 +85,20 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
     }
     scale_element = element->FindElement("range");
-    if (!scale_element)
-      throw(string("No range supplied for aerosurface scale component"));
+    if (!scale_element) {
+      XMLLogException err(fcs->GetExec()->GetLogger(), scale_element);
+      err << "No range supplied for aerosurface scale component\n";
+      throw err;
+    }
     if (scale_element->FindElement("max") && scale_element->FindElement("min") )
     {
       OutMax = scale_element->FindElementValueAsNumber("max");
       OutMin = scale_element->FindElementValueAsNumber("min");
     } else {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), scale_element, LogLevel::FATAL);
-      log << "Maximum and minimum output values must be supplied for the "
+      XMLLogException err(fcs->GetExec()->GetLogger(), scale_element);
+      err << "Maximum and minimum output values must be supplied for the "
              "aerosurface scale component\n";
-      throw BaseException(log.str());
+      throw err;
     }
     ZeroCentered = true;
     Element* zero_centered = element->FindElement("zero_centered");
@@ -112,9 +115,9 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if (element->FindElement("table")) {
       Table = new FGTable(PropertyManager, element->FindElement("table"));
     } else {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::FATAL);
-      log << "A table must be provided for the scheduled gain component\n";
-      throw BaseException(log.str());
+      XMLLogException err(fcs->GetExec()->GetLogger(), element);
+      err << "A table must be provided for the scheduled gain component\n";
+      throw err;
     }
   }
 

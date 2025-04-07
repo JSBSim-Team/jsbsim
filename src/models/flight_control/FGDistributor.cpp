@@ -63,7 +63,10 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   if (type_string == "inclusive") Type = eInclusive;
   else if (type_string == "exclusive") Type = eExclusive;
   else {
-    throw BaseException("Not a known Distributor type, "+type_string);
+    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    err << "Distributor type should be \"inclusive\" or \"exclusive\""
+        << " but got \"" << type_string << "\" instead.\n";
+    throw err;
   }
 
   Element* case_element = element->FindElement("case");
@@ -72,10 +75,14 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
     Element* test_element = case_element->FindElement("test");
     try {
       if (test_element) current_case->SetTest(test_element, PropertyManager);
-    } catch (BaseException& e) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::FATAL);
-      log << LogFormat::RED << e.what() << LogFormat::RESET << "\n\n";
+    } catch (XMLLogException&) {
       throw;
+    } catch (LogException& e) {
+      throw XMLLogException(e, test_element);
+    } catch (const BaseException& e) {
+      XMLLogException err(fcs->GetExec()->GetLogger(), test_element);
+      err << LogFormat::RED << e.what() << LogFormat::RESET << "\n\n";
+      throw err;
     }
     Element* prop_val_element = case_element->FindElement("property");
     while (prop_val_element) {

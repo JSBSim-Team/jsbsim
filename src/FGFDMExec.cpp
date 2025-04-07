@@ -145,16 +145,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   // this is to catch errors in binding member functions to the property tree.
   try {
     Allocate();
-  }
-  catch (const string& msg) {
-    FGLogging log(Log, LogLevel::FATAL);
-    log << endl << "Caught error: " << msg << endl;
-    throw BaseException(log.str());
-  }
-  catch (const BaseException& e) {
-    FGLogging log(Log, LogLevel::FATAL);
-    log << endl << "Caught error: " << e.what() << endl;
-    throw BaseException(log.str());
+  } catch (const BaseException& e) {
+    LogException err(Log);
+    err << endl << "Caught error: " << e.what() << endl;
+    throw err;
   }
 
   trim_status = false;
@@ -767,15 +761,15 @@ bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    FGLogging log(Log, LogLevel::ERROR);
-    log << "File: " << PlanetFileName << " could not be read." << endl;
-    throw BaseException(log.str());
+    LogException err(Log);
+    err << "File: " << PlanetFileName << " could not be read." << endl;
+    throw err;
   }
 
   if (document->GetName() != "planet") {
-    FGXMLLogging log(Log, document, LogLevel::ERROR);
-    log << "File: " << PlanetFileName << " is not a planet file." << endl;
-    throw BaseException(log.str());
+    XMLLogException err(Log, document);
+    err << "File: " << PlanetFileName << " is not a planet file." << endl;
+    throw err;
   }
 
   bool result = LoadPlanet(document);
@@ -1284,9 +1278,9 @@ bool FGFDMExec::ReadChild(Element* el)
   if (location) {
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
-    FGXMLLogging log(Log, el, LogLevel::FATAL);
-    log << "No location was found for this child object!" << endl;
-    throw BaseException(log.str());
+    XMLLogException err(Log, el);
+    err << "No location was found for this child object!" << endl;
+    throw err;
   }
 
   Element* orientation = el->FindElement("orient");
@@ -1343,7 +1337,7 @@ void FGFDMExec::DoTrim(int mode)
   if (Constructing) return;
 
   if (mode < 0 || mode > JSBSim::tNone)
-    throw("Illegal trimming mode!");
+    throw TrimFailureException("Illegal trimming mode!");
 
   FGTrim trim(this, (JSBSim::TrimMode)mode);
   bool success = trim.DoTrim();

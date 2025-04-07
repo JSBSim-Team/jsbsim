@@ -360,7 +360,11 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
   case eBuss1:
   case eBuss2:
   case eLocalLinearization:
-    throw("Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!");
+    {
+      LogException err(FDMExec->GetLogger());
+      err << "Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!";
+      throw err;
+    }
   default:
     break;
   }
@@ -1035,19 +1039,19 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) { // State sanity checking
       if (fabs(VState.vPQR.Magnitude()) > 1000.0) {
-        FGLogging log(FDMExec->GetLogger(), LogLevel::FATAL);
-        log << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude() << endl;
-        throw BaseException(log.str());
+        LogException err(FDMExec->GetLogger());
+        err << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude() << "\n";
+        throw err;
       }
       if (fabs(VState.vUVW.Magnitude()) > 1.0e10) {
-        FGLogging log(FDMExec->GetLogger(), LogLevel::FATAL);
-        log << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude() << endl;
-        throw BaseException(log.str());
+        LogException err(FDMExec->GetLogger());
+        err << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude() << "\n";
+        throw err;
       }
       if (fabs(GetDistanceAGL()) > 1e10) {
-        FGLogging log(FDMExec->GetLogger(), LogLevel::FATAL);
-        log << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL() << endl;
-        throw BaseException(log.str());
+        LogException err(FDMExec->GetLogger());
+        err << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL() << "\n";
+        throw err;
       }
     }
   }
