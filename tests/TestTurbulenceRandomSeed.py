@@ -1,6 +1,7 @@
 # TestTurbulenceRandomSeed.py
 #
-# Check that turbulence and gusts end their effect when completed or cancelled.
+# Check that identical wind outputs are achieved over multiple runs with the same
+# atmosphere/randomseed.
 #
 # Copyright (c) 2025 Sean McLeod
 #
