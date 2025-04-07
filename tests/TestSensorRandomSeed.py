@@ -58,7 +58,7 @@ class TestSensorRandomSeed(JSBSimTestCase):
         # Get the sensor data with some random seed for the FGFDMExec
         sensor_data1 = self.captureSensorData(3)
         # Get the sensor data with a different random seed for the FGFDMExec
-        sensor_data2 = self.captureSensorData(5)
+        sensor_data2 = self.captureSensorData(4)
         # Check that the two sets of sensor data are equal
         for i in range(len(sensor_data1)):
             self.assertAlmostEqual(sensor_data1[i], sensor_data2[i], delta=1E-8)
