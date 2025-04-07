@@ -629,6 +629,8 @@ public:
 
   auto GetRandomGenerator(void) const { return RandomGenerator; }
 
+  int  SRand(void) const { return RandomSeed; }
+
 private:
   // Declare Log first so that it's destroyed last: the logger may be used by
   // some FGFDMExec members to log data during their destruction.
@@ -705,7 +707,6 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void SRand(int sr);
-  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   bool LoadPlanet(Element* el);

@@ -40,6 +40,7 @@ INCLUDES
 
 #include "models/FGModel.h"
 #include "math/FGMatrix33.h"
+#include <optional>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -402,11 +403,11 @@ private:
   FGColumnVector3 vBurstGust;
   FGColumnVector3 vTurbulenceNED;
 
-  unsigned int RandomSeed;
+  std::optional<unsigned int> RandomSeed;
   std::shared_ptr<RandomNumberGenerator> generator;
 
   void SetRandomSeed(int sr);
-  int  GetRandomSeed(void) const { return RandomSeed; }
+  int  GetRandomSeed(void) const;
 
   void Turbulence(double h);
   void UpDownBurst();

@@ -72,4 +72,17 @@ class TestTurbulenceRandomSeed(JSBSimTestCase):
 
         return (wn, we, wd)
 
+    def testUnassignedSeed(self):
+        # Test that if no random seed is assigned for turbulence that the seed
+        # for turbulence is the same as the FGFDMExec seed.
+        fdm = self.create_fdm()
+
+        # Set a random seed for FGFDMExec
+        exec_seed = 47
+        fdm["simulation/randomseed"] = exec_seed
+
+        wind_seed = fdm["atmosphere/randomseed"]
+
+        self.assertEqual(exec_seed, wind_seed)
+
 RunTest(TestTurbulenceRandomSeed)

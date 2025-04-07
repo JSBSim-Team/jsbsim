@@ -489,7 +489,14 @@ void FGWinds::UpDownBurst()
 void FGWinds::SetRandomSeed(int sr)
 {
   RandomSeed = sr;
-  generator = std::make_shared<RandomNumberGenerator>(RandomSeed);
+  generator = std::make_shared<RandomNumberGenerator>(*RandomSeed);
+}
+
+int  FGWinds::GetRandomSeed(void) const {
+  if (RandomSeed)
+    return *RandomSeed;
+  else
+    return FDMExec->SRand();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
