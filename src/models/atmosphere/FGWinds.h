@@ -386,6 +386,14 @@ private:
   int probability_of_exceedence_index; ///< this is bound as the severity property
   FGTable *POE_Table; ///< probability of exceedence table
 
+  // keep values from last timesteps
+  // TODO maybe use deque?
+  double xi_u_km1, nu_u_km1;
+  double xi_v_km1, xi_v_km2, nu_v_km1, nu_v_km2;
+  double xi_w_km1, xi_w_km2, nu_w_km1, nu_w_km2;
+  double xi_p_km1, nu_p_km1;
+  double xi_q_km1, xi_r_km1;
+
   double psiw;
   FGColumnVector3 vTotalWindNED;
   FGColumnVector3 vWindNED;
