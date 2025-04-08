@@ -20,32 +20,22 @@
 #
 
 import xml.etree.ElementTree as et
-from JSBSim_utils import JSBSimTestCase, CopyAircraftDef, RunTest
+from JSBSim_utils import JSBSimTestCase, FlightModel, CopyAircraftDef, RunTest
 
 
 class TestSensorRandomSeed(JSBSimTestCase):
-    def AddSensorToAircraft(self, script_path):
-        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
-        system_tag = et.SubElement(tree.getroot(), 'system')
-        system_tag.attrib['file'] = 'sensorrandomseed'
-        tree.write(self.sandbox('aircraft', aircraft_name, aircraft_name+'.xml'))
 
     def captureSensorData(self, exec_seed):
-        script_name = '737_cruise.xml'
-        script_path = self.sandbox.path_to_jsbsim_file('scripts', script_name)
-        self.AddSensorToAircraft(script_path)
+        tripod = FlightModel(self, 'tripod')
+        tripod.include_system_test_file('sensorrandomseed.xml')
+        fdm = tripod.start()
 
-        fdm = self.create_fdm()
-        fdm.set_aircraft_path('aircraft')
-        fdm.set_systems_path(self.currentdir)
-        fdm.load_script(script_path)
-
-        fdm.run_ic()
         fdm['simulation/randomseed'] = exec_seed
 
         sensor_data = []
 
-        while fdm.run():
+        for _ in range(1200):
+            fdm.run()
             sensor_data.append(fdm['aero/sensor/qbar'])
 
         return sensor_data
