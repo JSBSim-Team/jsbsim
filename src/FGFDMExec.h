@@ -625,6 +625,8 @@ public:
 
   auto GetRandomGenerator(void) const { return RandomGenerator; }
 
+  int  SRand(void) const { return RandomSeed; }
+
 private:
   unsigned int Frame;
   unsigned int IdFDM;
@@ -697,7 +699,6 @@ private:
   bool ReadChild(Element*);
   bool ReadPrologue(Element*);
   void SRand(int sr);
-  int  SRand(void) const {return RandomSeed;}
   void LoadInputs(unsigned int idx);
   void LoadPlanetConstants(void);
   bool LoadPlanet(Element* el);

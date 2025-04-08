@@ -15,6 +15,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  CheckOutputRate
                  TestAccelerometer
                  CheckDebugLvl
+                 TestTurbulenceRandomSeed
                  TestCosineGust
                  TestTurbulenceGustStop
                  TestScriptOutput
