@@ -1,0 +1,14 @@
+<system>
+    <channel name="test-dynamicpressure">
+		<sensor name="aero/sensor/qbar">
+			<input> aero/qbar-psf </input>
+			<noise variation="PERCENT" distribution="UNIFORM" randomseed="5"> 15 </noise>
+			<quantization name="aero/sensor/quantized/qbar">
+				<bits> 12 </bits>
+				<min> 0 </min>
+				<max> 400 </max>
+			</quantization>
+			<bias> 1.5 </bias>
+		</sensor>
+	</channel>
+</system>
