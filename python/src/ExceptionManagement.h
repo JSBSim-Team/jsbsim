@@ -21,7 +21,7 @@
  */
 
 #include <string>
-#include "fpectl/fpectlmodule.h"
+#include "fpectlmodule.h"
 #include "FGFDMExec.h"
 #include "GeographicLib/Constants.hpp"
 #include "math/FGMatrix33.h"
