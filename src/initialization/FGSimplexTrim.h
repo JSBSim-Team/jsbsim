@@ -52,12 +52,12 @@ private:
     }
 
     class Callback : public JSBSim::FGNelderMead::Callback
-    {   
+    {
     private:
         std::ofstream _outputFile;
         JSBSim::FGTrimmer * _trimmer;
     public:
-        Callback(std::string fileName, JSBSim::FGTrimmer * trimmer) : 
+        Callback(std::string fileName, JSBSim::FGTrimmer * trimmer) :
             _outputFile((fileName + std::string("_simplexTrim.log")).c_str()),
             _trimmer(trimmer) {
         }
@@ -66,10 +66,11 @@ private:
         }
         void eval(const std::vector<double> &v)
         {
-            _outputFile << _trimmer->eval(v) << std::endl;;
-            //std::cout << "v: ";
-            //for (int i=0;i<v.size();i++) std::cout << v[i] << " ";
-            //std::cout << std::endl;
+            _outputFile << _trimmer->eval(v) << std::endl;
+            // FGLogging log(_trimmer->getFdm()->GetLogger(), LogLevel::INFO);
+            //log << "v: ";
+            //for (int i=0;i<v.size();i++) log << v[i] << " ";
+            //log << std::endl;
         }
     };
 };

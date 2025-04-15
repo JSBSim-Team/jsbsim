@@ -16,9 +16,11 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ctime>
+
 #include "FGTrim.h"
 #include "FGSimplexTrim.h"
-#include <ctime>
+#include "input_output/FGLog.h"
 
 namespace JSBSim {
 
@@ -30,7 +32,8 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
     FGTrimmer::Constraints constraints;
 
     if (fdm->GetDebugLevel() > 0) {
-        std::cout << "\n-----Performing Simplex Based Trim --------------\n" << std::endl;
+        FGLogging log(fdm->GetLogger(), LogLevel::DEBUG);
+        log << "\n-----Performing Simplex Based Trim --------------\n";
     }
 
     // defaults
@@ -48,7 +51,7 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
     // flight conditions
     double phi = fdm->GetIC()->GetPhiRadIC();
     double theta = fdm->GetIC()->GetThetaRadIC();
-    double gd = fdm->GetInertial()->gravity();
+    double gd = fdm->GetInertial()->GetGravity().Magnitude();
 
     constraints.velocity = fdm->GetIC()->GetVtrueFpsIC();
     constraints.altitude = fdm->GetIC()->GetAltitudeASLFtIC();
@@ -104,9 +107,10 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 
     // output
     if (fdm->GetDebugLevel() > 0) {
-        trimmer->printSolution(std::cout,solver->getSolution());
-        std::cout << "\nfinal cost: " << std::scientific << std::setw(10) << trimmer->eval(solver->getSolution()) << std::endl;
-        std::cout << "\ntrim computation time: " << (time_trimDone - time_start)/double(CLOCKS_PER_SEC) << "s \n" << std::endl;
+        FGLogging log(fdm->GetLogger(), LogLevel::DEBUG);
+        trimmer->printSolution(solver->getSolution());
+        log << "\nfinal cost: " << std::scientific << std::setw(10) << trimmer->eval(solver->getSolution()) << "\n";
+        log << "\ntrim computation time: " << (time_trimDone - time_start)/double(CLOCKS_PER_SEC) << "s \n\n";
     }
 
     delete solver;

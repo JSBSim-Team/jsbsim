@@ -38,8 +38,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iomanip>
-
 #include "FGOutputTextFile.h"
 #include "models/FGAerodynamics.h"
 #include "models/FGAccelerations.h"
@@ -51,8 +49,9 @@ INCLUDES
 #include "models/FGBuoyantForces.h"
 #include "models/FGFCS.h"
 #include "models/atmosphere/FGWinds.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/string_utilities.h"
+#include "FGXMLElement.h"
+#include "string_utilities.h"
+#include "FGLog.h"
 
 using namespace std;
 
@@ -87,10 +86,11 @@ bool FGOutputTextFile::OpenFile(void)
   datafile.clear();
   datafile.open(Filename);
   if (!datafile) {
-    cerr << endl << fgred << highint << "ERROR: unable to open the file "
-         << reset << Filename.c_str() << endl
-         << fgred << highint << "       => Output to this file is disabled."
-         << reset << endl << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    log << LogFormat::RED << LogFormat::BOLD << "\nERROR: unable to open the file "
+        << LogFormat::RESET << Filename.c_str()
+        << LogFormat::RED << LogFormat::BOLD << "\n       => Output to this file is disabled.\n\n"
+        << LogFormat::RESET;
     Disable();
     return false;
   }

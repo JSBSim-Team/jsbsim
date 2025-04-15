@@ -37,14 +37,13 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <ostream>
-
 #include "FGFDMExec.h"
 #include "FGOutputType.h"
-#include "input_output/FGXMLElement.h"
-#include "input_output/FGPropertyManager.h"
+#include "FGXMLElement.h"
+#include "FGPropertyManager.h"
 #include "math/FGTemplateFunc.h"
 #include "math/FGFunctionValue.h"
+#include "FGLog.h"
 
 using namespace std;
 
@@ -133,11 +132,11 @@ bool FGOutputType::Load(Element* element)
     string property_str = property_element->GetDataLine();
     FGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
-      cerr << property_element->ReadFrom()
-           << fgred << highint << endl << "  No property by the name "
-           << property_str << " has been defined. This property will " << endl
-           << "  not be logged. You should check your configuration file."
-           << reset << endl;
+      FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
+      log << LogFormat::RED << LogFormat::BOLD << "  No property by the name "
+          << property_str << " has been defined. This property will "
+          << "not be logged. You should check your configuration file.\n"
+          << LogFormat::RESET;
     } else {
       if (property_element->HasAttribute("apply")) {
         string function_str = property_element->GetAttributeValue("apply");
@@ -145,11 +144,11 @@ bool FGOutputType::Load(Element* element)
         if (f)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {
-          cerr << property_element->ReadFrom()
-               << fgred << highint << "  No function by the name "
+          FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
+          log << LogFormat::RED << LogFormat::BOLD << "  No function by the name "
                << function_str << " has been defined. This property will "
-               << "not be logged. You should check your configuration file."
-               << reset << endl;
+               << "not be logged. You should check your configuration file.\n"
+               << LogFormat::RESET;
         }
       }
       else
@@ -255,27 +254,29 @@ void FGOutputType::Debug(int from)
     if (from == 0) { // Constructor
     }
     if (from == 2) {
-      if (SubSystems & ssSimulation)      cout << "    Simulation parameters logged" << endl;
-      if (SubSystems & ssAerosurfaces)    cout << "    Aerosurface parameters logged" << endl;
-      if (SubSystems & ssRates)           cout << "    Rate parameters logged" << endl;
-      if (SubSystems & ssVelocities)      cout << "    Velocity parameters logged" << endl;
-      if (SubSystems & ssForces)          cout << "    Force parameters logged" << endl;
-      if (SubSystems & ssMoments)         cout << "    Moments parameters logged" << endl;
-      if (SubSystems & ssAtmosphere)      cout << "    Atmosphere parameters logged" << endl;
-      if (SubSystems & ssMassProps)       cout << "    Mass parameters logged" << endl;
-      if (SubSystems & ssAeroFunctions)   cout << "    Coefficient parameters logged" << endl;
-      if (SubSystems & ssPropagate)       cout << "    Propagate parameters logged" << endl;
-      if (SubSystems & ssGroundReactions) cout << "    Ground parameters logged" << endl;
-      if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
-      if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;
-      if (!OutputParameters.empty())      cout << "    Properties logged:" << endl;
+      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      if (SubSystems & ssSimulation)      log << "    Simulation parameters logged\n";
+      if (SubSystems & ssAerosurfaces)    log << "    Aerosurface parameters logged\n";
+      if (SubSystems & ssRates)           log << "    Rate parameters logged\n";
+      if (SubSystems & ssVelocities)      log << "    Velocity parameters logged\n";
+      if (SubSystems & ssForces)          log << "    Force parameters logged\n";
+      if (SubSystems & ssMoments)         log << "    Moments parameters logged\n";
+      if (SubSystems & ssAtmosphere)      log << "    Atmosphere parameters logged\n";
+      if (SubSystems & ssMassProps)       log << "    Mass parameters logged\n";
+      if (SubSystems & ssAeroFunctions)   log << "    Coefficient parameters logged\n";
+      if (SubSystems & ssPropagate)       log << "    Propagate parameters logged\n";
+      if (SubSystems & ssGroundReactions) log << "    Ground parameters logged\n";
+      if (SubSystems & ssFCS)             log << "    FCS parameters logged\n";
+      if (SubSystems & ssPropulsion)      log << "    Propulsion parameters logged\n";
+      if (!OutputParameters.empty())      log << "    Properties logged:\n";
       for (auto param: OutputParameters)
-        cout << "      - " << param->GetName() << endl;
+        log << "      - " << param->GetName() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGOutputType" << endl;
-    if (from == 1) cout << "Destroyed:    FGOutputType" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGOutputType\n";
+    if (from == 1) log << "Destroyed:    FGOutputType\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

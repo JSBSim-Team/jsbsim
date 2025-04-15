@@ -35,12 +35,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
-
 #include "FGNozzle.h"
+#include "FGFDMExec.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -52,14 +50,14 @@ CLASS IMPLEMENTATION
 
 
 FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
-                    : FGThruster(FDMExec, nozzle_element, num)
+  : FGThruster(FDMExec, nozzle_element, num)
 {
   if (nozzle_element->FindElement("area"))
     Area = nozzle_element->FindElementValueAsNumberConvertTo("area", "FT2");
   else {
-    const string s("Fatal Error: Nozzle exit area must be given in nozzle config file.");
-    cerr << s << endl;
-    throw BaseException(s);
+    XMLLogException err(fdmex->GetLogger(), nozzle_element);
+    err << "Fatal Error: Nozzle exit area must be given in nozzle config file.\n";
+    throw err;
   }
 
   Thrust = 0;
@@ -133,13 +131,15 @@ void FGNozzle::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      Nozzle Name: " << Name << endl;
-      cout << "      Nozzle Exit Area = " << Area << endl;
+      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      log << "      Nozzle Name: " << Name << "\n";
+      log << "      Nozzle Exit Area = " << Area << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGNozzle" << endl;
-    if (from == 1) cout << "Destroyed:    FGNozzle" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGNozzle\n";
+    if (from == 1) log << "Destroyed:    FGNozzle\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

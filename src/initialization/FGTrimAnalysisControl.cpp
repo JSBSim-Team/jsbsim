@@ -51,11 +51,12 @@ SENTRY
 #include "models/FGAircraft.h"
 #include "models/FGPropulsion.h"
 #include "models/FGAerodynamics.h"
+#include "models/FGAccelerations.h"
+#include "models/FGAuxiliary.h"
+#include "models/FGFCS.h"
+#include "input_output/FGLog.h"
 
 namespace JSBSim {
-
-IDENT(IdSrc,"$Id: FGTrimAnalysisControl.cpp,v 1.7 2014/01/13 10:46:00 ehofman Exp $");
-IDENT(IdHdr,ID_TRIMANALYSISCONTROL);
 
 /*****************************************************************************/
 
@@ -182,8 +183,10 @@ FGTrimAnalysisControl::FGTrimAnalysisControl(FGFDMExec* fdex, FGInitialCondition
     break;
   }
 
-//  if (debug_lvl > 0)
-//    cout << "FGTrimAnalysisControl created: "<< control_name << endl;
+//  if (debug_lvl > 0) {
+//    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+//    log << "FGTrimAnalysisControl created: "<< control_name << "\n";
+//  }
 
   Debug(0);
 }
@@ -199,14 +202,14 @@ FGTrimAnalysisControl::~FGTrimAnalysisControl(void)
 
 void FGTrimAnalysisControl::getState(void) {
   switch(state) {
-  case taUdot: state_value=fdmex->GetPropagate()->GetUVWdot(1)-state_target; break;
-  case taVdot: state_value=fdmex->GetPropagate()->GetUVWdot(2)-state_target; break;
-  case taWdot: state_value=fdmex->GetPropagate()->GetUVWdot(3)-state_target; break;
-  case taPdot: state_value=fdmex->GetPropagate()->GetPQRdot(1)-state_target; break;
-  case taQdot: state_value=fdmex->GetPropagate()->GetPQRdot(2)-state_target;break;
-  case taRdot: state_value=fdmex->GetPropagate()->GetPQRdot(3)-state_target; break;
+  case taUdot: state_value=fdmex->GetAccelerations()->GetUVWdot(1)-state_target; break;
+  case taVdot: state_value=fdmex->GetAccelerations()->GetUVWdot(2)-state_target; break;
+  case taWdot: state_value=fdmex->GetAccelerations()->GetUVWdot(3)-state_target; break;
+  case taPdot: state_value=fdmex->GetAccelerations()->GetPQRdot(1)-state_target; break;
+  case taQdot: state_value=fdmex->GetAccelerations()->GetPQRdot(2)-state_target;break;
+  case taRdot: state_value=fdmex->GetAccelerations()->GetPQRdot(3)-state_target; break;
   case taHmgt: state_value=computeHmgt()-state_target; break;
-  case taNlf:  state_value=fdmex->GetAircraft()->GetNlf()-state_target; break;
+  case taNlf:  state_value=fdmex->GetAuxiliary()->GetNlf()-state_target; break;
   case taAll: break;
   }
 }
@@ -305,7 +308,9 @@ void FGTrimAnalysisControl::SetThetaOnGround(double ff) {
   if((ref < 0) && (center >= 0)) {
     ref=center;
   }
-  cout << "SetThetaOnGround ref gear: " << ref << endl;
+
+  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  log << "SetThetaOnGround ref gear: " << ref << "\n";
   if(ref >= 0) {
     double sp = fdmex->GetPropagate()->GetSinEuler(ePhi);
     double cp = fdmex->GetPropagate()->GetCosEuler(ePhi);
@@ -317,10 +322,10 @@ void FGTrimAnalysisControl::SetThetaOnGround(double ff) {
                     lz*cp*cos(ff);
 
     fgic->SetAltitudeAGLFtIC(hagl);
-    cout << "SetThetaOnGround new alt: " << hagl << endl;
+    log << "SetThetaOnGround new alt: " << hagl << "\n";
   }
   fgic->SetThetaRadIC(ff);
-  cout << "SetThetaOnGround new theta: " << ff << endl;
+  log << "SetThetaOnGround new theta: " << ff << "\n";
 }
 
 /*****************************************************************************/
@@ -375,17 +380,20 @@ bool FGTrimAnalysisControl::initTheta(void) {
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
-    //cout << endl << theta << "  " << zDiff << endl;
-    //cout << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << endl;
-    //cout << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << endl;
+    //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    //log << "\n" << theta << "  " << zDiff << "\n";
+    //log << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << "\n";
+    //log << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << "\n";
     if(fabs(zDiff ) < 0.1)
         level=true;
     i++;
   }
-  //cout << i << endl;
+  //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  //log << i << "\n";
   if (debug_lvl > 0) {
-      cout << "    Initial Theta: " << fdmex->GetPropagate()->GetEuler(eTht)*radtodeg << endl;
-      cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
+      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      log << "    Initial Theta: " << fdmex->GetPropagate()->GetEuler(eTht)*radtodeg << "\n";
+      log << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward\n";
   }
   control_min=(theta+5)*degtorad;
   control_max=(theta-5)*degtorad;
@@ -439,9 +447,10 @@ void FGTrimAnalysisControl::setThrottlesPct(void) {
   for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++) {
       tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
       tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-      //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
+      //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      //log << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
-      //cout << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << endl;
+      //log << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << "\n";
       fdmex->SuspendIntegration();
       fdmex->Initialize(fgic);
       fdmex->Run();
@@ -482,8 +491,9 @@ void FGTrimAnalysisControl::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGTrimAnalysisControl" << endl;
-    if (from == 1) cout << "Destroyed:    FGTrimAnalysisControl" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGTrimAnalysisControl\n";
+    if (from == 1) log << "Destroyed:    FGTrimAnalysisControl\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -493,8 +503,6 @@ void FGTrimAnalysisControl::Debug(int from)
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
     }
   }
 }

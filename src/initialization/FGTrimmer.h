@@ -44,8 +44,8 @@ public:
     FGTrimmer(FGFDMExec * fdm, Constraints * constraints);
     ~FGTrimmer();
     std::vector<double> constrain(const std::vector<double> & v);
-    void printSolution(std::ostream & stream, const std::vector<double> & v);
-    void printState(std::ostream & stream);
+    void printSolution(const std::vector<double> & v);
+    void printState();
     double compute_cost();
     double eval(const std::vector<double> & v);
     static void limit(double min, double max, double &val)
@@ -54,6 +54,7 @@ public:
         else if (val>max) val=max;
     }
     void setFdm(FGFDMExec * fdm) {m_fdm = fdm; }
+    FGFDMExec* getFdm() { return m_fdm; }
 private:
     FGFDMExec * m_fdm;
     Constraints * m_constraints;

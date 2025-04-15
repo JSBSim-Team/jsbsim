@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include "simgear/misc/stdint.hxx"
 #include "FGInitialCondition.h"
+#include "input_output/FGLog.h"
 
 namespace JSBSim
 {
@@ -76,7 +77,7 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
     double cAlpha = cos(alpha);
 
     // turn coordination constraint, lewis pg. 190
-    double gd = m_fdm->GetInertial()->gravity();
+    double gd = m_fdm->GetInertial()->GetGravity().Magnitude();
     double gc = m_constraints->yawRate*vt/gd;
     double a = 1 - gc*tAlpha*sBeta;
     double b = sGam/cBeta;
@@ -121,7 +122,7 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
     m_fdm->GetIC()->ResetIC(u, v, w,
             p, q, r,
             alpha, beta,
-            phi, theta, psi, 
+            phi, theta, psi,
             lat, lon, altitude,
             gamma);
 
@@ -143,7 +144,7 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
     }
 
     // initialize
-    m_fdm->Initialize(m_fdm->GetIC());
+    m_fdm->Initialize(m_fdm->GetIC().get());
     for (unsigned int i=0; i<m_fdm->GetPropulsion()->GetNumEngines(); i++) {
         m_fdm->GetPropulsion()->GetEngine(i)->InitRunning();
     }
@@ -164,13 +165,15 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
         double dcost = fabs(costNew - cost);
         if (dcost < std::numeric_limits<double>::epsilon()) {
             if(m_fdm->GetDebugLevel() > 1) {
-                std::cout << "cost convergd, i: " << i << std::endl;
+                FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+                log << "cost convergd, i: " << i << std::endl;
             }
             break;
         }
         if (i > 1000) {
             if(m_fdm->GetDebugLevel() > 1) {
-                std::cout << "cost failed to converge, dcost: " 
+                FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+                log << "cost failed to converge, dcost: "
                     << std::scientific
                     << dcost << std::endl;
             }
@@ -185,7 +188,7 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
     return data;
 }
 
-void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> & v)
+void FGTrimmer::printSolution(const std::vector<double> & v)
 {
     eval(v);
 
@@ -212,7 +215,8 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
     eval(v);
 
     // state
-    stream << std::setw(10)
+    FGLogging log(m_fdm->GetLogger(), LogLevel::INFO);
+    log << std::setw(10)
 
               // aircraft state
               << "\naircraft state"
@@ -274,14 +278,14 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
               << std::scientific << std::setw(10);
 
               for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumTanks();i++) {
-                  stream 
-                    << "\n\ttank " << i << ": fuel (lbm)\t\t\t:\t" 
+                  log
+                    << "\n\ttank " << i << ": fuel (lbm)\t\t\t:\t"
                     << m_fdm->GetPropulsion()->GetTank(i)->GetContents();
               }
 
               for (unsigned int i=0;i<m_fdm->GetPropulsion()->GetNumEngines();i++) {
                   m_fdm->GetPropulsion()->GetEngine(i)->CalcFuelNeed();
-                  stream
+                  log
                     << "\n\tengine " << i
                     << "\n\t\tfuel flow rate (lbm/s)\t\t:\t" << m_fdm->GetPropulsion()->GetEngine(i)->GetFuelFlowRate()
                     << "\n\t\tfuel flow rate (gph)\t\t:\t" << m_fdm->GetPropulsion()->GetEngine(i)->GetFuelFlowRateGPH()
@@ -291,10 +295,11 @@ void FGTrimmer::printSolution(std::ostream & stream, const std::vector<double> &
               }
 }
 
-void FGTrimmer::printState(std::ostream & stream)
+void FGTrimmer::printState()
 {
     // state
-    stream << std::setw(10)
+    FGLogging log(m_fdm->GetLogger(), LogLevel::INFO);
+    log << std::setw(10)
 
               // interval method comparison
               //<< "\n\ninterval method comparison"
@@ -354,7 +359,8 @@ double FGTrimmer::compute_cost()
     double dr = m_fdm->GetAccelerations()->GetPQRdot(3);
 
         if(m_fdm->GetDebugLevel() > 1) {
-            std::cout
+            FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+            log
                 << "dvt: " << dvt
                 << "\tdalpha: " << dalpha
                 << "\tdbeta: " << dbeta

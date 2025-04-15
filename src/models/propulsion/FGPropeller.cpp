@@ -35,12 +35,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <sstream>
-
 #include "FGFDMExec.h"
 #include "FGPropeller.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -109,14 +107,19 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       } else if (name == "CP_MACH") {
         CpMach = new FGTable(PropertyManager, table_element);
       } else {
-        cerr << "Unknown table type: " << name << " in propeller definition." << endl;
+        FGXMLLogging log(fdmex->GetLogger(), table_element, LogLevel::ERROR);
+        log << "Unknown table type: " << name << " in propeller definition.\n";
       }
-    } catch (std::string& str) {
-      throw("Error loading propeller table:" + name + ". " + str);
+    } catch (BaseException& e) {
+      XMLLogException err(fdmex->GetLogger(), table_element);
+      err << "Error loading propeller table:" << name << ". " << e.what() << "\n";
+      throw err;
     }
   }
-  if( (cPower == 0) || (cThrust == 0)){
-      cerr << "Propeller configuration must contain C_THRUST and C_POWER tables!" << endl;
+  if( (cPower == nullptr) || (cThrust == nullptr)){
+    XMLLogException err(fdmex->GetLogger(), prop_element);
+    err << "Propeller configuration must contain C_THRUST and C_POWER tables!\n";
+    throw err;
   }
 
   local_element = prop_element->GetParent()->FindElement("sense");
@@ -129,7 +132,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     P_Factor = local_element->GetDataAsNumber();
   }
   if (P_Factor < 0) {
-    cerr << "P-Factor value in propeller configuration file must be greater than zero" << endl;
+    XMLLogException err(fdmex->GetLogger(), local_element);
+    err << "P-Factor value in propeller configuration file must be greater than zero\n";
+    throw err;
   }
   if (prop_element->FindElement("ct_factor"))
     SetCtFactor( prop_element->FindElementValueAsNumber("ct_factor") );
@@ -249,12 +254,12 @@ double FGPropeller::Calculate(double EnginePower)
   // Since Thrust and Vel can both be negative we need to adjust this formula
   // To handle sign (direction) separately from magnitude.
   double Vel2sum = Vel*abs(Vel) + 2.0*Thrust/(rho*Area);
-  
+
   if( Vel2sum > 0.0)
     Vinduced = 0.5 * (-Vel + sqrt(Vel2sum));
   else
     Vinduced = 0.5 * (-Vel - sqrt(-Vel2sum));
-    
+
   // P-factor is simulated by a shift of the acting location of the thrust.
   // The shift is a multiple of the angle between the propeller shaft axis
   // and the relative wind that goes through the propeller disk.
@@ -359,7 +364,7 @@ double FGPropeller::GetPowerRequired(void)
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
 
   double RPS = RPM / 60.0;
-  double local_RPS = RPS < 0.01 ? 0.01 : RPS; 
+  double local_RPS = RPS < 0.01 ? 0.01 : RPS;
 
   PowerRequired = cPReq*local_RPS*local_RPS*local_RPS*D5*in.Density;
 
@@ -439,39 +444,22 @@ void FGPropeller::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "\n    Propeller Name: " << Name << endl;
-      cout << "      IXX = " << Ixx << endl;
-      cout << "      Diameter = " << Diameter << " ft." << endl;
-      cout << "      Number of Blades  = " << numBlades << endl;
-      cout << "      Gear Ratio  = " << GearRatio << endl;
-      cout << "      Minimum Pitch  = " << MinPitch << endl;
-      cout << "      Maximum Pitch  = " << MaxPitch << endl;
-      cout << "      Minimum RPM  = " << MinRPM << endl;
-      cout << "      Maximum RPM  = " << MaxRPM << endl;
-// Tables are being printed elsewhere...
-//      cout << "      Thrust Coefficient: " <<  endl;
-//      cThrust->Print();
-//      cout << "      Power Coefficient: " <<  endl;
-//      cPower->Print();
-//      cout << "      Mach Thrust Coefficient: " <<  endl;
-//      if(CtMach)
-//      {
-//          CtMach->Print();
-//      } else {
-//          cout << "        NONE" <<  endl;
-//      }
-//      cout << "      Mach Power Coefficient: " <<  endl;
-//      if(CpMach)
-//      {
-//          CpMach->Print();
-//      } else {
-//          cout << "        NONE" <<  endl;
-//      }
+      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      log << "\n    Propeller Name: " << Name << "\n";
+      log << "      IXX = " << Ixx << "\n";
+      log << "      Diameter = " << Diameter << " ft." << "\n";
+      log << "      Number of Blades  = " << numBlades << "\n";
+      log << "      Gear Ratio  = " << GearRatio << "\n";
+      log << "      Minimum Pitch  = " << MinPitch << "\n";
+      log << "      Maximum Pitch  = " << MaxPitch << "\n";
+      log << "      Minimum RPM  = " << MinRPM << "\n";
+      log << "      Maximum RPM  = " << MaxRPM << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGPropeller" << endl;
-    if (from == 1) cout << "Destroyed:    FGPropeller" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGPropeller\n";
+    if (from == 1) log << "Destroyed:    FGPropeller\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
