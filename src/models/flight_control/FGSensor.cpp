@@ -105,7 +105,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       NoiseType = ePercent;
       FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
       log << "Unknown noise type in sensor: " << Name
-          << "\n  defaulting to PERCENT.\n";
+        << "\n  defaulting to PERCENT.\n";
     }
     string distribution = element->FindElement("noise")->GetAttributeValue("distribution");
     if (distribution == "UNIFORM") {
@@ -116,11 +116,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       DistributionType = eUniform;
       FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
       log << "Unknown random distribution type in sensor: " << Name
-          << "\n  defaulting to UNIFORM.\n";
+        << "\n  defaulting to UNIFORM.\n";
     }
-    string randomseed = element->FindElement("noise")->GetAttributeValue("randomseed");
-    if (!randomseed.empty())
-      generator = make_shared<RandomNumberGenerator>((unsigned int)atoi(randomseed.c_str()));
+    noise_property = element->GetAttributeValue("name");
   }
 
   bind(element, fcs->GetPropertyManager().get());
@@ -282,6 +280,38 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
     }
   }
 
+  if (!noise_property.empty()) {
+    if (noise_property.find("/") == string::npos) { // not found
+      string nprop = "fcs/" + PropertyManager->mkPropertyName(noise_property, true) + "/randomseed";
+      FGPropertyNode* node = PropertyManager->GetNode(nprop, true);
+      if (node->isTied()) {
+        FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::FATAL);
+        log << "Property " << tmp << " has already been successfully bound (late).\n";
+        throw BaseException(log.str());
+      }
+      else
+        PropertyManager->Tie(nprop, this, &FGSensor::GetNoiseRandomSeed, &FGSensor::SetNoiseRandomSeed);
+    }
+  }
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// User is supplying a random seed specifically for this sensor to override the
+// random seed used by FGFDMExec.
+
+void FGSensor::SetNoiseRandomSeed(int sr)
+{
+  RandomSeed = sr;
+  generator = std::make_shared<RandomNumberGenerator>(*RandomSeed);
+}
+
+int FGSensor::GetNoiseRandomSeed(void) const
+{
+  if (RandomSeed)
+    return *RandomSeed;
+  else
+    return fcs->GetExec()->SRand();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
