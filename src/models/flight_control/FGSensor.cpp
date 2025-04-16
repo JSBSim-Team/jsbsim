@@ -285,9 +285,9 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
       string nprop = "fcs/" + PropertyManager->mkPropertyName(noise_property, true) + "/randomseed";
       FGPropertyNode* node = PropertyManager->GetNode(nprop, true);
       if (node->isTied()) {
-        FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::FATAL);
-        log << "Property " << tmp << " has already been successfully bound (late).\n";
-        throw BaseException(log.str());
+        XMLLogException err(fcs->GetExec()->GetLogger(), el);
+        err << "Property " << tmp << " has already been successfully bound (late).\n";
+        throw err;
       }
       else
         PropertyManager->Tie(nprop, this, &FGSensor::GetNoiseRandomSeed, &FGSensor::SetNoiseRandomSeed);
