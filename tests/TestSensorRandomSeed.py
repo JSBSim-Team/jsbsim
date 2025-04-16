@@ -31,7 +31,7 @@ class TestSensorRandomSeed(JSBSimTestCase):
         fdm = tripod.start()
 
         fdm['simulation/randomseed'] = exec_seed
-        fdm['fcs/aero/sensor/qbar/noise/randomseed'] = 5
+        fdm['fcs/qbarsensornoise/randomseed'] = 5
 
         sensor_data = []
 

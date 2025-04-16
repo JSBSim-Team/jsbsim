@@ -118,7 +118,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       log << "Unknown random distribution type in sensor: " << Name
         << "\n  defaulting to UNIFORM.\n";
     }
-    noise_property = element->GetAttributeValue("name");
+    noise_property = element->FindElement("noise")->GetAttributeValue("name");
   }
 
   bind(element, fcs->GetPropertyManager().get());
