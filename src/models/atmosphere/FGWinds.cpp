@@ -133,6 +133,12 @@ bool FGWinds::InitModel(void)
   oneMinusCosineGust.gustProfile.Running = false;
   oneMinusCosineGust.gustProfile.elapsedTime = 0.0;
 
+  xi_u_km1 = nu_u_km1 = 0;
+  xi_v_km1 = xi_v_km2 = nu_v_km1 = nu_v_km2 = 0;
+  xi_w_km1 = xi_w_km2 = nu_w_km1 = nu_w_km2 = 0;
+  xi_p_km1 = nu_p_km1 = 0;
+  xi_q_km1 = xi_r_km1 = 0;
+
   return true;
 }
 
@@ -143,7 +149,10 @@ bool FGWinds::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  if (turbType != ttNone) Turbulence(in.AltitudeASL);
+  if (turbType != ttNone) 
+    Turbulence(in.AltitudeASL);
+  else
+    vTurbulenceNED.InitMatrix();
   if (oneMinusCosineGust.gustProfile.Running) CosineGust();
 
   vTotalWindNED = vWindNED + vGustNED + vCosineGust + vTurbulenceNED;
@@ -279,16 +288,6 @@ void FGWinds::Turbulence(double h)
       L_u = L_w = 1750.; //  MIL-F-8785c, Sec. 3.7.2.1, p. 48
       sig_u = sig_w = POE_Table->GetValue(probability_of_exceedence_index, h);
     }
-
-    // keep values from last timesteps
-    // TODO maybe use deque?
-    static double
-      xi_u_km1 = 0, nu_u_km1 = 0,
-      xi_v_km1 = 0, xi_v_km2 = 0, nu_v_km1 = 0, nu_v_km2 = 0,
-      xi_w_km1 = 0, xi_w_km2 = 0, nu_w_km1 = 0, nu_w_km2 = 0,
-      xi_p_km1 = 0, nu_p_km1 = 0,
-      xi_q_km1 = 0, xi_r_km1 = 0;
-
 
     double
       T_V = in.totalDeltaT, // for compatibility of nomenclature
@@ -486,6 +485,24 @@ void FGWinds::UpDownBurst()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// User is supplying a wind specific random seed to override the random seed
+// used by FGFDMExec. So initialise a new random number generator with this
+// random seed rather than referencing the FGFDMExec random number generator.
+
+void FGWinds::SetRandomSeed(int sr)
+{
+  RandomSeed = sr;
+  generator = std::make_shared<RandomNumberGenerator>(*RandomSeed);
+}
+
+int  FGWinds::GetRandomSeed(void) const {
+  if (RandomSeed)
+    return *RandomSeed;
+  else
+    return FDMExec->SRand();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGWinds::bind(void)
 {
@@ -565,6 +582,8 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/total-wind-east-fps",  this, eEast,  (PMF)&FGWinds::GetTotalWindNED);
   PropertyManager->Tie("atmosphere/total-wind-down-fps",  this, eDown,  (PMF)&FGWinds::GetTotalWindNED);
 
+  // Allow user to specify a separate random seed independent of the FDMExec random seed
+  PropertyManager->Tie("atmosphere/randomseed", this, (PMFt)&FGWinds::GetRandomSeed, &FGWinds::SetRandomSeed);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

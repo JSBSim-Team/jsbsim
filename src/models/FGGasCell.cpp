@@ -84,9 +84,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
-    log << "\nFatal Error: No location found for this gas cell.\n";
-    throw BaseException(log.str());
+    XMLLogException err(exec->GetLogger(), el);
+    err << "\nFatal Error: No location found for this gas cell.\n";
+    throw err;
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -137,9 +137,9 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
-    log << "\nGas cell shape must be given.\n";
-    throw BaseException(log.str());
+    XMLLogException err(exec->GetLogger(), el);
+    err << "\nGas cell shape must be given.\n";
+    throw err;
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
@@ -519,9 +519,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
   if (element) {
     vXYZ = element->FindElementTripletConvertTo("IN");
   } else {
-    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
-    log << "\nFatal Error: No location found for this ballonet.\n";
-    throw BaseException(log.str());
+    XMLLogException err(exec->GetLogger(), el);
+    err << "\nFatal Error: No location found for this ballonet.\n";
+    throw err;
   }
   if ((el->FindElement("x_radius") || el->FindElement("x_width")) &&
       (el->FindElement("y_radius") || el->FindElement("y_width")) &&
@@ -572,9 +572,9 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
          Xwidth * Ywidth * Zwidth);
     }
   } else {
-    FGXMLLogging log(exec->GetLogger(), el, LogLevel::FATAL);
-    log << "\nFatal Error: Ballonet shape must be given.\n";
-    throw BaseException(log.str());
+    XMLLogException err(exec->GetLogger(), el);
+    err << "\nFatal Error: Ballonet shape must be given.\n";
+    throw err;
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
