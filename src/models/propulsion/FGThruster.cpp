@@ -35,13 +35,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <iostream>
-#include <sstream>
-
 #include "FGFDMExec.h"
 #include "input_output/FGPropertyManager.h"
 #include "FGThruster.h"
 #include "input_output/FGXMLElement.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -72,7 +70,11 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
   element = thruster_element->FindElement("location");
   if (element)  location = element->FindElementTripletConvertTo("IN");
-  else          cerr << fgred << "      No thruster location found." << reset << endl;
+  else {
+    FGXMLLogging log(FDMExec->GetLogger(), thruster_element, LogLevel::ERROR);
+    log << LogFormat::RED << "      No thruster location found."
+        << LogFormat::RESET << "\n";
+  }
 
   SetLocation(location);
 
@@ -196,8 +198,9 @@ void FGThruster::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGThruster" << endl;
-    if (from == 1) cout << "Destroyed:    FGThruster" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGThruster\n";
+    if (from == 1) log << "Destroyed:    FGThruster\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

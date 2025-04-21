@@ -38,6 +38,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInputType.h"
+#include "FGLog.h"
+#include "FGFDMExec.h"
 
 using namespace std;
 
@@ -140,8 +142,9 @@ void FGInputType::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGInputType" << endl;
-    if (from == 1) cout << "Destroyed:    FGInputType" << endl;
+    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGInputType\n";
+    if (from == 1) log << "Destroyed:    FGInputType\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

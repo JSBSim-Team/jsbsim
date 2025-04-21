@@ -42,6 +42,7 @@ moments due to the difference between the point of application and the cg.
 #include "FGForce.h"
 #include "FGFDMExec.h"
 #include "models/FGAuxiliary.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -108,9 +109,9 @@ const FGMatrix33& FGForce::Transform(void) const
     return mT;
   default:
     {
-      const string s("Unrecognized tranform requested from FGForce::Transform()");
-      cout << s << endl;
-      throw BaseException(s);
+      LogException err(fdmex->GetLogger());
+      err << "Unrecognized tranform requested from FGForce::Transform()\n";
+      throw err;
     }
   }
 }
@@ -181,12 +182,12 @@ void FGForce::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGForce" << endl;
-    if (from == 1) cout << "Destroyed:    FGForce" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGForce\n";
+    if (from == 1) log << "Destroyed:    FGForce\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

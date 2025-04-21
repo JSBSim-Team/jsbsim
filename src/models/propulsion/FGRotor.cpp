@@ -43,18 +43,13 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <string>
-#include <sstream>
-
 #include "FGRotor.h"
 #include "models/FGMassBalance.h"
 #include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
 #include "input_output/FGXMLElement.h"
 #include "input_output/string_utilities.h"
+#include "input_output/FGLog.h"
 
-using std::cerr;
-using std::cout;
-using std::endl;
 using std::string;
 using std::ostringstream;
 
@@ -125,14 +120,16 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   if (thruster_element) {
     location = thruster_element->FindElementTripletConvertTo("IN");
   } else {
-    cerr << "No thruster location found." << endl;
+    FGXMLLogging log(exec->GetLogger(), rotor_element, LogLevel::ERROR);
+    log << "No thruster location found.\n";
   }
 
   thruster_element = rotor_element->GetParent()->FindElement("orient");
   if (thruster_element) {
     orientation = thruster_element->FindElementTripletConvertTo("RAD");
   } else {
-    cerr << "No thruster orientation found." << endl;
+    FGXMLLogging log(exec->GetLogger(), rotor_element, LogLevel::ERROR);
+    log << "No thruster orientation found.\n";
   }
 
   SetLocation(location);
@@ -141,7 +138,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 
   // wire controls
   ControlMap = eMainCtrl;
-  if (rotor_element->FindElement("controlmap")) {
+  Element* controlmap_el = rotor_element->FindElement("controlmap");
+  if (controlmap_el) {
     string cm = rotor_element->FindElementValue("controlmap");
     cm = to_upper(cm);
     if (cm == "TAIL") {
@@ -149,12 +147,14 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     } else if (cm == "TANDEM") {
       ControlMap = eTandemCtrl;
     } else {
-      cerr << "# found unknown controlmap: '" << cm << "' using main rotor config."  << endl;
+      FGXMLLogging log(exec->GetLogger(), controlmap_el, LogLevel::ERROR);
+      log << "# found unknown controlmap: '" << cm << "' using main rotor config.\n";
     }
   }
 
   // ExternalRPM -- is the RPM dictated ?
-  if (rotor_element->FindElement("ExternalRPM")) {
+  Element* extrpm_el = rotor_element->FindElement("ExternalRPM");
+  if (extrpm_el) {
     ExternalRPM = 1;
     SourceGearRatio = 1.0;
     RPMdefinition = (int) rotor_element->FindElementValueAsNumber("ExternalRPM");
@@ -170,7 +170,9 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
       }
     }
     if (RPMdefinition != rdef) {
-      cerr << "# discarded given RPM source (" << rdef << ") and switched to external control (-1)." << endl;
+      FGXMLLogging log(exec->GetLogger(), extrpm_el, LogLevel::ERROR);
+      log << "# discarded given RPM source (" << rdef
+          << ") and switched to external control (-1).\n";
     }
   }
 
@@ -249,8 +251,9 @@ double FGRotor::ConfigValueConv( Element* el, const string& ename, double defaul
     }
   } else {
     if (tell) {
-      cerr << pname << ": missing element '" << ename <<
-                       "' using estimated value: " << default_val << endl;
+      FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::ERROR);
+      log << pname << ": missing element '" << ename
+          << "' using estimated value: " << default_val << "\n";
     }
   }
 
@@ -771,13 +774,15 @@ bool FGRotor::bindmodel(FGPropertyManager* PropertyManager)
       property_name = ipn + "/rotor-rpm";
       ExtRPMsource = PropertyManager->GetNode(property_name, false);
       if (! ExtRPMsource) {
-        cerr << "# Warning: Engine number " << EngineNum << "." << endl;
-        cerr << "# No 'rotor-rpm' property found for engine " << RPMdefinition << "." << endl;
-        cerr << "# Please check order of engine definitons."  << endl;
+        FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+        log << "# Warning: Engine number " << EngineNum << ".\n";
+        log << "# No 'rotor-rpm' property found for engine " << RPMdefinition << ".\n";
+        log << "# Please check order of engine definitons.\n";
       }
     } else {
-      cerr << "# Engine number " << EngineNum;
-      cerr << ", given ExternalRPM value '" << RPMdefinition << "' unhandled."  << endl;
+      FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+      log << "# Engine number " << EngineNum;
+      log << ", given ExternalRPM value '" << RPMdefinition << "' unhandled.\n";
     }
   }
 
@@ -837,50 +842,52 @@ void FGRotor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "\n    Rotor Name: " << Name << endl;
-      cout << "      Diameter = " << 2.0 * Radius << " ft." << endl;
-      cout << "      Number of Blades = " << BladeNum << endl;
-      cout << "      Gear Ratio = " << GearRatio << endl;
-      cout << "      Sense = " << Sense << endl;
-      cout << "      Nominal RPM = " << NominalRPM << endl;
-      cout << "      Minimal RPM = " << MinimalRPM << endl;
-      cout << "      Maximal RPM = " << MaximalRPM << endl;
+      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      log << "\n    Rotor Name: " << Name << "\n";
+      log << "      Diameter = " << 2.0 * Radius << " ft." << "\n";
+      log << "      Number of Blades = " << BladeNum << "\n";
+      log << "      Gear Ratio = " << GearRatio << "\n";
+      log << "      Sense = " << Sense << "\n";
+      log << "      Nominal RPM = " << NominalRPM << "\n";
+      log << "      Minimal RPM = " << MinimalRPM << "\n";
+      log << "      Maximal RPM = " << MaximalRPM << "\n";
 
       if (ExternalRPM) {
         if (RPMdefinition == -1) {
-          cout << "      RPM is controlled externally" << endl;
+          log << "      RPM is controlled externally\n";
         } else {
-          cout << "      RPM source set to thruster " << RPMdefinition << endl;
+          log << "      RPM source set to thruster " << RPMdefinition << "\n";
         }
       }
 
-      cout << "      Blade Chord = " << BladeChord << endl;
-      cout << "      Lift Curve Slope = " << LiftCurveSlope << endl;
-      cout << "      Blade Twist = " << BladeTwist << endl;
-      cout << "      Hinge Offset = " << HingeOffset << endl;
-      cout << "      Blade Flapping Moment = " << BladeFlappingMoment << endl;
-      cout << "      Blade Mass Moment = " << BladeMassMoment << endl;
-      cout << "      Polar Moment = " << PolarMoment << endl;
-      cout << "      Inflow Lag = " << InflowLag << endl;
-      cout << "      Tip Loss = " << TipLossB << endl;
-      cout << "      Lock Number = " << LockNumberByRho * 0.002356 << " (SL)" << endl;
-      cout << "      Solidity = " << Solidity << endl;
-      cout << "      Max Brake Power = " << MaxBrakePower/hptoftlbssec << " HP" << endl;
-      cout << "      Gear Loss = " << GearLoss/hptoftlbssec << " HP" << endl;
-      cout << "      Gear Moment = " << GearMoment << endl;
+      log << "      Blade Chord = " << BladeChord << "\n";
+      log << "      Lift Curve Slope = " << LiftCurveSlope << "\n";
+      log << "      Blade Twist = " << BladeTwist << "\n";
+      log << "      Hinge Offset = " << HingeOffset << "\n";
+      log << "      Blade Flapping Moment = " << BladeFlappingMoment << "\n";
+      log << "      Blade Mass Moment = " << BladeMassMoment << "\n";
+      log << "      Polar Moment = " << PolarMoment << "\n";
+      log << "      Inflow Lag = " << InflowLag << "\n";
+      log << "      Tip Loss = " << TipLossB << "\n";
+      log << "      Lock Number = " << LockNumberByRho * 0.002356 << " (SL)\n";
+      log << "      Solidity = " << Solidity << "\n";
+      log << "      Max Brake Power = " << MaxBrakePower/hptoftlbssec << " HP\n";
+      log << "      Gear Loss = " << GearLoss/hptoftlbssec << " HP\n";
+      log << "      Gear Moment = " << GearMoment << "\n";
 
       switch (ControlMap) {
         case eTailCtrl:    ControlMapName = "Tail Rotor";   break;
         case eTandemCtrl:  ControlMapName = "Tandem Rotor"; break;
         default:           ControlMapName = "Main Rotor";
       }
-      cout << "      Control Mapping = " << ControlMapName << endl;
+      log << "      Control Mapping = " << ControlMapName << "\n";
 
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGRotor" << endl;
-    if (from == 1) cout << "Destroyed:    FGRotor" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGRotor\n";
+    if (from == 1) log << "Destroyed:    FGRotor\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

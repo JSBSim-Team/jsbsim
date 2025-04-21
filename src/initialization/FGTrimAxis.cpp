@@ -39,6 +39,7 @@ INCLUDES
 #include <string>
 #include <cstdlib>
 #include <iomanip>
+
 #include "FGFDMExec.h"
 #include "models/FGAtmosphere.h"
 #include "FGInitialCondition.h"
@@ -51,6 +52,7 @@ INCLUDES
 #include "models/FGGroundReactions.h"
 #include "models/FGPropagate.h"
 #include "models/FGAccelerations.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -247,7 +249,8 @@ void FGTrimAxis::Run(void) {
   double last_state_value;
   int i;
   setControl();
-  //cout << "FGTrimAxis::Run: " << control_value << endl;
+  //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  //log << "FGTrimAxis::Run: " << control_value << "\n";
   i=0;
   bool stable=false;
   while(!stable) {
@@ -289,24 +292,17 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-  // Save original cout format characteristics
-  std::ios_base::fmtflags originalFormat = cout.flags();
-  std::streamsize originalPrecision = cout.precision();
-  std::streamsize originalWidth = cout.width();
-  cout << "  " << left << setw(20) << GetControlName() << ": ";
-  cout << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
-  cout << setw(5) << GetStateName() << ": ";
-  cout << setw(9) << setprecision(2) << scientific << GetState()+state_target;
-  cout << " Tolerance: " << setw(3) << setprecision(0) << scientific << GetTolerance();
+  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  log << "  " << left << setw(20) << GetControlName() << ": ";
+  log << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
+  log << setw(5) << GetStateName() << ": ";
+  log << setw(9) << setprecision(2) << scientific << GetState()+state_target;
+  log << " Tolerance: " << setw(3) << setprecision(0) << scientific << GetTolerance();
 
   if( fabs(GetState()+state_target) < fabs(GetTolerance()) )
-     cout << "  Passed" << endl;
+     log << "  Passed\n";
   else
-     cout << "  Failed" << endl;
-  // Restore original cout format characteristics
-  cout.flags(originalFormat);
-  cout.precision(originalPrecision);
-  cout.width(originalWidth);
+     log << "  Failed\n";
 }
 
 /*****************************************************************************/
@@ -347,8 +343,9 @@ void FGTrimAxis::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGTrimAxis" << endl;
-    if (from == 1) cout << "Destroyed:    FGTrimAxis" << endl;
+    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGTrimAxis\n";
+    if (from == 1) log << "Destroyed:    FGTrimAxis\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

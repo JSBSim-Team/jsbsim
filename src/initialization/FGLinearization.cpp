@@ -18,6 +18,7 @@
 
 #include "FGInitialCondition.h"
 #include "FGLinearization.h"
+#include "input_output/FGLog.h"
 
 
 namespace JSBSim {
@@ -45,7 +46,8 @@ FGLinearization::FGLinearization(FGFDMExec * fdm)
         if (numEngines>2) ss.x.add(new FGStateSpace::Rpm2);
         if (numEngines>3) ss.x.add(new FGStateSpace::Rpm3);
         if (numEngines>4) {
-            std::cerr << "more than 4 engines not currently handled" << std::endl;
+            FGLogging log(fdm->GetLogger(), LogLevel::ERROR);
+            log << "More than 4 engines not currently handled\n";
         }
     }
     ss.x.add(new FGStateSpace::Beta);
