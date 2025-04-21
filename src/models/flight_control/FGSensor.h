@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
+#include <optional>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +61,7 @@ Syntax:
 <sensor name="name">
   <input> property </input>
   <lag> number </lag>
-  <noise [variation="PERCENT|ABSOLUTE"] [distribution="UNIFORM|GAUSSIAN"]> number </noise>
+  <noise [variation="PERCENT|ABSOLUTE"] [distribution="UNIFORM|GAUSSIAN"] > number </noise>
   <quantization name="name">
     <bits> number </bits>
     <min> number </min>
@@ -113,6 +114,11 @@ If the type is ABSOLUTE, then the noise number times the random number is added
 to the input signal instead of being multiplied against it as with the PERCENT
 type of noise.
 
+If a noise element is specified, then a property will be created, named 
+name/randomseed if the name contains a path separator '/' or fcs/name/randomseed
+if the name does not contain a path separator. Which allows a user to specify a
+random seed to be used for the noise generation.
+
 The delay element can specify a frame delay. The integer number provided is the
 number of frames to delay the output signal.
 
@@ -138,6 +144,9 @@ public:
   double GetFailHigh(void) const {if (fail_high) return 1.0; else return 0.0;}
   double GetFailStuck(void) const {if (fail_stuck) return 1.0; else return 0.0;}
   int    GetQuantized(void) const {return quantized;}
+
+  int GetNoiseRandomSeed(void) const;
+  void SetNoiseRandomSeed(int seed);
 
   bool Run (void) override;
   void ResetPastStates(void) override;
@@ -178,6 +187,7 @@ protected:
   void bind(Element* el, FGPropertyManager* pm) override;
 
 private:
+  std::optional<unsigned int> RandomSeed;
   std::shared_ptr<RandomNumberGenerator> generator;
   void Debug(int from) override;
 };
