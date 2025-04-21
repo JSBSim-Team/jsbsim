@@ -151,6 +151,7 @@ public:
 
   /** Sets up the engines as running */
   void InitRunning(int n);
+  void SetEngineRunning(int index);
 
   std::string GetPropulsionStrings(const std::string& delimiter) const;
   std::string GetPropulsionValues(const std::string& delimiter) const;
