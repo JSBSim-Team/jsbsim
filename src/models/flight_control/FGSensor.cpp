@@ -118,7 +118,6 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       log << "Unknown random distribution type in sensor: " << Name
         << "\n  defaulting to UNIFORM.\n";
     }
-    noise_property = element->FindElement("noise")->GetAttributeValue("name");
   }
 
   bind(element, fcs->GetPropertyManager().get());
@@ -261,10 +260,12 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
   const string tmp_low = tmp + "/malfunction/fail_low";
   const string tmp_high = tmp + "/malfunction/fail_high";
   const string tmp_stuck = tmp + "/malfunction/fail_stuck";
+  const string tmp_randomseed = tmp + "/randomseed";
 
   PropertyManager->Tie( tmp_low, this, &FGSensor::GetFailLow, &FGSensor::SetFailLow);
   PropertyManager->Tie( tmp_high, this, &FGSensor::GetFailHigh, &FGSensor::SetFailHigh);
   PropertyManager->Tie( tmp_stuck, this, &FGSensor::GetFailStuck, &FGSensor::SetFailStuck);
+  PropertyManager->Tie( tmp_randomseed, this, &FGSensor::GetNoiseRandomSeed, &FGSensor::SetNoiseRandomSeed);
 
   if (!quant_property.empty()) {
     if (quant_property.find("/") == string::npos) { // not found
@@ -279,21 +280,6 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
         PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);
     }
   }
-
-  if (!noise_property.empty()) {
-    if (noise_property.find("/") == string::npos) { // not found
-      string nprop = "fcs/" + PropertyManager->mkPropertyName(noise_property, true) + "/randomseed";
-      FGPropertyNode* node = PropertyManager->GetNode(nprop, true);
-      if (node->isTied()) {
-        XMLLogException err(fcs->GetExec()->GetLogger(), el);
-        err << "Property " << tmp << " has already been successfully bound (late).\n";
-        throw err;
-      }
-      else
-        PropertyManager->Tie(nprop, this, &FGSensor::GetNoiseRandomSeed, &FGSensor::SetNoiseRandomSeed);
-    }
-  }
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
