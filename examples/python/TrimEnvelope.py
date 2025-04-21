@@ -40,21 +40,27 @@ fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
 fdm.load_model(AIRCRAFT_NAME)
 
 # Set engines running
-fdm['propulsion/engine[0]/set-running'] = 1
-fdm['propulsion/engine[1]/set-running'] = 1
+fdm['propulsion/set-running'] = -1
 
 # Set alpha range for trim solutions
 fdm['aero/alpha-max-rad'] = math.radians(12)
 fdm['aero/alpha-min-rad'] = math.radians(-4.0)
+
+# Set envelope limits
+min_speed = 120
+max_speed = 460
+altitude = 15000
+min_gamma = -10
+max_gamma = 10
 
 # Trim results
 results = []
 
 # Iterate over a range of speeds and for each speed a range of flight path angles (gamma)
 # and check whether a trim point is possible
-for speed in range(120, 460, 10):
-    for gamma in range(-10, 10, 1):
-        fdm['ic/h-sl-ft'] = 15000
+for speed in range(min_speed, max_speed, 10):
+    for gamma in range(min_gamma, max_gamma, 1):
+        fdm['ic/h-sl-ft'] = altitude
         fdm['ic/vc-kts'] = speed
         fdm['ic/gamma-deg'] = gamma
 
@@ -85,8 +91,8 @@ for title, ax, data in graph_data:
     cb.set_label(title)
 
     # Graph axis range for speed and gamma
-    ax.set_xlim(100, 460)
-    ax.set_ylim(-30, 30)
+    ax.set_xlim(min_speed - 20, max_speed + 20)
+    ax.set_ylim(min_gamma * 2, max_gamma * 2)
 
     ax.grid(True, linestyle='-.')
 

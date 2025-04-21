@@ -74,8 +74,7 @@ for j in range(2):
     fdm.load_model(f'{AIRCRAFT_NAME}')
     # Set engines running
     cg=changeCG(fdm,cgPos[j],False)
-    fdm['propulsion/engine[0]/set-running'] = 1
-    fdm['propulsion/engine[1]/set-running'] = 1
+    fdm['propulsion/set-running'] = -1
 
     # Run for different weights
     for i in range(3):
