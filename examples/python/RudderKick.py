@@ -43,8 +43,7 @@ fdm = jsbsim.FGFDMExec(PATH_TO_JSBSIM_FILES)
 fdm.load_model(AIRCRAFT_NAME)
 
 # Set engines running
-fdm['propulsion/engine[0]/set-running'] = 1
-fdm['propulsion/engine[1]/set-running'] = 1
+fdm['propulsion/set-running'] = -1
 
 # Set alpha range for trim solutions
 fdm['aero/alpha-max-rad'] = math.radians(12)
