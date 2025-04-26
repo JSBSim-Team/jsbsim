@@ -99,7 +99,7 @@ public:
 
 protected:
   FGFCS* fcs;
-  std::vector <FGPropertyNode_ptr> OutputNodes;
+  std::vector <SGPropertyNode_ptr> OutputNodes;
   FGParameter_ptr ClipMin, ClipMax;
   std::vector <FGPropertyValue_ptr> InitNodes;
   std::vector <FGPropertyValue_ptr> InputNodes;

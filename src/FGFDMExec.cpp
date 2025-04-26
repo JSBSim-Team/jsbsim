@@ -123,11 +123,11 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   (*FDMctr)++;       // instance. "child" instances are loaded last.
 
   if (root == nullptr)          // Then this is the root FDM
-    Root = new FGPropertyNode();
+    Root = new SGPropertyNode();
   else
     Root = root->GetNode();
 
-  FGPropertyNode* instanceRoot = Root->GetNode("fdm/jsbsim", IdFDM, true);
+  auto instanceRoot = Root->getNode("fdm/jsbsim", IdFDM, true);
   instance = std::make_shared<FGPropertyManager>(instanceRoot);
 
   try {
@@ -1109,7 +1109,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
       if (pcs->node->getChild(i)->getAttribute(SGPropertyNode::WRITE)) access+="W";
       PropertyCatalog.push_back(pcsNew->base_string+" ("+access+")");
     } else {
-      pcsNew->node = (FGPropertyNode*)pcs->node->getChild(i);
+      pcsNew->node = pcs->node->getChild(i);
       BuildPropertyCatalog(pcsNew.get());
     }
   }

@@ -573,7 +573,7 @@ void FGScript::Debug(int from)
       cout << endl;
 
       for (auto node: LocalProperties) {
-        cout << "Local property: " << node->GetName()
+        cout << "Local property: " << node->getNameString()
              << " = " << node->getDoubleValue()
              << endl;
       }
@@ -613,7 +613,7 @@ void FGScript::Debug(int from)
               }
             } else {
               cout << endl << "      set "
-                   << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
+                   << GetRelativeName(Events[i].SetParam[j], "/fdm/jsbsim/")
                    << " to function value";
             }
           } else {
@@ -630,7 +630,7 @@ void FGScript::Debug(int from)
               }
             } else {
               cout << endl << "      set "
-                   << Events[i].SetParam[j]->GetRelativeName("/fdm/jsbsim/")
+                   << GetRelativeName(Events[i].SetParam[j], "/fdm/jsbsim/")
                    << " to " << Events[i].SetValue[j];
             }
           }

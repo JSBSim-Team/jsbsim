@@ -194,7 +194,7 @@ bool FGOutput::SetDirectivesFile(const SGPath& fname)
 
 bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
                     std::string port, std::string name, double outRate,
-                    std::vector<FGPropertyNode_ptr> & outputProperties)
+                    std::vector<SGPropertyNode_ptr> & outputProperties)
 {
   size_t idx = OutputTypes.size();
   FGOutputType* Output = 0;
