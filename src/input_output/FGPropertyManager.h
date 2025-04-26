@@ -57,9 +57,9 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-std::string GetPrintableName(const SGPropertyNode* node);
-std::string GetFullyQualifiedName(const SGPropertyNode* node);
-std::string GetRelativeName(const SGPropertyNode* node, const std::string &path);
+JSBSIM_API std::string GetPrintableName(const SGPropertyNode* node);
+JSBSIM_API std::string GetFullyQualifiedName(const SGPropertyNode* node);
+JSBSIM_API std::string GetRelativeName(const SGPropertyNode* node, const std::string &path);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
