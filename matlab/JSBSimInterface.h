@@ -48,7 +48,7 @@ public:
 	/// Open an aircraft model from Matlab
 	bool OpenAircraft(const std::string& acName);
 
-	/// Script handling 
+	/// Script handling
     bool OpenScript(const SGPath& script, double delta_t, const SGPath& initfile);
 
 	bool LoadIC(SGPath ResetName);
@@ -60,8 +60,8 @@ public:
 	bool AddInputPropertyNode(std::string property);
 	bool AddWeatherPropertyNode(std::string property);
 	bool AddOutputPropertyNode(std::string property, const int outputPort);
-	
-	/// Copy control inputs to JSBSim 
+
+	/// Copy control inputs to JSBSim
     bool CopyInputControlsToJSBSim(std::vector<double> controls);
 
 	/// Copy weather inputs to JSBSim
@@ -69,9 +69,9 @@ public:
 
 	/// Copy the flight state outputs from JSBSim
     bool CopyOutputsFromJSBSim(double *stateArray, const int outputPort);
-    
+
 	bool IsAircraftLoaded(){return _ac_model_loaded;}
-  	
+
 	// Wrapper functions to the FGFDMExec class
 	bool RunFDMExec() {return fdmExec->Run();}
 
@@ -104,9 +104,9 @@ private:
 	FGPropulsion *propulsion;
 	FGFCS *fcs;
 
-	std::vector<std::vector<FGPropertyNode*>> outputPorts;
-	std::vector<FGPropertyNode*> inputPort;
-	std::vector<FGPropertyNode*> weatherPort;
+	std::vector<std::vector<SGPropertyNode*>> outputPorts;
+	std::vector<SGPropertyNode*> inputPort;
+	std::vector<SGPropertyNode*> weatherPort;
 
 	bool _ac_model_loaded;
 
