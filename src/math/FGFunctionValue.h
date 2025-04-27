@@ -58,7 +58,7 @@ class FGFunctionValue : public FGPropertyValue
 {
 public:
 
-  FGFunctionValue(FGPropertyNode* propNode, FGTemplateFunc_ptr f)
+  FGFunctionValue(SGPropertyNode* propNode, FGTemplateFunc_ptr f)
     :FGPropertyValue(propNode), function(f) {}
   FGFunctionValue(std::string propName, std::shared_ptr<FGPropertyManager> propertyManager,
                   FGTemplateFunc_ptr f, Element* el)

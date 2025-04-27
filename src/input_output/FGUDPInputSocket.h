@@ -50,7 +50,7 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Implements a UDP input socket. 
+/** Implements a UDP input socket.
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ protected:
 
   int rate;
   double oldTimeStamp;
-  std::vector<FGPropertyNode_ptr> InputProperties;
+  std::vector<SGPropertyNode_ptr> InputProperties;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -83,8 +83,8 @@ public:
   bool Run(void) override;
 
 private:
-  FGPropertyNode_ptr target_angle_pNode;
-  FGPropertyNode_ptr source_angle_pNode;
+  SGPropertyNode_ptr target_angle_pNode;
+  SGPropertyNode_ptr source_angle_pNode;
   double target_angle;
   double source_angle;
   double target_angle_unit;

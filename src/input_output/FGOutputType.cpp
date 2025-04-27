@@ -131,7 +131,7 @@ bool FGOutputType::Load(Element* element)
 
   while (property_element) {
     string property_str = property_element->GetDataLine();
-    FGPropertyNode* node = PropertyManager->GetNode(property_str);
+    SGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
       cerr << property_element->ReadFrom()
            << fgred << highint << endl << "  No property by the name "
@@ -221,7 +221,7 @@ double FGOutputType::GetRateHz(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutputType::SetOutputProperties(vector<FGPropertyNode_ptr> & outputProperties)
+void FGOutputType::SetOutputProperties(vector<SGPropertyNode_ptr> & outputProperties)
 {
   for (auto prop: outputProperties)
     OutputParameters.push_back(new FGPropertyValue(prop));

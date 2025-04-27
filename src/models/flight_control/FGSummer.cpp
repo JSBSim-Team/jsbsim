@@ -114,7 +114,7 @@ void FGSummer::Debug(int from)
         cout << "       " << node->GetNameWithSign() << endl;
       if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
       for (auto node: OutputNodes)
-        cout << "      OUTPUT: " << node->GetName() << endl;
+        cout << "      OUTPUT: " << node->getNameString() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
@@ -134,4 +134,3 @@ void FGSummer::Debug(int from)
 }
 
 } //namespace JSBSim
-

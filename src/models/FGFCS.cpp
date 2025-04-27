@@ -1,6 +1,6 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Module:       FGFCS.cpp 
+ Module:       FGFCS.cpp
  Author:       Jon Berndt
  Date started: 12/12/98
  Purpose:      Model the flight controls
@@ -80,7 +80,7 @@ FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm), ChannelRate(1)
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   BrakePos.resize(FGLGear::bgNumBrakeGroups);
-  TailhookPos = WingFoldPos = 0.0; 
+  TailhookPos = WingFoldPos = 0.0;
 
   bind();
   for (i=0;i<NForms;i++) {
@@ -490,21 +490,21 @@ bool FGFCS::Load(Element* document)
   Debug(2);
 
   Element* channel_element = document->FindElement("channel");
-  
+
   while (channel_element) {
-  
+
     FGFCSChannel* newChannel = 0;
 
     string sOnOffProperty = channel_element->GetAttributeValue("execute");
     string sChannelName = channel_element->GetAttributeValue("name");
-    
+
     if (!channel_element->GetAttributeValue("execrate").empty())
       ChannelRate = channel_element->GetAttributeValueAsNumber("execrate");
     else
       ChannelRate = 1;
 
     if (sOnOffProperty.length() > 0) {
-      FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
+      SGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == 0) {
         cerr << channel_element->ReadFrom() << highint << fgred
              << "The On/Off property, " << sOnOffProperty << " specified for channel "
@@ -520,9 +520,9 @@ bool FGFCS::Load(Element* document)
     SystemChannels.push_back(newChannel);
 
     if (debug_lvl > 0)
-      cout << endl << highint << fgblue << "    Channel " 
+      cout << endl << highint << fgblue << "    Channel "
          << normint << channel_element->GetAttributeValue("name") << reset << endl;
-  
+
     Element* component_element = channel_element->GetElement();
     while (component_element) {
       try {

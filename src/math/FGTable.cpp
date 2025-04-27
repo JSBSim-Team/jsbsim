@@ -439,7 +439,7 @@ FGTable::~FGTable()
   // instance of FGTable after the destruction is completed.
   if (!Name.empty() && !internal) {
     string tmp = PropertyManager->mkPropertyName(Name, false);
-    FGPropertyNode* node = PropertyManager->GetNode(tmp);
+    SGPropertyNode* node = PropertyManager->GetNode(tmp);
     if (node && node->isTied())
       PropertyManager->Untie(node);
   }
@@ -702,7 +702,7 @@ void FGTable::bind(Element* el, const string& Prefix)
     string tmp = PropertyManager->mkPropertyName(Name, false);
 
     if (PropertyManager->HasNode(tmp)) {
-      FGPropertyNode* _property = PropertyManager->GetNode(tmp);
+      SGPropertyNode* _property = PropertyManager->GetNode(tmp);
       if (_property->isTied()) {
         cerr << el->ReadFrom()
              << "Property " << tmp << " has already been successfully bound (late)." << endl;

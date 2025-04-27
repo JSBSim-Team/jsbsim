@@ -149,7 +149,7 @@ void FGInputSocket::Read(bool Holding)
       }
 
       if (command == "set") {                       // SET PROPERTY
-        FGPropertyNode* node = nullptr;
+        SGPropertyNode* node = nullptr;
 
         if (argument.empty()) {
           socket->Reply("No property argument supplied.\r\n");
@@ -182,7 +182,7 @@ void FGInputSocket::Read(bool Holding)
         socket->Reply("set successful\r\n");
 
       } else if (command == "get") {             // GET PROPERTY
-        FGPropertyNode* node = nullptr;
+        SGPropertyNode* node = nullptr;
 
         if (argument.empty()) {
           socket->Reply("No property argument supplied.\r\n");

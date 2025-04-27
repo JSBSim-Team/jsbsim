@@ -899,7 +899,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
 
       if (p && p->IsConstant()) {
         double constant = p->GetValue();
-        FGPropertyNode_ptr node = p->pNode;
+        SGPropertyNode_ptr node = p->pNode;
         string pName = p->GetName();
 
         Parameters.pop_back();

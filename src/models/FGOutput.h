@@ -210,7 +210,7 @@ public:
       @result true if the execution succeeded. */
   bool Load(int subSystems, std::string protocol, std::string type,
             std::string port, std::string name, double outRate,
-            std::vector<FGPropertyNode_ptr> & outputProperties);
+            std::vector<SGPropertyNode_ptr> & outputProperties);
   /** Get the name identifier to which the output will be directed.
       @param idx ID of the output instance from which the name identifier must
                  be obtained
