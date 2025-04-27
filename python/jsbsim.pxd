@@ -70,20 +70,20 @@ cdef extern from "simgear/structure/SGSharedPtr.hxx":
         SGSharedPtr& operator=[U](U* p)
         T* ptr() const
 
-cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
-    cdef cppclass c_FGPropertyNode "JSBSim::FGPropertyNode":
-        c_FGPropertyNode* GetNode(const string& path, bool create)
-        const string& GetName() const
-        const string& GetFullyQualifiedName() const
+cdef extern from "simgear/props/props.hxx" namespace "JSBSim":
+    cdef cppclass c_SGPropertyNode "SGPropertyNode":
+        c_SGPropertyNode* getNode(const string& path, bool create)
+        const string& getNameString() const
         double getDoubleValue() const
         bool setDoubleValue(double value)
 
 cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
+    cdef string GetFullyQualifiedName(const c_SGPropertyNode* node)
     cdef cppclass c_FGPropertyManager "JSBSim::FGPropertyManager":
         c_FGPropertyManager()
-        c_FGPropertyManager(c_FGPropertyNode* root)
-        c_FGPropertyNode* GetNode()
-        c_FGPropertyNode* GetNode(const string& path, bool create)
+        c_FGPropertyManager(c_SGPropertyNode* root)
+        c_SGPropertyNode* GetNode()
+        c_SGPropertyNode* GetNode(const string& path, bool create)
         bool HasNode(const string& path) except +convertJSBSimToPyExc
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":

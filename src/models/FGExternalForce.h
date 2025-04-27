@@ -83,7 +83,7 @@ public:
   }
 
 private:
-  FGPropertyNode_ptr data[3];
+  SGPropertyNode_ptr data[3];
 };
 
 inline FGColumnVector3 operator*(double a, const FGPropertyVector3& v) {
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
 
       [<function> ... </function>]
 
-      <location unit="{IN | M}"> 
+      <location unit="{IN | M}">
         <x> {number} </x>
         <y> {number} </y>
         <z> {number} </z>

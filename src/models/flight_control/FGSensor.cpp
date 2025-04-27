@@ -270,7 +270,7 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
   if (!quant_property.empty()) {
     if (quant_property.find("/") == string::npos) { // not found
       string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
-      FGPropertyNode* node = PropertyManager->GetNode(qprop, true);
+      SGPropertyNode* node = PropertyManager->GetNode(qprop, true);
       if (node->isTied()) {
         XMLLogException err(fcs->GetExec()->GetLogger(), el);
         err << "Property " << tmp << " has already been successfully bound (late).\n";

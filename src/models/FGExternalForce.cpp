@@ -134,7 +134,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
     return new FGFunction(fdmex, function_element);
   } else {
     auto pm = fdmex->GetPropertyManager();
-    FGPropertyNode* node = pm->GetNode(magName, true);
+    SGPropertyNode* node = pm->GetNode(magName, true);
     return new FGPropertyValue(node);
   }
 }

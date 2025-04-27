@@ -127,15 +127,16 @@ cdef class FGPropagate:
 
 
 cdef class FGPropertyNode:
-    """@Dox(JSBSim::FGPropertyNode)"""
+    """@Dox(JSBSim::SGPropertyNode)"""
 
-    cdef SGSharedPtr[c_FGPropertyNode] thisptr
+    cdef SGSharedPtr[c_SGPropertyNode] thisptr
 
     def __bool__(self) -> bool:
         """Check if the object is initialized."""
         return self.thisptr.ptr() is not NULL
 
     def __str__(self) -> str:
+        """Print the fully qualified name of a property and its current value."""
         if self.thisptr.ptr() is not NULL:
             return f"Property '{self.get_fully_qualified_name()}' (value: {self.get_double_value()})"
         return "Uninitialized property"
@@ -153,20 +154,26 @@ cdef class FGPropertyNode:
             return None
 
     def get_name(self) -> str:
-        """@Dox(JSBSim::FGPropertyNode::GetName)"""
+        """Get the name of a node."""
         self.__intercept_invalid_pointer()
-        return self.thisptr.ptr().GetName().decode()
+        return self.thisptr.ptr().getNameString().decode()
 
     def get_fully_qualified_name(self) -> str:
-        """@Dox(JSBSim::FGPropertyNode::GetFullyQualifiedName)"""
-        self.__intercept_invalid_pointer()
-        return self.thisptr.ptr().GetFullyQualifiedName().decode()
+        """Get the fully qualified name of a node.
 
-    def get_node(self, path: str, create: bool = False) -> Optional[FGPropertyNode]:
-        """@Dox(JSBSim::FGPropertyNode::GetNode)"""
+           This function is very slow, so is probably useful for debugging only."""
+        self.__intercept_invalid_pointer()
+        return GetFullyQualifiedName(self.thisptr.ptr()).decode()
+
+    def get_node(self, path: str, create: bool = False) -> Optional[SGPropertyNode]:
+        """Get a property node.
+
+           :param path: The path of the node, relative to root.
+           :param create: True to create the node if it doesn't exist.
+           :return: The node, or None if none exists and none was created."""
         self.__intercept_invalid_pointer()
         node = FGPropertyNode()
-        node.thisptr = self.thisptr.ptr().GetNode(path.encode(), create)
+        node.thisptr = self.thisptr.ptr().getNode(path.encode(), create)
         return node.__validate_node_pointer(create)
 
     def get_double_value(self) -> float:
@@ -202,7 +209,7 @@ cdef class FGPropertyManager:
         if not self.thisptr:
             raise MemoryError()
 
-    def get_node(self, path: Optional[str] = None, create: bool = False) -> Optional[FGPropertyNode]:
+    def get_node(self, path: Optional[str] = None, create: bool = False) -> Optional[SGPropertyNode]:
         """@Dox(JSBSim::FGPropertyManager::GetNode)"""
         node = FGPropertyNode()
         if path is None:

@@ -59,7 +59,7 @@ public:
 
   FGTemplateFunc(FGFDMExec* fdmex, Element* element);
 
-  double GetValue(FGPropertyNode* node) {
+  double GetValue(SGPropertyNode* node) {
     var->SetNode(node);
     return FGFunction::GetValue();
   }

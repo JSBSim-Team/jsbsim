@@ -120,7 +120,7 @@ public:
   /** Set the list of properties that should be output for this output instance.
       @param outputProperties list of properties that should be output
   */
-  void SetOutputProperties(std::vector<FGPropertyNode_ptr> & outputProperties);
+  void SetOutputProperties(std::vector<SGPropertyNode_ptr> & outputProperties);
 
   /** Overwrites the name identifier under which the output will be logged.
       This method is taken into account if it is called before

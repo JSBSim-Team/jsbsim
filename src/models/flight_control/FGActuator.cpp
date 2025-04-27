@@ -343,7 +343,7 @@ void FGActuator::Debug(int from)
 
       if (!OutputNodes.empty()) {
         for (auto node: OutputNodes)
-          log << "      OUTPUT: " << node->GetName() << "\n";
+          log << "      OUTPUT: " << node->getNameString() << "\n";
       }
       if (bias != 0.0) log << "      Bias: " << bias << "\n";
       if (rate_limit_incr != 0) {

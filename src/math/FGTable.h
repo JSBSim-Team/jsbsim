@@ -302,9 +302,9 @@ public:
   double operator()(unsigned int r, unsigned int c) const
   { return GetElement(r, c); }
 
-  void SetRowIndexProperty(FGPropertyNode *node)
+  void SetRowIndexProperty(SGPropertyNode *node)
   { lookupProperty[eRow] = new FGPropertyValue(node); }
-  void SetColumnIndexProperty(FGPropertyNode *node)
+  void SetColumnIndexProperty(SGPropertyNode *node)
   { lookupProperty[eColumn] = new FGPropertyValue(node); }
 
   unsigned int GetNumRows() const {return nRows;}

@@ -514,7 +514,7 @@ bool FGFCS::Load(Element* document)
       ChannelRate = 1;
 
     if (sOnOffProperty.length() > 0) {
-      FGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
+      SGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == nullptr) {
         XMLLogException err(FDMExec->GetLogger(), channel_element);
         err << LogFormat::BOLD << LogFormat::RED

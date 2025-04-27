@@ -63,7 +63,7 @@ class JSBSIM_API FGPropertyValue : public FGParameter
 {
 public:
 
-  explicit FGPropertyValue(FGPropertyNode* propNode)
+  explicit FGPropertyValue(SGPropertyNode* propNode)
     : PropertyManager(nullptr), PropertyNode(propNode), Sign(1.0) {}
   FGPropertyValue(const std::string& propName,
                   std::shared_ptr<FGPropertyManager> propertyManager, Element* el);
@@ -73,7 +73,7 @@ public:
     return PropertyNode && (!PropertyNode->isTied()
                          && !PropertyNode->getAttribute(SGPropertyNode::WRITE));
   }
-  void SetNode(FGPropertyNode* node) {PropertyNode = node;}
+  void SetNode(SGPropertyNode* node) {PropertyNode = node;}
   void SetValue(double value);
   bool IsLateBound(void) const { return PropertyNode == nullptr; }
 
@@ -83,11 +83,11 @@ public:
   virtual std::string GetPrintableName(void) const;
 
 protected:
-  FGPropertyNode* GetNode(void) const;
+  SGPropertyNode* GetNode(void) const;
 
 private:
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
-  mutable FGPropertyNode_ptr PropertyNode;
+  mutable SGPropertyNode_ptr PropertyNode;
   mutable Element_ptr XML_def;
   std::string PropertyName;
   double Sign;

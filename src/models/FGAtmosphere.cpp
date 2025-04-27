@@ -141,25 +141,25 @@ double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet
 
 void FGAtmosphere::Calculate(double altitude)
 {
-  FGPropertyNode* node = PropertyManager->GetNode();
+  SGPropertyNode* node = PropertyManager->GetNode();
   double t =0.0;
   if (!PropertyManager->HasNode("atmosphere/override/temperature"))
     t = GetTemperature(altitude);
   else
-    t = node->GetDouble("atmosphere/override/temperature");
+    t = node->getDoubleValue("atmosphere/override/temperature");
   Temperature = ValidateTemperature(t, "", true);
 
   double p = 0.0;
   if (!PropertyManager->HasNode("atmosphere/override/pressure"))
     p = GetPressure(altitude);
   else
-    p = node->GetDouble("atmosphere/override/pressure");
+    p = node->getDoubleValue("atmosphere/override/pressure");
   Pressure = ValidatePressure(p, "", true);
 
   if (!PropertyManager->HasNode("atmosphere/override/density"))
     Density = Pressure/(Reng*Temperature);
   else
-    Density = node->GetDouble("atmosphere/override/density");
+    Density = node->getDoubleValue("atmosphere/override/density");
 
   Soundspeed  = sqrt(SHRatio*Reng*Temperature);
   PressureAltitude = CalculatePressureAltitude(Pressure, altitude);

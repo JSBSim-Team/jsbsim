@@ -93,42 +93,9 @@ string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyNode*
-FGPropertyNode::GetNode (const string &path, bool create)
+string GetPrintableName(const SGPropertyNode* node)
 {
-  SGPropertyNode* node = getNode(path.c_str(), create);
-  if (node == 0) {
-    cerr << "FGPropertyManager::GetNode() No node found for " << path << endl;
-  }
-  return (FGPropertyNode*)node;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGPropertyNode*
-FGPropertyNode::GetNode (const string &relpath, int index, bool create)
-{
-  SGPropertyNode* node = getNode(relpath.c_str(), index, create);
-  if (node == 0) {
-    cerr << "FGPropertyManager::GetNode() No node found for " << relpath
-         << "[" << index << "]" << endl;
-  }
-  return (FGPropertyNode*)node;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::HasNode (const string &path)
-{
-  const SGPropertyNode* node = getNode(path.c_str(), false);
-  return (node != 0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGPropertyNode::GetPrintableName( void ) const
-{
-  string temp_string(getNameString());
+  string temp_string(node->getNameString());
   size_t initial_location=0;
   size_t found_location;
 
@@ -147,155 +114,30 @@ string FGPropertyNode::GetPrintableName( void ) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyNode::GetFullyQualifiedName(void) const
+string GetFullyQualifiedName(const SGPropertyNode* node)
 {
-  string fqname;
-  const SGPropertyNode* node = this;
-  while(node) {
-    fqname = node->getDisplayName(true) + "/" + fqname;
-    node = node->getParent();
+  string fqname = node->getDisplayName(true);
+  const SGPropertyNode* parent = node->getParent();
+  if (!parent) return "/";  // node is the root.
+
+  while(parent) {
+    fqname = parent->getDisplayName(true) + "/" + fqname;
+    parent = parent->getParent();
   }
 
-  // Remove the trailing slash if the node is not the root.
-  size_t len = std::max<size_t>(1, fqname.size()-1);
-  return fqname.substr(0, len);
+  return fqname;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyNode::GetRelativeName( const string &path ) const
+string GetRelativeName(const SGPropertyNode* node, const string &path)
 {
-  string temp_string = GetFullyQualifiedName();
+  string temp_string = GetFullyQualifiedName(node);
   size_t len = path.length();
   if ( (len > 0) && (temp_string.substr(0,len) == path) ) {
     temp_string = temp_string.erase(0,len);
   }
   return temp_string;
-}
-
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::GetBool (const string &name, bool defaultValue) const
-{
-  return getBoolValue(name.c_str(), defaultValue);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-int FGPropertyNode::GetInt (const string &name, int defaultValue ) const
-{
-  return getIntValue(name.c_str(), defaultValue);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-int FGPropertyNode::GetLong (const string &name, long defaultValue ) const
-{
-  return getLongValue(name.c_str(), defaultValue);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-float FGPropertyNode::GetFloat (const string &name, float defaultValue ) const
-{
-  return getFloatValue(name.c_str(), defaultValue);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropertyNode::GetDouble (const string &name, double defaultValue ) const
-{
-  return getDoubleValue(name.c_str(), defaultValue);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGPropertyNode::GetString (const string &name, string defaultValue ) const
-{
-  return string(getStringValue(name.c_str(), defaultValue.c_str()));
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetBool (const string &name, bool val)
-{
-  return setBoolValue(name.c_str(), val);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetInt (const string &name, int val)
-{
-  return setIntValue(name.c_str(), val);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetLong (const string &name, long val)
-{
-  return setLongValue(name.c_str(), val);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetFloat (const string &name, float val)
-{
-  return setFloatValue(name.c_str(), val);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetDouble (const string &name, double val)
-{
-  return setDoubleValue(name.c_str(), val);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGPropertyNode::SetString (const string &name, const string &val)
-{
-  return setStringValue(name.c_str(), val.c_str());
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropertyNode::SetArchivable (const string &name, bool state )
-{
-  SGPropertyNode * node = getNode(name.c_str());
-  if (node == 0)
-    cerr <<
-           "Attempt to set archive flag for non-existent property "
-           << name << endl;
-  else
-    node->setAttribute(SGPropertyNode::ARCHIVE, state);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropertyNode::SetReadable (const string &name, bool state )
-{
-  SGPropertyNode * node = getNode(name.c_str());
-  if (node == 0)
-    cerr <<
-           "Attempt to set read flag for non-existant property "
-           << name << endl;
-  else
-    node->setAttribute(SGPropertyNode::READ, state);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropertyNode::SetWritable (const string &name, bool state )
-{
-  SGPropertyNode * node = getNode(name.c_str());
-  if (node == 0)
-    cerr <<
-           "Attempt to set write flag for non-existant property "
-           << name << endl;
-  else
-    node->setAttribute(SGPropertyNode::WRITE, state);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

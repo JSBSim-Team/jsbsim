@@ -130,7 +130,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   while (out_elem) {
     string output_node_name = out_elem->GetDataLine();
     bool node_exists = PropertyManager->HasNode(output_node_name);
-    FGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
+    SGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
     if (!OutputNode) {
       XMLLogException err(fcs->GetExec()->GetLogger(), out_elem);
       err << "  Unable to process property: " << output_node_name << "\n";
@@ -309,7 +309,7 @@ void FGFCSComponent::bind(Element* el, FGPropertyManager* PropertyManager)
     tmp = Name;
 
   bool node_exists = PropertyManager->HasNode(tmp);
-  FGPropertyNode* node = PropertyManager->GetNode(tmp, true);
+  SGPropertyNode* node = PropertyManager->GetNode(tmp, true);
 
   if (node) {
     OutputNodes.push_back(node);

@@ -47,7 +47,7 @@ JSBSimInterface::JSBSimInterface(int numOutputPorts)
 	fcs = fdmExec->GetFCS().get();
 	ic = new FGInitialCondition(fdmExec);
 	for (int i = 0; i < numOutputPorts; i++) {
-		std::vector<FGPropertyNode*> emptyVector;
+		std::vector<SGPropertyNode*> emptyVector;
 		outputPorts.push_back(emptyVector);
 	}
 	//verbosityLevel = JSBSimInterface::eSilent;
@@ -68,7 +68,7 @@ JSBSimInterface::JSBSimInterface(double dt, int numOutputPorts)
 	fcs = fdmExec->GetFCS().get();
 	ic = new FGInitialCondition(fdmExec);
 	for (int i = 0; i < numOutputPorts; i++) {
-		std::vector<FGPropertyNode*> emptyVector;
+		std::vector<SGPropertyNode*> emptyVector;
 		outputPorts.push_back(emptyVector);
 	}
 	//verbosityLevel = JSBSimInterface::eSilent;
@@ -86,7 +86,7 @@ bool JSBSimInterface::OpenAircraft(const std::string& acName)
 
 	if (!fdmExec->GetAircraft()->GetAircraftName().empty()) return false;
 
-    mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");  
+    mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");
     if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
     if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
     if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
@@ -103,8 +103,8 @@ bool JSBSimInterface::OpenAircraft(const std::string& acName)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGPath& initfile)
 {
-    
-    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;  
+
+    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
     if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
     if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
 
@@ -119,8 +119,8 @@ bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGP
 bool JSBSimInterface::LoadIC(SGPath ResetName)
 {
 
-    auto IC = fdmExec->GetIC(); 
-	
+    auto IC = fdmExec->GetIC();
+
     if (!IC->Load(ResetName)) return false;
 
     if (!fdmExec->RunIC()) return false;
@@ -139,8 +139,8 @@ void JSBSimInterface::Update()
 bool JSBSimInterface::AddInputPropertyNode(std::string property)
 {
 
-	FGPropertyNode* node = pm->GetNode(property);
-	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
+	SGPropertyNode* node = pm->GetNode(property);
+	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
 
 	inputPort.push_back(node);
 	return true;
@@ -149,11 +149,11 @@ bool JSBSimInterface::AddInputPropertyNode(std::string property)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
 {
-	
+
 	if (!(property.substr(0, std::string("atmosphere/").size()) == std::string("atmosphere/"))) return false;
 
-	FGPropertyNode* node = pm->GetNode(property);
-	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::WRITE)) return false;
+	SGPropertyNode* node = pm->GetNode(property);
+	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
 
 	weatherPort.push_back(node);
 	return true;
@@ -162,11 +162,11 @@ bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outputPort)
 {
-	
+
 	if (outputPort >= outputPorts.size()) return false;
 
-	FGPropertyNode* node = pm->GetNode(property);
-	if (node == NULL || !node->getAttribute(FGPropertyNode::Attribute::READ)) return false;
+	SGPropertyNode* node = pm->GetNode(property);
+	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::READ)) return false;
 
 	outputPorts.at(outputPort).push_back(node);
 	return true;
@@ -174,11 +174,11 @@ bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outp
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::CopyInputControlsToJSBSim(std::vector<double> controls) {
-    // TODO: error handling if controls is not correct size. 
-    
+    // TODO: error handling if controls is not correct size.
+
 	if (!fdmExec) return false;
 
-	FGPropertyNode* node;
+	SGPropertyNode* node;
 	for (int i = 0; i < inputPort.size(); i++) {
 		node = inputPort.at(i);
 		switch (node->getType()) {
@@ -202,16 +202,16 @@ bool JSBSimInterface::CopyInputControlsToJSBSim(std::vector<double> controls) {
 		}
 	}
 
-    return true; 
+    return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::CopyInputWeatherToJSBSim(std::vector<double> weather) {
-    // TODO: error handling if weather is not correct size. 
-    
+    // TODO: error handling if weather is not correct size.
+
 	if (!fdmExec) return false;
 
-	FGPropertyNode* node;
+	SGPropertyNode* node;
 	for (int i = 0; i < weatherPort.size(); i++) {
 		node = weatherPort.at(i);
 		switch (node->getType()) {
@@ -235,18 +235,18 @@ bool JSBSimInterface::CopyInputWeatherToJSBSim(std::vector<double> weather) {
 		}
 	}
 
-    return true; 
+    return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::CopyOutputsFromJSBSim(double *stateArray, const int outputPort) {
-	
+
 	if (outputPort >= outputPorts.size()) {
 		mexPrintf("Output port selected is out of bounds.\n");
 	}
 
-	FGPropertyNode* node;
-	std::vector<FGPropertyNode*> port = outputPorts.at(outputPort);
+	SGPropertyNode* node;
+	std::vector<SGPropertyNode*> port = outputPorts.at(outputPort);
 	for (int i = 0; i < port.size(); i++) {
 		node = port.at(i);
 		switch (node->getType()) {

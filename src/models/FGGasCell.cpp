@@ -197,7 +197,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
 
   property_name = base_property_name + "/max_volume-ft3";
   PropertyManager->Tie( property_name.c_str(), &MaxVolume);
-  PropertyManager->GetNode()->SetWritable( property_name, false );
+  PropertyManager->GetNode(property_name)->setAttribute( SGPropertyNode::WRITE, false );
   property_name = base_property_name + "/temp-R";
   PropertyManager->Tie( property_name.c_str(), &Temperature);
   property_name = base_property_name + "/pressure-psf";
@@ -629,7 +629,7 @@ FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
 
   property_name = base_property_name + "/max_volume-ft3";
   PropertyManager->Tie( property_name, &MaxVolume);
-  PropertyManager->GetNode()->SetWritable( property_name, false );
+  PropertyManager->GetNode(property_name)->setAttribute( SGPropertyNode::WRITE, false );
 
   property_name = base_property_name + "/temp-R";
   PropertyManager->Tie( property_name, &Temperature);

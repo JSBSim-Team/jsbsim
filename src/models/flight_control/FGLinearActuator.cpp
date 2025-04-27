@@ -261,7 +261,7 @@ void FGLinearActuator::Debug(int from)
       log << "        set: " << set << "\n";
       log << "      reset: " << reset << "\n";
       for (auto node: OutputNodes)
-        log << "     OUTPUT: " << node->GetName() << "\n";
+        log << "     OUTPUT: " << node->getNameString() << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

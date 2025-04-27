@@ -7,8 +7,8 @@ class FGPropertyValueTest : public CxxTest::TestSuite
 {
 public:
   void testConstructorFromNode() {
-    FGPropertyNode root;
-    FGPropertyNode_ptr node = root.GetNode("x", true);
+    SGPropertyNode root;
+    SGPropertyNode_ptr node = root.getNode("x", true);
     FGPropertyValue property(node);
 
     TS_ASSERT_EQUALS(property.GetValue(), 0.0);
@@ -21,8 +21,8 @@ public:
   }
 
   void testSetValue() {
-    FGPropertyNode root;
-    FGPropertyNode_ptr node = root.GetNode("x", true);
+    SGPropertyNode root;
+    SGPropertyNode_ptr node = root.getNode("x", true);
     FGPropertyValue property(node);
 
     TS_ASSERT_EQUALS(node->getDoubleValue(), 0.0);
@@ -32,9 +32,9 @@ public:
   }
 
   void testSetNode() {
-    FGPropertyNode root;
-    FGPropertyNode_ptr node_x = root.GetNode("x", true);
-    FGPropertyNode_ptr node_y = root.GetNode("y", true);
+    SGPropertyNode root;
+    SGPropertyNode_ptr node_x = root.getNode("x", true);
+    SGPropertyNode_ptr node_y = root.getNode("y", true);
     FGPropertyValue property(node_x);
 
     node_y->setDoubleValue(-1.547);
@@ -47,7 +47,7 @@ public:
 
   void testConstant_ness() {
     auto pm = std::make_shared<FGPropertyManager>();
-    FGPropertyNode_ptr node = pm->GetNode("x", true);
+    SGPropertyNode_ptr node = pm->GetNode("x", true);
     FGPropertyValue property(node);
 
     TS_ASSERT(!property.IsConstant());
@@ -60,7 +60,7 @@ public:
     // property is set to READ ONLY.
     auto pm = std::make_shared<FGPropertyManager>();
     double value = 0.0;
-    FGPropertyNode_ptr node = pm->GetNode("x", true);
+    SGPropertyNode_ptr node = pm->GetNode("x", true);
     FGPropertyValue property(node);
 
     node->setAttribute(SGPropertyNode::WRITE, false);

@@ -149,7 +149,7 @@ CLASS DOCUMENTATION
            <tt>propulsion/engine[x]/collective-ctrl-rad</tt>. See below for tail rotor</li>
       <li> The lateral cyclic input. Read from
            <tt>propulsion/engine[x]/lateral-ctrl-rad</tt>.</li>
-      <li> The longitudinal cyclic input. Read from 
+      <li> The longitudinal cyclic input. Read from
            <tt>propulsion/engine[x]/longitudinal-ctrl-rad</tt>.</li>
       <li> The tail rotor collective (aka antitorque, aka pedal) control input. Read from
            <tt>propulsion/engine[x]/antitorque-ctrl-rad</tt> or
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
     collective input from <tt>propulsion/engine[1]/antitorque-ctrl-rad</tt>
     (The TAIL-map ignores lateral and longitudinal input). The rotor needs to be
     attached to a dummy engine, e.g. an 1HP electrical engine.
-    A tandem rotor is setup analogous. 
+    A tandem rotor is setup analogous.
 
   <h4>- Sense -</h4>
 
@@ -205,11 +205,11 @@ CLASS DOCUMENTATION
     Setting <tt>\<ExternalRPM> -1 \</ExternalRPM></tt> the rotor's RPM is controlled  by
     the <tt>propulsion/engine[x]/x-rpm-dict</tt> property. This feature can be useful
     when developing a FDM.
-  
+
 
 <h3>References:</h3>
 
-    <dl>    
+    <dl>
     <dt>/SH79/</dt><dd>Shaugnessy, J. D., Deaux, Thomas N., and Yenni, Kenneth R.,
               "Development and Validation of a Piloted Simulation of a
               Helicopter and External Sling Load",  NASA TP-1285, 1979.</dd>
@@ -219,7 +219,7 @@ CLASS DOCUMENTATION
               Comparison With Flight Measurements", NACA TN-2136, 1950.</dd>
     <dt>/TA77/</dt><dd>Talbot, Peter D., Corliss, Lloyd D., "A Mathematical Force and Moment
               Model of a UH-1H Helicopter for Flight Dynamics Simulations", NASA TM-73,254, 1977.</dd>
-    <dt>/GE49/</dt><dd>Gessow, Alfred, Amer, Kenneth B. "An Introduction to the Physical 
+    <dt>/GE49/</dt><dd>Gessow, Alfred, Amer, Kenneth B. "An Introduction to the Physical
               Aspects of Helicopter Stability", NACA TN-1982, 1949.</dd>
     </dl>
 
@@ -257,7 +257,7 @@ public:
   /// Retrieves the RPMs of the rotor.
   double GetRPM(void) const { return RPM; }
   void   SetRPM(double rpm) { RPM = rpm; }
-  
+
   /// Retrieves the RPMs of the Engine, as seen from this rotor.
   double GetEngineRPM(void) const {return EngineRPM;} //{ return GearRatio*RPM; }
   void SetEngineRPM(double rpm) {EngineRPM = rpm;} //{ RPM = rpm/GearRatio; }
@@ -266,7 +266,7 @@ public:
   /// Retrieves the thrust of the rotor.
   double GetThrust(void) const { return Thrust; }
 
-  /// Retrieves the rotor's coning angle 
+  /// Retrieves the rotor's coning angle
   double GetA0(void) const { return a0; }
   /// Retrieves the longitudinal flapping angle with respect to the rotor shaft
   double GetA1(void) const { return a1s; }
@@ -285,7 +285,7 @@ public:
   double GetCT(void) const { return C_T; }
   /// Retrieves the torque
   double GetTorque(void) const { return Torque; }
-  
+
   /// Downwash angle - positive values point forward (given a horizontal spinning rotor)
   double GetThetaDW(void) const { return theta_downwash; }
   /// Downwash angle - positive values point leftward (given a horizontal spinning rotor)
@@ -317,7 +317,7 @@ public:
 private:
 
   // assist in parameter retrieval
-  double ConfigValueConv( Element* e, const std::string& ename, double default_val=0.0, 
+  double ConfigValueConv( Element* e, const std::string& ename, double default_val=0.0,
                                       const std::string& unit = "", bool tell=false);
 
   double ConfigValue( Element* e, const std::string& ename, double default_val=0.0,
@@ -336,7 +336,7 @@ private:
   void calc_downwash_angles();
 
   // transformations
-  FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr, 
+  FGColumnVector3 hub_vel_body2ca( const FGColumnVector3 &uvw, const FGColumnVector3 &pqr,
                                    double a_ic = 0.0 , double b_ic = 0.0 );
   FGColumnVector3 fus_angvel_body2ca( const FGColumnVector3 &pqr);
   FGColumnVector3 body_forces(double a_ic = 0.0 , double b_ic = 0.0 );
@@ -362,7 +362,7 @@ private:
   double MaximalRPM;
   int    ExternalRPM;
   int    RPMdefinition;
-  FGPropertyNode_ptr ExtRPMsource;
+  SGPropertyNode_ptr ExtRPMsource;
   double SourceGearRatio;
 
   // 'real' rotor parameters
@@ -396,7 +396,7 @@ private:
 
   // dynamic values
   double RPM;
-  double Omega;          // must be > 0 
+  double Omega;          // must be > 0
   double beta_orient;    // rotor orientation angle (rad)
   double a0;             // coning angle (rad)
   double a_1, b_1, a_dw; // flapping angles
@@ -406,7 +406,7 @@ private:
   double Torque;
   double C_T;        // rotor thrust coefficient
   double lambda;     // inflow ratio
-  double mu;         // tip-speed ratio 
+  double mu;         // tip-speed ratio
   double nu;         // induced inflow ratio
   double v_induced;  // induced velocity, usually positive [ft/s]
 

@@ -61,7 +61,7 @@ FGPropertyValue::FGPropertyValue(const std::string& propName,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyNode* FGPropertyValue::GetNode(void) const
+SGPropertyNode* FGPropertyValue::GetNode(void) const
 {
   if (PropertyNode) return PropertyNode;
 
@@ -102,7 +102,7 @@ void FGPropertyValue::SetValue(double value)
 std::string FGPropertyValue::GetName(void) const
 {
   if (PropertyNode)
-    return PropertyNode->GetName();
+    return PropertyNode->getNameString();
   else
     return PropertyName;
 }
@@ -125,7 +125,7 @@ std::string FGPropertyValue::GetNameWithSign(void) const
 std::string FGPropertyValue::GetFullyQualifiedName(void) const
 {
   if (PropertyNode)
-    return PropertyNode->GetFullyQualifiedName();
+    return JSBSim::GetFullyQualifiedName(PropertyNode);
   else
     return PropertyName;
 }
@@ -135,7 +135,7 @@ std::string FGPropertyValue::GetFullyQualifiedName(void) const
 std::string FGPropertyValue::GetPrintableName(void) const
 {
   if (PropertyNode)
-    return PropertyNode->GetPrintableName();
+    return JSBSim::GetPrintableName(PropertyNode);
   else
     return PropertyName;
 }

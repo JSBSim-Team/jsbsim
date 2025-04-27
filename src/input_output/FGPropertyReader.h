@@ -71,10 +71,7 @@ public:
     explicit const_iterator(const std::map<SGPropertyNode_ptr, double>::const_iterator &it) : prop_it(it) {}
     const_iterator& operator++() { ++prop_it; return *this; }
     bool operator!=(const const_iterator& it) const { return prop_it != it.prop_it; }
-    FGPropertyNode* operator*() {
-      SGPropertyNode* node = prop_it->first;
-      return static_cast<FGPropertyNode*>(node);
-    }
+    SGPropertyNode* operator*() { return prop_it->first; }
 
   private:
     std::map<SGPropertyNode_ptr, double>::const_iterator prop_it;
