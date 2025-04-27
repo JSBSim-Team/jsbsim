@@ -72,7 +72,7 @@ bool FGUDPInputSocket::Load(Element* el)
 
   while (property_element) {
     string property_str = property_element->GetDataLine();
-    auto node = PropertyManager->GetNode(property_str);
+    SGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
       FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
       log << LogFormat::RED << LogFormat::BOLD << "\n  No property by the name "

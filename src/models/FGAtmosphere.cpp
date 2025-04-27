@@ -141,7 +141,7 @@ double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet
 
 void FGAtmosphere::Calculate(double altitude)
 {
-  auto node = PropertyManager->GetNode();
+  SGPropertyNode* node = PropertyManager->GetNode();
   double t =0.0;
   if (!PropertyManager->HasNode("atmosphere/override/temperature"))
     t = GetTemperature(altitude);

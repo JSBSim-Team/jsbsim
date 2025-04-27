@@ -94,8 +94,8 @@ class JSBSIM_API FGPropertyManager
     {
       std::string newPath = path;
       if (newPath[0] == '-') newPath.erase(0,1);
-      auto prop = root->getNode(newPath);
-      return prop;
+      SGPropertyNode* prop = root->getNode(newPath);
+      return prop != nullptr;
     }
 
     /** Property-ify a name

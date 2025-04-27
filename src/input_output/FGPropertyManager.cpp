@@ -117,7 +117,7 @@ string GetPrintableName(const SGPropertyNode* node)
 string GetFullyQualifiedName(const SGPropertyNode* node)
 {
   string fqname = node->getDisplayName(true);
-  auto parent = node->getParent();
+  const SGPropertyNode* parent = node->getParent();
   if (!parent) return "/";  // node is the root.
 
   while(parent) {
