@@ -173,8 +173,6 @@ public:
   /// Destructor.
   ~FGQuaternion() {}
 
-  const double* GetQuaternion(void) const { return data;}
-
   /** Quaternion derivative for given angular rates.
       Computes the quaternion derivative which results from the given
       angular velocities

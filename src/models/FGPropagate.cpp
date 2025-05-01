@@ -103,7 +103,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   epa = 0.0;
 
   bind();
-  typedef double (FGPropagate::*PMF)(int) const;
+
   Debug(0);
 }
 
@@ -162,7 +162,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition* FGIC)
   // constructor). The Euler angles represent the orientation of the body
   // frame relative to the local frame.
   VState.qAttitudeLocal = FGIC->GetOrientation();
-  std::cout << "qAttitudeLocal: " << VState.qAttitudeLocal << endl;
 
   VState.qAttitudeECI = Ti2l.GetQuaternion()*VState.qAttitudeLocal;
   UpdateBodyMatrices();
@@ -270,7 +269,6 @@ bool FGPropagate::Run(bool Holding)
 
   // Angular orientation derivative
   CalculateQuatdot();
-  std::cout << "qAttitude: " << GetQuaternion() << endl;
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
