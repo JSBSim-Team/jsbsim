@@ -168,4 +168,8 @@
   <property> aero/alpha-wing-rad </property>
   <property> systems/stall-warn-norm </property>
   <property> aero/stall-hyst-norm </property>
+  <property> attitude/q0 </property>
+  <property> attitude/q1 </property>
+  <property> attitude/q2 </property>
+  <property> attitude/q3 </property>
 </output>

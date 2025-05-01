@@ -103,6 +103,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   epa = 0.0;
 
   bind();
+  typedef double (FGPropagate::*PMF)(int) const;
   Debug(0);
 }
 
@@ -161,6 +162,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition* FGIC)
   // constructor). The Euler angles represent the orientation of the body
   // frame relative to the local frame.
   VState.qAttitudeLocal = FGIC->GetOrientation();
+  std::cout << "qAttitudeLocal: " << VState.qAttitudeLocal << endl;
 
   VState.qAttitudeECI = Ti2l.GetQuaternion()*VState.qAttitudeLocal;
   UpdateBodyMatrices();
@@ -268,6 +270,7 @@ bool FGPropagate::Run(bool Holding)
 
   // Angular orientation derivative
   CalculateQuatdot();
+  std::cout << "qAttitude: " << GetQuaternion() << endl;
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
@@ -884,6 +887,15 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
+
+  // // Tie quaternions to property
+  PropertyManager->Tie("attitude/q0", this, (int)eQ0, (PMF)&FGPropagate::GetQuaternion);
+  PropertyManager->Tie("attitude/q1", this, (int)eQ1, (PMF)&FGPropagate::GetQuaternion);
+  PropertyManager->Tie("attitude/q2", this, (int)eQ2, (PMF)&FGPropagate::GetQuaternion);
+  PropertyManager->Tie("attitude/q3", this, (int)eQ3, (PMF)&FGPropagate::GetQuaternion);
+  // Random
+  PropertyManager->Tie("testtest", this, (int)ePhi, (PMF)&FGPropagate::GetSinEuler);
+
 
   PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
   PropertyManager->Tie("orbital/inclination-deg", &Inclination);

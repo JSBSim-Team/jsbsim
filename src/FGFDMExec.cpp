@@ -417,6 +417,8 @@ bool FGFDMExec::Run(void)
   bool success=true;
 
   Debug(2);
+  // Print quaternion values from FGPropagate
+  fprintf(stdout, "Quaternion values will be printed here.\n");
 
   for (auto &ChildFDM: ChildFDMList) {
     ChildFDM->AssignState(Propagate); // Transfer state to the child FDM
