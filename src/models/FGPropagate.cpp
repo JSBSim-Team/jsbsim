@@ -891,9 +891,6 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/q1", this, (int)eQ1, (PMF)&FGPropagate::GetQuaternion);
   PropertyManager->Tie("attitude/q2", this, (int)eQ2, (PMF)&FGPropagate::GetQuaternion);
   PropertyManager->Tie("attitude/q3", this, (int)eQ3, (PMF)&FGPropagate::GetQuaternion);
-  // Random
-  PropertyManager->Tie("testtest", this, (int)ePhi, (PMF)&FGPropagate::GetSinEuler);
-
 
   PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
   PropertyManager->Tie("orbital/inclination-deg", &Inclination);
