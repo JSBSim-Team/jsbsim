@@ -5,7 +5,7 @@ include(UseCython)
 string(TIMESTAMP THIS_YEAR "%Y")
 
 # Declare JSBSim as a C++ project
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
