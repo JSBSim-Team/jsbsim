@@ -69,7 +69,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
 
   // This is the U.S. Standard Atmosphere table for temperature in degrees
   // Rankine, based on geometric altitude. The table values are often given
-  // in literature relative to geopotential altitude. 
+  // in literature relative to geopotential altitude.
   //
   //                        GeoMet Alt    Temp      GeoPot Alt  GeoMet Alt
   //                           (ft)      (deg R)      (km)        (km)
@@ -82,7 +82,7 @@ FGStandardAtmosphere::FGStandardAtmosphere(FGFDMExec* fdmex)
   //                         << 168676.12 << 487.20  //   51.000      51.413
   //                         << 235570.77 << 386.40  //   71.000      71.802
   //                         << 282152.08 << 336.50  //   84.852      86.000
-  //                         << 298556.40 << 336.50; //               91.000 - First layer in high altitude regime 
+  //                         << 298556.40 << 336.50; //               91.000 - First layer in high altitude regime
 
   //                            GeoPot Alt    Temp       GeoPot Alt  GeoMet Alt
   //                               (ft)      (deg R)        (km)        (km)
@@ -452,9 +452,9 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // This function calculates (or recalculates) the lapse rate over an altitude range
-// where the "bh" in this case refers to the index of the base height in the 
-// StdAtmosTemperatureTable table. This function should be called anytime the 
-// temperature table is altered, such as when a gradient is applied across the 
+// where the "bh" in this case refers to the index of the base height in the
+// StdAtmosTemperatureTable table. This function should be called anytime the
+// temperature table is altered, such as when a gradient is applied across the
 // temperature table for a range of altitudes.
 
 void FGStandardAtmosphere::CalculateLapseRates()
@@ -484,7 +484,7 @@ void FGStandardAtmosphere::CalculatePressureBreakpoints(double SLpress)
     double UpperAlt = StdAtmosTemperatureTable(b+2,0);
     double deltaH = UpperAlt - BaseAlt;
     double Tmb = BaseTemp
-                 + TemperatureBias 
+                 + TemperatureBias
                  + (GradientFadeoutAltitude - BaseAlt)*TemperatureDeltaGradient;
     if (LapseRates[b] != 0.00) {
       double Lmb = LapseRates[b];
@@ -623,7 +623,7 @@ void FGStandardAtmosphere::ValidateVaporMassFraction(double h)
 void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
 {
   double dewPoint_R = ConvertToRankine(dewpoint, unit);
-  constexpr double minDewPoint = -CelsiusToRankine(c) + 1.0;
+  constexpr double minDewPoint = CelsiusToRankine(-c) + 1.0;
 
   if (dewPoint_R <= minDewPoint) {
     FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
@@ -817,7 +817,7 @@ void FGStandardAtmosphere::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
   }
-  if (debug_lvl & 128) { // 
+  if (debug_lvl & 128) { //
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

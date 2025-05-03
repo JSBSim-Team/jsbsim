@@ -172,16 +172,16 @@ void FGLogConsole::Flush(void) {
   case LogLevel::BULK:
   case LogLevel::DEBUG:
   case LogLevel::INFO:
-    std::cout << buffer.str();
+    std::cout << buffer;
     std::cout.flush(); // Force the message to be immediately displayed in the console
     break;
   default:
-    std::cerr << buffer.str();
+    std::cerr << buffer;
     std::cerr.flush(); // Force the message to be immediately displayed in the console
     break;
   }
 
-  buffer.str("");
+  buffer.clear();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,29 +190,29 @@ void FGLogConsole::Format(LogFormat format) {
   switch (format)
   {
   case LogFormat::RED:
-    buffer << FGJSBBase::fgred;
+    buffer.append(FGJSBBase::fgred);
     break;
   case LogFormat::BLUE:
-    buffer << FGJSBBase::fgblue;
+    buffer.append(FGJSBBase::fgblue);
     break;
   case LogFormat::BOLD:
-    buffer << FGJSBBase::highint;
+    buffer.append(FGJSBBase::highint);
     break;
   case LogFormat::NORMAL:
-    buffer << FGJSBBase::normint;
+    buffer.append(FGJSBBase::normint);
     break;
   case LogFormat::UNDERLINE_ON:
-    buffer << FGJSBBase::underon;
+    buffer.append(FGJSBBase::underon);
     break;
   case LogFormat::UNDERLINE_OFF:
-    buffer << FGJSBBase::underoff;
+    buffer.append(FGJSBBase::underoff);
     break;
   case LogFormat::DEFAULT:
-    buffer << FGJSBBase::fgdef;
+    buffer.append(FGJSBBase::fgdef);
     break;
   case LogFormat::RESET:
   default:
-    buffer << FGJSBBase::reset;
+    buffer.append(FGJSBBase::reset);
     break;
   }
 }

@@ -104,12 +104,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   EnginePath = "engine";
   SystemsPath = "systems";
 
-  try {
-    char* num = getenv("JSBSIM_DEBUG");
-    if (num) debug_lvl = atoi(num); // set debug level
-  } catch (...) {                   // if error set to 1
+  if (const char* num = getenv("JSBSIM_DEBUG"); num != nullptr)
+    debug_lvl = strtol(num, nullptr, 0);
+  else
     debug_lvl = 1;
-  }
 
   if (!FDMctr) {
     FDMctr = std::make_shared<unsigned int>(); // Create and initialize the child FDM counter
@@ -130,15 +128,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   SGPropertyNode* instanceRoot = Root->getNode("fdm/jsbsim", IdFDM, true);
   instance = std::make_shared<FGPropertyManager>(instanceRoot);
 
-  try {
-    char* num = getenv("JSBSIM_DISPERSE");
-    if (num) {
-      if (atoi(num) != 0) disperse = 1;  // set dispersions on
-    }
-  } catch (...) {                        // if error set to false
-    disperse = 0;
-    FGLogging log(Log, LogLevel::WARN);
-    log << "Could not process JSBSIM_DISPERSIONS environment variable: Assumed NO dispersions." << endl;
+  if (const char* num = getenv("JSBSIM_DISPERSE");
+      num != nullptr && strtol(num, nullptr, 0) != 0)
+  {
+    disperse = 1;  // set dispersions on
   }
 
   Debug(0);

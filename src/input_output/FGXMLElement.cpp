@@ -657,17 +657,10 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
                               const std::string& target_units)
 {
   double value=val;
-
   bool disperse = false;
-  try {
-    char* num = getenv("JSBSIM_DISPERSE");
-    if (num) {
-      disperse = (atoi(num) == 1);  // set dispersions
-    }
-  } catch (...) {                   // if error set to false
-    disperse = false;
-    std::cerr << "Could not process JSBSIM_DISPERSE environment variable: Assumed NO dispersions." << endl;
-  }
+
+  if(char* num = getenv("JSBSIM_DISPERSE"); num != nullptr)
+    disperse = strtol(num, nullptr, 0) == 1;  // set dispersions
 
   if (e->HasAttribute("dispersion") && disperse) {
     double disp = e->GetAttributeValueAsNumber("dispersion");
