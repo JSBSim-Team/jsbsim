@@ -103,7 +103,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   epa = 0.0;
 
   bind();
-
   Debug(0);
 }
 
@@ -278,6 +277,7 @@ bool FGPropagate::Run(bool Holding)
 
   // Compute orbital parameters in the inertial frame
   ComputeOrbitalParameters();
+  
 
   Debug(2);
   return false;
@@ -886,11 +886,11 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
 
-  // // Tie quaternions to property
-  PropertyManager->Tie("attitude/q0", this, (int)eQ0, (PMF)&FGPropagate::GetQuaternion);
-  PropertyManager->Tie("attitude/q1", this, (int)eQ1, (PMF)&FGPropagate::GetQuaternion);
-  PropertyManager->Tie("attitude/q2", this, (int)eQ2, (PMF)&FGPropagate::GetQuaternion);
-  PropertyManager->Tie("attitude/q3", this, (int)eQ3, (PMF)&FGPropagate::GetQuaternion);
+  PropertyManager->Tie("attitude/q0", &VState.qAttitudeLocal(eQ0));
+  PropertyManager->Tie("attitude/q1", &VState.qAttitudeLocal(eQ1));
+  PropertyManager->Tie("attitude/q2", &VState.qAttitudeLocal(eQ2));
+  PropertyManager->Tie("attitude/q3", &VState.qAttitudeLocal(eQ3));
+  std::cout << "q0: " << VState.qAttitudeLocal(0) << "q1: " << VState.qAttitudeLocal(1) << "q2: " << VState.qAttitudeLocal(2) << "q3: " << VState.qAttitudeLocal(3) << std::endl;
 
   PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
   PropertyManager->Tie("orbital/inclination-deg", &Inclination);
