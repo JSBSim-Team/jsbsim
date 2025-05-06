@@ -159,6 +159,10 @@ cdef class FGPropertyNode:
                 raise MemoryError()
             return None
 
+    def __eq__(self, other:FGPropertyNode) -> bool:
+        """Check if the 2 nodes are pointing to the same property."""
+        return self.thisptr.ptr() == other.thisptr.ptr()
+
     def get_name(self) -> str:
         """Get the node's simple name as a string."""
         self.__intercept_invalid_pointer()

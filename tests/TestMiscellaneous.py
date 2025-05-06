@@ -335,5 +335,12 @@ class TestMiscellaneous(JSBSimTestCase):
         self.assertTrue(root_node.get_attribute(jsbsim.Attribute.READ))
         self.assertTrue(root_node.get_attribute(jsbsim.Attribute.WRITE))
 
+    def test_property_node_equality(self):
+        pm = jsbsim.FGPropertyManager()
+        root_node = pm.get_node("root", True)
+        root_node2 = pm.get_node("root", False)
+        self.assertIsNot(root_node, root_node2)  # The nodes are 2 different Python objects
+        self.assertEqual(root_node, root_node2)  # but they are pointing to the same property node.
+
 
 RunTest(TestMiscellaneous)
