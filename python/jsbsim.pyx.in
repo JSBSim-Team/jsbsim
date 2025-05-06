@@ -126,8 +126,14 @@ cdef class FGPropagate:
         return _convertToNumpyVec(deref(self.thisptr).GetUVW())
 
 
+class Attribute(enum.Enum):
+    NO_ATTR = 0
+    READ = 1
+    WRITE = 2
+
+
 cdef class FGPropertyNode:
-    """@Dox(JSBSim::SGPropertyNode)"""
+    """@Dox(SGPropertyNode)"""
 
     cdef SGSharedPtr[c_SGPropertyNode] thisptr
 
@@ -154,7 +160,7 @@ cdef class FGPropertyNode:
             return None
 
     def get_name(self) -> str:
-        """Get the name of a node."""
+        """Get the node's simple name as a string."""
         self.__intercept_invalid_pointer()
         return self.thisptr.ptr().getNameString().decode()
 
@@ -166,11 +172,11 @@ cdef class FGPropertyNode:
         return GetFullyQualifiedName(self.thisptr.ptr()).decode()
 
     def get_node(self, path: str, create: bool = False) -> Optional[SGPropertyNode]:
-        """Get a property node.
+        """Get a pointer to another node by relative path.
 
-           :param path: The path of the node, relative to root.
+           :param path: The relative path from the node.
            :param create: True to create the node if it doesn't exist.
-           :return: The node, or None if none exists and none was created."""
+           :return: The node, or None if it does not exist."""
         self.__intercept_invalid_pointer()
         node = FGPropertyNode()
         node.thisptr = self.thisptr.ptr().getNode(path.encode(), create)
@@ -190,6 +196,17 @@ cdef class FGPropertyNode:
            :return: True if the assignment succeeded, False otherwise."""
         self.__intercept_invalid_pointer()
         return self.thisptr.ptr().setDoubleValue(value)
+
+    def get_attribute(self, attr: Attribute) -> bool:
+        """Check a single mode attribute for the property node."""
+        self.__intercept_invalid_pointer()
+        return self.thisptr.ptr().getAttribute(attr.value)
+
+    def set_attribute(self, attr: Attribute, state: bool) -> None:
+        """Set a single mode attribute for the property node."""
+        self.__intercept_invalid_pointer()
+        self.thisptr.ptr().setAttribute(attr.value ,state)
+
 
 cdef class FGPropertyManager:
     """@Dox(JSBSim::FGPropertyManager)"""

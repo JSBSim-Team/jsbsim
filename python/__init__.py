@@ -1,5 +1,6 @@
 from ._jsbsim import (
     __version__,
+    Attribute,
     BaseError,
     FGAerodynamics,
     FGAircraft,
