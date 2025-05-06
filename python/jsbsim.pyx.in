@@ -381,6 +381,11 @@ cdef class FGAircraft:
         if not self.thisptr:
             raise BaseError("Object is not initialized")
 
+    def get_aircraft_name(self) -> str:
+        """@Dox(JSBSim::FGAircraft::GetAircraftName)"""
+        self.__intercept_invalid_pointer()
+        return deref(self.thisptr).GetAircraftName().decode('utf-8')
+
     def get_xyz_rp(self) -> numpy.ndarray:
         """@Dox(JSBSim::FGAircraft::GetXYZrp)"""
         self.__intercept_invalid_pointer()

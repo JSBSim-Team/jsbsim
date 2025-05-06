@@ -56,4 +56,11 @@ class CheckAircrafts(JSBSimTestCase):
                     except RuntimeError:
                         self.fail('Failed to run IC %s for aircraft %s' % (f, d))
 
+    def test_aircraft_name(self):
+        fdm = self.create_fdm()
+        fdm.load_model('c172x')
+        aircraft = fdm.get_aircraft()
+        self.assertEqual(aircraft.get_aircraft_name(), "Cessna C-172 Skyhawk II")
+
+
 RunTest(CheckAircrafts)

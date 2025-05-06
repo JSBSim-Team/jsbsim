@@ -107,6 +107,7 @@ cdef extern from "models/FGAerodynamics.h" namespace "JSBSim":
 cdef extern from "models/FGAircraft.h" namespace "JSBSim":
     cdef cppclass c_FGAircraft "JSBSim::FGAircraft":
         c_FGAircraft(c_FGFDMExec* fdmex) except +
+        const string GetAircraftName() const
         c_FGColumnVector3& GetXYZrp()
 
 cdef extern from "models/FGAtmosphere.h" namespace "JSBSim":
