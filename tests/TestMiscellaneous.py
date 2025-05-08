@@ -297,5 +297,50 @@ class TestMiscellaneous(JSBSimTestCase):
             fdm_c172.run()
             self.assertEqual(fdm_S23["simulation/sim-time-sec"], 0.0)
 
+    def test_get_set_attributes(self):
+        pm = jsbsim.FGPropertyManager()
+        root_node = pm.get_node("root", True)
+        # Check default values
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        # Check that set No_ATTR is a no op.
+        root_node.set_attribute(jsbsim.Attribute.NO_ATTR, True)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        #Check READ unset
+        root_node.set_attribute(jsbsim.Attribute.READ, False)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        #Check WRITE unset
+        root_node.set_attribute(jsbsim.Attribute.WRITE, False)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        # Check that set No_ATTR is a no op.
+        root_node.set_attribute(jsbsim.Attribute.NO_ATTR, True)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        #Check READ set
+        root_node.set_attribute(jsbsim.Attribute.READ, True)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.WRITE))
+        #Check WRITE set
+        root_node.set_attribute(jsbsim.Attribute.WRITE, True)
+        self.assertFalse(root_node.get_attribute(jsbsim.Attribute.NO_ATTR))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.READ))
+        self.assertTrue(root_node.get_attribute(jsbsim.Attribute.WRITE))
+
+    def test_property_node_equality(self):
+        pm = jsbsim.FGPropertyManager()
+        root_node = pm.get_node("root", True)
+        root_node2 = pm.get_node("root", False)
+        self.assertIsNot(root_node, root_node2)  # The nodes are 2 different Python objects
+        self.assertEqual(root_node, root_node2)  # but they are pointing to the same property node.
+
 
 RunTest(TestMiscellaneous)
