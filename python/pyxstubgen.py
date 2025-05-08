@@ -1,5 +1,28 @@
-import sys
-from typing import List, Union, Tuple
+#! /usr/bin/python
+#
+# pyxstubgen.py
+#
+# Automatic generation of the JSBSim stub file `_jsbsim.pyi` from Cython's pyx file.
+#
+# Copyright (c) 2025 Bertrand Coconnier
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, see <http://www.gnu.org/licenses/>
+#
+
+import argparse
+import io
+from typing import List, Optional, Tuple, Union
 
 from lark import Lark
 from lark.indenter import PythonIndenter
@@ -7,15 +30,38 @@ from lark.lexer import Token
 from lark.tree import Tree
 from lark.visitors import Interpreter
 
-parser = Lark.open(
-    "cython.lark", parser="lalr", postlex=PythonIndenter(), start="file_input"
+arg_parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+arg_parser.add_argument(
+    "--pyxfile", metavar="<filename>", required=True, help="specifies the *.pyx file"
+)
+arg_parser.add_argument(
+    "--output",
+    metavar="<filename>",
+    required=True,
+    help="specifies the generated stub file",
+)
+args = arg_parser.parse_args()
+
+# BEWARE! The class `Token` is inheriting from `str` so always check that an item is an
+# instance of `Token` *BEFORE* checking that it is an instance of `str`.
+# The code includes lots of assert's to fail on any syntax that it has not been designed
+# to handle. Would that happen, the code would need to be modified to handle the new
+# case.
+
+grammar_parser = Lark.open(
+    "cython.lark",
+    rel_to=__file__,
+    parser="lalr",
+    postlex=PythonIndenter(),
+    start="file_input",
 )
 
-with open("jsbsim.pyx.in", "r", encoding="utf-8") as f:
-    pyx_tree = parser.parse(f.read())
+with open(args.pyxfile, "r", encoding="utf-8") as f:
+    pyx_tree = grammar_parser.parse(f.read())
 
 
 def rule_name(tree: Tree) -> str:
+    assert isinstance(tree, Tree)
     item_type: Token = tree.data
     assert isinstance(item_type, Token)
     assert item_type.type == "RULE"
@@ -27,9 +73,20 @@ def rule_name(tree: Tree) -> str:
     return item_name.value
 
 
+def dotted_name(tree: Tree) -> str:
+    assert isinstance(tree, Tree)
+    item_type: Token = tree.data
+    assert isinstance(item_type, Token)
+    assert item_type.type == "RULE"
+    assert item_type.value == "dotted_name"
+    names: List[str] = []
+    for child in tree.children:
+        names.append(rule_name(child))
+    return ".".join(names)
+
+
 def get_constant(tree: Tree) -> str:
-    if tree.children != []:
-        raise TypeError(f"Not a constant: {repr(tree)}")
+    assert isinstance(tree, Tree)
     assert tree.children == []
     if tree.data == "python__const_false":
         return "False"
@@ -44,21 +101,61 @@ def get_constant(tree: Tree) -> str:
 class GenerateStub(Interpreter):
     TAB_SPACES: str = "    "
     indent: int = 0
+    has_members = False
+
+    def __init__(self, output: io.TextIOBase):
+        self.output = output
+
+    def python__dotted_as_name(self, tree: Tree) -> str:
+        assert len(tree.children) == 2
+        name = dotted_name(tree.children[0])
+        as_name_item: Optional[Tree] = tree.children[1]
+        assert as_name_item is None
+        return name
+
+    def python__dotted_as_names(self, tree: Tree) -> str:
+        import_names: List[str] = []
+        for child in tree.children:
+            import_names.append(self.visit(child))
+        return ", ".join(import_names)
+
+    def python__import_as_name(self, tree: Tree) -> str:
+        assert len(tree.children) == 2
+        name = f"{rule_name(tree.children[0])}"
+        as_name_item: Optional[Tree] = tree.children[1]
+        if as_name_item is not None:
+            name += f" as {rule_name(as_name_item)}"
+        return name
+
+    def python__import_from(self, tree: Tree):
+        assert len(tree.children) == 2
+        name = dotted_name(tree.children[0])
+        import_names_item: Tree = tree.children[1]
+        assert isinstance(import_names_item, Tree)
+        import_names_type: Token = import_names_item.data
+        assert isinstance(import_names_type, Token)
+        assert import_names_type.type == "RULE"
+        assert import_names_type.value == "import_as_names"
+        import_names: List[str] = []
+        for child in import_names_item.children:
+            import_names.append(self.visit(child))
+        self.output.write(f"from {name} import {', '.join(import_names)}\n")
+
+    def python__import_name(self, tree: Tree) -> None:
+        assert len(tree.children) == 1
+        self.output.write(f"import {self.visit(tree.children[0])}\n")
 
     def cyclassdef(self, tree: Tree) -> None:
-        return self.python__classdef(tree)
+        self.python__classdef(tree)
 
     def python__var(self, tree: Tree) -> str:
         assert len(tree.children) == 1
-        var: Tree = tree.children[0]
-        assert isinstance(var, Tree)
-        return rule_name(var)
+        return rule_name(tree.children[0])
 
     def python__getattr(self, tree: Tree) -> List[str]:
         assert len(tree.children) >= 2
         attrs: List[str] = [self.visit(tree.children[0])]
         for child in tree.children[1:]:
-            assert isinstance(child, Tree)
             attrs.append(rule_name(child))
         return attrs
 
@@ -104,17 +201,19 @@ class GenerateStub(Interpreter):
                 if arguments:
                     class_name += f"({', '.join(arguments)})"
             else:  # Class body
-                print(f"class {class_name}: ...")
+                self.output.write(f"\nclass {class_name}:")
                 assert item.value == "suite"
+                self.has_members = False
                 self.indent += 1
-                # Look for the class methods
                 self.visit(tree.children[2])
                 self.indent -= 1
-                print("")
+
+                if not self.has_members:
+                    self.output.write("...")
+                self.output.write("\n")
 
     def python__typedparam(self, tree: Tree) -> Tuple[str, str]:
         assert len(tree.children) == 2
-        assert isinstance(tree.children[0], Tree)
         param_name = rule_name(tree.children[0])
         assert isinstance(tree.children[1], Tree)
         param_type = self.visit(tree.children[1])
@@ -131,19 +230,12 @@ class GenerateStub(Interpreter):
         assert tree.children[0].type in ("python__STRING", "python__LONG_STRING")
         return tree.children[0].value
 
-    def python__decorator(self, tree:Tree) -> str:
+    def python__decorator(self, tree: Tree) -> str:
         assert len(tree.children) == 2
         assert tree.children[1] is None
-        deco_name:Tree = tree.children[0]
-        assert isinstance(deco_name, Tree)
-        deco_type:Token = deco_name.data
-        assert isinstance(deco_type, Token)
-        assert deco_type.type == "RULE"
-        assert deco_type.value == "dotted_name"
-        names:List[str] = []
-        for child in deco_name.children:
-            names.append(rule_name(child))
-        print(f"{self.TAB_SPACES*self.indent}@{'.'.join(names)}")
+        self.output.write(
+            f"\n{self.TAB_SPACES*self.indent}@{dotted_name(tree.children[0])}"
+        )
 
     def funcdef(self, tree: Tree) -> None:
         func_name: str = ""
@@ -214,9 +306,12 @@ class GenerateStub(Interpreter):
                 func_name += f" -> {self.get_varname(child)}"
             else:
                 raise TypeError(f"Unknown parameter in {func_name}: {repr(child)}")
-        print(f"{self.TAB_SPACES*self.indent}def {func_name}: ...")
+
+        self.has_members = True
+        self.output.write(f"\n{self.TAB_SPACES * self.indent}def {func_name}: ...")
         if self.indent == 0:
-            print("")
+            self.output.write("\n")
 
 
-GenerateStub().visit(pyx_tree)
+with open(args.output, "w", encoding="utf-8") as f:
+    GenerateStub(f).visit(pyx_tree)
