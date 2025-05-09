@@ -315,7 +315,7 @@ void FGPropagate::CalculateQuatdot(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Compute the quaternion orientation derivative
 //
-// vQtrndot 
+// Quaterniondot
 
 void FGPropagate::CalculateQuaterniondot(void)
 {
