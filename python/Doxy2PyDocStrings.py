@@ -4,7 +4,7 @@
 # This saves the manual synchronization between the C++ code documentation and
 # Python doc strings.
 #
-# Copyright (c) 2019 Bertrand Coconnier
+# Copyright (c) 2019-2025 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,72 +20,79 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import argparse
+import os
 import re
-from textwrap import wrap
 import xml.etree.ElementTree as et
+from textwrap import wrap
+from typing import List, Optional
 
 LASTCOL = 79
 
 
-def wrap_last_line(txt, tab):
-    col = txt.rfind("\n" + tab) + len(tab) + 1
-    lastline = txt[col:].strip()
-    n = len(tab)
+def wrap_last_line(txt: str, indent: str) -> str:
+    col_lastline = txt.rfind("\n" + indent) + len(indent) + 1
+    lastline = txt[col_lastline:].strip()
+    n = len(indent)
     if len(lastline) > LASTCOL - n:
-        return txt[:col] + ("\n" + tab).join(wrap(lastline, LASTCOL - n))
+        return txt[:col_lastline] + ("\n" + indent).join(wrap(lastline, LASTCOL - n))
 
     return txt
 
 
-def wrap_list_item(item, bullet, indent):
-    text = " ".join(convert_para(item, indent).split())
-    tab = " " * (indent + len(bullet))
-    return ("\n" + tab).join(wrap(text, LASTCOL - len(tab)))
+def wrap_list_item(item, bullet, indent_level: int) -> str:
+    text = " ".join(convert_para(item, indent_level).split())
+    indent = " " * (indent_level + len(bullet))
+    return ("\n" + indent).join(wrap(text, LASTCOL - len(indent)))
 
 
-def convert_para(para, indent):
-    tab = " " * indent
-    docstring = ""
-    if para.text:
-        text = " ".join(para.text.split())
-        docstring += ("\n" + tab).join(wrap(text, LASTCOL - indent))
-    for elem in list(para):
+def convert_para(para_item: et.Element, indent_level: int) -> str:
+    indent: str = " " * indent_level
+    para_docstring: str = ""
+    if para_item.text:
+        text = " ".join(para_item.text.split())
+        para_docstring += ("\n" + indent).join(wrap(text, LASTCOL - indent_level))
+    for elem in list(para_item):
         if elem.tag == "heading":
-            if docstring:
-                docstring = docstring.strip() + "\n\n" + tab
-            docstring += ".. rubric:: " + elem.text
+            if para_docstring:
+                para_docstring = para_docstring.strip() + "\n\n" + indent
+            para_docstring += ".. rubric:: " + elem.text
         elif elem.tag == "linebreak":
-            docstring += "\n" + tab
+            para_docstring += "\n" + indent
             if elem.tail:
-                docstring += elem.tail.strip()
+                para_docstring += elem.tail.strip()
         elif elem.tag == "bold":
-            docstring += "**" + elem.text + "**"
+            para_docstring += "**" + elem.text + "**"
             if elem.tail:
-                docstring += elem.tail
+                para_docstring += elem.tail
         elif elem.tag == "itemizedlist":
-            if docstring:
-                docstring = docstring.strip() + "\n\n" + tab
+            if para_docstring:
+                para_docstring = para_docstring.strip() + "\n\n" + indent
             for item in elem.findall("listitem/para"):
-                docstring += "* " + wrap_list_item(item, "* ", indent) + "\n" + tab
-            docstring = docstring.rstrip()
+                para_docstring += (
+                    "* " + wrap_list_item(item, "* ", indent_level) + "\n" + indent
+                )
+            para_docstring = para_docstring.rstrip()
         elif elem.tag == "orderedlist":
-            if docstring:
-                docstring = docstring.strip() + "\n\n" + tab
+            if para_docstring:
+                para_docstring = para_docstring.strip() + "\n\n" + indent
             num = 1
             for item in elem.findall("listitem/para"):
-                bullet = "{}. ".format(num)
-                docstring += bullet + wrap_list_item(item, bullet, indent) + "\n" + tab
+                bullet = f"{num}. "
+                para_docstring += (
+                    bullet + wrap_list_item(item, bullet, indent_level) + "\n" + indent
+                )
                 num += 1
-            docstring = docstring.rstrip()
+            para_docstring = para_docstring.rstrip()
         elif elem.tag == "programlisting":
-            if docstring:
-                docstring = docstring.strip() + "\n\n" + tab
+            if para_docstring:
+                para_docstring = para_docstring.strip() + "\n\n" + indent
             language = "xml"
             if "filename" in elem.attrib.keys():
                 language = elem.attrib["filename"][1:]
-            docstring += ".. code-block:: " + language + "\n\n"
+            para_docstring += ".. code-block:: " + language + "\n\n"
             for codeline in elem.findall("codeline"):
-                line = " " * (indent + 3)
+                line = " " * (indent_level + 3)
                 for cl in codeline.iter():
                     if cl.tag in ("highlight", "ref"):
                         if cl.text:
@@ -94,128 +101,145 @@ def convert_para(para, indent):
                         line += " "
                     if cl.tail:
                         line += cl.tail.strip()
-                docstring += line + "\n"
+                para_docstring += line + "\n"
             if elem.tail:
-                docstring += elem.tail
+                para_docstring += elem.tail
         elif elem.tag == "ref":
             if elem.attrib["kindref"] == "compound" and elem.text in klasses:
-                docstring += " :ref:`" + elem.text + "`"
+                para_docstring += " :ref:`" + elem.text + "`"
             else:
-                docstring += " " + elem.text
+                para_docstring += " " + elem.text
             if elem.tail:
-                docstring += elem.tail
-            docstring = wrap_last_line(docstring, tab)
+                para_docstring += elem.tail
+            para_docstring = wrap_last_line(para_docstring, indent)
         elif elem.tag == "parameterlist":
-            if docstring.rstrip():
-                docstring += "\n\n" + tab
+            if para_docstring.rstrip():
+                para_docstring += "\n\n" + indent
             for item in elem.findall("parameteritem"):
                 pname = item.find("parameternamelist/parametername").text
                 pdesc = item.find("parameterdescription/para")
                 bullet = ":param " + pname + ": "
-                docstring += bullet + wrap_list_item(pdesc, bullet, indent) + "\n" + tab
+                para_docstring += (
+                    bullet + wrap_list_item(pdesc, bullet, indent_level) + "\n" + indent
+                )
         elif elem.tag == "simplesect" and elem.attrib["kind"] == "return":
             ret = elem.find("para")
             if ret is not None and ret.text:
-                if docstring.rstrip():
-                    docstring += "\n\n" + tab
+                if para_docstring.rstrip():
+                    para_docstring += "\n\n" + indent
                 bullet = ":return: "
-                docstring += bullet + wrap_list_item(ret, bullet, indent) + "\n"
+                para_docstring += (
+                    bullet + wrap_list_item(ret, bullet, indent_level) + "\n"
+                )
         elif elem.tag == "ulink":
-            docstring += "`" + elem.text + " <" + elem.attrib["url"] + ">`_"
+            para_docstring += "`" + elem.text + " <" + elem.attrib["url"] + ">`_"
             if elem.tail:
-                docstring += elem.tail
-            docstring = wrap_last_line(docstring, tab)
+                para_docstring += elem.tail
+            para_docstring = wrap_last_line(para_docstring, indent)
 
-    return docstring
+    return para_docstring
 
 
-with open("${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx") as source:
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument(
+    "--pyxfile", metavar="<filename>", help="specifies the *.pyx file to update"
+)
+parser.add_argument(
+    "--doxdir",
+    metavar="<directory>",
+    help="specifies the directory that contains the Doxygen generated docs",
+)
+args = parser.parse_args()
+
+with open(args.pyxfile, "r", encoding="utf-8") as source:
     pyx_data = source.read()
 
 klasses = re.findall(r"cdef\s+class\s+(\w+)", pyx_data)
 
 # Autogenerate the documentation page for each class
 for klass in klasses:
-    with open("${CMAKE_BINARY_DIR}/documentation/" + klass + ".rst", "w") as f:
+    with open(os.path.join(args.doxdir, klass + ".rst"), "w", encoding="utf-8") as f:
         title = klass
         f.write(".. _" + klass + ":\n\n")
         f.write("=" * len(title) + "\n" + title + "\n" + "=" * len(title) + "\n\n")
         f.write(".. autoclass:: jsbsim." + klass + "\n   :members:\n")
 
-tree = et.parse("${CMAKE_BINARY_DIR}/documentation/xml/indexpage.xml")
+tree = et.parse(os.path.join(args.doxdir, "xml", "indexpage.xml"))
 root = tree.getroot()
-mainpage = ""
+mainpage: str = ""
 doxymain = re.search(r"@DoxMainPage", pyx_data)
 col = doxymain.start() - pyx_data[: doxymain.start()].rfind("\n")
-tab = " " * (col - 1)
+INDENT = " " * (col - 1)
 
 for sect in root.findall(".//sect1"):
     # mainpage += '.. '+sect.attrib['id']+':\n\n'
     title = sect.find("title").text
-    mainpage += title + "\n" + tab + "=" * len(title) + "\n\n" + tab
+    mainpage += title + "\n" + INDENT + "=" * len(title) + "\n\n" + INDENT
     for para in sect.findall("para"):
-        mainpage += convert_para(para, col - 1).strip() + "\n\n" + tab
+        mainpage += convert_para(para, col - 1).strip() + "\n\n" + INDENT
 
 pyx_data = pyx_data[: doxymain.start()] + pyx_data[doxymain.start() :].replace(
     doxymain.group(), mainpage.rstrip()
 )
 
-with open("${CMAKE_BINARY_DIR}/documentation/mainpage.rst", "w") as f:
-    f.write("\n".join(mainpage.split("\n" + tab)))
+with open(os.path.join(args.doxdir, "mainpage.rst"), "w", encoding="utf-8") as f:
+    f.write("\n".join(mainpage.split("\n" + INDENT)))
 
 request = re.compile(r"@Dox\(([\w:]+)(\(([\w:,&\s]+)\))?\)")
 doxytag = re.search(request, pyx_data)
 
 while doxytag:
     names = doxytag.group(1).split("::")
-    xmlfilename = "class" + "_1_1".join(names[:2]) + ".xml"
-    tree = et.parse("${CMAKE_BINARY_DIR}/documentation/xml/" + xmlfilename)
+    if names[0] == "JSBSim":
+        klass_last_idx: int = 2
+    else:
+        klass_last_idx: int = 1  # SGPropertyNode and its siblings
+    xmlfilename: str = "class" + "_1_1".join(names[:klass_last_idx]) + ".xml"
+    tree = et.parse(os.path.join(args.doxdir, "xml/", xmlfilename))
     root = tree.getroot()
-    docstring = ""
+    docstring: str = ""
     col = doxytag.start() - pyx_data[: doxytag.start()].rfind("\n")
-    tab = " " * (col - 1)
+    INDENT = " " * (col - 1)
 
     for tag in root.findall("compounddef/compoundname"):
-        if tag.text != "::".join(names[:2]):
-            raise IOError(
-                "File {} does not contain {}".format(xmlfilename, doxytag.group(1))
-            )
+        if tag.text != "::".join(names[:klass_last_idx]):
+            raise IOError(f"File {xmlfilename} does not contain {doxytag.group(1)}")
 
-    if len(names) == 2:
+    if len(names) == klass_last_idx:
         # Class docs
         member = root.find("compounddef")
     else:
         # Member function docs
         if doxytag.group(3):
-            params_type = [ptype.strip() for ptype in doxytag.group(3).split(",")]
+            params_type: Optional[List[str]] = [
+                ptype.strip() for ptype in doxytag.group(3).split(",")
+            ]
         else:
-            params_type = None
+            params_type: Optional[List[str]] = None
         for member in root.findall(".//memberdef"):
-            if member.find("name").text == names[2]:
+            if member.find("name").text == names[-1]:
                 if params_type is not None:
                     ptypes = [ptype.text for ptype in member.findall("param/type")]
                     if ptypes != params_type:
                         continue
                 break
         else:
-            raise IOError(
-                "File {} does not contain {}".format(xmlfilename, doxytag.group(1))
-            )
+            raise IOError(f"File {xmlfilename} does not contain {doxytag.group(1)}")
     para = member.find("briefdescription/para")
     if para is not None and para.text:
-        docstring = para.text.strip() + "\n\n" + tab
+        docstring = para.text.strip() + "\n\n" + INDENT
 
     tag = member.find("detaileddescription")
     if tag is not None:
         for para in tag.findall("para"):
-            docstring += convert_para(para, col - 1).strip() + "\n\n" + tab
+            docstring += convert_para(para, col - 1).strip() + "\n\n" + INDENT
 
     if len(docstring) == 0:
         docstring = (
             "\n"
-            + tab
+            + INDENT
             + ".. note::\n\n   "
-            + tab
+            + INDENT
             + "This feature is not yet documented."
         )
 
@@ -224,6 +248,5 @@ while doxytag:
     )
     doxytag = re.search(request, pyx_data)
 
-with open("${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx", "w") as dest:
+with open(args.pyxfile, "w", encoding="utf-8") as dest:
     dest.write(pyx_data)
-

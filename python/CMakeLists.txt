@@ -16,8 +16,8 @@ set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
 # Autogenerate the Python module doc strings from Doxygen docs
 if(DOXYGEN_FOUND AND BUILD_DOCS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxy2PyDocStrings.py
-    doxy2pydocs.py)
-  execute_process(COMMAND ${Python3_EXECUTABLE} python/doxy2pydocs.py
+    doxy_to_pyx.py COPYONLY)
+  execute_process(COMMAND ${Python3_EXECUTABLE} python/doxy_to_pyx.py --pyxfile=${JSBSIM_PYX} --doxdir=${CMAKE_BINARY_DIR}/documentation
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
   # Prepare the sphinx build files
