@@ -14,15 +14,13 @@ import sys
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute.
 
-sys.path.insert(0, '${CMAKE_BINARY_DIR}/tests')
-
 try:
-    import jsbsim._jsbsim
+    import jsbsim
 except ModuleNotFoundError:
-    # If the JSBSim module cannot be loaded from the `tests` folder then
-    # restore `sys.path` to its inital value and use the globally installed
-    # JSBSim module, if there is one.
-    sys.path = sys.path[1:]
+    # If the JSBSim module is not installed gloablly then use the one from the `tests`
+    # folder.
+    sys.path.insert(0, '${CMAKE_BINARY_DIR}/tests')
+
 
 # -- Project information -----------------------------------------------------
 
@@ -66,7 +64,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -94,7 +92,6 @@ html_theme_options = {
     "github_banner": True,
     "github_user" : "JSBSim-Team",
     "github_repo": "jsbsim",
-    "travis_button" : True,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
