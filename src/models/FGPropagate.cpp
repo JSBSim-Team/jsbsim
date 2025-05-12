@@ -910,11 +910,6 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/qydot", &VState.vQuaterniondot(eQy));
   PropertyManager->Tie("attitude/qzdot", &VState.vQuaterniondot(eQz));
 
-  PropertyManager->Tie("attitude/qeci-w", &VState.qAttitudeECI(eQw));
-  PropertyManager->Tie("attitude/qeci-x", &VState.qAttitudeECI(eQx));
-  PropertyManager->Tie("attitude/qeci-y", &VState.qAttitudeECI(eQy));
-  PropertyManager->Tie("attitude/qeci-z", &VState.qAttitudeECI(eQz));
-
   PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
   PropertyManager->Tie("orbital/inclination-deg", &Inclination);
   PropertyManager->Tie("orbital/right-ascension-deg", &RightAscension);
