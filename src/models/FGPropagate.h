@@ -128,8 +128,6 @@ public:
 
     FGQuaternion vQtrndot;
 
-    FGQuaternion vQuaterniondot;
-
     FGColumnVector3 vInertialVelocity;
 
     FGColumnVector3 vInertialPosition;
@@ -664,7 +662,6 @@ private:
   void CalculateInertialVelocity(void);
   void CalculateUVW(void);
   void CalculateQuatdot(void);
-  void CalculateQuaterniondot(void);
 
   void Integrate( FGColumnVector3& Integrand,
                   FGColumnVector3& Val,
