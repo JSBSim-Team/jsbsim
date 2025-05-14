@@ -21,17 +21,16 @@ Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsb
 Windows users continue below:
 
 ### 1. Install Unreal Engine 5.x
-The project is compatible with engine versions UE5.5 - UE5.0
+The project is compatible with engine versions UE5.6 - UE5.0
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
-In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. You can setup Visual Studio and the required tools for Unreal using the following procedure:
+In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. Visual Studio Community can be used (It's free). You can setup Visual Studio and the required tools for Unreal using the following procedure:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 
 UE5.5 - UE5.4 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
 
-Visual Studio Community can be used (It's free).
-UE5.3 - UE5.5 require Visual Studio 2022. Visual Studio 2022 and 2019 can be used with UE5.0 - UE5.2.
+UE5.3 - UE5.6 require Visual Studio 2022. Visual Studio 2022 and 2019 can be used with UE5.0 - UE5.2.
 
 Optional extension setup:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
@@ -73,7 +72,7 @@ Once done, the UE Editor will open. If you get an error message, build manually 
 Right click on the  `UnrealEngine\UEReferenceApp.uproject` 
 A contextual menu will appear. Select "Generate Visual Studio project files"
 After a short time, a new solution file `UEReferenceApp.sln` will appear beside the uproject file. 
-Open it, and "Build Startup project" from the UnrealVS Extension bar. 
+Open it, and if prompted click Ok to retarget to v143, then you can Build the UERefferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
 
 Note that this Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
 

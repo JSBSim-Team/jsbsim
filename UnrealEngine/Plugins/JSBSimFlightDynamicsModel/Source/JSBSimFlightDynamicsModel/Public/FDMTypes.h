@@ -336,7 +336,7 @@ struct FFlightControlCommands
 		DebugMessage += FString::Printf(TEXT("        Flight : Elevator %.3f   Aileron    %.3f  Rudder  %.3f  YawTrim %.3f PitchTrim %.3f  RollTrim %.3f"), Elevator, Aileron, Rudder, YawTrim, PitchTrim, RollTrim) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        Brakes : Left     %.3f   Right      %.3f  Center  %.3f  Parking %.3f"), LeftBrake, RightBrake, CenterBrake, ParkingBrake) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        Wheels : Steer    %.3f   GearDown   %.3f"), Steer, GearDown) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("        Wings  : Flap     %.3f   SpeedBrake %.3f  Spoiler %.3f"), Flap, SpeedBrake, Spoiler, ParkingBrake) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Wings  : Flap     %.3f   SpeedBrake %.3f  Spoiler %.3f"), Flap, SpeedBrake, Spoiler) + LINE_TERMINATOR;
 
 		return DebugMessage;
 	}
@@ -411,10 +411,10 @@ struct FAircraftState
 	{
 		FString DebugMessage;
 		DebugMessage += TEXT("Aircraft State :"); DebugMessage += LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("        Elevator %.2f     Left Aileron %.2f     Right Aileron %.2f     Rudder   %.2f     (Degree)"), ElevatorPosition, LeftAileronPosition, RightAileronPosition) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        Elevator %.2f     Left Aileron %.2f     Right Aileron %.2f     Rudder   %.2f     (Degree)"), ElevatorPosition, LeftAileronPosition, RightAileronPosition, RudderPosition) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        Flap     %.2f     SpeedBrake   %.2f     Spoilers      %.2f"), FlapPosition, SpeedBrakePosition, SpoilersPosition) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        CAS      %.2f (kt)     GroundSpeed %.2f (kt)     VelocityNED %s (ft/s)"), CalibratedAirSpeedKts, GroundSpeedKts, *VelocityNEDfps.ToString()) + LINE_TERMINATOR;
-		DebugMessage += FString::Printf(TEXT("        AltitudeASL %.2f (ft)     AltitudeAGL %.2f (ft)     AltitudeRateFtps %.2f (ft/s)     StallWarning %d"), AltitudeASLFt, AltitudeAGLFt, AltitudeRateFtps, StallWarning) + LINE_TERMINATOR;
+		DebugMessage += FString::Printf(TEXT("        AltitudeASL %.2f (ft)     AltitudeAGL %.2f (ft)     AltitudeRateFtps %.2f (ft/s)     StallWarning %.1f"), AltitudeASLFt, AltitudeAGLFt, AltitudeRateFtps, StallWarning) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        ECEFLocation %s      Latitude %.3f      Longitude %.3f"), *ECEFLocation.ToString(), Latitude, Longitude) + LINE_TERMINATOR;
 		DebugMessage += FString::Printf(TEXT("        Yaw %.5f (%.5f)      Pitch %.5f (%.5f)     Roll %.5f (%.5f) (Degrees) "), LocalEulerAngles.Yaw, EulerRates.X, LocalEulerAngles.Pitch, EulerRates.Y, LocalEulerAngles.Roll, EulerRates.Z) + LINE_TERMINATOR;
 
