@@ -72,7 +72,7 @@ Once done, the UE Editor will open. If you get an error message, build manually 
 Right click on the  `UnrealEngine\UEReferenceApp.uproject` 
 A contextual menu will appear. Select "Generate Visual Studio project files"
 After a short time, a new solution file `UEReferenceApp.sln` will appear beside the uproject file. 
-Open it, and if prompted click Ok to retarget to v143, then you can Build the UERefferenceApp or select Build Startup project" from the UnrealVS Extension bar. 
+Open it, and if prompted click Ok to retarget to v143, then you can Build the UERefferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
 
 Note that this Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
 
