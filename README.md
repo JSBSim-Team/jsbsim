@@ -195,15 +195,15 @@ A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim
 
 ## Python module examples
 
-The [examples/python](https://github.com/JSBSim-Team/jsbsim/tree/master/examples/python) directory contains a number of example Python based scripts demonstrating the use of JSBSim to determine and analyse aircraft performance.
+The [examples/python](https://github.com/JSBSim-Team/jsbsim/tree/master/examples/python) directory contains a number of example Python based scripts embedded in Jupyter notebooks demonstrating the use of JSBSim to determine and analyse aircraft performance.
 
-- [PlotAoaVsCAS.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/PlotAoaVsCAS.py) calculates and plots the AoA versus CAS for level trim for a range in aircraft weight, altitude and cg.
+- [AoA vs CAS.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/AoA%20vs%20CAS.ipynb) calculates and plots the AoA versus CAS for level trim for a range in aircraft weight, altitude and cg.
 
-- [TrimEnvelope.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/TrimEnvelope.py) calculates a set of trim points for an aircraft over a range of airspeeds and flight path angles. Required thrust and AoA is indicated via a colormap.
+- [Trim Envelope.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Trim%20Envelope.ipynb) calculates a set of trim points for an aircraft over a range of airspeeds and flight path angles. Required thrust and AoA is indicated via a colormap.
 
-- [RudderKick.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/RudderKick.py) simulate a pilot performing a rudder kick test with time histories of the control inputs and sideslip angle plotted.
+- [Rudder Kick.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Rudder%20Kick.ipynb) simulate a pilot performing a rudder kick test with time histories of the control inputs and sideslip angle plotted.
 
-- [ThrustVectoringAnalysis.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/ThrustVectoringAnalysis.py) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
+- [Thrust Vectoring Analysis.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
 
 # Contributing Source Code Changes
 
