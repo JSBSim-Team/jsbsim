@@ -193,6 +193,18 @@ print(jsbsim.get_default_root_dir())
 
 A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
 
+## Python module examples
+
+The [examples/python](https://github.com/JSBSim-Team/jsbsim/tree/master/examples/python) directory contains a number of example Python based scripts demonstrating the use of JSBSim to determine and analyse aircraft performance.
+
+- [PlotAoaVsCAS.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/PlotAoaVsCAS.py) calculates and plots the AoA versus CAS for level trim for a range in aircraft weight, altitude and cg.
+
+- [TrimEnvelope.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/TrimEnvelope.py) calculates a set of trim points for an aircraft over a range of airspeeds and flight path angles. Required thrust and AoA is indicated via a colormap.
+
+- [RudderKick.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/RudderKick.py) simulate a pilot performing a rudder kick test with time histories of the control inputs and sideslip angle plotted.
+
+- [ThrustVectoringAnalysis.py](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/ThrustVectoringAnalysis.py) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
+
 # Contributing Source Code Changes
 
 If you would like to contribute source code changes please take a look at the [Contributing Source Code Changes to JSBSim](https://github.com/JSBSim-Team/jsbsim/wiki/Contributing-Source-Code-Changes-to-JSBSim) Wiki page for instructions on how to go about contributing.
