@@ -193,6 +193,18 @@ print(jsbsim.get_default_root_dir())
 
 A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
 
+## Python module examples
+
+The [examples/python](https://github.com/JSBSim-Team/jsbsim/tree/master/examples/python) directory contains a number of example Python based scripts embedded in Jupyter notebooks demonstrating the use of JSBSim to determine and analyse aircraft performance.
+
+- [AoA vs CAS.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/AoA%20vs%20CAS.ipynb) calculates and plots the AoA (Angle of Attack) versus CAS (Calibrated Air Speed) for level trim for a range in aircraft weight, altitude and cg (center of gravity).
+
+- [Trim Envelope.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Trim%20Envelope.ipynb) calculates a set of trim points for an aircraft over a range of airspeeds and flight path angles. Required thrust and AoA is indicated via a colormap.
+
+- [Rudder Kick.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Rudder%20Kick.ipynb) simulate a pilot performing a rudder kick test with time histories of the control inputs and sideslip angle plotted.
+
+- [Thrust Vectoring Analysis.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
+
 # Contributing Source Code Changes
 
 If you would like to contribute source code changes please take a look at the [Contributing Source Code Changes to JSBSim](https://github.com/JSBSim-Team/jsbsim/wiki/Contributing-Source-Code-Changes-to-JSBSim) Wiki page for instructions on how to go about contributing.
