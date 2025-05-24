@@ -907,15 +907,15 @@
 	<simulation>       OFF </simulation>
 	<atmosphere>       OFF </atmosphere>
 	<massprops>        OFF </massprops>
-	<aerosurfaces>     OFF </aerosurfaces>
-	<rates>            OFF </rates>
+	<aerosurfaces>     OFF  </aerosurfaces>
+	<rates>            OFF  </rates>
 	<velocities>       OFF </velocities>
 	<forces>           OFF </forces>
 	<moments>          OFF </moments>
-	<position>         OFF </position>
+	<position>         OFF  </position>
 	<coefficients>     OFF </coefficients>
 	<ground_reactions> OFF </ground_reactions>
-	<fcs>              OFF </fcs>
+	<fcs>              OFF  </fcs>
 	<propulsion>       ON </propulsion>
     </output>
 </fdm_config>
