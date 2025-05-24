@@ -1,3 +1,4 @@
+from . import _jsbsim
 from ._jsbsim import (
     __version__,
     Attribute,
