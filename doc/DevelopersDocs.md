@@ -28,7 +28,7 @@ or (SSH mode)
 
 JSBSim can either be built with [CMake](https://cmake.org/) or [Microsoft Visual Studio](https://www.visualstudio.com/free-developer-offers/). If you are using a Mac OSX or a Linux platform, you must use CMake. If you are a Windows user you can use either one.
 
-JSBSim is coded in standard C++11/C99 and has no dependencies, so all you need is a C/C++ compiler installed on your platform.
+JSBSim is coded in standard C++17 and has no dependencies, so all you need is a C/C++ compiler installed on your platform.
 
 ### Building with CMake
 
