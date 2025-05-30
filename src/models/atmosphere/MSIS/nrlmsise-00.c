@@ -61,7 +61,7 @@ extern double pma[10][100];
 extern double sam[100];
 
 /* LOWER7 */
-extern double ptm[50];
+extern double ptm[10];
 extern double pdm[8][10];
 extern double pavgm[10];
 
