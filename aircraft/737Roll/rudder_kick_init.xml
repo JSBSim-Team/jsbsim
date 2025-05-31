@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<initialize name="cruise">
+  <!--
+    This file sets up the aircraft to start off
+    at cruise conditions for the rudder kick.
+  -->
+  <altitude unit="FT">  1000.0 </altitude>
+  <vc unit="KTS">        200.0 </vc>
+  <gamma unit="DEG">       0.0 </gamma>
+  <beta unit="DEG">        0.0 </beta>
+  <running> -1 </running>
+</initialize>
