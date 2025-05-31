@@ -352,7 +352,7 @@ void FGAccelerations::bind(void)
 
   PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPidot);
   PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetQidot);
-  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetQidot);
+  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetRidot);
 
   PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
