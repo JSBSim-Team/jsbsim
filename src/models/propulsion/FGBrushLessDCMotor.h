@@ -87,7 +87,7 @@ public:
   ~FGBrushLessDCMotor();
 
   void Calculate(void);
-  double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
+  double GetPowerAvailable(void) const {return (HP * hptoftlbssec);}
   double CalcFuelNeed(void) { return 0.; }
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);

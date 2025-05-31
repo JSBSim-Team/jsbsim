@@ -76,6 +76,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   control_convert=1.0;
   state_value=0;
   state_target=0;
+  tolerance=DEFAULT_TOLERANCE;
   switch(state) {
     case tUdot: tolerance = DEFAULT_TOLERANCE; break;
     case tVdot: tolerance = DEFAULT_TOLERANCE; break;

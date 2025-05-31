@@ -390,7 +390,7 @@ double FGTurbine::CalcFuelNeed(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTurbine::GetPowerAvailable(void) {
+double FGTurbine::GetPowerAvailable(void) const {
   if( ThrottlePos <= 0.77 )
     return 64.94*ThrottlePos;
   else

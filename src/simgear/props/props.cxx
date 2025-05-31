@@ -838,12 +838,12 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = PRESERVE;
  * Default constructor: always creates a root node.
  */
 SGPropertyNode::SGPropertyNode ()
-  : _index(0),
-    _parent(0),
+  : _parent(0),
+    _listeners(0),
+    _index(0),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -855,13 +855,13 @@ SGPropertyNode::SGPropertyNode ()
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
   : SGReferenced(node),
+    _parent(0),			// don't copy the parent
+    _listeners(0),	// CHECK!!
     _index(node._index),
     _name(node._name),
-    _parent(0),			// don't copy the parent
     _type(node._type),
     _tied(node._tied),
-    _attr(node._attr),
-    _listeners(0)		// CHECK!!
+    _attr(node._attr)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -910,13 +910,13 @@ template<typename Itr>
 SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 				int index,
 				SGPropertyNode * parent)
-  : _index(index),
+  : _parent(parent),
+    _listeners(0),
+    _index(index),
     _name(begin, end),
-    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -927,13 +927,13 @@ SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 SGPropertyNode::SGPropertyNode( const std::string& name,
                                 int index,
                                 SGPropertyNode * parent)
-  : _index(index),
+  : _parent(parent),
+    _listeners(0),
+    _index(index),
     _name(name),
-    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
