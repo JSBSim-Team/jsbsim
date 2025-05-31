@@ -39,7 +39,7 @@ import sys
 import numpy
 
 
-__version__:str = '${PROJECT_VERSION}'
+__version__: str = '${PROJECT_VERSION}'
 
 
 class BaseError(RuntimeError):
