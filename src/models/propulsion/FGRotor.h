@@ -248,7 +248,7 @@ public:
   ~FGRotor();
 
   /// Returns the power required by the rotor.
-  double GetPowerRequired(void)const { return PowerRequired; }
+  double GetPowerRequired(void) { return PowerRequired; }
 
   /// Returns the scalar thrust of the rotor, and adjusts the RPM value.
   double Calculate(double EnginePower);

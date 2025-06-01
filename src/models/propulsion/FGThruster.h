@@ -92,7 +92,7 @@ public:
   void SetName(std::string name) {Name = name;}
   virtual void SetRPM(double rpm) {};
   virtual void SetEngineRPM(double rpm) {};
-  virtual double GetPowerRequired(void) const {return 0.0;}
+  virtual double GetPowerRequired(void) {return 0.0;}
   double GetThrust(void) const {return Thrust;}
   eType GetType(void) {return Type;}
   std::string GetName(void) {return Name;}
