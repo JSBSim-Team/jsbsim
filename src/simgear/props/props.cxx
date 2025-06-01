@@ -838,8 +838,8 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = PRESERVE;
  * Default constructor: always creates a root node.
  */
 SGPropertyNode::SGPropertyNode ()
-  : _parent(0),
-    _listeners(0),
+  : _parent(nullptr),
+    _listeners(nullptr),
     _index(0),
     _type(props::NONE),
     _tied(false),
@@ -855,8 +855,8 @@ SGPropertyNode::SGPropertyNode ()
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
   : SGReferenced(node),
-    _parent(0),			// don't copy the parent
-    _listeners(0),	// CHECK!!
+    _parent(nullptr),		// don't copy the parent
+    _listeners(nullptr),	// CHECK!!
     _index(node._index),
     _name(node._name),
     _type(node._type),
@@ -911,7 +911,7 @@ SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 				int index,
 				SGPropertyNode * parent)
   : _parent(parent),
-    _listeners(0),
+    _listeners(nullptr),
     _index(index),
     _name(begin, end),
     _type(props::NONE),
@@ -928,7 +928,7 @@ SGPropertyNode::SGPropertyNode( const std::string& name,
                                 int index,
                                 SGPropertyNode * parent)
   : _parent(parent),
-    _listeners(0),
+    _listeners(nullptr),
     _index(index),
     _name(name),
     _type(props::NONE),
