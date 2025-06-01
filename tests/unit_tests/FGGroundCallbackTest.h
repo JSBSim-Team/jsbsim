@@ -55,6 +55,8 @@ public:
         double lat_rad = lat*M_PI/180.;
         loc = FGLocation(lon_rad, lat_rad, RadiusReference);
         double agl = cb->GetAGLevel(loc, contact, normal, v, w);
+        double agl_2 = cb->GetAGLevel(loc);
+        TS_ASSERT_EQUALS(agl, agl_2);
         TS_ASSERT_DELTA(0.0, agl, 1e-8);
         TS_ASSERT_VECTOR_EQUALS(v, zero);
         TS_ASSERT_VECTOR_EQUALS(w, zero);
@@ -88,6 +90,8 @@ public:
         double lat_rad = lat*M_PI/180.;
         loc = FGLocation(lon_rad, lat_rad, RadiusReference+h);
         double agl = cb->GetAGLevel(loc, contact, normal, v, w);
+        double agl_2 = cb->GetAGLevel(loc);
+        TS_ASSERT_EQUALS(agl, agl_2);
         TS_ASSERT_DELTA(h/agl, 1.0, epsilon*100.);
         TS_ASSERT_VECTOR_EQUALS(v, zero);
         TS_ASSERT_VECTOR_EQUALS(w, zero);
@@ -129,6 +133,8 @@ public:
         double lat_rad = lat*M_PI/180.;
         loc = FGLocation(lon_rad, lat_rad, RadiusReference+h);
         double agl = cb->GetAGLevel(loc, contact, normal, v, w);
+        double agl_2 = cb->GetAGLevel(loc);
+        TS_ASSERT_EQUALS(agl, agl_2);
         TS_ASSERT_DELTA((h-elevation)/agl, 1.0, epsilon*100.);
         TS_ASSERT_VECTOR_EQUALS(v, zero);
         TS_ASSERT_VECTOR_EQUALS(w, zero);
@@ -195,13 +201,15 @@ public:
         double lat_rad = lat*M_PI/180.;
         loc.SetPositionGeodetic(lon_rad, lat_rad, h);
         double agl = cb->GetAGLevel(loc, contact, normal, v, w);
+        double agl_2 = cb->GetAGLevel(loc);
+        TS_ASSERT_EQUALS(agl, agl_2);
         TS_ASSERT_DELTA(h, agl, 1e-8);
         TS_ASSERT_VECTOR_EQUALS(v, zero);
         TS_ASSERT_VECTOR_EQUALS(w, zero);
         TS_ASSERT_DELTA(normal(1), cos(lat_rad)*cos(lon_rad), epsilon);
         TS_ASSERT_DELTA(normal(2), cos(lat_rad)*sin(lon_rad), epsilon);
         TS_ASSERT_DELTA(normal(3), sin(lat_rad), epsilon);
-        FGColumnVector3 vLoc = loc-h*normal;
+        FGColumnVector3 vLoc = FGColumnVector3(loc)-h*normal;
         FGColumnVector3 vContact = contact;
         TS_ASSERT_DELTA(vLoc(1), vContact(1), 1e-7);
         TS_ASSERT_DELTA(vLoc(2), vContact(2), 1e-7);
@@ -235,7 +243,7 @@ public:
         TS_ASSERT_DELTA(normal(1), cos(lat_rad)*cos(lon_rad), epsilon);
         TS_ASSERT_DELTA(normal(2), cos(lat_rad)*sin(lon_rad), epsilon);
         TS_ASSERT_DELTA(normal(3), sin(lat_rad), epsilon);
-        FGColumnVector3 vLoc = loc-(h-elevation)*normal;
+        FGColumnVector3 vLoc = FGColumnVector3(loc)-(h-elevation)*normal;
         FGColumnVector3 vContact = contact;
         TS_ASSERT_DELTA(vLoc(1), vContact(1), 1e-7);
         TS_ASSERT_DELTA(vLoc(2), vContact(2), 1e-7);
