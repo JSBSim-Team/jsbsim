@@ -350,17 +350,17 @@ void FGAccelerations::bind(void)
   PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRdot);
 
-  PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPidot);
-  PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetQidot);
-  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetRidot);
+  PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPQRidot);
+  PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRidot);
+  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRidot);
 
   PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
 
-  PropertyManager->Tie("accelerations/uidot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUidot);
-  PropertyManager->Tie("accelerations/vidot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetVidot);
-  PropertyManager->Tie("accelerations/widot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetWidot);
+  PropertyManager->Tie("accelerations/uidot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWidot);
+  PropertyManager->Tie("accelerations/vidot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWidot);
+  PropertyManager->Tie("accelerations/widot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWidot);
 
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
