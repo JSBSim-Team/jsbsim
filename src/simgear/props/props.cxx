@@ -838,12 +838,12 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = PRESERVE;
  * Default constructor: always creates a root node.
  */
 SGPropertyNode::SGPropertyNode ()
-  : _index(0),
-    _parent(0),
+  : _parent(nullptr),
+    _listeners(nullptr),
+    _index(0),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -855,13 +855,13 @@ SGPropertyNode::SGPropertyNode ()
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
   : SGReferenced(node),
+    _parent(nullptr),		// don't copy the parent
+    _listeners(nullptr),	// CHECK!!
     _index(node._index),
     _name(node._name),
-    _parent(0),			// don't copy the parent
     _type(node._type),
     _tied(node._tied),
-    _attr(node._attr),
-    _listeners(0)		// CHECK!!
+    _attr(node._attr)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -910,13 +910,13 @@ template<typename Itr>
 SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 				int index,
 				SGPropertyNode * parent)
-  : _index(index),
+  : _parent(parent),
+    _listeners(nullptr),
+    _index(index),
     _name(begin, end),
-    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -927,13 +927,13 @@ SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 SGPropertyNode::SGPropertyNode( const std::string& name,
                                 int index,
                                 SGPropertyNode * parent)
-  : _index(index),
+  : _parent(parent),
+    _listeners(nullptr),
+    _index(index),
     _name(name),
-    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE),
-    _listeners(0)
+    _attr(READ|WRITE)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -948,7 +948,7 @@ SGPropertyNode::~SGPropertyNode ()
 {
   // zero out all parent pointers, else they might be dangling
   for (unsigned i = 0; i < _children.size(); ++i)
-    _children[i]->_parent = 0;
+    _children[i]->_parent = nullptr;
   clearValue();
 
   if (_listeners) {
@@ -1255,7 +1255,7 @@ SGPropertyNode::removeAllChildren()
   for(unsigned i = 0; i < _children.size(); ++i)
   {
     SGPropertyNode_ptr& node = _children[i];
-    node->_parent = 0;
+    node->_parent = nullptr;
     node->setAttribute(REMOVED, true);
     node->clearValue();
     fireChildRemoved(node);
@@ -2033,7 +2033,7 @@ SGPropertyNode::untie ()
 SGPropertyNode *
 SGPropertyNode::getRootNode ()
 {
-  if (_parent == 0)
+  if (_parent == nullptr)
     return this;
   else
     return _parent->getRootNode();
@@ -2042,7 +2042,7 @@ SGPropertyNode::getRootNode ()
 const SGPropertyNode *
 SGPropertyNode::getRootNode () const
 {
-  if (_parent == 0)
+  if (_parent == nullptr)
     return this;
   else
     return _parent->getRootNode();
@@ -2363,7 +2363,7 @@ void
 SGPropertyNode::addChangeListener (SGPropertyChangeListener * listener,
                                    bool initial)
 {
-  if (_listeners == 0)
+  if (_listeners == nullptr)
     _listeners = new vector<SGPropertyChangeListener*>;
   _listeners->push_back(listener);
   listener->register_property(this);
@@ -2374,7 +2374,7 @@ SGPropertyNode::addChangeListener (SGPropertyChangeListener * listener,
 void
 SGPropertyNode::removeChangeListener (SGPropertyChangeListener * listener)
 {
-  if (_listeners == 0)
+  if (_listeners == nullptr)
     return;
   vector<SGPropertyChangeListener*>::iterator it =
     find(_listeners->begin(), _listeners->end(), listener);
@@ -2383,7 +2383,7 @@ SGPropertyNode::removeChangeListener (SGPropertyChangeListener * listener)
     listener->unregister_property(this);
     if (_listeners->empty()) {
       vector<SGPropertyChangeListener*>* tmp = _listeners;
-      _listeners = 0;
+      _listeners = nullptr;
       delete tmp;
     }
   }
@@ -2436,12 +2436,12 @@ SGPropertyNode::fireChildrenRemovedRecursive()
 void
 SGPropertyNode::fireValueChanged (SGPropertyNode * node)
 {
-  if (_listeners != 0) {
+  if (_listeners != nullptr) {
     for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->valueChanged(node);
     }
   }
-  if (_parent != 0)
+  if (_parent != nullptr)
     _parent->fireValueChanged(node);
 }
 
@@ -2449,12 +2449,12 @@ void
 SGPropertyNode::fireChildAdded (SGPropertyNode * parent,
 				SGPropertyNode * child)
 {
-  if (_listeners != 0) {
+  if (_listeners != nullptr) {
     for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->childAdded(parent, child);
     }
   }
-  if (_parent != 0)
+  if (_parent != nullptr)
     _parent->fireChildAdded(parent, child);
 }
 
@@ -2462,12 +2462,12 @@ void
 SGPropertyNode::fireChildRemoved (SGPropertyNode * parent,
 				  SGPropertyNode * child)
 {
-  if (_listeners != 0) {
+  if (_listeners != nullptr) {
     for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->childRemoved(parent, child);
     }
   }
-  if (_parent != 0)
+  if (_parent != nullptr)
     _parent->fireChildRemoved(parent, child);
 }
 
