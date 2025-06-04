@@ -311,8 +311,9 @@ namespace GeographicLib {
       // Now point1 and point2 belong within a hemisphere bounded by a
       // meridian and geodesic is neither meridional or equatorial.
 
-      // Figure a starting point for Newton's method
-      real dnm;
+      // Figure a starting point for Newton's method.
+      // dnm value assigned to suppress maybe-uninitialized warning
+      real dnm = 1.0;
       sig12 = InverseStart(sbet1, cbet1, dn1, sbet2, cbet2, dn2,
                            lam12, slam12, clam12,
                            salp1, calp1, salp2, calp2, dnm,

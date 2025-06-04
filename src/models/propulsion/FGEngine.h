@@ -180,7 +180,7 @@ public:
 
   virtual double CalcOxidizerNeed(void) {return 0.0;}
 
-  virtual double GetPowerAvailable(void) {return 0.0;};
+  virtual double GetPowerAvailable(void) const {return 0.0;};
 
   virtual const FGColumnVector3& GetBodyForces(void);
   virtual const FGColumnVector3& GetMoments(void);
