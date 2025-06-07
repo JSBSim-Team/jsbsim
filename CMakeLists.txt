@@ -7,7 +7,7 @@ project(JSBSim)
 
 set(PROJECT_VERSION_MAJOR "1")
 set(PROJECT_VERSION_MINOR "2")
-set(PROJECT_VERSION_PATCH "3.dev1")
+set(PROJECT_VERSION_PATCH "4.dev1")
 set(PROJECT_CONTACT_EMAIL "jsbsim-devel@lists.sourceforge.net")
 set(PROJECT_CONTACT_VENDOR "The JSBSim team")
 
