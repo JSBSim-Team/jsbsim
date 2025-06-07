@@ -752,8 +752,9 @@ void FGStandardAtmosphere::SetVaporMassFractionPPM(double frac)
 
 void FGStandardAtmosphere::bind(void)
 {
-  typedef double (FGStandardAtmosphere::*PMFi)(int) const;
-  typedef void (FGStandardAtmosphere::*PMF)(int, double);
+  using PMFi = double (FGStandardAtmosphere::*)(int) const;
+  using PMF = void (FGStandardAtmosphere::*)(int, double);
+
   PropertyManager->Tie("atmosphere/delta-T", this, eRankine,
                                     reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetTemperatureBias),
                                     reinterpret_cast<PMF>(&FGStandardAtmosphere::SetTemperatureBias));

@@ -506,8 +506,8 @@ int  FGWinds::GetRandomSeed(void) const {
 
 void FGWinds::bind(void)
 {
-  typedef int (FGWinds::*PMFt)(void) const;
-  typedef void (FGWinds::*PMFi)(int);
+  using PMFt = int (FGWinds::*)(void) const;
+  using PMFi = void (FGWinds::*)(int);
 
   // User-specified steady, constant, wind properties (local navigational/geographic frame: N-E-D)
   PropertyManager->Tie("atmosphere/psiw-rad", this, &FGWinds::GetWindPsi, &FGWinds::SetWindPsi);
