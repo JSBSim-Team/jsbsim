@@ -342,7 +342,7 @@ void FGPropulsion::SetEngineRunning(int engineIndex)
 {
   in.ThrottleCmd[engineIndex] = in.ThrottlePos[engineIndex] = 1; // Set the throttle command and position
   in.MixtureCmd[engineIndex] = in.MixturePos[engineIndex] = 1;   // Set the mixture command and position
-  FDMExec->GetFCS()->SetMixturePos(engineIndex, 1);    // Also set FCS values     
+  FDMExec->GetFCS()->SetMixturePos(engineIndex, 1);    // Also set FCS values
   FDMExec->GetFCS()->SetMixtureCmd(engineIndex, 1);
   GetEngine(engineIndex)->InitRunning();
 }
@@ -820,8 +820,6 @@ void FGPropulsion::SetFuelFreeze(bool f)
 
 void FGPropulsion::bind(void)
 {
-  typedef int (FGPropulsion::*iPMF)(void) const;
-  typedef bool (FGPropulsion::*bPMF)(void) const;
   bool HavePistonEngine = false;
   bool HaveTurboEngine = false;
 
@@ -831,7 +829,8 @@ void FGPropulsion::bind(void)
     if (!HaveTurboEngine && engine->GetType() == FGEngine::etTurboprop) HaveTurboEngine = true;
   }
 
-  PropertyManager->Tie("propulsion/set-running", this, (iPMF)nullptr, &FGPropulsion::InitRunning);
+  PropertyManager->Tie<FGPropulsion, int>("propulsion/set-running", this, nullptr,
+                                          &FGPropulsion::InitRunning);
   if (HaveTurboEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
     PropertyManager->Tie("propulsion/cutoff_cmd", this,  &FGPropulsion::GetCutoff, &FGPropulsion::SetCutoff);
@@ -839,7 +838,8 @@ void FGPropulsion::bind(void)
 
   if (HavePistonEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
-    PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)nullptr, &FGPropulsion::SetMagnetos);
+    PropertyManager->Tie<FGPropulsion, int>("propulsion/magneto_cmd", this,
+                                            nullptr, &FGPropulsion::SetMagnetos);
   }
 
   PropertyManager->Tie("propulsion/active_engine", this, &FGPropulsion::GetActiveEngine,
@@ -854,7 +854,8 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/total-oxidizer-lbs", &TotalOxidizerQuantity);
   PropertyManager->Tie("propulsion/refuel", &refuel);
   PropertyManager->Tie("propulsion/fuel_dump", &dump);
-  PropertyManager->Tie("propulsion/fuel_freeze", this, (bPMF)nullptr, &FGPropulsion::SetFuelFreeze);
+  PropertyManager->Tie<FGPropulsion, bool>("propulsion/fuel_freeze", this,
+                                           nullptr, &FGPropulsion::SetFuelFreeze);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
