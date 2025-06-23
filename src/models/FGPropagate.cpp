@@ -103,7 +103,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   epa = 0.0;
 
   bind();
-
   Debug(0);
 }
 
@@ -266,7 +265,7 @@ bool FGPropagate::Run(bool Holding)
   RecomputeLocalTerrainVelocity();
 
   VState.vPQR = VState.vPQRi - Ti2b * in.vOmegaPlanet;
-  
+
   // Angular orientation derivative
   CalculateQuatdot();
 
