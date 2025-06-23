@@ -133,8 +133,6 @@ public:
 
     FGQuaternion vQtrndot;
 
-    FGQuaternion vQuaterniondot;
-
     FGColumnVector3 vInertialVelocity;
 
     FGColumnVector3 vInertialPosition;

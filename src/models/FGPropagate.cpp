@@ -183,7 +183,6 @@ void FGPropagate::SetInitialState(const FGInitialCondition* FGIC)
 
   CalculateInertialVelocity(); // Translational position derivative
   CalculateQuatdot();  // Angular orientation derivative
-  CalculateQuaterniondot(); // Quaternion derivative
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,7 +270,6 @@ bool FGPropagate::Run(bool Holding)
   
   // Angular orientation derivative
   CalculateQuatdot();
-  CalculateQuaterniondot();
 
   VState.qAttitudeLocal = Tl2b.GetQuaternion();
 
@@ -311,17 +309,6 @@ void FGPropagate::CalculateQuatdot(void)
 {
   // Compute quaternion orientation derivative on current body rates
   VState.vQtrndot = VState.qAttitudeECI.GetQDot(VState.vPQRi);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Compute the quaternion orientation derivative
-//
-// vQtrndot 
-
-void FGPropagate::CalculateQuaterniondot(void)
-{
-  // Compute quaternion orientation derivative on current body rates
-  VState.vQuaterniondot = VState.qAttitudeLocal.GetQDot(VState.vPQRn);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -684,7 +671,6 @@ void FGPropagate::SetVState(const VehicleState& vstate)
   VState.vPQRi = VState.vPQR + Ti2b * in.vOmegaPlanet;
   VState.vInertialPosition = vstate.vInertialPosition;
   CalculateQuatdot();
-  CalculateQuaterniondot();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -905,16 +891,6 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/qx", &VState.qAttitudeLocal(eQx));
   PropertyManager->Tie("attitude/qy", &VState.qAttitudeLocal(eQy));
   PropertyManager->Tie("attitude/qz",  &VState.qAttitudeLocal(eQz));
-
-  PropertyManager->Tie("attitude/qwdot", &VState.vQuaterniondot(eQw));
-  PropertyManager->Tie("attitude/qxdot", &VState.vQuaterniondot(eQx));
-  PropertyManager->Tie("attitude/qydot", &VState.vQuaterniondot(eQy));
-  PropertyManager->Tie("attitude/qzdot", &VState.vQuaterniondot(eQz));
-
-  PropertyManager->Tie("attitude/qeci-w", &VState.qAttitudeECI(eQw));
-  PropertyManager->Tie("attitude/qeci-x", &VState.qAttitudeECI(eQx));
-  PropertyManager->Tie("attitude/qeci-y", &VState.qAttitudeECI(eQy));
-  PropertyManager->Tie("attitude/qeci-z", &VState.qAttitudeECI(eQz));
 
   PropertyManager->Tie("orbital/specific-angular-momentum-ft2_sec", &h);
   PropertyManager->Tie("orbital/inclination-deg", &Inclination);
