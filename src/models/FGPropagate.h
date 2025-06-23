@@ -118,11 +118,6 @@ public:
         units rad/sec */
     FGColumnVector3 vPQRi;
 
-    /** The angular velocity vector for the vehicle body frame relative to the
-        NED frame, expressed in the body frame.
-        units rad/sec */
-    FGColumnVector3 vPQRn;
-
     /** The current orientation of the vehicle, that is, the orientation of the
         body frame relative to the local, NED frame. */
     FGQuaternion qAttitudeLocal;
@@ -667,7 +662,6 @@ private:
   void CalculateInertialVelocity(void);
   void CalculateUVW(void);
   void CalculateQuatdot(void);
-  void CalculateQuaterniondot(void);
 
   void Integrate( FGColumnVector3& Integrand,
                   FGColumnVector3& Val,
