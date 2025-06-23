@@ -341,6 +341,8 @@ enum {eNorth = 1, eEast,  eDown };
 enum {eLat = 1, eLong, eRad     };
 /// Conversion specifiers
 enum {inNone = 0, inDegrees, inRadians, inMeters, inFeet };
+/// Quaternion components
+enum {eQw = 1, eQx, eQy, eQz};
 
 };
 
