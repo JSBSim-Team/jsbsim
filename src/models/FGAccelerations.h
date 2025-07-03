@@ -144,6 +144,7 @@ public:
       @return Body axis translational acceleration in ft/sec^2.
   */
   const FGColumnVector3& GetUVWidot(void) const { return vUVWidot; }
+  double GetUVWidot(int idx) const { return vUVWidot(idx); }
 
   /** Retrieves the body axis angular acceleration vector.
       Retrieves the body axis angular acceleration vector in rad/sec^2. The
@@ -174,6 +175,7 @@ public:
       @return The angular acceleration vector.
   */
   const FGColumnVector3& GetPQRidot(void) const {return vPQRidot;}
+  double GetPQRidot(int idx) const { return vPQRidot(idx); }
 
   /** Retrieves a body frame acceleration component.
       Retrieves a body frame acceleration component. The acceleration returned

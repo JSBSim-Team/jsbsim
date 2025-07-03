@@ -73,7 +73,7 @@ public:
   ~FGElectric();
 
   void Calculate(void);
-  double GetPowerAvailable(void) {return (HP * hptoftlbssec);}
+  double GetPowerAvailable(void) const {return (HP * hptoftlbssec);}
   double getRPM(void) {return RPM;}
   std::string GetEngineLabels(const std::string& delimiter);
   std::string GetEngineValues(const std::string& delimiter);
