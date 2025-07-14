@@ -563,7 +563,10 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGWinds::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/turb-type", this, (PMFt)&FGWinds::GetTurbType, (PMFi)&FGWinds::SetTurbType);
+  PropertyManager->Tie<int>("atmosphere/turb-type",
+     [this]() { return this->GetTurbType(); },
+     [this](int x) { this->SetTurbType((tType)x); }
+  );
   PropertyManager->Tie("atmosphere/turb-rate", this, &FGWinds::GetTurbRate, &FGWinds::SetTurbRate);
   PropertyManager->Tie("atmosphere/turb-gain", this, &FGWinds::GetTurbGain, &FGWinds::SetTurbGain);
   PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGWinds::GetRhythmicity,

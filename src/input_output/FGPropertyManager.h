@@ -253,6 +253,29 @@ class JSBSIM_API FGPropertyManager
       }
     }
 
+
+    template <typename T> void
+    Tie (const std::string &name, std::function<T()> getter, std::function<void(T)> setter)
+    {
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueCallable<T>(getter, setter),
+                                                       false))
+        std::cerr << "Failed to tie property " << name << " to indexed functions"
+                  << std::endl;
+      else {
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
+        tied_properties.push_back(property);
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+      }
+    }
+
+
     /**
      * Tie a property to a pair of object methods.
      *

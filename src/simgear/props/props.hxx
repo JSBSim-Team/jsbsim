@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include <typeinfo>
+#include <functional>
 
 #include "simgear/compiler.h"
 #include "JSBSim_API.h"
@@ -600,6 +601,33 @@ public:
   }
 private:
   C &_obj;
+  getter_t _getter;
+  setter_t _setter;
+};
+
+
+template <class T>
+class SGRawValueCallable : public SGRawValue<T>
+{
+public:
+  using getter_t = std::function<T(void)>;
+  using setter_t = std::function<void(T)>;
+
+  SGRawValueCallable (getter_t getter = 0, setter_t setter = 0)
+    : _getter(getter), _setter(setter) {}
+  virtual ~SGRawValueCallable () {}
+  virtual T getValue () const {
+    if (_getter) { return std::invoke(_getter); }
+    else { return SGRawValue<T>::DefaultValue(); }
+  }
+  virtual bool setValue (T value) {
+    if (_setter) { std::invoke(_setter, value); return true; }
+    else return false;
+  }
+  virtual SGRaw* clone () const {
+    return new SGRawValueCallable(_getter, _setter);
+  }
+private:
   getter_t _getter;
   setter_t _setter;
 };
