@@ -270,7 +270,7 @@ class JSBSIM_API FGPropertyManager
       else {
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        tied_properties.push_back(property);
+        tied_properties.push_back(PropertyState(property, nullptr));
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
     }
