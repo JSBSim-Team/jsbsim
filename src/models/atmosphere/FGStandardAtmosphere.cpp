@@ -754,29 +754,30 @@ void FGStandardAtmosphere::bind(void)
 {
   typedef double (FGStandardAtmosphere::*PMFi)(int) const;
   typedef void (FGStandardAtmosphere::*PMF)(int, double);
-  PropertyManager->Tie("atmosphere/delta-T", this, eRankine,
-                                    (PMFi)&FGStandardAtmosphere::GetTemperatureBias,
-                                    (PMF)&FGStandardAtmosphere::SetTemperatureBias);
-  PropertyManager->Tie("atmosphere/SL-graded-delta-T", this, eRankine,
-                                    (PMFi)&FGStandardAtmosphere::GetTemperatureDeltaGradient,
-                                    (PMF)&FGStandardAtmosphere::SetSLTemperatureGradedDelta);
-  PropertyManager->Tie("atmosphere/P-sl-psf", this, ePSF,
-                                   (PMFi)&FGStandardAtmosphere::GetPressureSL,
-                                   (PMF)&FGStandardAtmosphere::SetPressureSL);
-  PropertyManager->Tie("atmosphere/dew-point-R", this, eRankine,
-                       (PMFi)&FGStandardAtmosphere::GetDewPoint,
-                       (PMF)&FGStandardAtmosphere::SetDewPoint);
-  PropertyManager->Tie("atmosphere/vapor-pressure-psf", this, ePSF,
-                       (PMFi)&FGStandardAtmosphere::GetVaporPressure,
-                       (PMF)&FGStandardAtmosphere::SetVaporPressure);
-  PropertyManager->Tie("atmosphere/saturated-vapor-pressure-psf", this, ePSF,
-                       (PMFi)&FGStandardAtmosphere::GetSaturatedVaporPressure);
-  PropertyManager->Tie("atmosphere/RH", this,
-                       &FGStandardAtmosphere::GetRelativeHumidity,
-                       &FGStandardAtmosphere::SetRelativeHumidity);
-  PropertyManager->Tie("atmosphere/vapor-fraction-ppm", this,
-                       &FGStandardAtmosphere::GetVaporMassFractionPPM,
-                       &FGStandardAtmosphere::SetVaporMassFractionPPM);
+  PropertyManager->Tie<double>("atmosphere/delta-T",
+                        [this]() { return GetTemperatureBias(eRankine); },
+                        [this](double T) { SetTemperatureBias(eRankine, T); });
+  PropertyManager->Tie<double>("atmosphere/SL-graded-delta-T",
+                        [this]() { return GetTemperatureDeltaGradient(eRankine); },
+                        [this](double T) { SetSLTemperatureGradedDelta(eRankine, T); } );
+  PropertyManager->Tie<double>("atmosphere/P-sl-psf",
+                        [this]() { return GetPressureSL(ePSF); },
+                        [this](double T) { SetPressureSL(ePSF, T); });
+  PropertyManager->Tie<double>("atmosphere/dew-point-R",
+                        [this]() { return GetDewPoint(eRankine); },
+                        [this](double T) { SetDewPoint(eRankine, T); });
+  PropertyManager->Tie<double>("atmosphere/vapor-pressure-psf",
+                        [this]() { return GetVaporPressure(ePSF); },
+                        [this](double T) { SetVaporPressure(ePSF, T); });
+  PropertyManager->Tie<double>("atmosphere/saturated-vapor-pressure-psf",
+                        [this]() { return GetSaturatedVaporPressure(ePSF); },
+                        {});
+  PropertyManager->Tie<double>("atmosphere/RH",
+                        [this]() { return GetRelativeHumidity(); },
+                        [this](double T) { SetRelativeHumidity(T); });
+  PropertyManager->Tie<double>("atmosphere/vapor-fraction-ppm",
+                        [this]() { return GetVaporMassFractionPPM(); },
+                        [this](double T) { SetVaporMassFractionPPM(T); });
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
