@@ -122,9 +122,8 @@ void FGPID::bind(Element *el, FGPropertyManager* PropertyManager)
   } else {
     tmp = Name;
   }
-  typedef double (FGPID::*PMF)(void) const;
-  PropertyManager->Tie(tmp+"/initial-integrator-value", this, (PMF)nullptr,
-                       &FGPID::SetInitialOutput);
+  PropertyManager->Tie<FGPID, double>(tmp+"/initial-integrator-value", this,
+                                      nullptr, &FGPID::SetInitialOutput);
 
   Debug(0);
 }

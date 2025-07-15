@@ -57,12 +57,11 @@ CLASS IMPLEMENTATION
 
 FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 {
-  typedef int (FGOutput::*iOPV)(void) const;
-
   Name = "FGOutput";
   enabled = true;
 
-  PropertyManager->Tie("simulation/force-output", this, (iOPV)0, &FGOutput::ForceOutput);
+  PropertyManager->Tie<FGOutput, int>("simulation/force-output", this, nullptr,
+                                      &FGOutput::ForceOutput);
 
   Debug(0);
 }

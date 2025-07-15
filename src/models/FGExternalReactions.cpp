@@ -138,13 +138,12 @@ bool FGExternalReactions::Run(bool Holding)
 
 void FGExternalReactions::bind(void)
 {
-  typedef double (FGExternalReactions::*PMF)(int) const;
-  PropertyManager->Tie("moments/l-external-lbsft", this, eL, (PMF)&FGExternalReactions::GetMoments);
-  PropertyManager->Tie("moments/m-external-lbsft", this, eM, (PMF)&FGExternalReactions::GetMoments);
-  PropertyManager->Tie("moments/n-external-lbsft", this, eN, (PMF)&FGExternalReactions::GetMoments);
-  PropertyManager->Tie("forces/fbx-external-lbs", this, eX, (PMF)&FGExternalReactions::GetForces);
-  PropertyManager->Tie("forces/fby-external-lbs", this, eY, (PMF)&FGExternalReactions::GetForces);
-  PropertyManager->Tie("forces/fbz-external-lbs", this, eZ, (PMF)&FGExternalReactions::GetForces);
+  PropertyManager->Tie("moments/l-external-lbsft", this, eL, &FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/m-external-lbsft", this, eM, &FGExternalReactions::GetMoments);
+  PropertyManager->Tie("moments/n-external-lbsft", this, eN, &FGExternalReactions::GetMoments);
+  PropertyManager->Tie("forces/fbx-external-lbs", this, eX, &FGExternalReactions::GetForces);
+  PropertyManager->Tie("forces/fby-external-lbs", this, eY, &FGExternalReactions::GetForces);
+  PropertyManager->Tie("forces/fbz-external-lbs", this, eZ, &FGExternalReactions::GetForces);
 }
 
 

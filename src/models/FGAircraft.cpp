@@ -174,7 +174,6 @@ bool FGAircraft::Load(Element* el)
 
 void FGAircraft::bind(void)
 {
-  typedef double (FGAircraft::*PMF)(int) const;
   PropertyManager->Tie("metrics/Sw-sqft", this, &FGAircraft::GetWingArea, &FGAircraft::SetWingArea);
   PropertyManager->Tie("metrics/bw-ft", this, &FGAircraft::GetWingSpan);
   PropertyManager->Tie("metrics/cbarw-ft", this, &FGAircraft::Getcbar);
@@ -188,15 +187,15 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/lv-norm", this, &FGAircraft::Getlbarv);
   PropertyManager->Tie("metrics/vbarh-norm", this, &FGAircraft::Getvbarh);
   PropertyManager->Tie("metrics/vbarv-norm", this, &FGAircraft::Getvbarv);
-  PropertyManager->Tie("metrics/aero-rp-x-in", this, eX, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-y-in", this, eY, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-z-in", this, eZ, (PMF)&FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
-  PropertyManager->Tie("metrics/eyepoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZep);
-  PropertyManager->Tie("metrics/eyepoint-y-in", this, eY,(PMF)&FGAircraft::GetXYZep);
-  PropertyManager->Tie("metrics/eyepoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZep);
-  PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZvrp);
-  PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, (PMF)&FGAircraft::GetXYZvrp);
-  PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZvrp);
+  PropertyManager->Tie("metrics/aero-rp-x-in", this, eX, &FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-y-in", this, eY, &FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-z-in", this, eZ, &FGAircraft::GetXYZrp, &FGAircraft::SetXYZrp);
+  PropertyManager->Tie("metrics/eyepoint-x-in", this, eX, &FGAircraft::GetXYZep);
+  PropertyManager->Tie("metrics/eyepoint-y-in", this, eY,&FGAircraft::GetXYZep);
+  PropertyManager->Tie("metrics/eyepoint-z-in", this, eZ, &FGAircraft::GetXYZep);
+  PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, &FGAircraft::GetXYZvrp);
+  PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, &FGAircraft::GetXYZvrp);
+  PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, &FGAircraft::GetXYZvrp);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

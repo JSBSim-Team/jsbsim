@@ -344,43 +344,41 @@ void FGAccelerations::InitializeDerivatives(void)
 
 void FGAccelerations::bind(void)
 {
-  using PMF = double (FGAccelerations::*)(int) const;
+  PropertyManager->Tie("accelerations/pdot-rad_sec2", this, eP, &FGAccelerations::GetPQRdot);
+  PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, &FGAccelerations::GetPQRdot);
+  PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, &FGAccelerations::GetPQRdot);
 
-  PropertyManager->Tie("accelerations/pdot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPQRdot);
-  PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRdot);
-  PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRdot);
+  PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, &FGAccelerations::GetPQRidot);
+  PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, &FGAccelerations::GetPQRidot);
+  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, &FGAccelerations::GetPQRidot);
 
-  PropertyManager->Tie("accelerations/pidot-rad_sec2", this, eP, (PMF)&FGAccelerations::GetPQRidot);
-  PropertyManager->Tie("accelerations/qidot-rad_sec2", this, eQ, (PMF)&FGAccelerations::GetPQRidot);
-  PropertyManager->Tie("accelerations/ridot-rad_sec2", this, eR, (PMF)&FGAccelerations::GetPQRidot);
+  PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, &FGAccelerations::GetUVWdot);
+  PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, &FGAccelerations::GetUVWdot);
+  PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, &FGAccelerations::GetUVWdot);
 
-  PropertyManager->Tie("accelerations/udot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWdot);
-  PropertyManager->Tie("accelerations/vdot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWdot);
-  PropertyManager->Tie("accelerations/wdot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWdot);
-
-  PropertyManager->Tie("accelerations/uidot-ft_sec2", this, eU, (PMF)&FGAccelerations::GetUVWidot);
-  PropertyManager->Tie("accelerations/vidot-ft_sec2", this, eV, (PMF)&FGAccelerations::GetUVWidot);
-  PropertyManager->Tie("accelerations/widot-ft_sec2", this, eW, (PMF)&FGAccelerations::GetUVWidot);
+  PropertyManager->Tie("accelerations/uidot-ft_sec2", this, eU, &FGAccelerations::GetUVWidot);
+  PropertyManager->Tie("accelerations/vidot-ft_sec2", this, eV, &FGAccelerations::GetUVWidot);
+  PropertyManager->Tie("accelerations/widot-ft_sec2", this, eW, &FGAccelerations::GetUVWidot);
 
   PropertyManager->Tie("accelerations/gravity-ft_sec2", this, &FGAccelerations::GetGravAccelMagnitude);
   PropertyManager->Tie("simulation/gravitational-torque", &gravTorque);
-  PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, (PMF)&FGAccelerations::GetWeight);
-  PropertyManager->Tie("forces/fby-weight-lbs", this, eY, (PMF)&FGAccelerations::GetWeight);
-  PropertyManager->Tie("forces/fbz-weight-lbs", this, eZ, (PMF)&FGAccelerations::GetWeight);
+  PropertyManager->Tie("forces/fbx-weight-lbs", this, eX, &FGAccelerations::GetWeight);
+  PropertyManager->Tie("forces/fby-weight-lbs", this, eY, &FGAccelerations::GetWeight);
+  PropertyManager->Tie("forces/fbz-weight-lbs", this, eZ, &FGAccelerations::GetWeight);
 
-  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, (PMF)&FGAccelerations::GetForces);
-  PropertyManager->Tie("forces/fby-total-lbs", this, eY, (PMF)&FGAccelerations::GetForces);
-  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, (PMF)&FGAccelerations::GetForces);
-  PropertyManager->Tie("moments/l-total-lbsft", this, eL, (PMF)&FGAccelerations::GetMoments);
-  PropertyManager->Tie("moments/m-total-lbsft", this, eM, (PMF)&FGAccelerations::GetMoments);
-  PropertyManager->Tie("moments/n-total-lbsft", this, eN, (PMF)&FGAccelerations::GetMoments);
+  PropertyManager->Tie("forces/fbx-total-lbs", this, eX, &FGAccelerations::GetForces);
+  PropertyManager->Tie("forces/fby-total-lbs", this, eY, &FGAccelerations::GetForces);
+  PropertyManager->Tie("forces/fbz-total-lbs", this, eZ, &FGAccelerations::GetForces);
+  PropertyManager->Tie("moments/l-total-lbsft", this, eL, &FGAccelerations::GetMoments);
+  PropertyManager->Tie("moments/m-total-lbsft", this, eM, &FGAccelerations::GetMoments);
+  PropertyManager->Tie("moments/n-total-lbsft", this, eN, &FGAccelerations::GetMoments);
 
-  PropertyManager->Tie("moments/l-gear-lbsft", this, eL, (PMF)&FGAccelerations::GetGroundMoments);
-  PropertyManager->Tie("moments/m-gear-lbsft", this, eM, (PMF)&FGAccelerations::GetGroundMoments);
-  PropertyManager->Tie("moments/n-gear-lbsft", this, eN, (PMF)&FGAccelerations::GetGroundMoments);
-  PropertyManager->Tie("forces/fbx-gear-lbs", this, eX, (PMF)&FGAccelerations::GetGroundForces);
-  PropertyManager->Tie("forces/fby-gear-lbs", this, eY, (PMF)&FGAccelerations::GetGroundForces);
-  PropertyManager->Tie("forces/fbz-gear-lbs", this, eZ, (PMF)&FGAccelerations::GetGroundForces);
+  PropertyManager->Tie("moments/l-gear-lbsft", this, eL, &FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("moments/m-gear-lbsft", this, eM, &FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("moments/n-gear-lbsft", this, eN, &FGAccelerations::GetGroundMoments);
+  PropertyManager->Tie("forces/fbx-gear-lbs", this, eX, &FGAccelerations::GetGroundForces);
+  PropertyManager->Tie("forces/fby-gear-lbs", this, eY, &FGAccelerations::GetGroundForces);
+  PropertyManager->Tie("forces/fbz-gear-lbs", this, eZ, &FGAccelerations::GetGroundForces);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
