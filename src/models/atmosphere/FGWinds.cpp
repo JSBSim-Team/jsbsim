@@ -50,6 +50,19 @@ INCLUDES
 
 using namespace std;
 
+// Property traits specialization to tie properties using FGWinds enums.
+namespace simgear::props {
+  using EnumPropertyTrait = PropertyTraits<int>;
+  template<> struct PropertyTraits<JSBSim::FGWinds::tType> : public EnumPropertyTrait {};
+  template<> struct PropertyTraits<JSBSim::FGWinds::eGustFrame> : public EnumPropertyTrait {};
+};
+
+template<typename T> T getValue(const SGPropertyNode* node)
+{
+  static_assert(is_enum_v<T>); // Guard against misusing template instantiation.
+  return static_cast<T>(node->getIntValue());
+}
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -537,8 +550,8 @@ void FGWinds::bind(void)
                                         this, nullptr, &FGWinds::EndGustDuration);
   PropertyManager->Tie<FGWinds, double>("atmosphere/cosine-gust/magnitude-ft_sec",
                                         this, nullptr, &FGWinds::GustMagnitude);
-  PropertyManager->Tie<FGWinds, int>("atmosphere/cosine-gust/frame", this, nullptr,
-                                     reinterpret_cast<PMFi>(&FGWinds::GustFrame));
+  PropertyManager->Tie<FGWinds, eGustFrame>("atmosphere/cosine-gust/frame", this,
+                                            nullptr, &FGWinds::GustFrame);
   PropertyManager->Tie<FGWinds, double>("atmosphere/cosine-gust/X-velocity-ft_sec",
                                         this, nullptr, &FGWinds::GustXComponent);
   PropertyManager->Tie<FGWinds, double>("atmosphere/cosine-gust/Y-velocity-ft_sec",
@@ -570,9 +583,7 @@ void FGWinds::bind(void)
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this, eP, &FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this, eQ, &FGWinds::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this, eR, &FGWinds::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/turb-type", this,
-                       reinterpret_cast<PMFt>(&FGWinds::GetTurbType),
-                       reinterpret_cast<PMFi>(&FGWinds::SetTurbType));
+  PropertyManager->Tie("atmosphere/turb-type", this, &FGWinds::GetTurbType, &FGWinds::SetTurbType);
   PropertyManager->Tie("atmosphere/turb-rate", this, &FGWinds::GetTurbRate, &FGWinds::SetTurbRate);
   PropertyManager->Tie("atmosphere/turb-gain", this, &FGWinds::GetTurbGain, &FGWinds::SetTurbGain);
   PropertyManager->Tie("atmosphere/turb-rhythmicity", this, &FGWinds::GetRhythmicity,
