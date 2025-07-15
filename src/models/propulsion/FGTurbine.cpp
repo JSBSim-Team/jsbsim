@@ -78,6 +78,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number, struct Inp
   InjectionTimer = InjWaterNorm = 0.0;
   EPR = 1.0;
   disableWindmill = false;
+  ThrottlePos = 0.0;
 
   Load(exec, el);
   Debug(0);
