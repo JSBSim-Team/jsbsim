@@ -74,6 +74,11 @@ INCLUDES
 
 using namespace std;
 
+// Property traits specialization to tie properties using FGPropagate enums.
+namespace simgear::props {
+  template<> struct PropertyTraits<JSBSim::FGPropagate::eIntegrateType> : public PropertyTraits<int> {};
+};
+
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -908,14 +913,10 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("orbital/periapsis-radius-ft", &PeriapsisRadius);
   PropertyManager->Tie("orbital/period-sec", &OrbitalPeriod);
 
-  PropertyManager->Tie("simulation/integrator/rate/rotational",
-                       reinterpret_cast<int*>(&integrator_rotational_rate));
-  PropertyManager->Tie("simulation/integrator/rate/translational",
-                       reinterpret_cast<int*>(&integrator_translational_rate));
-  PropertyManager->Tie("simulation/integrator/position/rotational",
-                       reinterpret_cast<int*>(&integrator_rotational_position));
-  PropertyManager->Tie("simulation/integrator/position/translational",
-                       reinterpret_cast<int*>(&integrator_translational_position));
+  PropertyManager->Tie("simulation/integrator/rate/rotational", &integrator_rotational_rate);
+  PropertyManager->Tie("simulation/integrator/rate/translational", &integrator_translational_rate);
+  PropertyManager->Tie("simulation/integrator/position/rotational", &integrator_rotational_position);
+  PropertyManager->Tie("simulation/integrator/position/translational", &integrator_translational_position);
 
   PropertyManager->Tie<FGPropagate, int>("simulation/write-state-file", this,
                                          nullptr, &FGPropagate::WriteStateFile);

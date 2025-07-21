@@ -52,16 +52,9 @@ using namespace std;
 
 // Property traits specialization to tie properties using FGWinds enums.
 namespace simgear::props {
-  using EnumPropertyTrait = PropertyTraits<int>;
-  template<> struct PropertyTraits<JSBSim::FGWinds::tType> : public EnumPropertyTrait {};
-  template<> struct PropertyTraits<JSBSim::FGWinds::eGustFrame> : public EnumPropertyTrait {};
+  template<> struct PropertyTraits<JSBSim::FGWinds::tType> : public PropertyTraits<int> {};
+  template<> struct PropertyTraits<JSBSim::FGWinds::eGustFrame> : public PropertyTraits<int> {};
 };
-
-template<typename T> T getValue(const SGPropertyNode* node)
-{
-  static_assert(is_enum_v<T>); // Guard against misusing template instantiation.
-  return static_cast<T>(node->getIntValue());
-}
 
 namespace JSBSim {
 
