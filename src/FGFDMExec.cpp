@@ -149,19 +149,18 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   trim_completed = 0;
 
   Constructing = true;
-  typedef int (FGFDMExec::*iPMF)(void) const;
-  instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
-  instance->Tie("simulation/do_linearization", this, (iPMF)0, &FGFDMExec::DoLinearization);
-  instance->Tie("simulation/reset", this, (iPMF)0, &FGFDMExec::ResetToInitialConditions);
+  instance->Tie<FGFDMExec, int>("simulation/do_simple_trim", this, nullptr, &FGFDMExec::DoTrim);
+  instance->Tie<FGFDMExec, int>("simulation/do_linearization", this, nullptr, &FGFDMExec::DoLinearization);
+  instance->Tie<FGFDMExec, int>("simulation/reset", this, nullptr, &FGFDMExec::ResetToInitialConditions);
   instance->Tie("simulation/disperse", this, &FGFDMExec::GetDisperse);
-  instance->Tie("simulation/randomseed", this, (iPMF)&FGFDMExec::SRand, &FGFDMExec::SRand);
-  instance->Tie("simulation/terminate", (bool *)&Terminate);
-  instance->Tie("simulation/pause", (bool *)&holding);
+  instance->Tie("simulation/randomseed", this, &FGFDMExec::SRand, &FGFDMExec::SRand);
+  instance->Tie("simulation/terminate", &Terminate);
+  instance->Tie("simulation/pause", &holding);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/dt", this, &FGFDMExec::GetDeltaT);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
-  instance->Tie("simulation/frame", (int *)&Frame);
-  instance->Tie("simulation/trim-completed", (int *)&trim_completed);
+  instance->Tie("simulation/frame", reinterpret_cast<int*>(&Frame));
+  instance->Tie("simulation/trim-completed", &trim_completed);
   instance->Tie("forces/hold-down", this, &FGFDMExec::GetHoldDown, &FGFDMExec::SetHoldDown);
 
   Constructing = false;
