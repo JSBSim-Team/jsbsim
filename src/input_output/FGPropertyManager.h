@@ -44,6 +44,7 @@ INCLUDES
 #include <string>
 #include <list>
 #include <memory>
+#include <type_traits>
 #include "simgear/props/props.hxx"
 #if !PROPS_STANDALONE
 # include "simgear/math/SGMath.hxx"
@@ -54,6 +55,12 @@ INCLUDES
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+template<typename T> T getValue(const SGPropertyNode* node)
+{
+  static_assert(std::is_enum_v<T>, "PropertyTraits specialization for enum types only");
+  return static_cast<T>(node->getIntValue());
+}
 
 namespace JSBSim {
 

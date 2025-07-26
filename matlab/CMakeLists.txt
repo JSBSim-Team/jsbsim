@@ -8,7 +8,7 @@ if(Matlab_FOUND)
   matlab_add_mex(NAME JSBSim_SFunction SRC ${SOURCES} LINK_TO libJSBSim)
   target_include_directories(JSBSim_SFunction PUBLIC ${PROJECT_SOURCE_DIR}/src
                              ${Matlab_ROOT_DIR}/simulink/include)
-  set_target_properties(JSBSim_SFunction PROPERTIES CXX_STANDARD 14)
+  set_target_properties(JSBSim_SFunction PROPERTIES CXX_STANDARD 17)
 
   # Generate the MATLAB compile script for the Windows installer
   if(MSVC)
