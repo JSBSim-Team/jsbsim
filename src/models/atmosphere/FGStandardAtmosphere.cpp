@@ -741,26 +741,23 @@ void FGStandardAtmosphere::SetVaporMassFractionPPM(double frac)
 
 void FGStandardAtmosphere::bind(void)
 {
-  using PMFi = double (FGStandardAtmosphere::*)(int) const;
-  using PMF = void (FGStandardAtmosphere::*)(int, double);
-
   PropertyManager->Tie("atmosphere/delta-T", this, eRankine,
-                                    reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetTemperatureBias),
-                                    reinterpret_cast<PMF>(&FGStandardAtmosphere::SetTemperatureBias));
+                       &FGStandardAtmosphere::GetTemperatureBias,
+                       &FGStandardAtmosphere::SetTemperatureBias);
   PropertyManager->Tie("atmosphere/SL-graded-delta-T", this, eRankine,
-                                    reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetTemperatureDeltaGradient),
-                                    reinterpret_cast<PMF>(&FGStandardAtmosphere::SetSLTemperatureGradedDelta));
-  PropertyManager->Tie("atmosphere/P-sl-psf", this, ePSF,
-                                   reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetPressureSL),
-                                   reinterpret_cast<PMF>(&FGStandardAtmosphere::SetPressureSL));
+                       &FGStandardAtmosphere::GetTemperatureDeltaGradient,
+                       &FGStandardAtmosphere::SetSLTemperatureGradedDelta);
+  PropertyManager->Tie<FGStandardAtmosphere, double, FGStandardAtmosphere::ePressure>("atmosphere/P-sl-psf", this, ePSF,
+                       &FGStandardAtmosphere::GetPressureSL,
+                       &FGStandardAtmosphere::SetPressureSL);
   PropertyManager->Tie("atmosphere/dew-point-R", this, eRankine,
-                       reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetDewPoint),
-                       reinterpret_cast<PMF>(&FGStandardAtmosphere::SetDewPoint));
+                       &FGStandardAtmosphere::GetDewPoint,
+                       &FGStandardAtmosphere::SetDewPoint);
   PropertyManager->Tie("atmosphere/vapor-pressure-psf", this, ePSF,
-                       reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetVaporPressure),
-                       reinterpret_cast<PMF>(&FGStandardAtmosphere::SetVaporPressure));
+                       &FGStandardAtmosphere::GetVaporPressure,
+                       &FGStandardAtmosphere::SetVaporPressure);
   PropertyManager->Tie("atmosphere/saturated-vapor-pressure-psf", this, ePSF,
-                       reinterpret_cast<PMFi>(&FGStandardAtmosphere::GetSaturatedVaporPressure));
+                       &FGStandardAtmosphere::GetSaturatedVaporPressure);
   PropertyManager->Tie("atmosphere/RH", this,
                        &FGStandardAtmosphere::GetRelativeHumidity,
                        &FGStandardAtmosphere::SetRelativeHumidity);

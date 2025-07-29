@@ -144,7 +144,7 @@ public:
 
   /// Returns the temperature gradient to be applied on top of the standard
   /// temperature gradient.
-  virtual double GetTemperatureDeltaGradient(eTemperature to)
+  virtual double GetTemperatureDeltaGradient(eTemperature to) const
   { if (to == eCelsius || to == eKelvin) return TemperatureDeltaGradient/1.80; else return TemperatureDeltaGradient; }
 
   /// Sets the Sea Level temperature, if it is to be different than the

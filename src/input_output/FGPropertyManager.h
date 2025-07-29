@@ -62,6 +62,35 @@ template<typename T> T getValue(const SGPropertyNode* node)
   return static_cast<T>(node->getIntValue());
 }
 
+template <class C, class T, class U>
+class SGRawValueMethodsIndexedEnum : public SGRawValue<T>
+{
+public:
+  typedef T(C::* getter_t)(U) const;
+  typedef void (C::* setter_t)(U, T);
+  SGRawValueMethodsIndexedEnum(C& obj, U index,
+    getter_t getter = 0, setter_t setter = 0)
+    : _obj(obj), _index(index), _getter(getter), _setter(setter) {
+  }
+  virtual ~SGRawValueMethodsIndexedEnum() {}
+  virtual T getValue() const {
+    if (_getter) { return (_obj.*_getter)(_index); }
+    else { return SGRawValue<T>::DefaultValue(); }
+  }
+  virtual bool setValue(T value) {
+    if (_setter) { (_obj.*_setter)(_index, value); return true; }
+    else return false;
+  }
+  virtual SGRaw* clone() const {
+    return new SGRawValueMethodsIndexedEnum(_obj, _index, _getter, _setter);
+  }
+private:
+  C& _obj;
+  U _index;
+  getter_t _getter;
+  setter_t _setter;
+};
+
 namespace JSBSim {
 
 JSBSIM_API std::string GetPrintableName(const SGPropertyNode* node);
@@ -334,6 +363,44 @@ class JSBSIM_API FGPropertyManager
         if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
       }
    }
+
+    /**
+     * Tie a property to a pair of indexed object methods.
+     *
+     * Every time the property value is queried, the getter (if any) will
+     * be invoked with the index provided; every time the property value
+     * is modified, the setter (if any) will be invoked with the index
+     * provided.  The getter can be 0 to make the property unreadable, and
+     * the setter can be 0 to make the property unmodifiable.
+     *
+     * @param name The property name to tie (full path).
+     * @param obj The object whose methods should be invoked.
+     * @param index The enum argument to pass to the getter and
+     *        setter methods.
+     * @param getter The getter method, or 0 if the value is unreadable.
+     * @param setter The setter method, or 0 if the value is unmodifiable.
+     */
+    template <class T, class V, class U> void
+      Tie(const std::string& name, T* obj, U index, V(T::* getter)(U) const,
+        void (T::* setter)(U, V) = nullptr)
+    {
+      static_assert(std::is_enum_v<U>, "Specialization for enum types only");
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+      if (!property->tie(SGRawValueMethodsIndexedEnum<T, V, U>(*obj, index, getter, setter),
+        false))
+        std::cerr << "Failed to tie property " << name
+        << " to indexed object methods" << std::endl;
+      else {
+        tied_properties.push_back(PropertyState(property, obj));
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+      }
+    }
 
   private:
     struct PropertyState {
