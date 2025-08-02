@@ -85,7 +85,7 @@
    <izz unit="SLUG*FT2">    834676 </izz>
    <emptywt unit="LBS">     48235 </emptywt>
    <location name="CG" unit="IN">
-     <x> 790.80 </x>
+     <x> 790.82 </x>
      <y>   0.00 </y>
      <z> -29.07 </z>
    </location>
@@ -907,15 +907,15 @@
 	<simulation>       OFF </simulation>
 	<atmosphere>       OFF </atmosphere>
 	<massprops>        OFF </massprops>
-	<aerosurfaces>     OFF  </aerosurfaces>
-	<rates>            OFF  </rates>
+	<aerosurfaces>     OFF </aerosurfaces>
+	<rates>            OFF </rates>
 	<velocities>       OFF </velocities>
 	<forces>           OFF </forces>
 	<moments>          OFF </moments>
-	<position>         OFF  </position>
+	<position>         OFF </position>
 	<coefficients>     OFF </coefficients>
 	<ground_reactions> OFF </ground_reactions>
-	<fcs>              OFF  </fcs>
+	<fcs>              OFF </fcs>
 	<propulsion>       ON </propulsion>
     </output>
 </fdm_config>
