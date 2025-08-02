@@ -62,6 +62,37 @@ template<typename T> T getValue(const SGPropertyNode* node)
   return static_cast<T>(node->getIntValue());
 }
 
+template <class C, class T>
+class SGRawValueMethodsEnum : public SGRawValue<int>
+{
+public:
+  typedef T(C::* getter_t)() const;
+  typedef void (C::* setter_t)(T);
+  SGRawValueMethodsEnum(C& obj,
+    getter_t getter = 0, setter_t setter = 0)
+    : _obj(obj), _getter(getter), _setter(setter) {
+  }
+  virtual ~SGRawValueMethodsEnum() {}
+  virtual int getValue() const {
+    if (_getter) { return (int)(_obj.*_getter)(); }
+    else { return SGRawValue<int>::DefaultValue(); }
+  }
+  virtual bool setValue(int value) {
+      return this->setValue((T)value);
+  }
+  bool setValue(T value) {
+    if (_setter) { (_obj.*_setter)(value); return true; }
+    else return false;
+  }
+  virtual SGRaw* clone() const {
+    return new SGRawValueMethodsEnum(_obj, _getter, _setter);
+  }
+private:
+  C& _obj;
+  getter_t _getter;
+  setter_t _setter;
+};
+
 template <class C, class T, class U>
 class SGRawValueMethodsIndexedEnum : public SGRawValue<T>
 {
@@ -305,7 +336,29 @@ class JSBSIM_API FGPropertyManager
      * @param setter The object's setter method, or 0 if the value is
      *        unmodifiable.
      */
-    template <class T, class V> void
+    template <class T, class V>
+    typename std::enable_if<std::is_enum_v<V>, void>::type
+    Tie (const std::string &name, T * obj, V (T::*getter)() const,
+         void (T::*setter)(V) = nullptr)
+    {
+      SGPropertyNode* property = root->getNode(name.c_str(), true);
+      if (!property) {
+        std::cerr << "Could not get or create property " << name << std::endl;
+        return;
+      }
+
+      if (!property->tie(SGRawValueMethodsEnum<T,V>(*obj, getter, setter), false))
+        std::cerr << "Failed to tie property " << name << " to object methods"
+                  << std::endl;
+      else {
+        tied_properties.push_back(PropertyState(property, obj));
+        if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
+        if (!getter) property->setAttribute(SGPropertyNode::READ, false);
+        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+      }
+    }
+    template <class T, class V>
+    typename std::enable_if<!std::is_enum_v<V>, void>::type
     Tie (const std::string &name, T * obj, V (T::*getter)() const,
          void (T::*setter)(V) = nullptr)
     {
