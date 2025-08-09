@@ -563,7 +563,7 @@ inline T getValueFromRaw(SGRaw* value)
   return static_cast<SGRawValue<T>*>(value)->getValue();
 #else
   auto raw_value = dynamic_cast<SGRawValue<T>*>(value);
-  assert(raw_value); // Intercepts casting errors in DEBUG mode.
+  assert(raw_value); // Intercepts casting errors in debug mode.
   return raw_value->getValue();
 #endif
 }
