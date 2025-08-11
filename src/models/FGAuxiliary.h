@@ -276,6 +276,11 @@ public:
   double GetLatitudeRelativePosition  (void) const;
   double GetDistanceRelativePosition  (void) const;
 
+  /** The North East Up (NEU) position relative to initial condition's lat, lon and 
+  0 alt relative to geoid ellipsoid */
+  double GetNEUPositionFromStart(int idx) const { return vNEUFromStart(idx); }
+  const FGColumnVector3& GetNEUPositionFromStart() const { return vNEUFromStart; }
+
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
   struct Inputs {
@@ -328,6 +333,10 @@ private:
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
   FGLocation vLocationVRP;
+
+  bool NEUFromStartInitialized;
+  FGLocation NEUStartLocation;
+  FGColumnVector3 vNEUFromStart;
 
   double Vt, Vground;
   double Mach, MachU;
