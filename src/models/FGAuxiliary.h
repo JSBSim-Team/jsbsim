@@ -277,7 +277,7 @@ public:
   double GetDistanceRelativePosition  (void) const;
 
   /** The North East Up (NEU) position relative to initial condition's lat, lon and 
-  0 alt relative to geoid ellipsoid */
+  0 alt relative to reference ellipsoid */
   double GetNEUPositionFromStart(int idx) const { return vNEUFromStart(idx); }
   const FGColumnVector3& GetNEUPositionFromStart() const { return vNEUFromStart; }
 
