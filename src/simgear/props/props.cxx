@@ -20,6 +20,7 @@
 #include <iterator>
 #include <stdio.h>
 #include <string.h>
+#include <cassert>
 
 #if PROPS_STANDALONE
 # include <iostream>
@@ -555,11 +556,23 @@ find_node (SGPropertyNode * current,
 // Private methods from SGPropertyNode (may be inlined for speed).
 ////////////////////////////////////////////////////////////////////////
 
+template <typename T>
+inline T getValueFromRaw(SGRaw* value)
+{
+#ifdef NDEBUG
+  return static_cast<SGRawValue<T>*>(value)->getValue();
+#else
+  auto raw_value = dynamic_cast<SGRawValue<T>*>(value);
+  assert(raw_value); // Intercepts casting errors in debug mode.
+  return raw_value->getValue();
+#endif
+}
+
 inline bool
 SGPropertyNode::get_bool () const
 {
   if (_tied)
-    return static_cast<SGRawValue<bool>*>(_value.val)->getValue();
+    return getValueFromRaw<bool>(_value.val);
   else
     return _local_val.bool_val;
 }
@@ -568,7 +581,7 @@ inline int
 SGPropertyNode::get_int () const
 {
   if (_tied)
-      return (static_cast<SGRawValue<int>*>(_value.val))->getValue();
+    return getValueFromRaw<int>(_value.val);
   else
     return _local_val.int_val;
 }
@@ -577,7 +590,7 @@ inline long
 SGPropertyNode::get_long () const
 {
   if (_tied)
-    return static_cast<SGRawValue<long>*>(_value.val)->getValue();
+    return getValueFromRaw<long>(_value.val);
   else
     return _local_val.long_val;
 }
@@ -586,7 +599,7 @@ inline float
 SGPropertyNode::get_float () const
 {
   if (_tied)
-    return static_cast<SGRawValue<float>*>(_value.val)->getValue();
+    return getValueFromRaw<float>(_value.val);
   else
     return _local_val.float_val;
 }
@@ -595,7 +608,7 @@ inline double
 SGPropertyNode::get_double () const
 {
   if (_tied)
-    return static_cast<SGRawValue<double>*>(_value.val)->getValue();
+    return getValueFromRaw<double>(_value.val);
   else
     return _local_val.double_val;
 }
@@ -604,7 +617,7 @@ inline const char *
 SGPropertyNode::get_string () const
 {
   if (_tied)
-      return static_cast<SGRawValue<const char*>*>(_value.val)->getValue();
+    return getValueFromRaw<const char*>(_value.val);
   else
     return _local_val.string_val;
 }
@@ -838,12 +851,12 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = PRESERVE;
  * Default constructor: always creates a root node.
  */
 SGPropertyNode::SGPropertyNode ()
-  : _parent(nullptr),
-    _listeners(nullptr),
-    _index(0),
+  : _index(0),
+    _parent(nullptr),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE)
+    _attr(READ|WRITE),
+    _listeners(nullptr)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -855,13 +868,13 @@ SGPropertyNode::SGPropertyNode ()
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
   : SGReferenced(node),
-    _parent(nullptr),		// don't copy the parent
-    _listeners(nullptr),	// CHECK!!
     _index(node._index),
     _name(node._name),
+    _parent(nullptr),		// don't copy the parent
     _type(node._type),
     _tied(node._tied),
-    _attr(node._attr)
+    _attr(node._attr),
+    _listeners(nullptr)	// CHECK!!
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -910,13 +923,13 @@ template<typename Itr>
 SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 				int index,
 				SGPropertyNode * parent)
-  : _parent(parent),
-    _listeners(nullptr),
-    _index(index),
+  : _index(index),
     _name(begin, end),
+    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE)
+    _attr(READ|WRITE),
+    _listeners(nullptr)
 {
   _local_val.string_val = 0;
   _value.val = 0;
@@ -927,13 +940,13 @@ SGPropertyNode::SGPropertyNode (Itr begin, Itr end,
 SGPropertyNode::SGPropertyNode( const std::string& name,
                                 int index,
                                 SGPropertyNode * parent)
-  : _parent(parent),
-    _listeners(nullptr),
-    _index(index),
+  : _index(index),
     _name(name),
+    _parent(parent),
     _type(props::NONE),
     _tied(false),
-    _attr(READ|WRITE)
+    _attr(READ|WRITE),
+    _listeners(nullptr)
 {
   _local_val.string_val = 0;
   _value.val = 0;
