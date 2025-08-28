@@ -84,7 +84,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
-  NEUFromStartInitialized = false;
 
   bind();
 
@@ -119,9 +118,16 @@ bool FGAuxiliary::InitModel(void)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
-  NEUFromStartInitialized = false;
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAuxiliary::SetInitialState(const FGInitialCondition* ic)
+{
+  NEUStartLocation = ic->GetPosition();
+  NEUStartLocation.SetPositionGeodetic(NEUStartLocation.GetLongitude(), NEUStartLocation.GetGeodLatitudeRad(), 0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,11 +192,6 @@ bool FGAuxiliary::Run(bool Holding)
 
   // Position tracking in local frame with local frame origin at lat, lon of initial condition
   // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
-  if (!NEUFromStartInitialized) {
-    NEUStartLocation = FDMExec->GetIC()->GetPosition();
-    NEUStartLocation.SetPositionGeodetic(NEUStartLocation.GetLongitude(), NEUStartLocation.GetGeodLatitudeRad(), 0.0);
-    NEUFromStartInitialized = true;
-  }
   vNEUFromStart = NEUStartLocation.LocationToLocal(in.vLocation);
   vNEUFromStart(3) *= -1.0;  // Flip sign for Up, so + for altitude above reference ellipsoid
 
