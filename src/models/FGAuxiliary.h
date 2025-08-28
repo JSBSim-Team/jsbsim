@@ -48,6 +48,8 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class FGInitialCondition;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -276,6 +278,8 @@ public:
   double GetLatitudeRelativePosition  (void) const;
   double GetDistanceRelativePosition  (void) const;
 
+  void SetInitialState(const FGInitialCondition*);
+
   /** The North East Up (NEU) frame is a local tangential frame fixed in the ECEF
       frame (i.e following the Earth's rotation).
       The NEU frame's origin is fixed at the aircrat's initial lat, lon position
@@ -338,7 +342,6 @@ private:
   FGColumnVector3 vMachUVW;
   FGLocation vLocationVRP;
 
-  bool NEUFromStartInitialized;
   FGLocation NEUStartLocation;
   FGColumnVector3 vNEUFromStart;
 
