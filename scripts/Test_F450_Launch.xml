@@ -12,7 +12,7 @@
 
     <event name="Motor Idle">
       <condition> simulation/frame le 1 </condition>
-      <set name="fcs/throttle-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
       <set name="fcs/throttle-cmd-norm[2]" value="0.0"/>
       <set name="fcs/throttle-cmd-norm[3]" value="0.0"/>
@@ -29,13 +29,19 @@
 
     <event name="Motor Launch">
       <condition> simulation/sim-time-sec ge 1 </condition>
-      <set name="fcs/cmdHeave_nd" value="0.5"/>
+	  <set name="fcs/throttle-cmd-norm[0]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.5"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.5"/>
     </event>
 
     <event name="Motor Hover">
       <condition> simulation/sim-time-sec ge 2 </condition>
       <set name="fcs/ScasEngage" value="1"/>
-      <set name="fcs/cmdHeave_nd" value="0.49"/>
+	  <set name="fcs/throttle-cmd-norm[0]" value="0.49"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.49"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="0.49"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="0.49"/>
     </event>
     <!--
     <event name="Wind and Turbulence">
