@@ -367,7 +367,7 @@ double FGAuxiliary::GetNlf(void) const
 double FGAuxiliary::GetLongitudeRelativePosition(void) const
 {
   return in.vLocation.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
-                                    in.vLocation.GetGeodLatitudeRad());
+                                    in.vLocation.GetGeodLatitudeRad())*fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,7 +375,7 @@ double FGAuxiliary::GetLongitudeRelativePosition(void) const
 double FGAuxiliary::GetLatitudeRelativePosition(void) const
 {
   return in.vLocation.GetDistanceTo(in.vLocation.GetLongitude(),
-                                    FDMExec->GetIC()->GetGeodLatitudeRadIC());
+                                    FDMExec->GetIC()->GetGeodLatitudeRadIC())*fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -384,7 +384,7 @@ double FGAuxiliary::GetDistanceRelativePosition(void) const
 {
   auto ic = FDMExec->GetIC();
   return in.vLocation.GetDistanceTo(ic->GetLongitudeRadIC(),
-                                    ic->GetGeodLatitudeRadIC());
+                                    ic->GetGeodLatitudeRadIC())*fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
