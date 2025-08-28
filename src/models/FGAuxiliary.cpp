@@ -450,9 +450,9 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("position/vrp-longitude_deg", &vLocationVRP, &FGLocation::GetLongitudeDeg);
   PropertyManager->Tie("position/vrp-radius-ft", &vLocationVRP, &FGLocation::GetRadius);
 
-  PropertyManager->Tie("position/neu-n-ft", this, eX, &FGAuxiliary::GetNEUPositionFromStart);
-  PropertyManager->Tie("position/neu-e-ft", this, eY, &FGAuxiliary::GetNEUPositionFromStart);
-  PropertyManager->Tie("position/neu-u-ft", this, eZ, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-n-ft", this, eX, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-e-ft", this, eY, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-u-ft", this, eZ, &FGAuxiliary::GetNEUPositionFromStart);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
