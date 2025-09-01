@@ -84,6 +84,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
+  NEUCalcValid = false;
 
   bind();
 
@@ -118,6 +119,7 @@ bool FGAuxiliary::InitModel(void)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
+  NEUCalcValid = false;
 
   return true;
 }
@@ -190,11 +192,6 @@ bool FGAuxiliary::Run(bool Holding)
   vMachUVW(eV) = vAeroUVW(eV) / in.SoundSpeed;
   vMachUVW(eW) = vAeroUVW(eW) / in.SoundSpeed;
 
-  // Position tracking in local frame with local frame origin at lat, lon of initial condition
-  // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
-  vNEUFromStart = NEUStartLocation.LocationToLocal(in.vLocation);
-  vNEUFromStart(3) *= -1.0;  // Flip sign for Up, so + for altitude above reference ellipsoid
-
   Vground = sqrt( in.vVel(eNorth)*in.vVel(eNorth) + in.vVel(eEast)*in.vVel(eEast) );
 
   psigt = atan2(in.vVel(eEast), in.vVel(eNorth));
@@ -235,6 +232,9 @@ bool FGAuxiliary::Run(bool Holding)
 
   FGColumnVector3 vMac = in.Tb2l * in.RPBody;
   hoverbmac = (in.DistanceAGL - vMac(3)) / in.Wingspan;
+
+  // New timestep so vNEUFromStart is no longer valid since we only calculate it on demand
+  NEUCalcValid = false;
 
   return false;
 }
@@ -386,6 +386,21 @@ double FGAuxiliary::GetDistanceRelativePosition(void) const
   auto ic = FDMExec->GetIC();
   return in.vLocation.GetDistanceTo(ic->GetLongitudeRadIC(),
                                     ic->GetGeodLatitudeRadIC())*fttom;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGColumnVector3& FGAuxiliary::GetNEUPositionFromStart() const
+{ 
+  if (!NEUCalcValid) {
+    // Position tracking in local frame with local frame origin at lat, lon of initial condition
+    // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
+    vNEUFromStart = NEUStartLocation.LocationToLocal(in.vLocation);
+    vNEUFromStart(3) *= -1.0;  // Flip sign for Up, so + for altitude above reference ellipsoid
+    NEUCalcValid = true;
+  }
+
+  return vNEUFromStart; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

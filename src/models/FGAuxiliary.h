@@ -286,8 +286,8 @@ public:
       and at an altitude of 0 ft relative to the reference ellipsoid.
       The NEU frame is a left-handed coordinate system, unlike the NED frame. So
       beware of differences when computing cross products. */
-  double GetNEUPositionFromStart(int idx) const { return vNEUFromStart(idx); }
-  const FGColumnVector3& GetNEUPositionFromStart() const { return vNEUFromStart; }
+  double GetNEUPositionFromStart(int idx) const { return (GetNEUPositionFromStart())(idx); }
+  const FGColumnVector3& GetNEUPositionFromStart() const;
 
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
@@ -343,7 +343,8 @@ private:
   FGLocation vLocationVRP;
 
   FGLocation NEUStartLocation;
-  FGColumnVector3 vNEUFromStart;
+  mutable FGColumnVector3 vNEUFromStart;
+  mutable bool NEUCalcValid;
 
   double Vt, Vground;
   double Mach, MachU;
