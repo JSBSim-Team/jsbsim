@@ -49,7 +49,6 @@
   </channel>
 
   <property value="0.0"> fcs/ScasEngage </property>
-  <property>fcs/cmdHeave_nd </property>
   <property>fcs/refPhi_rad</property>
   <property>fcs/refTheta_rad</property>
 
@@ -157,7 +156,7 @@
 
   <channel name="Control Mixer">
     <pure_gain name="cmdHeave_mps_2_FR">
-      <input>fcs/cmdHeave_nd</input>
+      <input>fcs/throttle-cmd-norm</input>
       <gain>1.0</gain>
       <output>fcs/cmdHeave_nd_2_FR</output>
     </pure_gain>
@@ -185,7 +184,7 @@
     </summer>
 
     <pure_gain name="cmdHeave_mps_2_AL">
-      <input>fcs/cmdHeave_nd</input>
+      <input>fcs/throttle-cmd-norm</input>
       <gain>1.0</gain>
       <output>fcs/cmdHeave_nd_2_AL</output>
     </pure_gain>
@@ -213,7 +212,7 @@
     </summer>
 
     <pure_gain name="cmdHeave_mps_2_FL">
-      <input>fcs/cmdHeave_nd</input>
+      <input>fcs/throttle-cmd-norm</input>
       <gain>1.0</gain>
       <output>fcs/cmdHeave_nd_2_FL</output>
     </pure_gain>
@@ -241,7 +240,7 @@
     </summer>
 
     <pure_gain name="cmdHeave_mps_2_AR">
-      <input>fcs/cmdHeave_nd</input>
+      <input>fcs/throttle-cmd-norm</input>
       <gain>1.0</gain>
       <output>fcs/cmdHeave_nd_2_AR</output>
     </pure_gain>
