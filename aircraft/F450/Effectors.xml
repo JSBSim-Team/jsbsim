@@ -8,7 +8,7 @@
         <min>0.0</min>
         <max>1.0</max>
       </clipto>
-      <output>fcs/throttle-cmd-norm[0]</output>
+      <output>fcs/throttle-pos-norm[0]</output>
     </actuator>
 
     <actuator name="Aft Left">
@@ -17,7 +17,7 @@
         <min>0.0</min>
         <max>1.0</max>
       </clipto>
-      <output>fcs/throttle-cmd-norm[1]</output>
+      <output>fcs/throttle-pos-norm[1]</output>
     </actuator>
 
     <actuator name="Front Left">
@@ -26,7 +26,7 @@
         <min>0.0</min>
         <max>1.0</max>
       </clipto>
-      <output>fcs/throttle-cmd-norm[2]</output>
+      <output>fcs/throttle-pos-norm[2]</output>
     </actuator>
 
     <actuator name="Aft Right">
@@ -35,7 +35,7 @@
         <min>0.0</min>
         <max>1.0</max>
       </clipto>
-      <output>fcs/throttle-cmd-norm[3]</output>
+      <output>fcs/throttle-pos-norm[3]</output>
     </actuator>
   </channel>
 </system>
