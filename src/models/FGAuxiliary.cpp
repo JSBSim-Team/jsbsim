@@ -84,7 +84,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
-  NEUFromStartInitialized = false;
+  NEUCalcValid = false;
 
   bind();
 
@@ -119,9 +119,17 @@ bool FGAuxiliary::InitModel(void)
   vMachUVW.InitMatrix();
   vEulerRates.InitMatrix();
   vNEUFromStart.InitMatrix();
-  NEUFromStartInitialized = false;
+  NEUCalcValid = false;
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAuxiliary::SetInitialState(const FGInitialCondition* ic)
+{
+  NEUStartLocation = ic->GetPosition();
+  NEUStartLocation.SetPositionGeodetic(NEUStartLocation.GetLongitude(), NEUStartLocation.GetGeodLatitudeRad(), 0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,16 +192,6 @@ bool FGAuxiliary::Run(bool Holding)
   vMachUVW(eV) = vAeroUVW(eV) / in.SoundSpeed;
   vMachUVW(eW) = vAeroUVW(eW) / in.SoundSpeed;
 
-  // Position tracking in local frame with local frame origin at lat, lon of initial condition
-  // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
-  if (!NEUFromStartInitialized) {
-    NEUStartLocation = FDMExec->GetIC()->GetPosition();
-    NEUStartLocation.SetPositionGeodetic(NEUStartLocation.GetLongitude(), NEUStartLocation.GetGeodLatitudeRad(), 0.0);
-    NEUFromStartInitialized = true;
-  }
-  vNEUFromStart = NEUStartLocation.LocationToLocal(in.vLocation);
-  vNEUFromStart(3) *= -1.0;  // Flip sign for Up, so + for altitude above reference ellipsoid
-
   Vground = sqrt( in.vVel(eNorth)*in.vVel(eNorth) + in.vVel(eEast)*in.vVel(eEast) );
 
   psigt = atan2(in.vVel(eEast), in.vVel(eNorth));
@@ -234,6 +232,9 @@ bool FGAuxiliary::Run(bool Holding)
 
   FGColumnVector3 vMac = in.Tb2l * in.RPBody;
   hoverbmac = (in.DistanceAGL - vMac(3)) / in.Wingspan;
+
+  // New timestep so vNEUFromStart is no longer valid since we only calculate it on demand
+  NEUCalcValid = false;
 
   return false;
 }
@@ -367,7 +368,7 @@ double FGAuxiliary::GetNlf(void) const
 double FGAuxiliary::GetLongitudeRelativePosition(void) const
 {
   return in.vLocation.GetDistanceTo(FDMExec->GetIC()->GetLongitudeRadIC(),
-                                    in.vLocation.GetGeodLatitudeRad());
+                                    in.vLocation.GetGeodLatitudeRad())*fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,7 +376,7 @@ double FGAuxiliary::GetLongitudeRelativePosition(void) const
 double FGAuxiliary::GetLatitudeRelativePosition(void) const
 {
   return in.vLocation.GetDistanceTo(in.vLocation.GetLongitude(),
-                                    FDMExec->GetIC()->GetGeodLatitudeRadIC());
+                                    FDMExec->GetIC()->GetGeodLatitudeRadIC())*fttom;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -384,7 +385,22 @@ double FGAuxiliary::GetDistanceRelativePosition(void) const
 {
   auto ic = FDMExec->GetIC();
   return in.vLocation.GetDistanceTo(ic->GetLongitudeRadIC(),
-                                    ic->GetGeodLatitudeRadIC());
+                                    ic->GetGeodLatitudeRadIC())*fttom;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGColumnVector3& FGAuxiliary::GetNEUPositionFromStart() const
+{ 
+  if (!NEUCalcValid) {
+    // Position tracking in local frame with local frame origin at lat, lon of initial condition
+    // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
+    vNEUFromStart = NEUStartLocation.LocationToLocal(in.vLocation);
+    vNEUFromStart(3) *= -1.0;  // Flip sign for Up, so + for altitude above reference ellipsoid
+    NEUCalcValid = true;
+  }
+
+  return vNEUFromStart; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -450,9 +466,9 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("position/vrp-longitude_deg", &vLocationVRP, &FGLocation::GetLongitudeDeg);
   PropertyManager->Tie("position/vrp-radius-ft", &vLocationVRP, &FGLocation::GetRadius);
 
-  PropertyManager->Tie("position/neu-n-ft", this, eX, &FGAuxiliary::GetNEUPositionFromStart);
-  PropertyManager->Tie("position/neu-e-ft", this, eY, &FGAuxiliary::GetNEUPositionFromStart);
-  PropertyManager->Tie("position/neu-u-ft", this, eZ, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-n-ft", this, eX, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-e-ft", this, eY, &FGAuxiliary::GetNEUPositionFromStart);
+  PropertyManager->Tie("position/from-start-neu-u-ft", this, eZ, &FGAuxiliary::GetNEUPositionFromStart);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

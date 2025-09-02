@@ -48,6 +48,8 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
+class FGInitialCondition;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -276,14 +278,16 @@ public:
   double GetLatitudeRelativePosition  (void) const;
   double GetDistanceRelativePosition  (void) const;
 
+  void SetInitialState(const FGInitialCondition*);
+
   /** The North East Up (NEU) frame is a local tangential frame fixed in the ECEF
       frame (i.e following the Earth's rotation).
       The NEU frame's origin is fixed at the aircrat's initial lat, lon position
       and at an altitude of 0 ft relative to the reference ellipsoid.
       The NEU frame is a left-handed coordinate system, unlike the NED frame. So
       beware of differences when computing cross products. */
-  double GetNEUPositionFromStart(int idx) const { return vNEUFromStart(idx); }
-  const FGColumnVector3& GetNEUPositionFromStart() const { return vNEUFromStart; }
+  double GetNEUPositionFromStart(int idx) const { return (GetNEUPositionFromStart())(idx); }
+  const FGColumnVector3& GetNEUPositionFromStart() const;
 
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
@@ -338,9 +342,9 @@ private:
   FGColumnVector3 vMachUVW;
   FGLocation vLocationVRP;
 
-  bool NEUFromStartInitialized;
   FGLocation NEUStartLocation;
-  FGColumnVector3 vNEUFromStart;
+  mutable FGColumnVector3 vNEUFromStart;
+  mutable bool NEUCalcValid;
 
   double Vt, Vground;
   double Mach, MachU;
