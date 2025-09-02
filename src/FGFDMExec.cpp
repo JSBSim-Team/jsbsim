@@ -676,6 +676,7 @@ void FGFDMExec::Initialize(const FGInitialCondition* FGIC)
 {
   Propagate->SetInitialState(FGIC);
   Winds->SetWindNED(FGIC->GetWindNEDFpsIC());
+  Auxiliary->SetInitialState(FGIC);
   Run();
 }
 
