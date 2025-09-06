@@ -100,9 +100,15 @@ if(WIN32)
     # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid propagating it
     # to other targets such as the executable, the Python module and the unit
     # tests. Otherwise the linking of these targets will fail.
-    target_compile_definitions(libJSBSim PRIVATE JSBSIM_EXPORT)
+    target_compile_definitions(libJSBSim PRIVATE
+                               JSBSIM_EXPORT
+                               $<$<CONFIG:Release>:NDEBUG>
+                               $<$<CONFIG:RelWithDebInfo>:NDEBUG>)
     foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
-      target_compile_definitions(${TARGET_OBJECT} PRIVATE JSBSIM_EXPORT)
+      target_compile_definitions(${TARGET_OBJECT} PRIVATE
+                                 JSBSIM_EXPORT
+                                 $<$<CONFIG:Release>:NDEBUG>
+                                 $<$<CONFIG:RelWithDebInfo>:NDEBUG>)
     endforeach(TARGET_OBJECT)
   else()
     list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_STATIC_LINK)
