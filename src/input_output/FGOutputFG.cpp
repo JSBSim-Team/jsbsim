@@ -121,7 +121,7 @@ FGOutputFG::FGOutputFG(FGFDMExec* fdmex) :
   memset(&fgSockBuf, 0x0, sizeof(fgSockBuf));
 
   if (fdmex->GetDebugLevel() > 0) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     // Engine status
     if (Propulsion->GetNumEngines() > FGNetFDM::FG_MAX_ENGINES)
       log << "This vehicle has " << Propulsion->GetNumEngines() << " engines, but the current \n"

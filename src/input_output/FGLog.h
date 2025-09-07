@@ -106,11 +106,13 @@ protected:
   LogLevel log_level = LogLevel::BULK;
 };
 
+extern thread_local std::shared_ptr<FGLogger> CurrentLogger;
+
 class JSBSIM_API FGLogging
 {
 public:
-  FGLogging(std::shared_ptr<FGLogger> logger, LogLevel level)
-    : logger(logger)
+  FGLogging(LogLevel level)
+   : logger(CurrentLogger)
   { logger->SetLevel(level); }
 
   virtual ~FGLogging() { Flush(); }
@@ -141,7 +143,7 @@ protected:
 class JSBSIM_API FGXMLLogging : public FGLogging
 {
 public:
-  FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLevel level);
+  FGXMLLogging(Element* el, LogLevel level);
 };
 
 class JSBSIM_API FGLogConsole : public FGLogger
@@ -166,7 +168,7 @@ private:
 class JSBSIM_API LogException : public BaseException, public FGLogging
 {
 public:
-  LogException(std::shared_ptr<FGLogger> logger);
+  LogException();
   LogException(LogException& other);
   const char* what() const noexcept override;
 };
@@ -174,7 +176,9 @@ public:
 class JSBSIM_API XMLLogException : public LogException
 {
 public:
-  XMLLogException(std::shared_ptr<FGLogger> logger, Element* el);
+  // Construct an XMLLogException using the current thread-local logger
+  // and the supplied Element to add file/line location information.
+  XMLLogException(Element* el);
   /// This constructor can promote a LogException to an XMLLogException
   /// by adding the file location information to the exception.
   /// This is useful to add some context to an exception that was thrown in a

@@ -70,7 +70,7 @@ CLASS DECLARATION
 class FGSensorOrientation  : public FGJSBBase
 {
 public:
-  FGSensorOrientation(Element* element, std::shared_ptr<FGLogger> logger)
+  FGSensorOrientation(Element* element)
   {
     Element* orient_element = element->FindElement("orientation");
     if (orient_element) vOrient = orient_element->FindElementTripletConvertTo("RAD");
@@ -90,7 +90,7 @@ public:
     }
 
     if (axis == 0) {
-      FGXMLLogging log(logger, element, LogLevel::WARN);
+      FGXMLLogging log(element, LogLevel::WARN);
       log << "  Incorrect/no axis specified for this sensor; assuming X axis\n";
       axis = 1;
     }

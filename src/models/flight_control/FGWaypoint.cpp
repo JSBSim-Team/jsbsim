@@ -78,7 +78,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Target latitude is required for waypoint component: " << Name << "\n";
     throw err;
   }
@@ -92,7 +92,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Target longitude is required for waypoint component: " << Name << "\n";
     throw err;
   }
@@ -106,7 +106,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Source latitude is required for waypoint component: " << Name << "\n";
     throw err;
   }
@@ -120,7 +120,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Source longitude is required for waypoint component: " << Name << "\n";
     throw err;
   }
@@ -131,7 +131,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       if      (unit == "DEG") eUnit = eDeg;
       else if (unit == "RAD") eUnit = eRad;
       else {
-        XMLLogException err(fcs->GetExec()->GetLogger(), element);
+        XMLLogException err(element);
         err << "Unknown unit " << unit << " in HEADING waypoint component, " << "\n";
         throw err;
       }
@@ -143,7 +143,7 @@ FGWaypoint::FGWaypoint(FGFCS* fcs, Element* element)
       if      (unit == "FT") eUnit = eFeet;
       else if (unit == "M")  eUnit = eMeters;
       else {
-        XMLLogException err(fcs->GetExec()->GetLogger(), element);
+        XMLLogException err(element);
         err << "Unknown unit " << unit << " in DISTANCE waypoint component, "
             << Name << "\n";
         throw err;
@@ -175,7 +175,7 @@ bool FGWaypoint::Run(void )
   source.SetPositionGeodetic(source_longitude_rad, source_latitude_rad, 0.0);
 
   if (fabs(target_latitude_rad) > M_PI/2.0) {
-    LogException err(fcs->GetExec()->GetLogger());
+    LogException err;
     err << "\nTarget latitude in waypoint \"" << Name
         << "\" must be less than or equal to 90 degrees.\n"
         << "(is longitude being mistakenly supplied?)\n\n";
@@ -183,7 +183,7 @@ bool FGWaypoint::Run(void )
   }
 
   if (fabs(source_latitude_rad) > M_PI/2.0) {
-    LogException err(fcs->GetExec()->GetLogger());
+    LogException err;
     err << "\nSource latitude in waypoint \"" << Name
         << "\" must be less than or equal to 90 degrees.\n"
         << "(is longitude being mistakenly supplied?)\n\n";
@@ -241,7 +241,7 @@ void FGWaypoint::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGWaypoint\n";
     if (from == 1) log << "Destroyed:    FGWaypoint\n";
   }

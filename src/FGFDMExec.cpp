@@ -83,7 +83,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
 {
   Frame           = 0;
   disperse        = 0;
-  Log = make_shared<FGLogConsole>();
 
   RootDir = "";
 
@@ -139,7 +138,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   try {
     Allocate();
   } catch (const BaseException& e) {
-    LogException err(Log);
+    LogException err;
     err << endl << "Caught error: " << e.what() << endl;
     throw err;
   }
@@ -174,7 +173,7 @@ FGFDMExec::~FGFDMExec()
     Unbind();
     DeAllocate();
   } catch (const string& msg ) {
-    FGLogging log(Log, LogLevel::FATAL);
+    FGLogging log(LogLevel::FATAL);
     log << "Caught error: " << msg << endl;
   }
 
@@ -649,7 +648,7 @@ bool FGFDMExec::RunIC(void)
   if (debug_lvl > 0) {
     MassBalance->GetMassPropertiesReport(0);
 
-    FGLogging log(Log, LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << LogFormat::BLUE << LogFormat::BOLD
         << "End of vehicle configuration loading." << endl
         << "-------------------------------------------------------------------------------"
@@ -661,7 +660,7 @@ bool FGFDMExec::RunIC(void)
       try {
         Propulsion->InitRunning(n);
       } catch (const string& str) {
-        FGLogging log(Log, LogLevel::ERROR);
+        FGLogging log(LogLevel::ERROR);
         log << str << endl;
         return false;
       }
@@ -754,21 +753,21 @@ bool FGFDMExec::LoadPlanet(const SGPath& PlanetPath, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    LogException err(Log);
+    LogException err;
     err << "File: " << PlanetFileName << " could not be read." << endl;
     throw err;
   }
 
   if (document->GetName() != "planet") {
-    XMLLogException err(Log, document);
-    err << "File: " << PlanetFileName << " is not a planet file." << endl;
-    throw err;
+    XMLLogException err(document);
+  err << "File: " << PlanetFileName << " is not a planet file." << endl;
+  throw err;
   }
 
   bool result = LoadPlanet(document);
 
   if (!result) {
-    FGXMLLogging log(Log, document, LogLevel::ERROR);
+    FGXMLLogging log(document, LogLevel::ERROR);
     log << endl << "Planet element has problems in file " << PlanetFileName << endl;
   }
 
@@ -802,7 +801,7 @@ bool FGFDMExec::LoadPlanet(Element* element)
         Atmosphere->InitModel();
         result = Atmosphere->Load(atm_element);
         if (!result) {
-          FGLogging log(Log, LogLevel::ERROR);
+          FGLogging log(LogLevel::ERROR);
           log << endl << "Incorrect definition of <atmosphere>." << endl;
           return result;
         }
@@ -837,7 +836,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   modelName = model; // Set the class modelName attribute
 
   if( AircraftPath.isNull() || EnginePath.isNull() || SystemsPath.isNull()) {
-    FGLogging log(Log, LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Error: attempted to load aircraft with undefined "
         << "aircraft, engine, and system paths" << endl;
     return false;
@@ -868,7 +867,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = ReadFileHeader(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft fileheader element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -881,7 +880,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = LoadPlanet(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Planet element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -892,12 +891,12 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eAircraft]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft metrics element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
     } else {
-      FGLogging log(Log, LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << endl << "No metrics element was found in the aircraft config file." << endl;
       return false;
     }
@@ -907,12 +906,12 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eMassBalance]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft mass_balance element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
     } else {
-      FGLogging log(Log, LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << endl << "No mass_balance element was found in the aircraft config file." << endl;
       return false;
     }
@@ -922,14 +921,14 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eGroundReactions]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl
             << "Aircraft ground_reactions element has problems in file "
             << aircraftCfgFileName << endl;
         return result;
       }
     } else {
-      FGLogging log(Log, LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << endl << "No ground_reactions element was found in the aircraft config file." << endl;
       return false;
     }
@@ -939,7 +938,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eExternalReactions]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft external_reactions element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -950,7 +949,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eBuoyantForces]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft buoyant_forces element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -961,7 +960,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Propulsion->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft propulsion element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -974,7 +973,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     while (element) {
       result = Models[eSystems]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft system element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -986,7 +985,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eSystems]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft autopilot element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -997,7 +996,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eSystems]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft flight_control element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -1008,12 +1007,12 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = Models[eAerodynamics]->Load(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft aerodynamics element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
     } else {
-      FGLogging log(Log, LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << endl << "No expected aerodynamics element was found in the aircraft config file." << endl;
     }
 
@@ -1041,7 +1040,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (element) {
       result = ReadChild(element);
       if (!result) {
-        FGXMLLogging log(Log, element, LogLevel::ERROR);
+        FGXMLLogging log(element, LogLevel::ERROR);
         log << endl << "Aircraft child element has problems in file " << aircraftCfgFileName << endl;
         return result;
       }
@@ -1056,7 +1055,7 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
     if (IsChild) debug_lvl = saved_debug_lvl;
 
   } else {
-    FGLogging log(Log, LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << LogFormat::RED
         << "  JSBSim failed to open the configuration file: " << aircraftCfgFileName
         << LogFormat::DEFAULT << endl;
@@ -1124,7 +1123,7 @@ string FGFDMExec::QueryPropertyCatalog(const string& in, const string& end_of_li
 
 void FGFDMExec::PrintPropertyCatalog(void)
 {
-  FGLogging log(Log, LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << endl
       << "  " << LogFormat::BLUE << highint << LogFormat::UNDERLINE_ON
       << "Property Catalog for " << modelName << LogFormat::RESET << endl << endl;
@@ -1136,7 +1135,7 @@ void FGFDMExec::PrintPropertyCatalog(void)
 
 void FGFDMExec::PrintSimulationConfiguration(void) const
 {
-  FGLogging log(Log, LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << endl << "Simulation Configuration" << endl << "------------------------" << endl;
   log << MassBalance->GetName() << endl;
   log << GroundReactions->GetName() << endl;
@@ -1148,7 +1147,7 @@ void FGFDMExec::PrintSimulationConfiguration(void) const
 
 bool FGFDMExec::ReadFileHeader(Element* el)
 {
-  FGLogging log(Log, LogLevel::DEBUG);
+  FGLogging log(LogLevel::DEBUG);
 
   if (IsChild) {
     log << endl << LogFormat::BOLD << LogFormat::BLUE << "Reading child model: "
@@ -1179,7 +1178,7 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
   Aircraft->SetAircraftName(AircraftName);
 
   if (debug_lvl & 1) {
-    FGLogging log(Log, LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << LogFormat::UNDERLINE_ON << "Reading Aircraft Configuration File"
         << LogFormat::UNDERLINE_OFF << ": " << LogFormat::BOLD << AircraftName
         << LogFormat::NORMAL << endl;
@@ -1189,12 +1188,12 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
   Release    = el->GetAttributeValue("release");
 
   if (debug_lvl & 1) {
-    FGLogging log(Log, LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << "                            Version: "
         << LogFormat::BOLD << CFGVersion << LogFormat::NORMAL << endl;
   }
   if (CFGVersion != needed_cfg_version) {
-    FGLogging log(Log, LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << endl << LogFormat::RED << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
             " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     log << "Current version needed is: " << needed_cfg_version << endl;
@@ -1203,7 +1202,7 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
   }
 
   if (Release == "ALPHA" && (debug_lvl & 1)) {
-    FGLogging log(Log, LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << endl
         << LogFormat::BOLD << "This aircraft model is an " << LogFormat::RED << Release
         << LogFormat::RESET << LogFormat::BOLD << " release!!!" << endl << endl << LogFormat::RESET
@@ -1212,7 +1211,7 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
         << LogFormat::RED << LogFormat::BOLD << "Use this model for development purposes ONLY!!!"
         << LogFormat::NORMAL << LogFormat::RESET << endl << endl;
   } else if (Release == "BETA" && (debug_lvl & 1)) {
-    FGLogging log(Log, LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << endl
         << LogFormat::BOLD << "This aircraft model is a " << LogFormat::RED << Release
         << LogFormat::RESET << LogFormat::BOLD << " release!!!" << endl << endl << LogFormat::RESET
@@ -1220,12 +1219,12 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
         << LogFormat::BLUE << LogFormat::BOLD << "Use this model for development purposes ONLY!!!"
         << LogFormat::NORMAL << LogFormat::RESET << endl << endl;
   } else if (Release == "PRODUCTION" && (debug_lvl & 1)) {
-    FGLogging log(Log, LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << endl
         << LogFormat::BOLD << "This aircraft model is a " << LogFormat::BLUE << Release
         << LogFormat::RESET << LogFormat::BOLD << " release." << endl << endl << LogFormat::RESET;
   } else if (debug_lvl & 1) {
-    FGLogging log(Log, LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << endl
         << LogFormat::BOLD << "This aircraft model is an " << LogFormat::RED << Release
         << LogFormat::RESET << LogFormat::BOLD << " release!!!" << endl << endl << LogFormat::RESET
@@ -1271,7 +1270,7 @@ bool FGFDMExec::ReadChild(Element* el)
   if (location) {
     child->Loc = location->FindElementTripletConvertTo("IN");
   } else {
-    XMLLogException err(Log, el);
+    XMLLogException err(el);
     err << "No location was found for this child object!" << endl;
     throw err;
   }
@@ -1280,7 +1279,7 @@ bool FGFDMExec::ReadChild(Element* el)
   if (orientation) {
     child->Orient = orientation->FindElementTripletConvertTo("RAD");
   } else if (debug_lvl > 0) {
-    FGLogging log(Log, LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << endl << LogFormat::BOLD
         << "  No orientation was found for this child object! Assuming 0,0,0."
         << LogFormat::RESET << endl;
@@ -1385,7 +1384,7 @@ void FGFDMExec::Debug(int from)
 {
   if (debug_lvl <= 0) return;
 
-  FGLogging log(Log, LogLevel::DEBUG);
+  FGLogging log(LogLevel::DEBUG);
 
   if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor

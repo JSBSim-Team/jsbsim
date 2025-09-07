@@ -60,7 +60,7 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
   if (function_element)
     function = new FGFunction(fcs->GetExec(), function_element);
   else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "FCS Function should contain a \"function\" element\n";
     throw err;
   }
@@ -119,7 +119,7 @@ void FGFCSFunction::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       if (!InputNodes.empty())
         log << "      INPUT: " << InputNodes[0]->GetName() << "\n";
       for (auto node: OutputNodes)
@@ -127,7 +127,7 @@ void FGFCSFunction::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGFCSFunction\n";
     if (from == 1) log << "Destroyed:    FGFCSFunction\n";
   }

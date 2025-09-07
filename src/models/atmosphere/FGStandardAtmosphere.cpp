@@ -364,7 +364,7 @@ void FGStandardAtmosphere::SetTemperatureBias(eTemperature unit, double t)
   // temperature lower than the  lowest known temperature in the universe
   if (minStdAtmosphereTemp + TemperatureBias < minUniverseTemperature) {
     double minBias = minUniverseTemperature - minStdAtmosphereTemp;
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The temperature bias " << TemperatureBias << " R is too low. "
         << "It could result in temperatures below the absolute zero." << endl
         << "Temperature bias is therefore capped to " << minBias << endl;
@@ -415,7 +415,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
     deltemp *= 1.80; // If temp delta "t" is given in metric, scale up to English
 
   if (deltemp <= minDeltaTemperature) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The temperature delta " << deltemp << " R is too low. "
         << "It could result in temperatures below the absolute zero." << endl
         << "Temperature delta is therefore capped to " << minDeltaTemperature << endl;
@@ -434,7 +434,7 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
 
   void FGStandardAtmosphere::PrintStandardAtmosphereTable()
 {
-  FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "Altitude (ft)   Temp (F)   Pressure (psf)   Density (sl/ft3)" << std::endl;
   log << "-------------   --------   --------------   ----------------" << std::endl;
   for (int i=0; i<280000; i+=1000) {
@@ -626,7 +626,7 @@ void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
   constexpr double minDewPoint = CelsiusToRankine(-c) + 1.0;
 
   if (dewPoint_R <= minDewPoint) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The dew point temperature " << dewPoint_R << " is lower than "
         << minDewPoint << " R." << endl
         << "Dew point is therefore capped to " << minDewPoint << endl;
@@ -638,7 +638,7 @@ void FGStandardAtmosphere::SetDewPoint(eTemperature unit, double dewpoint)
 
   double finalizedDewPoint = GetDewPoint(eRankine);
   if (finalizedDewPoint < dewPoint_R) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "Dew point temperature has been capped to " << finalizedDewPoint
         << endl;
   }
@@ -668,12 +668,12 @@ void FGStandardAtmosphere::SetVaporPressure(ePressure unit, double Pa)
   double altitude = CalculatePressureAltitude(Pressure, 0.0);
   double VaporPressure = ConvertToPSF(Pa, unit);
   if (VaporPressure < 0.0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The vapor pressure cannot be negative." << endl
         << "Vapor pressure is set to 0.0" << endl;
     VaporPressure = 0.0;
   } else if (VaporPressure >= Pressure) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The vapor pressure " << VaporPressure
         << " PSF is higher than the ambient pressure." << endl
         << "Vapor pressure is therefore capped to " << Pressure-1.0 << endl;
@@ -711,12 +711,12 @@ double FGStandardAtmosphere::GetRelativeHumidity(void) const
 void FGStandardAtmosphere::SetRelativeHumidity(double RH)
 {
   if (RH < 0.0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The relative humidity cannot be negative." << endl
         << "Relative humidity is set to 0%" << endl;
     RH = 0.0;
   } else if (RH > 100.0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The relative humidity cannot be higher than 100%." << endl
         << "Relative humidity is set to 100%" << endl;
     RH = 100.0;
@@ -742,7 +742,7 @@ void FGStandardAtmosphere::SetVaporMassFractionPPM(double frac)
   ValidateVaporMassFraction(altitude);
 
   if (fabs(VaporMassFraction*1E6-frac)>1E-2) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     log << "The vapor mass fraction " << frac << " has been capped to "
         << VaporMassFraction*1E6 << "PPM." << endl;
   }
@@ -805,7 +805,7 @@ void FGStandardAtmosphere::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGStandardAtmosphere" << std::endl;
     if (from == 1) log << "Destroyed:    FGStandardAtmosphere" << std::endl;
   }

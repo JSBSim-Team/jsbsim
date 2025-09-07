@@ -46,6 +46,8 @@ INCLUDES
 
 namespace JSBSim {
 
+thread_local std::shared_ptr<FGLogger> CurrentLogger = std::make_shared<FGLogConsole>();
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -144,7 +146,8 @@ void FGLogging::Flush(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLogging& FGLogging::operator<<(LogFormat format) {
+FGLogging& FGLogging::operator<<(LogFormat format)
+{
   std::string message = buffer.str();
 
   if (!message.empty()) {
@@ -158,8 +161,8 @@ FGLogging& FGLogging::operator<<(LogFormat format) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGXMLLogging::FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLevel level)
-  : FGLogging(logger, level)
+FGXMLLogging::FGXMLLogging(Element* el, LogLevel level)
+  : FGLogging(level)
 {
   logger->FileLocation(el->GetFileName(), el->GetLineNumber());
 }
@@ -219,13 +222,16 @@ void FGLogConsole::Format(LogFormat format) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-LogException::LogException(std::shared_ptr<FGLogger> logger)
-: BaseException(""), FGLogging(std::make_shared<BufferLogger>(logger), LogLevel::FATAL) {}
+LogException::LogException()
+: BaseException(""), FGLogging(LogLevel::FATAL)
+{
+  logger = std::make_shared<BufferLogger>(CurrentLogger);
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 LogException::LogException(LogException& other)
-: BaseException(""), FGLogging(other.logger, LogLevel::FATAL)
+: BaseException(""), FGLogging(LogLevel::FATAL)
 {
   other.Flush(); // Make the data buffered in `other` accessible to all copies.
 }
@@ -245,8 +251,8 @@ const char* LogException::what() const noexcept
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-XMLLogException::XMLLogException(std::shared_ptr<FGLogger> logger, Element* el)
-  : LogException(logger)
+XMLLogException::XMLLogException(Element* el)
+  : LogException()
 {
   this->logger->FileLocation(el->GetFileName(), el->GetLineNumber());
 }

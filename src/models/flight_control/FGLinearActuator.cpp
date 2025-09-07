@@ -95,7 +95,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("module")) {
     module = element->FindElementValueAsNumber("module");
     if (module < 0) {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      FGLogging log(LogLevel::WARN);
       log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
           << " <module> parameter is forced from " << fixed << module
           << " value to 1.0 value\n";
@@ -106,7 +106,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("hysteresis")) {
     hysteresis = element->FindElementValueAsNumber("hysteresis");
     if (hysteresis < 0) {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      FGLogging log(LogLevel::WARN);
       log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
           << " <hysteresis> parameter is forced from " << fixed << hysteresis
           << " value to 0.0 value\n";
@@ -123,7 +123,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
       previousLagInput = previousLagOutput = 0.0;
     } else {
       if (lag < 0) {
-        FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+        FGLogging log(LogLevel::WARN);
         log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
             << " <lag> parameter is forced from " << fixed << lag
             << " value to 0.0 value\n";
@@ -135,7 +135,7 @@ FGLinearActuator::FGLinearActuator(FGFCS* fcs, Element* element)
   if (element->FindElement("rate")) {
     rate = element->FindElementValueAsNumber("rate");
     if (rate <= 0 || rate > 1.0) {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::WARN);
+      FGLogging log(LogLevel::WARN);
       log << "FGLinearActuator::Run " << InputNodes[0]->GetNameWithSign()
           << " <rate> parameter is forced from " << fixed << rate
           << " value to 0.5 value\n";
@@ -246,7 +246,7 @@ void FGLinearActuator::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << fixed << "\n";
       log << "   inputMem: " << inputMem << "\n";
       log << "       bias: " << bias << "\n";
@@ -265,7 +265,7 @@ void FGLinearActuator::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGLinearActuator\n";
     if (from == 1) log << "Destroyed:    FGLinearActuator\n";
   }
