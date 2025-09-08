@@ -73,11 +73,6 @@ INCLUDES
 
 using namespace std;
 
-// Property traits specialization to tie properties using FGPropagate enums.
-namespace simgear::props {
-  template<> struct PropertyTraits<JSBSim::FGPropagate::eIntegrateType> : public PropertyTraits<int> {};
-};
-
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

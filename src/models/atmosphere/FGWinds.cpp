@@ -49,12 +49,6 @@ INCLUDES
 
 using namespace std;
 
-// Property traits specialization to tie properties using FGWinds enums.
-namespace simgear::props {
-  template<> struct PropertyTraits<JSBSim::FGWinds::tType> : public PropertyTraits<int> {};
-  template<> struct PropertyTraits<JSBSim::FGWinds::eGustFrame> : public PropertyTraits<int> {};
-};
-
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
