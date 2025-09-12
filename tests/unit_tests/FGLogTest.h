@@ -36,7 +36,7 @@ std::shared_ptr<DummyLogger> logger;
 
 void setUp() {
   logger = std::make_shared<DummyLogger>();
-  JSBSim::CurrentLogger = logger;
+  JSBSim::SetLogger(logger);
 }
 
 void testConstructor() {
@@ -274,7 +274,7 @@ std::shared_ptr<JSBSim::FGLogConsole> logger;
 
 void setUp() {
   logger = std::make_shared<JSBSim::FGLogConsole>();
-  JSBSim::CurrentLogger = logger;
+  JSBSim::SetLogger(logger);
 }
 
 void testNormalMessage() {
@@ -424,7 +424,7 @@ std::shared_ptr<DummyLogger> logger;
 
 void setUp() {
   logger = std::make_shared<DummyLogger>();
-  JSBSim::CurrentLogger = logger;
+  JSBSim::SetLogger(logger);
 }
 
 void testConstructor() {
@@ -636,7 +636,7 @@ std::shared_ptr<DummyLogger> logger;
 
 void setUp() {
   logger = std::make_shared<DummyLogger>();
-  JSBSim::CurrentLogger = logger;
+  JSBSim::SetLogger(logger);
 }
 
 void testConstructor() {

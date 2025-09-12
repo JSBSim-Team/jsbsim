@@ -46,7 +46,11 @@ INCLUDES
 
 namespace JSBSim {
 
-JSBSIM_API thread_local std::shared_ptr<FGLogger> CurrentLogger = std::make_shared<FGLogConsole>();
+thread_local FGLogger_ptr CurrentLogger = std::make_shared<FGLogConsole>();
+
+void SetLogger(FGLogger_ptr logger) { CurrentLogger = logger; }
+FGLogger_ptr GetLoger(void) { return CurrentLogger; }
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -55,7 +59,7 @@ CLASS IMPLEMENTATION
 class BufferLogger : public FGLogger
 {
 public:
-  BufferLogger(std::shared_ptr<FGLogger> logger) : logger(logger) {
+  BufferLogger(FGLogger_ptr logger) : logger(logger) {
     logMessageBuffer[0] = '\0';
   }
   void FileLocation(const std::string& filename, int line) override {
@@ -77,7 +81,7 @@ private:
   char logMessageBuffer[1024];
   size_t bufferUsed = 0;
   std::vector<MessageToken> tokens;
-  const std::shared_ptr<FGLogger> logger;
+  const FGLogger_ptr logger;
   std::string filename;
   int line = -1;
 };
@@ -128,6 +132,14 @@ BufferLogger::~BufferLogger()
     logger->Message(std::string(token.messageItem));
   }
   logger->Flush();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGLogging::FGLogging(LogLevel level)
+   : logger(CurrentLogger)
+{
+  logger->SetLevel(level);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

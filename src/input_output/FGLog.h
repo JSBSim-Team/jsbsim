@@ -107,15 +107,14 @@ protected:
 };
 
 using FGLogger_ptr = std::shared_ptr<FGLogger>;
-JSBSIM_API extern thread_local FGLogger_ptr CurrentLogger;
+
+JSBSIM_API void SetLogger(FGLogger_ptr logger);
+JSBSIM_API FGLogger_ptr GetLoger(void);
 
 class JSBSIM_API FGLogging
 {
 public:
-  FGLogging(LogLevel level)
-   : logger(CurrentLogger)
-  { logger->SetLevel(level); }
-  FGLogging(FGLogger_ptr l) : logger(l) {}
+  FGLogging(LogLevel level);
 
   virtual ~FGLogging() { Flush(); }
   FGLogging& operator<<(const char* message) { buffer << message ; return *this; }
@@ -138,7 +137,9 @@ public:
   FGLogging& operator<<(LogFormat format);
   void Flush(void);
 protected:
-  std::shared_ptr<FGLogger> logger;
+  FGLogging(FGLogger_ptr l) : logger(l) {}
+
+  FGLogger_ptr logger;
   std::ostringstream buffer;
 };
 
