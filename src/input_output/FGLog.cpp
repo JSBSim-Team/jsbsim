@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-thread_local std::shared_ptr<FGLogger> CurrentLogger = std::make_shared<FGLogConsole>();
+JSBSIM_API thread_local std::shared_ptr<FGLogger> CurrentLogger = std::make_shared<FGLogConsole>();
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -223,15 +223,15 @@ void FGLogConsole::Format(LogFormat format) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 LogException::LogException()
-: BaseException(""), FGLogging(LogLevel::FATAL)
+: BaseException(""), FGLogging(std::make_shared<BufferLogger>(CurrentLogger))
 {
-  logger = std::make_shared<BufferLogger>(CurrentLogger);
+  logger->SetLevel(LogLevel::FATAL);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 LogException::LogException(LogException& other)
-: BaseException(""), FGLogging(LogLevel::FATAL)
+: BaseException(""), FGLogging(other.logger)
 {
   other.Flush(); // Make the data buffered in `other` accessible to all copies.
 }
@@ -254,7 +254,7 @@ const char* LogException::what() const noexcept
 XMLLogException::XMLLogException(Element* el)
   : LogException()
 {
-  this->logger->FileLocation(el->GetFileName(), el->GetLineNumber());
+  logger->FileLocation(el->GetFileName(), el->GetLineNumber());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

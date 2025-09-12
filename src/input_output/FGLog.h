@@ -106,7 +106,8 @@ protected:
   LogLevel log_level = LogLevel::BULK;
 };
 
-extern thread_local std::shared_ptr<FGLogger> CurrentLogger;
+using FGLogger_ptr = std::shared_ptr<FGLogger>;
+JSBSIM_API extern thread_local FGLogger_ptr CurrentLogger;
 
 class JSBSIM_API FGLogging
 {
@@ -114,6 +115,7 @@ public:
   FGLogging(LogLevel level)
    : logger(CurrentLogger)
   { logger->SetLevel(level); }
+  FGLogging(FGLogger_ptr l) : logger(l) {}
 
   virtual ~FGLogging() { Flush(); }
   FGLogging& operator<<(const char* message) { buffer << message ; return *this; }
