@@ -157,6 +157,7 @@ public:
   { buffer.append("\nIn file " + filename + ": line " + std::to_string(line) + "\n"); }
   void Format(LogFormat format) override;
   void Flush(void) override;
+  ~FGLogConsole() override { Flush(); }
 
   void Message(const std::string& message) override {
     if (log_level < min_level) return;

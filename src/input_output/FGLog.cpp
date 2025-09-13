@@ -49,7 +49,7 @@ namespace JSBSim {
 thread_local FGLogger_ptr CurrentLogger = std::make_shared<FGLogConsole>();
 
 void SetLogger(FGLogger_ptr logger) { CurrentLogger = logger; }
-FGLogger_ptr GetLoger(void) { return CurrentLogger; }
+FGLogger_ptr GetLogger(void) { return CurrentLogger; }
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,9 +59,7 @@ CLASS IMPLEMENTATION
 class BufferLogger : public FGLogger
 {
 public:
-  BufferLogger(FGLogger_ptr logger) : logger(logger) {
-    logMessageBuffer[0] = '\0';
-  }
+  BufferLogger() { logMessageBuffer[0] = '\0'; }
   void FileLocation(const std::string& filename, int line) override {
     this->filename = filename;
     this->line = line;
@@ -81,7 +79,6 @@ private:
   char logMessageBuffer[1024];
   size_t bufferUsed = 0;
   std::vector<MessageToken> tokens;
-  const FGLogger_ptr logger;
   std::string filename;
   int line = -1;
 };
@@ -120,24 +117,24 @@ BufferLogger::~BufferLogger()
 {
   if (tokens.empty()) return;
 
-  logger->SetLevel(log_level);
+  CurrentLogger->SetLevel(log_level);
 
-  if (line > 0) logger->FileLocation(filename, line);
+  if (line > 0) CurrentLogger->FileLocation(filename, line);
 
   for (const auto& token : tokens) {
     if (token.messageItem.empty()) {
-      logger->Format(token.format);
+      CurrentLogger->Format(token.format);
       continue;
     }
-    logger->Message(std::string(token.messageItem));
+    CurrentLogger->Message(std::string(token.messageItem));
   }
-  logger->Flush();
+  CurrentLogger->Flush();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLogging::FGLogging(LogLevel level)
-   : logger(CurrentLogger)
+  : logger(CurrentLogger)
 {
   logger->SetLevel(level);
 }
@@ -235,7 +232,7 @@ void FGLogConsole::Format(LogFormat format) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 LogException::LogException()
-: BaseException(""), FGLogging(std::make_shared<BufferLogger>(CurrentLogger))
+: BaseException(""), FGLogging(std::make_shared<BufferLogger>())
 {
   logger->SetLevel(LogLevel::FATAL);
 }
