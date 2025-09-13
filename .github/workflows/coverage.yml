@@ -1,0 +1,41 @@
+name: Code coverage
+
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+
+jobs:
+  Codecov:
+    name: Code coverage
+    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install cxxtest lcov
+      - name: Checkout JSBSim
+        uses: actions/checkout@v5
+      - name: Configure JSBSim
+        run: |
+          mkdir build && cd build
+          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
+      - name: Build JSBSim
+        working-directory: build
+        run: make --jobs=$(nproc)
+      - name: Run JSBSim tests
+        working-directory: build
+        run: ctest -R Test1 --output-on-failure
+      - name: Generate coverage report
+        working-directory: build
+        run: make lcov
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: ./build/lcov/data/capture/all_targets.info
+          disable_search: true
+          fail_ci_if_error: true
