@@ -109,7 +109,7 @@ protected:
 using FGLogger_ptr = std::shared_ptr<FGLogger>;
 
 JSBSIM_API void SetLogger(FGLogger_ptr logger);
-JSBSIM_API FGLogger_ptr GetLoger(void);
+JSBSIM_API FGLogger_ptr GetLogger(void);
 
 class JSBSIM_API FGLogging
 {

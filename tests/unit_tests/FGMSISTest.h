@@ -56,6 +56,13 @@ public:
   std::vector<double> MSIS_alt, MSIS_glat, MSIS_glon, MSIS_f107a, MSIS_f107, MSIS_ap,
                       MSIS_T, MSIS_rho, MSIS_mair;
 
+  ~FGMSISTest() {
+    // Avoid constructing `FGLogging` instances in a static instance of
+    // FGMSISTest. This is due to the destruction of thread local storage
+    // *before* the destruction of static globals.
+    JSBSim::FGJSBBase::debug_lvl = 0;
+  }
+
   FGMSISTest() {
     std_atm = fdmex.GetAtmosphere();
     fdmex.GetPropertyManager()->Unbind(std_atm);

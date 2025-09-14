@@ -46,10 +46,10 @@ INCLUDES
 
 namespace JSBSim {
 
-thread_local FGLogger_ptr CurrentLogger = std::make_shared<FGLogConsole>();
+thread_local FGLogger_ptr GlobalLogger = std::make_shared<FGLogConsole>();
 
-void SetLogger(FGLogger_ptr logger) { CurrentLogger = logger; }
-FGLogger_ptr GetLogger(void) { return CurrentLogger; }
+void SetLogger(FGLogger_ptr logger) { GlobalLogger = logger; }
+FGLogger_ptr GetLogger(void) { return GlobalLogger; }
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,24 +117,24 @@ BufferLogger::~BufferLogger()
 {
   if (tokens.empty()) return;
 
-  CurrentLogger->SetLevel(log_level);
+  GlobalLogger->SetLevel(log_level);
 
-  if (line > 0) CurrentLogger->FileLocation(filename, line);
+  if (line > 0) GlobalLogger->FileLocation(filename, line);
 
   for (const auto& token : tokens) {
     if (token.messageItem.empty()) {
-      CurrentLogger->Format(token.format);
+      GlobalLogger->Format(token.format);
       continue;
     }
-    CurrentLogger->Message(std::string(token.messageItem));
+    GlobalLogger->Message(std::string(token.messageItem));
   }
-  CurrentLogger->Flush();
+  GlobalLogger->Flush();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLogging::FGLogging(LogLevel level)
-  : logger(CurrentLogger)
+  : logger(GlobalLogger)
 {
   logger->SetLevel(level);
 }
