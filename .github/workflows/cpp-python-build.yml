@@ -7,7 +7,6 @@ env:
 
 jobs:
   XML-validation:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: XML validation
     runs-on: ubuntu-latest
     steps:
