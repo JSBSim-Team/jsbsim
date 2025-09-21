@@ -6,7 +6,7 @@
 
   <fileheader>
     <author> David Culp, Erik Hofman </author>
-    <filecreationdate> 2001-01-01 </filecreationdate>
+    <filecreationdate>2001-01-01</filecreationdate>
     <version> 2.1 </version>
     <description> (Powered) Paraglider </description>
 <!--
@@ -68,7 +68,7 @@
     </location>
     <pointmass name="Pilot">
       <weight unit="LBS"> 180 </weight>
-      <location name="POINTMASS" unit="IN">
+      <location unit="IN">
         <x>  0 </x>
         <y>  0 </y>
         <z> -330 </z>
@@ -76,7 +76,7 @@
     </pointmass>
     <pointmass name="Polini Engine">
       <weight unit="LBS"> 25.13 </weight>
-      <location name="POINTMASS" unit="IN">
+      <location unit="IN">
         <x>  4 </x>
         <y>  0 </y>
         <z> -330 </z>
@@ -84,7 +84,7 @@
     </pointmass>
     <pointmass name="DT Propeller">
       <weight unit="LBS"> 2.425 </weight>
-      <location name="POINTMASS" unit="IN">
+      <location unit="IN">
         <x> 10 </x>
         <y>  0 </y>
         <z> -330 </z>
@@ -125,14 +125,11 @@
     </contact>
   </ground_reactions>
 
-  <system file="Controls.xml"/>
-
   <propulsion>
     <engine file="Polini_THOR80">
     <feed> 0 </feed>
 
     <thruster file="DT_Propeller">
-     <sense> 1 </sense>
      <location unit="IN">
        <x>    10.00 </x>
        <y>     0.00 </y>
@@ -143,6 +140,7 @@
         <roll>     0.00 </roll>
          <yaw>     0.00 </yaw>
      </orient>
+     <sense> 1 </sense>
     </thruster>
   </engine>
 
@@ -157,16 +155,18 @@
   </tank>
   </propulsion>
 
+  <system file="Controls.xml"/>
+
   <flight_control name="FCS: paraglider_FCS">
   </flight_control>
 
   <aerodynamics>
 
     <!-- pilot area (area of a circle with a diameter of 4.1 foot) -->
-    <property type="float" value="13.2">metrics/Sp-sqft</property>
+    <property value="13.2">metrics/Sp-sqft</property>
 
     <!-- pilot arm (-330 inches equals to 27.5 foot -->
-    <property type="float" value="27.5">metrics/bp-ft</property>
+    <property value="27.5">metrics/bp-ft</property>
 
     <axis name="DRAG">
      <function name="aero/coefficient/CDalpha">
@@ -390,7 +390,7 @@
           2  -0.051
           4  -0.088
           6  -0.107
-          8  -0.133 
+          8  -0.133
          10  -0.152
         </tableData>
        </table>

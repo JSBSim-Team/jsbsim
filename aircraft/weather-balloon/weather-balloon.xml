@@ -6,12 +6,12 @@
 
  <fileheader>
   <author> Ron Jensen </author>
-  <filecreationdate>2011-12-11</filecreationdate>
-  <version>$Revision: 1.3 $</version>
-  <description> Models a 6-foot weather balloon. </description>
   <license
      licenseName="GPL (General Public License)"
      licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+  <filecreationdate>2011-12-11</filecreationdate>
+  <version>$Revision: 1.3 $</version>
+  <description> Models a 6-foot weather balloon. </description>
   <note>
    This model was created using publicly available data, publicly available
    technical reports, textbooks, and guesses. It contains no proprietary or
@@ -22,7 +22,7 @@
 
    This simulation model is not endorsed by the manufacturer.
    This model is not to be sold.
-  </note> 
+  </note>
   <note>
     References
     [1] BT-1039.12 http://library.gsfc.nasa.gov/Databases/Balloon/Data/BT1039.12.pdf
@@ -83,12 +83,12 @@
    </location>
    <pointmass name="Radiosonde">
     <weight unit="KG">    1.15 </weight>
-    <location name="POINTMASS" unit="IN">
+    <location unit="IN">
      <x>   0.0 </x>
      <y>   0.0 </y>
      <z> -25.1 </z>
     </location>
-  </pointmass> 
+  </pointmass>
  </mass_balance>
 
  <ground_reactions>
@@ -104,6 +104,80 @@
     <damping_coeff unit="LBS/FT/SEC"> 10.00 </damping_coeff>
   </contact>
  </ground_reactions>
+
+ <external_reactions>
+  <force name="parachute" frame="WIND">
+    <function>
+      <product>
+        <p> aero/qbar-psf </p>
+        <p> metrics/Schute-sqft </p>
+        <v> 1.4 </v> <!-- Full drag coefficient -->
+      </product>
+    </function>
+    <location unit="FT">
+      <x> 0</x>
+      <y> 0</y>
+      <z>-6.0</z>
+    </location>
+    <!-- The direction describes a unit vector. In this case, since
+         the selected frame is the WIND frame, the "-1" x component
+         describes a direction exactly opposite of the direction
+         into the wind vector. That is, the direction specified below
+         is the direction that the drag force acts in. -->
+    <direction>
+      <x>-1</x>
+      <y>0</y>
+      <z>0</z>
+    </direction>
+  </force>
+ </external_reactions>
+
+<buoyant_forces>
+  <gas_cell type="HYDROGEN">
+    <location unit="IN">
+      <x> 0.0 </x>
+      <y> 0.0 </y>
+      <z> 0.0 </z>
+    </location>
+    <x_radius unit="IN"> 133.0 </x_radius>
+    <y_radius unit="IN"> 133.0 </y_radius>
+    <z_radius unit="IN"> 133.0 </z_radius>
+    <max_overpressure unit="LBS/FT2"> 3000.0 </max_overpressure><!-- WAG -->
+    <valve_coefficient unit="FT4*SEC/SLUG"> 100000 </valve_coefficient> <!-- just a big number so the hydrogen disappears when the balloon bursts -->
+    <fullness> 0.02 </fullness>
+    <heat>
+    <!-- Heat transfer due to temperature difference. -->
+    <function name="buoyant_forces/gas-cell/dU_conduction">
+     <product>
+      <property> metrics/surface-sqft </property> <!-- Surface area [ft2] -->
+      <value>     0.02 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
+      <difference>
+       <property> atmosphere/T-R </property>
+       <property> buoyant_forces/gas-cell/temp-R </property>
+      </difference>
+     </product>
+    </function>
+    <function name="buoyant_forces/gas-cell/dU_radiation">
+     <product>
+      <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
+                                      [Btu / (h ft^2 R^4)] -->
+      <value>       0.05 </value> <!-- Emissivity [0,1] (Guess) -->
+      <property> metrics/surface-sqft</property><!-- Surface area [ft2] -->
+      <difference>
+       <pow>
+        <property> atmosphere/T-R </property>
+        <value> 4.0 </value>
+       </pow>
+       <pow>
+        <property> buoyant_forces/gas-cell/temp-R </property>
+        <value> 4.0 </value>
+       </pow>
+      </difference>
+     </product>
+    </function>
+    </heat>
+  </gas_cell>
+</buoyant_forces>
 
  <propulsion>
  </propulsion>
@@ -207,17 +281,12 @@
    </product>
   </function>
 
-
-  <axis name="LIFT">
-
-  </axis>
-
   <axis name="DRAG">
 
    <function name="aero/force/BasicDrag">
      <description>Drag. Table from [1]</description>
       <product>
-        <value name="Tweak"> 1.22 </value>
+        <value> 1.22 </value>
         <property>aero/qbar-psf</property>
         <property>metrics/Sref-sqft</property>
         <table>
@@ -239,10 +308,6 @@
 
   </axis>
 
-  <axis name="SIDE">
-
-  </axis>
-
   <axis name="ROLL">
    <function name="aero/coefficient/Clp">
     <description>Roll_moment_due_to_roll_rate_(roll_damping)</description>
@@ -253,7 +318,7 @@
      <property>velocities/p-aero-rad_sec</property>
      <value>-0.09</value>
     </product>
-   </function> 
+   </function>
 
    <function name="aero/coefficient/Clpc">
     <description>Roll_moment_due_to_roll_rate_chute_(roll_damping)</description>
@@ -264,7 +329,7 @@
      <property>velocities/p-aero-rad_sec</property>
      <value>-0.4</value>
     </product>
-   </function> 
+   </function>
    </axis>
 
   <axis name="PITCH">
@@ -288,7 +353,7 @@
      <property>velocities/q-aero-rad_sec</property>
      <value>-0.4</value>
     </product>
-   </function> 
+   </function>
   </axis>
 
   <axis name="YAW">
@@ -301,8 +366,8 @@
       <property>velocities/r-aero-rad_sec</property>
       <value>-0.05</value>
     </product>
-   </function> 
- 
+   </function>
+
   <function name="aero/coefficient/Cnrc">
      <description>Yaw_moment_due_to_yaw_rate_chute</description>
      <product>
@@ -312,84 +377,8 @@
       <property>velocities/r-aero-rad_sec</property>
       <value>-0.05</value>
     </product>
-   </function> 
+   </function>
   </axis>
 
  </aerodynamics>
-
- <external_reactions>
-  <force name="parachute" frame="WIND">
-    <function>
-      <product>
-        <p> aero/qbar-psf </p>
-        <p> metrics/Schute-sqft </p>
-        <v> 1.4 </v> <!-- Full drag coefficient -->
-      </product>
-    </function>
-    <location unit="FT">
-      <x> 0</x>
-      <y> 0</y>
-      <z>-6.0</z>
-    </location>
-    <!-- The direction describes a unit vector. In this case, since
-         the selected frame is the WIND frame, the "-1" x component
-         describes a direction exactly opposite of the direction
-         into the wind vector. That is, the direction specified below
-         is the direction that the drag force acts in. -->
-    <direction>
-      <x>-1</x>
-      <y>0</y>
-      <z>0</z>
-    </direction>
-  </force>
- </external_reactions>
-
-<buoyant_forces>
-  <gas_cell type="HYDROGEN">
-    <location unit="IN">
-      <x> 0.0 </x>
-      <y> 0.0 </y>
-      <z> 0.0 </z>
-    </location>
-    <x_radius unit="IN"> 133.0 </x_radius>
-    <y_radius unit="IN"> 133.0 </y_radius>
-    <z_radius unit="IN"> 133.0 </z_radius>
-    <fullness> 0.02 </fullness>
-    <max_overpressure unit="LBS/FT2"> 3000.0 </max_overpressure><!-- WAG -->
-    <heat>
-    <!-- Heat transfer due to temperature difference. -->
-    <function name="buoyant_forces/gas-cell/dU_conduction">
-     <product>
-      <property> metrics/surface-sqft </property> <!-- Surface area [ft2] -->
-      <value>     0.02 </value> <!-- Conductivity [lb / (K ft sec)] (Guess) -->
-      <difference>
-       <property> atmosphere/T-R </property>
-       <property> buoyant_forces/gas-cell/temp-R </property>
-      </difference>
-     </product>
-    </function>
-    <function name="buoyant_forces/gas-cell/dU_radiation">
-     <product>
-      <value> 0.1714e-8 </value> <!-- Stefan-Boltzmann's constant
-                                      [Btu / (h ft^2 R^4)] -->
-      <value>       0.05 </value> <!-- Emissivity [0,1] (Guess) -->
-      <property> metrics/surface-sqft</property><!-- Surface area [ft2] -->
-      <difference>
-       <pow>
-        <property> atmosphere/T-R </property>
-        <value> 4.0 </value>
-       </pow>
-       <pow>
-        <property> buoyant_forces/gas-cell/temp-R </property>
-        <value> 4.0 </value>
-       </pow>
-      </difference>
-     </product>
-    </function> 
-    </heat>
-    <valve_coefficient unit="FT4*SEC/SLUG"> 100000 </valve_coefficient> <!-- just a big number so the hydrogen disappears when the balloon bursts -->
-  </gas_cell>
-</buoyant_forces>
-
 </fdm_config>
-

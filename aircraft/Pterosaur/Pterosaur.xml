@@ -7,7 +7,7 @@
 
  <fileheader>
   <author> Aeromatic v 2.9.9 </author>
-  <filecreationdate> 27 Oct 2015 </filecreationdate>
+  <filecreationdate>2015-10-27</filecreationdate>
   <version>$Revision: 1.5 $</version>
   <description> Models a Pterosaur. </description>
  </fileheader>
@@ -109,27 +109,6 @@
      <z>    -9.84 </z>
    </location>
  </mass_balance>
-
- <propulsion>
-
-   <engine file="dummy">
-    <feed> 0 </feed>
-
-    <thruster file="direct">
-     <sense> 1 </sense>
-     <location unit="IN">
-       <x>    36.00 </x>
-       <y>     0.00 </y>
-       <z>     0.00 </z>
-     </location>
-     <orient unit="DEG">
-       <pitch>     0.00 </pitch>
-        <roll>     0.00 </roll>
-         <yaw>     0.00 </yaw>
-     </orient>
-    </thruster>
-  </engine>
- </propulsion>
 
  <ground_reactions>
 
@@ -250,6 +229,42 @@
   </contact>
 
  </ground_reactions>
+
+ <external_reactions>
+  <force name="legs" frame="BODY">
+   <location unit="IN">
+    <x> 188.99 </x>
+    <y>   0.00 </y>
+    <z>  -9.84 </z>
+   </location>
+   <direction>
+    <x> 1 </x>
+    <y> 0 </y>
+    <z> 0 </z>
+   </direction>
+  </force>
+ </external_reactions>
+
+ <propulsion>
+
+   <engine file="dummy">
+    <feed> 0 </feed>
+
+    <thruster file="direct">
+     <location unit="IN">
+       <x>    36.00 </x>
+       <y>     0.00 </y>
+       <z>     0.00 </z>
+     </location>
+     <orient unit="DEG">
+       <pitch>     0.00 </pitch>
+        <roll>     0.00 </roll>
+         <yaw>     0.00 </yaw>
+     </orient>
+     <sense> 1 </sense>
+    </thruster>
+  </engine>
+ </propulsion>
 
  <system file="Ornithopter Controls.xml"/>
  <system file="Landing Gear.xml"/>
@@ -612,20 +627,4 @@
   </axis>
 
  </aerodynamics>
-
- <external_reactions>
-  <force name="legs" frame="BODY">
-   <location unit="IN">
-    <x> 188.99 </x>
-    <y>   0.00 </y>
-    <z>  -9.84 </z>
-   </location>
-   <direction>
-    <x> 1 </x>
-    <y> 0 </y>
-    <z> 0 </z>
-   </direction>
-  </force>
- </external_reactions>
-
 </fdm_config>
