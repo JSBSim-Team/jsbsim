@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Dave Culp, based on Aero-Matic </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.25 $ </version>
         <description> OV-10 Bronco </description>
       <note>
@@ -139,7 +139,7 @@
             </thruster>
         </engine>
 	<!-- Internal Tank -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> 0 </y>
@@ -149,7 +149,7 @@
             <contents unit="LBS"> 1500 </contents>
         </tank>
 	<!-- External Tank -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> 0 </y>
@@ -159,7 +159,7 @@
             <contents unit="LBS"> 1500 </contents>
         </tank>
 	<!-- Mk 82 weight -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> 21.5 </y>
@@ -168,7 +168,7 @@
             <capacity unit="LBS"> 500 </capacity>
             <contents unit="LBS"> 500 </contents>
         </tank>
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> -21.5 </y>
@@ -178,7 +178,7 @@
             <contents unit="LBS"> 500 </contents>
         </tank>
 	<!-- LAU 68 weight -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> 35.8 </y>
@@ -187,7 +187,7 @@
             <capacity unit="LBS"> 190 </capacity>
             <contents unit="LBS"> 190 </contents>
         </tank>
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 200 </x>
                 <y> -35.8 </y>
@@ -197,7 +197,7 @@
             <contents unit="LBS"> 190 </contents>
         </tank>
 	<!-- Pilots weight -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 90 </x>
                 <y> 0 </y>
@@ -206,7 +206,7 @@
             <capacity unit="LBS"> 191 </capacity>
             <contents unit="LBS"> 191 </contents>
         </tank>
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 150 </x>
                 <y> 0 </y>
@@ -216,7 +216,7 @@
             <contents unit="LBS"> 192 </contents>
         </tank>
 	<!-- Rear payload weight -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 249.6 </x>
                 <y> 0 </y>
@@ -226,7 +226,7 @@
             <contents unit="LBS"> 200 </contents>
         </tank>
 	<!-- Paratroopers weight -->
-        <tank type="FUEL">    
+        <tank type="FUEL">
             <location unit="IN">
                 <x> 249.6 </x>
                 <y> 0 </y>
@@ -547,7 +547,7 @@
                 <description>Lift_due_to_Elevator_Deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
-                    <property>fcs/elevator-pos-norm</property> 
+                    <property>fcs/elevator-pos-norm</property>
                     <value>0.2000</value>
                 </product>
             </function>

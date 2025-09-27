@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate> 2005-01-01 </filecreationdate>
+        <filecreationdate>2005-01-01</filecreationdate>
         <version> $Revision: 1.31 $ </version>
         <description> McDonnell Douglas F-15 Eagle </description>
       <note>
@@ -61,7 +61,7 @@
         </location>
         <pointmass name="Pilot">
             <weight unit="LBS"> 230 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> -398.45 </x>
                 <y> 0 </y>
                 <z> 20 </z>

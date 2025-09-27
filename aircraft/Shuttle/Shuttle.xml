@@ -6,13 +6,12 @@
 
     <fileheader>
         <author> Jon Berndt </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <license
+          licenseName="GPL (General Public License)"
+          licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.2 $ </version>
         <description> Space Shuttle </description>
-        <license>
-          <licenseName>GPL (General Public License)</licenseName>
-          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
         <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
@@ -140,7 +139,6 @@
 
             <scheduled_gain name="Pitch Scheduled Gain 1">
                 <input>fcs/pitch-gain-1</input>
-                <gain>0.017</gain>
                 <table>
                     <independentVar>fcs/elevator-pos-rad</independentVar>
                     <tableData>
@@ -168,6 +166,7 @@
                          0.697 -33.433
                     </tableData>
                 </table>
+                <gain>0.017</gain>
             </scheduled_gain>
 
             <pure_gain name="Pitch SAS Feedback">

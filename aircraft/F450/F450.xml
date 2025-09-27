@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 
-<fdm_config release="Alpha" version="3.0">
+<fdm_config name="F450" release="ALPHA" version="3.0">
+    <fileheader/>
 
     <metrics file="Metrics.xml"/>
 
@@ -9,16 +10,15 @@
     <ground_reactions file="Gear.xml"/>
 
     <propulsion file="Propulsion.xml"/>
-   
-    <aerodynamics file="Aero.xml"/>
 
     <system file="Effectors.xml"/>
 
-  <flight_control file="FlightControl.xml"/>
+    <flight_control file="FlightControl.xml"/>
 
     <system file="SensorImu.xml"/>
     <system file="SensorBaro.xml"/>
     <system file="SensorGps.xml"/>
 
-</fdm_config>
+    <aerodynamics file="Aero.xml"/>
 
+</fdm_config>

@@ -6,10 +6,10 @@
 
     <fileheader>
         <author> Jon S. Berndt </author>
-        <filecreationdate> 2010-01-14 </filecreationdate>
+        <filecreationdate>2010-01-14</filecreationdate>
         <version> $Revision: 1.6 $ </version>
         <description>
-          Rough model of the DIRECT Jupiter-246 
+          Rough model of the DIRECT Jupiter-246
           Lunar Crew Launch Vehicle Configuration.
           FOR EDUCATIONAL PURPOSES ONLY.
           This model is not sanctioned by nor is it a work of the DIRECT Launcher
@@ -56,7 +56,7 @@
     </metrics>
 
     <mass_balance>
-      
+
       <!--
                    Weight (each)   Quantity    Subtotal    Total
         SRBs                                              2,593,208
@@ -712,16 +712,6 @@
           </product>
         </function>
       </axis>
-
-      <axis name="ROLL">
-      </axis>
-
-      <axis name="PITCH">
-      </axis>
-
-      <axis name="YAW">
-      </axis>
-
     </aerodynamics>
 
     <!--output name="J246.csv" type="CSV" rate="10">

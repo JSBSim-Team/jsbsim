@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Jon Berndt </author>
-        <filecreationdate> 1998-07-01 </filecreationdate>
+        <filecreationdate>1998-07-01</filecreationdate>
         <version> $Revision: 1.59 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
@@ -58,7 +58,7 @@
         <ixz unit="SLUG*FT2"> -590 </ixz>
         <iyz unit="SLUG*FT2"> 0 </iyz>
 <!--        <emptywt unit="LBS"> 15560 </emptywt> -->
-        <emptywt unit="LBS"> 14560 </emptywt> 
+        <emptywt unit="LBS"> 14560 </emptywt>
       <location name="CG" unit="IN">
             <x> 345 </x>
             <y> 0 </y>
@@ -161,13 +161,13 @@
             <contents unit="LBS"> 0 </contents>
         </tank>
     </propulsion>
-    
+
     <autopilot file="X15ap"/>
 
     <flight_control name="X-15">
 
         <channel name="Pitch">
-            
+
             <summer name="Pitch Trim Sum">
                 <input>ap/elevator-cmd</input>
                 <input>fcs/elevator-cmd-norm</input>
@@ -193,7 +193,6 @@
 
             <scheduled_gain name="Pitch Scheduled Gain 1">
                 <input>fcs/pitch-gain-1</input>
-                <gain>0.017</gain>
                 <table>
                     <independentVar>fcs/elevator-pos-rad</independentVar>
                     <tableData>
@@ -221,6 +220,7 @@
                          0.697 -33.433
                     </tableData>
                 </table>
+                <gain>0.017</gain>
             </scheduled_gain>
 
             <pure_gain name="Pitch SAS Feedback">
@@ -331,11 +331,11 @@
                 </clipto>
                 <output>fcs/rudder-pos-rad</output>
             </summer>
-            
+
         </channel>
-        
+
     </flight_control>
-    
+
     <aerodynamics>
 
         <axis name="DRAG">
