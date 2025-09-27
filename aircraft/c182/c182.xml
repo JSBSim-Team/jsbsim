@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Unknown </author>
-        <filecreationdate> 2002-01-01 </filecreationdate>
+        <filecreationdate>2002-01-01</filecreationdate>
         <version> $Id: c182.xml,v 1.24 2012/12/22 15:22:21 jberndt Exp $ </version>
         <description> Cessna C-182 </description>
       <note>
@@ -60,7 +60,7 @@
         </location>
         <pointmass name="name">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 36 </x>
                 <y> -14 </y>
                 <z> 24 </z>

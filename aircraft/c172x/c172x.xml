@@ -8,6 +8,9 @@
         <license
           licenseName="GPL (General Public License)"
           licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <filecreationdate>1999-01-01</filecreationdate>
+        <version>$Revision: 1.91 $</version>
+        <description>Models a 1982 Cessna 172P.</description>
         <note>
           This model was created using publicly available data, publicly available
           technical reports, textbooks, and guesses. It contains no proprietary or
@@ -19,9 +22,6 @@
           This simulation model is not endorsed by the manufacturer. This model
           is not to be sold.
         </note>
-        <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.91 $</version>
-        <description>Models a 1982 Cessna 172P.</description>
       <reference
         refID=  "1"
         author= "Cessna Aircraft Company"
@@ -117,7 +117,7 @@
             </location>
         </pointmass>
     </mass_balance>
-    
+
     <ground_reactions>
 
         <contact type="BOGEY" name="Nose Gear">
@@ -271,7 +271,7 @@
             <contents unit="LBS">130</contents>
         </tank>
     </propulsion>
-    
+
     <system name="Navigation">
       <channel name="Heading">
         <sensor name="navigation/actual-heading-rad">
@@ -284,28 +284,30 @@
     </system>
 
     <system name="Fuel content in volume">
-        <fcs_function name="propulsion/tank[0]/contents-volume-gal">
-            <function>
-                <quotient>
-                    <p> propulsion/tank[0]/contents-lbs </p>
-                    <p> propulsion/tank[0]/density-lbs_per_gal </p>
-                </quotient>
-            </function>
-        </fcs_function>
-        <fcs_function name="propulsion/tank[1]/contents-volume-gal">
-            <function>
-                <quotient>
-                    <p> propulsion/tank[1]/contents-lbs </p>
-                    <p> propulsion/tank[1]/density-lbs_per_gal </p>
-                </quotient>
-            </function>
-        </fcs_function>
+        <channel name="Fuel volume">
+            <fcs_function name="propulsion/tank[0]/contents-volume-gal">
+                <function>
+                    <quotient>
+                        <p> propulsion/tank[0]/contents-lbs </p>
+                        <p> propulsion/tank[0]/density-lbs_per_gal </p>
+                    </quotient>
+                </function>
+            </fcs_function>
+            <fcs_function name="propulsion/tank[1]/contents-volume-gal">
+                <function>
+                    <quotient>
+                        <p> propulsion/tank[1]/contents-lbs </p>
+                        <p> propulsion/tank[1]/density-lbs_per_gal </p>
+                    </quotient>
+                </function>
+            </fcs_function>
+        </channel>
     </system>
 
     <system name="Mixture control">
       <!--
       E = 1.3 * Mixture * P_std / P_amb
-  
+
       Mixture = (P_amb / P_std) / 1.3
       -->
       <channel name="Automatic Mixture Control">
@@ -326,14 +328,14 @@
         </fcs_function>
       </channel>
     </system>
-  
+
     <system file="GNCUtilities"/>
 
     <system file="Autopilot">
       <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
     </system>
-    
+
     <autopilot file="c172ap"/>
 
     <flight_control name="c172">
@@ -380,7 +382,7 @@
 
             <summer name="fcs/roll-trim-sum">
                 <input>ap/aileron_cmd</input>
-                <input>ap/roll-cmd-norm-output</input> 
+                <input>ap/roll-cmd-norm-output</input>
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
@@ -398,19 +400,19 @@
                 <max> 15</max>
               </range>
             </aerosurface_scale>
-    
+
             <actuator name="fcs/left-aileron-actuator">
               <description> The input to this actuator is in radians. </description>
               <input> fcs/left-aileron-control </input>
               <rate_limit> 1.57 </rate_limit>
-              <hysteresis> 0.005 </hysteresis>
+              <hysteresis_width> 0.005 </hysteresis_width>
               <clipto>
                 <min> -0.350 </min>
                 <max>  0.260 </max>
               </clipto>
               <output>fcs/left-aileron-pos-rad</output>
             </actuator>
-            
+
             <aerosurface_scale name="fcs/right-aileron-control">
               <description> The output from this control is in radians. </description>
               <input>-fcs/roll-trim-sum</input>
@@ -425,20 +427,24 @@
               <description> The input to this actuator is in radians. </description>
               <input> fcs/right-aileron-control </input>
               <rate_limit> 1.57 </rate_limit>
-              <hysteresis> 0.005 </hysteresis>
+              <hysteresis_width> 0.005 </hysteresis_width>
               <clipto>
                 <min> -0.350 </min>
                 <max>  0.260 </max>
               </clipto>
               <output>fcs/right-aileron-pos-rad</output>
             </actuator>
-            
-            <summer name="fcs/effective-aileron-pos">
+
+            <summer name="fcs/delta-aileron-pos">
               <input> fcs/left-aileron-pos-rad </input>
               <input> -fcs/right-aileron-pos-rad </input>
-              <gain> 0.5 </gain>
             </summer>
-            
+
+            <pure_gain name="fcs/effective-aileron-pos">
+                <input>fcs/delta-aileron-pos</input>
+                <gain> 0.5 </gain>
+            </pure_gain>
+
         </channel>
 
         <channel name="Yaw">
@@ -1269,7 +1275,6 @@
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
-    </output> 
+    </output>
     -->
 </fdm_config>
-

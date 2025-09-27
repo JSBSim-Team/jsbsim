@@ -61,7 +61,7 @@
         </location>
         <pointmass name="name">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
                 <z> 0 </z>

@@ -2,7 +2,7 @@
 
 <!--
 
-Modified version of what was origianlly in FlightGear CVS.  This has 
+Modified version of what was origianlly in FlightGear CVS.  This has
 been extensively modified by:
 
 Hal V. Engel hvengel@astound.net
@@ -15,7 +15,7 @@ Hal V. Engel hvengel@astound.net
 
     <fileheader>
         <author> Aeromatic / Jon Berndt / DATCOM / Hal V. Engel</author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.23 $ </version>
         <description> Advanced model of P-51D fighter (Beta) </description>
       <note>
@@ -70,7 +70,7 @@ Hal V. Engel hvengel@astound.net
         </location>
         <pointmass name="pilot">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 98 </x>
                 <y> 0 </y>
                 <z> 15 </z>
@@ -83,7 +83,7 @@ Hal V. Engel hvengel@astound.net
 
       <pointmass name="Ammo right inner gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -79.2</y>
                 <z> -19.2 </z>
@@ -91,16 +91,16 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="Ammo left inner gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 79.2</y>
                 <z> -19.2 </z>
             </location>
         </pointmass>
-        
+
         <pointmass name="Ammo right middle gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -87.6</y>
                 <z> -19.2 </z>
@@ -108,16 +108,16 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="Ammo left middle gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 87.6</y>
                 <z> -19.2 </z>
             </location>
         </pointmass>
-        
+
         <pointmass name="Ammo right outer gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -96</y>
                 <z> -19.2 </z>
@@ -125,7 +125,7 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="Ammo left outer gun">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 96</y>
                 <z> -19.2 </z>
@@ -134,7 +134,7 @@ Hal V. Engel hvengel@astound.net
 
         <pointmass name="left rockets">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 87.6</y>
                 <z> -30 </z>
@@ -142,7 +142,7 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="right rockets">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -87</y>
                 <z> -30 </z>
@@ -151,7 +151,7 @@ Hal V. Engel hvengel@astound.net
 
         <pointmass name="left bomb">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 87.6</y>
                 <z> -43 </z>
@@ -159,7 +159,7 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="right bomb">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -87</y>
                 <z> -43 </z>
@@ -168,7 +168,7 @@ Hal V. Engel hvengel@astound.net
 
         <pointmass name="left drop tank">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> 87.6</y>
                 <z> -43 </z>
@@ -176,7 +176,7 @@ Hal V. Engel hvengel@astound.net
         </pointmass>
         <pointmass name="right drop tank">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 97 </x>
                 <y> -87</y>
                 <z> -43 </z>
@@ -229,12 +229,11 @@ Hal V. Engel hvengel@astound.net
             <rolling_friction> 0.05 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 4100 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 4280 </damping_coeff>
-            <steerability> STEERABLE </steerability>
             <max_steer unit="DEG"> -6.0 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
-        
+
           <contact type="STRUCTURE" name="LEFT_WING_TIP">
               <location unit="IN">
               <x> 100 </x>
@@ -318,7 +317,7 @@ Hal V. Engel hvengel@astound.net
               <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
               <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
           </contact>
-            
+
            <contact type="STRUCTURE" name="BELLY">
               <location unit="IN">
               <x> 85 </x>
@@ -329,7 +328,7 @@ Hal V. Engel hvengel@astound.net
               <dynamic_friction> 0.50 </dynamic_friction>
               <spring_coeff unit="LBS/FT">       11000 </spring_coeff>
               <damping_coeff unit="LBS/FT/SEC">  1179.23 </damping_coeff>
-          </contact>  
+          </contact>
 
            <contact type="STRUCTURE" name="DOG_HOUSE">
               <location unit="IN">
@@ -390,7 +389,7 @@ Hal V. Engel hvengel@astound.net
               <spring_coeff unit="LBS/FT">       50 </spring_coeff>
               <damping_coeff unit="LBS/FT/SEC">  5000 </damping_coeff>
           </contact>
-        
+
     </ground_reactions>
 
     <propulsion>
@@ -415,11 +414,11 @@ Hal V. Engel hvengel@astound.net
                 <p_factor> 60 </p_factor>
             </thruster>
         </engine>
-        
+
         <!--
            internal wing tanks
            capacity 92 US gallons each
-        -->           
+        -->
         <tank type="FUEL">    <!-- Tank number 0 left wing -->
             <location unit="IN">
                 <x> 110 </x>
@@ -481,9 +480,9 @@ Hal V. Engel hvengel@astound.net
     <system file="compressability"/>
     <system file="weapons-weight"/>
     <!-- <system file="lift"/> -->
-    
+
     <flight_control name="FCS: P51D">
-       
+
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
@@ -501,7 +500,7 @@ Hal V. Engel hvengel@astound.net
                     <max>0.15</max>
                 </range>
                 <output>fcs/elevator-pos-rad</output>
-            </aerosurface_scale>\
+            </aerosurface_scale>
 
             <aerosurface_scale name="Elevator Position Normalized">
                 <input>fcs/elevator-pos-rad</input>
@@ -515,9 +514,9 @@ Hal V. Engel hvengel@astound.net
                 </range>
                 <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
-            
+
         </channel>
-        
+
         <channel name="Roll">
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
@@ -606,7 +605,7 @@ Hal V. Engel hvengel@astound.net
             </aerosurface_scale>
 
         </channel>
-                
+
         <channel name="Flaps">
             <kinematic name="Flaps Control">
                 <input>fcs/flap-cmd-norm</input>
@@ -666,12 +665,12 @@ Hal V. Engel hvengel@astound.net
                 </traverse>
                 <output>gear/gear-pos-norm</output>
             </kinematic>
-        </channel>   
-        
+        </channel>
+
         <!-- Deactivate this channel for stand-alone runs since its purpose is
              to transmit FlightGear brake parameters to JSBSim
         <channel name="Brakes">
-        
+
            <summer name="systems/brakes/brake-left">
                 <input>/controls/gear/brake-left</input>
                 <input>/controls/gear/brake-parking</input>
@@ -689,7 +688,7 @@ Hal V. Engel hvengel@astound.net
                     <max>1</max>
                 </clipto>
             </summer>
-            
+
            <aerosurface_scale name="Brake left">
                 <input>systems/brakes/brake-left</input>
                 <range>
@@ -707,13 +706,13 @@ Hal V. Engel hvengel@astound.net
                 </range>
                 <output>fcs/right-brake-cmd-norm</output>
             </aerosurface_scale>
-        
+
         </channel>
-        --> 
-        
+        -->
+
     </flight_control>
-    
-    
+
+
     <aerodynamics>
 
        <function name="aero/function/kCLge">
@@ -768,7 +767,7 @@ Hal V. Engel hvengel@astound.net
                     <value> 0.07 </value>
                     <table>
                       <independentVar lookup="row">aero/alpha-deg</independentVar>
-                      <tableData>  
+                      <tableData>
                           -90        0.25
                           -30        0.07
                           -15        0.03518
@@ -790,22 +789,22 @@ Hal V. Engel hvengel@astound.net
                   </table>
                 </product>
             </function>
-            
+
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
                     <!--
-                    Actual measured drag from 
-                    http://www.worldofkrauss.com/foils/getpolar/1085.dat 
-                    -90, -30, 30 and 90 degrees are guesses. 
-                     The data has been manually smoothed.  
-                                  
+                    Actual measured drag from
+                    http://www.worldofkrauss.com/foils/getpolar/1085.dat
+                    -90, -30, 30 and 90 degrees are guesses.
+                     The data has been manually smoothed.
+
                       This is the wing only
                     -->
                     <product>
                         <property>aero/qbar-psf</property>
                         <property>metrics/Sw-sqft</property>
                         <!--
-                            increase drag to reflect real world conditions since 
+                            increase drag to reflect real world conditions since
                             otherwise this would be an idealized prefect wing only.
                         -->
                          <value> 1.0 </value>
@@ -881,7 +880,7 @@ Hal V. Engel hvengel@astound.net
                         </table>
                     </product>
             </function>
-            
+
             <function name="aero/coefficient/CDi">
                 <description>Induced_drag</description>
                 <product>
@@ -891,7 +890,7 @@ Hal V. Engel hvengel@astound.net
                     <value>0.0125</value> <!-- based on NACA X51 data -->
                 </product>
             </function>
-            
+
             <!-- from NACA P-51X and P-51B test data -->
             <function name="aero/coefficient/CDmach">
                 <description>Drag_due_to_mach</description>
@@ -911,7 +910,7 @@ Hal V. Engel hvengel@astound.net
                     </table>
                 </product>
             </function>
-            
+
             <function name="aero/coefficient/CDflap">
                 <description>Drag_due_to_flaps</description>
                 <product>
@@ -971,7 +970,7 @@ Hal V. Engel hvengel@astound.net
         </axis>
 
         <axis name="LIFT">
-            
+
            <function name="aero/coefficient/CLalpha">
                 <description>Lift_due_to_alpha</description>
                 <product>
@@ -981,8 +980,8 @@ Hal V. Engel hvengel@astound.net
                     <value> 0.97 </value>
                     <table>
                          <!--
-                              Actual data from 
-                              http://www.worldofkrauss.com/foils/getpolar/1085.dat 
+                              Actual data from
+                              http://www.worldofkrauss.com/foils/getpolar/1085.dat
                               Data has been hand smoothed.  90 and -90 are guesses.
                           -->
                           <independentVar lookup="row">aero/alpha-deg</independentVar>
@@ -1174,9 +1173,9 @@ Hal V. Engel hvengel@astound.net
         </axis>
 
         <axis name="PITCH">
-        
-            <!-- make it nose heavy when gear and/or flaps are extended --> 
-        
+
+            <!-- make it nose heavy when gear and/or flaps are extended -->
+
             <function name="aero/coefficient/Cmflap">
                 <description>Pitch_moment_due_to_flaps</description>
                 <product>
@@ -1187,7 +1186,7 @@ Hal V. Engel hvengel@astound.net
                     <value>-0.0250</value>
                 </product>
             </function>
-            
+
             <function name="aero/coefficient/Cmgear">
                 <description>Pitch_moment_due_to_gear</description>
                 <product>
@@ -1200,19 +1199,19 @@ Hal V. Engel hvengel@astound.net
             </function>
 
             <function name="aero/coefficient/Cmalpha-wing">
-                <description>Pitch_moment_due_to_alpha</description>               
+                <description>Pitch_moment_due_to_alpha</description>
                   <product>
                       <property>aero/qbar-psf</property>
                       <property>metrics/Sw-sqft</property>
                       <property>metrics/cbarw-ft</property>
                       <!--
-                          actual data from http://www.worldofkrauss.com/foils/getpolar/1085.dat 
+                          actual data from http://www.worldofkrauss.com/foils/getpolar/1085.dat
                           from -15 to 15 degrees - other data is extrapolated.
                           Data has been hand smoothed.
                       -->
                       <table>
-                        <independentVar lookuadp="row">aero/alpha-deg</independentVar>
-                        <tableData> 
+                        <independentVar lookup="row">aero/alpha-deg</independentVar>
+                        <tableData>
                           -90.0        0.58700
                           -80.0        0.51700
                           -70.0        0.44700
@@ -1295,8 +1294,8 @@ Hal V. Engel hvengel@astound.net
                           80.0        -0.60300
                           90.0        -0.67300
                       </tableData>
-                    </table>-->
-                </product>                
+                    </table>
+                </product>
             </function>
 
             <function name="aero/coefficient/Cmbuffet-and-stall">
@@ -1328,7 +1327,7 @@ Hal V. Engel hvengel@astound.net
                     <value>0.1</value>
                 </product>
             </function>
-            
+
             <function name="aero/coefficient/Cmde">
                 <description>Pitch_moment_due_to_elevator</description>
                 <product>
@@ -1345,7 +1344,7 @@ Hal V. Engel hvengel@astound.net
                       </table>
                 </product>
             </function>
-            
+
             <function name="aero/coefficient/Cmq">
                 <description>Pitch_moment_due_to_pitch_rate</description>
                 <product>
@@ -1357,7 +1356,7 @@ Hal V. Engel hvengel@astound.net
                     <value>-10.0000</value>
                 </product>
             </function>
-            
+
    <!--         <function name="aero/coefficient/Cmht">
                 <description>Pitch_moment_due_to_alpha_horiz_tail</description>
                 <product>
@@ -1445,7 +1444,7 @@ Hal V. Engel hvengel@astound.net
                   </table>
                 </product>
             </function> -->
-            
+
         </axis>
 
         <axis name="YAW">
@@ -1501,9 +1500,9 @@ Hal V. Engel hvengel@astound.net
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                        <table> 
+                        <table>
                           <independentVar lookup="row">aero/alpha-deg</independentVar>
-                           <tableData> 
+                           <tableData>
                                   -90.0  0.0
                                    0.0   0.0
                                    5.0   0.0
@@ -1515,6 +1514,5 @@ Hal V. Engel hvengel@astound.net
             </function>
         </axis>
     </aerodynamics>
-    
-</fdm_config>
 
+</fdm_config>

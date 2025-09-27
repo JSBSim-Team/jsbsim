@@ -6,15 +6,14 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 11 September 2009 </filecreationdate>
+        <license
+          licenseName="GPL (General Public License)"
+          licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <filecreationdate>2009-09-11</filecreationdate>
         <version> 1.05 </version>
 
         <description> Boeing314A </description>
 
-        <license>
-          <licenseName>GPL (General Public License)</licenseName>
-          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
         <note>
             This model was created using publicly available data, publicly available
             technical reports, textbooks, and guesses. It contains no proprietary or
@@ -96,7 +95,7 @@
         <documentation>
          Not possible :
          - buoyancy by weak spring, because that can rear up at rest
-           (and speed makes water as hard as concrete). 
+           (and speed makes water as hard as concrete).
          - rebound by hard spring, because static can be unstable with empty weight.
         </documentation>
 
@@ -112,7 +111,7 @@
                            * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
          Airspeed limits : * level flight or climb 178 mph (155 kt) true, glide or dive 212 mph (184 kt) true.
                            * flaps extended (40 or less) 121 mph (105 kt) true.
-                           * flaps extended (more than 40) 105 mph (91 kt) true. 
+                           * flaps extended (more than 40) 105 mph (91 kt) true.
          Weight limits :   landing 80000 lb, take-off 84000 lb.
          Fuel capacity :   5448 gallons (32688 lb) :
                              2 tanks at 600 gallons (3600 lb) each, in wing stubs;
@@ -217,7 +216,7 @@
          Normal range : 3500 miles.
 
          - http://www.flyingclippers.com/B314.html/
-  
+
          Ceiling : cruise 13400 ft, maximum 19600 ft, climb 562 ft/min.
          Crew : 6-10.
          Payload : 40-74 (36 night) passengers.
@@ -236,7 +235,7 @@
 
          - http://www.southernoregonwarbirds.org/fa3.html/
          (Franck Varnum flew during WWII).
- 
+
          The sponsons (the short fins sticking out of the sides of the fuselage) provide lateral stability
          on the water. They were filled with gasoline and as a result were not at all that buoyant.
          If you had to taxi to downwind, on the turn to downwind the wind could get under the upwind wing
@@ -303,8 +302,8 @@
         </documentation>
         <wingarea unit="FT2"> 2867 </wingarea>
         <wingspan unit="FT"> 152 </wingspan>
-        <chord unit="FT"> 21.57 </chord>                                                 <!-- aeromatic 18.86 -->
         <wing_incidence unit="DEG"> 2.86 </wing_incidence>                               <!-- added to help the take-off -->
+        <chord unit="FT"> 21.57 </chord>                                                 <!-- aeromatic 18.86 -->
         <htailarea unit="FT2"> 458.72 </htailarea>
         <htailarm unit="FT"> 22.91 </htailarm>                                           <!-- aeromatic 53.00 -->
         <vtailarea unit="FT2"> 516.06 </vtailarea>
@@ -349,7 +348,7 @@
         </location>
         <pointmass name="payload">
             <weight unit="LBS"> 1500 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 460.0 </x>
                 <y> 0 </y>
                 <z> -31.8 </z>
@@ -464,6 +463,24 @@
             <retractable>0</retractable>
         </contact>
     </ground_reactions>
+
+    <external_reactions>
+        <documentation>
+          anchor at nose tip.
+        </documentation>
+        <force name="anchor" frame="BODY">
+            <location unit="IN">
+                <x>0 </x>
+                <y>0 </y>
+                <z>0 </z>
+            </location>
+            <direction>
+                <x>-1</x>
+                <y>0</y>
+                <z>-1</z>
+            </direction>
+        </force>
+    </external_reactions>
 
     <propulsion>
         <documentation>
@@ -629,8 +646,8 @@
      <channel name="Anchor">
 
         <pure_gain name="systems/hull/gear-lbs">
-            <gain>-1</gain>
             <input>forces/fbx-gear-lbs</input>
+            <gain>-1</gain>
         </pure_gain>
 
         <summer name="systems/hull/total-lbs">
@@ -1089,8 +1106,8 @@
         <documentation>
               NACA report 1103 (rebound on touch-down ) :
               - figure 2, khi 3 and 15 deg.
-              gamma, velocity angle over water : 0 - 80 deg, horizontal is 0. 
-              - figure 6, tau 6 deg (used as 3 deg) and tau 12 deg (used as 15 deg). 
+              gamma, velocity angle over water : 0 - 80 deg, horizontal is 0.
+              - figure 6, tau 6 deg (used as 3 deg) and tau 12 deg (used as 15 deg).
               tau, bow pitch over water : 3 - 15 deg, horizontal is 0.
 
               khi = (sin(tau) / sin(gamma)) x cos(tau + gamma) :
@@ -1626,23 +1643,4 @@
             </function>
         </axis>
     </aerodynamics>
-        
-    <external_reactions>
-        <documentation>
-          anchor at nose tip.
-        </documentation>
-        <force name="anchor" frame="BODY">
-            <location unit="IN">
-                <x>0 </x>
-                <y>0 </y>
-                <z>0 </z>
-            </location>
-            <direction>
-                <x>-1</x>
-                <y>0</y>
-                <z>-1</z>
-            </direction>
-        </force>
-    </external_reactions>
-
 </fdm_config>

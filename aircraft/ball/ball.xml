@@ -6,7 +6,7 @@
 
     <fileheader>
       <author> Jon Berndt </author>
-      <filecreationdate> 2004-06-01 </filecreationdate>
+      <filecreationdate>2004-06-01</filecreationdate>
       <version> Version 1.0 </version>
       <description> Test file </description>
       <note>
@@ -63,7 +63,7 @@
         </location>
         <pointmass name="M0">
             <weight unit="LBS"> 10 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
                 <z> 0 </z>
@@ -71,7 +71,7 @@
         </pointmass>
         <pointmass name="M1">
             <weight unit="LBS"> 0 </weight>
-            <location name="POINTMASS" unit="FT">
+            <location unit="FT">
                 <x> 0 </x>
                 <y> -5 </y>
                 <z> 0 </z>
@@ -101,7 +101,7 @@
       <!-- "Declare" the reefing term -->
       <property>fcs/parachute_reef_pos_norm</property>
       <property>propulsion/rocket_thrust</property>
-      
+
       <force name="parachute" frame="WIND">
         <function>
           <product>
@@ -141,7 +141,7 @@
           <z>0</z>
         </location>
         <!-- The direction that the thrust acts in is defined below in the Pointing
-             channel of the flight_control section, through the creation of a unit 
+             channel of the flight_control section, through the creation of a unit
              pointing vector. That is, the direction specified below
              is the direction that the drag force acts in. -->
       </force>
@@ -151,9 +151,9 @@
     <propulsion/>
 
     <flight_control name="FGFCS">
-    
+
       <channel name="Pointing">
-      
+
         <fcs_function name="propulsion/tvc_inertial_x">
           <function>
             <quotient>
@@ -163,7 +163,7 @@
           </function>
           <output> external_reactions/rocket/x </output>
         </fcs_function>
-      
+
         <fcs_function name="propulsion/tvc_inertial_y">
           <function>
             <quotient>
@@ -185,7 +185,7 @@
         </fcs_function>
 
       </channel>
-    
+
     </flight_control>
 
     <aerodynamics>
@@ -204,13 +204,12 @@
     <output name="BallOut.csv" type="CSV" rate="1">
         <rates> ON </rates>
         <velocities> ON </velocities>
-        <forces> ON </forces>
-        <moments> ON </moments>
         <position> ON </position>
         <massprops> ON </massprops>
+        <forces> ON </forces>
+        <moments> ON </moments>
         <property> position/vrp-gc-latitude_deg </property>
         <property> position/vrp-longitude_deg </property>
         <property> position/vrp-radius-ft </property>
-
     </output>
 </fdm_config>
