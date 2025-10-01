@@ -1,0 +1,173 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+// UAM 기체 주위 격자 세밀화 설정
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+geometry
+{
+    uam_geometry.stl
+    {
+        type triSurfaceMesh;
+        name uam;
+        
+        regions
+        {
+            fuselage
+            {
+                name fuselage;
+            }
+            rotors
+            {
+                name rotors;
+            }
+        }
+    }
+    
+    // 세밀화 박스들
+    refinementBox_near
+    {
+        type searchableBox;
+        min (-5 -10 -2);
+        max (15  10  8);
+    }
+    
+    refinementBox_wake
+    {
+        type searchableBox;
+        min (5 -15 -2);
+        max (50  15  8);
+    }
+};
+
+castellatedMeshControls
+{
+    maxLocalCells 10000000;
+    maxGlobalCells 20000000;
+    minRefinementCells 10;
+    maxLoadUnbalance 0.10;
+    nCellsBetweenLevels 3;
+    
+    features
+    (
+        {
+            file "uam_geometry.eMesh";
+            level 4;
+        }
+    );
+    
+    refinementSurfaces
+    {
+        uam
+        {
+            level (3 4);
+            
+            regions
+            {
+                fuselage
+                {
+                    level (3 4);
+                }
+                rotors
+                {
+                    level (4 5);
+                }
+            }
+        }
+    }
+    
+    refinementRegions
+    {
+        refinementBox_near
+        {
+            mode inside;
+            levels ((1E15 3));
+        }
+        
+        refinementBox_wake
+        {
+            mode inside;
+            levels ((1E15 2));
+        }
+    }
+    
+    locationInMesh (25 0 5);
+    
+    allowFreeStandingZoneFaces true;
+}
+
+snapControls
+{
+    nSmoothPatch 3;
+    tolerance 2.0;
+    nSolveIter 30;
+    nRelaxIter 5;
+    
+    nFeatureSnapIter 10;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+    multiRegionFeatureSnap false;
+}
+
+addLayersControls
+{
+    layers
+    {
+        uam
+        {
+            nSurfaceLayers 10;
+        }
+    }
+    
+    relativeSizes true;
+    
+    expansionRatio 1.3;
+    finalLayerThickness 0.3;
+    minThickness 0.1;
+    
+    nGrow 0;
+    featureAngle 60;
+    maxFaceThicknessRatio 0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedianAxisAngle 90;
+    nBufferCellsNoExtrude 0;
+    nLayerIter 50;
+}
+
+meshQualityControls
+{
+    maxNonOrtho 65;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave 80;
+    minFlatness 0.5;
+    minVol 1e-13;
+    minTetQuality 1e-9;
+    minArea -1;
+    minTwist 0.02;
+    minDeterminant 0.001;
+    minFaceWeight 0.02;
+    minVolRatio 0.01;
+    minTriangleTwist -1;
+    
+    nSmoothScale 4;
+    errorReduction 0.75;
+}
+
+writeFlags
+(
+    scalarLevels
+    layerSets
+    layerFields
+);
+
+mergeTolerance 1e-6;

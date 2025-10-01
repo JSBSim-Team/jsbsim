@@ -1,0 +1,167 @@
+{
+    "-25": {
+        "CD": 0.09999999999999999,
+        "Cy": 0.11796925759419817,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": -0.04820152098900639,
+        "sideslip_angle": -25.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "-20": {
+        "CD": 0.09999999999999999,
+        "Cy": 0.09365872059838747,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": -0.03844988748593761,
+        "sideslip_angle": -20.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "-15": {
+        "CD": 0.09999999999999999,
+        "Cy": 0.07309662580404283,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": -0.02697471796335862,
+        "sideslip_angle": -15.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "-10": {
+        "CD": 0.09999999999999999,
+        "Cy": 0.05260538239479968,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": -0.019958458267587912,
+        "sideslip_angle": -10.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "-5": {
+        "CD": 0.09999999999999999,
+        "Cy": 0.026614413124377435,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": -0.009490634907665428,
+        "sideslip_angle": -5.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "0": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.0,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.0,
+        "sideslip_angle": 0.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "5": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.02424466547860188,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.009130431831789089,
+        "sideslip_angle": 5.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "10": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.04889917164818443,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.02236278640273858,
+        "sideslip_angle": 10.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "15": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.07039190366322128,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.027944384330685686,
+        "sideslip_angle": 15.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "20": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.10730438484340132,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.040459331867114055,
+        "sideslip_angle": 20.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    },
+    "25": {
+        "CD": 0.09999999999999999,
+        "Cy": -0.11503335704109997,
+        "CL": 0.049999999999999996,
+        "Cl": 0.02,
+        "Cm": 0.04,
+        "Cn": 0.04781559829371912,
+        "sideslip_angle": 25.0,
+        "dynamic_pressure": 551.25,
+        "test_conditions": {
+            "velocity": 30.0,
+            "density": 1.225,
+            "reference_area": 1.333
+        }
+    }
+}

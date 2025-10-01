@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<initialize name="reset01">
+  <description>UAM 횡풍 착륙 분석을 위한 초기조건</description>
+  
+  <!-- 위치 정보 -->
+  <ubody unit="FT/SEC"> 65.6 </ubody>         <!-- 20 m/s 전진속도 -->
+  <vbody unit="FT/SEC">  0.0 </vbody>         <!-- 측방향 속도 0 -->
+  <wbody unit="FT/SEC"> -6.56 </wbody>        <!-- -2 m/s 하강속도 -->
+  
+  <longitude unit="DEG"> -122.0 </longitude>   <!-- 경도 -->
+  <latitude unit="DEG">   37.0 </latitude>    <!-- 위도 -->
+  <altitude unit="FT">   328.0 </altitude>    <!-- 100m 고도 -->
+  
+  <!-- 자세 정보 -->
+  <phi unit="DEG">     0.0 </phi>             <!-- 롤각 0도 -->
+  <theta unit="DEG">  -3.0 </theta>           <!-- 피치각 -3도 (접근각) -->
+  <psi unit="DEG">     0.0 </psi>             <!-- 요각 0도 -->
+  
+  <!-- 각속도 -->
+  <p unit="RAD/SEC">   0.0 </p>               <!-- 롤각속도 0 -->
+  <q unit="RAD/SEC">   0.0 </q>               <!-- 피치각속도 0 -->
+  <r unit="RAD/SEC">   0.0 </r>               <!-- 요각속도 0 -->
+</initialize>

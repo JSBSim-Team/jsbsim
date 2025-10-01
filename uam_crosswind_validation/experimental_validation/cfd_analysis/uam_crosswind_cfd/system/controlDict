@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+// UAM 횡풍 해석 제어 설정
+
+application     simpleFoam;
+
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+endTime         2000;
+
+deltaT          1;
+
+writeControl    timeStep;
+writeInterval   100;
+
+purgeWrite      2;
+writeFormat     ascii;
+writePrecision  6;
+writeCompression off;
+
+timeFormat      general;
+timePrecision   6;
+
+runTimeModifiable true;
+
+// 후처리 함수들
+functions
+{
+    forces
+    {
+        type            forceCoeffs;
+        libs            ("libforces.so");
+        
+        writeControl    timeStep;
+        writeInterval   10;
+        
+        patches         (uam);
+        
+        rho             rhoInf;
+        rhoInf          1.225;
+        
+        CofR            (2.285 0 0.75);  // 기체 무게중심
+        liftDir         (0 0 1);
+        dragDir         (1 0 0);
+        sideDir         (0 1 0);
+        pitchAxis       (0 1 0);
+        rollAxis        (1 0 0);
+        yawAxis         (0 0 1);
+        
+        magUInf         20.0;
+        lRef            4.57;    // 기체 길이
+        Aref            10.0;    // 기준면적
+    }
+    
+    pressureCoeffs
+    {
+        type            pressure;
+        libs            ("libfieldFunctionObjects.so");
+        
+        writeControl    writeTime;
+        
+        fields          (p);
+    }
+    
+    residuals
+    {
+        type            residuals;
+        libs            ("libutilityFunctionObjects.so");
+        
+        writeControl    timeStep;
+        writeInterval   1;
+        
+        fields          (U p k omega);
+    }
+}

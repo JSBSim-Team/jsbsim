@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+// UAM 횡풍 해석을 위한 배경 격자 생성
+
+scale   1;
+
+vertices
+(
+    // 계산 영역 경계점들
+    (-50 -50 -20)  // 0
+    (100 -50 -20)  // 1
+    (100 50 -20)  // 2
+    (-50 50 -20)  // 3
+    (-50 -50 30)  // 4
+    (100 -50 30)  // 5
+    (100 50 30)  // 6
+    (-50 50 30)  // 7
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (100 60 40) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    
+    sides
+    {
+        type symmetryPlane;
+        faces
+        (
+            (1 5 4 0)
+            (3 7 6 2)
+        );
+    }
+    
+    top
+    {
+        type symmetryPlane;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+    
+    bottom
+    {
+        type wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);

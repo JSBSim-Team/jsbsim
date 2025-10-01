@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<!-- UAM Crosswind Aerodynamics Model -->
+<aerodynamics name="UAM_Crosswind_Effects">
+
+ <!-- Enhanced Side Force Model for Crosswind Analysis -->
+ <axis name="SIDE">
+
+    <!-- Primary side force due to sideslip angle (β) -->
+    <function name="aero/force/Side_beta">
+       <description>Side force due to beta (sideslip angle)</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>aero/beta-rad</property>
+           <value>-0.25</value> <!-- Cy_β coefficient for UAM -->
+       </product>
+    </function>
+
+    <!-- Side force due to crosswind velocity component -->
+    <function name="aero/force/Side_crosswind">
+       <description>Side force due to crosswind</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <sin><property>atmosphere/wind-from-down-rad</property></sin>
+           <cos><property>atmosphere/wind-from-east-rad</property></cos>
+           <property>atmosphere/wind-mag-fps</property>
+           <value>0.15</value> <!-- Crosswind sensitivity factor -->
+       </product>
+    </function>
+
+    <!-- Side force due to rudder deflection -->
+    <function name="aero/force/Side_rudder">
+       <description>Side force due to rudder</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>fcs/rudder-pos-rad</property>
+           <value>-0.12</value> <!-- Cy_δr coefficient -->
+       </product>
+    </function>
+
+    <!-- Side force due to roll rate (p) -->
+    <function name="aero/force/Side_roll_rate">
+       <description>Side force due to roll rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/p-aero-rad_sec</property>
+           <value>0.02</value> <!-- Cy_p coefficient -->
+       </product>
+    </function>
+
+    <!-- Side force due to yaw rate (r) -->
+    <function name="aero/force/Side_yaw_rate">
+       <description>Side force due to yaw rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/r-aero-rad_sec</property>
+           <value>0.08</value> <!-- Cy_r coefficient -->
+       </product>
+    </function>
+
+ </axis>
+
+ <!-- Enhanced Roll Moment Model for Lateral Stability -->
+ <axis name="ROLL">
+
+    <!-- Roll moment due to sideslip (dihedral effect) -->
+    <function name="aero/moment/Roll_beta">
+       <description>Roll moment due to beta (dihedral effect)</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/beta-rad</property>
+           <value>-0.08</value> <!-- Cl_β coefficient (negative for positive dihedral effect) -->
+       </product>
+    </function>
+
+    <!-- Roll damping moment -->
+    <function name="aero/moment/Roll_damp">
+       <description>Roll moment due to roll rate (roll damping)</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/p-aero-rad_sec</property>
+           <value>-0.45</value> <!-- Cl_p coefficient (negative for stability) -->
+       </product>
+    </function>
+
+    <!-- Roll moment due to yaw rate (adverse yaw coupling) -->
+    <function name="aero/moment/Roll_yaw">
+       <description>Roll moment due to yaw rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/r-aero-rad_sec</property>
+           <value>0.02</value> <!-- Cl_r coefficient -->
+       </product>
+    </function>
+
+    <!-- Roll moment due to aileron deflection -->
+    <function name="aero/moment/Roll_aileron">
+       <description>Roll moment due to aileron</description>
+       <product>
+          <property>aero/qbar-psf</property>
+          <property>metrics/Sw-sqft</property>
+          <property>metrics/bw-ft</property>
+          <property>fcs/left-aileron-pos-rad</property>
+          <value>0.15</value> <!-- Cl_δa coefficient -->
+       </product>
+    </function>
+
+    <!-- Roll moment due to rudder (coupling effect) -->
+    <function name="aero/moment/Roll_rudder">
+       <description>Roll moment due to rudder</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>fcs/rudder-pos-rad</property>
+           <value>0.01</value> <!-- Cl_δr coefficient -->
+       </product>
+    </function>
+
+    <!-- Roll moment due to crosswind (wind gradient effect) -->
+    <function name="aero/moment/Roll_crosswind_gradient">
+       <description>Roll moment due to crosswind gradient</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>position/h-agl-ft</property>
+           <sin><property>atmosphere/wind-from-down-rad</property></sin>
+           <cos><property>atmosphere/wind-from-east-rad</property></cos>
+           <property>atmosphere/wind-mag-fps</property>
+           <value>0.0001</value> <!-- Wind gradient effect on roll -->
+       </product>
+    </function>
+
+ </axis>
+
+ <!-- Enhanced Yaw Moment Model for Directional Stability -->
+ <axis name="YAW">
+
+    <!-- Yaw moment due to sideslip (weathercock stability) -->
+    <function name="aero/moment/Yaw_beta">
+       <description>Yaw moment due to beta (weathercock stability)</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/beta-rad</property>
+           <value>0.12</value> <!-- Cn_β coefficient (positive for stability) -->
+       </product>
+    </function>
+
+    <!-- Yaw damping moment -->
+    <function name="aero/moment/Yaw_damp">
+       <description>Yaw moment due to yaw rate (yaw damping)</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/r-aero-rad_sec</property>
+           <value>-0.25</value> <!-- Cn_r coefficient (negative for stability) -->
+       </product>
+    </function>
+
+    <!-- Yaw moment due to roll rate (roll-yaw coupling) -->
+    <function name="aero/moment/Yaw_roll">
+       <description>Yaw moment due to roll rate</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>aero/bi2vel</property>
+           <property>velocities/p-aero-rad_sec</property>
+           <value>-0.01</value> <!-- Cn_p coefficient -->
+       </product>
+    </function>
+
+    <!-- Yaw moment due to rudder deflection -->
+    <function name="aero/moment/Yaw_rudder">
+       <description>Yaw moment due to rudder</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>fcs/rudder-pos-rad</property>
+           <value>-0.08</value> <!-- Cn_δr coefficient -->
+       </product>
+    </function>
+
+    <!-- Yaw moment due to aileron (adverse yaw) -->
+    <function name="aero/moment/Yaw_aileron">
+       <description>Yaw moment due to aileron (adverse yaw)</description>
+       <product>
+           <property>aero/qbar-posf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>fcs/left-aileron-pos-rad</property>
+           <value>-0.005</value> <!-- Cn_δa coefficient (adverse yaw) -->
+       </product>
+    </function>
+
+    <!-- Yaw moment due to crosswind turbulence -->
+    <function name="aero/moment/Yaw_crosswind_turbulence">
+       <description>Yaw moment due to crosswind turbulence</description>
+       <product>
+           <property>aero/qbar-psf</property>
+           <property>metrics/Sw-sqft</property>
+           <property>metrics/bw-ft</property>
+           <property>atmosphere/turb-north-fps</property>
+           <property>atmosphere/turb-east-fps</property>
+           <value>0.001</value> <!-- Turbulence sensitivity -->
+       </product>
+    </function>
+
+ </axis>
+
+ <!-- Ground Effect Model for Landing Phase -->
+ <function name="aero/ground_effect_factor">
+    <description>Ground effect factor based on height AGL</description>
+    <table>
+      <independentVar lookup="row">position/h-agl-ft</independentVar>
+      <tableData>
+         0.0    1.25
+         5.0    1.20
+        10.0    1.15
+        20.0    1.10
+        40.0    1.05
+        80.0    1.02
+       160.0    1.01
+       320.0    1.00
+      </tableData>
+    </table>
+ </function>
+
+</aerodynamics>

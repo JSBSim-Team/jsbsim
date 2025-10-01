@@ -1,0 +1,14 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+
+// 유체 물성치
+
+transportModel  Newtonian;
+
+nu              [0.000014776];

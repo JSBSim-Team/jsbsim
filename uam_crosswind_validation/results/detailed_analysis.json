@@ -1,0 +1,89 @@
+{
+  "wind_speed_correlation": {
+    "0_deg": NaN,
+    "30_deg": 0.8695634866225628,
+    "60_deg": 0.996551646692147,
+    "90_deg": 0.9712227958006263,
+    "120_deg": 0.9959753642388682,
+    "150_deg": 0.9999592688807303,
+    "180_deg": 0.9979872890745936
+  },
+  "wind_direction_effects": {
+    "0_deg": {
+      "mean_deviation": 0.0,
+      "max_deviation": 0.0,
+      "std_deviation": 0.0
+    },
+    "30_deg": {
+      "mean_deviation": 82.77199908662995,
+      "max_deviation": 109.29678498582899,
+      "std_deviation": 14.504985009240318
+    },
+    "60_deg": {
+      "mean_deviation": 128.09320690279483,
+      "max_deviation": 177.01977726982975,
+      "std_deviation": 34.48974259574768
+    },
+    "90_deg": {
+      "mean_deviation": 153.39919218340654,
+      "max_deviation": 190.96788310007818,
+      "std_deviation": 39.91742373275898
+    },
+    "120_deg": {
+      "mean_deviation": 171.66215162166634,
+      "max_deviation": 233.51866963397006,
+      "std_deviation": 51.534300609386506
+    },
+    "150_deg": {
+      "mean_deviation": 165.71762512927515,
+      "max_deviation": 233.39500498148317,
+      "std_deviation": 50.691847040425095
+    },
+    "180_deg": {
+      "mean_deviation": 58.808759359151104,
+      "max_deviation": 82.84357094141991,
+      "std_deviation": 17.312758112703865
+    }
+  },
+  "critical_conditions": {
+    "threshold_m": 190.93767300939115,
+    "critical_cases": [
+      {
+        "wind_speed_ms": 12,
+        "wind_direction_deg": 119.99999999999999,
+        "lateral_deviation_m": 212.45325830311072
+      },
+      {
+        "wind_speed_ms": 12,
+        "wind_direction_deg": 150.0,
+        "lateral_deviation_m": 202.05895615823445
+      },
+      {
+        "wind_speed_ms": 15,
+        "wind_direction_deg": 90.0,
+        "lateral_deviation_m": 190.96788310007818
+      },
+      {
+        "wind_speed_ms": 15,
+        "wind_direction_deg": 119.99999999999999,
+        "lateral_deviation_m": 233.51866963397006
+      },
+      {
+        "wind_speed_ms": 15,
+        "wind_direction_deg": 150.0,
+        "lateral_deviation_m": 233.39500498148317
+      }
+    ],
+    "most_critical": {
+      "wind_speed": 15,
+      "wind_direction": 119.99999999999999,
+      "deviation": 233.51866963397006
+    }
+  },
+  "safety_margins": {
+    "runway_width_m": 30.0,
+    "safe_cases": 6,
+    "unsafe_cases": 36,
+    "safety_rate": 14.285714285714285
+  }
+}

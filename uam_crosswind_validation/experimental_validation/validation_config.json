@@ -1,0 +1,12 @@
+{
+    "cfd_case_directory": "cfd_analysis/uam_crosswind_cfd",
+    "wind_tunnel_data_file": "wind_tunnel_data.csv",
+    "openfoam_solver": "simpleFoam",
+    "convergence_criteria": 1e-06,
+    "max_iterations": 5000,
+    "parallel_cores": 8,
+    "validation_targets": {
+        "coefficient_accuracy": 0.15,
+        "correlation_threshold": 0.85
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "update_date": "2025-10-01T04:39:05.293470",
+    "validation_method": "CFD + Wind Tunnel Experiment",
+    "original_coefficients": {
+        "Cy_beta": -0.25,
+        "Cn_beta": 0.12,
+        "Cl_p": -0.45,
+        "Cn_r": -0.25
+    },
+    "updated_coefficients": {
+        "Cy_beta": -0.29294712340307494,
+        "Cn_beta": 0.1139925609255192,
+        "Cl_p": -0.45,
+        "Cn_r": -0.25
+    },
+    "update_recommendations": {
+        "Cy_beta": {
+            "original_value": -0.25,
+            "recommended_value": -0.29294712340307494,
+            "action": "UPDATE",
+            "confidence": "HIGH",
+            "validation_error": 10.696211149015147,
+            "reason": "Based on CFD-Wind Tunnel validation: Good Agreement"
+        },
+        "Cn_beta": {
+            "original_value": 0.12,
+            "recommended_value": 0.1139925609255192,
+            "action": "CONSERVATIVE_UPDATE",
+            "confidence": "MEDIUM",
+            "validation_error": 24.32096306330938,
+            "reason": "Based on CFD-Wind Tunnel validation: Acceptable Agreement"
+        },
+        "Cl_p": {
+            "original_value": -0.45,
+            "recommended_value": -0.45,
+            "action": "REQUIRE_ADDITIONAL_VALIDATION",
+            "confidence": "LOW",
+            "validation_error": 100.0,
+            "reason": "Based on CFD-Wind Tunnel validation: Poor Agreement - Investigation Required"
+        }
+    },
+    "validation_summary": {
+        "Cy_beta": "Good Agreement",
+        "Cn_beta": "Acceptable Agreement",
+        "Cl_beta": "Poor Agreement - Investigation Required"
+    }
+}

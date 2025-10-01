@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+
+// 속도 경계조건 (사이드슬립: 0°)
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (20.000 0.000 0);
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform (20.000 0.000 0);
+    }
+    
+    outlet
+    {
+        type            zeroGradient;
+    }
+    
+    sides
+    {
+        type            symmetryPlane;
+    }
+    
+    top
+    {
+        type            symmetryPlane;
+    }
+    
+    bottom
+    {
+        type            noSlip;
+    }
+    
+    uam
+    {
+        type            noSlip;
+    }
+}

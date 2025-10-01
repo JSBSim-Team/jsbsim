@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<engine name="Electric Motor">
+  <ixx unit="SLUG*FT2"> 0.5 </ixx>
+  <minmp unit="INHG"> 0.1 </minmp>
+  <maxmp unit="INHG"> 29.92 </maxmp>
+  <displacement unit="IN3"> 0.0 </displacement>
+  <maxpower unit="HP"> 100.0 </maxpower>
+  <cycles> 0.0 </cycles>
+  <idlerpm> 0 </idlerpm>
+  <maxrpm> 7000 </maxrpm>
+  <maxthrottle> 1.0 </maxthrottle>
+  <minthrottle> 0.0 </minthrottle>
+  <sparkfaildrop> 0.0 </sparkfaildrop>
+  <bsfc unit="LBS/HP*HR"> 0.0 </bsfc>
+  <volumetric_efficiency> 1.0 </volumetric_efficiency>
+  <numboostspeeds> 0 </numboostspeeds>
+  <boostoverride> 0 </boostoverride>
+  <ratedboostspeed> 0 </ratedboostspeed>
+  <normaspeed> 0 </normaspeed>
+  <boostmanual> 0 </boostmanual>
+  <man_boost_lag> 0.0 </man_boost_lag>
+  <takeoffboost> 0.0 </takeoffboost>
+  <air_intake_impedance_factor> 1.0 </air_intake_impedance_factor>
+  <ram_air_factor> 1.0 </ram_air_factor>
+  
+  <!-- Electric motor power characteristics -->
+  <table name="POWER" type="internal">
+    <tableData>
+      0.0     0.0
+      0.1    10.0
+      0.2    20.0
+      0.3    30.0
+      0.4    40.0
+      0.5    50.0
+      0.6    60.0
+      0.7    70.0
+      0.8    80.0
+      0.9    90.0
+      1.0   100.0
+    </tableData>
+  </table>
+  
+  <!-- Electric motor efficiency -->
+  <table name="EFFICIENCY" type="internal">
+    <tableData>
+      0.0    0.0
+      0.1    0.7
+      0.2    0.8
+      0.3    0.85
+      0.4    0.87
+      0.5    0.90
+      0.6    0.92
+      0.7    0.94
+      0.8    0.95
+      0.9    0.94
+      1.0    0.92
+    </tableData>
+  </table>
+
+</engine>

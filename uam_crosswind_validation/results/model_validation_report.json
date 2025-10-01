@@ -1,0 +1,52 @@
+{
+  "total_score": 82,
+  "grade": "A (매우 신뢰)",
+  "literature_validation": {
+    "Cy_beta": {
+      "mean_reference": -0.2675,
+      "std_reference": 0.03269174207655505,
+      "mean_difference_percent": 11.887910476620156,
+      "validity": "✅ 매우 타당"
+    },
+    "Cn_beta": {
+      "mean_reference": 0.09375,
+      "std_reference": 0.011924240017711819,
+      "mean_difference_percent": 30.066844919786085,
+      "validity": "🟡 타당"
+    },
+    "Cl_p": {
+      "mean_reference": -0.4375,
+      "std_reference": 0.06647367900154166,
+      "mean_difference_percent": 15.195741758241759,
+      "validity": "✅ 매우 타당"
+    },
+    "Cn_r": {
+      "mean_reference": -0.26,
+      "std_reference": 0.0447213595499958,
+      "mean_difference_percent": 15.438988095238098,
+      "validity": "✅ 매우 타당"
+    }
+  },
+  "dimensional_validation": {
+    "Cy_beta_theoretical": -0.41887902047863906,
+    "Cy_beta_difference": 40.316896340539245,
+    "Cl_p_in_range": true
+  },
+  "sensitivity_analysis": {
+    "Cy_beta": 0.8064516129032255,
+    "Cn_beta": 0.19354838709677427,
+    "Cl_p": 0.0,
+    "Cn_r": 0.0
+  },
+  "uncertainty_analysis": {
+    "mean": 253.52636737680575,
+    "std": 60.272014050817255,
+    "confidence_95": [
+      133.28993946328163,
+      369.3494373770614
+    ],
+    "relative_uncertainty": 23.7734696688323,
+    "safety_probability": 0.0,
+    "safety_assessment": "❌ 매우위험"
+  }
+}

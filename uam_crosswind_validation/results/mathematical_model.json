@@ -1,0 +1,48 @@
+{
+  "lateral_dynamics": {
+    "description": "횡방향 동역학 방정식",
+    "equations": [
+      "dv/dt = (Y/m) - ru + pw",
+      "dp/dt = (L + (I_yy - I_zz)qr)/I_xx",
+      "dr/dt = (N + (I_xx - I_yy)pq)/I_zz",
+      "dφ/dt = p + q sin(φ)tan(θ) + r cos(φ)tan(θ)",
+      "dψ/dt = (q sin(φ) + r cos(φ))/cos(θ)"
+    ]
+  },
+  "aerodynamic_forces": {
+    "description": "공기역학적 힘과 모멘트",
+    "equations": [
+      "Y = q̄S[C_y_β β + C_y_δr δ_r + C_y_p p̂ + C_y_r r̂]",
+      "L = q̄Sb[C_l_β β + C_l_p p̂ + C_l_r r̂ + C_l_δa δ_a + C_l_δr δ_r]",
+      "N = q̄Sb[C_n_β β + C_n_r r̂ + C_n_p p̂ + C_n_δr δ_r + C_n_δa δ_a]"
+    ]
+  },
+  "crosswind_effects": {
+    "description": "횡풍 영향 모델링",
+    "equations": [
+      "β = arcsin(v_rel/V_rel)",
+      "v_rel = v - V_wind sin(ψ_wind)",
+      "u_rel = u - V_wind cos(ψ_wind)",
+      "V_rel = √(u_rel² + v_rel² + w_rel²)"
+    ]
+  },
+  "coefficients": {
+    "description": "공기역학 계수 (UAM 기체)",
+    "values": {
+      "Cy_beta": -0.25,
+      "Cy_delta_r": -0.12,
+      "Cy_p": 0.02,
+      "Cy_r": 0.08,
+      "Cl_beta": -0.08,
+      "Cl_p": -0.45,
+      "Cl_r": 0.02,
+      "Cl_delta_a": 0.15,
+      "Cl_delta_r": 0.01,
+      "Cn_beta": 0.12,
+      "Cn_r": -0.25,
+      "Cn_p": -0.01,
+      "Cn_delta_r": -0.08,
+      "Cn_delta_a": -0.005
+    }
+  }
+}

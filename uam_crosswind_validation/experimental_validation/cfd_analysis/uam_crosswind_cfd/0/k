@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      k;
+}
+
+// 난류운동에너지 경계조건
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 1.500000;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform 1.500000;
+    }
+    
+    outlet
+    {
+        type            zeroGradient;
+    }
+    
+    sides
+    {
+        type            symmetryPlane;
+    }
+    
+    top
+    {
+        type            symmetryPlane;
+    }
+    
+    bottom
+    {
+        type            kqRWallFunction;
+        value           uniform 1.500000;
+    }
+    
+    uam
+    {
+        type            kqRWallFunction;
+        value           uniform 1.500000;
+    }
+}
