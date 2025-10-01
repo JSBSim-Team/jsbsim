@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSimScript.xsd"
+           name="Cessna 172 Crosswind Landing">
+           
+  <description>
+    Cessna 172 crosswind landing simulation
+    Wind: 15.0 kts from 90.0 degrees
+    Approach: -3.0 degree glideslope
+  </description>
+
+  <use aircraft="c172p" initialize="cruise"/>
+
+  <!-- 초기 조건 설정 -->
+  <run start="0.0" end="120.0" dt="0.01">
+    
+    <!-- 초기 위치 및 자세 -->
+    <property value="0.0">ic/lat-gc-deg</property>
+    <property value="0.0">ic/long-gc-deg</property>
+    <property value="500.0">ic/h-sl-ft</property>
+    <property value="70.0">ic/vc-kts</property>
+    <property value="0.0">ic/gamma-deg</property>
+    <property value="90.0">ic/psi-true-deg</property>
+    
+    <!-- 횡풍 조건 설정 -->
+    <property value="15.0">atmosphere/wind-mag-fps</property>
+    <property value="90.0">atmosphere/wind-dir-deg</property>
+    <property value="0.0">atmosphere/wind-down-fps</property>
+    
+    <!-- 자동조종장치 해제 (수동 조종) -->
+    <property value="0">ap/autopilot_engage</property>
+    
+    <!-- 엔진 설정 (접근 파워) -->
+    <property value="0.4">fcs/throttle-cmd-norm</property>
+    <property value="0.4">fcs/mixture-cmd-norm</property>
+    
+    <!-- 착륙장치 전개 -->
+    <property value="1">gear/gear-cmd-norm</property>
+    
+    <!-- 플랩 설정 (착륙 설정) -->
+    <property value="30">fcs/flap-cmd-deg</property>
+    
+    <!-- 횡풍 접근 이벤트들 -->
+    
+    <!-- 0-30초: 안정화된 접근 -->
+    <event name="stable_approach" persistent="false">
+      <condition>simulation/sim-time-sec ge 0.0</condition>
+      <set name="fcs/elevator-cmd-norm" value="-0.1"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+    </event>
+    
+    <!-- 30-60초: 횡풍 보정 시작 (크랩 방법) -->
+    <event name="crab_correction" persistent="false">
+      <condition>simulation/sim-time-sec ge 30.0</condition>
+      <set name="fcs/rudder-cmd-norm" value="0.2"/>  <!-- 풍향으로 기수 돌림 -->
+      <notify>
+        <property>simulation/sim-time-sec</property>
+        <property>aero/beta-deg</property>
+        <property>attitude/psi-deg</property>
+      </notify>
+    </event>
+    
+    <!-- 60-90초: 사이드슬립 전환 -->
+    <event name="sideslip_transition" persistent="false">
+      <condition>simulation/sim-time-sec ge 60.0</condition>
+      <set name="fcs/aileron-cmd-norm" value="-0.15"/>  <!-- 풍상측 에일러론 -->
+      <set name="fcs/rudder-cmd-norm" value="0.1"/>     <!-- 반대 러더로 균형 -->
+      <notify>
+        <property>simulation/sim-time-sec</property>
+        <property>aero/beta-deg</property>
+        <property>attitude/phi-deg</property>
+      </notify>
+    </event>
+    
+    <!-- 90-120초: 최종 접지 접근 -->
+    <event name="final_approach" persistent="false">
+      <condition>simulation/sim-time-sec ge 90.0</condition>
+      <set name="fcs/aileron-cmd-norm" value="-0.2"/>
+      <set name="fcs/rudder-cmd-norm" value="0.15"/>
+      <set name="fcs/elevator-cmd-norm" value="0.05"/>  <!-- 플레어 시작 -->
+      <notify>
+        <property>simulation/sim-time-sec</property>
+        <property>position/h-agl-ft</property>
+        <property>aero/beta-deg</property>
+      </notify>
+    </event>
+
+    <!-- 데이터 로깅 설정 -->
+    <event name="log_data" persistent="true">
+      <condition>simulation/sim-time-sec ge 0.0</condition>
+      <notify format="CSV">
+        <property caption="Time">simulation/sim-time-sec</property>
+        <property caption="Altitude_AGL">position/h-agl-ft</property>
+        <property caption="Airspeed">velocities/vc-kts</property>
+        <property caption="Sideslip">aero/beta-deg</property>
+        <property caption="Heading">attitude/psi-deg</property>
+        <property caption="Roll">attitude/phi-deg</property>
+        <property caption="Pitch">attitude/theta-deg</property>
+        <property caption="Lateral_Pos">position/distance-from-start-lon-mt</property>
+        <property caption="Side_Force">forces/fby-lbs</property>
+        <property caption="Yaw_Moment">moments/n-aero-lbsft</property>
+        <property caption="Roll_Moment">moments/l-aero-lbsft</property>
+        <property caption="Wind_Speed">atmosphere/wind-mag-fps</property>
+        <property caption="Wind_Dir">atmosphere/wind-dir-deg</property>
+        <property caption="Aileron">fcs/aileron-pos-norm</property>
+        <property caption="Rudder">fcs/rudder-pos-norm</property>
+        <property caption="Elevator">fcs/elevator-pos-norm</property>
+      </notify>
+    </event>
+    
+  </run>
+
+</runscript>

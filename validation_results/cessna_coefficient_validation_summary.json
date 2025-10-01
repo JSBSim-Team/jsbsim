@@ -1,0 +1,53 @@
+{
+  "cessna_properties": {
+    "name": "Cessna 172P",
+    "wingspan": 10.91,
+    "wing_area": 16.16,
+    "length": 8.28,
+    "weight": 1157,
+    "cruise_speed": 55.6,
+    "approach_speed": 30.9
+  },
+  "cessna_coefficients": {
+    "Cy_beta": -0.393,
+    "Cn_beta": 0.0587,
+    "Cl_beta": -0.0923,
+    "Cy_rudder": 0.187,
+    "Cn_rudder": -0.0873,
+    "Cl_rudder": 0.0213
+  },
+  "nasa_validation": {
+    "coefficients_comparison": {
+      "Cy_beta": {
+        "nasa_value": -0.39,
+        "jsbsim_value": -0.393,
+        "difference_percent": 0.7692307692307698,
+        "within_tolerance": true
+      },
+      "Cn_beta": {
+        "nasa_value": 0.059,
+        "jsbsim_value": 0.0587,
+        "difference_percent": 0.5084745762711774,
+        "within_tolerance": true
+      },
+      "Cl_beta": {
+        "nasa_value": -0.089,
+        "jsbsim_value": -0.0923,
+        "difference_percent": 3.7078651685393234,
+        "within_tolerance": true
+      }
+    },
+    "overall_validation": true,
+    "max_difference_percent": 3.7078651685393234,
+    "validation_confidence": "HIGH"
+  },
+  "uam_predicted_coefficients": {
+    "Cy_beta": -0.4716,
+    "Cn_beta": 0.08218,
+    "Cl_beta": -0.045112412951227476,
+    "Cy_rudder": 0.15,
+    "Cn_rudder": -0.12,
+    "Cl_rudder": 0.08
+  },
+  "parametric_analysis_cases": 55
+}

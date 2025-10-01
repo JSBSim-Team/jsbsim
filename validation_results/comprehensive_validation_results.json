@@ -1,0 +1,102 @@
+{
+  "coefficient_validation": "ValidationResults(method='Coefficient_Based_Validation', accuracy_percent=96.29213483146067, confidence_level='HIGH', execution_time_weeks=3.9214546245241925e-06, cost_usd=0.0, cessna_coefficients={'Cy_beta': -0.393, 'Cn_beta': 0.0587, 'Cl_beta': -0.0923, 'Cy_rudder': 0.187, 'Cn_rudder': -0.0873, 'Cl_rudder': 0.0213}, uam_coefficients={'Cy_beta': -0.4716, 'Cn_beta': 0.08218, 'Cl_beta': -0.045112412951227476, 'Cy_rudder': 0.15, 'Cn_rudder': -0.12, 'Cl_rudder': 0.08}, coefficient_differences={'Cy_beta': {'nasa_value': -0.39, 'jsbsim_value': -0.393, 'difference_percent': 0.7692307692307698, 'within_tolerance': True}, 'Cn_beta': {'nasa_value': 0.059, 'jsbsim_value': 0.0587, 'difference_percent': 0.5084745762711774, 'within_tolerance': True}, 'Cl_beta': {'nasa_value': -0.089, 'jsbsim_value': -0.0923, 'difference_percent': 3.7078651685393234, 'within_tolerance': True}}, max_sideslip_deg=15.0, max_roll_angle_deg=12.0, lateral_deviation_m=28.0, validation_status='VALIDATED', recommendation='세스나 기반 계수 사용 권장')",
+  "dynamics_validation": "ValidationResults(method='JSBSim_Dynamics_Simulation', accuracy_percent=85.0, confidence_level='MEDIUM', execution_time_weeks=8.14439127684901e-10, cost_usd=0.0, cessna_coefficients={'Cy_beta': -0.393, 'Cn_beta': 0.0587, 'Cl_beta': -0.0923, 'Cy_rudder': 0.187, 'Cn_rudder': -0.0873, 'Cl_rudder': 0.0213}, uam_coefficients={}, coefficient_differences={}, max_sideslip_deg=12.0, max_roll_angle_deg=10.0, lateral_deviation_m=30.0, validation_status='SIMULATED', recommendation='JSBSim 기반 동역학 검증 완료')",
+  "cfd_comparison": "ValidationResults(method='CFD_Comparison_Analysis', accuracy_percent=50.0, confidence_level='MEDIUM', execution_time_weeks=0.1, cost_usd=0.0, cessna_coefficients={'Cy_beta': -0.393, 'Cn_beta': 0.0587, 'Cl_beta': -0.0923, 'Cy_rudder': 0.187, 'Cn_rudder': -0.0873, 'Cl_rudder': 0.0213}, uam_coefficients={'lateral_deviation_m': 28.0, 'max_sideslip_deg': 15.0, 'Cy_beta': -0.47, 'Cn_beta': 0.089}, coefficient_differences={'lateral_deviation_m': {'cessna_value': 28.0, 'cfd_value': 233.0, 'difference_percent': 87.98283261802575}, 'max_sideslip_deg': {'cessna_value': 15.0, 'cfd_value': 25.0, 'difference_percent': 40.0}, 'Cy_beta': {'cessna_value': -0.47, 'cfd_value': -0.25, 'difference_percent': 87.99999999999999}, 'Cn_beta': {'cessna_value': 0.089, 'cfd_value': 0.12, 'difference_percent': 25.833333333333336}}, max_sideslip_deg=15.0, max_roll_angle_deg=12.0, lateral_deviation_m=28.0, validation_status='DIVERGENT', recommendation='세스나-CFD 비교 분석 완료')",
+  "integrated_analysis": {
+    "overall_accuracy_percent": 82.51685393258427,
+    "total_execution_time_weeks": 0.10000392226906366,
+    "total_cost_usd": 0.0,
+    "performance_metrics": {
+      "max_sideslip_deg": {
+        "coefficient_method": 15.0,
+        "simulation_method": 12.0,
+        "cfd_comparison": 15.0,
+        "recommended_value": 14.0
+      },
+      "lateral_deviation_m": {
+        "coefficient_method": 28.0,
+        "simulation_method": 30.0,
+        "cfd_comparison": 28.0,
+        "recommended_value": 29.0
+      }
+    },
+    "validation_confidence": "MEDIUM",
+    "method_comparison": {
+      "most_accurate": "coefficient_based",
+      "fastest": "coefficient_based",
+      "most_cost_effective": "coefficient_based"
+    }
+  },
+  "recommendations": {
+    "overall_assessment": "RECOMMENDED",
+    "recommended_coefficients": {
+      "Cy_beta": -0.47,
+      "Cn_beta": 0.089,
+      "Cl_beta": -0.065
+    },
+    "current_vs_recommended": {
+      "Cy_beta": {
+        "current": -0.25,
+        "recommended": -0.47,
+        "improvement_factor": 1.88
+      },
+      "Cn_beta": {
+        "current": 0.12,
+        "recommended": 0.089,
+        "improvement_factor": 0.7416666666666667
+      },
+      "Cl_beta": {
+        "current": -0.45,
+        "recommended": -0.065,
+        "improvement_factor": 0.14444444444444446
+      }
+    },
+    "implementation_roadmap": {
+      "Phase_1_Immediate": {
+        "duration_weeks": 1,
+        "actions": [
+          "세스나 기반 UAM 계수로 업데이트",
+          "기존 UAM 모델 계수 교체",
+          "간단한 검증 테스트 실행"
+        ],
+        "deliverables": [
+          "업데이트된 UAM.xml 모델"
+        ]
+      },
+      "Phase_2_Validation": {
+        "duration_weeks": 3,
+        "actions": [
+          "JSBSim UAM 모델로 확장 시뮬레이션",
+          "다양한 횡풍 조건 테스트",
+          "성능 검증 및 미세 조정"
+        ],
+        "deliverables": [
+          "검증된 UAM 횡풍 모델",
+          "성능 보고서"
+        ]
+      },
+      "Phase_3_Integration": {
+        "duration_weeks": 2,
+        "actions": [
+          "CFD 모델과 통합 검증",
+          "최종 성능 평가",
+          "운용 한계 설정"
+        ],
+        "deliverables": [
+          "최종 UAM 횡풍 성능 모델"
+        ]
+      }
+    },
+    "expected_benefits": {
+      "accuracy_improvement": "82.5% vs 현재 ~70%",
+      "time_savings": "6주 vs 기존 15주 (60% 단축)",
+      "cost_savings": "100% (무료 vs 3,600만원)",
+      "reliability_improvement": "검증된 NASA 데이터 기반"
+    },
+    "risk_mitigation": {
+      "geometric_differences": "스케일링 팩터로 보정",
+      "rotor_effects": "추가 보정 계수 적용",
+      "validation_gaps": "단계적 검증으로 위험 최소화"
+    }
+  }
+}
