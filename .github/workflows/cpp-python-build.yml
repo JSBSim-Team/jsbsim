@@ -157,7 +157,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
@@ -170,7 +170,7 @@ jobs:
         run: valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: env.release == 'true' && env.static_link == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
@@ -228,13 +228,13 @@ jobs:
 
       - name: Upload Files for Release (Linux & MacOSX)
         if: steps.tests-unix.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: build/matlab/JSBSim_SFunction.mex*
       - name: Upload Files for Release (Windows)
         if: steps.tests-windows.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: |
@@ -287,7 +287,7 @@ jobs:
 
     # Upload files
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: Windows_MinGW.logs
@@ -358,7 +358,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: Windows_MSVC.logs
@@ -367,7 +367,7 @@ jobs:
             build/tests/*-build.log
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: env.release == 'true' && matrix.shared_libs == 'OFF'
         with:
           name: ${{ runner.os }}.binaries
@@ -435,7 +435,7 @@ jobs:
           # Compile the installer with Inno Setup
           iscc JSBSim.iss
       - name: Upload the installer for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Windows-installer.binaries
           path: |
@@ -531,7 +531,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: MacOSX.logs
@@ -540,7 +540,7 @@ jobs:
             build/tests/*-build.log
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: env.release == 'true' && matrix.os == 'macos-13'
         with:
           name: ${{ runner.os }}.binaries
@@ -725,7 +725,7 @@ jobs:
           pip uninstall jsbsim -y
           deactivate
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.os }}-Wheels.binaries
           path: ./wheelhouse/*.whl
