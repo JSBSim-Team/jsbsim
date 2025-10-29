@@ -178,8 +178,14 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
     }
 
   } else {
-    cerr << "No \"use\" directives in the script file." << endl;
-    return false;
+    if (!FDMExec->GetModelName().empty() && !initfile.isNull()) {
+        cout << "Using pre-loaded aircraft \"" << FDMExec->GetModelName() << "\" with " << initfile << endl;
+        initialize = initfile;
+    } else {
+      cerr << "No \"use\" directives in the script file! "
+           << "Pre-load aircraft via LoadModel() and specify initfile." << endl;
+      return false;
+    }
   }
 
   auto IC = FDMExec->GetIC();

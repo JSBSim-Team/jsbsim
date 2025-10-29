@@ -848,7 +848,14 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
 
   FullAircraftPath = AircraftPath;
   if (addModelToPath) FullAircraftPath.append(model);
-  aircraftCfgFileName = FullAircraftPath/(model + ".xml");
+
+  // Try model.xml first, fall back to <model>.xml
+  SGPath modelXmlPath = FullAircraftPath/"model.xml";
+  if (modelXmlPath.exists()) {
+    aircraftCfgFileName = modelXmlPath;
+  } else {
+    aircraftCfgFileName = FullAircraftPath/(model + ".xml");
+  }
 
   if (modelLoaded) {
     DeAllocate();
