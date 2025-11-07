@@ -196,7 +196,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DBUILD_MATLAB_SFUNCTION=ON ..
+          cmake -DBUILD_MATLAB_SFUNCTION=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" ..
       - name: Build JSBSim S-Function
         working-directory: build
         run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction --parallel 3
