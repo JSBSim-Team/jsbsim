@@ -190,13 +190,13 @@ jobs:
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v2
         with:
-          release: R2022a
+          release: R2023b
           products: Simulink
       - name: Configure JSBSim
         run: |
           mkdir build
           cd build
-          cmake -DBUILD_MATLAB_SFUNCTION=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" ..
+          cmake -DBUILD_MATLAB_SFUNCTION=ON ..
       - name: Build JSBSim S-Function
         working-directory: build
         run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction --parallel 3
