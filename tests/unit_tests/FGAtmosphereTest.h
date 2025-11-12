@@ -150,8 +150,24 @@ public:
     const double nu0 = mu0/rho0;
 
     for(double h=-1000.0; h<10000; h+= 1000) {
-      double T = T0 + 0.1*h;
-      double P = P0 + 1.0*h;
+      const double T = T0 + 0.1*h;
+      const double P = P0 + 1.0*h;
+      const double rho = P/(R*T);
+      const double a = sqrt(gama*R*T);
+
+      FGAtmosphere::AltitudeDependentValues adv;
+      atm.GetAltitudeDependentValues(adv, h);
+      TS_ASSERT_DELTA(adv.Temperature, T, epsilon);
+      TS_ASSERT_DELTA(adv.Pressure, P, epsilon);
+      TS_ASSERT_DELTA(adv.Density, rho, epsilon);
+      TS_ASSERT_DELTA(adv.SoundSpeed, a, epsilon);
+
+      FGAtmosphere::AltitudeDependentValues adv_0;
+      atm.GetAltitudeDependentValues(adv_0, 0.0);
+      TS_ASSERT_EQUALS(adv_0.Temperature, T0);
+      TS_ASSERT_EQUALS(adv_0.Pressure, P0);
+      TS_ASSERT_DELTA(adv_0.Density, rho0, epsilon);
+      TS_ASSERT_DELTA(adv_0.SoundSpeed, a0, epsilon);
 
       TS_ASSERT_DELTA(atm.GetTemperature(h), T, epsilon);
       TS_ASSERT_EQUALS(atm.GetTemperature(0.0), T0);
@@ -160,11 +176,9 @@ public:
       TS_ASSERT_DELTA(atm.GetPressure(h), P, epsilon);
       TS_ASSERT_EQUALS(atm.GetPressure(0.0), P0);
 
-      double rho = P/(R*T);
       TS_ASSERT_DELTA(atm.GetDensity(h), rho, epsilon);
       TS_ASSERT_DELTA(atm.GetDensity(0.0), rho0, epsilon);
 
-      double a = sqrt(gama*R*T);
       TS_ASSERT_DELTA(atm.GetSoundSpeed(h), a, epsilon);
       TS_ASSERT_DELTA(atm.GetSoundSpeed(0.0), a0, epsilon);
 
