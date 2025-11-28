@@ -100,7 +100,7 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Target angle is required for Angles component: " << Name << "\n";
     throw err;
   }
@@ -113,7 +113,7 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
     }
   } else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Source angle is required for Angles component: " << Name << "\n";
     throw err;
   }
@@ -123,7 +123,7 @@ FGAngles::FGAngles(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if      (unit == "DEG") output_unit = 180.0/M_PI;
     else if (unit == "RAD") output_unit = 1.0;
     else {
-      XMLLogException err(fcs->GetExec()->GetLogger(), element);
+      XMLLogException err(element);
       err << "Unknown unit " << unit << " in angle component, " << Name << "\n";
       throw err;
     }
@@ -195,8 +195,8 @@ void FGAngles::Debug(int from)
     if (from == 0) { // Constructor
     }
   }
-  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGAngles\n";
     if (from == 1) log << "Destroyed:    FGAngles\n";
   }

@@ -410,7 +410,7 @@ void FGAccelerations::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGAccelerations\n";
     if (from == 1) log << "Destroyed:    FGAccelerations\n";
   }

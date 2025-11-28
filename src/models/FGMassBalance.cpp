@@ -269,7 +269,7 @@ void FGMassBalance::AddPointMass(Element* el)
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
-    XMLLogException err(FDMExec->GetLogger(), el);
+    XMLLogException err(el);
     err << "Pointmass " << pointmass_name << " has no location." << endl;
     throw err;
   }
@@ -436,7 +436,7 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << endl << LogFormat::BLUE << LogFormat::BOLD
       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
       << LogFormat::RESET << endl;
@@ -501,7 +501,7 @@ void FGMassBalance::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << endl << "  Mass and Balance:" << endl << fixed;
       log << "    baseIxx: " << baseJ(1,1) << " slug-ft2" << endl;
       log << "    baseIyy: " << baseJ(2,2) << " slug-ft2" << endl;
@@ -521,7 +521,7 @@ void FGMassBalance::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGMassBalance" << endl;
     if (from == 1) log << "Destroyed:    FGMassBalance" << endl;
   }
@@ -531,7 +531,7 @@ void FGMassBalance::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       if (EmptyWeight <= 0.0 || EmptyWeight > 1e9)
         log << "MassBalance::EmptyWeight out of bounds: " << EmptyWeight << endl;
       if (Weight <= 0.0 || Weight > 1e9)

@@ -86,7 +86,7 @@ bool FGOutputTextFile::OpenFile(void)
   datafile.clear();
   datafile.open(Filename);
   if (!datafile) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << LogFormat::RED << LogFormat::BOLD << "\nERROR: unable to open the file "
         << LogFormat::RESET << Filename.c_str()
         << LogFormat::RED << LogFormat::BOLD << "\n       => Output to this file is disabled.\n\n"

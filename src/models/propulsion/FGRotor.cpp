@@ -120,7 +120,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   if (thruster_element) {
     location = thruster_element->FindElementTripletConvertTo("IN");
   } else {
-    FGXMLLogging log(exec->GetLogger(), rotor_element, LogLevel::ERROR);
+    FGXMLLogging log(rotor_element, LogLevel::ERROR);
     log << "No thruster location found.\n";
   }
 
@@ -128,7 +128,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   if (thruster_element) {
     orientation = thruster_element->FindElementTripletConvertTo("RAD");
   } else {
-    FGXMLLogging log(exec->GetLogger(), rotor_element, LogLevel::ERROR);
+    FGXMLLogging log(rotor_element, LogLevel::ERROR);
     log << "No thruster orientation found.\n";
   }
 
@@ -147,7 +147,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     } else if (cm == "TANDEM") {
       ControlMap = eTandemCtrl;
     } else {
-      FGXMLLogging log(exec->GetLogger(), controlmap_el, LogLevel::ERROR);
+      FGXMLLogging log(controlmap_el, LogLevel::ERROR);
       log << "# found unknown controlmap: '" << cm << "' using main rotor config.\n";
     }
   }
@@ -170,7 +170,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
       }
     }
     if (RPMdefinition != rdef) {
-      FGXMLLogging log(exec->GetLogger(), extrpm_el, LogLevel::ERROR);
+      FGXMLLogging log(extrpm_el, LogLevel::ERROR);
       log << "# discarded given RPM source (" << rdef
           << ") and switched to external control (-1).\n";
     }
@@ -251,7 +251,7 @@ double FGRotor::ConfigValueConv( Element* el, const string& ename, double defaul
     }
   } else {
     if (tell) {
-      FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::ERROR);
+      FGXMLLogging log(el, LogLevel::ERROR);
       log << pname << ": missing element '" << ename
           << "' using estimated value: " << default_val << "\n";
     }
@@ -774,13 +774,13 @@ bool FGRotor::bindmodel(FGPropertyManager* PropertyManager)
       property_name = ipn + "/rotor-rpm";
       ExtRPMsource = PropertyManager->GetNode(property_name, false);
       if (! ExtRPMsource) {
-        FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+        FGLogging log(LogLevel::ERROR);
         log << "# Warning: Engine number " << EngineNum << ".\n";
         log << "# No 'rotor-rpm' property found for engine " << RPMdefinition << ".\n";
         log << "# Please check order of engine definitons.\n";
       }
     } else {
-      FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "# Engine number " << EngineNum;
       log << ", given ExternalRPM value '" << RPMdefinition << "' unhandled.\n";
     }
@@ -842,7 +842,7 @@ void FGRotor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n    Rotor Name: " << Name << "\n";
       log << "      Diameter = " << 2.0 * Radius << " ft." << "\n";
       log << "      Number of Blades = " << BladeNum << "\n";
@@ -885,7 +885,7 @@ void FGRotor::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGRotor\n";
     if (from == 1) log << "Destroyed:    FGRotor\n";
   }

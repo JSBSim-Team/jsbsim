@@ -107,17 +107,17 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
       } else if (name == "CP_MACH") {
         CpMach = new FGTable(PropertyManager, table_element);
       } else {
-        FGXMLLogging log(fdmex->GetLogger(), table_element, LogLevel::ERROR);
+        FGXMLLogging log(table_element, LogLevel::ERROR);
         log << "Unknown table type: " << name << " in propeller definition.\n";
       }
     } catch (BaseException& e) {
-      XMLLogException err(fdmex->GetLogger(), table_element);
+      XMLLogException err(table_element);
       err << "Error loading propeller table:" << name << ". " << e.what() << "\n";
       throw err;
     }
   }
   if( (cPower == nullptr) || (cThrust == nullptr)){
-    XMLLogException err(fdmex->GetLogger(), prop_element);
+    XMLLogException err(prop_element);
     err << "Propeller configuration must contain C_THRUST and C_POWER tables!\n";
     throw err;
   }
@@ -132,7 +132,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     P_Factor = local_element->GetDataAsNumber();
   }
   if (P_Factor < 0) {
-    XMLLogException err(fdmex->GetLogger(), local_element);
+    XMLLogException err(local_element);
     err << "P-Factor value in propeller configuration file must be greater than zero\n";
     throw err;
   }
@@ -444,7 +444,7 @@ void FGPropeller::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n    Propeller Name: " << Name << "\n";
       log << "      IXX = " << Ixx << "\n";
       log << "      Diameter = " << Diameter << " ft." << "\n";
@@ -457,7 +457,7 @@ void FGPropeller::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGPropeller\n";
     if (from == 1) log << "Destroyed:    FGPropeller\n";
   }

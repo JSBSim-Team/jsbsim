@@ -109,7 +109,7 @@ void FGSummer::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor
       log << "      INPUTS: " << fixed << "\n";
       for (auto node: InputNodes)
@@ -120,7 +120,7 @@ void FGSummer::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGSummer\n";
     if (from == 1) log << "Destroyed:    FGSummer\n";
   }

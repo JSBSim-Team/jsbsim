@@ -282,12 +282,12 @@ void FGBuoyantForces::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  Buoyant Forces: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGBuoyantForces\n";
     if (from == 1) log << "Destroyed:    FGBuoyantForces\n";
   }

@@ -174,12 +174,12 @@ void FGExternalReactions::Debug(int from)
     if (from == 0) { // Constructor - loading and initialization
     }
     if (from == 2) { // Loading
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  External Reactions: \n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGExternalReactions\n";
     if (from == 1) log << "Destroyed:    FGExternalReactions\n";
   }

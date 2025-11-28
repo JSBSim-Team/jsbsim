@@ -319,7 +319,7 @@ void FGPropulsion::InitRunning(int n)
   if (n >= 0) { // A specific engine is supposed to be initialized
 
     if (n >= (int)GetNumEngines() ) {
-      LogException err(FDMExec->GetLogger());
+      LogException err;
       err << "Tried to initialize a non-existent engine!";
       throw err;
     }
@@ -374,7 +374,7 @@ bool FGPropulsion::Load(Element* el)
     if (tank->GetType() == FGTank::ttFUEL)
       FuelDensity = tank->GetDensity();
     else if (tank->GetType() != FGTank::ttOXIDIZER) {
-      FGXMLLogging log(FDMExec->GetLogger(), tank_element, LogLevel::ERROR);
+      FGXMLLogging log(tank_element, LogLevel::ERROR);
       log << "Unknown tank type specified.\n";
       return false;
     }
@@ -393,12 +393,12 @@ bool FGPropulsion::Load(Element* el)
       // Locate the thruster definition
       Element* thruster_element = engine_element->FindElement("thruster");
       if (!thruster_element) {
-        XMLLogException err(FDMExec->GetLogger(), engine_element);
+        XMLLogException err(engine_element);
         err << "No thruster definition supplied with engine definition.";
         throw err;
       }
       if (!ModelLoader.Open(thruster_element)) {
-        XMLLogException err(FDMExec->GetLogger(), thruster_element);
+        XMLLogException err(thruster_element);
         err << "Cannot open the thruster element.";
         throw err;
       }
@@ -423,7 +423,7 @@ bool FGPropulsion::Load(Element* el)
         Engines.push_back(make_shared<FGBrushLessDCMotor>(FDMExec, element, numEngines, in));
       }
       else {
-        FGXMLLogging log(FDMExec->GetLogger(), engine_element, LogLevel::ERROR);
+        FGXMLLogging log(engine_element, LogLevel::ERROR);
         log << " Unknown engine type\n";
         return false;
       }
@@ -435,7 +435,7 @@ bool FGPropulsion::Load(Element* el)
       err << "Cannot load " << Name << "\n";
       return false;
     } catch (const BaseException& e) {
-      FGXMLLogging err(FDMExec->GetLogger(), engine_element, LogLevel::FATAL);
+      FGXMLLogging err(engine_element, LogLevel::FATAL);
       err << "\n" << LogFormat::RED << e.what() << LogFormat::RESET
           << "\nCannot load " << Name << "\n";
       return false;
@@ -883,12 +883,12 @@ void FGPropulsion::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  Propulsion:\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGPropulsion\n";
     if (from == 1) log << "Destroyed:    FGPropulsion\n";
   }

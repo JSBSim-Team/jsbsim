@@ -68,7 +68,7 @@ Element_ptr FGModelLoader::Open(Element *el)
     else {
       document = XMLFileRead.LoadXMLDocument(path);
       if (document == 0L) {
-        FGXMLLogging log(model->GetExec()->GetLogger(), el, LogLevel::ERROR);
+        FGXMLLogging log(el, LogLevel::ERROR);
         log << "Could not open file: " << fname << endl;
         return NULL;
       }

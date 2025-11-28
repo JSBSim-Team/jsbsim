@@ -63,7 +63,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), element, LogLevel::ERROR);
+      FGXMLLogging log(element, LogLevel::ERROR);
       log << LogFormat::BOLD << "      No GAIN specified (default: 1.0)\n";
     }
   }
@@ -86,7 +86,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
     scale_element = element->FindElement("range");
     if (!scale_element) {
-      XMLLogException err(fcs->GetExec()->GetLogger(), scale_element);
+      XMLLogException err(scale_element);
       err << "No range supplied for aerosurface scale component\n";
       throw err;
     }
@@ -95,7 +95,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       OutMax = scale_element->FindElementValueAsNumber("max");
       OutMin = scale_element->FindElementValueAsNumber("min");
     } else {
-      XMLLogException err(fcs->GetExec()->GetLogger(), scale_element);
+      XMLLogException err(scale_element);
       err << "Maximum and minimum output values must be supplied for the "
              "aerosurface scale component\n";
       throw err;
@@ -115,7 +115,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if (element->FindElement("table")) {
       Table = new FGTable(PropertyManager, element->FindElement("table"));
     } else {
-      XMLLogException err(fcs->GetExec()->GetLogger(), element);
+      XMLLogException err(element);
       err << "A table must be provided for the scheduled gain component\n";
       throw err;
     }
@@ -198,7 +198,7 @@ void FGGain::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << "\n";
       log << "      GAIN: " << Gain->GetName() << fixed << "\n";
 
@@ -219,7 +219,7 @@ void FGGain::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGGain\n";
     if (from == 1) log << "Destroyed:    FGGain\n";
   }

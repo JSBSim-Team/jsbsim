@@ -67,7 +67,7 @@ private:
         void eval(const std::vector<double> &v)
         {
             _outputFile << _trimmer->eval(v) << std::endl;
-            // FGLogging log(_trimmer->getFdm()->GetLogger(), LogLevel::INFO);
+            //FGLogging log(LogLevel::INFO);
             //log << "v: ";
             //for (int i=0;i<v.size();i++) log << v[i] << " ";
             //log << std::endl;

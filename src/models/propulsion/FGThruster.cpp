@@ -71,7 +71,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   element = thruster_element->FindElement("location");
   if (element)  location = element->FindElementTripletConvertTo("IN");
   else {
-    FGXMLLogging log(FDMExec->GetLogger(), thruster_element, LogLevel::ERROR);
+    FGXMLLogging log(thruster_element, LogLevel::ERROR);
     log << LogFormat::RED << "      No thruster location found."
         << LogFormat::RESET << "\n";
   }
@@ -198,7 +198,7 @@ void FGThruster::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGThruster\n";
     if (from == 1) log << "Destroyed:    FGThruster\n";
   }

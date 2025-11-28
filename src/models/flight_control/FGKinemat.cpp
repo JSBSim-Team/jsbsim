@@ -71,7 +71,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element)
   }
 
   if (Detents.size() <= 1) {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "\nKinematic component " << Name
         << " must have more than 1 setting element\n";
     throw err;
@@ -178,7 +178,7 @@ void FGKinemat::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor
       log << "      INPUT: " << InputNodes[0]->GetName() << "\n";
       log << "      DETENTS: " << Detents.size() << fixed << setprecision(4) << "\n";
@@ -191,7 +191,7 @@ void FGKinemat::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGKinemat\n";
     if (from == 1) log << "Destroyed:    FGKinemat\n";
   }

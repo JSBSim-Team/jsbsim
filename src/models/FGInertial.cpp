@@ -121,7 +121,7 @@ bool FGInertial::Load(Element* el)
 
   // Messages to warn the user about possible inconsistencies.
   if (debug_lvl > 0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+    FGLogging log(LogLevel::WARN);
     if (a != b && J2 == 0.0)
       log << "Gravitational constant J2 is null for a non-spherical planet." << endl;
     if (a == b && J2 != 0.0)
@@ -242,7 +242,7 @@ void FGInertial::SetAltitudeAGL(FGLocation& location, double altitudeAGL)
 void FGInertial::SetGravityType(int gt)
 {
   // Messages to warn the user about possible inconsistencies.
-  FGLogging log(FDMExec->GetLogger(), LogLevel::WARN);
+  FGLogging log(LogLevel::WARN);
   switch (gt)
   {
   case eGravType::gtStandard:
@@ -291,7 +291,7 @@ void FGInertial::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) {} // Constructor
     if (from == 2) { // Loading
       log << endl << "  Planet " << Name << endl
@@ -303,7 +303,7 @@ void FGInertial::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGInertial" << endl;
     if (from == 1) log << "Destroyed:    FGInertial" << endl;
   }

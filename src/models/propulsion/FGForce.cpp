@@ -109,7 +109,7 @@ const FGMatrix33& FGForce::Transform(void) const
     return mT;
   default:
     {
-      LogException err(fdmex->GetLogger());
+      LogException err;
       err << "Unrecognized tranform requested from FGForce::Transform()\n";
       throw err;
     }
@@ -185,7 +185,7 @@ void FGForce::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGForce\n";
     if (from == 1) log << "Destroyed:    FGForce\n";
   }

@@ -289,7 +289,7 @@ void FGInitialCondition::SetVtrueFpsIC(double vtrue)
 void FGInitialCondition::SetClimbRateFpsIC(double hdot)
 {
   if (fabs(hdot) > vt) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "The climb rate cannot be higher than the true speed.\n";
     return;
   }
@@ -364,7 +364,7 @@ void FGInitialCondition::calcThetaBeta(double alfa, const FGColumnVector3& _vt_N
   // following error being raised too often, we might need to reconsider this
   // position.
   if (DotProduct(v0, v0) < DotProduct(u, u)) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Cannot modify angle 'alpha' from " << alpha << " to " << alfa << "\n";
     return;
   }
@@ -1020,13 +1020,13 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    LogException err(fdmex->GetLogger());
+    LogException err;
     err << "File: " << init_file_name << " could not be read.\n";
     throw err;
   }
 
   if (document->GetName() != "initialize") {
-    LogException err(fdmex->GetLogger());
+    LogException err;
     err << "File: " << init_file_name << " is not a reset file.\n";
     throw err;
   }
@@ -1038,7 +1038,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
     double version = document->GetAttributeValueAsNumber("version");
 
     if (version >= 3.0) {
-      XMLLogException err(fdmex->GetLogger(), document);
+      XMLLogException err(document);
       err << "Only initialization file formats 1 and 2 are currently supported\n";
       throw err;
     } else if (version >= 2.0) {
@@ -1052,7 +1052,7 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
   }
 
   // Check to see if any engines are specified to be initialized in a running state
-  Element* running_elements = document->FindElement("running");
+    Element* running_elements = document->FindElement("running");
   while (running_elements) {
     int engineNumber = int(running_elements->GetDataAsNumber());
     enginesRunning |= engineNumber == -1 ? engineNumber : 1 << engineNumber;
@@ -1075,7 +1075,7 @@ bool FGInitialCondition::LoadLatitude(Element* position_el)
       string unit_type = latitude_el->GetAttributeValue("unit");
       if (unit_type.empty()) unit_type="RAD";
 
-      FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << latitude_el->ReadFrom() << "The latitude value "
           << latitude_el->GetDataAsNumber() << " " << unit_type
           << " is outside the range [";
@@ -1254,7 +1254,7 @@ bool FGInitialCondition::Load_v2(Element* document)
         } else if (position_el->FindElement("altitudeMSL")) {
           SetAltitudeASLFtIC(position_el->FindElementValueAsNumberConvertTo("altitudeMSL", "FT"));
         } else {
-          FGXMLLogging log(fdmex->GetLogger(), position_el, LogLevel::ERROR);
+          FGXMLLogging log(position_el, LogLevel::ERROR);
           log << "  No altitude or radius initial condition is given.\n";
           result = false;
         }
@@ -1266,12 +1266,12 @@ bool FGInitialCondition::Load_v2(Element* document)
         position = position_el->FindElementTripletConvertTo("FT");
       }
     } else {
-      FGXMLLogging log(fdmex->GetLogger(), position_el, LogLevel::ERROR);
+      FGXMLLogging log(position_el, LogLevel::ERROR);
       log << "  Neither ECI nor ECEF frame is specified for initial position.\n";
       result = false;
     }
   } else {
-    FGXMLLogging log(fdmex->GetLogger(), document, LogLevel::ERROR);
+    FGXMLLogging log(document, LogLevel::ERROR);
     log << "  Initial position not specified in this initialization file.\n";
     result = false;
   }
@@ -1347,7 +1347,7 @@ bool FGInitialCondition::Load_v2(Element* document)
       orientation = FGQuaternion(vOrient);
 
     } else {
-      FGXMLLogging log(fdmex->GetLogger(), orientation_el, LogLevel::ERROR);
+      FGXMLLogging log(orientation_el, LogLevel::ERROR);
       log << "\n" << LogFormat::RED << "  Orientation frame type: \"" << frame
           << "\" is not supported!\n\n" << LogFormat::RESET;
       result = false;
@@ -1386,7 +1386,7 @@ bool FGInitialCondition::Load_v2(Element* document)
       vUVW_NED = Tb2l * vInitVelocity;
       lastSpeedSet = setuvw;
     } else {
-      FGXMLLogging log(fdmex->GetLogger(), velocity_el, LogLevel::ERROR);
+      FGXMLLogging log(velocity_el, LogLevel::ERROR);
       log << "\n" << LogFormat::RED << "  Velocity frame type: \"" << frame
           << "\" is not supported!\n\n" << LogFormat::RESET;
       result = false;
@@ -1432,12 +1432,11 @@ bool FGInitialCondition::Load_v2(Element* document)
       vPQR_body = Tl2b * (vAttRate + vOmegaLocal);
     } else if (frame == "body") {
       vPQR_body = vAttRate;
-    } else if (!frame.empty()) { // misspelling of frame
-      FGXMLLogging log(fdmex->GetLogger(), attrate_el, LogLevel::ERROR);
+  } else if (!frame.empty()) { // misspelling of frame
+      FGXMLLogging log(attrate_el, LogLevel::ERROR);
       log << endl << LogFormat::RED << "  Attitude rate frame type: \"" << frame
           << "\" is not supported!\n\n" << LogFormat::RESET;
       result = false;
-
     } else if (frame.empty()) {
       vPQR_body.InitMatrix();
     }
@@ -1623,7 +1622,7 @@ void FGInitialCondition::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGInitialCondition\n";
     if (from == 1) log << "Destroyed:    FGInitialCondition\n";
   }

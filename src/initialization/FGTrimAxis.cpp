@@ -250,7 +250,7 @@ void FGTrimAxis::Run(void) {
   double last_state_value;
   int i;
   setControl();
-  //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  //FGLogging log(LogLevel::INFO);
   //log << "FGTrimAxis::Run: " << control_value << "\n";
   i=0;
   bool stable=false;
@@ -293,7 +293,7 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "  " << left << setw(20) << GetControlName() << ": ";
   log << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
   log << setw(5) << GetStateName() << ": ";
@@ -344,7 +344,7 @@ void FGTrimAxis::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGTrimAxis\n";
     if (from == 1) log << "Destroyed:    FGTrimAxis\n";
   }

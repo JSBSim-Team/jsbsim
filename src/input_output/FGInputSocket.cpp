@@ -76,7 +76,7 @@ bool FGInputSocket::Load(Element* el)
   SockPort = atoi(el->GetAttributeValue("port").c_str());
 
   if (SockPort == 0) {
-    FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::ERROR);
+    FGXMLLogging log(el, LogLevel::ERROR);
     log << "No port assigned in input element\n";
     return false;
   }

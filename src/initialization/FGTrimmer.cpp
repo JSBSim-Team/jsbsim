@@ -165,14 +165,14 @@ std::vector<double> FGTrimmer::constrain(const std::vector<double> & dv)
         double dcost = fabs(costNew - cost);
         if (dcost < std::numeric_limits<double>::epsilon()) {
             if(m_fdm->GetDebugLevel() > 1) {
-                FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+                FGLogging log(LogLevel::DEBUG);
                 log << "cost convergd, i: " << i << std::endl;
             }
             break;
         }
         if (i > 1000) {
             if(m_fdm->GetDebugLevel() > 1) {
-                FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+                FGLogging log(LogLevel::DEBUG);
                 log << "cost failed to converge, dcost: "
                     << std::scientific
                     << dcost << std::endl;
@@ -215,7 +215,7 @@ void FGTrimmer::printSolution(const std::vector<double> & v)
     eval(v);
 
     // state
-    FGLogging log(m_fdm->GetLogger(), LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << std::setw(10)
 
               // aircraft state
@@ -298,7 +298,7 @@ void FGTrimmer::printSolution(const std::vector<double> & v)
 void FGTrimmer::printState()
 {
     // state
-    FGLogging log(m_fdm->GetLogger(), LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << std::setw(10)
 
               // interval method comparison
@@ -359,7 +359,7 @@ double FGTrimmer::compute_cost()
     double dr = m_fdm->GetAccelerations()->GetPQRdot(3);
 
         if(m_fdm->GetDebugLevel() > 1) {
-            FGLogging log(m_fdm->GetLogger(), LogLevel::DEBUG);
+            FGLogging log(LogLevel::DEBUG);
             log
                 << "dvt: " << dvt
                 << "\tdalpha: " << dalpha
