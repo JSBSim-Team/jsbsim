@@ -17,7 +17,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install cxxtest lcov
       - name: Checkout JSBSim
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
