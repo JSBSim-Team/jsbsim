@@ -182,7 +182,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-13, ubuntu-22.04, windows-latest ]
+        os: [ macos-14, ubuntu-22.04, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
@@ -190,7 +190,7 @@ jobs:
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v2
         with:
-          release: R2022a
+          release: R2023b
           products: Simulink
       - name: Configure JSBSim
         run: |
@@ -444,15 +444,7 @@ jobs:
   MacOSX:
     name: C/C++ build (MacOSX)
     needs: [XML-validation, MSIS-validation]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-13]
-        python-version: [3.9]
-        include:
-          - os: macos-14
-            python-version: '3.10'
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-14
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v6
@@ -464,11 +456,11 @@ jobs:
           path: |
             ~/Library/Caches/pip
             build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
+          key: macos14-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
       - name: Install Python packages
         run: |
           pip install -r python/requirements.txt
@@ -476,7 +468,7 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        if: env.release == 'true'
         run: |
           brew install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -505,7 +497,7 @@ jobs:
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        if: env.release == 'true'
         working-directory: build/python
         run: |
           echo "::group::Generate the type hints stub"
@@ -518,7 +510,6 @@ jobs:
           python -m build --sdist
           echo "::endgroup::"
       - name: Check reset for real time execution
-        if: matrix.os == 'macos-14'
         run: |
           start_time=$(date +%s)
           ./build/src/JSBSim scripts/c172_cruise_8K.xml --realtime --nice
@@ -541,7 +532,7 @@ jobs:
 
       - name: Upload Files for Release
         uses: actions/upload-artifact@v5
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        if: env.release == 'true'
         with:
           name: ${{ runner.os }}.binaries
           path: |
@@ -600,7 +591,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, windows-2022]
+        os: [ubuntu-latest, macos-14, windows-2022]
 
     steps:
       - name: Checkout JSBSim
@@ -617,7 +608,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen
       - name: Install Doxygen (MacOSX)
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-14'
         run: brew install doxygen
       - name: Install Doxygen (Windows)
         if: runner.os == 'Windows'
