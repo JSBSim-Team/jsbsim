@@ -101,7 +101,7 @@ jobs:
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/pip
@@ -307,7 +307,7 @@ jobs:
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~\AppData\Local\pip\Cache
@@ -451,7 +451,7 @@ jobs:
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/Library/Caches/pip
