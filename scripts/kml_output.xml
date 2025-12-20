@@ -23,6 +23,6 @@
 
 </description>
   <property> position/long-gc-deg </property>
-  <property> position/lat-gc-deg </property>
+  <property> position/lat-geod-deg </property>
   <property> position/h-sl-meters </property>
 </output>
