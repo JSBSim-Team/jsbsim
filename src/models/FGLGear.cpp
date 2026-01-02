@@ -174,7 +174,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
       ForceY_Table = new FGTable(PropertyManager, force_table);
       break;
     } else {
-      FGXMLLogging log(fdmex->GetLogger(), force_table, LogLevel::ERROR);
+      FGXMLLogging log(force_table, LogLevel::ERROR);
       log << "Undefined force table for " << name << " contact point\n";
     }
     force_table = el->FindNextElement("table");
@@ -183,7 +183,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   Element* element = el->FindElement("location");
   if (element) vXYZn = element->FindElementTripletConvertTo("IN");
   else {
-    XMLLogException err(fdmex->GetLogger(), el);
+    XMLLogException err(el);
     err << "\nNo location given for contact " << name << "\n";
     throw err;
   }
@@ -211,7 +211,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
   else if (sBrakeGroup == "NONE"  ) eBrakeGrp = bgNone;
   else if (sBrakeGroup.empty()    ) eBrakeGrp = bgNone;
   else {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::ERROR);
+    FGXMLLogging log(el, LogLevel::ERROR);
     log << "Improper braking group specification in config file: "
         << sBrakeGroup << " is undefined.\n";
   }
@@ -550,7 +550,7 @@ void FGLGear::ReportTakeoffOrLanding(void)
   if (lastWOW != WOW)
   {
     if (debug_lvl > 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      FGLogging log(LogLevel::INFO);
       log << "GEAR_CONTACT: " << fixed << fdmex->GetSimTime() << " seconds: "
           << name << " " << WOW << "\n";
     }
@@ -568,7 +568,7 @@ void FGLGear::CrashDetect(void)
       SinkRate > 1.4666*30 ) && !fdmex->IntegrationSuspended())
   {
     if (debug_lvl > 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      FGLogging log(LogLevel::INFO);
       log << "*CRASH DETECTED* " << fixed << fdmex->GetSimTime() << " seconds: "
           << name << "\n";
     }
@@ -868,7 +868,7 @@ void FGLGear::Report(ReportType repType)
 {
   if (fabs(TakeoffDistanceTraveled) < 0.001) return; // Don't print superfluous reports
 
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
 
   switch(repType) {
   case erLand:
@@ -933,7 +933,7 @@ void FGLGear::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor - loading and initialization
       log << "    " << sContactType[eContactType] << " " << name << "\n" << fixed;
       log << "      Location: "         << vXYZn << "\n";
@@ -961,7 +961,7 @@ void FGLGear::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGLGear\n";
     if (from == 1) log << "Destroyed:    FGLGear\n";
   }

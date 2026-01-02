@@ -55,7 +55,7 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
   if (nozzle_element->FindElement("area"))
     Area = nozzle_element->FindElementValueAsNumberConvertTo("area", "FT2");
   else {
-    XMLLogException err(fdmex->GetLogger(), nozzle_element);
+    XMLLogException err(nozzle_element);
     err << "Fatal Error: Nozzle exit area must be given in nozzle config file.\n";
     throw err;
   }
@@ -131,13 +131,13 @@ void FGNozzle::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "      Nozzle Name: " << Name << "\n";
       log << "      Nozzle Exit Area = " << Area << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGNozzle\n";
     if (from == 1) log << "Destroyed:    FGNozzle\n";
   }

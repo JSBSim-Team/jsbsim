@@ -94,7 +94,7 @@ bool FGInput::Load(Element* el)
   FGInputType* Input = 0;
 
   if (debug_lvl > 0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << endl << "  Input data set: " << idx << "  " << endl;
   }
 
@@ -105,7 +105,7 @@ bool FGInput::Load(Element* el)
   } else if (type == "QTJSBSIM") {
     Input = new FGUDPInputSocket(FDMExec);
   } else if (type != string("NONE")) {
-    FGXMLLogging log(FDMExec->GetLogger(), element, LogLevel::ERROR);
+    FGXMLLogging log(element, LogLevel::ERROR);
     log << "Unknown type of input specified in config file" << endl;
   }
 
@@ -158,14 +158,14 @@ bool FGInput::SetDirectivesFile(const SGPath& fname)
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);
   if (!document) {
-    LogException err(FDMExec->GetLogger());
+    LogException err;
     err << "Could not read directive file: " << fname << endl;
     throw err;
   }
   bool result = Load(document);
 
   if (!result) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << endl << "Aircraft input element has problems in file " << fname << endl;
   }
 
@@ -236,7 +236,7 @@ void FGInput::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGInput" << endl;
     if (from == 1) log << "Destroyed:    FGInput" << endl;
   }

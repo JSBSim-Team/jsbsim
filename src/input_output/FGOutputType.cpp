@@ -132,7 +132,7 @@ bool FGOutputType::Load(Element* element)
     string property_str = property_element->GetDataLine();
     SGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
-      FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
+      FGXMLLogging log(property_element, LogLevel::ERROR);
       log << LogFormat::RED << LogFormat::BOLD << "  No property by the name "
           << property_str << " has been defined. This property will "
           << "not be logged. You should check your configuration file.\n"
@@ -144,7 +144,7 @@ bool FGOutputType::Load(Element* element)
         if (f)
           OutputParameters.push_back(new FGFunctionValue(node, f));
         else {
-          FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
+          FGXMLLogging log(property_element, LogLevel::ERROR);
           log << LogFormat::RED << LogFormat::BOLD << "  No function by the name "
                << function_str << " has been defined. This property will "
                << "not be logged. You should check your configuration file.\n"
@@ -254,7 +254,7 @@ void FGOutputType::Debug(int from)
     if (from == 0) { // Constructor
     }
     if (from == 2) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       if (SubSystems & ssSimulation)      log << "    Simulation parameters logged\n";
       if (SubSystems & ssAerosurfaces)    log << "    Aerosurface parameters logged\n";
       if (SubSystems & ssRates)           log << "    Rate parameters logged\n";
@@ -274,7 +274,7 @@ void FGOutputType::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGOutputType\n";
     if (from == 1) log << "Destroyed:    FGOutputType\n";
   }

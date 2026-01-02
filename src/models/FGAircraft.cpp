@@ -223,7 +223,7 @@ void FGAircraft::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  Aircraft Metrics:\n"  << fixed;
       log << "    WingArea: " << WingArea  << "\n";
       log << "    WingSpan: " << WingSpan  << "\n";
@@ -239,7 +239,7 @@ void FGAircraft::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGAircraft\n";
     if (from == 1) log << "Destroyed:    FGAircraft\n";
   }

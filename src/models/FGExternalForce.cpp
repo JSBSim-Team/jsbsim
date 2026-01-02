@@ -93,7 +93,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   // Set frame (from FGForce).
   string sFrame = el->GetAttributeValue("frame");
   if (sFrame.empty()) {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
+    FGXMLLogging log(el, LogLevel::WARN);
     log << "No frame specified for external " << el->GetName() << ", \""
         << Name << "\".\nFrame set to Body\n";
     ttype = tNone;
@@ -106,7 +106,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
   } else if (sFrame == "INERTIAL") {
     ttype = tInertialBody;
   } else {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
+    FGXMLLogging log(el, LogLevel::WARN);
     log << "Invalid frame specified for external " << el->GetName() << ", \""
         << Name << "\".\nFrame set to Body\n";
     ttype = tNone;
@@ -114,7 +114,7 @@ FGParameter* FGExternalForce::bind(Element *el, const string& magName,
 
   Element* direction_element = el->FindElement("direction");
   if (!direction_element) {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
+    FGXMLLogging log(el, LogLevel::WARN);
     log << "No direction element specified in " << el->GetName()
         << " object. Default is (0,0,0).\n";
   } else {
@@ -153,7 +153,7 @@ void FGExternalForce::setForce(Element *el)
 
   Element* location_element = el->FindElement("location");
   if (!location_element) {
-    FGXMLLogging log(fdmex->GetLogger(), el, LogLevel::WARN);
+    FGXMLLogging log(el, LogLevel::WARN);
     log << "No location element specified in force object.\n";
   } else {
     FGColumnVector3 location = location_element->FindElementTripletConvertTo("IN");
@@ -228,7 +228,7 @@ void FGExternalForce::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "    " << Name;
       log << "\n    Frame: ";
       switch(ttype) {
@@ -252,7 +252,7 @@ void FGExternalForce::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGExternalForce\n";
     if (from == 1) log << "Destroyed:    FGExternalForce\n";
   }

@@ -81,8 +81,8 @@ void FGMars::Calculate(double altitude)
   Pressure = 14.62*exp(-0.00003*altitude); // psf - 14.62 psf =~ 7 millibars
   Density = Pressure/(Reng*Temperature); // slugs/ft^3 (needs deg R. as input
 
-  //FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
-  //log << "Atmosphere:  h=" << altitude << " rho= " << intDensity << "\n";
+  //FGLogging log(LogLevel::INFO);
+  //log << "Atmosphere:  h=" << altitude << " rho= " << Density << "\n";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ void FGMars::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGMars\n";
     if (from == 1) log << "Destroyed:    FGMars\n";
   }

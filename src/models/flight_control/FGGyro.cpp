@@ -50,7 +50,7 @@ CLASS IMPLEMENTATION
 
 FGGyro::FGGyro(FGFCS* fcs, Element* element)
   : FGSensor(fcs, element),
-    FGSensorOrientation(element, fcs->GetExec()->GetLogger())
+    FGSensorOrientation(element)
 {
   Propagate = fcs->GetExec()->GetPropagate();
 
@@ -111,13 +111,13 @@ void FGGyro::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor
       log << "        Axis: " << ax[axis] << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGGyro\n";
     if (from == 1) log << "Destroyed:    FGGyro\n";
   }

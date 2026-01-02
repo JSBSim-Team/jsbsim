@@ -391,7 +391,7 @@ double FGAuxiliary::GetDistanceRelativePosition(void) const
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 const FGColumnVector3& FGAuxiliary::GetNEUPositionFromStart() const
-{ 
+{
   if (!NEUCalcValid) {
     // Position tracking in local frame with local frame origin at lat, lon of initial condition
     // and at 0 altitude relative to the reference ellipsoid. Position is NEU (North, East, UP) in feet.
@@ -400,7 +400,7 @@ const FGColumnVector3& FGAuxiliary::GetNEUPositionFromStart() const
     NEUCalcValid = true;
   }
 
-  return vNEUFromStart; 
+  return vNEUFromStart;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,7 +475,7 @@ void FGAuxiliary::bind(void)
 
 double FGAuxiliary::BadUnits(void) const
 {
-  FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+  FGLogging log(LogLevel::ERROR);
   log << "Bad units" << endl;
   return 0.0;
 }
@@ -509,7 +509,7 @@ void FGAuxiliary::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGAuxiliary" << endl;
     if (from == 1) log << "Destroyed:    FGAuxiliary" << endl;
   }
@@ -518,7 +518,7 @@ void FGAuxiliary::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (Mach > 100 || Mach < 0.00)
       log << "FGPropagate::Mach is out of bounds: " << Mach << endl;
     if (qbar > 1e6 || qbar < 0.00)
