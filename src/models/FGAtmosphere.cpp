@@ -195,6 +195,17 @@ double FGAtmosphere::GetSoundSpeed(double altitude) const
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get all atmospheric conditions which depend on the altitude
+
+void FGAtmosphere::GetAltitudeDependentConditions(AltitudeDependentConditions& conditions, double altitude) const
+{
+  conditions.Temperature = GetTemperature(altitude);
+  conditions.Pressure = GetPressure(altitude);
+  conditions.Density = (conditions.Pressure / (Reng * conditions.Temperature));
+  conditions.SoundSpeed = sqrt(SHRatio * Reng * conditions.Temperature);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // This function sets the sea level temperature.
 // Internally, the Rankine scale is used for calculations, so any temperature
 // supplied must be converted to that unit.
