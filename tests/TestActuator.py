@@ -29,6 +29,7 @@
 
 import os, time, math
 import xml.etree.ElementTree as et
+import numpy as np
 from multiprocessing import Process
 from scipy import stats
 from JSBSim_utils import JSBSimTestCase, CreateFDM, CopyAircraftDef, RunTest
@@ -75,8 +76,9 @@ class TestActuator(JSBSimTestCase):
         # value is following a slope equal to the rate limit. The correlation
         # coefficient r_value is also checked to verify that the output is
         # evolving linearly.
-        slope, intercept, r_value, p_value, std_err = stats.linregress(aileron_course)
-        self.assertTrue(abs(slope - rate_value) < 1E-9 and abs(1.0 - abs(r_value)) < 1E-9,
+        data = np.array(aileron_course)
+        results = stats.linregress(data[:,0],data[:,1])
+        self.assertTrue(abs(results.slope - rate_value) < 1E-9 and abs(1.0 - abs(results.rvalue)) < 1E-9,
                         msg="The actuator rate is not linear")
 
     def CheckRateLimit(self, incr_limit, decr_limit):
