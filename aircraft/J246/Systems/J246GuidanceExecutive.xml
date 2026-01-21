@@ -224,7 +224,7 @@
               <property>guidance/executive/semimajor-axis-length-ft</property>
               <sum>
                 <value>1</value>
-                <property>guidance/executive/eccentricity</property>
+                <property>orbital/eccentricity</property>
               </sum>
             </product>
             <property>inertial/sea-level-radius_ft</property>
@@ -242,7 +242,7 @@
               <property>guidance/executive/semimajor-axis-length-ft</property>
               <difference>
                 <value>1</value>
-                <property>guidance/executive/eccentricity</property>
+                <property>orbital/eccentricity</property>
               </difference>
             </product>
             <property>inertial/sea-level-radius_ft</property>
