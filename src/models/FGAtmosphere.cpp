@@ -61,6 +61,10 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
   Name = "FGAtmosphere";
 
   bind();
+  SGPropertyNode* root = PropertyManager->GetNode();
+  atmosphere_node = root->getNode("atmosphere");
+
+  assert(atmosphere_node);
   Debug(0);
 }
 
@@ -141,11 +145,10 @@ double FGAtmosphere::ValidateTemperature(double t, const string& msg, bool quiet
 
 void FGAtmosphere::Calculate(double altitude)
 {
-  SGPropertyNode* root = PropertyManager->GetNode();
   double t =0.0;
   double p = 0.0;
 
-  if (!override_node) override_node = root->getNode("atmosphere/override");
+  if (!override_node) override_node = atmosphere_node->getNode("override");
 
   // Temperature and pressure
   if (override_node) {

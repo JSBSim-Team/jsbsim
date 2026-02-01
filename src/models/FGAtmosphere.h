@@ -237,10 +237,11 @@ protected:
   double KinematicViscosity = 0.0;
 
   // Nodes for atmospheric properties overridding
-  SGPropertyNode_ptr override_node = nullptr;
-  SGPropertyNode_ptr override_temperature_node = nullptr;
-  SGPropertyNode_ptr override_pressure_node = nullptr;
-  SGPropertyNode_ptr override_density_node = nullptr;
+  SGPropertyNode_ptr atmosphere_node;
+  SGPropertyNode_ptr override_node;
+  SGPropertyNode_ptr override_temperature_node;
+  SGPropertyNode_ptr override_pressure_node;
+  SGPropertyNode_ptr override_density_node;
 
   /// Calculate the atmosphere for the given altitude.
   virtual void Calculate(double altitude);
