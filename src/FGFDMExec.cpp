@@ -1086,9 +1086,9 @@ string FGFDMExec::GetPropulsionTankReport() const
 void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 {
   auto pcsNew = std::make_unique<struct PropertyCatalogStructure>();
-  SGPropertyNode* root = instance->GetNode();
-  const string root_name = GetFullyQualifiedName(root) + "/";
-  size_t root_name_length = root_name.length();
+  const SGPropertyNode* root_node = instance->GetNode();
+  const string root_name = GetFullyQualifiedName(root_node) + "/";
+  const size_t root_name_length = root_name.length();
 
   for (int i=0; i<pcs->node->nChildren(); i++) {
     string access="";
