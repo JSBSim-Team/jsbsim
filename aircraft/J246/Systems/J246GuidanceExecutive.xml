@@ -220,13 +220,7 @@
       <function>
         <quotient>
           <difference>
-            <product>
-              <property>guidance/executive/semimajor-axis-length-ft</property>
-              <sum>
-                <value>1</value>
-                <property>orbital/eccentricity</property>
-              </sum>
-            </product>
+            <property>orbital/apoapsis-radius-ft</property>
             <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
@@ -238,13 +232,7 @@
       <function>
         <quotient>
           <difference>
-            <product>
-              <property>guidance/executive/semimajor-axis-length-ft</property>
-              <difference>
-                <value>1</value>
-                <property>orbital/eccentricity</property>
-              </difference>
-            </product>
+            <property>orbital/periapsis-radius-ft</property>
             <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
