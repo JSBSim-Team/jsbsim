@@ -355,7 +355,12 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
         // Computes Rotation in engine frame
         FTransform ENUTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(AircraftState.ECEFLocation);
         FRotator LocalUERotation(AircraftState.LocalEulerAngles);
-        LocalUERotation.Yaw = LocalUERotation.Yaw - 90.0; // JSBSim heading is aero heading (0 at north). We have to remove 90 because in UE, 0 is pointing east.
+        LocalUERotation.Yaw -= 90.0; // JSBSim heading is aero heading (0 at north). We have to remove 90 because in UE, 0 is pointing east.
+        if (GeoReferencingSystem->PlanetShape == EPlanetShape::FlatPlanet) //Fix for Flat Planet bug 
+        {
+          LocalUERotation.Yaw -= 180.0;
+          ECEFForwardHorizontal.Y *= -1.0;
+        }
         FQuat EngineRotationQuat = ENUTransform.TransformRotation(LocalUERotation.Quaternion());
 
         FMatrix EngineRotation;
@@ -523,13 +528,18 @@ void UJSBSimMovementComponent::PrepareJSBSim()
     FTransform ENUTransform = GeoReferencingSystem->GetTangentTransformAtGeographicLocation(GeographicCoordinates);
     FQuat LocalECEFRotation = ENUTransform.InverseTransformRotation(Parent->GetActorQuat());
     FRotator PsiThetaPhi = LocalECEFRotation.Rotator();
+    int AddYaw = 90; // JSBSim to UE is differnet by 90 degrees
+    if (GeoReferencingSystem->PlanetShape == EPlanetShape::FlatPlanet) // Flat Planet has bug, off by 180 degrees.
+    {
+      AddYaw += 180;
+    }
 
     // Set it as initial conditions
     IC->SetLongitudeDegIC(GeographicCoordinates.Longitude);
     IC->SetGeodLatitudeDegIC(GeographicCoordinates.Latitude);
     IC->SetAltitudeASLFtIC(GeographicCoordinates.Altitude * METER_TO_FEET);
     IC->SetPhiDegIC(PsiThetaPhi.Roll);
-    IC->SetPsiDegIC(PsiThetaPhi.Yaw + 90);
+    IC->SetPsiDegIC(PsiThetaPhi.Yaw + AddYaw);
     IC->SetThetaDegIC(PsiThetaPhi.Pitch);
   }
 
