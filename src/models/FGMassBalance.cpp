@@ -395,34 +395,20 @@ FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
 
 void FGMassBalance::bind(void)
 {
-  typedef double (FGMassBalance::*PMF)(int) const;
-  PropertyManager->Tie("inertia/mass-slugs", this,
-                       &FGMassBalance::GetMass);
-  PropertyManager->Tie("inertia/weight-lbs", this,
-                       &FGMassBalance::GetWeight);
-  PropertyManager->Tie("inertia/empty-weight-lbs", this,
-                       &FGMassBalance::GetEmptyWeight);
-  PropertyManager->Tie("inertia/cg-x-in", this,1,
-                       (PMF)&FGMassBalance::GetXYZcg);
-  PropertyManager->Tie("inertia/cg-y-in", this,2,
-                       (PMF)&FGMassBalance::GetXYZcg);
-  PropertyManager->Tie("inertia/cg-z-in", this,3,
-                       (PMF)&FGMassBalance::GetXYZcg);
-  PropertyManager->Tie("inertia/ixx-slugs_ft2", this,
-                       &FGMassBalance::GetIxx);
-  PropertyManager->Tie("inertia/iyy-slugs_ft2", this,
-                       &FGMassBalance::GetIyy);
-  PropertyManager->Tie("inertia/izz-slugs_ft2", this,
-                       &FGMassBalance::GetIzz);
-  PropertyManager->Tie("inertia/ixy-slugs_ft2", this,
-                       &FGMassBalance::GetIxy);
-  PropertyManager->Tie("inertia/ixz-slugs_ft2", this,
-                       &FGMassBalance::GetIxz);
-  PropertyManager->Tie("inertia/iyz-slugs_ft2", this,
-                       &FGMassBalance::GetIyz);
-  typedef int (FGMassBalance::*iOPV)() const;
-  PropertyManager->Tie("inertia/print-mass-properties", this, (iOPV)0,
-                       &FGMassBalance::GetMassPropertiesReport);
+  PropertyManager->Tie("inertia/mass-slugs", this, &FGMassBalance::GetMass);
+  PropertyManager->Tie("inertia/weight-lbs", this, &FGMassBalance::GetWeight);
+  PropertyManager->Tie("inertia/empty-weight-lbs", this, &FGMassBalance::GetEmptyWeight);
+  PropertyManager->Tie("inertia/cg-x-in", this, eX, &FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/cg-y-in", this, eY, &FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/cg-z-in", this, eZ, &FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/ixx-slugs_ft2", this, &FGMassBalance::GetIxx);
+  PropertyManager->Tie("inertia/iyy-slugs_ft2", this, &FGMassBalance::GetIyy);
+  PropertyManager->Tie("inertia/izz-slugs_ft2", this, &FGMassBalance::GetIzz);
+  PropertyManager->Tie("inertia/ixy-slugs_ft2", this, &FGMassBalance::GetIxy);
+  PropertyManager->Tie("inertia/ixz-slugs_ft2", this, &FGMassBalance::GetIxz);
+  PropertyManager->Tie("inertia/iyz-slugs_ft2", this, &FGMassBalance::GetIyz);
+  PropertyManager->Tie<FGMassBalance, int>("inertia/print-mass-properties", this,
+                                            nullptr, &FGMassBalance::GetMassPropertiesReport);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

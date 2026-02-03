@@ -3,17 +3,16 @@
 <fdm_config name="737" release="BETA" version="2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
-    
+
     <fileheader>
         <author> Dave Culp </author>
         <author> Aeromatic </author>
-        <filecreationdate> 2006-01-04 </filecreationdate>
+        <license
+          licenseName="GPL (General Public License)"
+          licenseURL="http://www.gnu.org/licenses/gpl.html"/>
+        <filecreationdate>2006-01-04</filecreationdate>
         <version>$Revision: 1.43 $</version>
         <description> Models a Boeing 737. </description>
-        <license>
-          <licenseName>GPL (General Public License)</licenseName>
-          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
         <note>
         This model was created using publicly available data, publicly available
         technical reports, textbooks, and guesses. It contains no proprietary or
@@ -115,7 +114,7 @@
             <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
             <damping_coeff_rebound unit="LBS/FT/SEC">20000</damping_coeff_rebound>
-            
+
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
@@ -844,7 +843,7 @@
 
     <!-- 41 properties output, + 1 for the time stamp -->
  <!--output name="localhost" type="SOCKET" port="5138" protocol="UDP" rate="10">
-   
+
   <property> velocities/vc-kts </property>
   <property> position/h-sl-ft </property>
   <property> attitude/theta-deg </property>
@@ -888,23 +887,22 @@
   <property> fcs/speedbrake-pos-norm </property>
   <property> fcs/right-aileron-pos-norm </property>
   <property> fcs/elevator-pos-norm </property>
-  
+
   <property> fcs/rudder-pos-norm </property>
-  
+
  </output-->
 
  <!-- this is the telnet interface -->
- <input port="5137" /> 
- 
+ <input port="5137" />
+
  <!-- 6 properties input, + 1 for the time stamp -->
  <input port="5139" type="QTJSBSIM" rate="20">
-  <property> fcs/aileron-cmd-norm </property> 
-  <property> fcs/elevator-cmd-norm </property> 
-  <property> fcs/rudder-cmd-norm </property> 
-  <property> fcs/throttle-cmd-norm[0] </property> 
+  <property> fcs/aileron-cmd-norm </property>
+  <property> fcs/elevator-cmd-norm </property>
+  <property> fcs/rudder-cmd-norm </property>
+  <property> fcs/throttle-cmd-norm[0] </property>
   <property> fcs/throttle-cmd-norm[1] </property>
-  <property> simulation/terminate </property> 
- </input>  
+  <property> simulation/terminate </property>
+ </input>
 
 </fdm_config>
-

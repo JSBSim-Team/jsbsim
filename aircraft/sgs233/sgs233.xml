@@ -6,7 +6,7 @@
 
     <fileheader>
         <author> Unknown </author>
-        <filecreationdate> 2001-01-01 </filecreationdate>
+        <filecreationdate>2001-01-01</filecreationdate>
         <version> $Revision: 1.10 $ </version>
         <description> SGS-233 glider </description>
       <note>
@@ -60,7 +60,7 @@
         </location>
         <pointmass name="name">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 43 </x>
                 <y> 0 </y>
                 <z> 4 </z>
@@ -68,7 +68,7 @@
         </pointmass>
         <pointmass name="name">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 85 </x>
                 <y> 0 </y>
                 <z> 4 </z>

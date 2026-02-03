@@ -11,7 +11,6 @@ env:
 
 jobs:
   XML-validation:
-    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') || github.event_name == 'pull_request' }}
     name: XML validation
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install libxml2-utils
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Validate scripts files
         run: |
           for filename in scripts/*.xml; do
@@ -36,6 +35,16 @@ jobs:
               [ -e "$filename" ] || continue
               xmllint --noout --schema JSBSimSystem.xsd $filename
           done
+      - name: Valide aircraft files
+        run: |
+          for dir in $(ls -d aircraft/*); do
+            base=$(basename $dir)
+            [ "$base" != "blank" ] || continue
+            filename="${dir}/${base}.xml"
+            if [ -f "$filename" ]; then
+                xmllint --noout --schema JSBSim.xsd $filename
+            fi
+          done
 
   MSIS-validation:
     name: MSIS code validation
@@ -46,7 +55,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Configure the MSIS test program
         run: |
           mkdir build && cd build
@@ -88,18 +97,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install cxxtest valgrind binutils-dev
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/pip
             build/Testing/Temporary/CTestCostData.txt
           key: ${{ runner.os }}-3.9-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: Install Python packages
@@ -115,7 +124,7 @@ jobs:
       - name: Checkout Backward-cpp
         if: matrix.display_stack_trace == 'ON'
         id: BackwardCppCheckout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: bombela/backward-cpp
           ref: 'v1.6'
@@ -148,7 +157,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: Linux-${{ matrix.os }}-system_expat_${{ matrix.expat }}-shared_libs_${{ matrix.shared_libs }}.logs
@@ -161,7 +170,7 @@ jobs:
         run: valgrind-ci valgrind_Short_S23_3.xml --number-of-errors --summary --source=.
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: env.release == 'true' && env.static_link == 'true'
         with:
           name: Linux-${{ matrix.os }}.binaries
@@ -173,15 +182,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-13, ubuntu-22.04, windows-latest ]
+        os: [ macos-14, ubuntu-22.04, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v2
         with:
-          release: R2022a
+          release: R2023b
           products: Simulink
       - name: Configure JSBSim
         run: |
@@ -219,13 +228,13 @@ jobs:
 
       - name: Upload Files for Release (Linux & MacOSX)
         if: steps.tests-unix.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: build/matlab/JSBSim_SFunction.mex*
       - name: Upload Files for Release (Windows)
         if: steps.tests-windows.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Matlab-SFunction-${{ runner.os }}.binaries
           path: |
@@ -243,13 +252,13 @@ jobs:
         shared_libs: [ON, OFF]
     steps:
       - name: Set up Python 3.10
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.10'
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Checkout CxxTest
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -278,7 +287,7 @@ jobs:
 
     # Upload files
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: Windows_MinGW.logs
@@ -294,24 +303,24 @@ jobs:
         shared_libs: [ON, OFF]
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~\AppData\Local\pip\Cache
             build\Testing\Temporary\CTestCostData.txt
           key: ${{ runner.os }}-3.9-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: Install Python packages
         run: pip install -r python/requirements.txt
       - name: Checkout CxxTest
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -322,7 +331,7 @@ jobs:
           cp python/python3/cxxtest/*.py cxxtest/.
           cp python/python3/scripts/cxxtestgen .
       - name: Checkout Backward-cpp
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: bombela/backward-cpp
           ref: 'v1.6'
@@ -349,7 +358,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: Windows_MSVC.logs
@@ -358,7 +367,7 @@ jobs:
             build/tests/*-build.log
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: env.release == 'true' && matrix.shared_libs == 'OFF'
         with:
           name: ${{ runner.os }}.binaries
@@ -376,19 +385,19 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Checkout JSBSim logos
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: JSBSim-Team/jsbsim-logo
           path: jsbsim-logo
       - name: Download binary file for JSBSim.iss
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: Matlab-SFunction-Windows.binaries
           path: build
       - name: Download JSBSim library and executable
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: Windows.binaries
       - name: Update the version of JSBSim in matlab/README.md
@@ -426,7 +435,7 @@ jobs:
           # Compile the installer with Inno Setup
           iscc JSBSim.iss
       - name: Upload the installer for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Windows-installer.binaries
           path: |
@@ -435,31 +444,23 @@ jobs:
   MacOSX:
     name: C/C++ build (MacOSX)
     needs: [XML-validation, MSIS-validation]
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-13]
-        python-version: [3.9]
-        include:
-          - os: macos-14
-            python-version: '3.10'
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-14
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/Library/Caches/pip
             build/Testing/Temporary/CTestCostData.txt
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
+          key: macos14-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.10'
       - name: Install Python packages
         run: |
           pip install -r python/requirements.txt
@@ -467,7 +468,7 @@ jobs:
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
       - name: Install & Configure Doxygen
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        if: env.release == 'true'
         run: |
           brew install doxygen
           # We don't want Doxygen to generate the HTML docs in this job (saves time)
@@ -475,7 +476,7 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Checkout CxxTest
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
@@ -496,7 +497,7 @@ jobs:
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        if: env.release == 'true'
         working-directory: build/python
         run: |
           echo "::group::Generate the type hints stub"
@@ -509,7 +510,6 @@ jobs:
           python -m build --sdist
           echo "::endgroup::"
       - name: Check reset for real time execution
-        if: matrix.os == 'macos-14'
         run: |
           start_time=$(date +%s)
           ./build/src/JSBSim scripts/c172_cruise_8K.xml --realtime --nice
@@ -522,7 +522,7 @@ jobs:
 
     # On failure, upload logs
       - name: On failure - Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: MacOSX.logs
@@ -531,8 +531,8 @@ jobs:
             build/tests/*-build.log
 
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
-        if: env.release == 'true' && matrix.os == 'macos-13'
+        uses: actions/upload-artifact@v6
+        if: env.release == 'true'
         with:
           name: ${{ runner.os }}.binaries
           path: |
@@ -551,13 +551,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: macOS.binaries
       - name: Build Python module from sources (Linux & MacOSX)
@@ -591,13 +591,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13, windows-2022]
+        os: [ubuntu-latest, macos-14, windows-2022]
 
     steps:
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: Install Python packages
@@ -608,7 +608,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen
       - name: Install Doxygen (MacOSX)
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-14'
         run: brew install doxygen
       - name: Install Doxygen (Windows)
         if: runner.os == 'Windows'
@@ -620,7 +620,7 @@ jobs:
           perl -i -pe 's/^(GENERATE_HTML\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
           perl -i -pe 's/^(HAVE_DOT\s*=\s*)YES/\1NO/g' doc/JSBSim.dox.in
       - name: Download source package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: macOS.binaries
       - name: Configure JSBSim (BSD/Unix)
@@ -716,43 +716,10 @@ jobs:
           pip uninstall jsbsim -y
           deactivate
       - name: Upload Files for Release
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.os }}-Wheels.binaries
           path: ./wheelhouse/*.whl
-
-  Codecov:
-    name: Code coverage
-    needs: Linux
-    if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Ubuntu packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install cxxtest lcov
-      - name: Checkout JSBSim
-        uses: actions/checkout@v4
-      - name: Configure JSBSim
-        run: |
-          mkdir build && cd build
-          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
-      - name: Build JSBSim
-        working-directory: build
-        run: make --jobs=$(nproc)
-      - name: Run JSBSim tests
-        working-directory: build
-        run: ctest -R Test1 --output-on-failure
-      - name: Generate coverage report
-        working-directory: build
-        run: make lcov
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./build/lcov/data/capture/all_targets.info
-          token: ${{ secrets.CODECOV_TOKEN }}
-          disable_search: true
-          fail_ci_if_error: true
 
   Rolling-Release:
     needs: [Test-Build-PyPackage-From-Source, Windows-MinGW, Windows-installer]
@@ -761,7 +728,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - name: Download files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
       - name: Prepare files
         run: |
           mkdir dist
@@ -795,7 +762,7 @@ jobs:
       id-token: write  # Mandatory for PyPI trusted publishing
     steps:
       - name: Download files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
       - name: Prepare files for deployment
         run: |
           find . -type f -name MSVC_version.txt -exec cp {} . \;
@@ -808,7 +775,7 @@ jobs:
 
       # PyPI deployment
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: PyPI deployment
@@ -851,7 +818,7 @@ jobs:
 
       # Bump version
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Bump version
@@ -885,7 +852,7 @@ jobs:
 
       # Bump stable version of the `master` branch
       - name: Checkout JSBSim master branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
           path: _master
@@ -923,19 +890,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen graphviz
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.9'
       - name: Install Python packages
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
           cmake ..
       - name: Download Python wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ubuntu-latest-Wheels.binaries
           path: build
@@ -948,7 +915,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           # upload entire directory
           path: 'build/documentation/html'

@@ -95,7 +95,7 @@
 
    <pointmass name="left-tip-tank"><!--empty-->
       <weight unit="LBS">125</weight>
-      <location name="POINTMASS" unit="IN">
+      <location unit="IN">
           <x>389</x>
           <y>-148</y>
           <z>-52</z>
@@ -104,7 +104,7 @@
 
    <pointmass name="right-tip-tank"><!--empty-->
       <weight unit="LBS">125</weight>
-      <location name="POINTMASS" unit="IN">
+      <location unit="IN">
           <x>389</x>
           <y>148</y>
           <z>-52</z>

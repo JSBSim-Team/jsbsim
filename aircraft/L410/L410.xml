@@ -7,7 +7,7 @@
         <author> Jiri Javurek, jjavurek@walterengines.com </author>
         <author> Jiri Javurek, javky@rozhled.cz </author>
         <author> Jon Berndt, jsb@hal-pc.org (conversion to v2.0 only) </author>
-        <filecreationdate> 2005-11-01 </filecreationdate>
+        <filecreationdate>2005-11-01</filecreationdate>
         <version> 4.0 </version>
         <description> Czech Republic LET 410 Light Twin </description>
       <note>
@@ -467,7 +467,6 @@
 
         <scheduled_gain name="indicated-eng-propshaft1">
             <input>/engines/engine[0]/thruster/torque</input>
-            <gain>-0.0571</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -475,12 +474,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>-0.0571</gain>
             <output>/instrumentation/engine/indicated-pshaft1-perc</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-eng-propshaft2">
             <input>/engines/engine[1]/thruster/torque</input>
-            <gain>-0.0571</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -488,6 +487,7 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>-0.0571</gain>
             <output>/instrumentation/engine/indicated-pshaft2-perc</output>
         </scheduled_gain>
 
@@ -517,7 +517,6 @@
 
         <scheduled_gain name="indicated-fuelfl1-kgph">
             <input>/engines/engine[0]/fuel-flow_pph</input>
-            <gain>0.4536</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -525,12 +524,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.4536</gain>
             <output>/instrumentation/engine/indicated-fuelfl1-kgph</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-fuelfl2-kgph">
             <input>/engines/engine[1]/fuel-flow_pph</input>
-            <gain>0.4536</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -538,12 +537,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.4536</gain>
             <output>/instrumentation/engine/indicated-fuelfl2-kgph</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-fuel1-kg">
             <input>/consumables/fuel/tank/level-lb</input>
-            <gain>0.4536</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -551,12 +550,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.4536</gain>
             <output>/instrumentation/engine/indicated-fuel1-kg</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-fuel2-kg">
             <input>/consumables/fuel/tank[1]/level-lb</input>
-            <gain>0.4536</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -564,6 +563,7 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.4536</gain>
             <output>/instrumentation/engine/indicated-fuel2-kg</output>
         </scheduled_gain>
 
@@ -653,7 +653,6 @@
 
         <scheduled_gain name="indicated-parkingbrake-kp_cm2">
             <input>/controls/gear/brake-parking</input>
-            <gain>25.0000</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -661,12 +660,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>25.0000</gain>
             <output>/instrumentation/pressure/indicated-parkingbrake-kp_cm2</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-leftbrake-kp_cm2">
             <input>/controls/gear/brake-left</input>
-            <gain>45.0000</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -674,12 +673,12 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>45.0000</gain>
             <output>/instrumentation/pressure/indicated-leftbrake-kp_cm2</output>
         </scheduled_gain>
 
         <scheduled_gain name="indicated-rightbrake-kp_cm2">
             <input>/controls/gear/brake-right</input>
-            <gain>45.0000</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -687,6 +686,7 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>45.0000</gain>
             <output>/instrumentation/pressure/indicated-rightbrake-kp_cm2</output>
         </scheduled_gain>
 
@@ -697,7 +697,6 @@
 
         <scheduled_gain name="temp-oil1-2">
             <input>fcs/temp-oil1-1</input>
-            <gain>0.5555</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -705,6 +704,7 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.5555</gain>
             <output>/instrumentation/temperature/indicated-oil1-degc</output>
         </scheduled_gain>
 
@@ -715,7 +715,6 @@
 
         <scheduled_gain name="temp-oil2-2">
             <input>fcs/temp-oil2-1</input>
-            <gain>0.5555</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
                 <tableData>
@@ -723,6 +722,7 @@
                     1.0000	1.0000
                 </tableData>
             </table>
+            <gain>0.5555</gain>
             <output>/instrumentation/temperature/indicated-oil2-degc</output>
         </scheduled_gain>
 
