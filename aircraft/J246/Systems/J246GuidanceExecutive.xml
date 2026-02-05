@@ -162,71 +162,11 @@
 
   <channel name="Orbital Parameters">
 
-    <fcs_function name="guidance/executive/semimajor-axis-length-ft">
-      <description>
-        This equation calculates the semimajor-axis length in feet. a = mu/(2*mu/r - v^2) 
-      </description>
-      <function>
-        <quotient>
-          <p> guidance/executive/gm </p>
-          <difference>
-            <quotient>
-              <product>
-                <v> 2.0 </v>
-                <p> guidance/executive/gm </p>
-              </product>
-              <p> position/radius-to-vehicle-ft </p>
-            </quotient>
-            <pow>
-              <p> velocities/eci-velocity-mag-fps </p>
-              <v> 2.0 </v>
-            </pow>
-          </difference>
-        </quotient>
-      </function>
-    </fcs_function>
-
-    <fcs_function name="guidance/executive/eccentricity">
-      <description>
-        This equation calculates eccentricity. e = sqrt (1 - [ r v cos(gamma) ]^2 / {a * mu})
-      </description>
-      <function>
-        <pow>
-          <difference>
-            <v> 1.0 </v>
-            <quotient>
-              <pow>
-                <product>
-                  <property> position/radius-to-vehicle-ft </property>
-                  <property> velocities/eci-velocity-mag-fps </property>
-                  <cos>
-                    <property> flight-path/gamma-rad </property>
-                  </cos>
-                </product>
-                <v> 2.0 </v>
-              </pow>
-              <product>
-                <p> guidance/executive/semimajor-axis-length-ft </p>
-                <p> guidance/executive/gm </p>
-              </product>
-            </quotient>
-          </difference>
-          <v> 0.5 </v>
-        </pow>
-      </function>
-    </fcs_function>
-
     <fcs_function name="guidance/executive/apoapsis">
       <function>
         <quotient>
           <difference>
-            <product>
-              <property>guidance/executive/semimajor-axis-length-ft</property>
-              <sum>
-                <value>1</value>
-                <property>guidance/executive/eccentricity</property>
-              </sum>
-            </product>
+            <property>orbital/apoapsis-radius-ft</property>
             <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
@@ -238,13 +178,7 @@
       <function>
         <quotient>
           <difference>
-            <product>
-              <property>guidance/executive/semimajor-axis-length-ft</property>
-              <difference>
-                <value>1</value>
-                <property>guidance/executive/eccentricity</property>
-              </difference>
-            </product>
+            <property>orbital/periapsis-radius-ft</property>
             <property>inertial/sea-level-radius_ft</property>
           </difference>
           <value>5280</value>
