@@ -26,7 +26,7 @@
         <property caption="ECI Velocity (fps):      "> velocities/eci-velocity-mag-fps </property>
         <property caption="Orbital apogee (miles):  "> guidance/executive/apoapsis </property>
         <property caption="Orbital perigee (miles): "> guidance/executive/periapsis </property>
-        <property caption="Orbital eccentricity:    "> guidance/executive/eccentricity </property>
+        <property caption="Orbital eccentricity:    "> orbital/eccentricity </property>
         <property caption="Altitude AGL (ft):       "> position/h-agl-ft </property>
         <property caption="Alpha (deg):             "> aero/alpha-deg </property>
         <property caption="Pitch rate cmd:          "> guidance/executive/gravity-turn-pitch-rate-command </property>
