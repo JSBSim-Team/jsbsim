@@ -655,7 +655,7 @@ jobs:
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
           echo "::endgroup::"
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23
+        uses: pypa/cibuildwheel@v3.3
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
