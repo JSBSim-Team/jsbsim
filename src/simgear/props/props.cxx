@@ -204,7 +204,7 @@ parse_name (const string &path, int &i)
       } else if (path[i] == '[' || path[i] == '/') {
         break;
       } else {
-        throw string("name may contain only ._- and alphanumeric characters");
+        throw string("name may contain only ._- and alphanumeric characters :")+path;
       }
       i++;
     }
