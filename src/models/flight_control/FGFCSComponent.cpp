@@ -132,7 +132,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     bool node_exists = PropertyManager->HasNode(output_node_name);
     SGPropertyNode* OutputNode = PropertyManager->GetNode( output_node_name, true );
     if (!OutputNode) {
-      XMLLogException err(fcs->GetExec()->GetLogger(), out_elem);
+      XMLLogException err(out_elem);
       err << "  Unable to process property: " << output_node_name << "\n";
       throw err;
     }
@@ -158,7 +158,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       } else if (delayType == "frames") {
         delay = (unsigned int)delay_time;
       } else {
-        FGXMLLogging log(fcs->GetExec()->GetLogger(), delay_elem, LogLevel::ERROR);
+        FGXMLLogging log(delay_elem, LogLevel::ERROR);
         log << "Unallowed delay type\n";
       }
     } else {
@@ -172,7 +172,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   if (clip_el) {
     Element* el = clip_el->FindElement("min");
     if (!el) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), clip_el, LogLevel::ERROR);
+      FGXMLLogging log(clip_el, LogLevel::ERROR);
       log << "Element <min> is missing, <clipto> is ignored.\n";
       return;
     }
@@ -181,7 +181,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
     el = clip_el->FindElement("max");
     if (!el) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), clip_el, LogLevel::ERROR);
+      FGXMLLogging log(clip_el, LogLevel::ERROR);
       log << "Element <max> is missing, <clipto> is ignored.\n";
       ClipMin = nullptr;
       return;
@@ -221,7 +221,7 @@ void FGFCSComponent::CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* 
   size_t num = InputNodes.size();
 
   if (num < MinNodes) {
-    XMLLogException err(fcs->GetExec()->GetLogger(), el);
+    XMLLogException err(el);
     err << "    Not enough <input> nodes are provided\n"
         << "    Expecting " << MinNodes << " while " << num
         << " are provided.\n";
@@ -229,7 +229,7 @@ void FGFCSComponent::CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* 
   }
 
   if (num > MaxNodes) {
-    FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::ERROR);
+    FGXMLLogging log(el, LogLevel::ERROR);
     log << "    Too many <input> nodes are provided\n"
         << "    Expecting " << MaxNodes << " while " << num
         << " are provided.\n"
@@ -272,7 +272,7 @@ void FGFCSComponent::Clip(void)
     double range = vmax - vmin;
 
     if (range < 0.0) {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Trying to clip with a max value (" << fixed << vmax << ") from "
           << ClipMax->GetName() << " lower than the min value (" << vmin
           << ") from " << ClipMin->GetName() << ".\n"
@@ -321,7 +321,7 @@ void FGFCSComponent::bind(Element* el, FGPropertyManager* PropertyManager)
       node->setDoubleValue(Output);
   }
   else {
-    FGXMLLogging log(fcs->GetExec()->GetLogger(), el, LogLevel::ERROR);
+    FGXMLLogging log(el, LogLevel::ERROR);
     log << "Could not get or create property " << tmp << "\n";
   }
 }
@@ -351,7 +351,7 @@ void FGFCSComponent::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n    Loading Component \"" << Name << fixed
           << "\" of type: " << Type << "\n";
 
@@ -364,7 +364,7 @@ void FGFCSComponent::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGFCSComponent\n";
     if (from == 1) log << "Destroyed:    FGFCSComponent\n";
   }

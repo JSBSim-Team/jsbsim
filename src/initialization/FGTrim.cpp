@@ -80,7 +80,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
   debug_axis=tAll;
   SetMode(tt);
   if (debug_lvl & 2) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "Instantiated: FGTrim\n";
   }
 }
@@ -89,7 +89,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt)
 
 FGTrim::~FGTrim(void) {
   if (debug_lvl & 2) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "Destroyed:    FGTrim\n";
   }
 }
@@ -98,7 +98,7 @@ FGTrim::~FGTrim(void) {
 
 void FGTrim::TrimStats() {
   int run_sum=0;
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "\n  Trim Statistics:\n";
   log << "    Total Iterations: " << total_its << "\n";
   if( total_its > 0) {
@@ -119,7 +119,7 @@ void FGTrim::TrimStats() {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::Report(void) {
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "  Trim Results:\n";
   for(unsigned int current_axis=0; current_axis<TrimAxes.size(); current_axis++)
     TrimAxes[current_axis].AxisReport();
@@ -130,8 +130,8 @@ void FGTrim::Report(void) {
 void FGTrim::ClearStates(void) {
     mode=tCustom;
     TrimAxes.clear();
-    //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
-    //log << "TrimAxes.size(): " << TrimAxes.size() << "\n";
+  //FGLogging log(LogLevel::INFO);
+  //log << "TrimAxes.size(): " << TrimAxes.size() << "\n";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +229,7 @@ bool FGTrim::DoTrim(void) {
 
   //clear the sub iterations counts & zero out the controls
   for(unsigned int current_axis=0;current_axis<TrimAxes.size();current_axis++) {
-    //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    //FGLogging log(LogLevel::INFO);
     //log << current_axis << "  " << TrimAxes[current_axis]->GetStateName()
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< "\n";
     xlo=TrimAxes[current_axis].GetControlMin();
@@ -243,7 +243,7 @@ bool FGTrim::DoTrim(void) {
   }
 
   if(mode == tPullup ) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << "Setting pitch rate and nlf...\n";
     setupPullup();
     log << "pitch rate done ...\n";
@@ -282,7 +282,7 @@ bool FGTrim::DoTrim(void) {
     }
 
     if((axis_count == TrimAxes.size()-1) && (TrimAxes.size() > 1)) {
-      //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      //FGLogging log(LogLevel::INFO);
       //log << TrimAxes.size()-1 << " out of " << TrimAxes.size() << "!" << "\n";
       //At this point we can check the input limits of the failed axis
       //and declare the trim failed if there is no sign change. If there
@@ -298,7 +298,7 @@ bool FGTrim::DoTrim(void) {
             if( (gamma_fallback) &&
                 (TrimAxes[current_axis].GetStateType() == tUdot) &&
                 (TrimAxes[current_axis].GetControlType() == tThrottle)) {
-              FGLogging log(fdmex->GetLogger(), LogLevel::WARN);
+              FGLogging log(LogLevel::WARN);
               log << "  Can't trim udot with throttle, trying flight"
               << " path angle. (" << N << ")\n";
               if(TrimAxes[current_axis].GetState() > 0)
@@ -308,7 +308,7 @@ bool FGTrim::DoTrim(void) {
               TrimAxes[current_axis].Run();
               TrimAxes[current_axis]=FGTrimAxis(fdmex,&fgic,tUdot,tGamma);
             } else {
-              FGLogging log(fdmex->GetLogger(), LogLevel::ERROR);
+              FGLogging log(LogLevel::ERROR);
               log << "  Sorry, " << TrimAxes[current_axis].GetStateName()
               << " doesn't appear to be trimmable\n";
               //total_its=k;
@@ -326,7 +326,7 @@ bool FGTrim::DoTrim(void) {
   if((!trim_failed) && (axis_count >= TrimAxes.size())) {
     total_its=N;
     if (debug_lvl > 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  Trim successful\n";
     }
   } else { // The trim has failed
@@ -349,7 +349,7 @@ bool FGTrim::DoTrim(void) {
       trimOnGround();
 
     if (debug_lvl > 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "\n  Trim failed\n";
     }
   }
@@ -533,7 +533,7 @@ FGTrim::RotationParameters FGTrim::calcRotation(vector<ContactPoints>& contacts,
     // the ground is (0, DistPlane, alpha) in the basis (u, v, t)
     double mag = sqrRadius - DistPlane * DistPlane;
     if (mag < 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::WARN);
+      FGLogging log(LogLevel::WARN);
       log << "FGTrim::calcRotation DistPlane^2 larger than sqrRadius\n";
     }
     double alpha = sqrt(max(mag, 0.0));
@@ -586,7 +586,7 @@ bool FGTrim::solve(FGTrimAxis& axis) {
       axis.Run();
       f2=axis.GetState();
       if(Debug > 1) {
-        FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+        FGLogging log(LogLevel::DEBUG);
         log << "FGTrim::solve Nsub,x1,x2,x3: " << Nsub << ", " << x1
         << ", " << x2 << ", " << x3 << "\n";
         log << "                             " << f1 << ", " << f2 << ", " << f3 << "\n";
@@ -595,18 +595,18 @@ bool FGTrim::solve(FGTrimAxis& axis) {
         x3=x2;
         f3=f2;
         f1=relax*f1;
-        //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+        //FGLogging log(LogLevel::INFO);
         //log << "Solution is between x1 and x2" << "\n";
       }
       else if(f2*f3 <= 0.0) {
         x1=x2;
         f1=f2;
         f3=relax*f3;
-        //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+        //FGLogging log(LogLevel::INFO);
         //log << "Solution is between x2 and x3" << "\n";
 
       }
-      //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      //FGLogging log(LogLevel::INFO);
       //log << i << "\n";
 
 
@@ -690,7 +690,7 @@ bool FGTrim::findInterval(FGTrimAxis& axis) {
     lastalo=alo;lastahi=ahi;
     if( !found && xlo==xmin && xhi==xmax ) continue;
     if(Debug > 1) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "FGTrim::findInterval: Nsub=" << Nsub << " Lo= " << xlo
           << " Hi= " << xhi << " alo*ahi: " << alo*ahi << "\n";
     }
@@ -728,7 +728,7 @@ bool FGTrim::checkLimits(FGTrimAxis& axis)
   axis.Run();
   ahi=axis.GetState();
   if(Debug > 1) {
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "checkLimits() xlo,xhi,alo,ahi: " << xlo << ", " << xhi << ", "
         << alo << ", " << ahi << "\n";
   }
@@ -758,7 +758,7 @@ void FGTrim::setupPullup() {
   double g,q,cgamma;
   g=fdmex->GetInertial()->GetGravity().Magnitude();
   cgamma=cos(fgic.GetFlightPathAngleRadIC());
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
        << fgic.GetVtrueFpsIC() << "\n";
   q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
@@ -777,7 +777,7 @@ void FGTrim::setupTurn(void){
     targetNlf = 1 / cos(phi);
     g = fdmex->GetInertial()->GetGravity().Magnitude();
     psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
-    FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    FGLogging log(LogLevel::INFO);
     log << targetNlf << ", " << psidot << "\n";
   }
 
@@ -833,7 +833,7 @@ void FGTrim::SetMode(TrimMode tt) {
     switch(tt) {
       case tFull:
         if (debug_lvl > 0) {
-          FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+          FGLogging log(LogLevel::DEBUG);
           log << "  Full Trim\n";
         }
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha));
@@ -846,7 +846,7 @@ void FGTrim::SetMode(TrimMode tt) {
         break;
       case tLongitudinal:
         if (debug_lvl > 0) {
-          FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+          FGLogging log(LogLevel::DEBUG);
           log << "  Longitudinal Trim\n";
         }
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAlpha ));
@@ -855,7 +855,7 @@ void FGTrim::SetMode(TrimMode tt) {
         break;
       case tGround:
         if (debug_lvl > 0) {
-          FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+          FGLogging log(LogLevel::DEBUG);
           log << "  Ground Trim\n";
         }
         TrimAxes.push_back(FGTrimAxis(fdmex,&fgic,tWdot,tAltAGL ));
@@ -883,7 +883,7 @@ void FGTrim::SetMode(TrimMode tt) {
       case tNone:
         break;
     }
-    //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    //FGLogging log(LogLevel::INFO);
     //log << "TrimAxes.size(): " << TrimAxes.size() << "\n";
     sub_iterations.resize(TrimAxes.size());
     successful.resize(TrimAxes.size());

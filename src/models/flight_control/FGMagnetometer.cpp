@@ -53,7 +53,7 @@ CLASS IMPLEMENTATION
 
 FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
   : FGSensor(fcs, element),
-    FGSensorOrientation(element, fcs->GetExec()->GetLogger()),
+    FGSensorOrientation(element),
     counter(0), INERTIAL_UPDATE_RATE(1000)
 {
   Propagate = fcs->GetExec()->GetPropagate();
@@ -64,7 +64,7 @@ FGMagnetometer::FGMagnetometer(FGFCS* fcs, Element* element)
   if (location_element)
     vLocation = location_element->FindElementTripletConvertTo("IN");
   else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "No location given for magnetometer.\n";
     throw err;
   }
@@ -174,13 +174,13 @@ void FGMagnetometer::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor
       log << "        Axis: " << ax[axis] << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGMagnetometer\n";
     if (from == 1) log << "Destroyed:    FGMagnetometer\n";
   }

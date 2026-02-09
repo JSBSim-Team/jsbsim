@@ -106,12 +106,15 @@ protected:
   LogLevel log_level = LogLevel::BULK;
 };
 
+using FGLogger_ptr = std::shared_ptr<FGLogger>;
+
+JSBSIM_API void SetLogger(FGLogger_ptr logger);
+JSBSIM_API FGLogger_ptr GetLogger(void);
+
 class JSBSIM_API FGLogging
 {
 public:
-  FGLogging(std::shared_ptr<FGLogger> logger, LogLevel level)
-    : logger(logger)
-  { logger->SetLevel(level); }
+  FGLogging(LogLevel level);
 
   virtual ~FGLogging() { Flush(); }
   FGLogging& operator<<(const char* message) { buffer << message ; return *this; }
@@ -134,14 +137,16 @@ public:
   FGLogging& operator<<(LogFormat format);
   void Flush(void);
 protected:
-  std::shared_ptr<FGLogger> logger;
+  FGLogging(FGLogger_ptr l) : logger(l) {}
+
+  FGLogger_ptr logger;
   std::ostringstream buffer;
 };
 
 class JSBSIM_API FGXMLLogging : public FGLogging
 {
 public:
-  FGXMLLogging(std::shared_ptr<FGLogger> logger, Element* el, LogLevel level);
+  FGXMLLogging(Element* el, LogLevel level);
 };
 
 class JSBSIM_API FGLogConsole : public FGLogger
@@ -152,6 +157,7 @@ public:
   { buffer.append("\nIn file " + filename + ": line " + std::to_string(line) + "\n"); }
   void Format(LogFormat format) override;
   void Flush(void) override;
+  ~FGLogConsole() override { Flush(); }
 
   void Message(const std::string& message) override {
     if (log_level < min_level) return;
@@ -166,7 +172,7 @@ private:
 class JSBSIM_API LogException : public BaseException, public FGLogging
 {
 public:
-  LogException(std::shared_ptr<FGLogger> logger);
+  LogException();
   LogException(LogException& other);
   const char* what() const noexcept override;
 };
@@ -174,7 +180,9 @@ public:
 class JSBSIM_API XMLLogException : public LogException
 {
 public:
-  XMLLogException(std::shared_ptr<FGLogger> logger, Element* el);
+  // Construct an XMLLogException using the current thread-local logger
+  // and the supplied Element to add file/line location information.
+  XMLLogException(Element* el);
   /// This constructor can promote a LogException to an XMLLogException
   /// by adding the file location information to the exception.
   /// This is useful to add some context to an exception that was thrown in a

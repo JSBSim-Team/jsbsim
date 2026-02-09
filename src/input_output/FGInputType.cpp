@@ -142,7 +142,7 @@ void FGInputType::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGInputType\n";
     if (from == 1) log << "Destroyed:    FGInputType\n";
   }

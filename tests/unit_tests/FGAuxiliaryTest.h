@@ -35,6 +35,13 @@ public:
     fdmex.GetPropertyManager()->Unbind(aux);
   }
 
+  ~FGAuxiliaryTest() {
+    // Avoid constructing `FGLogging` instances in a static instance of
+    // FGAuxiliaryTest. This is due to the destruction of thread local storage
+    // *before* the destruction of static globals.
+    JSBSim::FGJSBBase::debug_lvl = 0;
+  }
+
   void testPitotTotalPressure() {
     auto aux = FGAuxiliary(&fdmex);
     aux.in.vLocation = fdmex.GetAuxiliary()->in.vLocation;

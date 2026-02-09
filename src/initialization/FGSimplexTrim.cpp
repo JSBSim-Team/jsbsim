@@ -32,7 +32,7 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
     FGTrimmer::Constraints constraints;
 
     if (fdm->GetDebugLevel() > 0) {
-        FGLogging log(fdm->GetLogger(), LogLevel::DEBUG);
+        FGLogging log(LogLevel::DEBUG);
         log << "\n-----Performing Simplex Based Trim --------------\n";
     }
 
@@ -107,7 +107,7 @@ FGSimplexTrim::FGSimplexTrim(FGFDMExec * fdm, TrimMode mode)
 
     // output
     if (fdm->GetDebugLevel() > 0) {
-        FGLogging log(fdm->GetLogger(), LogLevel::DEBUG);
+        FGLogging log(LogLevel::DEBUG);
         trimmer->printSolution(solver->getSolution());
         log << "\nfinal cost: " << std::scientific << std::setw(10) << trimmer->eval(solver->getSolution()) << "\n";
         log << "\ntrim computation time: " << (time_trimDone - time_start)/double(CLOCKS_PER_SEC) << "s \n\n";

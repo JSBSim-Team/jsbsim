@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 
 FGAccelerometer::FGAccelerometer(FGFCS* fcs, Element* element)
   : FGSensor(fcs, element),
-    FGSensorOrientation(element, fcs->GetExec()->GetLogger())
+    FGSensorOrientation(element)
 {
   Propagate = fcs->GetExec()->GetPropagate();
   Accelerations = fcs->GetExec()->GetAccelerations();
@@ -62,7 +62,7 @@ FGAccelerometer::FGAccelerometer(FGFCS* fcs, Element* element)
   if (location_element)
     vLocation = location_element->FindElementTripletConvertTo("IN");
   else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "No location given for accelerometer.\n";
     throw err;
   }
@@ -131,12 +131,12 @@ void FGAccelerometer::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "        Axis: " << ax[axis] << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGAccelerometer\n";
     if (from == 1) log << "Destroyed:    FGAccelerometer\n";
   }
