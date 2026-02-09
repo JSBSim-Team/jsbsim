@@ -58,7 +58,7 @@ Another more advanced application within the field of Deep Reinforcement Learnin
 
 ### Windows
 
-A Windows installer `JSBSim-1.2.3-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.3). It installs the 2 executables along with aircraft data and some example scripts:
+A Windows installer `JSBSim-1.2.4-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.4). It installs the 2 executables along with aircraft data and some example scripts:
 
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
@@ -69,15 +69,15 @@ The Windows installer also contains the files needed to build the JSBSim Matlab 
 
 ### Ubuntu Linux
 
-Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.3). There are 3 packages for each platform:
+Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.2.4). There are 3 packages for each platform:
 
-* `JSBSim_1.2.3-1561.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
-* `JSBSim-devel_1.2.3-1561.amd64.deb` which installs the development resources (headers and libraries)
-* `python3-JSBSim_1.2.3-1561.amd64.deb` which installs the Python module of JSBSim
+* `JSBSim_1.2.4-1671.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
+* `JSBSim-devel_1.2.4-1671.amd64.deb` which installs the development resources (headers and libraries)
+* `python3-JSBSim_1.2.4-1671.amd64.deb` which installs the Python module of JSBSim
 
 ### Python module
 
-JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.9, 3.10, 3.11, 3.12 and 3.13). These can be installed using either `pip` or `conda`.
+JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.10, 3.11, 3.12, 3.13 and 3.14). These can be installed using either `pip` or `conda`.
 
 #### Installation with `pip`
 
@@ -121,7 +121,7 @@ At the moment, JSBSim does not provide binaries for platforms other than Windows
 
 ### Aircraft data and example scripts
 
-JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.2.3.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.2.3.tar.gz).
+JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.2.4.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.2.4.tar.gz).
 
 ## Quick start
 

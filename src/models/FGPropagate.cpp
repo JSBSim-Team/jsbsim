@@ -361,7 +361,7 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
   case eBuss2:
   case eLocalLinearization:
     {
-      LogException err(FDMExec->GetLogger());
+      LogException err;
       err << "Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!";
       throw err;
     }
@@ -457,7 +457,7 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
       double J = C2p*qk + C3p*qdotk - C4*Cp;
       double K = C2p*pk + C3p*pdotk - C4*Dp;
 
-      FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
+      FGLogging log(LogLevel::INFO);
       log << "q:       " << q << "\n";
 
       // Warning! In the paper of Barker et al. the quaternion components are not
@@ -707,7 +707,7 @@ FGColumnVector3 FGPropagate::GetEulerDeg(void) const
 
 void FGPropagate::DumpState(void)
 {
-  FGLogging log(FDMExec->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "\n";
   log << LogFormat::BLUE
       << "------------------------------------------------------------------" << LogFormat::RESET << "\n";
@@ -773,7 +773,7 @@ void FGPropagate::WriteStateFile(int num)
       outfile << "</initialize>\n";
       outfile.close();
     } else {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Could not open and/or write the state to the initial conditions file: "
           << path << "\n";
     }
@@ -811,13 +811,13 @@ void FGPropagate::WriteStateFile(int num)
       outfile << "</initialize>\n";
       outfile.close();
     } else {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Could not open and/or write the state to the initial conditions file: "
           << path << "\n";
     }
     break;
   default:
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "When writing a state file, the supplied value must be 1 or 2 for the version number of the resulting IC file\n";
   }
 }
@@ -946,14 +946,14 @@ void FGPropagate::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGPropagate\n";
     if (from == 1) log << "Destroyed:    FGPropagate\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
   if (debug_lvl & 8 && from == 2) { // Runtime state variables
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "\n" << LogFormat::BLUE << LogFormat::BOLD << left << fixed
         << "  Propagation Report (English units: ft, degrees) at simulation time " << FDMExec->GetSimTime() << " seconds"
         << LogFormat::RESET << "\n\n";
@@ -1043,17 +1043,17 @@ void FGPropagate::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
     if (from == 2) { // State sanity checking
       if (fabs(VState.vPQR.Magnitude()) > 1000.0) {
-        LogException err(FDMExec->GetLogger());
+        LogException err;
         err << "Vehicle rotation rate is excessive (>1000 rad/sec): " << VState.vPQR.Magnitude() << "\n";
         throw err;
       }
       if (fabs(VState.vUVW.Magnitude()) > 1.0e10) {
-        LogException err(FDMExec->GetLogger());
+        LogException err;
         err << "Vehicle velocity is excessive (>1e10 ft/sec): " << VState.vUVW.Magnitude() << "\n";
         throw err;
       }
       if (fabs(GetDistanceAGL()) > 1e10) {
-        LogException err(FDMExec->GetLogger());
+        LogException err;
         err << "Vehicle altitude is excessive (>1e10 ft): " << GetDistanceAGL() << "\n";
         throw err;
       }

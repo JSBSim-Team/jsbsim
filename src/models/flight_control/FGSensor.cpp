@@ -103,7 +103,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       NoiseType = eAbsolute;
     } else {
       NoiseType = ePercent;
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Unknown noise type in sensor: " << Name
         << "\n  defaulting to PERCENT.\n";
     }
@@ -114,7 +114,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element)
       DistributionType = eGaussian;
     } else {
       DistributionType = eUniform;
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Unknown random distribution type in sensor: " << Name
         << "\n  defaulting to UNIFORM.\n";
     }
@@ -272,7 +272,7 @@ void FGSensor::bind(Element* el, FGPropertyManager* PropertyManager)
       string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
       SGPropertyNode* node = PropertyManager->GetNode(qprop, true);
       if (node->isTied()) {
-        XMLLogException err(fcs->GetExec()->GetLogger(), el);
+        XMLLogException err(el);
         err << "Property " << tmp << " has already been successfully bound (late).\n";
         throw err;
       }
@@ -324,7 +324,7 @@ void FGSensor::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) { // Constructor
       if (!InputNodes.empty())
         log << "      INPUT: " << InputNodes[0]->GetNameWithSign() << fixed
@@ -363,7 +363,7 @@ void FGSensor::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGSensor\n";
     if (from == 1) log << "Destroyed:    FGSensor\n";
   }

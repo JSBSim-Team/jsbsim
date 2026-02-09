@@ -100,7 +100,7 @@ public:
     if (i < GetNumComponents()) {
       return FCSComponents[i];
     } else {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Tried to get nonexistent component\n";
       return nullptr;
     }

@@ -168,7 +168,7 @@ bool FGFCS::Run(bool Holding)
   // Execute system channels in order
   for (i=0; i<SystemChannels.size(); i++) {
     if (debug_lvl & 4) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "    Executing System Channel: " << SystemChannels[i]->GetName() << endl;
     }
     ChannelRate = SystemChannels[i]->GetRate();
@@ -326,7 +326,7 @@ void FGFCS::SetThrottleCmd(int engineNum, double setting)
       ThrottleCmd[engineNum] = setting;
     }
   } else {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Throttle " << engineNum << " does not exist! " << ThrottleCmd.size()
         << " engines exist, but attempted throttle command is for engine "
         << engineNum << endl;
@@ -345,7 +345,7 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
       ThrottlePos[engineNum] = setting;
     }
   } else {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Throttle " << engineNum << " does not exist! " << ThrottlePos.size()
         << " engines exist, but attempted throttle position setting is for engine "
         << engineNum << endl;
@@ -358,13 +358,13 @@ double FGFCS::GetThrottleCmd(int engineNum) const
 {
   if (engineNum < (int)ThrottleCmd.size()) {
     if (engineNum < 0) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Cannot get throttle value for ALL engines" << endl;
     } else {
       return ThrottleCmd[engineNum];
     }
   } else {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Throttle " << engineNum << " does not exist! " << ThrottleCmd.size()
         << " engines exist, but throttle setting for engine " << engineNum
         << " is selected" << endl;
@@ -378,13 +378,13 @@ double FGFCS::GetThrottlePos(int engineNum) const
 {
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Cannot get throttle value for ALL engines" << endl;
     } else {
       return ThrottlePos[engineNum];
     }
   } else {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Throttle " << engineNum << " does not exist! " << ThrottlePos.size()
         << " engines exist, but attempted throttle position setting is for engine "
         << engineNum << endl;
@@ -516,7 +516,7 @@ bool FGFCS::Load(Element* document)
     if (sOnOffProperty.length() > 0) {
       SGPropertyNode* OnOffPropertyNode = PropertyManager->GetNode(sOnOffProperty);
       if (OnOffPropertyNode == nullptr) {
-        XMLLogException err(FDMExec->GetLogger(), channel_element);
+        XMLLogException err(channel_element);
         err << LogFormat::BOLD << LogFormat::RED
             << "The On/Off property, " << sOnOffProperty << " specified for channel "
             << channel_element->GetAttributeValue("name") << " is undefined or not "
@@ -531,7 +531,7 @@ bool FGFCS::Load(Element* document)
     SystemChannels.push_back(newChannel);
 
     if (debug_lvl > 0) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << endl << LogFormat::BOLD << LogFormat::BLUE << "    Channel "
           << LogFormat::NORMAL << channel_element->GetAttributeValue("name") << LogFormat::RESET << endl;
     }
@@ -566,7 +566,7 @@ bool FGFCS::Load(Element* document)
           // <integrator> is equivalent to <pid type="trap">
           Element* c1_el = component_element->FindElement("c1");
           if (!c1_el) {
-            XMLLogException err(FDMExec->GetLogger(), component_element);
+            XMLLogException err(component_element);
             err << "INTEGRATOR component " << component_element->GetAttributeValue("name")
                 << " does not provide the parameter <c1>" << endl;
             throw err;
@@ -596,11 +596,11 @@ bool FGFCS::Load(Element* document)
         } else if (component_element->GetName() == string("linear_actuator")) {
           newChannel->Add(new FGLinearActuator(this, component_element));
         } else {
-          FGXMLLogging log(FDMExec->GetLogger(), component_element, LogLevel::ERROR);
+          FGXMLLogging log(component_element, LogLevel::ERROR);
           log << "Unknown FCS component: " << component_element->GetName() << endl;
         }
       } catch(string& s) {
-        FGXMLLogging log(FDMExec->GetLogger(), component_element, LogLevel::ERROR);
+        FGXMLLogging log(component_element, LogLevel::ERROR);
         log << LogFormat::BOLD << LogFormat::RED << endl << "  " << s << endl;
         log << LogFormat::RESET << endl;
         return false;
@@ -832,13 +832,13 @@ void FGFCS::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 2) { // Loader
       log << endl << "  " << Name << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGFCS" << endl;
     if (from == 1) log << "Destroyed:    FGFCS" << endl;
   }

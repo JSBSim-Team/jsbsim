@@ -184,7 +184,7 @@ FGTrimAnalysisControl::FGTrimAnalysisControl(FGFDMExec* fdex, FGInitialCondition
   }
 
 //  if (debug_lvl > 0) {
-//    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+//    FGLogging log(LogLevel::DEBUG);
 //    log << "FGTrimAnalysisControl created: "<< control_name << "\n";
 //  }
 
@@ -309,7 +309,7 @@ void FGTrimAnalysisControl::SetThetaOnGround(double ff) {
     ref=center;
   }
 
-  FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  FGLogging log(LogLevel::INFO);
   log << "SetThetaOnGround ref gear: " << ref << "\n";
   if(ref >= 0) {
     double sp = fdmex->GetPropagate()->GetSinEuler(ePhi);
@@ -380,7 +380,7 @@ bool FGTrimAnalysisControl::initTheta(void) {
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
-    //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+    //FGLogging log(LogLevel::INFO);
     //log << "\n" << theta << "  " << zDiff << "\n";
     //log << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << "\n";
     //log << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << "\n";
@@ -388,10 +388,10 @@ bool FGTrimAnalysisControl::initTheta(void) {
         level=true;
     i++;
   }
-  //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+  //FGLogging log(LogLevel::INFO);
   //log << i << "\n";
   if (debug_lvl > 0) {
-      FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "    Initial Theta: " << fdmex->GetPropagate()->GetEuler(eTht)*radtodeg << "\n";
       log << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward\n";
   }
@@ -447,7 +447,7 @@ void FGTrimAnalysisControl::setThrottlesPct(void) {
   for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++) {
       tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
       tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-      //FGLogging log(fdmex->GetLogger(), LogLevel::INFO);
+      //FGLogging log(LogLevel::INFO);
       //log << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
       //log << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << "\n";
@@ -491,7 +491,7 @@ void FGTrimAnalysisControl::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fdmex->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGTrimAnalysisControl\n";
     if (from == 1) log << "Destroyed:    FGTrimAnalysisControl\n";
   }

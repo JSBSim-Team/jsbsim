@@ -116,7 +116,7 @@ bool FGModel::Upload(Element* el, bool preLoad)
   if (!document) return false;
 
   if (document->GetName() != el->GetName()) {
-    FGXMLLogging log(FDMExec->GetLogger(), el, LogLevel::ERROR);
+    FGXMLLogging log(el, LogLevel::ERROR);
     log << " Read model '" << document->GetName()
         << "' while expecting model '" << el->GetName() << "'" << endl;
     return false;
@@ -178,12 +178,12 @@ void FGModel::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGModel" << endl;
     if (from == 1) log << "Destroyed:    FGModel" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from ==2) log << "Entering Run() for model " << Name << endl;
   }
   if (debug_lvl & 8 ) { // Runtime state variables

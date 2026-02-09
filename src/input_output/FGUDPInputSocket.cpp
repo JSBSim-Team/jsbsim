@@ -74,7 +74,7 @@ bool FGUDPInputSocket::Load(Element* el)
     string property_str = property_element->GetDataLine();
     SGPropertyNode* node = PropertyManager->GetNode(property_str);
     if (!node) {
-      FGXMLLogging log(FDMExec->GetLogger(), property_element, LogLevel::ERROR);
+      FGXMLLogging log(property_element, LogLevel::ERROR);
       log << LogFormat::RED << LogFormat::BOLD << "\n  No property by the name "
           << property_str << " can be found.\n" << LogFormat::RESET;
     } else {
@@ -109,7 +109,7 @@ void FGUDPInputSocket::Read(bool Holding)
       for (string& token : tokens)
         values.push_back(atof_locale_c(token));
     } catch(InvalidNumber& e) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << e.what() << "\n";
       return;
     }
@@ -122,7 +122,7 @@ void FGUDPInputSocket::Read(bool Holding)
 
     // the zeroeth value is the time stamp
     if ((values.size() - 1) != InputProperties.size()) {
-      FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "\nMismatch between UDP input property and value counts.\n";
       return;
     }

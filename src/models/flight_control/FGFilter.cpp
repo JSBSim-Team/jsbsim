@@ -141,7 +141,7 @@ void FGFilter::CalculateDynamicFilters(void)
       break;
     case eUnknown:
     {
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::ERROR);
+      FGLogging log(LogLevel::ERROR);
       log << "Unknown filter type\n";
     }
     break;
@@ -220,7 +220,7 @@ void FGFilter::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "      INPUT: " << InputNodes[0]->GetName() << fixed << "\n";
 
       for (int i=1; i < 7; i++) {
@@ -236,7 +236,7 @@ void FGFilter::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGFilter\n";
     if (from == 1) log << "Destroyed:    FGFilter\n";
   }

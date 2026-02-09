@@ -231,14 +231,14 @@ void FGMSIS::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) {} // Constructor
     if (from == 3) { // Loading
-      FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "    NRLMSIS atmosphere model\n" << fixed;
       log << "      day: " << day_of_year << "\n";
       log << "      UTC: " << seconds_in_day << "\n\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: MSIS\n";
     if (from == 1) log << "Destroyed:    MSIS\n";
   }

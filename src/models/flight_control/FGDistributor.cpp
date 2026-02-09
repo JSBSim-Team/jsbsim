@@ -63,7 +63,7 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
   if (type_string == "inclusive") Type = eInclusive;
   else if (type_string == "exclusive") Type = eExclusive;
   else {
-    XMLLogException err(fcs->GetExec()->GetLogger(), element);
+    XMLLogException err(element);
     err << "Distributor type should be \"inclusive\" or \"exclusive\""
         << " but got \"" << type_string << "\" instead.\n";
     throw err;
@@ -80,7 +80,7 @@ FGDistributor::FGDistributor(FGFCS* fcs, Element* element)
     } catch (LogException& e) {
       throw XMLLogException(e, test_element);
     } catch (const BaseException& e) {
-      XMLLogException err(fcs->GetExec()->GetLogger(), test_element);
+      XMLLogException err(test_element);
       err << LogFormat::RED << e.what() << LogFormat::RESET << "\n\n";
       throw err;
     }
@@ -143,7 +143,7 @@ void FGDistributor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       unsigned int ctr=0;
       for (const auto& Case: Cases) {
         log << "      Case: " << fixed << ctr << "\n";
@@ -165,7 +165,7 @@ void FGDistributor::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGDistributor\n";
     if (from == 1) log << "Destroyed:    FGDistributor\n";
   }

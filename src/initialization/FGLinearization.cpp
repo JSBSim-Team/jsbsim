@@ -46,7 +46,7 @@ FGLinearization::FGLinearization(FGFDMExec * fdm)
         if (numEngines>2) ss.x.add(new FGStateSpace::Rpm2);
         if (numEngines>3) ss.x.add(new FGStateSpace::Rpm3);
         if (numEngines>4) {
-            FGLogging log(fdm->GetLogger(), LogLevel::ERROR);
+            FGLogging log(LogLevel::ERROR);
             log << "More than 4 engines not currently handled\n";
         }
     }

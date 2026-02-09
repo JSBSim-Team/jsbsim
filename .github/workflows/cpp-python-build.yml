@@ -106,11 +106,11 @@ jobs:
           path: |
             ~/.cache/pip
             build/Testing/Temporary/CTestCostData.txt
-          key: ${{ runner.os }}-3.9-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
-      - name: Set up Python 3.9
+          key: ${{ runner.os }}-3.10-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install Python packages
         run: |
           pip install -r python/requirements.txt
@@ -312,11 +312,11 @@ jobs:
           path: |
             ~\AppData\Local\pip\Cache
             build\Testing\Temporary\CTestCostData.txt
-          key: ${{ runner.os }}-3.9-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
-      - name: Set up Python 3.9
+          key: ${{ runner.os }}-3.10-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install Python packages
         run: pip install -r python/requirements.txt
       - name: Checkout CxxTest
@@ -550,10 +550,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Download source package
@@ -596,10 +596,10 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v6
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install Python packages
         run: pip install -U cython 'numpy>=1.20' mypy
       - name: Install Doxygen (Linux)
@@ -655,7 +655,7 @@ jobs:
           Copy-Item -Path .\JSBSim-*\jsbsim\*.pyi -Destination ..\..\build\python\jsbsim
           echo "::endgroup::"
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23
+        uses: pypa/cibuildwheel@v3.3
         env:
           CIBW_BEFORE_ALL_LINUX: |
             cd build
@@ -774,10 +774,10 @@ jobs:
           find . -type f -name *.deb -exec cp {} GH_release/. \;
 
       # PyPI deployment
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: PyPI deployment
         uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -889,10 +889,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install doxygen graphviz
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install Python packages
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim

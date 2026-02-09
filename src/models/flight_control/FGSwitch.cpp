@@ -99,7 +99,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       }
       tests.push_back(current_test.release());
     } catch (const BaseException& e) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
+      FGXMLLogging log(test_element, LogLevel::ERROR);
       log << e.what() << "\n"
           << "    Default value IGNORED.\n";
     }
@@ -114,7 +114,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       current_test->setTestValue(value, Name, PropertyManager, test_element);
       tests.push_back(current_test.release());
     } catch (const BaseException& e) {
-      FGXMLLogging log(fcs->GetExec()->GetLogger(), test_element, LogLevel::ERROR);
+      FGXMLLogging log(test_element, LogLevel::ERROR);
       log << e.what() << "\n"
           << "    Test IGNORED.\n";
     }
@@ -206,7 +206,7 @@ void FGSwitch::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       unsigned int i = 0;
       for (auto test: tests) {
         if (test->Default) {
@@ -224,7 +224,7 @@ void FGSwitch::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGSwitch\n";
     if (from == 1) log << "Destroyed:    FGSwitch\n";
   }

@@ -175,14 +175,14 @@ bool FGOutput::SetDirectivesFile(const SGPath& fname)
   FGXMLFileRead XMLFile;
   Element* document = XMLFile.LoadXMLDocument(fname);
   if (!document) {
-    LogException err(FDMExec->GetLogger());
+    LogException err;
     err << "Could not read directive file: " << fname;
     throw err;
   }
 
   bool result = Load(document);
   if (!result) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "\nAircraft output element has problems in file " << fname << "\n";
   }
 
@@ -199,7 +199,7 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "\n  Output data set: " << idx << "\n";
   }
 
@@ -222,7 +222,7 @@ bool FGOutput::Load(int subSystems, std::string protocol, std::string type,
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Unknown type of output specified in config file\n";
   }
 
@@ -256,7 +256,7 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   FGOutputType* Output = 0;
 
   if (debug_lvl > 0) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     log << "\n  Output data set: " << idx << "  \n";
   }
 
@@ -273,7 +273,7 @@ bool FGOutput::Load(Element* document, const SGPath& dir)
   } else if (type == "TERMINAL") {
     // Not done yet
   } else if (type != string("NONE")) {
-    FGLogging log(FDMExec->GetLogger(), LogLevel::ERROR);
+    FGLogging log(LogLevel::ERROR);
     log << "Unknown type of output specified in config file\n";
   }
 
@@ -334,7 +334,7 @@ void FGOutput::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(FDMExec->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGOutput\n";
     if (from == 1) log << "Destroyed:    FGOutput\n";
   }

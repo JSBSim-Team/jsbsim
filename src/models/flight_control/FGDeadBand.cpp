@@ -128,7 +128,7 @@ void FGDeadBand::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+      FGLogging log(LogLevel::DEBUG);
       log << "      INPUT: " << InputNodes[0]->GetName() << "\n";
       log << "      DEADBAND WIDTH: " << Width->GetName() << "\n";
       log << "      GAIN: " << fixed << setprecision(4) << gain << "\n";
@@ -138,7 +138,7 @@ void FGDeadBand::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    FGLogging log(fcs->GetExec()->GetLogger(), LogLevel::DEBUG);
+    FGLogging log(LogLevel::DEBUG);
     if (from == 0) log << "Instantiated: FGDeadBand\n";
     if (from == 1) log << "Destroyed:    FGDeadBand\n";
   }
