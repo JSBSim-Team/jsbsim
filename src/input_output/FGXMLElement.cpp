@@ -35,6 +35,7 @@ INCLUDES
 #include "FGXMLElement.h"
 #include "FGJSBBase.h"
 #include "input_output/string_utilities.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -288,20 +289,18 @@ double Element::GetAttributeValueAsNumber(const string& attr)
   string attribute = GetAttributeValue(attr);
 
   if (attribute.empty()) {
-    std::stringstream s;
-    s << ReadFrom() << "Expecting numeric attribute value, but got no data";
-    cerr << s.str() << endl;
-    throw length_error(s.str());
+    XMLLogException err(this);
+    err << "Expecting numeric attribute value, but got no data\n";
+    throw err;
   }
   else {
     double number=0;
     try {
       number = atof_locale_c(attribute);
     } catch (InvalidNumber& e) {
-      std::stringstream s;
-      s << ReadFrom() << e.what();
-      cerr << s.str() << endl;
-      throw BaseException(s.str());
+      XMLLogException err(this);
+      err << e.what() << "\n";
+      throw err;
     }
 
     return (number);
@@ -352,29 +351,24 @@ double Element::GetDataAsNumber(void)
     try {
       number = atof_locale_c(data_lines[0]);
     } catch (InvalidNumber& e) {
-      std::stringstream s;
-      s << ReadFrom() << e.what();
-      cerr << s.str() << endl;
-      throw BaseException(s.str());
+      XMLLogException err(this);
+      err << e.what() << "\n";
+      throw err;
     }
 
     return number;
   } else if (data_lines.empty()) {
-    std::stringstream s;
-    s << ReadFrom() << "Expected numeric value, but got no data";
-    cerr << s.str() << endl;
-    throw length_error(s.str());
+    XMLLogException err(this);
+    err << "Expected numeric value, but got no data\n";
+    throw err;
   } else {
-    cerr << ReadFrom() << "Attempting to get single data value in element "
-         << "<" << name << ">" << endl
-         << " from multiple lines:" << endl;
+    XMLLogException err(this);
+    err << "Attempting to get single data value in element "
+        << "<" << name << ">\n"
+        << " from multiple lines:\n";
     for(unsigned int i=0; i<data_lines.size(); ++i)
-      cerr << data_lines[i] << endl;
-    std::stringstream s;
-    s << ReadFrom() << "Attempting to get single data value in element "
-      << "<" << name << ">"
-      << " from multiple lines (" << data_lines.size() << ").";
-    throw length_error(s.str());
+      err << data_lines[i] << "\n";
+    throw err;
   }
 }
 
@@ -441,10 +435,9 @@ double Element::FindElementValueAsNumber(const string& el)
     value = DisperseValue(element, value);
     return value;
   } else {
-    std::stringstream s;
-    s << ReadFrom() << "Attempting to get non-existent element " << el;
-    cerr << s.str() << endl;
-    throw length_error(s.str());
+    XMLLogException err(this);
+    err << "Attempting to get non-existent element " << el << "\n";
+    throw err;
   }
 }
 
@@ -464,8 +457,9 @@ bool Element::FindElementValueAsBoolean(const string& el)
       return true;
     }
   } else {
-    cerr << ReadFrom() << "Attempting to get non-existent element " << el << " ;returning false"
-         << endl;
+    FGXMLLogging log(this, LogLevel::ERROR);
+    log << "Attempting to get non-existent element " << el
+        << " ;returning false\n";
     return false;
   }
 }
@@ -489,28 +483,24 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   Element* element = FindElement(el);
 
   if (!element) {
-    std::stringstream s;
-    s << ReadFrom() << "Attempting to get non-existent element " << el;
-    cerr << s.str() << endl;
-    throw length_error(s.str());
+    XMLLogException err(this);
+    err << "Attempting to get non-existent element " << el << "\n";
+    throw err;
   }
 
   string supplied_units = element->GetAttributeValue("unit");
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      std::stringstream s;
-      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" does not exist (typo?).";
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(element);
+      err << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?).\n";
+      throw err;
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      std::stringstream s;
-      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" cannot be converted to " << target_units;
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(element);
+      err << "Supplied unit: \"" << supplied_units
+          << "\" cannot be converted to " << target_units << "\n";
+      throw err;
     }
   }
 
@@ -518,14 +508,14 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
 
   // Sanity check for angular values
   if ((supplied_units == "RAD") && (fabs(value) > 2 * M_PI)) {
-    cerr << element->ReadFrom() << element->GetName() << " value "
-         << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]"
-         << endl;
+    FGXMLLogging log(element, LogLevel::ERROR);
+    log << element->GetName() << " value "
+        << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]\n";
   }
   if ((supplied_units == "DEG") && (fabs(value) > 360.0)) {
-    cerr << element->ReadFrom() << element->GetName() << " value "
-         << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]"
-         << endl;
+    FGXMLLogging log(element, LogLevel::ERROR);
+    log << element->GetName() << " value "
+        << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]\n";
   }
 
 
@@ -534,14 +524,14 @@ double Element::FindElementValueAsNumberConvertTo(const string& el, const string
   }
 
   if ((target_units == "RAD") && (fabs(value) > 2 * M_PI)) {
-    cerr << element->ReadFrom() << element->GetName() << " value "
-         << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]"
-         << endl;
+    FGXMLLogging log(element, LogLevel::ERROR);
+    log << element->GetName() << " value "
+        << value << " RAD is outside the range [ -2*M_PI RAD ; +2*M_PI RAD ]\n";
   }
   if ((target_units == "DEG") && (fabs(value) > 360.0)) {
-    cerr << element->ReadFrom() << element->GetName() << " value "
-         << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]"
-         << endl;
+    FGXMLLogging log(element, LogLevel::ERROR);
+    log << element->GetName() << " value "
+        << value << " DEG is outside the range [ -360 DEG ; +360 DEG ]\n";
   }
 
   value = DisperseValue(element, value, supplied_units, target_units);
@@ -558,26 +548,23 @@ double Element::FindElementValueAsNumberConvertFromTo( const string& el,
   Element* element = FindElement(el);
 
   if (!element) {
-    std::stringstream s;
-    s << ReadFrom() << "Attempting to get non-existent element " << el;
-    cerr << s.str() << endl;
-    throw length_error(s.str());
+    XMLLogException err(this);
+    err << "Attempting to get non-existent element " << el << "\n";
+    throw err;
   }
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      std::stringstream s;
-      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" does not exist (typo?).";
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(element);
+      err << "Supplied unit: \"" << supplied_units
+          << "\" does not exist (typo?).\n";
+      throw err;
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      std::stringstream s;
-      s << element->ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" cannot be converted to " << target_units;
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(element);
+      err << "Supplied unit: \"" << supplied_units
+          << "\" cannot be converted to " << target_units << "\n";
+      throw err;
     }
   }
 
@@ -602,18 +589,16 @@ FGColumnVector3 Element::FindElementTripletConvertTo( const string& target_units
 
   if (!supplied_units.empty()) {
     if (convert.find(supplied_units) == convert.end()) {
-      std::stringstream s;
-      s << ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" does not exist (typo?).";
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(this);
+      err << "Supplied unit: \"" << supplied_units
+          << "\" does not exist (typo?).\n";
+      throw err;
     }
     if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
-      std::stringstream s;
-      s << ReadFrom() << "Supplied unit: \"" << supplied_units
-        << "\" cannot be converted to " << target_units;
-      cerr << s.str() << endl;
-      throw invalid_argument(s.str());
+      XMLLogException err(this);
+      err << "Supplied unit: \"" << supplied_units
+          << "\" cannot be converted to " << target_units << "\n";
+      throw err;
     }
   }
 
@@ -681,10 +666,9 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
       else // Assume uniformsigned
         value = (val + disp * urn)*FGJSBBase::sign(urn);
     } else {
-      std::stringstream s;
-      s << ReadFrom() << "Unknown dispersion type" << attType;
-      cerr << s.str() << endl;
-      throw domain_error(s.str());
+      XMLLogException err(this);
+      err << "Unknown dispersion type" << attType << "\n";
+      throw err;
     }
 
   }
@@ -756,11 +740,13 @@ void Element::MergeAttributes(Element* el)
     if (attributes.find(it->first) == attributes.end())
       attributes[it->first] = it->second;
     else {
-      if (FGJSBBase::debug_lvl > 0 && (attributes[it->first] != it->second))
-        cout << el->ReadFrom() << " Attribute '" << it->first << "' is overridden in file "
-             << GetFileName() << ": line " << GetLineNumber() << endl
-             << " The value '" << attributes[it->first] << "' will be used instead of '"
-             << it->second << "'." << endl;
+      if (FGJSBBase::debug_lvl > 0 && (attributes[it->first] != it->second)) {
+        FGXMLLogging log(el, LogLevel::DEBUG);
+        log << " Attribute '" << it->first << "' is overridden in file "
+            << GetFileName() << ": line " << GetLineNumber() << "\n"
+            << " The value '" << attributes[it->first] << "' will be used instead of '"
+            << it->second << "'.\n";
+      }
     }
   }
 }

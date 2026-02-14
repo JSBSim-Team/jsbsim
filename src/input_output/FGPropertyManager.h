@@ -51,6 +51,7 @@ INCLUDES
 #endif
 
 #include "FGJSBBase.h"
+#include "input_output/FGLog.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -224,15 +225,21 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        std::cerr << "Could not get or create property " << name << std::endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not get or create property " << name << "\n";
         return;
       }
 
-      if (!property->tie(SGRawValuePointer<T>(pointer), false))
-          std::cerr << "Failed to tie property " << name << " to a pointer" << std::endl;
+      if (!property->tie(SGRawValuePointer<T>(pointer), false)) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Failed to tie property " << name << " to a pointer\n";
+      }
       else {
         tied_properties.push_back(PropertyState(property, nullptr));
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) {
+          FGLogging log(LogLevel::DEBUG);
+          log << name << "\n";
+        }
       }
     }
 
@@ -259,18 +266,23 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        std::cerr << "Could not get or create property " << name << std::endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not get or create property " << name << "\n";
         return;
       }
 
-      if (!property->tie(SGRawValueMethodsEnum<T,V>(*obj, getter, setter), false))
-        std::cerr << "Failed to tie property " << name << " to object methods"
-                  << std::endl;
+      if (!property->tie(SGRawValueMethodsEnum<T,V>(*obj, getter, setter), false)) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Failed to tie property " << name << " to object methods\n";
+      }
       else {
         tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) {
+          FGLogging log(LogLevel::DEBUG);
+          log << name << "\n";
+        }
       }
     }
 
@@ -281,18 +293,23 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        std::cerr << "Could not get or create property " << name << std::endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not get or create property " << name << "\n";
         return;
       }
 
-      if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), false))
-        std::cerr << "Failed to tie property " << name << " to object methods"
-                  << std::endl;
+      if (!property->tie(SGRawValueMethods<T,V>(*obj, getter, setter), false)) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Failed to tie property " << name << " to object methods\n";
+      }
       else {
         tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) {
+          FGLogging log(LogLevel::DEBUG);
+          log << name << "\n";
+        }
       }
     }
 
@@ -318,19 +335,25 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        std::cerr << "Could not get or create property " << name << std::endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not get or create property " << name << "\n";
         return;
       }
 
       if (!property->tie(SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter),
-                                                       false))
-        std::cerr << "Failed to tie property " << name
-                  << " to indexed object methods" << std::endl;
+                                                       false)) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Failed to tie property " << name
+            << " to indexed object methods\n";
+      }
       else {
         tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) {
+          FGLogging log(LogLevel::DEBUG);
+          log << name << "\n";
+        }
       }
    }
 
@@ -357,18 +380,23 @@ class JSBSIM_API FGPropertyManager
     {
       SGPropertyNode* property = root->getNode(name.c_str(), true);
       if (!property) {
-        std::cerr << "Could not get or create property " << name << std::endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not get or create property " << name << "\n";
         return;
       }
       if (!property->tie(SGRawValueMethodsIndexedEnum<T, V, U>(*obj, index, getter, setter),
-        false))
-        std::cerr << "Failed to tie property " << name
-        << " to indexed object methods" << std::endl;
+        false)) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Failed to tie property " << name << " to indexed object methods\n";
+      }
       else {
         tied_properties.push_back(PropertyState(property, obj));
         if (!setter) property->setAttribute(SGPropertyNode::WRITE, false);
         if (!getter) property->setAttribute(SGPropertyNode::READ, false);
-        if (FGJSBBase::debug_lvl & 0x20) std::cout << name << std::endl;
+        if (FGJSBBase::debug_lvl & 0x20) {
+          FGLogging log(LogLevel::DEBUG);
+          log << name << "\n";
+        }
       }
     }
 
