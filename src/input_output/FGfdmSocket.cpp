@@ -81,7 +81,8 @@ static bool LoadWinSockDLL(int debug_lvl)
 {
   WSADATA wsaData;
   if (WSAStartup(MAKEWORD(1, 1), &wsaData)) {
-    cerr << "Winsock DLL not initialized ..." << endl;
+    FGLogging log(LogLevel::ERROR);
+    log << "Winsock DLL not initialized ...\n";
     return false;
   }
 
