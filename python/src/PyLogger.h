@@ -28,14 +28,17 @@
 #include <Python.h>
 #include "input_output/FGLog.h"
 
-#ifndef PYLOG_H
-#define PYLOG_H
+#ifndef PYLOGGER_H
+#define PYLOGGER_H
 
 namespace JSBSim {
 /// Pointers to the Python counterparts of C++ classes.
 extern PyObject* FGLogger_PyClass;
 extern PyObject* LogLevel_PyClass;
 extern PyObject* LogFormat_PyClass;
+
+/// Reset the global logger to its default.
+JSBSIM_API void ResetLogger(void);
 
 // Helper class to manage the reference count of a PyObject.
 class PyObjectPtr {

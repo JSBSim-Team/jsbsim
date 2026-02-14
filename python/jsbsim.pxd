@@ -97,8 +97,12 @@ cdef extern from "PyLogger.h" namespace "JSBSim":
     cdef PyObject* FGLogger_PyClass
     cdef PyObject* LogLevel_PyClass
     cdef PyObject* LogFormat_PyClass
+    cdef void ResetLogger()
     cdef cppclass c_PyLogger "JSBSim::PyLogger":
         c_PyLogger(PyObject* logger)
+
+cdef extern from "input_output/FGLog.h" namespace "JSBSim":
+    cdef void SetLogger(shared_ptr[c_PyLogger] logger)
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
     cdef cppclass c_FGColumnVector3 "JSBSim::FGColumnVector3":
@@ -276,4 +280,3 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         shared_ptr[c_FGAircraft] GetAircraft()
         shared_ptr[c_FGAtmosphere] GetAtmosphere()
         shared_ptr[c_FGMassBalance] GetMassBalance()
-        void SetLogger(shared_ptr[c_PyLogger] logger)

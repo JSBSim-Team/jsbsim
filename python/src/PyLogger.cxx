@@ -33,6 +33,8 @@ PyObject* FGLogger_PyClass;
 PyObject* LogLevel_PyClass;
 PyObject* LogFormat_PyClass;
 
+void ResetLogger(void) { SetLogger(std::make_shared<FGLogConsole>()); }
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

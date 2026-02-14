@@ -31,6 +31,7 @@ from cython.operator cimport dereference as deref
 from libcpp.memory cimport shared_ptr, make_shared
 from typing import Optional
 
+import atexit
 import enum
 import errno
 import os
@@ -133,6 +134,14 @@ class FGLogger:
         """@Dox(JSBSim::FGLogger::Flush)"""
         pass
 
+cdef shared_ptr[c_PyLogger] _logger  # hold the logger instance
+
+def set_logger(logger: FGLogger) -> None:
+    """@Dox(JSBSim::SetLogger)"""
+    global _logger
+    _logger = make_shared[c_PyLogger](<PyObject*>logger)
+    SetLogger(_logger)
+
 
 # Initializing pointers for the C++ interface
 FGLogger_PyClass = <PyObject*>FGLogger
@@ -154,6 +163,20 @@ class DefaultLogger(FGLogger):
         print(f"\nIn file {filename}: line {line}")
     def message(self, message: str) -> None:
         print(f"{message}", end='')
+
+
+# Reset the logger before Python shutdown to prevent crashes.
+# This function is called at module exit to clear the global logger variable.
+# This prevents the c_PyLogger destructor from trying to decrement reference
+# counts on Python objects after Python has already finalized.
+cdef _reset_logger():
+    global _logger
+    _logger.reset()
+    ResetLogger()
+
+
+atexit.register(_reset_logger)
+set_logger(DefaultLogger())
 
 
 cdef class FGPropagate:
@@ -779,7 +802,6 @@ cdef class FGFDMExec(FGJSBBase):
     """@Dox(JSBSim::FGFDMExec)"""
 
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
-    cdef shared_ptr[c_PyLogger] logger # hold the logger instance that is used by FGFDMEexec
     cdef dict properties_cache     # Dictionary cache of property nodes
 
     def __cinit__(self, root_dir, FGPropertyManager pm_root=None, *args,
@@ -807,7 +829,6 @@ cdef class FGFDMExec(FGJSBBase):
         self.set_engine_path("engine")
         self.set_aircraft_path("aircraft")
         self.set_systems_path("systems")
-        self.set_logger(DefaultLogger())
 
         self.properties_cache = { }
 
@@ -1131,8 +1152,3 @@ cdef class FGFDMExec(FGJSBBase):
         propulsion = FGPropulsion(None)
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
-
-    def set_logger(self, logger: FGLogger) -> None:
-        """@Dox(JSBSim::FGFDMExec::SetLogger)"""
-        self.logger = make_shared[c_PyLogger](<PyObject*>logger)
-        self.thisptr.SetLogger(self.logger)
