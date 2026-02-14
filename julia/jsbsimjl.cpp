@@ -1,5 +1,9 @@
 #include <jlcxx/jlcxx.hpp>
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#undef ERROR // Defined by <windows.h>
+#endif
+
 #include "FGFDMExec.h"
 #include "initialization/FGInitialCondition.h"
 
