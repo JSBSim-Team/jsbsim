@@ -38,7 +38,7 @@ class TelnetInterface:
 
     async def get_output(self):
         msg = await self.reader.read(1024)
-        lines = msg.split("\r\n")
+        lines = msg.splitlines()
         if lines[-1] == "JSBSim> ":
             return "\n".join(lines[:-1])
         else:
@@ -52,7 +52,7 @@ class TelnetInterface:
         return await self.get_output()
 
     async def get_property_value(self, property_name):
-        msg = (await self.send_command(f"get {property_name}")).split("\n")
+        msg = (await self.send_command(f"get {property_name}")).splitlines()
         return float(msg[0].split("=")[1])
 
 
@@ -122,7 +122,7 @@ class TestInputSocket(JSBSimTestCase):
 
     async def shell(self, root, dt, reader, writer):
         await self.sanity_check(reader, writer)
-        msg = (await self.telnet.send_command("info")).split("\n")
+        msg = (await self.telnet.send_command("info")).splitlines()
 
         # Check the aircraft name and its version
         self.assertEqual(msg[2].split(":")[1].strip(), root.attrib["name"].strip())
@@ -210,7 +210,7 @@ class TestInputSocket(JSBSimTestCase):
             sorted(
                 map(
                     lambda x: x.split("{")[0].strip(),
-                    out.split("\n")[2:-1],
+                    out.strip().splitlines()[2:],
                 )
             ),
             ["get", "help", "hold", "info", "iterate", "quit", "resume", "set"],
