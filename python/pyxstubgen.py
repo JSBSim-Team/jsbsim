@@ -99,12 +99,46 @@ def get_constant(tree: Tree) -> str:
 
 
 class GenerateStub(Interpreter):
-    TAB_SPACES: str = "    "
+    TAB_SPACES: str = " " * 4
     indent: int = 0
     has_members = False
 
     def __init__(self, output: io.TextIOBase):
         self.output = output
+
+    def extract_docstring(self, tree: Tree) -> str:
+        assert isinstance(tree, Tree)
+
+        # Empty tree or no children means no docstring
+        if not tree.children or not isinstance(tree.children[0], Tree):
+            return ""
+
+        # Navigate through the AST to find a string literal
+        # Expected path: tree -> simple_stmt -> expr_stmt -> string
+        current = tree.children[0]
+
+        while isinstance(current, Tree):
+            stmt_data: Union[str, Token] = current.data
+
+            if isinstance(stmt_data, Token):
+                if stmt_data.value in ("simple_stmt", "expr_stmt") and current.children:
+                    current = current.children[0]
+                    continue
+            elif isinstance(stmt_data, str):
+                if stmt_data == "python__string":
+                    # Found a string - this is our docstring
+                    return self.visit(current)
+                elif (
+                    stmt_data in ("python__simple_stmt", "python__expr_stmt")
+                    and current.children
+                ):
+                    current = current.children[0]
+                    continue
+
+            # If we get here, we couldn't navigate further or it's not a docstring
+            return ""
+
+        return ""
 
     def python__dotted_as_name(self, tree: Tree) -> str:
         assert len(tree.children) == 2
@@ -205,6 +239,12 @@ class GenerateStub(Interpreter):
                 assert item.value == "suite"
                 self.has_members = False
                 self.indent += 1
+                docstring = self.extract_docstring(child)
+
+                if docstring:
+                    self.output.write(f"\n{self.TAB_SPACES * self.indent}{docstring}")
+                    self.has_members = True
+
                 self.visit(tree.children[2])
                 self.indent -= 1
 
@@ -239,6 +279,7 @@ class GenerateStub(Interpreter):
 
     def funcdef(self, tree: Tree) -> None:
         func_name: str = ""
+        docstring: str = ""
         for i, child in enumerate(tree.children):
             if child is None:
                 if i == 1:
@@ -302,16 +343,32 @@ class GenerateStub(Interpreter):
                     func_name += f"({', '.join(parameters)})"
                 else:
                     assert child_type.value == "suite"
+                    docstring = self.extract_docstring(child)
             elif isinstance(child_type, str):
                 func_name += f" -> {self.get_varname(child)}"
             else:
                 raise TypeError(f"Unknown parameter in {func_name}: {repr(child)}")
 
         self.has_members = True
-        self.output.write(f"\n{self.TAB_SPACES * self.indent}def {func_name}: ...")
+        prefix = self.TAB_SPACES * self.indent
+
+        if docstring:
+            self.output.write(f"\n{prefix}def {func_name}:")
+            self.output.write(f"\n{prefix + self.TAB_SPACES}{docstring}")
+            self.output.write(f"\n{prefix + self.TAB_SPACES}...")
+        else:
+            self.output.write(f"\n{prefix}def {func_name}: ...")
+
         if self.indent == 0:
             self.output.write("\n")
 
 
 with open(args.output, "w", encoding="utf-8") as f:
-    GenerateStub(f).visit(pyx_tree)
+    stub_gen = GenerateStub(f)
+
+    # Extract and write module-level docstring if present
+    module_docstring = stub_gen.extract_docstring(pyx_tree)
+    if module_docstring:
+        f.write(f"{module_docstring}\n\n")
+
+    stub_gen.visit(pyx_tree)
