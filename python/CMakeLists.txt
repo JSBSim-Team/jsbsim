@@ -65,6 +65,16 @@ if(WIN32)
   set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_PACKAGE_DIR})
   set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_PACKAGE_DIR})
   set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_PACKAGE_DIR})
+
+  # Windows needs the DLL to be in the same directory than the Python module.
+  if(BUILD_SHARED_LIBS)
+    add_custom_command(OUTPUT ${JSBSIM_PACKAGE_DIR}/JSBSim.dll
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        $<TARGET_FILE:libJSBSim>
+                        ${JSBSIM_PACKAGE_DIR})
+    add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_PACKAGE_DIR}/JSBSim.dll)
+    add_dependencies(CopyJSBSimDLL libJSBSim)
+  endif(BUILD_SHARED_LIBS)
 endif(WIN32)
 
 add_subdirectory(fpectl)

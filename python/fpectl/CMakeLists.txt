@@ -12,11 +12,13 @@ else()
                                     fpectlmodule.cpp)
   set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PYTHON_DIR})
 
-  # Output directories for MSVC
-  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PYTHON_DIR})
-  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PYTHON_DIR})
-  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${PYTHON_DIR})
-  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${PYTHON_DIR})
+  if (WIN32)
+    # Output directories for MSVC
+    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PYTHON_DIR})
+    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PYTHON_DIR})
+    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${PYTHON_DIR})
+    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${PYTHON_DIR})
+  endif(WIN32)
 
   if(FPECTL_DISPLAY_STACK_TRACE)
     find_package(Backward)
