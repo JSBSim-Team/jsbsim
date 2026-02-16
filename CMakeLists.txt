@@ -249,7 +249,7 @@ endif()
 # Windows installer                                                            #
 ################################################################################
 
-if(WIN32)
+if(WIN32 AND NOT SKBUILD)
   configure_file(${PROJECT_SOURCE_DIR}/JSBSim.iss.in JSBSim.iss)
 endif()
 
@@ -284,6 +284,7 @@ set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/"
                                "TAGS"
                                "${CPACK_SOURCE_IGNORE_FILES}")
 if(NOT SKBUILD)
+  set(CPACK_COMPONENTS_ALL "devel" "pymodules" "runtime")
   include (CPack)
 endif(NOT SKBUILD)
 
