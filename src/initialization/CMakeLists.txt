@@ -11,7 +11,9 @@ set(HEADERS FGInitialCondition.h
 add_library(Init OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Init PROPERTIES TARGET_DIRECTORY
                            ${CMAKE_CURRENT_SOURCE_DIR})
-add_coverage(Init)
+if(CXXTEST_FOUND)
+    add_coverage(Init)
+endif(CXXTEST_FOUND)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization
                          COMPONENT devel)

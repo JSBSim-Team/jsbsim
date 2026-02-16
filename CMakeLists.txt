@@ -28,14 +28,20 @@ function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
   set(${OUTPUT_STRING} ${TAIL} PARENT_SCOPE)
 endfunction()
 
-find_package(PkgConfig)
+if(NOT SKBUILD)
+  find_package(PkgConfig)
+  find_package(CxxTest)
+endif(NOT SKBUILD)
 
 ################################################################################
 # Build JSBSim libs and exec                                                   #
 ################################################################################
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tests/unit_tests/CMakeModules)
-find_package(codecov)
+if(CXXTEST_FOUND)
+  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tests/unit_tests/CMakeModules)
+  find_package(codecov)
+endif(CXXTEST_FOUND)
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(src)
 
@@ -77,8 +83,10 @@ if (BUILD_PYTHON_MODULE)
 
   if (CYTHON_FOUND)
     if (Python3_Development_FOUND)
-      enable_testing()
-      add_subdirectory(tests)
+      if (NOT SKBUILD)
+        enable_testing()
+        add_subdirectory(tests)
+      endif(NOT SKBUILD)
       add_subdirectory(python)
     endif(Python3_Development_FOUND)
   elseif(NOT Python3_Development_FOUND)
@@ -110,8 +118,6 @@ endif(BUILD_MATLAB_SFUNCTION)
 ################################################################################
 # Build the unit tests (needs CxxTest)                                         #
 ################################################################################
-
-find_package(CxxTest)
 
 if (CXXTEST_FOUND)
   enable_testing()
@@ -277,7 +283,9 @@ set(CPACK_SOURCE_IGNORE_FILES "${CMAKE_BINARY_DIR}/"
                                "/CVS/"
                                "TAGS"
                                "${CPACK_SOURCE_IGNORE_FILES}")
-include (CPack)
+if(NOT SKBUILD)
+  include (CPack)
+endif(NOT SKBUILD)
 
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
@@ -285,4 +293,6 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 # Build the utilities                                                          #
 ################################################################################
 
-add_subdirectory(utils)
+if(NOT SKBUILD)
+  add_subdirectory(utils)
+endif(NOT SKBUILD)

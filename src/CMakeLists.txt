@@ -67,7 +67,6 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   )
 target_include_directories(libJSBSim PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-add_coverage(libJSBSim)
 
 if(EXPAT_FOUND)
   target_include_directories(libJSBSim PRIVATE ${EXPAT_INCLUDE_DIRS})
@@ -166,8 +165,12 @@ endif()
 
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
-# Add JSBSim to the coverage analysis to avoid linking errors
-add_coverage(JSBSim)
+
+if(CXXTEST_FOUND)
+  add_coverage(libJSBSim)
+  # Add JSBSim to the coverage analysis to avoid linking errors
+  add_coverage(JSBSim)
+endif(CXXTEST_FOUND)
 
 if(MSVC AND BUILD_SHARED_LIBS)
   # Under Windows, during the linking process, executables must have a

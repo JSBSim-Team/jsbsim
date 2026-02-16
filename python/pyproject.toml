@@ -1,12 +1,43 @@
 [build-system]
-# Exclude Cython version 0.29.26 as it fails building wheels for PyPy38
-# Require setuptools 72.1.0 for PyPy (see issue #2676 on pypa/cibuildwheel
-# GitHub project page)
-requires = [
-    "setuptools==72.1.0; platform_python_implementation == 'PyPy' and python_version < '3.11'",
-    "setuptools", "cython!=0.29.26"
+requires = ["scikit-build-core", "cython"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "jsbsim"
+version = "1.2.5.dev1"
+
+[tool.scikit-build]
+cmake.args = ["-DBUILD_DOCS=OFF"]
+build.targets = ["_jsbsim"]
+# build-dir = "build"
+install.components = [ "wheel" ]
+sdist.exclude = [ "*" ]
+sdist.include = [
+    "/pyproject.toml",
+    "/CMakeLists.txt",
+    "src/**/CMakeLists.txt",
+    "python/CMakeLists.txt",
+    "/COPYING",
+    "src/simgear/xml/COPYING",
+    "src/GeographicLib/LICENSE.txt",
+    "src/**/*.cpp",
+    "src/**/*.hpp",
+    "src/**/*.cxx",
+    "src/**/*.hxx",
+    "src/**/*.c",
+    "src/**/*.h",
+    "python/*.py",
+    "python/*.pyx.in",
+    "python/*.pxd",
+    "python/*.pyi",
+    "python/**/*.h",
+    "python/CMakeModules/*.cmake",
+    "python/py.typed",
+    "aircraft/**/*.xml",
+    "engine/**/*.xml",
+    "scripts/**/*.xml",
+    "systems/**/*.xml"
 ]
-build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"

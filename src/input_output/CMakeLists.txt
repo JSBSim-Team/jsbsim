@@ -47,7 +47,9 @@ set_target_properties(InputOutput PROPERTIES TARGET_DIRECTORY
 # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
 target_compile_definitions(InputOutput PRIVATE $<$<BOOL:${MINGW}>:_WIN32_WINNT=0x600>)  # Windows Vista/Windows Server 2008
 
-add_coverage(InputOutput)
+if(CXXTEST_FOUND)
+    add_coverage(InputOutput)
+endif(CXXTEST_FOUND)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output
                          COMPONENT devel)

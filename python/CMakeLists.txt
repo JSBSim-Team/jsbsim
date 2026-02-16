@@ -9,8 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(JSBSIM_PYX ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pyx)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pyx.in ${JSBSIM_PYX})
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pxd)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jsbsim.pxd ${CMAKE_CURRENT_BINARY_DIR}/_jsbsim.pxd COPYONLY)
 set_source_files_properties(${JSBSIM_PYX} PROPERTIES CYTHON_IS_CXX TRUE
                                           INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/src)
 
@@ -31,7 +30,7 @@ file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
 # Build the package directory
 set(JSBSIM_PACKAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jsbsim)
 file(MAKE_DIRECTORY ${JSBSIM_PACKAGE_DIR})
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py DESTINATION ${JSBSIM_PACKAGE_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_PACKAGE_DIR} COPYONLY)
 
 # Duplicate the files for the source distribution of JSBSim
 cmake_policy(SET CMP0051 NEW)
@@ -40,24 +39,29 @@ get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
 file(RELATIVE_PATH libJSBSim_PATH ${PROJECT_SOURCE_DIR} ${libJSBSim_DIRECTORY})
 
 # Copy license files to the package directory
-file(COPY ${PROJECT_SOURCE_DIR}/src/GeographicLib/LICENSE.txt DESTINATION ${JSBSIM_PACKAGE_DIR})
-file(COPY ${PROJECT_SOURCE_DIR}/src/simgear/xml/COPYING DESTINATION ${JSBSIM_PACKAGE_DIR})
-file(RENAME ${JSBSIM_PACKAGE_DIR}/LICENSE.txt ${JSBSIM_PACKAGE_DIR}/GeographicLib-LICENSE.txt)
-file(RENAME ${JSBSIM_PACKAGE_DIR}/COPYING ${JSBSIM_PACKAGE_DIR}/libexpat-LICENSE.txt)
-file(COPY ${PROJECT_SOURCE_DIR}/COPYING DESTINATION ${JSBSIM_PACKAGE_DIR})
-file(RENAME ${JSBSIM_PACKAGE_DIR}/COPYING ${JSBSIM_PACKAGE_DIR}/LICENSE.txt)
+install(FILES ${PROJECT_SOURCE_DIR}/src/GeographicLib/LICENSE.txt DESTINATION jsbsim
+        RENAME GeographicLib-LICENSE.txt COMPONENT wheel)
+install(FILES ${PROJECT_SOURCE_DIR}/src/simgear/xml/COPYING DESTINATION jsbsim
+        RENAME libexpat-LICENSE.txt COMPONENT wheel)
+install(FILES ${PROJECT_SOURCE_DIR}/COPYING DESTINATION jsbsim
+        RENAME LICENSE.txt COMPONENT wheel)
 
 # Duplicate data files (i.e. aircraft, engines, etc.)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY ${PROJECT_SOURCE_DIR}/aircraft DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
-file(COPY ${PROJECT_SOURCE_DIR}/engine DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
-file(COPY ${PROJECT_SOURCE_DIR}/systems DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
-file(COPY ${PROJECT_SOURCE_DIR}/scripts DESTINATION ${JSBSIM_PACKAGE_DIR} FILES_MATCHING PATTERN "*.xml")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/py.typed "")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/py.typed DESTINATION jsbsim COMPONENT wheel)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/aircraft DESTINATION jsbsim COMPONENT wheel)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/engine DESTINATION jsbsim COMPONENT wheel)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/systems DESTINATION jsbsim COMPONENT wheel)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION jsbsim COMPONENT wheel)
 
+# Build the Python module
 python3_add_library(_jsbsim MODULE ${JSBSIM_CXX})
 target_include_directories(_jsbsim PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/python)
 target_link_libraries(_jsbsim PRIVATE libJSBSim)
 set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_PACKAGE_DIR})
+install(TARGETS _jsbsim DESTINATION jsbsim COMPONENT wheel)
+install(FILES ${PROJECT_SOURCE_DIR}/python/__init__.py DESTINATION jsbsim COMPONENT wheel)
 
 if(WIN32)
   # Output directories for MSVC
@@ -77,7 +81,9 @@ if(WIN32)
   endif(BUILD_SHARED_LIBS)
 endif(WIN32)
 
-add_subdirectory(fpectl)
+if(NOT SKBUILD)
+  add_subdirectory(fpectl)
+endif(NOT SKBUILD)
 
 # Install the JSBSim Python module
 if (INSTALL_JSBSIM_PYTHON_MODULE)

@@ -33,6 +33,8 @@ set(HEADERS FGColumnVector3.h
 add_library(Math OBJECT ${HEADERS} ${SOURCES})
 set_target_properties(Math PROPERTIES TARGET_DIRECTORY
                            ${CMAKE_CURRENT_SOURCE_DIR})
-add_coverage(Math)
+if(CXXTEST_FOUND)
+    add_coverage(Math)
+endif(CXXTEST_FOUND)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/math COMPONENT devel)

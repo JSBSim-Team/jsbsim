@@ -497,18 +497,9 @@ jobs:
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
-        if: env.release == 'true'
-        working-directory: build/python
         run: |
-          echo "::group::Generate the type hints stub"
-          python ../../python/pyxstubgen.py --pyxfile=_jsbsim.pyx --output=jsbsim/_jsbsim.pyi
-          touch jsbsim/py.typed
-          echo "::endgroup::"
-
-          echo "::group::Build the source package"
-          rm -f _jsbsim.cxx  # Make sure that jsbsim.cxx is not stored in the source distribution
+          python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/_jsbsim.pyi
           python -m build --sdist
-          echo "::endgroup::"
       - name: Check reset for real time execution
         run: |
           start_time=$(date +%s)
@@ -537,8 +528,7 @@ jobs:
           name: ${{ runner.os }}.binaries
           path: |
             build/src/libJSBSim.a
-            build/python/setup.py
-            build/python/dist/*.tar.gz
+            dist/*.tar.gz
 
   Test-Build-PyPackage-From-Source:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
