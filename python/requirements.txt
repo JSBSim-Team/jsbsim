@@ -3,5 +3,4 @@ numpy>=1.20
 cython
 pandas
 scipy>=1.7.0
-setuptools>=60.0.0
 telnetlib3
