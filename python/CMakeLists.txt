@@ -27,10 +27,11 @@ endif(DOXYGEN_FOUND AND BUILD_DOCS)
 compile_pyx(_jsbsim _JSBSIM_CXX ${JSBSIM_PYX})
 file(RELATIVE_PATH JSBSIM_CXX ${CMAKE_CURRENT_BINARY_DIR} ${_JSBSIM_CXX})
 
-# Build the package directory
-set(JSBSIM_PACKAGE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jsbsim)
-file(MAKE_DIRECTORY ${JSBSIM_PACKAGE_DIR})
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_PACKAGE_DIR} COPYONLY)
+# Build the package directory in the test folder
+set(JSBSIM_TEST_DIR ${CMAKE_BINARY_DIR}/tests)
+set(JSBSIM_TEST_PACKAGE_DIR ${JSBSIM_TEST_DIR}/jsbsim)
+file(MAKE_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_TEST_PACKAGE_DIR} COPYONLY)
 
 # Duplicate the files for the source distribution of JSBSim
 cmake_policy(SET CMP0051 NEW)
@@ -47,7 +48,6 @@ install(FILES ${PROJECT_SOURCE_DIR}/COPYING DESTINATION jsbsim
         RENAME LICENSE.txt COMPONENT wheel)
 
 # Duplicate data files (i.e. aircraft, engines, etc.)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.py ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/py.typed "")
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/py.typed DESTINATION jsbsim COMPONENT wheel)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/aircraft DESTINATION jsbsim COMPONENT wheel)
@@ -59,25 +59,25 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/scripts DESTINATION jsbsim COMPONENT whe
 python3_add_library(_jsbsim MODULE ${JSBSIM_CXX})
 target_include_directories(_jsbsim PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/python)
 target_link_libraries(_jsbsim PRIVATE libJSBSim)
-set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_PACKAGE_DIR})
+set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
 install(TARGETS _jsbsim DESTINATION jsbsim COMPONENT wheel)
 install(FILES ${PROJECT_SOURCE_DIR}/python/__init__.py DESTINATION jsbsim COMPONENT wheel)
 install(FILES ${PROJECT_SOURCE_DIR}/python/_jsbsim.pyi DESTINATION jsbsim COMPONENT wheel)
 
 if(WIN32)
   # Output directories for MSVC
-  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${JSBSIM_PACKAGE_DIR})
-  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_PACKAGE_DIR})
-  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_PACKAGE_DIR})
-  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${JSBSIM_TEST_PACKAGE_DIR})
+  set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${JSBSIM_TEST_PACKAGE_DIR})
 
-  # Windows needs the DLL to be in the same directory than the Python module.
+  # Windows needs the DLL to be copied locally for unit tests to run.
   if(BUILD_SHARED_LIBS)
-    add_custom_command(OUTPUT ${JSBSIM_PACKAGE_DIR}/JSBSim.dll
+    add_custom_command(OUTPUT ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll
                         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                         $<TARGET_FILE:libJSBSim>
-                        ${JSBSIM_PACKAGE_DIR})
-    add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_PACKAGE_DIR}/JSBSim.dll)
+                        ${JSBSIM_TEST_PACKAGE_DIR})
+    add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll)
     add_dependencies(CopyJSBSimDLL libJSBSim)
   endif(BUILD_SHARED_LIBS)
 endif(WIN32)

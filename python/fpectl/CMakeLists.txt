@@ -2,23 +2,19 @@
 
 option(FPECTL_DISPLAY_STACK_TRACE "Set to ON to display the stack trace when a floating point exception is raised" OFF)
 
-set(PYTHON_DIR ${CMAKE_BINARY_DIR}/python)
-
 if (APPLE)
-  file(COPY fpectl.py DESTINATION ${PYTHON_DIR})
+  file(COPY fpectl.py DESTINATION ${CMAKE_BINARY_DIR}/tests)
 else()
   python3_add_library(fpectl MODULE ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
                                     fpectlmodule.h
                                     fpectlmodule.cpp)
-  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PYTHON_DIR})
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 
-  if (WIN32)
-    # Output directories for MSVC
-    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PYTHON_DIR})
-    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PYTHON_DIR})
-    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${PYTHON_DIR})
-    set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${PYTHON_DIR})
-  endif(WIN32)
+  # Output directories for MSVC
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_BINARY_DIR}/tests)
+  set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_BINARY_DIR}/tests)
 
   if(FPECTL_DISPLAY_STACK_TRACE)
     find_package(Backward)
