@@ -8,15 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ################################################################################
-# Init the list of libraries that JSBSim links with                            #
-################################################################################
-
-# MSVC and MINGW linked libraries
-set(WINDOWS_LINK_LIBRARIES wsock32 ws2_32)
-# Unix linked libraries
-set(UNIX_LINK_LIBRARIES m)
-
-################################################################################
 # Build and install libraries                                                  #
 ################################################################################
 
@@ -42,7 +33,7 @@ set(HEADERS FGFDMExec.h
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
-add_library(libJSBSim ${HEADERS} ${SOURCES}
+add_library(libJSBSim ${SOURCES}
   $<TARGET_OBJECTS:Init>
   $<TARGET_OBJECTS:Atmosphere>
   $<TARGET_OBJECTS:FlightControl>
@@ -59,6 +50,7 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Simgear>
   $<TARGET_OBJECTS:GeographicLib>
   )
+
 target_compile_definitions(libJSBSim PUBLIC
                            JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 target_include_directories(libJSBSim PUBLIC
@@ -68,18 +60,18 @@ if(EXPAT_FOUND)
   target_include_directories(libJSBSim PRIVATE ${EXPAT_INCLUDE_DIRS})
   if (PKG_CONFIG_FOUND)
     target_link_libraries(libJSBSim ${PC_EXPAT_LIBRARIES})
-    set(ALL_LINK_LIBRARIES ${PC_EXPAT_LIBRARIES})
   else()
     target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
-    set(ALL_LINK_LIBRARIES ${EXPAT_LIBRARIES})
   endif()
 endif(EXPAT_FOUND)
 
 if(WIN32)
   target_compile_definitions(libJSBSim PUBLIC _USE_MATH_DEFINES)
+  target_link_libraries(libJSBSim wsock32 ws2_32)
+
   if(BUILD_SHARED_LIBS)
     set(JSBSIM_LIBRARY_TYPE JSBSIM_EXPORT)
-    # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid propagating it
+    # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid being propagated
     # to other targets such as the executable, the Python module and the unit
     # tests. Otherwise the linking of these targets will fail.
     target_compile_definitions(libJSBSim PRIVATE JSBSIM_EXPORT)
@@ -94,27 +86,14 @@ if(WIN32)
       target_compile_definitions(${CMAKE_MATCH_1} PRIVATE ${JSBSIM_LIBRARY_TYPE})
     endif()
   endforeach(OBJECT)
+elseif(UNIX)
+  target_link_libraries(libJSBSim m)
 endif(WIN32)
 
 set_target_properties(libJSBSim PROPERTIES
                                 OUTPUT_NAME JSBSim
                                 VERSION ${LIBRARY_VERSION}
                                 TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Manage link libraries
-set(JSBSIM_LINK_LIBRARIES ${ALL_LINK_LIBRARIES} PARENT_SCOPE)
-set(JSBSIM_WINDOWS_LINK_LIBRARIES ${WINDOWS_LINK_LIBRARIES} PARENT_SCOPE)
-set(JSBSIM_UNIX_LINK_LIBRARIES ${UNIX_LINK_LIBRARIES} PARENT_SCOPE)
-
-if(WIN32 AND (MSVC OR MINGW))
-  foreach(LINK_LIBRARY ${WINDOWS_LINK_LIBRARIES})
-    target_link_libraries(libJSBSim ${LINK_LIBRARY})
-  endforeach()
-elseif(UNIX)
-  foreach(LINK_LIBRARY ${UNIX_LINK_LIBRARIES})
-    target_link_libraries(libJSBSim ${LINK_LIBRARY})
-  endforeach()
-endif()
 
 if(BUILD_SHARED_LIBS)
   set_target_properties(libJSBSim PROPERTIES
