@@ -80,6 +80,32 @@ if(WIN32)
     add_custom_target(CopyJSBSimDLL ALL DEPENDS ${JSBSIM_TEST_PACKAGE_DIR}/JSBSim.dll)
     add_dependencies(CopyJSBSimDLL libJSBSim)
   endif(BUILD_SHARED_LIBS)
+
+  if(SKBUILD)
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+    include(InstallRequiredSystemLibraries)
+    list(FILTER CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS INCLUDE REGEX "msvcp[0-9]+|vcruntime[0-9]+")
+
+    if(NOT CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+      message(FATAL_ERROR
+        "\n"
+        "----------------------------------------------------------------------\n"
+        " FATAL ERROR: MSVC system runtime libraries not found!\n"
+        " The Windows wheel build cannot proceed because required DLLs\n"
+        " (msvcp140.dll, etc.) are missing from this build environment.\n"
+        " \n"
+        " Action: Ensure the 'MSVC C++ x64/x86 build tools' and the \n"
+        " 'C++ Redistributable MSVC' components are installed via the \n"
+        " Visual Studio Installer on this machine.\n"
+        "----------------------------------------------------------------------\n"
+      )
+    endif()
+
+    install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+            DESTINATION jsbsim COMPONENT wheel)
+
+    message(STATUS "Windows runtimes added to wheel: ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}")
+  endif(SKBUILD)
 endif(WIN32)
 
 if(NOT SKBUILD)
