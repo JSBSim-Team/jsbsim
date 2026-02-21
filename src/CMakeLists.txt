@@ -6,8 +6,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# MSVC specific compile definitions
-set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
 
 ################################################################################
 # Init the list of libraries that JSBSim links with                            #
@@ -17,7 +15,6 @@ set(MSVC_COMPILE_DEFINITIONS _USE_MATH_DEFINES NOMINMAX)
 set(WINDOWS_LINK_LIBRARIES wsock32 ws2_32)
 # Unix linked libraries
 set(UNIX_LINK_LIBRARIES m)
-
 
 ################################################################################
 # Build and install libraries                                                  #
@@ -31,9 +28,6 @@ elseif(DEFINED ENV{APPVEYOR})
 elseif(DEFINED ENV{GITHUB_RUN_NUMBER})
   set(VERSION_MESSAGE " [GitHub build $ENV{GITHUB_RUN_NUMBER}/commit $ENV{GITHUB_SHA}]")
 endif()
-
-# Compile definitions common to all platforms
-set(COMPILE_DEFINITIONS JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 
 add_subdirectory(initialization)
 add_subdirectory(input_output)
@@ -65,6 +59,8 @@ add_library(libJSBSim ${HEADERS} ${SOURCES}
   $<TARGET_OBJECTS:Simgear>
   $<TARGET_OBJECTS:GeographicLib>
   )
+target_compile_definitions(libJSBSim PUBLIC
+                           JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 target_include_directories(libJSBSim PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
@@ -77,47 +73,28 @@ if(EXPAT_FOUND)
     target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
     set(ALL_LINK_LIBRARIES ${EXPAT_LIBRARIES})
   endif()
-else()
-  list(APPEND MSVC_COMPILE_DEFINITIONS XML_STATIC)
 endif(EXPAT_FOUND)
 
-# Manage compile definitions
-set(JSBSIM_COMPILE_DEFINITIONS ${COMPILE_DEFINITIONS} PARENT_SCOPE)
-set(JSBSIM_MSVC_COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS} PARENT_SCOPE)
-
-# Determine the target object list
-get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
-
-foreach(OBJECT ${libJSBSim_SOURCE_FILES})
-	if (${OBJECT} MATCHES "TARGET_OBJECTS:([^ >]+)")
-    list(APPEND TARGET_OBJECTS_LIST ${CMAKE_MATCH_1})
-  endif()
-endforeach(OBJECT)
-
 if(WIN32)
+  target_compile_definitions(libJSBSim PUBLIC _USE_MATH_DEFINES)
   if(BUILD_SHARED_LIBS)
+    set(JSBSIM_LIBRARY_TYPE JSBSIM_EXPORT)
     # The flag JSBSIM_EXPORT must be declared PRIVATE to avoid propagating it
     # to other targets such as the executable, the Python module and the unit
     # tests. Otherwise the linking of these targets will fail.
     target_compile_definitions(libJSBSim PRIVATE JSBSIM_EXPORT)
-    foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
-      target_compile_definitions(${TARGET_OBJECT} PRIVATE JSBSIM_EXPORT)
-    endforeach(TARGET_OBJECT)
   else()
-    list(APPEND MSVC_COMPILE_DEFINITIONS JSBSIM_STATIC_LINK)
+    set(JSBSIM_LIBRARY_TYPE JSBSIM_STATIC_LINK)
+    target_compile_definitions(libJSBSim PUBLIC JSBSIM_STATIC_LINK)
   endif(BUILD_SHARED_LIBS)
 
-  list(APPEND COMPILE_DEFINITIONS ${MSVC_COMPILE_DEFINITIONS})
+  get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
+  foreach(OBJECT ${libJSBSim_SOURCE_FILES})
+    if (${OBJECT} MATCHES "TARGET_OBJECTS:([^ >]+)")
+      target_compile_definitions(${CMAKE_MATCH_1} PRIVATE ${JSBSIM_LIBRARY_TYPE})
+    endif()
+  endforeach(OBJECT)
 endif(WIN32)
-
-# Apply the compilation definitions to all target objects and make them PUBLIC
-# so they propagate to other targets.
-foreach(COMPILE_DEF ${COMPILE_DEFINITIONS})
-  target_compile_definitions(libJSBSim PUBLIC ${COMPILE_DEF})
-  foreach(TARGET_OBJECT ${TARGET_OBJECTS_LIST})
-    target_compile_definitions(${TARGET_OBJECT} PUBLIC ${COMPILE_DEF})
-  endforeach(TARGET_OBJECT)
-endforeach(COMPILE_DEF)
 
 set_target_properties(libJSBSim PROPERTIES
                                 OUTPUT_NAME JSBSim
