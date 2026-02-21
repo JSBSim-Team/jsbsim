@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "jsbsim"
-version = "1.2.5.dev1"
+version = "${PROJECT_VERSION}"
 
 [tool.scikit-build]
 cmake.args = ["-DBUILD_DOCS=OFF"]

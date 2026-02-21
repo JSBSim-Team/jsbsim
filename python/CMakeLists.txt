@@ -109,6 +109,7 @@ if(WIN32)
 endif(WIN32)
 
 if(NOT SKBUILD)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pyproject.toml.in pyproject.toml)
   add_subdirectory(fpectl)
 endif(NOT SKBUILD)
 

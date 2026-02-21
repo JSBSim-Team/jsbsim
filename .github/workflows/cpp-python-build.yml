@@ -499,7 +499,7 @@ jobs:
       - name: Build the source package for Python
         run: |
           python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/_jsbsim.pyi
-          cp python/pyproject.toml .
+          cp build/python/pyproject.toml .
           python -m build --sdist
       - name: Check reset for real time execution
         run: |
