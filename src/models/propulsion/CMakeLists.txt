@@ -28,9 +28,8 @@ set(HEADERS FGElectric.h
             FGRotor.h
             FGBrushLessDCMotor.h)
 
-add_library(Propulsion OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(Propulsion PROPERTIES TARGET_DIRECTORY
-                                 ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(Propulsion OBJECT ${SOURCES})
+
 if(CXXTEST_FOUND)
     add_coverage(Propulsion)
 endif(CXXTEST_FOUND)

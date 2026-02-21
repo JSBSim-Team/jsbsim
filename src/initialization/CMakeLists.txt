@@ -8,9 +8,8 @@ set(HEADERS FGInitialCondition.h
             FGTrimAxis.h
             FGLinearization.h)
 
-add_library(Init OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(Init PROPERTIES TARGET_DIRECTORY
-                           ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(Init OBJECT ${SOURCES})
+
 if(CXXTEST_FOUND)
     add_coverage(Init)
 endif(CXXTEST_FOUND)

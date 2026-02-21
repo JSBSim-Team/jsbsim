@@ -33,12 +33,6 @@ set(JSBSIM_TEST_PACKAGE_DIR ${JSBSIM_TEST_DIR}/jsbsim)
 file(MAKE_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/__init__.py ${JSBSIM_TEST_PACKAGE_DIR} COPYONLY)
 
-# Duplicate the files for the source distribution of JSBSim
-cmake_policy(SET CMP0051 NEW)
-get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
-get_target_property(libJSBSim_DIRECTORY libJSBSim TARGET_DIRECTORY)
-file(RELATIVE_PATH libJSBSim_PATH ${PROJECT_SOURCE_DIR} ${libJSBSim_DIRECTORY})
-
 # Copy license files to the package directory
 install(FILES ${PROJECT_SOURCE_DIR}/src/GeographicLib/LICENSE.txt DESTINATION jsbsim
         RENAME GeographicLib-LICENSE.txt COMPONENT wheel)

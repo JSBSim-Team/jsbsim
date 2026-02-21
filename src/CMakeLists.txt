@@ -46,8 +46,6 @@ add_library(libJSBSim ${SOURCES}
   $<TARGET_OBJECTS:Magvar>
   $<TARGET_OBJECTS:Misc>
   $<TARGET_OBJECTS:IOStreams>
-  $<TARGET_OBJECTS:Structure>
-  $<TARGET_OBJECTS:Simgear>
   $<TARGET_OBJECTS:GeographicLib>
   )
 
@@ -92,8 +90,7 @@ endif(WIN32)
 
 set_target_properties(libJSBSim PROPERTIES
                                 OUTPUT_NAME JSBSim
-                                VERSION ${LIBRARY_VERSION}
-                                TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                                VERSION ${LIBRARY_VERSION})
 
 if(BUILD_SHARED_LIBS)
   set_target_properties(libJSBSim PROPERTIES

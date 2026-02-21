@@ -37,9 +37,8 @@ set(HEADERS FGDeadBand.h
             FGDistributor.h
             FGLinearActuator.h)
 
-add_library(FlightControl OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(FlightControl PROPERTIES TARGET_DIRECTORY
-                                    ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(FlightControl OBJECT ${SOURCES})
+
 if(CXXTEST_FOUND)
     add_coverage(FlightControl)
 endif(CXXTEST_FOUND)

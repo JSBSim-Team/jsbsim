@@ -9,9 +9,8 @@ set(HEADERS FGMSIS.h
             FGWinds.h
             MSIS/nrlmsise-00.h)
 
-add_library(Atmosphere OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(Atmosphere PROPERTIES TARGET_DIRECTORY
-                                 ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(Atmosphere OBJECT ${SOURCES})
+
 if(CXXTEST_FOUND)
     add_coverage(Atmosphere)
 endif(CXXTEST_FOUND)
