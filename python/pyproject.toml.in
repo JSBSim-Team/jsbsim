@@ -5,9 +5,37 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "jsbsim"
 version = "${PROJECT_VERSION}"
+authors = [{ name="Jon S. Berndt et al.", email="jsbsim-users@lists.sourceforge.net" }]
+description="An open source flight dynamics & control software library"
+readme = { text = "JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. The FDM is essentially the physics & math model that defines the movement of an aircraft, rocket, etc., under the forces and moments applied to it using the various control mechanisms and from the forces of nature. JSBSim can be run in a standalone batch mode flight simulator (no graphical displays) for testing and study, or integrated with [FlightGear](http://home.flightgear.org/) or other flight simulator.", "content-type" = "text/markdown" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
+    "Operating System :: Microsoft",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Cython",
+    "Topic :: Education",
+    "Topic :: Games/Entertainment :: Simulation",
+    "Topic :: Scientific/Engineering"
+]
+dependencies = ["numpy>=1.20"]
+requires-python = ">=3.10"
+
+[project.urls]
+GitHub = "https://github.com/JSBSim-Team/jsbsim"
+documentation = "https://jsbsim-team.github.io/jsbsim/python/"
 
 [tool.scikit-build]
-cmake.args = ["-DBUILD_DOCS=OFF"]
+cmake.define.BUILD_DOCS = "OFF"
+cmake.define.INSTALL_JSBSIM_PYTHON_MODULE = "OFF"
 build.targets = ["_jsbsim"]
 # build-dir = "build"
 install.components = [ "wheel" ]
@@ -38,6 +66,25 @@ sdist.include = [
     "scripts/**/*.xml",
     "systems/**/*.xml"
 ]
+
+[[tool.scikit-build.overrides]]
+if.platform-system = "windows"
+cmake.build-type = "RelWithDebInfo"
+cmake.define.CMAKE_CXX_FLAGS="/DNDEBUG"
+cmake.define.CMAKE_C_FLAGS="/DNDEBUG"
+
+[[tool.scikit-build.overrides]]
+if.platform-system = "linux"
+cmake.build-type = "Release"
+cmake.define.CMAKE_CXX_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
+cmake.define.CMAKE_C_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
+
+[[tool.scikit-build.overrides]]
+if.platform-system = "darwin"
+cmake.build-type = "Release"
+cmake.define.CMAKE_CXX_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
+cmake.define.CMAKE_C_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
+cmake.define.CMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux2014"
