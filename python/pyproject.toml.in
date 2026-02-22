@@ -35,7 +35,6 @@ documentation = "https://jsbsim-team.github.io/jsbsim/python/"
 
 [tool.scikit-build]
 cmake.define.BUILD_DOCS = "OFF"
-cmake.define.INSTALL_JSBSIM_PYTHON_MODULE = "OFF"
 build.targets = ["_jsbsim"]
 # build-dir = "build"
 install.components = [ "wheel" ]
@@ -69,18 +68,21 @@ sdist.include = [
 
 [[tool.scikit-build.overrides]]
 if.platform-system = "windows"
+inherit.cmake.define = "append"
 cmake.build-type = "RelWithDebInfo"
 cmake.define.CMAKE_CXX_FLAGS="/DNDEBUG"
 cmake.define.CMAKE_C_FLAGS="/DNDEBUG"
 
 [[tool.scikit-build.overrides]]
 if.platform-system = "linux"
+inherit.cmake.define = "append"
 cmake.build-type = "Release"
 cmake.define.CMAKE_CXX_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
 cmake.define.CMAKE_C_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
 
 [[tool.scikit-build.overrides]]
 if.platform-system = "darwin"
+inherit.cmake.define = "append"
 cmake.build-type = "Release"
 cmake.define.CMAKE_CXX_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
 cmake.define.CMAKE_C_FLAGS="-g -O2 -DNDEBUG -fno-math-errno -fno-fast-math"
