@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.18)
 
 ################################################################################
 # Project description                                                          #
@@ -78,18 +78,18 @@ option(INSTALL_JSBSIM_PYTHON_MODULE "Set to ON to install the Python module for 
 if (BUILD_PYTHON_MODULE)
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/python/CMakeModules)
   cmake_policy(SET CMP0094 NEW)  # makes FindPython3 prefer activated virtualenv Python to the latest version
-  find_package(Python3 COMPONENTS Interpreter Development)
+  find_package(Python3 COMPONENTS Interpreter Development.Module)
   find_package(Cython)
 
   if (CYTHON_FOUND)
-    if (Python3_Development_FOUND)
+    if (Python3_Development.Module_FOUND)
       if (NOT SKBUILD)
         enable_testing()
         add_subdirectory(tests)
       endif(NOT SKBUILD)
       add_subdirectory(python)
-    endif(Python3_Development_FOUND)
-  elseif(NOT Python3_Development_FOUND)
+    endif(Python3_Development.Module_FOUND)
+  elseif(NOT Python3_Development.Module_FOUND)
     message(WARNING "JSBSim Python module and test suite will not be built")
   endif(CYTHON_FOUND)
 endif(BUILD_PYTHON_MODULE)
