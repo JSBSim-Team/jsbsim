@@ -30,7 +30,7 @@ dependencies = ["numpy>=1.20"]
 requires-python = ">=3.10"
 
 [project.scripts]
-jsbsim = "jsbsim.JSBSim:main"
+jsbsim = "jsbsim.script:main"
 
 [project.urls]
 GitHub = "https://github.com/JSBSim-Team/jsbsim"
