@@ -3,4 +3,5 @@ numpy>=1.20
 cython
 pandas
 scipy>=1.7.0
+scikit-build-core
 telnetlib3
