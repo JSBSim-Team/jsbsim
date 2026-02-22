@@ -571,6 +571,8 @@ jobs:
         run: |
           echo "import jsbsim" > test.py
           mypy test.py
+      - name: Test JSBSim.py script
+        run: jsbsim --help
 
   Python-Wheels:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')

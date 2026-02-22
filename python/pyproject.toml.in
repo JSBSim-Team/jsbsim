@@ -29,6 +29,9 @@ classifiers = [
 dependencies = ["numpy>=1.20"]
 requires-python = ">=3.10"
 
+[project.scripts]
+jsbsim = "jsbsim.JSBSim:main"
+
 [project.urls]
 GitHub = "https://github.com/JSBSim-Team/jsbsim"
 documentation = "https://jsbsim-team.github.io/jsbsim/python/"
