@@ -729,7 +729,7 @@ void FGPropagate::DumpState(void)
   log << "\n  " << LogFormat::UNDERLINE_ON
       << "Velocity" << LogFormat::UNDERLINE_OFF << "\n";
   log << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)\n";
-  log << "    ECEF:  " << (Tb2ec * VState.vUVW).Dump(", ") << " (x,y,z in ft/s)\n";
+  log << "    ECEF:  " << GetECEFVelocity().Dump(", ") << " (x,y,z in ft/s)\n";
   log << "    Local: " << GetVel() << " (n,e,d in ft/sec)\n";
   log << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)\n";
 
@@ -847,6 +847,10 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/eci-x-fps", this, eX, &FGPropagate::GetInertialVelocity);
   PropertyManager->Tie("velocities/eci-y-fps", this, eY, &FGPropagate::GetInertialVelocity);
   PropertyManager->Tie("velocities/eci-z-fps", this, eZ, &FGPropagate::GetInertialVelocity);
+
+  PropertyManager->Tie("velocities/ecef-x-fps", this, eX, &FGPropagate::GetECEFVelocity);
+  PropertyManager->Tie("velocities/ecef-y-fps", this, eY, &FGPropagate::GetECEFVelocity);
+  PropertyManager->Tie("velocities/ecef-z-fps", this, eZ, &FGPropagate::GetECEFVelocity);
 
   PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
   PropertyManager->Tie("velocities/ned-velocity-mag-fps", this, &FGPropagate::GetNEDVelocityMagnitude);
