@@ -666,7 +666,6 @@ jobs:
         run: |
           mkdir dist
           find . -type f -name *.exe -exec cp {} dist/. \;
-          find . -type f -name *.whl -exec cp {} dist/. \;
           find . -type f -name *.deb -exec cp {} dist/. \;
       - name: Rolling release
         uses: softprops/action-gh-release@v2
@@ -681,7 +680,6 @@ jobs:
             (branch ${{ github.ref }} commit ${{ github.sha}})
           files: |
             dist/*.exe
-            dist/*.whl
             dist/*.deb
 
   Stable-Release:
