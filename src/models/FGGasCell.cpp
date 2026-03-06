@@ -320,7 +320,8 @@ void FGGasCell::Calculate(double dt)
     const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
     const double GasMass    = Contents * M_gas();                     // [slug]
     const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft^3]
-    const double GasDensity = GasMass / GasVolume;
+    const double GasDensity = GasVolume > 0.0 ? GasMass / GasVolume
+                                              : 0.0;
     const double DeltaPressure =
       Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
     const double VolumeValved =
@@ -349,9 +350,17 @@ void FGGasCell::Calculate(double dt)
   }
 
   //-- Volume --
-  Volume = Contents * R * Temperature / Pressure + BallonetsVolume;
-  dVolumeIdeal =
-    Contents * R * (Temperature / Pressure - OldTemperature / OldPressure);
+  if (Pressure > 0.0) {
+    Volume = Contents * R * Temperature / Pressure + BallonetsVolume;
+  } else {
+    Volume = BallonetsVolume;
+  }
+  if (Pressure > 0.0 && OldPressure > 0.0) {
+    dVolumeIdeal =
+      Contents * R * (Temperature / Pressure - OldTemperature / OldPressure);
+  } else {
+    dVolumeIdeal = 0.0;
+  }
 
   //-- Current buoyancy --
   // The buoyancy is computed using the atmospheres local density.
