@@ -179,18 +179,21 @@ FGXMLLogging::FGXMLLogging(Element* el, LogLevel level)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLogConsole::Flush(void) {
-  switch (log_level)
-  {
-  case LogLevel::BULK:
-  case LogLevel::DEBUG:
-  case LogLevel::INFO:
-    std::cout << buffer;
-    std::cout.flush(); // Force the message to be immediately displayed in the console
-    break;
-  default:
-    std::cerr << buffer;
-    std::cerr.flush(); // Force the message to be immediately displayed in the console
-    break;
+  if (log_level >= min_level || log_level == LogLevel::STDOUT) {
+    switch (log_level)
+    {
+    case LogLevel::BULK:
+    case LogLevel::DEBUG:
+    case LogLevel::INFO:
+    case LogLevel::STDOUT:
+      std::cout << buffer;
+      std::cout.flush(); // Force the message to be immediately displayed in the console
+      break;
+    default:
+      std::cerr << buffer;
+      std::cerr.flush(); // Force the message to be immediately displayed in the console
+      break;
+    }
   }
 
   buffer.clear();

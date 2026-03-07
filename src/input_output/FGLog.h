@@ -157,14 +157,10 @@ public:
   void SetMinLevel(LogLevel level) { min_level = level; }
   void FileLocation(const std::string& filename, int line) override
   { buffer.append("\nIn file " + filename + ": line " + std::to_string(line) + "\n"); }
+  void Message(const std::string& message) override { buffer.append(message); }
   void Format(LogFormat format) override;
   void Flush(void) override;
   ~FGLogConsole() override { Flush(); }
-
-  void Message(const std::string& message) override {
-    if (log_level < min_level) return;
-    buffer.append(message);
-  }
 
 private:
   std::string buffer;
