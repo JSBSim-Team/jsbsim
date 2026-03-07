@@ -679,22 +679,24 @@ double Element::DisperseValue(Element *e, double val, const std::string& supplie
 
 void Element::Print(unsigned int level)
 {
-  unsigned int i, spaces;
-
   level+=2;
-  for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
-  cout << "Element Name: " << name;
 
-  map<string, string>::iterator it;
-  for (it = attributes.begin(); it != attributes.end(); ++it)
-    cout << "  " << it->first << " = " << it->second;
+  {
+    FGLogging out(LogLevel::STDOUT);
+    for (unsigned int spaces=0; spaces<=level; spaces++) out << " ";
+    out << "Element Name: " << name;
 
-  cout << endl;
-  for (i=0; i<data_lines.size(); i++) {
-    for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
-    cout << data_lines[i] << endl;
+    for (auto const& attr : attributes)
+      out << "  " << attr.first << " = " << attr.second;
+
+    out << endl;
+    for (unsigned i=0; i<data_lines.size(); i++) {
+      for (unsigned int spaces=0; spaces<=level; spaces++) out << " ";
+      out << data_lines[i] << endl;
+    }
   }
-  for (i=0; i<children.size(); i++) {
+
+  for (unsigned int i=0; i<children.size(); i++) {
     children[i]->Print(level);
   }
 }

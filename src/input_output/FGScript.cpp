@@ -505,45 +505,46 @@ bool FGScript::RunScript(void)
 
       // Print notification values after setting them
       if (thisEvent.Notify && !thisEvent.Notified) {
+        LogLevel level = thisEvent.NotifyKML ? LogLevel::STDOUT : LogLevel::INFO;
+        FGLogging out(level);
         if (thisEvent.NotifyKML) {
-          cout << endl << "<Placemark>" << endl;
-          cout << "  <name> " << currentTime << " seconds" << " </name>"
-               << endl;
-          cout << "  <description>" << endl;
-          cout << "  <![CDATA[" << endl;
-          cout << "  <b>" << thisEvent.Name << " (Event " << event_ctr << ")"
-               << " executed at time: " << currentTime << "</b><br/>" << endl;
+          out << "\n<Placemark>\n";
+          out << "  <name> " << currentTime << " seconds" << " </name>\n";
+          out << "  <description>\n";
+          out << "  <![CDATA[\n";
+          out << "  <b>" << thisEvent.Name << " (Event " << event_ctr << ")"
+               << " executed at time: " << currentTime << "</b><br/>\n";
         } else  {
-          cout << endl << underon
-               << highint << thisEvent.Name << normint << underoff
-               << " (Event " << event_ctr << ")"
-               << " executed at time: " << highint << currentTime << normint
-               << endl;
+          out << "\n" << LogFormat::UNDERLINE_ON << LogFormat::BOLD
+              << thisEvent.Name << LogFormat::NORMAL << LogFormat::UNDERLINE_OFF
+              << " (Event " << event_ctr << ")"
+              << " executed at time: " << LogFormat::BOLD << currentTime << LogFormat::NORMAL
+              << "\n";
         }
         if (!thisEvent.Description.empty()) {
-          cout << "    " << thisEvent.Description << endl;
+          out << "    " << thisEvent.Description << "\n";
         }
         for (j=0; j<thisEvent.NotifyProperties.size();j++) {
-          cout << "    " << thisEvent.DisplayString[j] << " = "
+          out << "    " << thisEvent.DisplayString[j] << " = "
                << thisEvent.NotifyProperties[j]->getDoubleValue();
-          if (thisEvent.NotifyKML) cout << " <br/>";
-          cout << endl;
+          if (thisEvent.NotifyKML) out << " <br/>";
+          out << "\n";
         }
         if (thisEvent.NotifyKML) {
-          cout << "  ]]>" << endl;
-          cout << "  </description>" << endl;
-          cout << "  <Point>" << endl;
-          cout << "    <altitudeMode> absolute </altitudeMode>" << endl;
-          cout << "    <extrude> 1 </extrude>" << endl;
-          cout << "    <coordinates>"
+          out << "  ]]>\n";
+          out << "  </description>\n";
+          out << "  <Point>\n";
+          out << "    <altitudeMode> absolute </altitudeMode>\n";
+          out << "    <extrude> 1 </extrude>\n";
+          out << "    <coordinates>"
                << FDMExec->GetPropagate()->GetLongitudeDeg() << ","
                << FDMExec->GetPropagate()->GetGeodLatitudeDeg() << ","
                << FDMExec->GetPropagate()->GetAltitudeASLmeters()
-               << "</coordinates>" << endl;
-          cout << "  </Point>" << endl;
-          cout << "</Placemark>" << endl;
+               << "</coordinates>\n";
+          out << "  </Point>\n";
+          out << "</Placemark>\n";
         }
-        cout << endl;
+        out << "\n";
         thisEvent.Notified = true;
       }
 

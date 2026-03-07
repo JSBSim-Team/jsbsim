@@ -83,20 +83,28 @@ bool FGOutputTextFile::Load(Element* el)
 
 bool FGOutputTextFile::OpenFile(void)
 {
-  datafile.clear();
-  datafile.open(Filename);
-  if (!datafile) {
-    FGLogging log(LogLevel::ERROR);
-    log << LogFormat::RED << LogFormat::BOLD << "\nERROR: unable to open the file "
-        << LogFormat::RESET << Filename.c_str()
-        << LogFormat::RED << LogFormat::BOLD << "\n       => Output to this file is disabled.\n\n"
-        << LogFormat::RESET;
-    Disable();
-    return false;
+  std::unique_ptr<FGLogging> out;
+  streambuf* buffer = nullptr;
+  string scratch = Filename.utf8Str();
+
+  if (to_upper(scratch) == "COUT") {
+    out.reset(new FGLogging(LogLevel::STDOUT));
+    buffer = out->rdbuf();
+  } else {
+    datafile.clear();
+    datafile.open(Filename);
+    if (!datafile) {
+      FGLogging log(LogLevel::ERROR);
+      log << LogFormat::RED << LogFormat::BOLD << "\nERROR: unable to open the file "
+          << LogFormat::RESET << Filename.c_str()
+          << LogFormat::RED << LogFormat::BOLD << "\n       => Output to this file is disabled.\n\n"
+          << LogFormat::RESET;
+      Disable();
+      return false;
+    }
+    buffer = datafile.rdbuf();
   }
 
-  string scratch = "";
-  streambuf* buffer = datafile.rdbuf();
   ostream outstream(buffer);
 
   outstream.precision(10);
@@ -247,11 +255,13 @@ bool FGOutputTextFile::OpenFile(void)
 
 void FGOutputTextFile::Print(void)
 {
-  streambuf* buffer;
   string scratch = Filename.utf8Str();
+  std::unique_ptr<FGLogging> out;
+  std::streambuf* buffer = nullptr;
 
   if (to_upper(scratch) == "COUT") {
-    buffer = cout.rdbuf();
+    out.reset(new FGLogging(LogLevel::STDOUT));
+    buffer = out->rdbuf();
   } else {
     buffer = datafile.rdbuf();
   }
