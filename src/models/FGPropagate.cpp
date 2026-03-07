@@ -707,7 +707,7 @@ FGColumnVector3 FGPropagate::GetEulerDeg(void) const
 
 void FGPropagate::DumpState(void)
 {
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << "\n";
   log << LogFormat::BLUE
       << "------------------------------------------------------------------" << LogFormat::RESET << "\n";

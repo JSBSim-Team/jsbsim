@@ -98,7 +98,7 @@ FGTrim::~FGTrim(void) {
 
 void FGTrim::TrimStats() {
   int run_sum=0;
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << "\n  Trim Statistics:\n";
   log << "    Total Iterations: " << total_its << "\n";
   if( total_its > 0) {
@@ -119,7 +119,7 @@ void FGTrim::TrimStats() {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::Report(void) {
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << "  Trim Results:\n";
   for(unsigned int current_axis=0; current_axis<TrimAxes.size(); current_axis++)
     TrimAxes[current_axis].AxisReport();

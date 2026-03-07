@@ -436,7 +436,7 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << endl << LogFormat::BLUE << LogFormat::BOLD
       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
       << LogFormat::RESET << endl;

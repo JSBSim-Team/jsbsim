@@ -1126,7 +1126,7 @@ string FGFDMExec::QueryPropertyCatalog(const string& in, const string& end_of_li
 
 void FGFDMExec::PrintPropertyCatalog(void)
 {
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << endl
       << "  " << LogFormat::BLUE << highint << LogFormat::UNDERLINE_ON
       << "Property Catalog for " << modelName << LogFormat::RESET << endl << endl;

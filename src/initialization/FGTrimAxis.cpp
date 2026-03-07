@@ -293,7 +293,7 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-  FGLogging log(LogLevel::INFO);
+  FGLogging log(LogLevel::STDOUT);
   log << "  " << left << setw(20) << GetControlName() << ": ";
   log << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
   log << setw(5) << GetStateName() << ": ";
