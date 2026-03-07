@@ -39,15 +39,15 @@ set(HEADERS FGGroundCallback.h
             FGUDPInputSocket.h
             FGLog.h)
 
-add_library(InputOutput OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(InputOutput PROPERTIES TARGET_DIRECTORY
-                                  ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(InputOutput OBJECT ${SOURCES})
 # For MinGW, we need to force _WIN32_WINNT to a quite recent value for FGfdmSocket
 # to compile due to the usage of the flags AI_ADDRCONFIG and AI_V4MAPPED
 # See https://docs.microsoft.com/fr-fr/windows/win32/winprog/using-the-windows-headers#setting-winver-or-_win32_winnt
 target_compile_definitions(InputOutput PRIVATE $<$<BOOL:${MINGW}>:_WIN32_WINNT=0x600>)  # Windows Vista/Windows Server 2008
 
-add_coverage(InputOutput)
+if(CXXTEST_FOUND)
+    add_coverage(InputOutput)
+endif(CXXTEST_FOUND)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/input_output
                          COMPONENT devel)

@@ -2,9 +2,11 @@ set(SOURCES sg_path.cxx strutils.cxx)
 
 set(HEADERS stdint.hxx sg_path.hxx strutils.hxx)
 
-add_library(Misc OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(Misc PROPERTIES TARGET_DIRECTORY
-                           ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(Misc OBJECT ${SOURCES})
+
+if(WIN32)
+    target_compile_definitions(Misc PRIVATE NOMINMAX)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/misc
                          COMPONENT devel)
