@@ -39,7 +39,6 @@ documentation = "https://jsbsim-team.github.io/jsbsim/python/"
 [tool.scikit-build]
 cmake.define.BUILD_DOCS = "OFF"
 build.targets = ["_jsbsim"]
-# build-dir = "build"
 install.components = [ "wheel" ]
 sdist.inclusion-mode = "classic"
 sdist.exclude = [ "*" ]

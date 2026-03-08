@@ -33,7 +33,6 @@ src/.libs/
 TAGS
 .dir-locals.el
 initfile.*.xml
-dist/
 
 #################
 ## Python
