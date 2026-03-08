@@ -83,7 +83,7 @@ bool FGOutputTextFile::Load(Element* el)
 
 bool FGOutputTextFile::OpenFile(void)
 {
-  std::unique_ptr<FGLogging> out;
+  unique_ptr<FGLogging> out;
   streambuf* buffer = nullptr;
   string scratch = Filename.utf8Str();
 
@@ -255,9 +255,9 @@ bool FGOutputTextFile::OpenFile(void)
 
 void FGOutputTextFile::Print(void)
 {
+  streambuf* buffer;
   string scratch = Filename.utf8Str();
-  std::unique_ptr<FGLogging> out;
-  std::streambuf* buffer = nullptr;
+  unique_ptr<FGLogging> out;
 
   if (to_upper(scratch) == "COUT") {
     out.reset(new FGLogging(LogLevel::STDOUT));

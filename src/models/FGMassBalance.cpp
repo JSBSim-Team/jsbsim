@@ -436,15 +436,15 @@ void FGMassBalance::PointMass::bind(FGPropertyManager* PropertyManager,
 
 void FGMassBalance::GetMassPropertiesReport(int i)
 {
-  FGLogging log(LogLevel::STDOUT);
-  log << endl << LogFormat::BLUE << LogFormat::BOLD
+  FGLogging out(LogLevel::STDOUT);
+  out << endl << LogFormat::BLUE << LogFormat::BOLD
       << "  Mass Properties Report (English units: lbf, in, slug-ft^2)"
       << LogFormat::RESET << endl;
-  log << "                                  " << LogFormat::UNDERLINE_ON << "    Weight    CG-X    CG-Y"
+  out << "                                  " << LogFormat::UNDERLINE_ON << "    Weight    CG-X    CG-Y"
       << "    CG-Z         Ixx         Iyy         Izz"
       << "         Ixy         Ixz         Iyz" << LogFormat::UNDERLINE_OFF << endl;
-  log << fixed << setprecision(1);
-  log << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << LogFormat::NORMAL
+  out << fixed << setprecision(1);
+  out << LogFormat::BOLD << setw(34) << left << "    Base Vehicle " << LogFormat::NORMAL
       << right << setw(12) << EmptyWeight
       << setw(8) << vbaseXYZcg(eX) << setw(8) << vbaseXYZcg(eY) << setw(8) << vbaseXYZcg(eZ)
       << setw(12) << baseJ(1,1) << setw(12) << baseJ(2,2) << setw(12) << baseJ(3,3)
@@ -453,17 +453,17 @@ void FGMassBalance::GetMassPropertiesReport(int i)
   for (unsigned int i=0;i<PointMasses.size();i++) {
     PointMass* pm = PointMasses[i];
     double pmweight = pm->GetPointMassWeight();
-    log << LogFormat::BOLD << left << setw(4) << i << setw(30) << pm->GetName() << LogFormat::NORMAL
+    out << LogFormat::BOLD << left << setw(4) << i << setw(30) << pm->GetName() << LogFormat::NORMAL
         << right << setw(12) << pmweight << setw(8) << pm->GetLocation()(eX)
         << setw(8) << pm->GetLocation()(eY) << setw(8) << pm->GetLocation()(eZ)
         << setw(12) << pm->GetPointMassMoI(1,1) << setw(12) << pm->GetPointMassMoI(2,2) << setw(12) << pm->GetPointMassMoI(3,3)
         << setw(12) << pm->GetPointMassMoI(1,2) << setw(12) << pm->GetPointMassMoI(1,3) << setw(12) << pm->GetPointMassMoI(2,3) << endl;
   }
 
-  log << FDMExec->GetPropulsionTankReport();
+  out << FDMExec->GetPropulsionTankReport();
 
-  log << "    " << LogFormat::UNDERLINE_ON << setw(136) << " " << LogFormat::UNDERLINE_OFF << endl;
-  log << LogFormat::BOLD << left << setw(30) << "    Total: " << right << setw(14) << Weight
+  out << "    " << LogFormat::UNDERLINE_ON << setw(136) << " " << LogFormat::UNDERLINE_OFF << endl;
+  out << LogFormat::BOLD << left << setw(30) << "    Total: " << right << setw(14) << Weight
       << setw(8) << vXYZcg(eX)
       << setw(8) << vXYZcg(eY)
       << setw(8) << vXYZcg(eZ)

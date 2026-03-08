@@ -293,17 +293,17 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-  FGLogging log(LogLevel::STDOUT);
-  log << "  " << left << setw(20) << GetControlName() << ": ";
-  log << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
-  log << setw(5) << GetStateName() << ": ";
-  log << setw(9) << setprecision(2) << scientific << GetState()+state_target;
-  log << " Tolerance: " << setw(3) << setprecision(0) << scientific << GetTolerance();
+  FGLogging out(LogLevel::STDOUT);
+  out << "  " << left << setw(20) << GetControlName() << ": ";
+  out << setw(6) << setprecision(2) << GetControl()*control_convert << ' ';
+  out << setw(5) << GetStateName() << ": ";
+  out << setw(9) << setprecision(2) << scientific << GetState()+state_target;
+  out << " Tolerance: " << setw(3) << setprecision(0) << scientific << GetTolerance();
 
   if( fabs(GetState()+state_target) < fabs(GetTolerance()) )
-     log << "  Passed\n";
+     out << "  Passed\n";
   else
-     log << "  Failed\n";
+     out << "  Failed\n";
 }
 
 /*****************************************************************************/
