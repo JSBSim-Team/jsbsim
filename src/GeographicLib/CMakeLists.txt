@@ -7,6 +7,5 @@ set(HEADERS Config.h
             GeodesicLine.hpp
             Math.hpp)
 
-add_library(GeographicLib OBJECT ${HEADERS} ${SOURCES})
-set_target_properties(GeographicLib PROPERTIES TARGET_DIRECTORY
-                                    ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(GeographicLib OBJECT ${SOURCES})
+install(FILES ${HEADERS} DESTINATION include/GeographicLib COMPONENT devel)

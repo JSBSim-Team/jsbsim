@@ -19,13 +19,19 @@ if(NOT EXPAT_FOUND)
                       xmlrole.h
                       xmltok.h
                       xmltok_impl.h
+                      xmltok_impl.c
+                      xmltok_ns.c
                       expat_config.h
                       siphash.h)
-endif()
+  set_property(SOURCE xmltok_impl.c PROPERTY HEADER_FILE_ONLY)
+  set_property(SOURCE xmltok_ns.c PROPERTY HEADER_FILE_ONLY)
+endif(NOT EXPAT_FOUND)
 
-add_library(Xml OBJECT ${HEADERS} ${SOURCES})
+add_library(Xml OBJECT ${SOURCES})
 target_include_directories(Xml PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-set_target_properties(Xml PROPERTIES TARGET_DIRECTORY
-                          ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(WIN32 AND NOT EXPAT_FOUND)
+  target_compile_definitions(Xml PRIVATE XML_STATIC)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml COMPONENT devel)
