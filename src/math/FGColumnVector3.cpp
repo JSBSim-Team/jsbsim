@@ -37,12 +37,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "FGColumnVector3.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+
+#include "FGJSBBase.h"
+#include "FGColumnVector3.h"
+#include "input_output/FGLog.h"
 
 using namespace std;
 
@@ -84,9 +86,10 @@ FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
   if (scalar != 0.0)
     return operator*( 1.0/scalar );
 
-  cerr << "Attempt to divide by zero in method \
+  FGLogging log(LogLevel::ERROR);
+  log << "Attempt to divide by zero in method \
     FGColumnVector3::operator/(const double scalar), \
-    object " << data[0] << " , " << data[1] << " , " << data[2] << endl;
+    object " << data[0] << " , " << data[1] << " , " << data[2] << "\n";
   return FGColumnVector3();
 }
 
@@ -96,10 +99,12 @@ FGColumnVector3& FGColumnVector3::operator/=(const double scalar)
 {
   if (scalar != 0.0)
     operator*=( 1.0/scalar );
-  else
-    cerr << "Attempt to divide by zero in method \
+  else {
+    FGLogging log(LogLevel::ERROR);
+    log << "Attempt to divide by zero in method \
       FGColumnVector3::operator/=(const double scalar), \
-      object " << data[0] << " , " << data[1] << " , " << data[2] << endl;
+      object " << data[0] << " , " << data[1] << " , " << data[2] << "\n";
+  }
 
   return *this;
 }

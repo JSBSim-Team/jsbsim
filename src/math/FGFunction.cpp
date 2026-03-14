@@ -904,7 +904,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       FGXMLLogging log(element, LogLevel::ERROR);
       log << LogFormat::RED << LogFormat::BOLD
           << "Bad operation <" << operation
-          << "> detected in configuration file" << reset << endl;
+          << "> detected in configuration file\n" << LogFormat::RESET;
     }
 
     // Optimize functions applied on constant parameters by replacing them by
