@@ -326,7 +326,7 @@ void FGGasCell::Calculate(double dt)
     const double VolumeValved =
       ValveOpen * ValveCoefficient * DeltaPressure * dt;
     Contents =
-      max(1E-8, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
   }
 
   //-- Update ballonets. --
@@ -346,6 +346,32 @@ void FGGasCell::Calculate(double dt)
     Contents =
       (AirPressure + MaxOverpressure) *
       (MaxVolume - BallonetsVolume) / (R * Temperature);
+  }
+
+  //-- Handle empty gas cell. --
+  if (Contents <= 0.0) {
+    Contents = 0.0;
+    Pressure = AirPressure;
+    Volume = BallonetsVolume;
+    dVolumeIdeal = 0.0;
+    Buoyancy = Volume * AirDensity * g;
+    vFn = {0.0, 0.0, -Buoyancy};
+    gasCellJ.InitMatrix();
+    Mass = 0.0;
+    gasCellM.InitMatrix();
+    if (no_ballonets > 0) {
+      for (i = 0; i < no_ballonets; i++) {
+        Mass += Ballonet[i]->GetMass();
+        gasCellM(eX) +=
+          Ballonet[i]->GetXYZ(eX) * Ballonet[i]->GetMass()*slugtolb;
+        gasCellM(eY) +=
+          Ballonet[i]->GetXYZ(eY) * Ballonet[i]->GetMass()*slugtolb;
+        gasCellM(eZ) +=
+          Ballonet[i]->GetXYZ(eZ) * Ballonet[i]->GetMass()*slugtolb;
+        gasCellJ += Ballonet[i]->GetInertia();
+      }
+    }
+    return;
   }
 
   //-- Volume --
@@ -729,10 +755,18 @@ void FGBallonet::Calculate(double dt)
     const double VolumeValved =
       ((Pressure > AirPressure + MaxOverpressure) ? 1.0 : ValveOpen) *
       ValveCoefficient * DeltaPressure * dt;
-    // FIXME: Too small values of Contents sometimes leads to NaN.
-    //        Currently the minimum is restricted to a safe value.
     Contents =
-      max(1.0, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+  }
+
+  //-- Handle empty ballonet. --
+  if (Contents <= 0.0) {
+    Contents = 0.0;
+    Pressure = ParentPressure;
+    Volume = 0.0;
+    dVolumeIdeal = 0.0;
+    ballonetJ.InitMatrix();
+    return;
   }
 
   //-- Volume --
