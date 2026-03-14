@@ -29,6 +29,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGXMLFileRead.h"
+#include "input_output/FGLog.h"
 #include "simgear/io/iostreams/sgstream.hxx"
 
 namespace JSBSim {
@@ -47,12 +48,16 @@ Element* FGXMLFileRead::LoadXMLDocument(const SGPath& XML_filename,
       filename.concat(".xml");
     infile.open(filename);
     if ( !infile.is_open()) {
-      if (verbose) std::cerr << "Could not open file: " << filename << std::endl;
-      return 0L;
+      if (verbose) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Could not open file: " << filename << "\n";
+      }
+      return nullptr;
     }
   } else {
-    std::cerr << "No filename given." << std::endl;
-    return 0L;
+    FGLogging log(LogLevel::ERROR);
+    log << "No filename given.\n";
+    return nullptr;
   }
   readXML(infile, fparse, filename.utf8Str());
   Element* document = fparse.GetDocument();

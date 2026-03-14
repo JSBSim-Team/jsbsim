@@ -146,7 +146,8 @@ void FGPropertyManager::Untie(const string &name)
 {
   SGPropertyNode* property = root->getNode(name.c_str());
   if (!property) {
-    cerr << "Attempt to untie a non-existant property." << name << endl;
+    FGLogging log(LogLevel::ERROR);
+    log << "Attempt to untie a non-existant property." << name << "\n";
     return;
   }
 
@@ -165,12 +166,16 @@ void FGPropertyManager::Untie(SGPropertyNode *property)
     if (it->node.ptr() == property) {
       it->untie();
       tied_properties.erase(it);
-      if (FGJSBBase::debug_lvl & 0x20) cout << "Untied " << name << endl;
+      if (FGJSBBase::debug_lvl & 0x20) {
+        FGLogging log(LogLevel::DEBUG);
+        log << "Untied " << name << "\n";
+      }
       return;
     }
   }
 
-  cerr << "Failed to untie property " << name << endl
-       << "JSBSim is not the owner of this property." << endl;
+  FGLogging log(LogLevel::ERROR);
+  log << "Failed to untie property " << name
+      << "\nJSBSim is not the owner of this property.\n";
 }
 } // namespace JSBSim

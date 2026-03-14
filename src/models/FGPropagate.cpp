@@ -707,36 +707,36 @@ FGColumnVector3 FGPropagate::GetEulerDeg(void) const
 
 void FGPropagate::DumpState(void)
 {
-  FGLogging log(LogLevel::INFO);
-  log << "\n";
-  log << LogFormat::BLUE
+  FGLogging out(LogLevel::STDOUT);
+  out << "\n";
+  out << LogFormat::BLUE
       << "------------------------------------------------------------------" << LogFormat::RESET << "\n";
-  log << LogFormat::BOLD << fixed
+  out << LogFormat::BOLD << fixed
       << "State Report at sim time: " << FDMExec->GetSimTime() << " seconds" << LogFormat::RESET << "\n";
-  log << "  " << LogFormat::UNDERLINE_ON
+  out << "  " << LogFormat::UNDERLINE_ON
       << "Position" << LogFormat::UNDERLINE_OFF << "\n";
-  log << "    ECI:   " << VState.vInertialPosition.Dump(", ") << " (x,y,z, in ft)\n";
-  log << "    ECEF:  " << VState.vLocation << " (x,y,z, in ft)\n";
-  log << "    Local: " << VState.vLocation.GetGeodLatitudeDeg()
+  out << "    ECI:   " << VState.vInertialPosition.Dump(", ") << " (x,y,z, in ft)\n";
+  out << "    ECEF:  " << VState.vLocation << " (x,y,z, in ft)\n";
+  out << "    Local: " << VState.vLocation.GetGeodLatitudeDeg()
                        << ", " << VState.vLocation.GetLongitudeDeg()
                        << ", " << GetAltitudeASL() << " (geodetic lat, lon, alt ASL in deg and ft)\n";
 
-  log << "\n  " << LogFormat::UNDERLINE_ON
+  out << "\n  " << LogFormat::UNDERLINE_ON
       << "Orientation" << LogFormat::UNDERLINE_OFF << "\n";
-  log << "    ECI:   " << VState.qAttitudeECI.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)\n";
-  log << "    Local: " << VState.qAttitudeLocal.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)\n";
+  out << "    ECI:   " << VState.qAttitudeECI.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)\n";
+  out << "    Local: " << VState.qAttitudeLocal.GetEulerDeg().Dump(", ") << " (phi, theta, psi in deg)\n";
 
-  log << "\n  " << LogFormat::UNDERLINE_ON
+  out << "\n  " << LogFormat::UNDERLINE_ON
       << "Velocity" << LogFormat::UNDERLINE_OFF << "\n";
-  log << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)\n";
-  log << "    ECEF:  " << GetECEFVelocity().Dump(", ") << " (x,y,z in ft/s)\n";
-  log << "    Local: " << GetVel() << " (n,e,d in ft/sec)\n";
-  log << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)\n";
+  out << "    ECI:   " << VState.vInertialVelocity.Dump(", ") << " (x,y,z in ft/s)\n";
+  out << "    ECEF:  " << GetECEFVelocity().Dump(", ") << " (x,y,z in ft/s)\n";
+  out << "    Local: " << GetVel() << " (n,e,d in ft/sec)\n";
+  out << "    Body:  " << GetUVW() << " (u,v,w in ft/sec)\n";
 
-  log << "\n" << "  " << LogFormat::UNDERLINE_ON
+  out << "\n" << "  " << LogFormat::UNDERLINE_ON
       << "Body Rates (relative to given frame, expressed in body frame)" << LogFormat::UNDERLINE_OFF << "\n";
-  log << "    ECI:   " << (VState.vPQRi * radtodeg).Dump(", ") << " (p,q,r in deg/s)" << "\n";
-  log << "    ECEF:  " << (VState.vPQR * radtodeg).Dump(", ") << " (p,q,r in deg/s)" << "\n";
+  out << "    ECI:   " << (VState.vPQRi * radtodeg).Dump(", ") << " (p,q,r in deg/s)" << "\n";
+  out << "    ECEF:  " << (VState.vPQR * radtodeg).Dump(", ") << " (p,q,r in deg/s)" << "\n";
 }
 
 //******************************************************************************

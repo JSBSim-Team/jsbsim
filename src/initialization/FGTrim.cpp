@@ -98,29 +98,29 @@ FGTrim::~FGTrim(void) {
 
 void FGTrim::TrimStats() {
   int run_sum=0;
-  FGLogging log(LogLevel::INFO);
-  log << "\n  Trim Statistics:\n";
-  log << "    Total Iterations: " << total_its << "\n";
+  FGLogging out(LogLevel::STDOUT);
+  out << "\n  Trim Statistics:\n";
+  out << "    Total Iterations: " << total_its << "\n";
   if( total_its > 0) {
-    log << "    Sub-iterations:\n";
+    out << "    Sub-iterations:\n";
     for (unsigned int current_axis=0; current_axis<TrimAxes.size(); current_axis++) {
       run_sum += TrimAxes[current_axis].GetRunCount();
-      log << "   " << setw(5) << TrimAxes[current_axis].GetStateName().c_str()
+      out << "   " << setw(5) << TrimAxes[current_axis].GetStateName().c_str()
            << ": " << setprecision(3) << sub_iterations[current_axis]
            << " average: " << setprecision(5) << sub_iterations[current_axis]/double(total_its)
            << "  successful:  " << setprecision(3) << successful[current_axis]
            << "  stability: " << setprecision(5) << TrimAxes[current_axis].GetAvgStability()
            << "\n";
     }
-    log << "    Run Count: " << run_sum << "\n";
+    out << "    Run Count: " << run_sum << "\n";
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::Report(void) {
-  FGLogging log(LogLevel::INFO);
-  log << "  Trim Results:\n";
+  FGLogging out(LogLevel::STDOUT);
+  out << "  Trim Results:\n";
   for(unsigned int current_axis=0; current_axis<TrimAxes.size(); current_axis++)
     TrimAxes[current_axis].AxisReport();
 }

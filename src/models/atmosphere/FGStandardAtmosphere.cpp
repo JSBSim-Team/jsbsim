@@ -434,12 +434,12 @@ void FGStandardAtmosphere::SetTemperatureGradedDelta(double deltemp, double h, e
 
   void FGStandardAtmosphere::PrintStandardAtmosphereTable()
 {
-  FGLogging log(LogLevel::INFO);
-  log << "Altitude (ft)   Temp (F)   Pressure (psf)   Density (sl/ft3)" << std::endl;
-  log << "-------------   --------   --------------   ----------------" << std::endl;
+  FGLogging out(LogLevel::STDOUT);
+  out << "Altitude (ft)   Temp (F)   Pressure (psf)   Density (sl/ft3)" << std::endl;
+  out << "-------------   --------   --------------   ----------------" << std::endl;
   for (int i=0; i<280000; i+=1000) {
     Calculate(i);
-    log << std::setw(12) << std::setprecision(2) << i
+    out << std::setw(12) << std::setprecision(2) << i
         << "  " << std::setw(9)  << std::setprecision(2) << Temperature - 459.67
         << "  " << std::setw(13) << std::setprecision(4) << Pressure
         << "  " << std::setw(18) << std::setprecision(8) << Density

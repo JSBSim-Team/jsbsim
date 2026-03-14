@@ -1126,12 +1126,12 @@ string FGFDMExec::QueryPropertyCatalog(const string& in, const string& end_of_li
 
 void FGFDMExec::PrintPropertyCatalog(void)
 {
-  FGLogging log(LogLevel::INFO);
-  log << endl
+  FGLogging out(LogLevel::STDOUT);
+  out << endl
       << "  " << LogFormat::BLUE << highint << LogFormat::UNDERLINE_ON
       << "Property Catalog for " << modelName << LogFormat::RESET << endl << endl;
   for (auto &catalogElm: PropertyCatalog)
-    log << "    " << catalogElm << endl;
+    out << "    " << catalogElm << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

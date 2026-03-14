@@ -69,7 +69,8 @@ enum class LogLevel {
   INFO,  // Informatory messages
   WARN,  // Possible impending problem
   ERROR, // Problem that can be recovered
-  FATAL  // Fatal problem => an exception will be thrown
+  FATAL, // Fatal problem => an exception will be thrown
+  STDOUT // Standard output - unconditionally displayed.
 };
 
 enum class LogFormat {
@@ -135,6 +136,7 @@ public:
   FGLogging& operator<<(const SGPath& path) { buffer << path; return *this; }
   FGLogging& operator<<(const FGColumnVector3& vec) { buffer << vec; return *this; }
   FGLogging& operator<<(LogFormat format);
+  std::streambuf* rdbuf() { return buffer.rdbuf(); }
   void Flush(void);
 protected:
   FGLogging(FGLogger_ptr l) : logger(l) {}
@@ -155,14 +157,10 @@ public:
   void SetMinLevel(LogLevel level) { min_level = level; }
   void FileLocation(const std::string& filename, int line) override
   { buffer.append("\nIn file " + filename + ": line " + std::to_string(line) + "\n"); }
+  void Message(const std::string& message) override { buffer.append(message); }
   void Format(LogFormat format) override;
   void Flush(void) override;
   ~FGLogConsole() override { Flush(); }
-
-  void Message(const std::string& message) override {
-    if (log_level < min_level) return;
-    buffer.append(message);
-  }
 
 private:
   std::string buffer;
