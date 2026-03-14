@@ -46,9 +46,6 @@
 #  define SG_COMPILER_STR "GNU C++ version " SG_STRINGIZE(__GNUC__) "." SG_STRINGIZE(__GNUC_MINOR__)
 #endif // __GNUC__
 
-// Dummy SG_LOG macro
-#define SG_LOG(type, level, message) (cout << message << endl)
-
 //
 // Microsoft compilers.
 //
