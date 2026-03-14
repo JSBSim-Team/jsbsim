@@ -16,7 +16,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FGNelderMead.h"
 #include <limits>
 #include <cmath>
 #include <cstdlib>
@@ -25,6 +24,9 @@
 #include <sstream>
 #include <stdexcept>
 #include <ctime>
+
+#include "FGNelderMead.h"
+#include "input_output/FGLog.h"
 
 namespace JSBSim
 {
@@ -53,7 +55,8 @@ FGNelderMead::FGNelderMead(Function * f, const std::vector<double> & initialGues
 
 void FGNelderMead::update()
 {
-    std::cout.precision(3);
+    FGLogging log(LogLevel::DEBUG);
+    log << std::setprecision(3);
 
     // reinitialize simplex whenever rtol condition is met
     if ( rtolI < rtol || iter == 0)
@@ -61,7 +64,7 @@ void FGNelderMead::update()
         std::vector<double> guess(m_nDim);
         if (iter == 0)
         {
-            //std::cout << "constructing simplex" << std::endl;
+            //log << "constructing simplex\n";
             guess = initialGuess;
         }
         else
@@ -71,7 +74,7 @@ void FGNelderMead::update()
                 m_status = -1;
                 throw std::runtime_error("unable to escape local minimum!");
             }
-            //std::cout << "reinitializing step size" << std::endl;
+            //log << "reinitializing step size\n";
             guess = m_simplex[m_iMin];
             minCostPrevResize = minCost;
         }
@@ -83,7 +86,7 @@ void FGNelderMead::update()
     {
         try
         {
-            m_cost[vertex] = eval(m_simplex[vertex]);   
+            m_cost[vertex] = eval(m_simplex[vertex]);
         }
         catch (...)
         {
@@ -122,7 +125,7 @@ void FGNelderMead::update()
     // check for convergence break condition
     else if ( m_cost[m_iMin] < abstol )
     {
-        //std::cout << "\nsimplex converged" << std::endl;
+        //log << "\nsimplex converged\n";
         m_status = 0;
         return;
     }
@@ -147,73 +150,74 @@ void FGNelderMead::update()
         if ( (minCostPrev + std::numeric_limits<float>::epsilon() )
                 < minCost && minCostPrev != 0)
         {
-            std::cout << "\twarning: simplex cost increased"
-                      << std::scientific
-                      << "\n\tcost: " << minCost
-                      << "\n\tcost previous: " << minCostPrev
-                      << std::fixed << std::endl;
+            log << "\twarning: simplex cost increased"
+                << std::scientific
+                << "\n\tcost: " << minCost
+                << "\n\tcost previous: " << minCostPrev
+                << std::fixed << "\n";
         }
 
-        std::cout << "i: " << iter
-                  << std::scientific
-                  << "\tcost: " << m_cost[m_iMin]
-                  << "\trtol: " << rtolI
-                  << std::fixed
-                  << "\talpha: " << m_simplex[m_iMin][2]*180/M_PI
-                  << "\tbeta: " << m_simplex[m_iMin][5]*180/M_PI
-                  << "\tthrottle: " << m_simplex[m_iMin][0]
-                  << "\televator: " << m_simplex[m_iMin][1]
-                  << "\taileron: " << m_simplex[m_iMin][3]
-                  << "\trudder: " << m_simplex[m_iMin][4]
-                  << std::endl;
+        log << "i: " << iter
+            << std::scientific
+            << "\tcost: " << m_cost[m_iMin]
+            << "\trtol: " << rtolI
+            << std::fixed
+            << "\talpha: " << m_simplex[m_iMin][2]*180/M_PI
+            << "\tbeta: " << m_simplex[m_iMin][5]*180/M_PI
+            << "\tthrottle: " << m_simplex[m_iMin][0]
+            << "\televator: " << m_simplex[m_iMin][1]
+            << "\taileron: " << m_simplex[m_iMin][3]
+            << "\trudder: " << m_simplex[m_iMin][4]
+            << "\n";
     }
     if (showSimplex)
     {
-        std::cout << "simplex: " << std::endl;;
+        log << "simplex:\n";
         for (unsigned int j=0;j<m_nVert;j++)
-            std::cout << "\t" << std::scientific
-                      << std::setw(10) << m_cost[j];
-        std::cout << std::endl;
-        for (unsigned int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
-        std::cout << std::endl;
+            log << "\t" << std::scientific
+                << std::setw(10) << m_cost[j];
+        log << "\n";
+        for (unsigned int j=0;j<m_nVert;j++) log << "\t\t" << j;
+        log << "\n";
         for (unsigned int i=0;i<m_nDim;i++)
         {
             for (unsigned int j=0;j<m_nVert;j++)
-                std::cout << "\t" << std::setw(10) << m_simplex[j][i];
-            std::cout << std::endl;
+                log << "\t" << std::setw(10) << m_simplex[j][i];
+            log << "\n";
         }
-        std::cout << std::fixed
-                  << "\n\tiMax: " <<  m_iMax
-                  << "\t\tiNextMax: " <<  m_iNextMax
-                  << "\t\tiMin: " <<  m_iMin << std::endl;
+        log << std::fixed
+            << "\n\tiMax: " <<  m_iMax
+            << "\t\tiNextMax: " <<  m_iNextMax
+            << "\t\tiMin: " <<  m_iMin << "\n";
     }
 
     if (pause)
     {
-        std::cout << "paused, press any key to continue" << std::endl;
+        FGLogging out(LogLevel::STDOUT);
+        out << "paused, press any key to continue\n";
         std::cin.get();
     }
 
 
     // costs
-    
+
     try
     {
         // try inversion
         double costTry = tryStretch(-1.0);
-        //std::cout << "cost Try 0: " << costTry << std::endl;
+        //log << "cost Try 0: " << costTry << "\n";
 
         // if lower cost than best, then try further stretch by double speed factor
         if (costTry < minCost)
         {
             double costTry0 = costTry;
             costTry = tryStretch(speed);
-            //std::cout << "cost Try 1: " << costTry << std::endl;
+            //log << "cost Try 1: " << costTry << "\n";
 
             if (showSimplex)
             {
-                if (costTry < costTry0) std::cout << "inversion about: " << m_iMax << std::endl;
-                else std::cout << "inversion and stretch about: " << m_iMax << std::endl;
+                if (costTry < costTry0) log << "inversion about: " << m_iMax << "\n";
+                else log << "inversion and stretch about: " << m_iMax << "\n";
             }
         }
         // otherwise try a contraction
@@ -221,19 +225,19 @@ void FGNelderMead::update()
         {
             // 1d contraction
             costTry = tryStretch(1./speed);
-            //std::cout << "cost Try 2: " << costTry << std::endl;
+            //log << "cost Try 2: " << costTry << "\n";
 
             // if greater than max cost, contract about min
             if (costTry > maxCost)
             {
                 if (showSimplex)
-                    std::cout << "multiD contraction about: " << m_iMin << std::endl;
+                    log << "multiD contraction about: " << m_iMin << "\n";
                 contract();
             }
             else
             {
                 if (showSimplex)
-                    std::cout << "contraction about: " << m_iMin << std::endl;
+                    log << "contraction about: " << m_iMin << "\n";
             }
         }
     }
@@ -257,7 +261,7 @@ int FGNelderMead::status()
 double FGNelderMead::getRandomFactor()
 {
     double randFact = 1+(float(rand() % 1000)/500-1)*m_randomization;
-    //std::cout << "random factor: " << randFact << std::endl;;
+    //log << "random factor: " << randFact << "\n";
     return randFact;
 }
 
@@ -294,7 +298,10 @@ double FGNelderMead::tryStretch(double factor)
         for (unsigned int dim=0;dim<m_nDim;dim++) m_simplex[m_iMax][dim] = tryVertex[dim];
         // update the cost
         m_cost[m_iMax] = costTry;
-        if (showSimplex) std::cout << "stretched\t" << m_iMax << "\tby : " << factor << std::endl;
+        if (showSimplex) {
+            FGLogging log(LogLevel::DEBUG);
+            log << "stretched\t" << m_iMax << "\tby : " << factor << "\n";
+        }
     }
     return costTry;
 }
@@ -328,14 +335,15 @@ void FGNelderMead::constructSimplex(const std::vector<double> & guess,
     }
     if (showSimplex)
     {
-        std::cout << "simplex: " << std::endl;;
-        for (unsigned int j=0;j<m_nVert;j++) std::cout << "\t\t" << j;
-        std::cout << std::endl;
+        FGLogging log(LogLevel::DEBUG);
+        log << "simplex:\n";
+        for (unsigned int j=0;j<m_nVert;j++) log << "\t\t" << j;
+        log << "\n";
         for (unsigned int i=0;i<m_nDim;i++)
         {
             for (unsigned int j=0;j<m_nVert;j++)
-                std::cout << "\t" << std::setw(10) << m_simplex[j][i];
-            std::cout << std::endl;
+                log << "\t" << std::setw(10) << m_simplex[j][i];
+            log << "\n";
         }
     }
 }
@@ -357,16 +365,14 @@ double FGNelderMead::eval(const std::vector<double> & vertex, bool check)
         double cost0 = m_f->eval(vertex);
         double cost1 = m_f->eval(vertex);
         if ((cost0 - cost1) > std::numeric_limits<float>::epsilon()) {
-            std::stringstream msg;
-            msg.precision(10);
-            msg << std::scientific
+            LogException err;
+            err << std::setprecision(10) << std::scientific
                 << "dynamics not stable!"
                 << "\tdiff: " << cost1 - cost0
                 << "\tcost0: " << cost0
                 << "\tcost1: " << cost1
-                << std::endl;
-            std::cout << msg.str();
-            //throw std::runtime_error(msg.str());
+                << "\n";
+            //throw err;
         } else {
             return cost1;
         }

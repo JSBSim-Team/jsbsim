@@ -156,10 +156,11 @@ bool GetBinary(double val, const string &ctxMsg)
   if (val < 1E-9) return false;
   else if (val-1 < 1E-9) return true;
   else {
-    cerr << ctxMsg << FGJSBBase::fgred << FGJSBBase::highint
-         << "Malformed conditional check in function definition."
-         << FGJSBBase::reset << endl;
-    throw BaseException("Fatal Error.");
+    LogException err;
+    err << ctxMsg << LogFormat::RED << LogFormat::BOLD
+        << "Malformed conditional check in function definition.\n"
+        << LogFormat::RESET;
+    throw err;
   }
 }
 
@@ -190,11 +191,12 @@ FGParameter_ptr VarArgsFn(const func_t& _f, FGFDMExec* fdmex, Element* el,
   }
   catch(WrongNumberOfArguments& e) {
     if ((e.GetElement() == el) && (e.NumberOfArguments() == 1)) {
-      cerr << el->ReadFrom() << FGJSBBase::fgred
-           << "<" << el->GetName()
-           << "> only has one argument which makes it a no-op." << endl
-           << "Its argument will be evaluated but <" << el->GetName()
-           << "> will not be applied to the result." << FGJSBBase::reset << endl;
+      FGXMLLogging log(el, LogLevel::WARN);
+      log << LogFormat::RED
+          << "<" << el->GetName()
+          << "> only has one argument which makes it a no-op.\n"
+          << "Its argument will be evaluated but <" << el->GetName()
+          << "> will not be applied to the result.\n" << LogFormat::RESET;
       return e.FirstParameter();
     }
     else
@@ -219,20 +221,22 @@ FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
       if (is_number(prefix))
         sCopyTo = replace(sCopyTo,"#",prefix);
       else {
-        cerr << el->ReadFrom() << fgred
-             << "Illegal use of the special character '#'" << reset << endl
-             << "The 'copyto' argument in function " << Name << " is ignored."
-             << endl;
+        FGXMLLogging log(el, LogLevel::ERROR);
+        log << LogFormat::RED
+            << "Illegal use of the special character '#'\n" << LogFormat::RESET
+            << "The 'copyto' argument in function " << Name << " is ignored.\n";
         return;
       }
     }
 
     pCopyTo = PropertyManager->GetNode(sCopyTo);
-    if (!pCopyTo)
-      cerr << el->ReadFrom() << fgred
-           << "Property \"" << sCopyTo
-           << "\" must be previously defined in function " << Name << reset
-           << "The 'copyto' argument is ignored." << endl;
+    if (!pCopyTo) {
+      FGXMLLogging log(el, LogLevel::ERROR);
+      log << LogFormat::RED
+          << "Property \"" << sCopyTo
+          << "\" must be previously defined in function " << Name << LogFormat::RESET
+          << "The 'copyto' argument is ignored.\n";
+    }
   }
 }
 
@@ -270,18 +274,20 @@ void FGFunction::CheckOddOrEvenArguments(Element* el, OddEven odd_even)
   switch(odd_even) {
   case OddEven::Even:
     if (Parameters.size() % 2 == 1) {
-      cerr << el->ReadFrom() << fgred << highint
-           << "<" << el->GetName() << "> must have an even number of arguments."
-           << reset << endl;
-      throw BaseException("Fatal Error");
+      XMLLogException err(el);
+      err << LogFormat::RED << LogFormat::BOLD
+          << "<" << el->GetName() << "> must have an even number of arguments.\n"
+          << LogFormat::RESET;
+      throw err;
     }
     break;
   case OddEven::Odd:
     if (Parameters.size() % 2 == 0) {
-      cerr << el->ReadFrom() << fgred << highint
-           << "<" << el->GetName() << "> must have an odd number of arguments."
-           << reset << endl;
-      throw BaseException("Fatal Error");
+      XMLLogException err(el);
+      err << LogFormat::RED << LogFormat::BOLD
+           << "<" << el->GetName() << "> must have an odd number of arguments.\n"
+           << LogFormat::RESET;
+      throw err;
     }
     break;
   default:
@@ -336,10 +342,10 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
             property_name = replace(property_name,"#",Prefix);
           }
           else {
-            cerr << element->ReadFrom()
-                 << fgred << "Illegal use of the special character '#'"
-                 << reset << endl;
-            throw BaseException("Fatal Error.");
+            XMLLogException err(element);
+            err << LogFormat::RED << "Illegal use of the special character '#'\n"
+                << LogFormat::RESET;
+            throw err;
           }
         }
 
@@ -350,11 +356,12 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
             Parameters.push_back(new FGFunctionValue(property_name,
                                                      PropertyManager, f, element));
           else {
-            cerr << element->ReadFrom()
-                 << fgred << highint << "  No function by the name "
-                 << function_str << " has been defined. This property will "
-                 << "not be logged. You should check your configuration file."
-                 << reset << endl;
+            FGXMLLogging log(element, LogLevel::ERROR);
+            log << LogFormat::RED << LogFormat::BOLD
+                << "  No function by the name " << function_str
+                << " has been defined. This property will "
+                << "not be logged. You should check your configuration file.\n"
+                << LogFormat::RESET;
           }
         }
         else
@@ -368,10 +375,9 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "table" || operation == "t") {
       string call_type = element->GetAttributeValue("type");
       if (call_type == "internal") {
-        std::cerr << el->ReadFrom()
-                  << "An internal table cannot be nested within a function."
-                  << endl;
-        throw BaseException("An internal table cannot be nested within a function.");
+        XMLLogException err(el);
+        err << "An internal table cannot be nested within a function.\n";
+        throw err;
       }
       Parameters.push_back(new FGTable(PropertyManager, element, Prefix));
       // operations
@@ -615,16 +621,18 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         try {
           mean = atof_locale_c(mean_attr);
         } catch (InvalidNumber& e) {
-          cerr << element->ReadFrom() << e.what() << endl;
-          throw e;
+          XMLLogException err(element);
+          err << e.what() << "\n";
+          throw err;
         }
       }
       if (!stddev_attr.empty()) {
         try {
           stddev = atof_locale_c(stddev_attr);
         } catch (InvalidNumber& e) {
-          cerr << element->ReadFrom() << e.what() << endl;
-          throw e;
+          XMLLogException err(element);
+          err << e.what() << "\n";
+          throw err;
         }
       }
       auto generator(makeRandomGenerator(element, fdmex));
@@ -643,16 +651,18 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         try {
           lower = atof_locale_c(lower_attr);
         } catch (InvalidNumber &e) {
-          cerr << element->ReadFrom() << e.what() << endl;
-          throw e;
+          XMLLogException err(element);
+          err << e.what() << "\n";
+          throw err;
         }
       }
       if (!upper_attr.empty()) {
         try {
           upper = atof_locale_c(upper_attr);
         } catch (InvalidNumber &e) {
-          cerr << element->ReadFrom() << e.what() << endl;
-          throw e;
+          XMLLogException err(element);
+          err << e.what() << "\n";
+          throw err;
         }
       }
       auto generator(makeRandomGenerator(element, fdmex));
@@ -667,27 +677,29 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "switch") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
-                 double temp = p[0]->GetValue();
-                 if (temp < 0.0) {
-                   cerr << ctxMsg << fgred << highint
-                        << "The switch function index (" << temp
-                        << ") is negative." << reset << endl;
-                   throw BaseException("Fatal error");
-                 }
-                 size_t n = p.size()-1;
-                 size_t i = static_cast<size_t>(temp+0.5);
+                double temp = p[0]->GetValue();
+                if (temp < 0.0) {
+                  LogException err;
+                  err << ctxMsg << LogFormat::RED << LogFormat::BOLD
+                      << "The switch function index (" << temp
+                      << ") is negative.\n" << LogFormat::RESET;
+                  throw err;
+                }
+                size_t n = p.size()-1;
+                size_t i = static_cast<size_t>(temp+0.5);
 
-                 if (i < n)
-                   return p[i+1]->GetValue();
-                 else {
-                   cerr << ctxMsg << fgred << highint
-                        << "The switch function index (" << temp
-                        << ") selected a value above the range of supplied values"
-                        << "[0:" << n-1 << "]"
-                        << " - not enough values were supplied." << reset << endl;
-                   throw BaseException("Fatal error");
-                 }
-               };
+                if (i < n)
+                  return p[i+1]->GetValue();
+                else {
+                  LogException err;
+                  err << ctxMsg << LogFormat::RED << LogFormat::BOLD
+                      << "The switch function index (" << temp
+                      << ") selected a value above the range of supplied values"
+                      << "[0:" << n-1 << "]"
+                      << " - not enough values were supplied.\n" << LogFormat::RESET;
+                   throw err;
+                }
+              };
       Parameters.push_back(new aFunc<decltype(f), 2>(f, fdmex, element, Prefix,
                                                      var, MaxArgs));
     } else if (operation == "interpolate1d") {
@@ -834,62 +846,65 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       // origin of the vector remains the same.
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
-                 double rx = p[0]->GetValue();             //x component of input vector
-                 double ry = p[1]->GetValue();             //y component of input vector
-                 double rz = p[2]->GetValue();             //z component of input vector
-                 double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
-                 double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
-                 double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
-                 int idx = static_cast<int>(p[6]->GetValue());
+                double rx = p[0]->GetValue();             //x component of input vector
+                double ry = p[1]->GetValue();             //y component of input vector
+                double rz = p[2]->GetValue();             //z component of input vector
+                double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
+                double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+                double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
+                int idx = static_cast<int>(p[6]->GetValue());
 
-                 if ((idx < 1) || (idx > 3)) {
-                   cerr << ctxMsg << fgred << highint
-                        << "The index must be one of the integer value 1, 2 or 3."
-                        << reset << endl;
-                   throw BaseException("Fatal error");
-                 }
+                if ((idx < 1) || (idx > 3)) {
+                  LogException err;
+                  err << ctxMsg << LogFormat::RED << LogFormat::BOLD
+                      << "The index must be one of the integer value 1, 2 or 3.\n"
+                      << LogFormat::RESET;
+                  throw err;
+                }
 
-                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
-                 FGMatrix33 mT = (qa*qb*qc).GetT();
-                 FGColumnVector3 r0(rx, ry, rz);
-                 FGColumnVector3 r = mT*r0;
+                FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                FGMatrix33 mT = (qa*qb*qc).GetT();
+                FGColumnVector3 r0(rx, ry, rz);
+                FGColumnVector3 r = mT*r0;
 
-                 return r(idx);
-               };
+                return r(idx);
+              };
       Parameters.push_back(new aFunc<decltype(f), 7>(f, fdmex, element, Prefix, var));
     } else if (operation == "rotation_wf_to_bf") {
       // Transforms the input vector from q wind frame to a body frame. The
       // origin of the vector remains the same.
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& p)->double {
-                 double rx = p[0]->GetValue();             //x component of input vector
-                 double ry = p[1]->GetValue();             //y component of input vector
-                 double rz = p[2]->GetValue();             //z component of input vector
-                 double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
-                 double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
-                 double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
-                 int idx = static_cast<int>(p[6]->GetValue());
+                double rx = p[0]->GetValue();             //x component of input vector
+                double ry = p[1]->GetValue();             //y component of input vector
+                double rz = p[2]->GetValue();             //z component of input vector
+                double alpha = p[3]->GetValue()*degtorad; //angle of attack of the body frame
+                double beta = p[4]->GetValue()*degtorad;  //sideslip angle of the body frame
+                double gamma = p[5]->GetValue()*degtorad; //roll angle of the body frame
+                int idx = static_cast<int>(p[6]->GetValue());
 
-                 if ((idx < 1) || (idx > 3)) {
-                   cerr << ctxMsg << fgred << highint
-                        << "The index must be one of the integer value 1, 2 or 3."
-                        << reset << endl;
-                   throw BaseException("Fatal error");
-                 }
+                if ((idx < 1) || (idx > 3)) {
+                  LogException err;
+                  err << ctxMsg << LogFormat::RED << LogFormat::BOLD
+                      << "The index must be one of the integer value 1, 2 or 3.\n"
+                      << LogFormat::RESET;
+                  throw err;
+                }
 
-                 FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
-                 FGMatrix33 mT = (qa*qb*qc).GetT();
-                 FGColumnVector3 r0(rx, ry, rz);
-                 mT.T();
-                 FGColumnVector3 r = mT*r0;
+                FGQuaternion qa(eY, -alpha), qb(eZ, beta), qc(eX, -gamma);
+                FGMatrix33 mT = (qa*qb*qc).GetT();
+                FGColumnVector3 r0(rx, ry, rz);
+                mT.T();
+                FGColumnVector3 r = mT*r0;
 
-                 return r(idx);
-               };
+                return r(idx);
+              };
       Parameters.push_back(new aFunc<decltype(f), 7>(f, fdmex, element, Prefix, var));
     } else if (operation != "description") {
-      cerr << element->ReadFrom() << fgred << highint
-           << "Bad operation <" << operation
-           << "> detected in configuration file" << reset << endl;
+      FGXMLLogging log(element, LogLevel::ERROR);
+      log << LogFormat::RED << LogFormat::BOLD
+          << "Bad operation <" << operation
+          << "> detected in configuration file" << reset << endl;
     }
 
     // Optimize functions applied on constant parameters by replacing them by
@@ -901,23 +916,27 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
         double constant = p->GetValue();
         SGPropertyNode_ptr node = p->pNode;
         string pName = p->GetName();
+        unique_ptr<FGXMLLogging> log;
 
         Parameters.pop_back();
         Parameters.push_back(new FGRealValue(constant));
-        if (debug_lvl > 0)
-          cout << element->ReadFrom() << fggreen << highint
-               << "<" << operation << "> is applied on constant parameters."
-               << endl << "It will be replaced by its result ("
-               << constant << ")";
+
+        if (debug_lvl > 0) {
+          log.reset(new FGXMLLogging(element, LogLevel::DEBUG));
+          *log << LogFormat::GREEN << LogFormat::BOLD
+               << "<" << operation << "> is applied on constant parameters.\n"
+               << "It will be replaced by its result (" << constant << ")";
+        }
 
         if (node) {
           node->setDoubleValue(constant);
           node->setAttribute(SGPropertyNode::WRITE, false);
           if (debug_lvl > 0)
-            cout << " and the property " << pName
+            *log << " and the property " << pName
                  << " will be unbound and made read only.";
         }
-        cout << reset << endl << endl;
+
+        if (debug_lvl > 0) *log << LogFormat::RESET << "\n\n";
       }
     }
     element = el->GetNextElement();
@@ -1000,10 +1019,10 @@ string FGFunction::CreateOutputNode(Element* el, const string& Prefix)
           Name = replace(Name,"#",Prefix);
           nName  = PropertyManager->mkPropertyName(Name, false);
         } else {
-          cerr << el->ReadFrom()
-               << "Malformed function name with number: " << Prefix
-               << " and property name: " << Name
-               << " but no \"#\" sign for substitution." << endl;
+          FGXMLLogging log(el, LogLevel::ERROR);
+          log << "Malformed function name with number: " << Prefix
+              << " and property name: " << Name
+              << " but no \"#\" sign for substitution.\n";
         }
       } else {
         nName  = PropertyManager->mkPropertyName(Prefix + "/" + Name, false);
@@ -1012,9 +1031,9 @@ string FGFunction::CreateOutputNode(Element* el, const string& Prefix)
 
     pNode = PropertyManager->GetNode(nName, true);
     if (pNode->isTied()) {
-      cerr << el->ReadFrom()
-           << "Property " << nName << " has already been successfully bound (late)." << endl;
-      throw BaseException("Failed to bind the property to an existing already tied node.");
+      XMLLogException err(el);
+      err << "Property " << nName << " has already been successfully bound (late).\n";
+      throw err;
     }
   }
 
@@ -1056,13 +1075,16 @@ void FGFunction::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      if (!Name.empty())
-        cout << "    Function: " << Name << endl;
+      if (!Name.empty()) {
+        FGLogging log(LogLevel::DEBUG);
+        log << "    Function: " << Name << endl;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGFunction" << endl;
-    if (from == 1) cout << "Destroyed:    FGFunction" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGFunction\n";
+    if (from == 1) log << "Destroyed:    FGFunction\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

@@ -124,10 +124,9 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   if (call_type == "internal") {
     internal = true;
   } else if (!call_type.empty()) {
-    std::cerr << el->ReadFrom()
-              <<"  An unknown table type attribute is listed: " << call_type
-              << endl;
-    throw BaseException("Unknown table type.");
+    XMLLogException err(el);
+    err <<"  An unknown table type attribute is listed: " << call_type << "\n";
+    throw err;
   }
 
   // Determine and store the lookup properties for this table unless this table
@@ -142,11 +141,11 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     // The 'internal' attribute of the table element cannot be specified
     // at the same time that independentVars are specified.
     if (internal) {
-      cerr  << el->ReadFrom()
-            << fgred << "  This table specifies both 'internal' call type" << endl
-            << "  and specific lookup properties via the 'independentVar' element." << endl
-            << "  These are mutually exclusive specifications. The 'internal'" << endl
-            << "  attribute will be ignored." << fgdef << endl << endl;
+      FGXMLLogging log(el, LogLevel::ERROR);
+      log << LogFormat::RED << "  This table specifies both 'internal' call type\n"
+          << "  and specific lookup properties via the 'independentVar' element.\n"
+          << "  These are mutually exclusive specifications. The 'internal'\n"
+          << "  attribute will be ignored.\n" << LogFormat::DEFAULT;
       internal = false;
     }
 
@@ -203,10 +202,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
           // columns.
           for(unsigned int i=1; i<nLines; ++i) {
             if (FindNumColumns(tableData->GetDataLine(i)) != nColumns) {
-              std::cerr << tableData->ReadFrom()
-                        << "Invalid number of columns in line "
-                        << tableData->GetLineNumber()+i << endl;
-              throw BaseException("Invalid number of columns in table");
+              XMLLogException err(tableData);
+              err << "Invalid number of columns in line "
+                  << tableData->GetLineNumber()+i << "\n";
+              throw err;
             }
           }
         }
@@ -214,9 +213,9 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
           dimension = 1;
 
         if (dimension == 1 && nColumns != 2) {
-          std::cerr << tableData->ReadFrom()
-                    << "Too many columns for a 1D table" << endl;
-          throw BaseException("Too many columns for a 1D table");
+          XMLLogException err(tableData);
+          err << "Too many columns for a 1D table\n";
+          throw err;
         }
       }
     }
@@ -226,10 +225,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     if (brkpt_string.empty()) {
       // no independentVars found, and table is not marked as internal, nor is it
       // a 3D table
-      std::cerr << el->ReadFrom()
-                << "No independentVars found, and table is not marked as internal,"
-                << " nor is it a 3D table." << endl;
-      throw BaseException("No independent variable found for table.");
+      XMLLogException err(el);
+      err << "No independentVars found, and table is not marked as internal,"
+          << " nor is it a 3D table.\n";
+      throw err;
     }
   }
   // end lookup property code
@@ -245,13 +244,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   }
 
   if (!tableData) {
-    std::cerr << el->ReadFrom()
-              << "FGTable: <tableData> elements are missing" << endl;
-    throw BaseException("FGTable: <tableData> elements are missing");
+    XMLLogException err(el);
+    err << "FGTable: <tableData> elements are missing\n";
+    throw err;
   }
   else if (tableData->GetNumDataLines() == 0) {
-    std::cerr << tableData->ReadFrom() << "<tableData> is empty." << endl;
-    throw BaseException("<tableData> is empty.");
+    XMLLogException err(tableData);
+    err << "<tableData> is empty.\n";
+    throw err;
   }
 
   // Check that the lookup axes match the declared dimension of the table.
@@ -259,23 +259,23 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     switch (dimension) {
     case 3u:
       if (!lookupProperty[eTable]) {
-        std::cerr << el->ReadFrom()
-                  << "FGTable: missing lookup axis \"table\"";
-        throw BaseException("FGTable: missing lookup axis \"table\"");
+        XMLLogException err(el);
+        err << "FGTable: missing lookup axis \"table\"\n";
+        throw err;
       }
       // Don't break as we want to investigate the other lookup axes as well.
     case 2u:
       if (!lookupProperty[eColumn]) {
-        std::cerr << el->ReadFrom()
-                  << "FGTable: missing lookup axis \"column\"";
-        throw BaseException("FGTable: missing lookup axis \"column\"");
+        XMLLogException err(el);
+        err << "FGTable: missing lookup axis \"column\"\n";
+        throw err;
       }
       // Don't break as we want to investigate the last lookup axes as well.
     case 1u:
       if (!lookupProperty[eRow]) {
-        std::cerr << el->ReadFrom()
-                  << "FGTable: missing lookup axis \"row\"";
-        throw BaseException("FGTable: missing lookup axis \"row\"");
+        XMLLogException err(el);
+        err << "FGTable: missing lookup axis \"row\"\n";
+        throw err;
       }
       break;
     default:
@@ -289,10 +289,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   for (unsigned int i=0; i<tableData->GetNumDataLines(); i++) {
     string line = tableData->GetDataLine(i);
     if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos) {
-      cerr << " In file " << tableData->GetFileName() << endl
-           << "   Illegal character found in line "
-           << tableData->GetLineNumber() + i + 1 << ": " << endl << line << endl;
-      throw BaseException("Illegal character");
+      XMLLogException err(tableData);
+      err << "   Illegal character found in line "
+          << tableData->GetLineNumber() + i + 1 << ": \n" << line << "\n";
+      throw err;
     }
     buf << line << " ";
   }
@@ -344,21 +344,21 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // find next xml element containing a name attribute
   // to indicate where the error occured
   Element* nameel = el;
-  while (nameel != 0 && nameel->GetAttributeValue("name") == "")
+  while (nameel && nameel->GetAttributeValue("name") == "")
     nameel=nameel->GetParent();
 
   // check breakpoints, if applicable
   if (Type == tt3D) {
     for (unsigned int b=2; b<=Tables.size(); ++b) {
       if (Data[b] <= Data[b-1]) {
-        std::cerr << el->ReadFrom()
-                  << fgred << highint
-                  << "  FGTable: breakpoint lookup is not monotonically increasing" << endl
-                  << "  in breakpoint " << b;
-        if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
-                  << "  " << Data[b] << "<=" << Data[b-1] << endl;
-        throw BaseException("Breakpoint lookup is not monotonically increasing");
+        XMLLogException err(el);
+        err << LogFormat::RED << LogFormat::BOLD
+            << "  FGTable: breakpoint lookup is not monotonically increasing\n"
+            << "  in breakpoint " << b;
+        if (nameel) err << " of table in " << nameel->GetAttributeValue("name");
+        err << ":\n" << LogFormat::RESET
+            << "  " << Data[b] << "<=" << Data[b-1] << "\n";
+        throw err;
       }
     }
   }
@@ -367,14 +367,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   if (Type == tt2D) {
     for (unsigned int c=2; c<=nCols; ++c) {
       if (Data[c] <= Data[c-1]) {
-        std::cerr << el->ReadFrom()
-                  << fgred << highint
-                  << "  FGTable: column lookup is not monotonically increasing" << endl
-                  << "  in column " << c;
-        if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
-                  << "  " << Data[c] << "<=" << Data[c-1] << endl;
-        throw BaseException("FGTable: column lookup is not monotonically increasing");
+        XMLLogException err(el);
+        err << LogFormat::RED << LogFormat::BOLD
+            << "  FGTable: column lookup is not monotonically increasing\n"
+            << "  in column " << c;
+        if (nameel != 0) err << " of table in " << nameel->GetAttributeValue("name");
+        err << ":\n" << LogFormat::RESET
+            << "  " << Data[c] << "<=" << Data[c-1] << "\n";
+        throw err;
       }
     }
   }
@@ -383,14 +383,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   if (Type != tt3D) { // in 3D tables, check only rows of subtables
     for (size_t r=2; r<=nRows; ++r) {
       if (Data[r*(nCols+1)]<=Data[(r-1)*(nCols+1)]) {
-        std::cerr << el->ReadFrom()
-                  << fgred << highint
-                  << "  FGTable: row lookup is not monotonically increasing" << endl
-                  << "  in row " << r;
-        if (nameel != 0) std::cerr << " of table in " << nameel->GetAttributeValue("name");
-        std::cerr << ":" << reset << endl
-                  << "  " << Data[r*(nCols+1)] << "<=" << Data[(r-1)*(nCols+1)] << endl;
-        throw BaseException("FGTable: row lookup is not monotonically increasing");
+        XMLLogException err(el);
+        err << LogFormat::RED << LogFormat::BOLD
+            << "  FGTable: row lookup is not monotonically increasing\n"
+            << "  in row " << r;
+        if (nameel != 0) err << " of table in " << nameel->GetAttributeValue("name");
+        err << ":\n" << LogFormat::RESET
+            << "  " << Data[r*(nCols+1)] << "<=" << Data[(r-1)*(nCols+1)] << "\n";
+        throw err;
       }
     }
   }
@@ -421,14 +421,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
 void FGTable::missingData(Element *el, unsigned int expected_size, size_t actual_size)
 {
-  std::cerr << el->ReadFrom()
-            << fgred << highint
-            << "  FGTable: Missing data";
-  if (!Name.empty()) std::cerr << " in table " << Name;
-  std::cerr << ":" << reset << endl
-            << "  Expecting " << expected_size << " elements while "
-            << actual_size << " elements were provided." << endl;
-  throw BaseException("FGTable: missing data");
+  XMLLogException err(el);
+  err << LogFormat::RED << LogFormat::BOLD
+      << "  FGTable: Missing data";
+  if (!Name.empty()) err << " in table " << Name;
+  err << ":\n" << LogFormat::RESET
+      << "  Expecting " << expected_size << " elements while "
+      << actual_size << " elements were provided.\n";
+  throw err;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,19 +634,19 @@ FGTable& FGTable::operator<<(const double x)
 
 void FGTable::Print(void)
 {
-  ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream
-  cout.precision(4);
+  FGLogging out(LogLevel::STDOUT);
+  out << std::setprecision(4);
 
   switch(Type) {
     case tt1D:
-      cout << "    1 dimensional table with " << nRows << " rows." << endl;
+      out << "    1 dimensional table with " << nRows << " rows.\n";
       break;
     case tt2D:
-      cout << "    2 dimensional table with " << nRows << " rows, " << nCols << " columns." << endl;
+      out << "    2 dimensional table with " << nRows << " rows, " << nCols << " columns.\n";
       break;
     case tt3D:
-      cout << "    3 dimensional table with " << nRows << " breakpoints, "
-                                          << Tables.size() << " tables." << endl;
+      out << "    3 dimensional table with " << nRows << " breakpoints, "
+                                          << Tables.size() << " tables.\n";
       break;
   }
   unsigned int startCol=1, startRow=1;
@@ -659,24 +659,24 @@ void FGTable::Print(void)
   if (Type == tt2D) startRow = 0;
 
   for (unsigned int r=startRow; r<=nRows; r++) {
-    cout << "\t";
+    out << "\t";
     if (Type == tt2D) {
       if (r == startRow)
-        cout << "\t";
+        out << "\t";
       else
         startCol = 0;
     }
 
     for (unsigned int c=startCol; c<=nCols; c++) {
-      cout << Data[p++] << "\t";
+      out << Data[p++] << "\t";
       if (Type == tt3D) {
-        cout << endl;
+        out << "\n";
         Tables[r-1]->Print();
       }
     }
-    cout << endl;
+    out << "\n";
   }
-  cout.setf(flags); // reset
+  out << std::fixed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -689,11 +689,11 @@ void FGTable::bind(Element* el, const string& Prefix)
         if (Name.find("#") != string::npos) {
           Name = replace(Name, "#", Prefix);
         } else {
-          cerr << el->ReadFrom()
-                << "Malformed table name with number: " << Prefix
-                << " and property name: " << Name
-                << " but no \"#\" sign for substitution." << endl;
-          throw BaseException("Missing \"#\" sign for substitution");
+          XMLLogException err(el);
+          err << "Malformed table name with number: " << Prefix
+              << " and property name: " << Name
+              << " but no \"#\" sign for substitution.\n";
+          throw err;
         }
       } else {
         Name = Prefix + "/" + Name;
@@ -704,9 +704,9 @@ void FGTable::bind(Element* el, const string& Prefix)
     if (PropertyManager->HasNode(tmp)) {
       SGPropertyNode* _property = PropertyManager->GetNode(tmp);
       if (_property->isTied()) {
-        cerr << el->ReadFrom()
-             << "Property " << tmp << " has already been successfully bound (late)." << endl;
-        throw BaseException("Failed to bind the property to an existing already tied node.");
+        XMLLogException err(el);
+        err << "Property " << tmp << " has already been successfully bound (late).\n";
+        throw err;
       }
     }
 
@@ -740,8 +740,9 @@ void FGTable::Debug(int from)
     if (from == 0) { } // Constructor
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGTable" << endl;
-    if (from == 1) cout << "Destroyed:    FGTable" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGTable\n";
+    if (from == 1) log << "Destroyed:    FGTable\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

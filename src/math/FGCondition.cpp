@@ -215,14 +215,18 @@ bool FGCondition::Evaluate(void) const
 
 void FGCondition::PrintCondition(string indent) const
 {
-  string scratch;
+  FGLogging out(LogLevel::STDOUT);
 
   if (!conditions.empty()) {
+    string scratch;
 
     switch(Logic) {
     case (elUndef):
-      scratch = " UNSET";
-      cerr << "unset logic for test condition" << endl;
+      {
+        FGLogging log(LogLevel::ERROR);
+        log << "unset logic for test condition\n";
+        scratch = " UNSET";
+      }
       break;
     case (eAND):
       scratch = indent + "if all of the following are true: {";
@@ -231,21 +235,25 @@ void FGCondition::PrintCondition(string indent) const
       scratch = indent + "if any of the following are true: {";
       break;
     default:
-      scratch = " UNKNOWN";
-      cerr << "Unknown logic for test condition" << endl;
+      {
+        FGLogging log(LogLevel::ERROR);
+        log << "Unknown logic for test condition\n";
+        scratch = " UNKNOWN";
+      }
     }
-    cout << scratch << endl;
+
+    out << scratch << "\n";
 
     for (auto& cond: conditions) {
       cond->PrintCondition(indent + "  ");
-      cout << endl;
+      out << "\n";
     }
 
-    cout << indent << "}";
+    out << indent << "}";
 
   } else {
-    cout << indent << TestParam1->GetName() << " " << conditional
-         << " " << TestParam2->GetName();
+    out << indent << TestParam1->GetName() << " " << conditional
+        << " " << TestParam2->GetName();
   }
 }
 
@@ -278,8 +286,9 @@ void FGCondition::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGCondition" << endl;
-    if (from == 1) cout << "Destroyed:    FGCondition" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGCondition\n";
+    if (from == 1) log << "Destroyed:    FGCondition\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

@@ -100,14 +100,15 @@ void FGStateSpace::numericalJacobian(std::vector< std::vector<double> >  & J, Co
 
             if (m_fdm->GetDebugLevel() > 1)
             {
-                std::cout << std::scientific << "\ty:\t" << y.getName(iY) << "\tx:\t"
-                          << x.getName(iX)
-                          << "\tfn2:\t" << fn2 << "\tfn1:\t" << fn1
-                          << "\tf1:\t" << f1 << "\tf2:\t" << f2
-                          << "\tf1-fn1:\t" << f1-fn1
-                          << "\tf2-fn2:\t" << f2-fn2
-                          << "\tdf/dx:\t" << J[iY][iX]
-                          << std::fixed << std::endl;
+                FGLogging log(LogLevel::DEBUG);
+                log << std::scientific << "\ty:\t" << y.getName(iY) << "\tx:\t"
+                    << x.getName(iX)
+                    << "\tfn2:\t" << fn2 << "\tfn1:\t" << fn1
+                    << "\tf1:\t" << f1 << "\tf2:\t" << f2
+                    << "\tf1-fn1:\t" << f1-fn1
+                    << "\tf2-fn2:\t" << f2-fn2
+                    << "\tdf/dx:\t" << J[iY][iX]
+                    << std::fixed << "\n";
             }
         }
     }
@@ -146,11 +147,12 @@ std::ostream &operator<<( std::ostream &out, const std::vector< std::vector<doub
     out << std::left << std::setw(1) << "[" << std::right;
     for (unsigned int i=0;i<nI;i++)
     {
-		//std::cout << "i: " << i << std::endl;
+        //FGLogging log(LogLevel::DEBUG);
+		//log << "i: " << i << "\n";
         size_t nJ = vec2d[i].size();
         for (unsigned int j=0;j<nJ;j++)
         {
-			//std::cout << "j: " << j << std::endl;
+			//log << "j: " << j << "\n";
             if (i==0 && j==0) out << std::setw(width-1) << vec2d[i][j];
             else out << std::setw(width) << vec2d[i][j];
 
