@@ -111,7 +111,7 @@ unsigned int FGEngine::GetSourceTank(unsigned int i) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGEngine::GetThrust(void) const 
+double FGEngine::GetThrust(void) const
 {
   return Thruster->GetThrust();
 }
@@ -164,8 +164,9 @@ void FGEngine::LoadThruster(FGFDMExec* exec, Element *thruster_element)
     Element *document = thruster_element->FindElement("direct");
     Thruster = new FGThruster(exec, document, EngineNumber);
   } else {
-    cerr << thruster_element->ReadFrom() << " Unknown thruster type" << endl;
-    throw("Failed to load the thruster");
+    XMLLogException err(thruster_element);
+    err << " Unknown thruster type\n";
+    throw err;
   }
 
   Debug(2);
@@ -189,14 +190,16 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   // If engine location and/or orientation is supplied issue a warning since they
   // are ignored. What counts is the location and orientation of the thruster.
   local_element = parent_element->FindElement("location");
-  if (local_element)
-    cerr << local_element->ReadFrom()
-         << "Engine location ignored, only thruster location is used." << endl;
+  if (local_element) {
+    FGLogging log(LogLevel::WARN);
+    log << "Engine location ignored, only thruster location is used.\n";
+  }
 
   local_element = parent_element->FindElement("orient");
-  if (local_element)
-    cerr << local_element->ReadFrom()
-         << "Engine orientation ignored, only thruster orientation is used." << endl;
+  if (local_element) {
+    FGLogging log(LogLevel::WARN);
+    log << "Engine orientation ignored, only thruster orientation is used.\n";
+  }
 
   // Load thruster
   local_element = parent_element->FindElement("thruster");
@@ -204,10 +207,16 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
     try {
       LoadThruster(exec, local_element);
     } catch (std::string& str) {
-      throw("Error loading engine " + Name + ". " + str);
+      XMLLogException err(local_element);
+      err << "Error loading engine " << Name << ". " << str << "\n";
+      throw err;
+    } catch (LogException &e) {
+      XMLLogException err(e, local_element);
+      throw err;
     }
   } else {
-    cerr << "No thruster definition supplied with engine definition." << endl;
+    FGLogging log(LogLevel::ERROR);
+    log << "No thruster definition supplied with engine definition.\n";
   }
 
   ResetToIC(); // initialize dynamic terms
@@ -269,16 +278,18 @@ void FGEngine::Debug(int from)
 
     }
     if (from == 2) { // After thruster loading
-      cout << "      X = " << Thruster->GetLocationX() << endl;
-      cout << "      Y = " << Thruster->GetLocationY() << endl;
-      cout << "      Z = " << Thruster->GetLocationZ() << endl;
-      cout << "      Pitch = " << radtodeg*Thruster->GetAnglesToBody(ePitch) << " degrees" << endl;
-      cout << "      Yaw = " << radtodeg*Thruster->GetAnglesToBody(eYaw) << " degrees" << endl;
+      FGLogging log(LogLevel::DEBUG);
+      log << "      X = " << Thruster->GetLocationX() << "\n";
+      log << "      Y = " << Thruster->GetLocationY() << "\n";
+      log << "      Z = " << Thruster->GetLocationZ() << "\n";
+      log << "      Pitch = " << radtodeg*Thruster->GetAnglesToBody(ePitch) << " degrees\n";
+      log << "      Yaw = " << radtodeg*Thruster->GetAnglesToBody(eYaw) << " degrees\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGEngine" << endl;
-    if (from == 1) cout << "Destroyed:    FGEngine" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGEngine\n";
+    if (from == 1) log << "Destroyed:    FGEngine\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

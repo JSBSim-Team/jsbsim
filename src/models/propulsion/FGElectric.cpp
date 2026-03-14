@@ -162,15 +162,15 @@ void FGElectric::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-
-      cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      Power Watts: "         << PowerWatts << endl;
-
+      FGLogging log(LogLevel::DEBUG);
+      log << "\n      Engine Name: " << Name << "\n";
+      log << "      Power Watts: " << PowerWatts << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGElectric" << endl;
-    if (from == 1) cout << "Destroyed:    FGElectric" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGElectric\n";
+    if (from == 1) log << "Destroyed:    FGElectric\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
