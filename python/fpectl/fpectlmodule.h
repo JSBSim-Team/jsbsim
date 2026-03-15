@@ -1,6 +1,6 @@
 /* Python module to control floating point exceptions
  *
- * Copyright (c) 2016-2024 Bertrand Coconnier
+ * Copyright (c) 2016-2026 Bertrand Coconnier
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free

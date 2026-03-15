@@ -45,24 +45,24 @@ PyLogger::PyLogger(PyObject* logger)
     logger_pyclass = logger;
     Py_INCREF(logger);
 
-    convert_level_enums[LogLevel::BULK] = PyObject_GetAttrString(LogLevel_PyClass, "BULK");
-    convert_level_enums[LogLevel::DEBUG] = PyObject_GetAttrString(LogLevel_PyClass, "DEBUG");
-    convert_level_enums[LogLevel::INFO] = PyObject_GetAttrString(LogLevel_PyClass, "INFO");
-    convert_level_enums[LogLevel::WARN] = PyObject_GetAttrString(LogLevel_PyClass, "WARN");
-    convert_level_enums[LogLevel::ERROR] = PyObject_GetAttrString(LogLevel_PyClass, "ERROR");
-    convert_level_enums[LogLevel::FATAL] = PyObject_GetAttrString(LogLevel_PyClass, "FATAL");
-    convert_level_enums[LogLevel::STDOUT] = PyObject_GetAttrString(LogLevel_PyClass, "STDOUT");
+    convert_level_enums[(int)LogLevel::BULK] = PyObject_GetAttrString(LogLevel_PyClass, "BULK");
+    convert_level_enums[(int)LogLevel::DEBUG] = PyObject_GetAttrString(LogLevel_PyClass, "DEBUG");
+    convert_level_enums[(int)LogLevel::INFO] = PyObject_GetAttrString(LogLevel_PyClass, "INFO");
+    convert_level_enums[(int)LogLevel::WARN] = PyObject_GetAttrString(LogLevel_PyClass, "WARN");
+    convert_level_enums[(int)LogLevel::ERROR] = PyObject_GetAttrString(LogLevel_PyClass, "ERROR");
+    convert_level_enums[(int)LogLevel::FATAL] = PyObject_GetAttrString(LogLevel_PyClass, "FATAL");
+    convert_level_enums[(int)LogLevel::STDOUT] = PyObject_GetAttrString(LogLevel_PyClass, "STDOUT");
 
-    convert_format_enums[LogFormat::RESET] = PyObject_GetAttrString(LogFormat_PyClass, "RESET");
-    convert_format_enums[LogFormat::RED] = PyObject_GetAttrString(LogFormat_PyClass, "RED");
-    convert_format_enums[LogFormat::BLUE] = PyObject_GetAttrString(LogFormat_PyClass, "BLUE");
-    convert_format_enums[LogFormat::CYAN] = PyObject_GetAttrString(LogFormat_PyClass, "CYAN");
-    convert_format_enums[LogFormat::GREEN] = PyObject_GetAttrString(LogFormat_PyClass, "GREEN");
-    convert_format_enums[LogFormat::DEFAULT] = PyObject_GetAttrString(LogFormat_PyClass, "DEFAULT");
-    convert_format_enums[LogFormat::BOLD] = PyObject_GetAttrString(LogFormat_PyClass, "BOLD");
-    convert_format_enums[LogFormat::NORMAL] = PyObject_GetAttrString(LogFormat_PyClass, "NORMAL");
-    convert_format_enums[LogFormat::UNDERLINE_ON] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_ON");
-    convert_format_enums[LogFormat::UNDERLINE_OFF] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_OFF");
+    convert_format_enums[(int)LogFormat::RESET] = PyObject_GetAttrString(LogFormat_PyClass, "RESET");
+    convert_format_enums[(int)LogFormat::RED] = PyObject_GetAttrString(LogFormat_PyClass, "RED");
+    convert_format_enums[(int)LogFormat::BLUE] = PyObject_GetAttrString(LogFormat_PyClass, "BLUE");
+    convert_format_enums[(int)LogFormat::CYAN] = PyObject_GetAttrString(LogFormat_PyClass, "CYAN");
+    convert_format_enums[(int)LogFormat::GREEN] = PyObject_GetAttrString(LogFormat_PyClass, "GREEN");
+    convert_format_enums[(int)LogFormat::DEFAULT] = PyObject_GetAttrString(LogFormat_PyClass, "DEFAULT");
+    convert_format_enums[(int)LogFormat::BOLD] = PyObject_GetAttrString(LogFormat_PyClass, "BOLD");
+    convert_format_enums[(int)LogFormat::NORMAL] = PyObject_GetAttrString(LogFormat_PyClass, "NORMAL");
+    convert_format_enums[(int)LogFormat::UNDERLINE_ON] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_ON");
+    convert_format_enums[(int)LogFormat::UNDERLINE_OFF] = PyObject_GetAttrString(LogFormat_PyClass, "UNDERLINE_OFF");
   } else {
     PyErr_SetString(PyExc_TypeError, "The logger must be an instance of FGLogger");
   }
@@ -71,8 +71,9 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  assert(convert_level_enums.find(level) != convert_level_enums.end());
-  PyObjectPtr py_level = convert_level_enums[level];
+  const int idx = static_cast<int>(level);
+  assert(idx >=0 && idx <= 6);
+  PyObjectPtr py_level = convert_level_enums[idx];
   PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
   if (result) FGLogger::SetLevel(level);
 }
@@ -99,8 +100,9 @@ void PyLogger::Message(const std::string& message)
 
 void PyLogger::Format(LogFormat format)
 {
-  assert(convert_format_enums.find(format) != convert_format_enums.end());
-  PyObjectPtr py_format = convert_format_enums[format];
+  const int idx = static_cast<int>(format);
+  assert(idx >= 0 && idx <= 9);
+  PyObjectPtr py_format = convert_format_enums[idx];
   CallPythonMethodWithArguments("format", py_format);
 }
 
