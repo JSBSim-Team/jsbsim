@@ -92,12 +92,13 @@ cdef _convertToNumpyVec(const c_FGColumnVector3& v):
 
 class LogLevel(enum.Enum):
     """Enumeration of log levels."""
-    BULK = 0  # For frequent messages
-    DEBUG = 1 # Less frequent debug type messages
-    INFO = 2  # Informatory messages
-    WARN = 3  # Possible impending problem
-    ERROR = 4 # Problem that can be recovered
-    FATAL = 5 # Fatal problem => an exception will be thrown
+    BULK = 0   # For frequent messages
+    DEBUG = 1  # Less frequent debug type messages
+    INFO = 2   # Informatory messages
+    WARN = 3   # Possible impending problem
+    ERROR = 4  # Problem that can be recovered
+    FATAL = 5  # Fatal problem => an exception will be thrown
+    STDOUT = 6 # Standard output - unconditionally displayed.
 
 
 class LogFormat(enum.Enum):
