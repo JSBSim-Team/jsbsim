@@ -786,29 +786,32 @@ void FGTrim::setupTurn(void){
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::updateRates(void){
-  if( mode == tTurn ) {
-    double phi = fgic.GetPhiRadIC();
-    double g = fdmex->GetInertial()->GetGravity().Magnitude();
-    double p,q,r,theta;
-    if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
-      theta=fgic.GetThetaRadIC();
-      phi=fgic.GetPhiRadIC();
-      psidot = g*tan(phi) / fgic.GetUBodyFpsIC();
-      p=-psidot*sin(theta);
-      q=psidot*cos(theta)*sin(phi);
-      r=psidot*cos(theta)*cos(phi);
-    } else {
-      p=q=r=0;
+  const double vTrue = fgic.GetVtrueFpsIC();
+
+  if (mode == tTurn)
+  {
+    const double phi = fgic.GetPhiRadIC(); // bank angle
+    const double g = fdmex->GetInertial()->GetGravity().Magnitude();
+    double p = 0.0;
+    double q = 0.0;
+    double r = 0.0;
+
+    if (fabs(phi) > 0.001 && fabs(phi) < 1.56) { // < ~90°
+      const double theta = fgic.GetThetaRadIC();
+      psidot = g * tan(phi) / vTrue;
+      p = -psidot * sin(theta);
+      q =  psidot * cos(theta) * sin(phi);
+      r =  psidot * cos(theta) * cos(phi);
     }
     fgic.SetPRadpsIC(p);
     fgic.SetQRadpsIC(q);
     fgic.SetRRadpsIC(r);
-  } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
-      double g,q,cgamma;
-      g=fdmex->GetInertial()->GetGravity().Magnitude();
-      cgamma=cos(fgic.GetFlightPathAngleRadIC());
-      q=g*(targetNlf-cgamma)/fgic.GetVtrueFpsIC();
-      fgic.SetQRadpsIC(q);
+
+  } else if (mode == tPullup && fabs(targetNlf - 1.0) > 0.01) {
+    const double g = fdmex->GetInertial()->GetGravity().Magnitude();
+    const double cgamma = cos(fgic.GetFlightPathAngleRadIC());
+    const double q = g * (targetNlf - cgamma) / vTrue;
+    fgic.SetQRadpsIC(q);
   }
 }
 
