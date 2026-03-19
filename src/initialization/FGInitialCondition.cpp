@@ -1020,15 +1020,15 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
 
   // Make sure that the document is valid
   if (!document) {
-    LogException err;
-    err << "File: " << init_file_name << " could not be read.\n";
-    throw err;
+    FGLogging log(LogLevel::ERROR);
+    log << "Init file: " << init_file_name << " could not be loaded.\n";
+    return false;
   }
 
   if (document->GetName() != "initialize") {
-    LogException err;
-    err << "File: " << init_file_name << " is not a reset file.\n";
-    throw err;
+    FGLogging log(LogLevel::ERROR);
+    log << "File: " << init_file_name << " is not a valid reset file.\n";
+    return false;
   }
 
   bool result = false;
@@ -1038,9 +1038,9 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
     double version = document->GetAttributeValueAsNumber("version");
 
     if (version >= 3.0) {
-      XMLLogException err(document);
-      err << "Only initialization file formats 1 and 2 are currently supported\n";
-      throw err;
+      FGLogging log(LogLevel::ERROR);
+      log << "Only initialization file formats 1 and 2 are currently supported\n";
+      return false;
     } else if (version >= 2.0) {
       result = Load_v2(document);
     } else if (version >= 1.0) {
