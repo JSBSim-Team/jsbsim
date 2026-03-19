@@ -1015,48 +1015,48 @@ bool FGInitialCondition::Load(const SGPath& rstfile, bool useAircraftPath)
     init_file_name = rstfile;
   }
 
-  FGXMLFileRead XMLFileRead;
-  Element* document = XMLFileRead.LoadXMLDocument(init_file_name);
-
-  // Make sure that the document is valid
-  if (!document) {
-    FGLogging log(LogLevel::ERROR);
-    log << "Init file: " << init_file_name << " could not be loaded.\n";
-    return false;
-  }
-
-  if (document->GetName() != "initialize") {
-    FGLogging log(LogLevel::ERROR);
-    log << "File: " << init_file_name << " is not a valid reset file.\n";
-    return false;
-  }
-
   bool result = false;
+  try {
+    FGXMLFileRead XMLFileRead;
+    Element* document = XMLFileRead.LoadXMLDocument(init_file_name);
 
-  // If doc has an version, check it. Otherwise fall back to legacy.
-  if (document->HasAttribute("version")) {
-    double version = document->GetAttributeValueAsNumber("version");
-
-    if (version >= 3.0) {
+    // Make sure that the document is valid
+    if (!document) {
       FGLogging log(LogLevel::ERROR);
-      log << "Only initialization file formats 1 and 2 are currently supported\n";
+      log << "Init file: " << init_file_name << " could not be loaded.\n";
       return false;
-    } else if (version >= 2.0) {
-      result = Load_v2(document);
-    } else if (version >= 1.0) {
-      result = Load_v1(document);
     }
 
-  } else {
-    result = Load_v1(document);
-  }
+    if (document->GetName() != "initialize") {
+      FGLogging log(LogLevel::ERROR);
+      log << "File: " << init_file_name << " is not a valid reset file.\n";
+      return false;
+    }
 
-  // Check to see if any engines are specified to be initialized in a running state
-    Element* running_elements = document->FindElement("running");
-  while (running_elements) {
-    int engineNumber = int(running_elements->GetDataAsNumber());
-    enginesRunning |= engineNumber == -1 ? engineNumber : 1 << engineNumber;
-    running_elements = document->FindNextElement("running");
+    // If doc has an version, check it. Otherwise fall back to legacy.
+    if (document->HasAttribute("version")) {
+      double version = document->GetAttributeValueAsNumber("version");
+
+      if (version >= 3.0) {
+        FGLogging log(LogLevel::ERROR);
+        log << "Only initialization file formats 1 and 2 are currently supported\n";
+        return false;
+      } else if (version >= 2.0) {
+        result = Load_v2(document);
+      } else if (version >= 1.0) {
+        result = Load_v1(document);
+      }
+
+    } else {
+      result = Load_v1(document);
+    }
+  }
+  catch (BaseException& err)
+  {
+    FGLogging log(LogLevel::ERROR);
+    log << "Error parsing " << init_file_name << "\n";
+    log << err.what();
+    return false;
   }
 
   return result;
@@ -1196,6 +1196,8 @@ bool FGInitialCondition::Load_v1(Element* document)
     SetTrimRequest(document->FindElementValue("trim"));
 
   vPQR_body.InitMatrix();
+
+  Load_running(document);
 
   return result;
 }
@@ -1445,7 +1447,20 @@ bool FGInitialCondition::Load_v2(Element* document)
       vPQR_body.InitMatrix();
   }
 
+  Load_running(document);
+
   return result;
+}
+
+void FGInitialCondition::Load_running(Element* document)
+{
+  // Check to see if any engines are specified to be initialized in a running state
+  Element* running_elements = document->FindElement("running");
+  while (running_elements) {
+    int engineNumber = int(running_elements->GetDataAsNumber());
+    enginesRunning |= engineNumber == -1 ? engineNumber : 1 << engineNumber;
+    running_elements = document->FindNextElement("running");
+  }
 }
 
 //******************************************************************************
