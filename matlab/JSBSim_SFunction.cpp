@@ -226,12 +226,14 @@ public:
             case LogLevel::DEBUG:
             case LogLevel::INFO:
             case LogLevel::STDOUT:
-                mexPrintf("JSBSim: %s", buffer.c_str());
+                mexPrintf("%s", buffer.c_str());
                 break;
             case LogLevel::WARN:
                 mexWarnMsgIdAndTxt("JSBSim:Warning", buffer.c_str());
                 break;
             case LogLevel::ERROR:
+                mexWarnMsgIdAndTxt("JSBSim:Error", buffer.c_str());
+                break;
             case LogLevel::FATAL:
             {
                 snprintf(error_msg, sizeof(error_msg), "%s", buffer.c_str());
