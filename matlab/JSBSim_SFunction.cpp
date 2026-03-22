@@ -221,28 +221,27 @@ public:
     void Format(LogFormat format) override {} // Ignore text formatting.
     void Flush(void) override {
         static char error_msg[1024];
-        std::string message = buffer.str();
         switch (log_level) {
             case LogLevel::BULK:
             case LogLevel::DEBUG:
             case LogLevel::INFO:
             case LogLevel::STDOUT:
-                mexPrintf("JSBSim: %s", message.c_str());
+                mexPrintf("JSBSim: %s", buffer.c_str());
                 break;
             case LogLevel::WARN:
-                mexWarnMsgIdAndTxt("JSBSim:Warning", message.c_str());
+                mexWarnMsgIdAndTxt("JSBSim:Warning", buffer.c_str());
                 break;
             case LogLevel::ERROR:
             case LogLevel::FATAL:
             {
-                snprintf(error_msg, sizeof(error_msg), "%s", message.c_str());
+                snprintf(error_msg, sizeof(error_msg), "%s", buffer.c_str());
                 ssSetErrorStatus(S, error_msg);
                 break;
             }
             default:
                 break;
         }
-        buffer.str("");
+        buffer.clear();
     }
 private:
     SimStruct *S;
