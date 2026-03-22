@@ -29,78 +29,78 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* JSBSIm SFunction 2021-07-08
  *
  * Several changes have been made to integrate Simulink with JSBSim Version 1.1.6
- * For the original code, see 
+ * For the original code, see
  * https://se.mathworks.com/matlabcentral/fileexchange/25042-jsbsim-s-function-gui-0-3
- * and 
+ * and
  * https://github.com/podhrmic/JSBSim-Matlab
- * A big thanks to Michal Podhradsky for the work done. 
+ * A big thanks to Michal Podhradsky for the work done.
  *
- * SFunction block parameters are changed to: 
- * 'ac_name_string', [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg 
+ * SFunction block parameters are changed to:
+ * 'ac_name_string', [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg
  *   phi-rad theta-rad psi-rad],
  * [throttle-cmd-norm aileron-cmd-norm elevator-cmd-norm rudder-cmd-norm mixture-cmd-norm set-running flaps-cmd-norm gear-cmd-norm],
  * [delta_T], 'script/scriptname'
- * 
+ *
  * This means it is now possible to define a script as usual in JSBSim. If
- * a valid script name is not defined, Simulink will try to load the specified 
- * aircraft and run the script using the input parameters. 
+ * a valid script name is not defined, Simulink will try to load the specified
+ * aircraft and run the script using the input parameters.
  *
  * Input parameters: [throttle, aileron, elevator, rudder, mixture, set-running, flaps and gear]
  *
- * Output parameters have been updated, there are 4 output ports. 
+ * Output parameters have been updated, there are 4 output ports.
  * 0 (states): [u-fps v-fps w-fps p-rad-sec q-rad-sec r-rad-sec h-sl-ft long-deg lat-deg phi-rad theta-rad psi-rad]
- * 1 (Flight controls): [thr-pos-norm left-ail-pos-rad right-ail-pos-rad el-pos-rad rud-pos-rad flap-pos-norm 
- *   speedbrake-pos-rad spoiler-pos-rad gear-pos-norm] 
- * 2: (Propulsion output): Not yet defined in the SFunction. Placeholder. Needs to be engine dependent. 
- * 3: (Pilot related output): [pilot-Nz alpha-rad alpha-dot-rad-sec beta-rad beta-dot-rad-sec vc-fps vc-kts 
+ * 1 (Flight controls): [thr-pos-norm left-ail-pos-rad right-ail-pos-rad el-pos-rad rud-pos-rad flap-pos-norm
+ *   speedbrake-pos-rad spoiler-pos-rad gear-pos-norm]
+ * 2: (Propulsion output): Not yet defined in the SFunction. Placeholder. Needs to be engine dependent.
+ * 3: (Pilot related output): [pilot-Nz alpha-rad alpha-dot-rad-sec beta-rad beta-dot-rad-sec vc-fps vc-kts
  *						Vt-fps vg-fps mach climb-rate-fps qbar-psf]
  *
- * Verbosity settings and JSBSim Multiplier have been removed. 
- * 
- * It is currently needed to run the clearSF.m function in the command window 
- * in matlab before each simulation. This should be fixed. 
+ * Verbosity settings and JSBSim Multiplier have been removed.
+ *
+ * It is currently needed to run the clearSF.m function in the command window
+ * in matlab before each simulation. This should be fixed.
  *
  * 2021-07-08 Tilda Sikström
- * Linköping, Sweden 
+ * Linköping, Sweden
  *
- * 
+ *
  * ***********************************************************************************************
  * **************************************************************************************************
  * Bug fixes
  * %%% Fixed issues with Debug Verbosity settings
  * %%% Fixed problem with "verbose" Verbosity setting that did not allow simulation to run properly
- * %%% Fixed issue with throttles not being initialized properly and angines not being properly spooled up to the 
+ * %%% Fixed issue with throttles not being initialized properly and angines not being properly spooled up to the
  * intended power setting
  *
  * 01/22/10 Brian Mills
- * 
+ *
  * *********Discrete States Version******************************************************************
  * JSBSim calculates states.  NO integration performed by Simulink.
  * Use fixed step discrete state solver
  * Basic implementation of a JSBSim S-Function that takes 5 input parameters
  * at the S-Function's block parameters dialog box:
- * 'ac_name_string', 
- * [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg 
+ * 'ac_name_string',
+ * [u-fps v-fps w-fps p-radsec q-radsec r-radsec h-sl-ft long-gc-deg lat-gc-deg
  *   phi-rad theta-rad psi-rad],
  * [throttle-cmd-norm aileron-cmd-norm elevator-cmd-norm rudder-cmd-norm mixture-cmd-norm set-running flaps-cmd-norm gear-cmd-norm],
  * [delta_T], 'script/scriptname'
  * The model currently takes 8 control inputs:throttle, aileron, elevator, rudder, mixture, set-running, flaps and gear.
- * The model has 12 states:[u-fps v-fps w-fps p-rad-sec q-rad-sec r-rad-sec h-sl-ft long-deg lat-deg phi-rad theta-rad psi-rad] 
+ * The model has 12 states:[u-fps v-fps w-fps p-rad-sec q-rad-sec r-rad-sec h-sl-ft long-deg lat-deg phi-rad theta-rad psi-rad]
  * Model has 4 output ports: state vector, control output vector, propulsion output vector and calculated output vector.
- * States output [u-fps v-fps w-fps p-rad-sec q-rad-sec r-rad-sec h-sl-ft long-deg lat-deg phi-rad theta-rad psi-rad] 
- * Flight Controls output [thr-pos-norm left-ail-pos-rad right-ail-pos-rad el-pos-rad rud-pos-rad flap-pos-norm 
+ * States output [u-fps v-fps w-fps p-rad-sec q-rad-sec r-rad-sec h-sl-ft long-deg lat-deg phi-rad theta-rad psi-rad]
+ * Flight Controls output [thr-pos-norm left-ail-pos-rad right-ail-pos-rad el-pos-rad rud-pos-rad flap-pos-norm
      speedbrake-pos-rad spoiler-pos-rad gear-pos-norm]
- * Propulsion output piston (per engine) [prop-rpm prop-thrust-lbs mixture fuel-flow-gph advance-ratio power-hp pt-lbs_sqft 
+ * Propulsion output piston (per engine) [prop-rpm prop-thrust-lbs mixture fuel-flow-gph advance-ratio power-hp pt-lbs_sqft
  * volumetric-efficiency bsfc-lbs_hphr prop-torque blade-angle prop-pitch]
- * Propulsion output turbine (per engine) [thrust-lbs n1 n2 fuel-flow-pph fuel-flow-pps pt-lbs_sqft pitch-rad reverser-rad yaw-rad inject-cmd 
+ * Propulsion output turbine (per engine) [thrust-lbs n1 n2 fuel-flow-pph fuel-flow-pps pt-lbs_sqft pitch-rad reverser-rad yaw-rad inject-cmd
  * set-running fuel-dump]
- * Calculated outputs [pilot-Nz alpha-rad alpha-dot-rad-sec beta-rad beta-dot-rad-sec vc-fps vc-kts 
+ * Calculated outputs [pilot-Nz alpha-rad alpha-dot-rad-sec beta-rad beta-dot-rad-sec vc-fps vc-kts
  *						Vt-fps vg-fps mach climb-rate-fps]
  *
  * The UpdateStates method added to JSBSimInterface is called for every s-function simulation time step.
- * Currently it is advised that if the AC model FCS has integrators, then after each simulation run "clearSF" 
+ * Currently it is advised that if the AC model FCS has integrators, then after each simulation run "clearSF"
  * should be entered at the Matlab command line to reset the simulation.
- * This will ensure that every consecutive simulation run starts from the same initial states.  
+ * This will ensure that every consecutive simulation run starts from the same initial states.
  * It is planned to fix this in the near future.
  * Please look in the mdlInitializeSizes method for more detailed input port and output port details.
  * *************************************************************************************************************************
@@ -108,13 +108,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 08/08/09 JSBSimSFunction revision 1.0 for campatibility with JSBSim 1.0
  * Brian Mills
  * *************************************************************************************************************************
- * JSBSimInterface written by Agostino De Marco for use in the JSBSimMexFunction project. Additional functions have been added and changes 
+ * JSBSimInterface written by Agostino De Marco for use in the JSBSimMexFunction project. Additional functions have been added and changes
  * made to work with SFunction API. Thanks to Agostino for providing the basis for this project.
  * *************************************************************************************************************************
 
 */
 #ifdef __cplusplus
- 
+
 #endif       // defined within this scope
 #define S_FUNCTION_NAME  JSBSim_SFunction
 #define S_FUNCTION_LEVEL 2
@@ -184,7 +184,7 @@ std::string getMxArrayString(const mxArray* mxArrayStr) {
 
     mwSize strLen = mxGetNumberOfElements(mxArrayStr) + 1;
     char* strBuf = (char*) malloc(strLen * sizeof(char));
-    mxGetString(mxArrayStr, strBuf, strLen); 
+    mxGetString(mxArrayStr, strBuf, strLen);
     std::string str = std::string(strBuf);
     free(strBuf);
     return str;
@@ -214,6 +214,41 @@ std::string getMxArrayString(const mxArray* mxArrayStr) {
  * See matlabroot/simulink/src/sfuntmpl_doc.c for more details.
  */
 
+class LogMatlab : public FGLogConsole
+{
+public:
+    LogMatlab(SimStruct *s) : S(s) {}
+    void Format(LogFormat format) override {} // Ignore text formatting.
+    void Flush(void) override {
+        static char error_msg[1024];
+        std::string message = buffer.str();
+        switch (log_level) {
+            case LogLevel::BULK:
+            case LogLevel::DEBUG:
+            case LogLevel::INFO:
+            case LogLevel::STDOUT:
+                mexPrintf("JSBSim: %s", message.c_str());
+                break;
+            case LogLevel::WARN:
+                mexWarnMsgIdAndTxt("JSBSim:Warning", message.c_str());
+                break;
+            case LogLevel::ERROR:
+            case LogLevel::FATAL:
+            {
+                snprintf(error_msg, sizeof(error_msg), "%s", message.c_str());
+                ssSetErrorStatus(S, error_msg);
+                break;
+            }
+            default:
+                break;
+        }
+        buffer.str("");
+    }
+private:
+    SimStruct *S;
+};
+
+
 /*====================*
  * S-function methods *
  *====================*/
@@ -227,32 +262,32 @@ static void mdlCheckParameters(SimStruct *S)
         ssSetErrorStatus(S,"JSBSim S-function must have 6 parameters.");
         return;
     }
-    
+
     if (!mxIsChar(ac_name)) {
         ssSetErrorStatus(S, "Parameter 1 to JSBSim S-function must be a string.");
         return;
     }
-    
+
     if (!mxIsNumeric(ssGetSFcnParam(S, TIME_STEP_PARAM)) || delta_t < 0) {
         ssSetErrorStatus(S, "Parameter 2 to JSBSim S-function must be a nonnegative number.");
         return;
     }
-    
+
     if (!mxIsNumeric(ssGetSFcnParam(S, USE_SCRIPT_PARAM)) || !(use_script == 1 || use_script == 0)) {
         ssSetErrorStatus(S, "Parameter 3 to JSBSim S-function must be either 0 (disabled) or 1 (enabled).");
-        return; 
+        return;
     }
-    
+
     if (!mxIsChar(script_name)) {
         ssSetErrorStatus(S, "Parameter 4 to JSBSim S-function must be a string.");
         return;
     }
-    
+
     if (!mxIsChar(reset_name)) {
         ssSetErrorStatus(S, "Parameter 5 to JSBSim S-function must be a string.");
         return;
     }
-    
+
     if (!mxIsChar(io_config_file_name)) {
         ssSetErrorStatus(S, "Parameter 6 to JSBSim S-function must be a string.");
         return;
@@ -316,7 +351,7 @@ static void mdlProcessParameters(SimStruct *S)
 
     // Configure the output port(s).
     if (!ssSetNumOutputPorts(S, numOutputs)) return;
-    
+
     int i;
     Element* outputElement = outputsElement->FindElement("output");
     int outputSize;
@@ -329,7 +364,7 @@ static void mdlProcessParameters(SimStruct *S)
         // to set the name.
 
         outputElement = outputsElement->FindNextElement("output");
-    }   
+    }
 }
 #endif /* MDL_PROCESS_PARAMETERS */
 
@@ -342,7 +377,7 @@ static void mdlInitializeSizes(SimStruct *S)
 {
 
     /* See sfuntmpl_doc.c for more details on the macros below */
-    ssSetNumSFcnParams(S, NUM_PARAMS);  /* Number of expected parameter vectors*/ 
+    ssSetNumSFcnParams(S, NUM_PARAMS);  /* Number of expected parameter vectors*/
     if (ssGetNumSFcnParams(S) == ssGetSFcnParamsCount(S)) {
         mdlCheckParameters(S);
         mdlProcessParameters(S);
@@ -352,7 +387,7 @@ static void mdlInitializeSizes(SimStruct *S)
     }
 
     // Create the work vectors.
-    if(!ssSetNumDWork(   S, useWeather ? 2 + numOutputs : 1 + numOutputs)) return; //HW change 
+    if(!ssSetNumDWork(   S, useWeather ? 2 + numOutputs : 1 + numOutputs)) return; //HW change
 
     // Work vector for input port.
     ssSetDWorkWidth(     S, 0, ssGetInputPortWidth(S,0));
@@ -369,7 +404,7 @@ static void mdlInitializeSizes(SimStruct *S)
         ssSetDWorkWidth(     S, i+1, ssGetOutputPortWidth(S,i));
         ssSetDWorkDataType(  S, i+1, SS_DOUBLE);
     }
-	
+
     // Reserve element in the pointers vector to store the JSBSimInterface.
 	ssSetNumPWork(S, 1);
 
@@ -405,11 +440,12 @@ static void mdlInitializeSampleTimes(SimStruct *S)
 *    restarts execution to reset the states.
 */
 static void mdlInitializeConditions(SimStruct *S)
-{	
-    
+{
+
     mexPrintf("\nJSBSim S-Function is initializing...\n\n");
-    
+
     // Create new JSBSimInterface object and initialize it with delta_t and num_outputs.
+    SetLogger(std::make_shared<LogMatlab>(S));
     JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs);
     ssGetPWork(S)[0] = (void *) JII;
 
@@ -449,7 +485,7 @@ static void mdlInitializeConditions(SimStruct *S)
             return;
         }
     }
-    
+
     // Get the user provided input/output config.
     std::string io_config_file = getMxArrayString(io_config_file_name);
 
@@ -529,8 +565,8 @@ static void mdlInitializeConditions(SimStruct *S)
  *    block.
  */
 static void mdlOutputs(SimStruct *S, int_T tid)
-{ 
-    
+{
+
     real_T* output;
     double* dWorkVector;
     int i;
@@ -555,8 +591,8 @@ static void mdlOutputs(SimStruct *S, int_T tid)
    */
 static void mdlUpdate(SimStruct *S, int_T tid)
 {
-    /* send update inputs to JSBSimInterface, run one cycle, 
-    retrieve state vector, and update sim state vector 
+    /* send update inputs to JSBSimInterface, run one cycle,
+    retrieve state vector, and update sim state vector
     */
 
     JSBSimInterface* JII = (JSBSimInterface*) ssGetPWork(S)[0];
@@ -569,7 +605,7 @@ static void mdlUpdate(SimStruct *S, int_T tid)
         ctrlVec[i] = (double) *ctrlCmdInput[i];
         dWorkCtrlCmdIn[i] = *ctrlCmdInput[i];
     }
-    
+
     if (!JII->CopyInputControlsToJSBSim(ctrlVec)) {
         ssSetErrorStatus(S, "Issue copying control inputs to JSBSim.\n");
         return;
@@ -591,7 +627,7 @@ static void mdlUpdate(SimStruct *S, int_T tid)
     }
 
     JII->Update();
-    
+
     double *dWorkVector;
     for (i = 0; i < numOutputs; i++) {
         dWorkVector = (double *) ssGetDWork(S,i+1);
@@ -608,7 +644,7 @@ static void mdlUpdate(SimStruct *S, int_T tid)
  */
 static void mdlTerminate(SimStruct *S)
 {
-	
+
 	JSBSimInterface *JII = (JSBSimInterface *) ssGetPWork(S)[0];
     delete JII;
 
