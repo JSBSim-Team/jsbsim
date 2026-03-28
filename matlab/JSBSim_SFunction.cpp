@@ -217,10 +217,8 @@ std::string getMxArrayString(const mxArray* mxArrayStr) {
 class LogMatlab : public FGLogConsole
 {
 public:
-    LogMatlab(SimStruct *s) : S(s) {}
     void Format(LogFormat format) override {} // Ignore text formatting.
     void Flush(void) override {
-        static char error_msg[1024];
         switch (log_level) {
             case LogLevel::BULK:
             case LogLevel::DEBUG:
@@ -235,18 +233,13 @@ public:
                 mexWarnMsgIdAndTxt("JSBSim:Error", buffer.c_str());
                 break;
             case LogLevel::FATAL:
-            {
-                snprintf(error_msg, sizeof(error_msg), "%s", buffer.c_str());
-                ssSetErrorStatus(S, error_msg);
-                break;
-            }
+                // Will be executed from within Simulink's exception catcher
+                // Only call noexcept/exception free functions.
             default:
                 break;
         }
         buffer.clear();
     }
-private:
-    SimStruct *S;
 };
 
 
@@ -446,8 +439,8 @@ static void mdlInitializeConditions(SimStruct *S)
     mexPrintf("\nJSBSim S-Function is initializing...\n\n");
 
     // Create new JSBSimInterface object and initialize it with delta_t and num_outputs.
-    SetLogger(std::make_shared<LogMatlab>(S));
-    JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs);
+    SetLogger(std::make_shared<LogMatlab>());
+    JSBSimInterface *JII = new JSBSimInterface(delta_t, numOutputs, S);
     ssGetPWork(S)[0] = (void *) JII;
 
     // Check if a script file is given in Simulink.
