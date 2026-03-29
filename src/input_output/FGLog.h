@@ -162,7 +162,7 @@ public:
   void Flush(void) override;
   ~FGLogConsole() override { Flush(); }
 
-private:
+protected:
   std::string buffer;
   LogLevel min_level = LogLevel::BULK;
 };

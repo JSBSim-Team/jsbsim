@@ -41,8 +41,8 @@ using namespace JSBSim;
 class JSBSimInterface
 {
 public:
-  	JSBSimInterface(int numOutputPorts);
-  	JSBSimInterface(double dt, int numOutputPorts);
+  	JSBSimInterface(int numOutputPorts, SimStruct *s);
+  	JSBSimInterface(double dt, int numOutputPorts, SimStruct *s);
 	~JSBSimInterface(void);
 
 	/// Open an aircraft model from Matlab
@@ -73,26 +73,28 @@ public:
 	bool IsAircraftLoaded(){return _ac_model_loaded;}
 
 	// Wrapper functions to the FGFDMExec class
-	bool RunFDMExec() {return fdmExec->Run();}
+	bool RunFDMExec();
 
 	// false - never hold the simulation time from advancing
 	// TODO: make setable
-	bool RunPropagate() {return propagate->Run(false);}
+	bool RunPropagate();
 
 	// false - never hold the simulation time from advancing
 	// TODO: make setable
-	bool RunAuxiliary() {return auxiliary->Run(false);}
+	bool RunAuxiliary();
 
 	// false - never hold the simulation time from advancing
 	// TODO: make setable
-	bool RunPropulsion() {return propulsion->Run(false);}
+	bool RunPropulsion();
 
 	// false - never hold the simulation time from advancing
 	// TODO: make setable
-	bool RunFCS() {return fcs->Run(false);}
+	bool RunFCS();
 
 
 private:
+	SimStruct *S;
+
 	FGFDMExec *fdmExec;
 	FGPropertyManager* pm;
 	FGPropagate *propagate;

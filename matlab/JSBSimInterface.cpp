@@ -26,6 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 
+#include "simstruc.h"
 #include "JSBSimInterface.h"
 #include <models/FGAircraft.h>
 #include <models/FGAccelerations.h>
@@ -33,45 +34,60 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* 2021-07-08 compiles with JSBSim 1.1.6
  */
+static char error_msg[1024];
 
-JSBSimInterface::JSBSimInterface(int numOutputPorts)
+JSBSimInterface::JSBSimInterface(int numOutputPorts, SimStruct *s)
+: S(s)
 {
-	_ac_model_loaded = false;
-	fdmExec = new FGFDMExec;
-	pm = fdmExec->GetPropertyManager().get();
-	propagate = fdmExec->GetPropagate().get();
-	accel = fdmExec->GetAccelerations().get();
-	auxiliary = fdmExec->GetAuxiliary().get();
-	aerodynamics = fdmExec->GetAerodynamics().get();
-	propulsion = fdmExec->GetPropulsion().get();
-	fcs = fdmExec->GetFCS().get();
-	ic = new FGInitialCondition(fdmExec);
-	for (int i = 0; i < numOutputPorts; i++) {
-		std::vector<SGPropertyNode*> emptyVector;
-		outputPorts.push_back(emptyVector);
+	try {
+		_ac_model_loaded = false;
+		fdmExec = new FGFDMExec;
+		pm = fdmExec->GetPropertyManager().get();
+		propagate = fdmExec->GetPropagate().get();
+		accel = fdmExec->GetAccelerations().get();
+		auxiliary = fdmExec->GetAuxiliary().get();
+		aerodynamics = fdmExec->GetAerodynamics().get();
+		propulsion = fdmExec->GetPropulsion().get();
+		fcs = fdmExec->GetFCS().get();
+		ic = new FGInitialCondition(fdmExec);
+		for (int i = 0; i < numOutputPorts; i++) {
+			std::vector<SGPropertyNode*> emptyVector;
+			outputPorts.push_back(emptyVector);
+		}
+		//verbosityLevel = JSBSimInterface::eSilent;
+	} catch (const LogException& e) {
+		snprintf(error_msg, sizeof(error_msg), "%s", e.what());
+		ssSetErrorStatus(S, error_msg);
+		throw BaseException(error_msg);
 	}
-	//verbosityLevel = JSBSimInterface::eSilent;
 }
 
-JSBSimInterface::JSBSimInterface(double dt, int numOutputPorts)
+JSBSimInterface::JSBSimInterface(double dt, int numOutputPorts, SimStruct *s)
+: S(s)
 {
-	_ac_model_loaded = false;
-	fdmExec = new FGFDMExec;
-	fdmExec->Setdt(dt);
-	mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
-	pm = fdmExec->GetPropertyManager().get();
-	propagate = fdmExec->GetPropagate().get();
-	accel = fdmExec->GetAccelerations().get();
-	auxiliary = fdmExec->GetAuxiliary().get();
-	aerodynamics = fdmExec->GetAerodynamics().get();
-	propulsion = fdmExec->GetPropulsion().get();
-	fcs = fdmExec->GetFCS().get();
-	ic = new FGInitialCondition(fdmExec);
-	for (int i = 0; i < numOutputPorts; i++) {
-		std::vector<SGPropertyNode*> emptyVector;
-		outputPorts.push_back(emptyVector);
+	try {
+		_ac_model_loaded = false;
+		fdmExec = new FGFDMExec;
+		fdmExec->Setdt(dt);
+		mexPrintf("Simulation dt set to %f\n",fdmExec->GetDeltaT());
+		pm = fdmExec->GetPropertyManager().get();
+		propagate = fdmExec->GetPropagate().get();
+		accel = fdmExec->GetAccelerations().get();
+		auxiliary = fdmExec->GetAuxiliary().get();
+		aerodynamics = fdmExec->GetAerodynamics().get();
+		propulsion = fdmExec->GetPropulsion().get();
+		fcs = fdmExec->GetFCS().get();
+		ic = new FGInitialCondition(fdmExec);
+		for (int i = 0; i < numOutputPorts; i++) {
+			std::vector<SGPropertyNode*> emptyVector;
+			outputPorts.push_back(emptyVector);
+		}
+		//verbosityLevel = JSBSimInterface::eSilent;
+	} catch (const LogException& e) {
+		snprintf(error_msg, sizeof(error_msg), "%s", e.what());
+		ssSetErrorStatus(S, error_msg);
+		throw BaseException(error_msg);
 	}
-	//verbosityLevel = JSBSimInterface::eSilent;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,93 +99,122 @@ JSBSimInterface::~JSBSimInterface(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::OpenAircraft(const std::string& acName)
 {
+	try {
+		if (!fdmExec->GetAircraft()->GetAircraftName().empty()) return false;
 
-	if (!fdmExec->GetAircraft()->GetAircraftName().empty()) return false;
+		mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");
+		if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
+		if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
+		if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
 
-    mexPrintf("\tSetting up JSBSim with standard 'aircraft', 'engine', and 'system' paths.\n");
-    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
-    if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
-    if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
+		mexPrintf("\tLoading aircraft '%s' ...\n",acName.c_str());
 
-    mexPrintf("\tLoading aircraft '%s' ...\n",acName.c_str());
+		if ( ! fdmExec->LoadModel(SGPath("aircraft"), SGPath("engine"), SGPath("systems"), acName)) return false;
 
-    if ( ! fdmExec->LoadModel(SGPath("aircraft"), SGPath("engine"), SGPath("systems"), acName)) return false;
+		_ac_model_loaded = true;
 
-	_ac_model_loaded = true;
-
-  	return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::OpenScript(const SGPath& script, double delta_t, const SGPath& initfile)
 {
+	try {
+		if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
+		if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
+		if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
 
-    if (!fdmExec->SetAircraftPath (SGPath("aircraft"))) return false;
-    if (!fdmExec->SetEnginePath   (SGPath("engine"))) return false;
-    if (!fdmExec->SetSystemsPath  (SGPath("systems"))) return false;
+		if (!fdmExec->LoadScript(script, delta_t, initfile)) return false;
 
-    if (!fdmExec->LoadScript(script, delta_t, initfile)) return false;
+		if (!fdmExec->RunIC()) return false;
 
-    if (!fdmExec->RunIC()) return false;
-
-    return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::LoadIC(SGPath ResetName)
 {
+	try {
+		auto IC = fdmExec->GetIC();
 
-    auto IC = fdmExec->GetIC();
+		if (!IC->Load(ResetName)) return false;
 
-    if (!IC->Load(ResetName)) return false;
+		if (!fdmExec->RunIC()) return false;
 
-    if (!fdmExec->RunIC()) return false;
-
-	return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void JSBSimInterface::Update()
 {
-
-    fdmExec->Run();
+	try {
+    	fdmExec->Run();
+	} catch (const LogException& e) {
+		snprintf(error_msg, sizeof(error_msg), "%s", e.what());
+		ssSetErrorStatus(S, error_msg);
+		throw BaseException(error_msg);
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddInputPropertyNode(std::string property)
 {
+	try {
+		SGPropertyNode* node = pm->GetNode(property);
+		if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
 
-	SGPropertyNode* node = pm->GetNode(property);
-	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
-
-	inputPort.push_back(node);
-	return true;
+		inputPort.push_back(node);
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddWeatherPropertyNode(std::string property)
 {
+	try {
+		if (!(property.substr(0, std::string("atmosphere/").size()) == std::string("atmosphere/"))) return false;
 
-	if (!(property.substr(0, std::string("atmosphere/").size()) == std::string("atmosphere/"))) return false;
+		SGPropertyNode* node = pm->GetNode(property);
+		if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
 
-	SGPropertyNode* node = pm->GetNode(property);
-	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::WRITE)) return false;
-
-	weatherPort.push_back(node);
-	return true;
+		weatherPort.push_back(node);
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool JSBSimInterface::AddOutputPropertyNode(std::string property, const int outputPort)
 {
+	try {
+		if (outputPort >= outputPorts.size()) return false;
 
-	if (outputPort >= outputPorts.size()) return false;
+		SGPropertyNode* node = pm->GetNode(property);
+		if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::READ)) return false;
 
-	SGPropertyNode* node = pm->GetNode(property);
-	if (node == nullptr || !node->getAttribute(SGPropertyNode::Attribute::READ)) return false;
-
-	outputPorts.at(outputPort).push_back(node);
-	return true;
+		outputPorts.at(outputPort).push_back(node);
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,31 +223,36 @@ bool JSBSimInterface::CopyInputControlsToJSBSim(std::vector<double> controls) {
 
 	if (!fdmExec) return false;
 
-	SGPropertyNode* node;
-	for (int i = 0; i < inputPort.size(); i++) {
-		node = inputPort.at(i);
-		switch (node->getType()) {
-			case simgear::props::BOOL:
-				node->setBoolValue(controls[i]);
-				break;
-			case simgear::props::INT:
-				node->setIntValue(controls[i]);
-				break;
-			case simgear::props::LONG:
-				node->setLongValue(controls[i]);
-				break;
-			case simgear::props::FLOAT:
-				node->setFloatValue(controls[i]);
-				break;
-			case simgear::props::DOUBLE:
-				node->setDoubleValue(controls[i]);
-				break;
-			default:
-				return false;
+	try {
+		SGPropertyNode* node;
+		for (int i = 0; i < inputPort.size(); i++) {
+			node = inputPort.at(i);
+			switch (node->getType()) {
+				case simgear::props::BOOL:
+					node->setBoolValue(controls[i]);
+					break;
+				case simgear::props::INT:
+					node->setIntValue(controls[i]);
+					break;
+				case simgear::props::LONG:
+					node->setLongValue(controls[i]);
+					break;
+				case simgear::props::FLOAT:
+					node->setFloatValue(controls[i]);
+					break;
+				case simgear::props::DOUBLE:
+					node->setDoubleValue(controls[i]);
+					break;
+				default:
+					return false;
+			}
 		}
-	}
 
-    return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,31 +261,36 @@ bool JSBSimInterface::CopyInputWeatherToJSBSim(std::vector<double> weather) {
 
 	if (!fdmExec) return false;
 
-	SGPropertyNode* node;
-	for (int i = 0; i < weatherPort.size(); i++) {
-		node = weatherPort.at(i);
-		switch (node->getType()) {
-			case simgear::props::BOOL:
-				node->setBoolValue(weather[i]);
-				break;
-			case simgear::props::INT:
-				node->setIntValue(weather[i]);
-				break;
-			case simgear::props::LONG:
-				node->setLongValue(weather[i]);
-				break;
-			case simgear::props::FLOAT:
-				node->setFloatValue(weather[i]);
-				break;
-			case simgear::props::DOUBLE:
-				node->setDoubleValue(weather[i]);
-				break;
-			default:
-				return false;
+	try {
+		SGPropertyNode* node;
+		for (int i = 0; i < weatherPort.size(); i++) {
+			node = weatherPort.at(i);
+			switch (node->getType()) {
+				case simgear::props::BOOL:
+					node->setBoolValue(weather[i]);
+					break;
+				case simgear::props::INT:
+					node->setIntValue(weather[i]);
+					break;
+				case simgear::props::LONG:
+					node->setLongValue(weather[i]);
+					break;
+				case simgear::props::FLOAT:
+					node->setFloatValue(weather[i]);
+					break;
+				case simgear::props::DOUBLE:
+					node->setDoubleValue(weather[i]);
+					break;
+				default:
+					return false;
+			}
 		}
-	}
 
-    return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,30 +300,85 @@ bool JSBSimInterface::CopyOutputsFromJSBSim(double *stateArray, const int output
 		mexPrintf("Output port selected is out of bounds.\n");
 	}
 
-	SGPropertyNode* node;
-	std::vector<SGPropertyNode*> port = outputPorts.at(outputPort);
-	for (int i = 0; i < port.size(); i++) {
-		node = port.at(i);
-		switch (node->getType()) {
-			case simgear::props::BOOL:
-				stateArray[i] = node->getBoolValue();
-				break;
-			case simgear::props::INT:
-				stateArray[i] = node->getIntValue();
-				break;
-			case simgear::props::LONG:
-				stateArray[i] = node->getLongValue();
-				break;
-			case simgear::props::FLOAT:
-				stateArray[i] = node->getFloatValue();
-				break;
-			case simgear::props::DOUBLE:
-				stateArray[i] = node->getDoubleValue();
-				break;
-			default:
-				return false;
+	try {
+		SGPropertyNode* node;
+		std::vector<SGPropertyNode*> port = outputPorts.at(outputPort);
+		for (int i = 0; i < port.size(); i++) {
+			node = port.at(i);
+			switch (node->getType()) {
+				case simgear::props::BOOL:
+					stateArray[i] = node->getBoolValue();
+					break;
+				case simgear::props::INT:
+					stateArray[i] = node->getIntValue();
+					break;
+				case simgear::props::LONG:
+					stateArray[i] = node->getLongValue();
+					break;
+				case simgear::props::FLOAT:
+					stateArray[i] = node->getFloatValue();
+					break;
+				case simgear::props::DOUBLE:
+					stateArray[i] = node->getDoubleValue();
+					break;
+				default:
+					return false;
+			}
 		}
-	}
 
-	return true;
+		return true;
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::RunFDMExec() {
+	try {
+		return fdmExec->Run();
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::RunPropagate() {
+	try {
+		return propagate->Run(false);
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::RunAuxiliary() {
+	try {
+		return auxiliary->Run(false);
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::RunPropulsion() {
+	try {
+		return propulsion->Run(false);
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bool JSBSimInterface::RunFCS() {
+	try {
+		return fcs->Run(false);
+	} catch (const LogException& e) {
+		mexPrintf(e.what());
+		return false;
+	}
 }
