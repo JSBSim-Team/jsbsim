@@ -28,8 +28,10 @@
    @DoxMainPage"""
 
 from cython.operator cimport dereference as deref
+from libcpp.memory cimport shared_ptr, make_shared
 from typing import Optional
 
+import atexit
 import enum
 import errno
 import os
@@ -86,6 +88,96 @@ cdef _convertToNumpyMat(const c_FGMatrix33& m):
 
 cdef _convertToNumpyVec(const c_FGColumnVector3& v):
     return numpy.matrix([v.Entry(1), v.Entry(2), v.Entry(3)]).T
+
+
+class LogLevel(enum.Enum):
+    """Enumeration of log levels."""
+    BULK = 0   # For frequent messages
+    DEBUG = 1  # Less frequent debug type messages
+    INFO = 2   # Informatory messages
+    WARN = 3   # Possible impending problem
+    ERROR = 4  # Problem that can be recovered
+    FATAL = 5  # Fatal problem => an exception will be thrown
+    STDOUT = 6 # Standard output - unconditionally displayed.
+
+
+class LogFormat(enum.Enum):
+    """Enumeration of log formats."""
+    RESET = 0
+    RED = 1
+    BLUE = 2
+    CYAN = 3
+    GREEN = 4
+    DEFAULT = 5
+    BOLD = 6
+    NORMAL = 7
+    UNDERLINE_ON = 8
+    UNDERLINE_OFF = 9
+
+
+class FGLogger:
+    """@Dox(JSBSim::FGLogger)"""
+    log_level = LogLevel.BULK
+
+    def set_level(self, level: LogLevel) -> None:
+        """@Dox(JSBSim::FGLogger::SetLevel)"""
+        self.log_level = level
+    def file_location(self, filename: str, line: int) -> None:
+        """@Dox(JSBSim::FGLogger::FileLocation)"""
+        pass
+    def message(self, message: str) -> None:
+        """@Dox(JSBSim::FGLogger::Message)"""
+        pass
+    def format(self, format: LogFormat) -> None:
+        """@Dox(JSBSim::FGLogger::Format)"""
+        pass
+    def flush(self) -> None:
+        """@Dox(JSBSim::FGLogger::Flush)"""
+        pass
+
+cdef shared_ptr[c_PyLogger] _logger  # hold the logger instance
+
+def set_logger(logger: FGLogger) -> None:
+    """@Dox(JSBSim::SetLogger)"""
+    global _logger
+    _logger = make_shared[c_PyLogger](<PyObject*>logger)
+    SetLogger(_logger)
+
+
+# Initializing pointers for the C++ interface
+FGLogger_PyClass = <PyObject*>FGLogger
+LogLevel_PyClass = <PyObject*>LogLevel
+LogFormat_PyClass = <PyObject*>LogFormat
+
+
+def inherit_docstring(cls):
+    for name, func in cls.__dict__.items():
+        if not func.__doc__:
+            func.__doc__ = getattr(super(cls, cls), name).__doc__
+    return cls
+
+
+@inherit_docstring
+class DefaultLogger(FGLogger):
+    """Default logger: print messages to stdout without formatting."""
+    def file_location(self, filename: str, line: int) -> None:
+        print(f"\nIn file {filename}: line {line}")
+    def message(self, message: str) -> None:
+        print(f"{message}", end='')
+
+
+# Reset the logger before Python shutdown to prevent crashes.
+# This function is called at module exit to clear the global logger variable.
+# This prevents the c_PyLogger destructor from trying to decrement reference
+# counts on Python objects after Python has already finalized.
+cdef _reset_logger():
+    global _logger
+    _logger.reset()
+    ResetLogger()
+
+
+atexit.register(_reset_logger)
+set_logger(DefaultLogger())
 
 
 cdef class FGPropagate:

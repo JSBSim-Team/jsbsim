@@ -5,9 +5,7 @@ option(FPECTL_DISPLAY_STACK_TRACE "Set to ON to display the stack trace when a f
 if (APPLE)
   file(COPY fpectl.py DESTINATION ${CMAKE_BINARY_DIR}/tests)
 else()
-  python3_add_library(fpectl MODULE ${PROJECT_SOURCE_DIR}/python/ExceptionManagement.h
-                                    fpectlmodule.h
-                                    fpectlmodule.cpp)
+  python3_add_library(fpectl MODULE fpectlmodule.cpp)
   set_target_properties(fpectl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 
   # Output directories for MSVC

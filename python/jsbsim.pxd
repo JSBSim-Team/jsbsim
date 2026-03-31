@@ -29,7 +29,7 @@ from libcpp.memory cimport shared_ptr
 from libcpp.vector cimport vector
 from cpython.ref cimport PyObject
 
-cdef extern from "ExceptionManagement.h":
+cdef extern from "ExceptionManagement.h" namespace "JSBSim":
     cdef PyObject* base_error
     cdef PyObject* trimfailure_error
     cdef PyObject* geographic_error
@@ -92,6 +92,17 @@ cdef extern from "input_output/FGPropertyManager.h" namespace "JSBSim":
         c_SGPropertyNode* GetNode()
         c_SGPropertyNode* GetNode(const string& path, bool create)
         bool HasNode(const string& path) except +convertJSBSimToPyExc
+
+cdef extern from "PyLogger.h" namespace "JSBSim":
+    cdef PyObject* FGLogger_PyClass
+    cdef PyObject* LogLevel_PyClass
+    cdef PyObject* LogFormat_PyClass
+    cdef void ResetLogger()
+    cdef cppclass c_PyLogger "JSBSim::PyLogger":
+        c_PyLogger(PyObject* logger)
+
+cdef extern from "input_output/FGLog.h" namespace "JSBSim":
+    cdef void SetLogger(shared_ptr[c_PyLogger] logger)
 
 cdef extern from "math/FGColumnVector3.h" namespace "JSBSim":
     cdef cppclass c_FGColumnVector3 "JSBSim::FGColumnVector3":

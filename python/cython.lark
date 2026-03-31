@@ -36,11 +36,11 @@ ctype: name | ref_type | pointer_type | const_type | ctemplate_type
 
 conversion: "<" ctype ">" name
 new_param: "new" name "(" [arguments] ")"
-cyassign: testlist_star_expr "=" (testlist_star_expr "=")* (new_param | conversion)
+cyassign: testlist_star_expr "=" (testlist_star_expr "=")* (new_param | conversion | ctemplate_type "(" [cparameters] ")")
 ?ctypedparam: ctype name
-cparameter: (ctypedparam ("=" test)?) | paramvalue
+cparameter: (ctypedparam ("=" test)?) | conversion | paramvalue
 cparameters: cparameter ("," cparameter)* ["," [starparams | kwparams]]
-cyfuncdef: name "(" cparameters ")" ":" suite
+cyfuncdef: name "(" [cparameters] ")" ":" suite
 cyclassdef: "class" name ["(" [arguments] ")"] ":" suite
 cdeclare_var: ctypedparam ("=" "&"? argvalue)? _NEWLINE
 cdef_stmt: "cdef" (cdeclare_var | cyfuncdef | cyclassdef)
