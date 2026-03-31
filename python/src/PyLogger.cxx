@@ -29,9 +29,31 @@
 
 namespace JSBSim {
 // These pointers are initialized in jsbsim.pyx
+extern PyObject* logexception_error;
 PyObject* FGLogger_PyClass;
 PyObject* LogLevel_PyClass;
 PyObject* LogFormat_PyClass;
+
+/** Helper class to intercept and rethrow Python exceptions using RAII.
+ *  The constructor fetches the current Python exception, clearing the error
+ *  state of the thread. The destructor restores the exception state.
+ */
+class PyErrorSentry {
+public:
+  PyErrorSentry() { PyErr_Fetch(&type, &value, &traceback); }
+  ~PyErrorSentry() { PyErr_Restore(type, value, traceback); }
+
+  /** Returns true if there is no current Python error OR if the caught
+   *  error matches the given exception type.
+   */
+  bool NoErrorOrMatches(PyObject* exc) const {
+    return !type || PyErr_GivenExceptionMatches(type, exc);
+  }
+private:
+  PyObject* type = nullptr;
+  PyObject* value = nullptr;
+  PyObject* traceback = nullptr;
+};
 
 void ResetLogger(void) { SetLogger(std::make_shared<FGLogConsole>()); }
 
@@ -71,39 +93,65 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  const int idx = static_cast<int>(level);
-  assert(idx >=0 && idx <= 6);
-  PyObjectPtr py_level = convert_level_enums[idx];
-  PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
-  if (result) FGLogger::SetLevel(level);
+  PyErrorSentry sentry;
+
+  if (sentry.NoErrorOrMatches(logexception_error)) {
+    const int idx = static_cast<int>(level);
+    assert(idx >= 0 && idx <= 6);
+    PyObjectPtr py_level = convert_level_enums[idx];
+    PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
+    if (result) FGLogger::SetLevel(level);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::FileLocation(const std::string& filename, int line)
 {
-  PyObjectPtr py_filename = PyUnicode_FromString(filename.c_str());
-  PyObjectPtr py_line = PyLong_FromLong(line);
-  PyObjectPtr args = PyTuple_Pack(2, py_filename.get(), py_line.get());
-  CallPythonMethodWithTuple("file_location", args);
+  PyErrorSentry sentry;
+
+  if (sentry.NoErrorOrMatches(logexception_error)) {
+    PyObjectPtr py_filename = PyUnicode_FromString(filename.c_str());
+    PyObjectPtr py_line = PyLong_FromLong(line);
+    PyObjectPtr args = PyTuple_Pack(2, py_filename.get(), py_line.get());
+    CallPythonMethodWithTuple("file_location", args);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::Message(const std::string& message)
 {
-  PyObjectPtr msg = PyUnicode_FromString(message.c_str());
-  CallPythonMethodWithArguments("message", msg);
+  PyErrorSentry sentry;
+
+  if (sentry.NoErrorOrMatches(logexception_error)) {
+    PyObjectPtr msg = PyUnicode_FromString(message.c_str());
+    CallPythonMethodWithArguments("message", msg);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::Format(LogFormat format)
 {
-  const int idx = static_cast<int>(format);
-  assert(idx >= 0 && idx <= 9);
-  PyObjectPtr py_format = convert_format_enums[idx];
-  CallPythonMethodWithArguments("format", py_format);
+  PyErrorSentry sentry;
+
+  if (sentry.NoErrorOrMatches(logexception_error)) {
+    const int idx = static_cast<int>(format);
+    assert(idx >= 0 && idx <= 9);
+    PyObjectPtr py_format = convert_format_enums[idx];
+    CallPythonMethodWithArguments("format", py_format);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void PyLogger::Flush(void)
+{
+  PyErrorSentry sentry;
+
+  if (sentry.NoErrorOrMatches(logexception_error))
+    CallPythonMethodWithTuple("flush", nullptr);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

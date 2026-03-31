@@ -58,10 +58,13 @@ class GeographicError(BaseError):
     """Exception class for geographic computation errors."""
     pass
 
+class LogExceptionError(BaseError):
+    pass
 
 base_error = <PyObject*>BaseError
 trimfailure_error = <PyObject*>TrimFailureError
 geographic_error = <PyObject*>GeographicError
+logexception_error = <PyObject*>LogExceptionError
 
 
 def get_default_root_dir() -> str:

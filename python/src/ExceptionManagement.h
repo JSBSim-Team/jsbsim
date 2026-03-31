@@ -36,7 +36,7 @@ namespace JSBSim {
 PyObject* base_error;
 PyObject* trimfailure_error;
 PyObject* geographic_error;
-PyObject* table_error;
+PyObject* logexception_error;
 
 void convertJSBSimToPyExc()
 {
@@ -49,6 +49,9 @@ void convertJSBSimToPyExc()
   }
   catch (const GeographicLib::GeographicErr& e) {
     PyErr_SetString(geographic_error, e.what());
+  }
+  catch (const JSBSim::LogException& e) {
+    PyErr_SetString(logexception_error, e.what());
   }
   catch (const JSBSim::BaseException& e) {
     PyErr_SetString(base_error, e.what());

@@ -103,7 +103,7 @@ public:
   void FileLocation(const std::string& filename, int line) override;
   void Message(const std::string& message) override;
   void Format(LogFormat format) override;
-  void Flush(void) override { CallPythonMethodWithTuple("flush", nullptr); }
+  void Flush(void) override;
 
 private:
   PyObjectPtr CallPythonMethodWithTuple(const char* method_name, const PyObjectPtr& tuple);
