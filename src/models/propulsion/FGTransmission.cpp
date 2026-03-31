@@ -43,8 +43,6 @@ INCLUDES
 #include "FGTransmission.h"
 
 using std::string;
-using std::cout;
-using std::endl;
 
 namespace JSBSim {
 
@@ -104,10 +102,10 @@ void FGTransmission::Calculate(double EnginePower, double ThrusterTorque, double
   coupling = fw_mult * Constrain(0.0, ClutchCtrlNorm, 1.0);
 
   if (coupling < 0.999999) { // are the separate calculations needed ?
-    // assume linear transfer 
+    // assume linear transfer
     engine_d_omega   =
        (engine_torque - ThrusterTorque*coupling)/(ThrusterMoment*coupling + EngineMoment) * dt;
-    thruster_d_omega = 
+    thruster_d_omega =
        (engine_torque*coupling - ThrusterTorque)/(ThrusterMoment + EngineMoment*coupling) * dt;
 
     EngineRPM += omega_to_rpm(engine_d_omega);
@@ -141,15 +139,15 @@ bool FGTransmission::BindModel(int num, FGPropertyManager* PropertyManager)
   base_property_name = CreateIndexedPropertyName("propulsion/engine", num);
 
   property_name = base_property_name + "/brake-ctrl-norm";
-  PropertyManager->Tie( property_name.c_str(), this, 
+  PropertyManager->Tie( property_name.c_str(), this,
       &FGTransmission::GetBrakeCtrlNorm, &FGTransmission::SetBrakeCtrlNorm);
 
   property_name = base_property_name + "/clutch-ctrl-norm";
-  PropertyManager->Tie( property_name.c_str(), this, 
+  PropertyManager->Tie( property_name.c_str(), this,
       &FGTransmission::GetClutchCtrlNorm, &FGTransmission::SetClutchCtrlNorm);
 
   property_name = base_property_name + "/free-wheel-transmission";
-  PropertyManager->Tie( property_name.c_str(), this, 
+  PropertyManager->Tie( property_name.c_str(), this,
       &FGTransmission::GetFreeWheelTransmission);
 
   return true;
@@ -183,8 +181,9 @@ void FGTransmission::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGTransmission" << endl;
-    if (from == 1) cout << "Destroyed:    FGTransmission" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGTransmission\n";
+    if (from == 1) log << "Destroyed:    FGTransmission\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

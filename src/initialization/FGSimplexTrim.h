@@ -42,7 +42,8 @@ private:
     template <class varType>
     void prompt(const std::string & str, varType & var)
     {
-        std::cout << str + " [" << std::setw(10) << var << "]\t: ";
+        FGLogging out(LogLevel::STDOUT);
+        out << str + " [" << std::setw(10) << var << "]\t: ";
         if (std::cin.peek() != '\n')
         {
             std::cin >> var;
@@ -66,11 +67,11 @@ private:
         }
         void eval(const std::vector<double> &v)
         {
-            _outputFile << _trimmer->eval(v) << std::endl;
+            _outputFile << _trimmer->eval(v) << "\n";
             //FGLogging log(LogLevel::INFO);
             //log << "v: ";
             //for (int i=0;i<v.size();i++) log << v[i] << " ";
-            //log << std::endl;
+            //log << "\n";
         }
     };
 };

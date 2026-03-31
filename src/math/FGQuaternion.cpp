@@ -43,9 +43,6 @@ SENTRY
 #include <sstream>
 #include <iomanip>
 #include <cmath>
-using std::cerr;
-using std::cout;
-using std::endl;
 
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
@@ -94,14 +91,14 @@ FGQuaternion::FGQuaternion(FGColumnVector3 vOrient): mCacheValid(false)
 
   InitializeFromEulerAngles(phi, tht, psi);
 }
- 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
 // This function computes the quaternion that describes the relationship of the
 // body frame with respect to another frame, such as the ECI or ECEF frames. The
 // Euler angles used represent a 3-2-1 (psi, theta, phi) rotation sequence from
 // the reference frame to the body frame. See "Quaternions and Rotation
-// Sequences", Jack B. Kuipers, sections 9.2 and 7.6. 
+// Sequences", Jack B. Kuipers, sections 9.2 and 7.6.
 
 void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
 {
@@ -112,20 +109,20 @@ void FGQuaternion::InitializeFromEulerAngles(double phi, double tht, double psi)
   double thtd2 = 0.5*tht;
   double psid2 = 0.5*psi;
   double phid2 = 0.5*phi;
-  
+
   double Sthtd2 = sin(thtd2);
   double Spsid2 = sin(psid2);
   double Sphid2 = sin(phid2);
-  
+
   double Cthtd2 = cos(thtd2);
   double Cpsid2 = cos(psid2);
   double Cphid2 = cos(phid2);
-  
+
   double Cphid2Cthtd2 = Cphid2*Cthtd2;
   double Cphid2Sthtd2 = Cphid2*Sthtd2;
   double Sphid2Sthtd2 = Sphid2*Sthtd2;
   double Sphid2Cthtd2 = Sphid2*Cthtd2;
-  
+
   data[0] = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
   data[1] = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
   data[2] = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
@@ -204,7 +201,7 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
   double q1q2 = q1*q2;
   double q1q3 = q1*q3;
   double q2q3 = q2*q3;
-  
+
   mT(1,1) = q0q0 + q1q1 - q2q2 - q3q3; // This is found from Eqn. 1.3-32 in
   mT(1,2) = 2.0*(q1q2 + q0q3);         // Stevens and Lewis
   mT(1,3) = 2.0*(q1q3 - q0q2);
@@ -219,11 +216,11 @@ void FGQuaternion::ComputeDerivedUnconditional(void) const
 
   mTInv = mT;
   mTInv.T();
-  
+
   // Compute the Euler-angles
 
   mEulerAngles = mT.GetEuler();
-  
+
   // FIXME: may be one can compute those values easier ???
   mEulerSines(ePhi) = sin(mEulerAngles(ePhi));
   // mEulerSines(eTht) = sin(mEulerAngles(eTht));

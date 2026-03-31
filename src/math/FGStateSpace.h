@@ -66,13 +66,14 @@ public:
             m_stateSpace->x.set(x0);
             if (m_fdm->GetDebugLevel() > 1)
             {
-                std::cout << std::scientific
-                          << "name: " << m_name
-                          << "\nf1: " << f0
-                          << "\nf2: " << f1
-                          << "\ndt: " << m_fdm->GetDeltaT()
-                          << "\tdf/dt: " << (f1-f0)/m_fdm->GetDeltaT()
-                          << std::fixed << std::endl;
+                FGLogging log(LogLevel::DEBUG);
+                log << std::scientific
+                    << "name: " << m_name
+                    << "\nf1: " << f0
+                    << "\nf2: " << f1
+                    << "\ndt: " << m_fdm->GetDeltaT()
+                    << "\tdf/dt: " << (f1-f0)/m_fdm->GetDeltaT()
+                    << std::fixed << "\n";
             }
             double deriv = (f1-f0)/m_fdm->GetDeltaT();
             m_fdm->Setdt(dt0); // restore original value
@@ -243,15 +244,17 @@ public:
             double dcost = fabs(costNew - cost);
             if (dcost < std::numeric_limits<double>::epsilon()) {
                 if(m_fdm->GetDebugLevel() > 1) {
-                    std::cout << "cost convergd, i: " << i << std::endl;
+                    FGLogging log(LogLevel::DEBUG);
+                    log << "cost convergd, i: " << i << "\n";
                 }
                 break;
             }
             if (i > 1000) {
                 if(m_fdm->GetDebugLevel() > 1) {
-                    std::cout << "cost failed to converge, dcost: "
+                    FGLogging log(LogLevel::DEBUG);
+                    log << "cost failed to converge, dcost: "
                         << std::scientific
-                        << dcost << std::endl;
+                        << dcost << "\n";
                 }
                 break;
             }
@@ -912,7 +915,7 @@ public:
             double Vn = m_fdm->GetPropagate()->GetVel(1);
             double Vndot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(1);
             double Ve = m_fdm->GetPropagate()->GetVel(2);
-            double Vedot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(2); 
+            double Vedot = (m_fdm->GetPropagate()->GetTb2l()*m_fdm->GetAccelerations()->GetUVWdot())(2);
 
             //dCOG/dt = dCOG/dVe*dVe/dt + dCOG/dVn*dVn/dt
             return Vn/(Vn*Vn+Ve*Ve)*Vedot - Ve/(Vn*Vn+Ve*Ve)*Vndot;

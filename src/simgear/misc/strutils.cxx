@@ -32,6 +32,7 @@
 #endif
 
 #include "strutils.hxx"
+#include "input_output/FGLog.h"
 
 #include <simgear/compiler.h>   // SG_WINDOWS
 
@@ -43,8 +44,6 @@
 using std::string;
 using std::vector;
 using std::stringstream;
-using std::cout;
-using std::endl;
 
 namespace simgear {
     namespace strutils {
@@ -80,7 +79,10 @@ namespace simgear {
 		for (string::iterator p = s_utf8.begin(); p != s_utf8.end(); ++p) {
 			value_type value = get_value<string::iterator&>(p);
 			if (value > 0x10ffff) return s_utf8; // invalid UTF-8: guess that the input was already Latin-1
-			if (value > 0xff) SG_LOG(SG_IO, SG_WARN, "utf8ToLatin1: wrong char value: " << value);
+			if (value > 0xff) {
+                JSBSim::FGLogging log(JSBSim::LogLevel::WARN);
+                log << "utf8ToLatin1: wrong char value: " << value << "\n";
+            }
 			s_latin1 += static_cast<char>(value);
 		}
 		return s_latin1;
@@ -663,7 +665,8 @@ string sanitizePrintfFormat(const string& input)
 {
     string::size_type i = input.find("%n");
     if (i != string::npos) {
-        SG_LOG(SG_IO, SG_WARN, "sanitizePrintfFormat: bad format string:" << input);
+        JSBSim::FGLogging log(JSBSim::LogLevel::WARN);
+        log << "sanitizePrintfFormat: bad format string:" << input << "\n";
         return string();
     }
 

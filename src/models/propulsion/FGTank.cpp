@@ -79,8 +79,10 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
   element = el->FindElement("location");
   if (element)  vXYZ = element->FindElementTripletConvertTo("IN");
-  else          cerr << el->ReadFrom() << "No location found for this tank."
-                     << endl;
+  else {
+    FGXMLLogging log(el, LogLevel::ERROR);
+    log << "No location found for this tank.\n";
+  }
 
   vXYZ_drain = vXYZ; // Set initial drain location to initial tank CG
 
@@ -114,29 +116,32 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   SetPriority( InitialPriority );     // this will also set the Selected flag
 
   if (Capacity == 0) {
-    cerr << el->ReadFrom()
-         << "Tank capacity must not be zero. Reset to 0.00001 lbs!" << endl;
+    FGXMLLogging log(el, LogLevel::WARN);
+    log << "Tank capacity must not be zero. Reset to 0.00001 lbs!\n";
     Capacity = 0.00001;
     Contents = 0.0;
   }
   if (Capacity <= GetUnusable()) {
-    cerr << el->ReadFrom() << "Tank capacity (" << Capacity
-         << " lbs) is lower than the amount of unusable fuel (" << GetUnusable()
-         << " lbs) for tank " << tank_number
-         << "! Did you accidentally swap unusable and capacity?" << endl;
-    throw("tank definition error");
+    XMLLogException err(el);
+    err << "Tank capacity (" << Capacity
+        << " lbs) is lower than the amount of unusable fuel (" << GetUnusable()
+        << " lbs) for tank " << tank_number
+        << "! Did you accidentally swap unusable and capacity?\n";
+    throw err;
   }
   if (Contents > Capacity) {
-    cerr << el->ReadFrom() << "Tank content (" << Contents
-         << " lbs) is greater than tank capacity (" << Capacity
-         << " lbs) for tank " << tank_number
-         << "! Did you accidentally swap contents and capacity?" << endl;
-    throw("tank definition error");
+    XMLLogException err(el);
+    err << "Tank content (" << Contents
+        << " lbs) is greater than tank capacity (" << Capacity
+        << " lbs) for tank " << tank_number
+        << "! Did you accidentally swap contents and capacity?\n";
+    throw err;
   }
   if (Contents < GetUnusable()) {
-    cerr << el->ReadFrom() << "Tank content (" << Contents
+    FGXMLLogging log(el, LogLevel::ERROR);
+    log << el->ReadFrom() << "Tank content (" << Contents
          << " lbs) is lower than the amount of unusable fuel (" << GetUnusable()
-         << " lbs) for tank " << tank_number << endl;
+         << " lbs) for tank " << tank_number << "\n";
   }
 
   PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
@@ -168,7 +173,10 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
           function_iyy = new FGFunction(exec, element_iyy->FindElement("function"));
         }
       } else {
-        throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an iyy must be specified when the FUNCTION grain type is specified.");
+        XMLLogException err(element_Grain);
+        err << "For tank " << TankNumber
+            << " and when grain_config is specified an iyy must be specified when the FUNCTION grain type is specified.\n";
+        throw err;
       }
 
       if (element_Grain->FindElement("izz")) {
@@ -178,12 +186,16 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
           function_izz = new FGFunction(exec, element_izz->FindElement("function"));
         }
       } else {
-        throw("For tank "+to_string(TankNumber)+" and when grain_config is specified an izz must be specified when the FUNCTION grain type is specified.");
+        XMLLogException err(element_Grain);
+        err << "For tank " << TankNumber
+            << " and when grain_config is specified an izz must be specified when the FUNCTION grain type is specified.\n";
+        throw err;
       }
     }
-    else
-      cerr << el->ReadFrom() << "Unknown propellant grain type specified"
-           << endl;
+    else {
+      FGXMLLogging log(el, LogLevel::ERROR);
+      log << "Unknown propellant grain type specified\n";
+    }
 
     if (element_Grain->FindElement("length"))
       Length = element_Grain->FindElementValueAsNumberConvertTo("length", "IN");
@@ -195,9 +207,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
     switch (grainType) {
       case gtCYLINDRICAL:
         if (Radius <= InnerRadius) {
-          const string s("The bore diameter should be smaller than the total grain diameter!");
-          cerr << element_Grain->ReadFrom() << endl << s << endl;
-          throw BaseException(s);
+          XMLLogException err(element_Grain);
+          err << "The bore diameter should be smaller than the total grain diameter!\n";
+          throw err;
         }
         Volume = M_PI * Length * (Radius*Radius - InnerRadius*InnerRadius); // cubic inches
         break;
@@ -209,9 +221,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
         break;
       case gtUNKNOWN:
         {
-          const string s("Unknown grain type found in this rocket engine definition.");
-          cerr << el->ReadFrom() << endl << s << endl;
-          throw BaseException(s);
+          XMLLogException err(el);
+          err << "Unknown grain type found in this rocket engine definition.\n";
+          throw err;
         }
     }
     Density = (Capacity*lbtoslug)/Volume; // slugs/in^3
@@ -377,9 +389,9 @@ void FGTank::CalculateInertias(void)
     } else if (Contents <= 0.0) {
       Volume = 0;
     } else {
-      const string s("  Solid propellant grain density is zero!");
-      cerr << endl << s << endl;
-      throw BaseException(s);
+      LogException err;
+      err << "Solid propellant grain density is zero!\n";
+      throw err;
     }
 
     switch (grainType) {
@@ -403,9 +415,9 @@ void FGTank::CalculateInertias(void)
       break;
     default:
       {
-        const string s("Unknown grain type found.");
-        cerr << s << endl;
-        throw BaseException(s);
+        LogException err;
+        err << "Unknown grain type found.\n";
+        throw err;
       }
     }
 
@@ -446,7 +458,8 @@ double FGTank::ProcessFuelName(const std::string& name)
    else if (name == "AVTAG")    return 6.48;
    else if (name == "AVCAT")    return 6.81;
    else {
-     cerr << "Unknown fuel type specified: "<< name << endl;
+     FGLogging log(LogLevel::ERROR);
+     log << "Unknown fuel type specified: "<< name << "\n";
    }
 
    return 6.6;
@@ -529,17 +542,19 @@ void FGTank::Debug(int from)
         break;
       }
 
-      cout << "      " << Name << " (" << type << ") tank holds " << Capacity << " lbs. " << type << endl;
-      cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
-      cout << "      Tank location (X, Y, Z): " << vXYZ(eX) << ", " << vXYZ(eY) << ", " << vXYZ(eZ) << endl;
-      cout << "      Effective radius: " << Radius << " inches" << endl;
-      cout << "      Initial temperature: " << Temperature << " Fahrenheit" << endl;
-      cout << "      Priority: " << Priority << endl;
+      FGLogging log(LogLevel::DEBUG);
+      log << "      " << Name << " (" << type << ") tank holds " << Capacity << " lbs. " << type << "\n";
+      log << "      currently at " << PctFull << "% of maximum capacity\n";
+      log << "      Tank location (X, Y, Z): " << vXYZ(eX) << ", " << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
+      log << "      Effective radius: " << Radius << " inches\n";
+      log << "      Initial temperature: " << Temperature << " Fahrenheit\n";
+      log << "      Priority: " << Priority << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGTank" << endl;
-    if (from == 1) cout << "Destroyed:    FGTank" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGTank\n";
+    if (from == 1) log << "Destroyed:    FGTank\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

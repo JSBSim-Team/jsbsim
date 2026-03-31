@@ -35,13 +35,11 @@
 
 #include "FGJSBBase.h"
 #include "FGRungeKutta.h"
+#include "input_output/FGLog.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-using std::cout;
-using std::endl;
 
 namespace JSBSim {
 
@@ -61,7 +59,7 @@ int FGRungeKutta::init(double x_start, double x_end, int intervals)
   safer_x1 = x1 - h*1e-6; // avoid 'intervals*h < x1'
   h05 = h*0.5;
   err = 0.0;
-  
+
   if (x0>=x1) {
     status &= eFaultyInit;
   }
@@ -73,7 +71,7 @@ int FGRungeKutta::init(double x_start, double x_end, int intervals)
 /*
    Make sure that a numerical result is within +/-RealLimit.
    This is a hapless try to be portable.
-   (There will be at least one architecture/compiler combination 
+   (There will be at least one architecture/compiler combination
    where this will fail.)
 */
 
@@ -93,7 +91,7 @@ double FGRungeKutta::evolve(double y_0, FGRungeKuttaProblem *pf)
   pfo = pf;
 
   iterations = 0;
-  
+
   if (!trace_values) {
     while (x<safer_x1) {
       y  = approximate(x,y);
@@ -102,14 +100,15 @@ double FGRungeKutta::evolve(double y_0, FGRungeKuttaProblem *pf)
       iterations++;
     }
   } else {
+    FGLogging log(LogLevel::DEBUG);
     while (x<safer_x1) {
-      cout << x << " " << y << endl;
+      log << x << " " << y << "\n";
       y = approximate(x,y);
       if (!sane_val(y)) { status &= eMathError; }
       x += h;
       iterations++;
     }
-    cout << x << " " << y << endl;
+    log << x << " " << y << "\n";
   }
 
   x_end = x; // twimc, store the last x used.
@@ -130,7 +129,7 @@ double FGRK4::approximate(double x, double y)
 {
   double k1,k2,k3,k4;
 
-  k1   =  pfo->pFunc(x      , y         ); 
+  k1   =  pfo->pFunc(x      , y         );
   k2   =  pfo->pFunc(x + h05, y + h05*k1);
   k3   =  pfo->pFunc(x + h05, y + h05*k2);
   k4   =  pfo->pFunc(x + h  , y + h  *k3);
@@ -139,7 +138,7 @@ double FGRK4::approximate(double x, double y)
 
   return y;
 }
- 
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -178,22 +177,22 @@ double FGRKFehlberg::approximate(double x, double y)
 
     err  =  h*h*h*h*h; // h might change
 
-    k1   =  pfo->pFunc(x          , y      ); 
+    k1   =  pfo->pFunc(x          , y      );
 
     as   =  h*A2[1]*k1;
-    k2   =  pfo->pFunc(x + C[2]*h , y + as ); 
+    k2   =  pfo->pFunc(x + C[2]*h , y + as );
 
     as   =  h*(A3[1]*k1 + A3[2]*k2);
-    k3   =  pfo->pFunc(x + C[3]*h , y + as ); 
+    k3   =  pfo->pFunc(x + C[3]*h , y + as );
 
     as   =  h*(A4[1]*k1 + A4[2]*k2 + A4[3]*k3);
-    k4   =  pfo->pFunc(x + C[4]*h , y + as ); 
+    k4   =  pfo->pFunc(x + C[4]*h , y + as );
 
     as   =  h*(A5[1]*k1 + A5[2]*k2 + A5[3]*k3 + A5[4]*k4);
-    k5   =  pfo->pFunc(x + C[5]*h , y + as ); 
+    k5   =  pfo->pFunc(x + C[5]*h , y + as );
 
     as   =  h*(A6[1]*k1 + A6[2]*k2 + A6[3]*k3 + A6[4]*k4 + A6[5]*k5);
-    k6   =  pfo->pFunc(x + C[6]*h , y + as ); 
+    k6   =  pfo->pFunc(x + C[6]*h , y + as );
 
     /* B[2]*k2 and Bs[2]*k2 are zero */
     y5_val  =  y + h * ( B[1]*k1 +  B[3]*k3 +  B[4]*k4 +  B[5]*k5 + B[6]*k6);
@@ -203,7 +202,7 @@ double FGRKFehlberg::approximate(double x, double y)
     // same in green
     // abs_err = h * (Ee[1] * k1 + Ee[3] * k3 + Ee[4] * k4 + Ee[5] * k5 + Ee[6] * k6);
 
-    // estimate step size 
+    // estimate step size
     if (abs_err > epsilon) {
       est_step = sqrt(sqrt(epsilon*h/abs_err));
     } else {

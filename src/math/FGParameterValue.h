@@ -68,11 +68,10 @@ public:
     std::string value = el->GetDataLine();
 
     if (el->GetNumDataLines() != 1 || value.empty()) {
-      std::cerr << el->ReadFrom()
-                << "The element <" << el->GetName()
-                << "> must either contain a value number or a property name."
-                << std::endl;
-      throw BaseException("FGParameterValue: Illegal argument defining: " + el->GetName());
+      XMLLogException err(el);
+      err << "The element <" << el->GetName()
+          << "> must either contain a value number or a property name.\n";
+      throw err;
     }
   }
 

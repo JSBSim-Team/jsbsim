@@ -253,14 +253,17 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
       } else if (name == "MIXTURE") {
         Mixture_Efficiency_Correlation = new FGTable(PropertyManager, table_element);
       } else {
-        cerr << "Unknown table type: " << name << " in piston engine definition." << endl;
+        FGLogging log(LogLevel::ERROR);
+        log << "Unknown table type: " << name << " in piston engine definition.\n";
       }
     } catch (std::string& str) {
       // Make sure allocated resources are freed before rethrowing.
       // (C++ standard guarantees that a null pointer deletion is no-op).
+      XMLLogException err(table_element);
       delete Lookup_Combustion_Efficiency;
       delete Mixture_Efficiency_Correlation;
-      throw("Error loading piston engine table:" + name + ". " + str);
+      err << "Error loading piston engine table:" + name + ". " + str << "\n";
+      throw err;
     }
   }
 
@@ -281,7 +284,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
       double fmep = (FMEPDynamic * RatedMeanPistonSpeed_fps * fttom + FMEPStatic);
       double hp_loss = ((pmep + fmep) * displacement_SI * MaxRPM)/(Cycles*22371);
       ISFC = ( 1.1*Displacement * MaxRPM * volumetric_efficiency *(MaxManifoldPressure_inHg / 29.92) ) / (9411 * (MaxHP+hp_loss-StaticFriction_HP));
-// cout <<"FMEP: "<< fmep <<" PMEP: "<< pmep << " hp_loss: " <<hp_loss <<endl;
+      //FGLogging log(LogLevel::INFO);
+      //log << "FMEP: "<< fmep << " PMEP: " << pmep << " hp_loss: " << hp_loss << "\n";
   }
   if ( MaxManifoldPressure_inHg > 29.9 ) {   // Don't allow boosting with a bogus number
       MaxManifoldPressure_inHg = 29.9;
@@ -413,7 +417,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number, struct Input
         BoostSwitchAltitude[i] = RatedAltitude[i] + 1000;
       }
       BoostSwitchPressure[i] = GetStdPressure100K(BoostSwitchAltitude[i]) * psftopa;
-      //cout << "BoostSwitchAlt = " << BoostSwitchAltitude[i] << ", pressure = " << BoostSwitchPressure[i] << '\n';
+      //FGLogging log(LogLevel::INFO);
+      //log << "BoostSwitchAlt = " << BoostSwitchAltitude[i] << ", pressure = " << BoostSwitchPressure[i] << '\n';
       // Assume there is some hysteresis on the supercharger gear switch, and guess the value for now
       BoostSwitchHysteresis = 1000;
     }
@@ -812,10 +817,11 @@ void FGPiston::doEnginePower(void)
   // (1/2) convert cycles, 60 minutes to seconds, 745.7 watts to hp.
   double pumping_hp = ((PMEP + FMEP) * displacement_SI * RPM)/(Cycles*22371);
 
-HP = IndicatedHorsePower + pumping_hp - BoostLossHP;
-//  cout << "pumping_hp " <<pumping_hp << FMEP << PMEP <<endl;
+  HP = IndicatedHorsePower + pumping_hp - BoostLossHP;
+  //FGLogging log(LogLevel::INFO);
+  //log << "pumping_hp " << pumping_hp << FMEP << PMEP << "\n";
   PctPower = HP / MaxHP ;
-//  cout << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << endl;
+  //log << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << "\n";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1021,48 +1027,48 @@ void FGPiston::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      FGLogging log(LogLevel::DEBUG);
+      log << "\n    Engine Name: "         << Name << "\n";
+      log << "      MinManifoldPressure: " << MinManifoldPressure_inHg << "\n";
+      log << "      MaxManifoldPressure: " << MaxManifoldPressure_inHg << "\n";
+      log << "      MinMaP (Pa):         " << minMAP << "\n";
+      log << "      MaxMaP (Pa):         " << maxMAP << "\n";
+      log << "      Displacement: "        << Displacement             << "\n";
+      log << "      Bore: "                << Bore                     << "\n";
+      log << "      Stroke: "              << Stroke                   << "\n";
+      log << "      Cylinders: "           << Cylinders                << "\n";
+      log << "      Cylinders Head Mass: " << CylinderHeadMass         << "\n";
+      log << "      Compression Ratio: "   << CompressionRatio         << "\n";
+      log << "      MaxHP: "               << MaxHP                    << "\n";
+      log << "      Cycles: "              << Cycles                   << "\n";
+      log << "      IdleRPM: "             << IdleRPM                  << "\n";
+      log << "      MaxRPM: "              << MaxRPM                   << "\n";
+      log << "      Throttle Constant: "   << Z_throttle               << "\n";
+      log << "      ISFC: "                << ISFC                     << "\n";
+      log << "      Volumetric Efficiency: " << volumetric_efficiency    << "\n";
+      log << "      PeakMeanPistonSpeed_fps: " << PeakMeanPistonSpeed_fps << "\n";
+      log << "      Intake Impedance Factor: " << Z_airbox << "\n";
+      log << "      Dynamic FMEP Factor: " << FMEPDynamic << "\n";
+      log << "      Static FMEP Factor: " << FMEPStatic << "\n";
 
-      cout << "\n    Engine Name: "         << Name << endl;
-      cout << "      MinManifoldPressure: " << MinManifoldPressure_inHg << endl;
-      cout << "      MaxManifoldPressure: " << MaxManifoldPressure_inHg << endl;
-      cout << "      MinMaP (Pa):         " << minMAP << endl;
-      cout << "      MaxMaP (Pa):         " << maxMAP << endl;
-      cout << "      Displacement: "        << Displacement             << endl;
-      cout << "      Bore: "                << Bore                     << endl;
-      cout << "      Stroke: "              << Stroke                   << endl;
-      cout << "      Cylinders: "           << Cylinders                << endl;
-      cout << "      Cylinders Head Mass: " << CylinderHeadMass         << endl;
-      cout << "      Compression Ratio: "   << CompressionRatio         << endl;
-      cout << "      MaxHP: "               << MaxHP                    << endl;
-      cout << "      Cycles: "              << Cycles                   << endl;
-      cout << "      IdleRPM: "             << IdleRPM                  << endl;
-      cout << "      MaxRPM: "              << MaxRPM                   << endl;
-      cout << "      Throttle Constant: "   << Z_throttle               << endl;
-      cout << "      ISFC: "                << ISFC                     << endl;
-      cout << "      Volumetric Efficiency: " << volumetric_efficiency    << endl;
-      cout << "      PeakMeanPistonSpeed_fps: " << PeakMeanPistonSpeed_fps << endl;
-      cout << "      Intake Impedance Factor: " << Z_airbox << endl;
-      cout << "      Dynamic FMEP Factor: " << FMEPDynamic << endl;
-      cout << "      Static FMEP Factor: " << FMEPStatic << endl;
+      log << "      Starter Motor Torque: " << StarterTorque << "\n";
+      log << "      Starter Motor RPM:    " << StarterRPM << "\n";
 
-      cout << "      Starter Motor Torque: " << StarterTorque << endl;
-      cout << "      Starter Motor RPM:    " << StarterRPM << endl;
-
-      cout << endl;
-      cout << "      Combustion Efficiency table:" << endl;
+      log << "\n";
+      log << "      Combustion Efficiency table:\n";
       Lookup_Combustion_Efficiency->Print();
-      cout << endl;
+      log << "\n";
 
-      cout << endl;
-      cout << "      Mixture Efficiency Correlation table:" << endl;
+      log << "\n";
+      log << "      Mixture Efficiency Correlation table:\n";
       Mixture_Efficiency_Correlation->Print();
-      cout << endl;
-
+      log << "\n";
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGPiston" << endl;
-    if (from == 1) cout << "Destroyed:    FGPiston" << endl;
+    FGLogging log(LogLevel::DEBUG);
+    if (from == 0) log << "Instantiated: FGPiston\n";
+    if (from == 1) log << "Destroyed:    FGPiston\n";
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

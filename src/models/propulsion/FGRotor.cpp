@@ -166,7 +166,8 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
       } else {
         FGThruster *tr = exec->GetPropulsion()->GetEngine(RPMdefinition)->GetThruster();
         SourceGearRatio = tr->GetGearRatio();
-        // cout << "# got sources' GearRatio: " << SourceGearRatio << endl;
+        //FGLogging log(LogLevel::INFO);
+        //log << "# got sources' GearRatio: " << SourceGearRatio << "\n";
       }
     }
     if (RPMdefinition != rdef) {

@@ -10,6 +10,7 @@
 #endif
 
 #include "props.hxx"
+#include "input_output/FGLog.h"
 
 #include <algorithm>
 #include <limits>
@@ -24,7 +25,6 @@
 
 #if PROPS_STANDALONE
 # include <iostream>
-using std::cerr;
 #else
 # include <boost/algorithm/string/find_iterator.hpp>
 # include <boost/algorithm/string/predicate.hpp>
@@ -46,7 +46,6 @@ using std::vector<SGPropertyNode *>;
 # endif
 #endif
 
-using std::endl;
 using std::find;
 using std::sort;
 using std::vector;
@@ -383,7 +382,8 @@ first_unused_index( const char * name,
       return index;
   }
 
-  SG_LOG(SG_GENERAL, SG_ALERT, "Too many nodes: " << name);
+  JSBSim::FGLogging log(JSBSim::LogLevel::ERROR);
+  log << "Too many nodes: " << name << "\n";
   return -1;
 }
 
@@ -823,8 +823,9 @@ SGPropertyNode::make_string () const
 void
 SGPropertyNode::trace_write () const
 {
-  SG_LOG(SG_GENERAL, SG_ALERT, "TRACE: Write node " << getPath()
-	 << ", value \"" << make_string() << '"');
+  JSBSim::FGLogging log(JSBSim::LogLevel::INFO);
+  log << "TRACE: Write node " << getPath()
+      << ", value \"" << make_string() << "\"\n";
 }
 
 /**
@@ -833,8 +834,9 @@ SGPropertyNode::trace_write () const
 void
 SGPropertyNode::trace_read () const
 {
-  SG_LOG(SG_GENERAL, SG_ALERT, "TRACE: Read node " << getPath()
-	 << ", value \"" << make_string() << '"');
+  JSBSim::FGLogging log(JSBSim::LogLevel::INFO);
+  log << "TRACE: Read node " << getPath()
+	    << ", value \"" << make_string() << "\"\n";
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -990,24 +992,25 @@ SGPropertyNode::alias (SGPropertyNode * target)
 
   if (!target)
   {
-    SG_LOG(SG_GENERAL, SG_ALERT,
-           "Failed to create alias for " << getPath() << ". "
-           "The target property does not exist.");
+    JSBSim::FGLogging log(JSBSim::LogLevel::ERROR);
+    log << "Failed to create alias for " << getPath() << ". "
+        << "The target property does not exist.\n";
   }
   else
   if (_type == props::ALIAS)
   {
     if (_value.alias == target)
         return true; // ok, identical alias requested
-    SG_LOG(SG_GENERAL, SG_ALERT,
-           "Failed to create alias at " << target->getPath() << ". "
-           "Source "<< getPath() << " is already aliasing another property.");
+    JSBSim::FGLogging log(JSBSim::LogLevel::ERROR);
+    log << "Failed to create alias at " << target->getPath() << ". "
+        << "Source "<< getPath() << " is already aliasing another property.\n";
   }
   else
   if (_tied)
   {
-    SG_LOG(SG_GENERAL, SG_ALERT, "Failed to create alias at " << target->getPath() << ". "
-           "Source " << getPath() << " is a tied property.");
+    JSBSim::FGLogging log(JSBSim::LogLevel::ERROR);
+    log << "Failed to create alias at " << target->getPath() << ". "
+        << "Source " << getPath() << " is a tied property.\n";
   }
 
   return false;
@@ -1868,7 +1871,8 @@ bool SGPropertyNode::interpolate( const std::string& type,
 {
   if( !_interpolation_mgr )
   {
-    SG_LOG(SG_GENERAL, SG_WARN, "No property interpolator available");
+    JSBSim::FGLogging log(JSBSim::LogLevel::WARN);
+    log << "No property interpolator available\n";
 
     // no interpolation possible -> set to target immediately
     setUnspecifiedValue( target.getStringValue() );
@@ -1886,7 +1890,8 @@ bool SGPropertyNode::interpolate( const std::string& type,
 {
   if( !_interpolation_mgr )
   {
-    SG_LOG(SG_GENERAL, SG_WARN, "No property interpolator available");
+    JSBSim::FGLogging log(JSBSim::LogLevel::WARN);
+    log << "No property interpolator available\n";
 
     // no interpolation possible -> set to last value immediately
     if( !values.empty() )

@@ -26,11 +26,10 @@ INCLUDES
 #include <sstream>
 
 #include "FGJSBBase.h"
+#include "input_output/FGLog.h"
 
 using std::istream;
 using std::string;
-using std::cerr;
-using std::endl;
 using std::ifstream;
 
 ////////////////////////////////////////////////////////////////////////
@@ -267,36 +266,34 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
   while (!input.eof()) {
 
     if (!input.good()) {
-      std::stringstream s;
-      s << "Problem reading input file " << path << endl;
+      JSBSim::LogException err;
+      err << "Problem reading input file " << path << "\n";
       visitor.setParser(0);
       XML_ParserFree(parser);
-      cerr << endl << s.str() << endl;
-      throw JSBSim::BaseException(s.str());
+
+      throw err;
     }
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
-      std::stringstream s;
-      s << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
-        << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser));
-      cerr << endl << s.str() << endl;
+      JSBSim::LogException err;
+      err << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser)
+          << "\nXML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << "\n";
       visitor.setParser(0);
       XML_ParserFree(parser);
-      throw JSBSim::BaseException(s.str());
+      throw err;
     }
 
   }
 
 // Verify end of document.
   if (!XML_Parse(parser, buf, 0, true)) {
-    std::stringstream s;
-    s << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser) << endl
-      << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser));
-    cerr << endl << s.str() << endl;
+    JSBSim::LogException err;
+    err << "In file " << path << ": line " << XML_GetCurrentLineNumber(parser)
+        << "\nXML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << "\n";
     visitor.setParser(0);
     XML_ParserFree(parser);
-    throw JSBSim::BaseException(s.str());
+    throw err;
   }
 
   visitor.setParser(0);
@@ -313,14 +310,15 @@ void readXML(const string &path, XMLVisitor &visitor)
     try {
       readXML(input, visitor, path);
     } catch (...) {
+      JSBSim::FGLogging err(JSBSim::LogLevel::FATAL);
       input.close();
-      cerr << "Failed to open file " << path << endl;
+      err << "Failed to open file " << path << "\n";
       throw;
     }
   } else {
-    std::stringstream s;
-    s << "Failed to open file " << path;
-    throw JSBSim::BaseException(s.str());
+    JSBSim::LogException err;
+    err << "Failed to open file " << path << "\n";
+    throw err;
   }
   input.close();
 }

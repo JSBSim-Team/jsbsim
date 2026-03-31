@@ -68,11 +68,15 @@ SGPropertyNode* FGPropertyValue::GetNode(void) const
   // Manage late binding.
   PropertyNode = PropertyManager->GetNode(PropertyName);
   if (!PropertyNode) {
+    unique_ptr<LogException> err;
     if (XML_def)
-      cerr << XML_def->ReadFrom()
-           << "Property " << PropertyName << " does not exist" << endl;
-    throw BaseException("FGPropertyValue::GetValue() The property " +
-                        PropertyName + " does not exist.");
+      err.reset(new XMLLogException(XML_def));
+    else
+      err.reset(new LogException);
+
+    *err << "FGPropertyValue::GetValue() The property " << PropertyName
+         << " does not exist\n";
+    throw *err;
   }
 
   XML_def = nullptr; // Now that the property is bound, we no longer need that.
