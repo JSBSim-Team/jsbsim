@@ -40,8 +40,22 @@ PyObject* LogFormat_PyClass;
  */
 class PyErrorSentry {
 public:
-  PyErrorSentry() { PyErr_Fetch(&type, &value, &traceback); }
-  ~PyErrorSentry() { PyErr_Restore(type, value, traceback); }
+  /// Constructor - Catch the current Python error, if any.
+  explicit PyErrorSentry(PyObjectPtr context) : context_obj(context) {
+    PyErr_Fetch(&type, &value, &traceback);
+  }
+
+  /// Destructor - Manage the errors then re-raise the Python error, if there was one.
+  ~PyErrorSentry() {
+    if (type) { // If an initial JSBSim error was pending (Error A)
+      if (PyErr_Occurred()) // And if the logger call also failed (Error B)
+        PyErr_WriteUnraisable(context_obj.get()); // Report Error B as unraisable to prevent it from overwriting Error A
+
+      PyErr_Restore(type, value, traceback); // Restore Error A
+    }
+    // If type is NULL (no initial Error A), any Error B is left in the thread
+    // state and will be naturally raised when returning to Python.
+  }
 
   /** Returns true if there is no current Python error OR if the caught
    *  error matches the given exception type.
@@ -53,6 +67,7 @@ private:
   PyObject* type = nullptr;
   PyObject* value = nullptr;
   PyObject* traceback = nullptr;
+  PyObjectPtr context_obj;
 };
 
 void ResetLogger(void) { SetLogger(std::make_shared<FGLogConsole>()); }
@@ -93,7 +108,7 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  PyErrorSentry sentry;
+  PyErrorSentry sentry(logger_pyclass);
 
   if (sentry.NoErrorOrMatches(logexception_error)) {
     const int idx = static_cast<int>(level);
@@ -108,7 +123,7 @@ void PyLogger::SetLevel(LogLevel level) {
 
 void PyLogger::FileLocation(const std::string& filename, int line)
 {
-  PyErrorSentry sentry;
+  PyErrorSentry sentry(logger_pyclass);
 
   if (sentry.NoErrorOrMatches(logexception_error)) {
     PyObjectPtr py_filename = PyUnicode_FromString(filename.c_str());
@@ -122,7 +137,7 @@ void PyLogger::FileLocation(const std::string& filename, int line)
 
 void PyLogger::Message(const std::string& message)
 {
-  PyErrorSentry sentry;
+  PyErrorSentry sentry(logger_pyclass);
 
   if (sentry.NoErrorOrMatches(logexception_error)) {
     PyObjectPtr msg = PyUnicode_FromString(message.c_str());
@@ -134,7 +149,7 @@ void PyLogger::Message(const std::string& message)
 
 void PyLogger::Format(LogFormat format)
 {
-  PyErrorSentry sentry;
+  PyErrorSentry sentry(logger_pyclass);
 
   if (sentry.NoErrorOrMatches(logexception_error)) {
     const int idx = static_cast<int>(format);
@@ -148,7 +163,7 @@ void PyLogger::Format(LogFormat format)
 
 void PyLogger::Flush(void)
 {
-  PyErrorSentry sentry;
+  PyErrorSentry sentry(logger_pyclass);
 
   if (sentry.NoErrorOrMatches(logexception_error))
     CallPythonMethodWithTuple("flush", nullptr);
@@ -169,10 +184,6 @@ PyObjectPtr PyLogger::CallPythonMethodWithTuple(const char* method_name, const P
   PyObjectPtr method = PyObject_GetAttrString(logger_pyclass.get(), method_name);
   assert(method); // This should not fail as the constructor has checked the type of logger_pyclass.
 
-  PyObjectPtr result = PyObject_CallObject(method.get(), tuple.get());
-
-  if (!result) PyErr_Print();
-
-  return result;
+  return PyObject_CallObject(method.get(), tuple.get());
 }
 } // namespace JSBSim
