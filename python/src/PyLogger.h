@@ -107,7 +107,7 @@ public:
 
 private:
   PyObjectPtr CallPythonMethodWithTuple(const char* method_name, const PyObjectPtr& tuple);
-  PyObjectPtr CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg);
+  PyObjectPtr CallPythonMethodWithOneArgument(const char* method_name, const PyObjectPtr& arg);
 
   PyObjectPtr logger_pyclass;
   std::array<PyObjectPtr, 7> convert_level_enums;

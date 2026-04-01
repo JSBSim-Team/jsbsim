@@ -38,18 +38,17 @@ PyObject* LogFormat_PyClass;
  *  The constructor fetches the current Python exception, clearing the error
  *  state of the thread. The destructor restores the exception state.
  */
-class PyErrorSentry {
+class PyExceptionHandler {
 public:
   /// Constructor - Catch the current Python error, if any.
-  explicit PyErrorSentry(PyObjectPtr context) : context_obj(context) {
-    PyErr_Fetch(&type, &value, &traceback);
-  }
+  explicit PyExceptionHandler(const PyObjectPtr& context)
+    : context_ref(context) { PyErr_Fetch(&type, &value, &traceback); }
 
   /// Destructor - Manage the errors then re-raise the Python error, if there was one.
-  ~PyErrorSentry() {
+  ~PyExceptionHandler() {
     if (type) { // If an initial JSBSim error was pending (Error A)
       if (PyErr_Occurred()) // And if the logger call also failed (Error B)
-        PyErr_WriteUnraisable(context_obj.get()); // Report Error B as unraisable to prevent it from overwriting Error A
+        PyErr_WriteUnraisable(context_ref.get()); // Report Error B as unraisable to prevent it from overwriting Error A
 
       PyErr_Restore(type, value, traceback); // Restore Error A
     }
@@ -60,14 +59,14 @@ public:
   /** Returns true if there is no current Python error OR if the caught
    *  error matches the given exception type.
    */
-  bool NoErrorOrMatches(PyObject* exc) const {
+  bool NoExceptionOrMatches(PyObject* exc) const {
     return !type || PyErr_GivenExceptionMatches(type, exc);
   }
 private:
   PyObject* type = nullptr;
   PyObject* value = nullptr;
   PyObject* traceback = nullptr;
-  PyObjectPtr context_obj;
+  PyObjectPtr context_ref;
 };
 
 void ResetLogger(void) { SetLogger(std::make_shared<FGLogConsole>()); }
@@ -108,13 +107,13 @@ PyLogger::PyLogger(PyObject* logger)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PyLogger::SetLevel(LogLevel level) {
-  PyErrorSentry sentry(logger_pyclass);
+  PyExceptionHandler handler(logger_pyclass);
 
-  if (sentry.NoErrorOrMatches(logexception_error)) {
+  if (handler.NoExceptionOrMatches(logexception_error)) {
     const int idx = static_cast<int>(level);
     assert(idx >= 0 && idx <= 6);
     PyObjectPtr py_level = convert_level_enums[idx];
-    PyObjectPtr result = CallPythonMethodWithArguments("set_level", py_level);
+    PyObjectPtr result = CallPythonMethodWithOneArgument("set_level", py_level);
     if (result) FGLogger::SetLevel(level);
   }
 }
@@ -123,9 +122,9 @@ void PyLogger::SetLevel(LogLevel level) {
 
 void PyLogger::FileLocation(const std::string& filename, int line)
 {
-  PyErrorSentry sentry(logger_pyclass);
+  PyExceptionHandler handler(logger_pyclass);
 
-  if (sentry.NoErrorOrMatches(logexception_error)) {
+  if (handler.NoExceptionOrMatches(logexception_error)) {
     PyObjectPtr py_filename = PyUnicode_FromString(filename.c_str());
     PyObjectPtr py_line = PyLong_FromLong(line);
     PyObjectPtr args = PyTuple_Pack(2, py_filename.get(), py_line.get());
@@ -137,11 +136,11 @@ void PyLogger::FileLocation(const std::string& filename, int line)
 
 void PyLogger::Message(const std::string& message)
 {
-  PyErrorSentry sentry(logger_pyclass);
+  PyExceptionHandler handler(logger_pyclass);
 
-  if (sentry.NoErrorOrMatches(logexception_error)) {
+  if (handler.NoExceptionOrMatches(logexception_error)) {
     PyObjectPtr msg = PyUnicode_FromString(message.c_str());
-    CallPythonMethodWithArguments("message", msg);
+    CallPythonMethodWithOneArgument("message", msg);
   }
 }
 
@@ -149,13 +148,13 @@ void PyLogger::Message(const std::string& message)
 
 void PyLogger::Format(LogFormat format)
 {
-  PyErrorSentry sentry(logger_pyclass);
+  PyExceptionHandler handler(logger_pyclass);
 
-  if (sentry.NoErrorOrMatches(logexception_error)) {
+  if (handler.NoExceptionOrMatches(logexception_error)) {
     const int idx = static_cast<int>(format);
     assert(idx >= 0 && idx <= 9);
     PyObjectPtr py_format = convert_format_enums[idx];
-    CallPythonMethodWithArguments("format", py_format);
+    CallPythonMethodWithOneArgument("format", py_format);
   }
 }
 
@@ -163,15 +162,15 @@ void PyLogger::Format(LogFormat format)
 
 void PyLogger::Flush(void)
 {
-  PyErrorSentry sentry(logger_pyclass);
+  PyExceptionHandler handler(logger_pyclass);
 
-  if (sentry.NoErrorOrMatches(logexception_error))
+  if (handler.NoExceptionOrMatches(logexception_error))
     CallPythonMethodWithTuple("flush", nullptr);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-PyObjectPtr PyLogger::CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg)
+PyObjectPtr PyLogger::CallPythonMethodWithOneArgument(const char* method_name, const PyObjectPtr& arg)
 {
   PyObjectPtr tuple = PyTuple_Pack(1, arg.get());
   return CallPythonMethodWithTuple(method_name, tuple);

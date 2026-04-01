@@ -59,6 +59,7 @@ class GeographicError(BaseError):
     pass
 
 class LogExceptionError(BaseError):
+    """Exception class for errors carrying detailed logging information."""
     pass
 
 base_error = <PyObject*>BaseError
