@@ -103,11 +103,11 @@ public:
   void FileLocation(const std::string& filename, int line) override;
   void Message(const std::string& message) override;
   void Format(LogFormat format) override;
-  void Flush(void) override { CallPythonMethodWithTuple("flush", nullptr); }
+  void Flush(void) override;
 
 private:
   PyObjectPtr CallPythonMethodWithTuple(const char* method_name, const PyObjectPtr& tuple);
-  PyObjectPtr CallPythonMethodWithArguments(const char* method_name, const PyObjectPtr& arg);
+  PyObjectPtr CallPythonMethodWithOneArgument(const char* method_name, const PyObjectPtr& arg);
 
   PyObjectPtr logger_pyclass;
   std::array<PyObjectPtr, 7> convert_level_enums;
