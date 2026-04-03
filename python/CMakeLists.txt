@@ -58,7 +58,7 @@ target_link_libraries(_jsbsim PRIVATE libJSBSim)
 set_target_properties(_jsbsim PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JSBSIM_TEST_PACKAGE_DIR})
 install(TARGETS _jsbsim DESTINATION jsbsim COMPONENT wheel)
 install(FILES ${PROJECT_SOURCE_DIR}/python/__init__.py DESTINATION jsbsim COMPONENT wheel)
-install(FILES ${PROJECT_SOURCE_DIR}/python/_jsbsim.pyi DESTINATION jsbsim COMPONENT wheel)
+install(FILES ${PROJECT_SOURCE_DIR}/python/__init__.pyi DESTINATION jsbsim COMPONENT wheel)
 install(PROGRAMS ${PROJECT_SOURCE_DIR}/python/JSBSim.py DESTINATION jsbsim
         RENAME script.py COMPONENT wheel)
 

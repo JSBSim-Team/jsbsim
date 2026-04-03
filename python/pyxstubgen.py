@@ -2,7 +2,7 @@
 #
 # pyxstubgen.py
 #
-# Automatic generation of the JSBSim stub file `_jsbsim.pyi` from Cython's pyx file.
+# Automatic generation of the JSBSim stub file `*.pyi` from Cython's pyx file.
 #
 # Copyright (c) 2025 Bertrand Coconnier
 #
