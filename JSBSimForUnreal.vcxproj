@@ -203,6 +203,7 @@
     <ClInclude Include="src\math\FGLocation.h" />
     <ClInclude Include="src\models\flight_control\FGMagnetometer.h" />
     <ClInclude Include="src\models\atmosphere\FGMars.h" />
+    <ClInclude Include="src\models\atmosphere\FGNullAtmosphere.h" />
     <ClInclude Include="src\models\FGMassBalance.h" />
     <ClInclude Include="src\math\FGMatrix33.h" />
     <ClInclude Include="src\models\FGModel.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="src\math\FGLocation.cpp" />
     <ClCompile Include="src\models\flight_control\FGMagnetometer.cpp" />
     <ClCompile Include="src\models\atmosphere\FGMars.cpp" />
+    <ClCompile Include="src\models\atmosphere\FGNullAtmosphere.cpp" />
     <ClCompile Include="src\models\FGMassBalance.cpp" />
     <ClCompile Include="src\math\FGMatrix33.cpp" />
     <ClCompile Include="src\models\FGModel.cpp" />

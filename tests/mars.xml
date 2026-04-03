@@ -1,0 +1,8 @@
+<planet name="Mars">
+  <equatorial_radius unit="KM">3396.2</equatorial_radius>
+  <polar_radius unit="KM">3376.2</polar_radius>
+  <rotation_rate unit="RAD/SEC">7.0882E-5</rotation_rate>
+  <GM unit="M3/SEC2">4.2828372E13</GM>
+  <J2>1.9605E-3</J2>
+  <atmosphere model="Mars"/>
+</planet>

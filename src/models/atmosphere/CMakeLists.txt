@@ -1,10 +1,14 @@
 set(SOURCES FGMSIS.cpp
+            FGMars.cpp
+            FGNullAtmosphere.cpp
             FGStandardAtmosphere.cpp
             FGWinds.cpp
             MSIS/nrlmsise-00.c
             MSIS/nrlmsise-00_data.c)
 
 set(HEADERS FGMSIS.h
+            FGMars.h
+            FGNullAtmosphere.h
             FGStandardAtmosphere.h
             FGWinds.h
             MSIS/nrlmsise-00.h)
