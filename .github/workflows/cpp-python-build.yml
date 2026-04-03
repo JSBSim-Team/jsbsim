@@ -497,7 +497,7 @@ jobs:
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
       - name: Build the source package for Python
         run: |
-          python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/_jsbsim.pyi
+          python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/__init__.pyi
           cp build/python/pyproject.toml .
           python -m build --sdist
       - name: Check reset for real time execution
