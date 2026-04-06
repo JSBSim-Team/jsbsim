@@ -188,7 +188,7 @@ jobs:
       - name: Checkout JSBSim
         uses: actions/checkout@v6
       - name: Set up Matlab
-        uses: matlab-actions/setup-matlab@v2
+        uses: matlab-actions/setup-matlab@v3
         with:
           release: R2023b
           products: Simulink
