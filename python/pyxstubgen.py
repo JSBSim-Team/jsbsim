@@ -291,7 +291,9 @@ class GenerateStub(Interpreter):
             if isinstance(child_type, Token):
                 if child_type.value == "name":  # Get the function
                     func_name = rule_name(child)
-                    if func_name in ("__cinit__", "__dealloc__") or func_name[0] == "_":
+                    if func_name in ("__cinit__", "__dealloc__"):
+                        return
+                    if  func_name[0] == "_" and func_name[1] != '_':
                         return
                 elif child_type.value == "cparameters":  # Get the function parameters
                     parameters: List[str] = []
