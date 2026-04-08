@@ -31,8 +31,13 @@ LASTCOL = 79
 
 
 def wrap_last_line(txt: str, indent: str) -> str:
-    col_lastline = txt.rfind("\n" + indent) + len(indent) + 1
-    lastline = txt[col_lastline:].strip()
+    ret_pos = txt.rfind("\n" + indent)
+    if ret_pos > 0:
+        col_lastline = ret_pos + len(indent) + 1
+        lastline = txt[col_lastline:].strip()
+    else:
+        col_lastline = 0
+        lastline = txt
     n = len(indent)
     if len(lastline) > LASTCOL - n:
         return txt[:col_lastline] + ("\n" + indent).join(wrap(lastline, LASTCOL - n))
@@ -40,10 +45,28 @@ def wrap_last_line(txt: str, indent: str) -> str:
     return txt
 
 
+def concatenate_with_one_space(s1: str, s2: str) -> str:
+    return " ".join(filter(None, [s1.rstrip(), s2.lstrip()]))
+
+
 def wrap_list_item(item, bullet, indent_level: int) -> str:
     text = " ".join(convert_para(item, indent_level).split())
     indent = " " * (indent_level + len(bullet))
     return ("\n" + indent).join(wrap(text, LASTCOL - len(indent)))
+
+
+def convert_ref(elem: et.Element) -> str:
+    ref_item = elem.find("ref")
+    if ref_item is not None:
+        if ref_item.attrib["kindref"] == "compound" and ref_item.text in klasses:
+            ref_docstring = ":ref:`" + ref_item.text + "`"
+        else:
+            ref_docstring = ref_item.text
+        if elem.tail:
+            ref_docstring = concatenate_with_one_space(ref_docstring, elem.tail)
+    else:
+        ref_docstring = elem.text
+    return ref_docstring
 
 
 def convert_para(para_item: et.Element, indent_level: int) -> str:
@@ -56,7 +79,7 @@ def convert_para(para_item: et.Element, indent_level: int) -> str:
         if elem.tag == "heading":
             if para_docstring:
                 para_docstring = para_docstring.strip() + "\n\n" + indent
-            para_docstring += ".. rubric:: " + elem.text
+            para_docstring += ".. rubric:: " + convert_ref(elem)
         elif elem.tag == "linebreak":
             para_docstring += "\n" + indent
             if elem.tail:
@@ -106,11 +129,13 @@ def convert_para(para_item: et.Element, indent_level: int) -> str:
                 para_docstring += elem.tail
         elif elem.tag == "ref":
             if elem.attrib["kindref"] == "compound" and elem.text in klasses:
-                para_docstring += " :ref:`" + elem.text + "`"
+                para_docstring = concatenate_with_one_space(
+                    para_docstring, ":ref:`" + elem.text + "`"
+                )
             else:
-                para_docstring += " " + elem.text
+                para_docstring = concatenate_with_one_space(para_docstring, elem.text)
             if elem.tail:
-                para_docstring += elem.tail
+                para_docstring = concatenate_with_one_space(para_docstring, elem.tail)
             para_docstring = wrap_last_line(para_docstring, indent)
         elif elem.tag == "parameterlist":
             if para_docstring.rstrip():
@@ -136,6 +161,11 @@ def convert_para(para_item: et.Element, indent_level: int) -> str:
             if elem.tail:
                 para_docstring += elem.tail
             para_docstring = wrap_last_line(para_docstring, indent)
+        elif elem.tag == "computeroutput":
+            para_docstring = concatenate_with_one_space(
+                para_docstring, convert_ref(elem)
+            )
+            para_docstring = wrap_last_line(para_docstring, indent)
 
     return para_docstring
 
@@ -154,7 +184,7 @@ args = parser.parse_args()
 with open(args.pyxfile, "r", encoding="utf-8") as source:
     pyx_data = source.read()
 
-klasses = re.findall(r"cdef\s+class\s+(\w+)", pyx_data)
+klasses = re.findall(r"^(?:cdef\s+)?class\s+(\w+)", pyx_data, re.MULTILINE)
 
 # Autogenerate the documentation page for each class
 for klass in klasses:
@@ -195,7 +225,14 @@ while doxytag:
     else:
         klass_last_idx: int = 1  # SGPropertyNode and its siblings
     xmlfilename: str = "class" + "_1_1".join(names[:klass_last_idx]) + ".xml"
-    tree = et.parse(os.path.join(args.doxdir, "xml/", xmlfilename))
+    fullpath = os.path.join(args.doxdir, "xml/", xmlfilename)
+
+    if not os.path.exists(fullpath):
+        xmlfilename = "namespaceJSBSim.xml"
+        fullpath = os.path.join(args.doxdir, "xml/", xmlfilename)
+        klass_last_idx = 1
+
+    tree = et.parse(fullpath)
     root = tree.getroot()
     docstring: str = ""
     col = doxytag.start() - pyx_data[: doxytag.start()].rfind("\n")

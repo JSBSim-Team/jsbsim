@@ -97,7 +97,7 @@ CLASS DECLARATION
 /**
  * Logging backend interface.
  *
- * JSBSim routes each log record to an `FGLogger` instance instead of writing
+ * JSBSim routes each log record to an FGLogger instance instead of writing
  * directly to stdout/stderr. Applications can keep the default `FGLogConsole`
  * backend, or provide their own subclass and register it through
  * `SetLogger(FGLogger_ptr)`.
