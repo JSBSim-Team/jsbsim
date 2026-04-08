@@ -1,8 +1,8 @@
-from . import _jsbsim
 from ._jsbsim import (
     __version__,
     Attribute,
     BaseError,
+    DefaultLogger,
     FGAerodynamics,
     FGAircraft,
     FGAtmosphere,
@@ -26,4 +26,5 @@ from ._jsbsim import (
     ePressure,
     eTemperature,
     get_default_root_dir,
+    set_logger,
 )

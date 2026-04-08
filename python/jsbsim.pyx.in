@@ -154,14 +154,14 @@ LogLevel_PyClass = <PyObject*>LogLevel
 LogFormat_PyClass = <PyObject*>LogFormat
 
 
-def inherit_docstring(cls):
+def _inherit_docstring_from_super_class(cls):
     for name, func in cls.__dict__.items():
         if not func.__doc__:
             func.__doc__ = getattr(super(cls, cls), name).__doc__
     return cls
 
 
-@inherit_docstring
+@_inherit_docstring_from_super_class
 class DefaultLogger(FGLogger):
     """Default logger: print messages to stdout without formatting."""
     def file_location(self, filename: str, line: int) -> None:
@@ -270,7 +270,7 @@ cdef class FGPropertyNode:
         self.__intercept_invalid_pointer()
         return GetFullyQualifiedName(self.thisptr.ptr()).decode()
 
-    def get_node(self, path: str, create: bool = False) -> Optional[SGPropertyNode]:
+    def get_node(self, path: str, create: bool = False) -> Optional[FGPropertyNode]:
         """Get a pointer to another node by relative path.
 
            :param path: The relative path from the node.
@@ -325,7 +325,7 @@ cdef class FGPropertyManager:
         if not self.thisptr:
             raise MemoryError()
 
-    def get_node(self, path: Optional[str] = None, create: bool = False) -> Optional[SGPropertyNode]:
+    def get_node(self, path: Optional[str] = None, create: bool = False) -> Optional[FGPropertyNode]:
         """@Dox(JSBSim::FGPropertyManager::GetNode)"""
         node = FGPropertyNode()
         if path is None:
