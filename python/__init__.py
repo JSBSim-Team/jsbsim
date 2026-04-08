@@ -26,5 +26,6 @@ from ._jsbsim import (
     ePressure,
     eTemperature,
     get_default_root_dir,
+    get_logger,
     set_logger,
 )

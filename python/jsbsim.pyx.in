@@ -139,13 +139,21 @@ class FGLogger:
         """@Dox(JSBSim::FGLogger::Flush)"""
         pass
 
-cdef shared_ptr[c_PyLogger] _logger  # hold the logger instance
+cdef shared_ptr[c_PyLogger] _cpp_logger  # hold the C++ logger instance
+_logger: Optional[FGLogger] = None  # hold the Python logger instance
 
 def set_logger(logger: FGLogger) -> None:
     """@Dox(JSBSim::SetLogger)"""
+    global _cpp_logger, _logger
+    _logger = logger
+    _cpp_logger = make_shared[c_PyLogger](<PyObject*>logger)
+    SetLogger(_cpp_logger)
+
+def get_logger() -> FGLogger:
+    """@Dox(JSBSim::GetLogger)"""
     global _logger
-    _logger = make_shared[c_PyLogger](<PyObject*>logger)
-    SetLogger(_logger)
+    assert _logger is not None
+    return _logger
 
 
 # Initializing pointers for the C++ interface
@@ -175,8 +183,9 @@ class DefaultLogger(FGLogger):
 # This prevents the c_PyLogger destructor from trying to decrement reference
 # counts on Python objects after Python has already finalized.
 cdef _reset_logger():
-    global _logger
-    _logger.reset()
+    global _cpp_logger, _logger
+    _cpp_logger.reset()
+    _logger = None
     ResetLogger()
 
 

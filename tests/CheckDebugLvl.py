@@ -19,10 +19,12 @@
 #
 
 import os
+
 import pandas as pd
-from JSBSim_utils import (JSBSimTestCase, ExecuteUntil,
-                          isDataMatching, FindDifferences, RunTest)
-from jsbsim import FGLogger, set_logger, DefaultLogger, FGJSBBase, LogLevel
+from JSBSim_utils import (ExecuteUntil, FindDifferences, JSBSimTestCase,
+                          RunTest, isDataMatching)
+from jsbsim import (DefaultLogger, FGJSBBase, FGLogger, LogLevel, get_logger,
+                    set_logger)
 
 
 class DebugLog(FGLogger):
@@ -37,6 +39,8 @@ class DebugLog(FGLogger):
 
 class TestDebugLvl(JSBSimTestCase):
     def __init__(self, methodName):
+        self._default_logger = get_logger()
+        self.assertIsInstance(self._default_logger, DefaultLogger)
         super().__init__(methodName, quiet=False)
         self.assertEqual(FGJSBBase().debug_lvl, 1)  # Check default value of debug_lvl
 
@@ -44,7 +48,7 @@ class TestDebugLvl(JSBSimTestCase):
         super().setUp('check_cases', 'orbit')
 
     def tearDown(self):
-        set_logger(DefaultLogger())
+        set_logger(self._default_logger)
         os.environ.pop('JSBSIM_DEBUG', None)
         super().tearDown()
 
