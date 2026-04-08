@@ -273,11 +273,9 @@ class GenerateStub(Interpreter):
     def python__decorator(self, tree: Tree) -> str:
         assert len(tree.children) == 2
         assert tree.children[1] is None
-        decorator_name = tree.children[0]
+        decorator_name = dotted_name(tree.children[0])
         if decorator_name[0] != "_":
-            self.output.write(
-                f"\n{self.TAB_SPACES*self.indent}@{dotted_name(decorator_name)}"
-            )
+            self.output.write(f"\n{self.TAB_SPACES*self.indent}@{decorator_name}")
 
     def funcdef(self, tree: Tree) -> None:
         func_name: str = ""
