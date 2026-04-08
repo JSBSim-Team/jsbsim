@@ -154,14 +154,14 @@ LogLevel_PyClass = <PyObject*>LogLevel
 LogFormat_PyClass = <PyObject*>LogFormat
 
 
-def inherit_docstring(cls):
+def _inherit_docstring_from_super_class(cls):
     for name, func in cls.__dict__.items():
         if not func.__doc__:
             func.__doc__ = getattr(super(cls, cls), name).__doc__
     return cls
 
 
-@inherit_docstring
+@_inherit_docstring_from_super_class
 class DefaultLogger(FGLogger):
     """Default logger: print messages to stdout without formatting."""
     def file_location(self, filename: str, line: int) -> None:

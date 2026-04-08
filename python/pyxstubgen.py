@@ -273,9 +273,11 @@ class GenerateStub(Interpreter):
     def python__decorator(self, tree: Tree) -> str:
         assert len(tree.children) == 2
         assert tree.children[1] is None
-        self.output.write(
-            f"\n{self.TAB_SPACES*self.indent}@{dotted_name(tree.children[0])}"
-        )
+        decorator_name = tree.children[0]
+        if decorator_name[0] != "_":
+            self.output.write(
+                f"\n{self.TAB_SPACES*self.indent}@{dotted_name(decorator_name)}"
+            )
 
     def funcdef(self, tree: Tree) -> None:
         func_name: str = ""
@@ -291,7 +293,7 @@ class GenerateStub(Interpreter):
             if isinstance(child_type, Token):
                 if child_type.value == "name":  # Get the function
                     func_name = rule_name(child)
-                    if func_name in ("__cinit__", "__dealloc__"):
+                    if func_name in ("__cinit__", "__dealloc__") or func_name[0] == "_":
                         return
                 elif child_type.value == "cparameters":  # Get the function parameters
                     parameters: List[str] = []

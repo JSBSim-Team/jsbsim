@@ -94,14 +94,47 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+/**
+ * Logging backend interface.
+ *
+ * JSBSim routes each log record to an `FGLogger` instance instead of writing
+ * directly to stdout/stderr. Applications can keep the default `FGLogConsole`
+ * backend, or provide their own subclass and register it through
+ * `SetLogger(FGLogger_ptr)`.
+ *
+ * A single log record follows this lifecycle:
+ * 1. `SetLevel()` starts a new log record and gives the severity.
+ * 2. `FileLocation()` may be called (typically for XML-related messages),
+ *    immediately after `SetLevel()` and before message content.
+ * 3. `Message()` receives the textual payload. It can be invoked multiple times
+ *    for one logical record because JSBSim may build a message in fragments.
+ * 4. `Format()` communicates formatting intent (colors, emphasis, reset) for
+ *    the subsequent output. Implementations may ignore it if formatting is not
+ *    applicable.
+ * 5. `Flush()` ends the current log record and is the right place to finalize
+ *    and emit the record (for example: prefixing, buffering, forwarding to a
+ *    UI, or forcing output synchronization).
+ *
+ * Implementations are expected to keep enough internal state between these
+ * callbacks to assemble one coherent log record.
+ *
+ * \see SetLogger
+ * \see GetLogger
+ */
 class JSBSIM_API FGLogger
 {
 public:
+  /// Virtual destructor for polymorphic use.
   virtual ~FGLogger() {}
+  /// Starts a new log record and provides its severity level.
   virtual void SetLevel(LogLevel level) { log_level = level;}
+  /// Optionally provides source filename and line for contextual diagnostics.
   virtual void FileLocation(const std::string& filename, int line) {}
+  /// Appends message text. May be called multiple times per log record.
   virtual void Message(const std::string& message) = 0;
+  /// Applies a formatting hint to subsequent output.
   virtual void Format(LogFormat format) {}
+  /// Ends the current log record and commits any buffered output.
   virtual void Flush(void) {}
 protected:
   LogLevel log_level = LogLevel::BULK;
@@ -109,7 +142,22 @@ protected:
 
 using FGLogger_ptr = std::shared_ptr<FGLogger>;
 
+/**
+ * Sets the active logger for the current thread.
+ *
+ * The logger is stored in thread-local storage: all JSBSim instances running
+ * in this thread share this same `FGLogger` instance, while other threads keep
+ * their own independent logger instance.
+ *
+ * \see GetLogger
+ */
 JSBSIM_API void SetLogger(FGLogger_ptr logger);
+
+/**
+ * Returns the active logger for the current thread.
+ *
+ * \see SetLogger
+ */
 JSBSIM_API FGLogger_ptr GetLogger(void);
 
 class JSBSIM_API FGLogging
