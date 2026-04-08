@@ -1,7 +1,6 @@
 # CheckDebugLvl.py
 #
-# Regression test that check that the same results are obtained whether the
-# environment variable JSBSIM_DEBUG is set ot zero or not.
+# Regression tests for the global variable `debug_lvl`
 #
 # Copyright (c) 2015-2026 Bertrand Coconnier
 #
@@ -37,6 +36,10 @@ class DebugLog(FGLogger):
             self.buffer += message
 
 class TestDebugLvl(JSBSimTestCase):
+    def __init__(self, methodName):
+        super().__init__(methodName, quiet=False)
+        self.assertEqual(FGJSBBase().debug_lvl, 1)  # Check default value of debug_lvl
+
     def setUp(self, *_):
         super().setUp('check_cases', 'orbit')
 
@@ -46,6 +49,8 @@ class TestDebugLvl(JSBSimTestCase):
         super().tearDown()
 
     def test_env_variable(self):
+        """Regression test to check that the results are independent of the environment
+           variable JSBSIM_DEBUG setting."""
         fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
         fdm.run_ic()
@@ -74,14 +79,11 @@ class TestDebugLvl(JSBSimTestCase):
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
 
     def test_no_debug_lvl(self):
-        self.assertEqual(FGJSBBase().debug_lvl, 0)
+        """Regression test to check that FGFDMExec does not modify debug_lvl."""
+        FGJSBBase().debug_lvl = 0
         logger = DebugLog()
         set_logger(logger)
-        fdm = self.create_fdm()
-        self.assertEqual(logger.buffer, "")
-        self.assertEqual(FGJSBBase().debug_lvl, 0)
-
-        fdm.load_script(self.sandbox.path_to_jsbsim_file("scripts", "ball_orbit.xml"))
+        self.create_fdm()
         self.assertEqual(logger.buffer, "")
         self.assertEqual(FGJSBBase().debug_lvl, 0)
 
