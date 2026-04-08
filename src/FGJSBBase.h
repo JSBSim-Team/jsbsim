@@ -56,6 +56,7 @@ INCLUDES
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+/// Main namespace for the JSBSim Flight Dynamics Model.
 namespace JSBSim {
 
 class JSBSIM_API BaseException : public std::runtime_error {
