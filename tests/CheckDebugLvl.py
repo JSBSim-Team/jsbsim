@@ -3,7 +3,7 @@
 # Regression test that check that the same results are obtained whether the
 # environment variable JSBSIM_DEBUG is set ot zero or not.
 #
-# Copyright (c) 2015 Bertrand Coconnier
+# Copyright (c) 2015-2026 Bertrand Coconnier
 #
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,16 +23,31 @@ import os
 import pandas as pd
 from JSBSim_utils import (JSBSimTestCase, ExecuteUntil,
                           isDataMatching, FindDifferences, RunTest)
+from jsbsim import FGLogger, set_logger, DefaultLogger, FGJSBBase, LogLevel
 
+
+class DebugLog(FGLogger):
+    def __init__(self):
+        self.buffer = ""
+    def file_location(self, filename: str, line: int) -> None:
+        if self.log_level == LogLevel.DEBUG:
+            self.buffer += f"\nIn file {filename}: line {line}"
+    def message(self, message: str) -> None:
+        if self.log_level == LogLevel.DEBUG:
+            self.buffer += message
 
 class TestDebugLvl(JSBSimTestCase):
-    def setUp(self):
-        JSBSimTestCase.setUp(self, 'check_cases', 'orbit')
+    def setUp(self, *_):
+        super().setUp('check_cases', 'orbit')
 
-    def testDebugLvl(self):
+    def tearDown(self):
+        set_logger(DefaultLogger())
+        os.environ.pop('JSBSIM_DEBUG', None)
+        super().tearDown()
+
+    def test_env_variable(self):
         fdm = self.create_fdm()
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
-                                                         'ball_orbit.xml'))
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
         fdm.run_ic()
 
         ExecuteUntil(fdm, 1000.)
@@ -41,8 +56,7 @@ class TestDebugLvl(JSBSimTestCase):
 
         os.environ["JSBSIM_DEBUG"] = str(0)
         fdm = self.create_fdm()
-        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts',
-                                                         'ball_orbit.xml'))
+        fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
         fdm.run_ic()
 
         ExecuteUntil(fdm, 1000.)
@@ -58,5 +72,18 @@ class TestDebugLvl(JSBSimTestCase):
         diff = FindDifferences(ref, current, 1E-8)
         self.longMessage = True
         self.assertEqual(len(diff), 0, msg='\n'+diff.to_string())
+
+    def test_no_debug_lvl(self):
+        self.assertEqual(FGJSBBase().debug_lvl, 0)
+        logger = DebugLog()
+        set_logger(logger)
+        fdm = self.create_fdm()
+        self.assertEqual(logger.buffer, "")
+        self.assertEqual(FGJSBBase().debug_lvl, 0)
+
+        fdm.load_script(self.sandbox.path_to_jsbsim_file("scripts", "ball_orbit.xml"))
+        self.assertEqual(logger.buffer, "")
+        self.assertEqual(FGJSBBase().debug_lvl, 0)
+
 
 RunTest(TestDebugLvl)

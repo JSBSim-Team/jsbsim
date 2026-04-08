@@ -1148,6 +1148,8 @@ void FGFDMExec::PrintSimulationConfiguration(void) const
 
 bool FGFDMExec::ReadFileHeader(Element* el)
 {
+  if (debug_lvl == 0) return true;
+
   FGLogging log(LogLevel::DEBUG);
 
   if (IsChild) {
