@@ -27,10 +27,6 @@ sys.path.append(os.getcwd())
 import jsbsim
 
 
-# Hides startup and debug messages
-jsbsim.FGJSBBase().debug_lvl = 0
-
-
 class SandBox:
     def __init__(self, *args):
         self._tmpdir = tempfile.mkdtemp(dir=os.getcwd())
@@ -141,9 +137,11 @@ def CopyAircraftDef(script_path, sandbox):
 
 
 class JSBSimTestCase(unittest.TestCase):
-    def __init__(self, methodName):
+    def __init__(self, methodName, quiet=True):
         unittest.TestCase.__init__(self, methodName)
         self._fdm = None
+        if quiet:
+            jsbsim.FGJSBBase().debug_lvl = 0
 
     def setUp(self, *args):
         self.sandbox = SandBox(*args)
