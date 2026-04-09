@@ -491,6 +491,10 @@ jobs:
       - name: Test JSBSim
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
+      - name: Update the docstrings in jsbsim.pyx.in
+        if: env.release == 'true'
+        run: |
+          python python/Doxy2PyDocStrings.py --pyxfile=python/jsbsim.pyx.in --doxdir=build/documentation
       - name: Build the source package for Python
         run: |
           python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/__init__.pyi
@@ -838,6 +842,12 @@ jobs:
         run: |
           pip install jsbsim --no-index -f .
           touch documentation/html/.nojekyll
+          rm -f documentation/LogExceptionError.rst
+          rm -f documentation/DefaultLogger.rst
+          echo ".. autoclass:: jsbsim.DefaultLogger" >> documentation/FGLogger.rst
+          echo "   :members:" >> documentation/FGLogger.rst
+          echo ".. autofunction:: jsbsim.set_logger" >> documentation/FGLogger.rst
+          echo ".. autofunction:: jsbsim.get_logger" >> documentation/FGLogger.rst
           sphinx-build -b html documentation documentation/html/python
       - name: Setup Pages
         uses: actions/configure-pages@v6
