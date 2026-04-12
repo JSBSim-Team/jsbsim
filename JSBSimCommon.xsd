@@ -126,29 +126,45 @@
     <xs:list itemType="xs:double"/>
   </xs:simpleType>
 
+  <xs:complexType name="table-data">
+    <xs:simpleContent>
+      <xs:extension base="numbers-list">
+        <xs:attribute name="breakPoint" type="xs:double" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="unnamed-table">
     <xs:sequence>
-      <xs:element maxOccurs="unbounded" name="independentVar">
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="independentVar">
         <xs:complexType mixed="true">
           <xs:attribute name="lookup" type="xs:string"/>
         </xs:complexType>
       </xs:element>
-      <xs:element name="tableData" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="numbers-list">
-              <xs:attribute name="breakPoint" type="xs:double" use="optional"/>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType>
-      </xs:element>
+      <xs:choice>
+        <xs:sequence>
+          <xs:element name="tableData" type="table-data" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:sequence>
+          <xs:element name="slice" type="table-slice" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="table-slice">
+    <xs:complexContent>
+      <xs:extension base="unnamed-table">
+        <xs:attribute name="breakPoint" type="xs:double" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="table">
     <xs:complexContent>
       <xs:extension base="unnamed-table">
         <xs:attribute name="name" use="optional" type="xs:string"/>
+        <xs:attribute name="type" use="optional" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
