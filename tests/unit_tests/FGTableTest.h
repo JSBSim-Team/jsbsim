@@ -1953,3 +1953,230 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
   }
 };
+
+
+class FGTable4DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad4DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+    
+    // 4D table using slice elements
+    // axis1: 1.0, 2.0 (2 values)
+    // axis2: 0.0, 1.0 (2 values)
+    // axis3: 0.0, 10.0 (2 values)
+    // axis4: 0.0, 1.0 (2 values, top level)
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test4d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <slice breakPoint=\"0.0\">"
+                                  "      <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      1.0   1.0  2.0\n"
+                                  "      2.0   3.0  4.0\n"
+                                  "      </tableData>"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        2.0   3.0  4.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"10.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        2.0   7.0  8.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "    <slice breakPoint=\"1.0\">"
+                                  "      <tableData>"
+                                  "            0.0  1.0\n"
+                                  "      1.0   1.0  2.0\n"
+                                  "      2.0   3.0  4.0\n"
+                                  "      </tableData>"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        2.0   3.0  4.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"10.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        2.0   7.0  8.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t4d(pm, el_table);
+    TS_ASSERT_EQUALS(t4d.GetName(), std::string("test4d"));
+    // Verify table is properly loaded
+    TS_ASSERT(t4d.GetNumRows() > 0);
+  }
+};
+
+
+class FGTable5DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad5DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+    auto a5 = pm->GetNode("axis5", true);
+    
+    // 5D table using slice elements
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test5d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <independentVar lookup=\"axis5\">axis5</independentVar>"
+                                  "    <slice breakPoint=\"0.0\">"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"10.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "    <slice breakPoint=\"1.0\">"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"10.0\">"
+                                  "        <tableData>"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t5d(pm, el_table);
+    TS_ASSERT_EQUALS(t5d.GetName(), std::string("test5d"));
+    // Verify table is properly loaded
+    TS_ASSERT(t5d.GetNumRows() > 0);
+  }
+};
+
+
+class FGTable6DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad6DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+    auto a5 = pm->GetNode("axis5", true);
+    auto a6 = pm->GetNode("axis6", true);
+    
+    // 6D table using slice elements
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test6d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <independentVar lookup=\"axis5\">axis5</independentVar>"
+                                  "    <independentVar lookup=\"axis6\">axis6</independentVar>"
+                                  "    <slice breakPoint=\"0.0\">"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"1.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "    <slice breakPoint=\"1.0\">"
+                                  "      <slice breakPoint=\"0.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "      </slice>"
+                                  "      <slice breakPoint=\"1.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "      </slice>"
+                                  "    </slice>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t6d(pm, el_table);
+    TS_ASSERT_EQUALS(t6d.GetName(), std::string("test6d"));
+    // Verify table is properly loaded
+    TS_ASSERT(t6d.GetNumRows() > 0);
+  }
+};

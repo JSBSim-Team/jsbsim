@@ -38,6 +38,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
+#include <vector>
+
 #include "FGParameter.h"
 #include "math/FGPropertyValue.h"
 
@@ -54,8 +57,12 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Lookup table class.
-Models a one, two, or three dimensional lookup table for use in aerodynamics
+Models a one or more dimensional lookup table for use in aerodynamics
 and function definitions.
+
+The legacy 1D/2D/3D XML syntax is preserved. For 4D and higher, add
+independent variables with lookup="axis4", lookup="axis5", ... and
+nest <slice breakPoint="..."> elements.
 
 For a single "vector" lookup table, the format is as follows:
 
@@ -268,6 +275,11 @@ public:
   /// @param TableKey Table coordinate at which the value must be interpolated
   /// @return The interpolated value
   double GetValue(double rowKey, double colKey, double TableKey) const;
+  double GetValue(double a1, double a2, double a3, double a4) const;
+  double GetValue(double a1, double a2, double a3, double a4, double a5) const;
+  double GetValue(double a1, double a2, double a3, double a4, double a5,
+                  double a6) const;
+  double GetValue(const std::vector<double>& keys) const;
 
   double GetMinValue(void) const;
   double GetMinValue(double colKey) const;
@@ -303,9 +315,9 @@ public:
   { return GetElement(r, c); }
 
   void SetRowIndexProperty(SGPropertyNode *node)
-  { lookupProperty[eRow] = new FGPropertyValue(node); }
+  { SetLookupProperty(eRow, new FGPropertyValue(node)); }
   void SetColumnIndexProperty(SGPropertyNode *node)
-  { lookupProperty[eColumn] = new FGPropertyValue(node); }
+  { SetLookupProperty(eColumn, new FGPropertyValue(node)); }
 
   unsigned int GetNumRows() const {return nRows;}
 
@@ -314,15 +326,28 @@ public:
   std::string GetName(void) const {return Name;}
 
 private:
-  enum type {tt1D, tt2D, tt3D} Type;
+  enum type {tt1D, tt2D, ttND} Type;
   enum axis {eRow=0, eColumn, eTable};
   bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
-  FGPropertyValue_ptr lookupProperty[3];
+  std::vector<FGPropertyValue_ptr> lookupProperty;
   std::vector<double> Data;
   std::vector<std::unique_ptr<FGTable>> Tables;
-  unsigned int nRows, nCols;
+  unsigned int nRows = 0u, nCols = 0u, nDims = 0u;
   std::string Name;
+
+  void SetLookupProperty(unsigned int axis, FGPropertyValue_ptr node)
+  {
+    if (lookupProperty.size() <= axis) lookupProperty.resize(axis + 1u);
+    lookupProperty[axis] = node;
+  }
+
+  bool HasLookupProperty(unsigned int axis) const
+  {
+    return axis < lookupProperty.size() && lookupProperty[axis];
+  }
+
+  double GetValue(const double* keys, unsigned int dimension) const;
   void bind(Element* el, const std::string& Prefix);
   void missingData(Element *el, unsigned int expected_size, size_t actual_size);
   void Debug(int from);
