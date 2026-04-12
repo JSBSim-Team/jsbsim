@@ -1964,12 +1964,11 @@ public:
     auto a2 = pm->GetNode("axis2", true);
     auto a3 = pm->GetNode("axis3", true);
     auto a4 = pm->GetNode("axis4", true);
-    
-    // 4D table using slice elements
-    // axis1: 1.0, 2.0 (2 values)
-    // axis2: 0.0, 1.0 (2 values)
-    // axis3: 0.0, 10.0 (2 values)
-    // axis4: 0.0, 1.0 (2 values, top level)
+
+    // 4D table: 2 slice levels wrapping 2D tableData leaves
+    // axis4 (outer slice): breakPoints 0.0, 1.0
+    // axis3 (inner slice): breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData
     Element_ptr elm = readFromXML("<dummy>"
                                   "  <table name=\"test4d\">"
                                   "    <independentVar lookup=\"row\">axis1</independentVar>"
@@ -1977,11 +1976,6 @@ public:
                                   "    <independentVar lookup=\"axis3\">axis3</independentVar>"
                                   "    <independentVar lookup=\"axis4\">axis4</independentVar>"
                                   "    <slice breakPoint=\"0.0\">"
-                                  "      <tableData>"
-                                  "            0.0  1.0\n"
-                                  "      1.0   1.0  2.0\n"
-                                  "      2.0   3.0  4.0\n"
-                                  "      </tableData>"
                                   "      <slice breakPoint=\"0.0\">"
                                   "        <tableData>"
                                   "              0.0  1.0\n"
@@ -1998,11 +1992,6 @@ public:
                                   "      </slice>"
                                   "    </slice>"
                                   "    <slice breakPoint=\"1.0\">"
-                                  "      <tableData>"
-                                  "            0.0  1.0\n"
-                                  "      1.0   1.0  2.0\n"
-                                  "      2.0   3.0  4.0\n"
-                                  "      </tableData>"
                                   "      <slice breakPoint=\"0.0\">"
                                   "        <tableData>"
                                   "              0.0  1.0\n"
@@ -2024,7 +2013,6 @@ public:
 
     FGTable t4d(pm, el_table);
     TS_ASSERT_EQUALS(t4d.GetName(), std::string("test4d"));
-    // Verify table is properly loaded
     TS_ASSERT(t4d.GetNumRows() > 0);
   }
 };
@@ -2040,8 +2028,12 @@ public:
     auto a3 = pm->GetNode("axis3", true);
     auto a4 = pm->GetNode("axis4", true);
     auto a5 = pm->GetNode("axis5", true);
-    
-    // 5D table using slice elements
+
+    // 5D table: 3 slice levels wrapping 2D tableData leaves
+    // axis5 (outermost slice): breakPoints 0.0, 1.0
+    // axis4 (middle slice):    breakPoints 0.0, 1.0
+    // axis3 (inner slice):     breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData
     Element_ptr elm = readFromXML("<dummy>"
                                   "  <table name=\"test5d\">"
                                   "    <independentVar lookup=\"row\">axis1</independentVar>"
@@ -2051,30 +2043,62 @@ public:
                                   "    <independentVar lookup=\"axis5\">axis5</independentVar>"
                                   "    <slice breakPoint=\"0.0\">"
                                   "      <slice breakPoint=\"0.0\">"
-                                  "        <tableData>"
-                                  "              0.0  1.0\n"
-                                  "        1.0   1.0  2.0\n"
-                                  "        </tableData>"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
                                   "      </slice>"
-                                  "      <slice breakPoint=\"10.0\">"
-                                  "        <tableData>"
-                                  "              0.0  1.0\n"
-                                  "        1.0   5.0  6.0\n"
-                                  "        </tableData>"
+                                  "      <slice breakPoint=\"1.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
                                   "      </slice>"
                                   "    </slice>"
                                   "    <slice breakPoint=\"1.0\">"
                                   "      <slice breakPoint=\"0.0\">"
-                                  "        <tableData>"
-                                  "              0.0  1.0\n"
-                                  "        1.0   1.0  2.0\n"
-                                  "        </tableData>"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
                                   "      </slice>"
-                                  "      <slice breakPoint=\"10.0\">"
-                                  "        <tableData>"
-                                  "              0.0  1.0\n"
-                                  "        1.0   5.0  6.0\n"
-                                  "        </tableData>"
+                                  "      <slice breakPoint=\"1.0\">"
+                                  "        <slice breakPoint=\"0.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
+                                  "        <slice breakPoint=\"10.0\">"
+                                  "          <tableData>"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </slice>"
                                   "      </slice>"
                                   "    </slice>"
                                   "  </table>"
@@ -2083,7 +2107,6 @@ public:
 
     FGTable t5d(pm, el_table);
     TS_ASSERT_EQUALS(t5d.GetName(), std::string("test5d"));
-    // Verify table is properly loaded
     TS_ASSERT(t5d.GetNumRows() > 0);
   }
 };
@@ -2100,8 +2123,13 @@ public:
     auto a4 = pm->GetNode("axis4", true);
     auto a5 = pm->GetNode("axis5", true);
     auto a6 = pm->GetNode("axis6", true);
-    
-    // 6D table using slice elements
+
+    // 6D table: 4 slice levels wrapping 2D tableData leaves
+    // axis6 (outermost slice): breakPoints 0.0, 1.0
+    // axis5 (slice level 3):   breakPoints 0.0, 1.0
+    // axis4 (slice level 2):   breakPoints 0.0, 1.0
+    // axis3 (inner slice):     breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData
     Element_ptr elm = readFromXML("<dummy>"
                                   "  <table name=\"test6d\">"
                                   "    <independentVar lookup=\"row\">axis1</independentVar>"
@@ -2113,60 +2141,124 @@ public:
                                   "    <slice breakPoint=\"0.0\">"
                                   "      <slice breakPoint=\"0.0\">"
                                   "        <slice breakPoint=\"0.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   1.0  2.0\n"
-                                  "          </tableData>"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
-                                  "        <slice breakPoint=\"10.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   5.0  6.0\n"
-                                  "          </tableData>"
+                                  "        <slice breakPoint=\"1.0\">"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
                                   "      </slice>"
                                   "      <slice breakPoint=\"1.0\">"
                                   "        <slice breakPoint=\"0.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   1.0  2.0\n"
-                                  "          </tableData>"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
-                                  "        <slice breakPoint=\"10.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   5.0  6.0\n"
-                                  "          </tableData>"
+                                  "        <slice breakPoint=\"1.0\">"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
                                   "      </slice>"
                                   "    </slice>"
                                   "    <slice breakPoint=\"1.0\">"
                                   "      <slice breakPoint=\"0.0\">"
                                   "        <slice breakPoint=\"0.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   1.0  2.0\n"
-                                  "          </tableData>"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
-                                  "        <slice breakPoint=\"10.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   5.0  6.0\n"
-                                  "          </tableData>"
+                                  "        <slice breakPoint=\"1.0\">"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
                                   "      </slice>"
                                   "      <slice breakPoint=\"1.0\">"
                                   "        <slice breakPoint=\"0.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   1.0  2.0\n"
-                                  "          </tableData>"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
-                                  "        <slice breakPoint=\"10.0\">"
-                                  "          <tableData>"
-                                  "                0.0  1.0\n"
-                                  "          1.0   5.0  6.0\n"
-                                  "          </tableData>"
+                                  "        <slice breakPoint=\"1.0\">"
+                                  "          <slice breakPoint=\"0.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
+                                  "          <slice breakPoint=\"10.0\">"
+                                  "            <tableData>"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "            </tableData>"
+                                  "          </slice>"
                                   "        </slice>"
                                   "      </slice>"
                                   "    </slice>"
@@ -2176,7 +2268,6 @@ public:
 
     FGTable t6d(pm, el_table);
     TS_ASSERT_EQUALS(t6d.GetName(), std::string("test6d"));
-    // Verify table is properly loaded
     TS_ASSERT(t6d.GetNumRows() > 0);
   }
 };
