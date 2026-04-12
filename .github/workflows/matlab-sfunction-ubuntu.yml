@@ -1,0 +1,92 @@
+name: Matlab S-Function (Ubuntu)
+
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+    paths:
+      - '.github/workflows/matlab-sfunction-ubuntu.yml'
+      - 'CMakeLists.txt'
+      - 'matlab/**'
+      - 'src/**'
+      - 'aircraft/**'
+      - 'engine/**'
+      - 'scripts/**'
+      - 'systems/**'
+  pull_request:
+    paths:
+      - '.github/workflows/matlab-sfunction-ubuntu.yml'
+      - 'CMakeLists.txt'
+      - 'matlab/**'
+      - 'src/**'
+      - 'aircraft/**'
+      - 'engine/**'
+      - 'scripts/**'
+      - 'systems/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Matlab S-Function (Ubuntu)
+    runs-on: ubuntu-24.04
+    env:
+      MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }}
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v6
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2023b
+          products: Simulink
+
+      - name: Configure JSBSim
+        shell: bash
+        run: |
+          cmake -S . -B build \
+            -DBUILD_MATLAB_SFUNCTION=ON \
+            -DBUILD_DOCS=OFF \
+            -DBUILD_PYTHON_MODULE=OFF \
+            -DINSTALL_JSBSIM_PYTHON_MODULE=OFF
+
+      - name: Build JSBSim S-Function
+        run: cmake --build build --config RelWithDebInfo --target JSBSim_SFunction --parallel 3
+
+      - name: Prepare Simulink test assets
+        shell: bash
+        run: |
+          cp -R aircraft matlab/
+          cp -R engine matlab/
+          cp -R systems matlab/
+          cp -R scripts matlab/
+
+      - name: Force MATLAB to use the system libstdc++
+        shell: bash
+        run: echo 'LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6' >> "$GITHUB_ENV"
+
+      - name: Run MATLAB smoke test
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('build/matlab'); run('matlab/TestJSBSim.m')
+
+      - name: Upload MATLAB S-Function artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: Matlab-SFunction-Ubuntu
+          path: build/matlab/JSBSim_SFunction.mex*
+          if-no-files-found: error
+
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Matlab-SFunction-Ubuntu-logs
+          path: |
+            build/CMakeCache.txt
+            build/CMakeFiles/CMakeConfigureLog.yaml
+            build/CMakeFiles/CMakeError.log
+            build/CMakeFiles/CMakeOutput.log
