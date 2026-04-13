@@ -18,14 +18,38 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+from typing import final
 from JSBSim_utils import (ExecuteUntil, JSBSimTestCase, RunTest)
 from jsbsim import (DefaultLogger, LogLevel, set_logger)
+import io
+import sys
+
+class CapturedDefaultLogger(DefaultLogger):
+    def __init__(self):
+        super().__init__()
+        self.buffer = io.StringIO()
+
+    def file_location(self, filename: str, line: int) -> None:
+        original_stdout = sys.stdout
+        try:
+            sys.stdout = self.buffer
+            super().file_location(filename, line)
+        finally:
+            sys.stdout = original_stdout
+
+    def message(self, message: str) -> None:
+        original_stdout = sys.stdout
+        try:
+            sys.stdout = self.buffer
+            super().message(message)
+        finally:
+            sys.stdout = original_stdout
 
 class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
 
     def test_logoutput_fatal(self):
         """Confirm that no log output occurs for LogLevel.FATAL"""
-        logger = DefaultLogger()
+        logger = CapturedDefaultLogger()
         logger.set_min_level(LogLevel.FATAL)
         set_logger(logger)
 
@@ -34,11 +58,11 @@ class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
         fdm.run_ic()
         ExecuteUntil(fdm, 1000.)
 
-        self.assertEqual(logger.buffer, "")
+        self.assertEqual(logger.buffer.getvalue(), "")
 
     def test_logoutput_bulk(self):
         """Confirm that log output occurs for LogLevel.BULK"""
-        logger = DefaultLogger()
+        logger = CapturedDefaultLogger()
         logger.set_min_level(LogLevel.BULK)
         set_logger(logger)
 
@@ -47,6 +71,6 @@ class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
         fdm.run_ic()
         ExecuteUntil(fdm, 1000.)
 
-        self.assertNotEqual(logger.buffer, "")
+        self.assertNotEqual(logger.buffer.getvalue(), "")
 
 RunTest(TestPythonDefaultLoggerFiltering)
