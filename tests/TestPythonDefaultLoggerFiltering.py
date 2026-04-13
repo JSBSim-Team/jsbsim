@@ -19,8 +19,7 @@
 #
 
 from JSBSim_utils import (ExecuteUntil, JSBSimTestCase, RunTest)
-from jsbsim import (DefaultLogger, LogLevel)
-
+from jsbsim import (DefaultLogger, LogLevel, set_logger)
 
 class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
 
@@ -28,7 +27,7 @@ class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
         """Confirm that no log output occurs for LogLevel.FATAL"""
         logger = DefaultLogger()
         logger.set_min_level(LogLevel.FATAL)
-        jsbsim.set_logger(logger)
+        set_logger(logger)
 
         fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
@@ -41,7 +40,7 @@ class TestPythonDefaultLoggerFiltering(JSBSimTestCase):
         """Confirm that log output occurs for LogLevel.BULK"""
         logger = DefaultLogger()
         logger.set_min_level(LogLevel.BULK)
-        jsbsim.set_logger(logger)
+        set_logger(logger)
 
         fdm = self.create_fdm()
         fdm.load_script(self.sandbox.path_to_jsbsim_file('scripts', 'ball_orbit.xml'))
