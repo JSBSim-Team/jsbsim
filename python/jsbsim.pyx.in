@@ -175,6 +175,7 @@ class DefaultLogger(FGLogger):
     def __init__(self, min_level=LogLevel.BULK):
         self.min_level = min_level
     def set_min_level(self, level: LogLevel) -> None:
+        """Set minimum log level for filtering."""
         self.min_level = level
     def file_location(self, filename: str, line: int) -> None:
         if int(self.log_level) >= int(self.min_level):
