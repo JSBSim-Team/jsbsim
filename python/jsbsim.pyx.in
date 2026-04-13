@@ -94,7 +94,7 @@ cdef _convertToNumpyVec(const c_FGColumnVector3& v):
     return numpy.matrix([v.Entry(1), v.Entry(2), v.Entry(3)]).T
 
 
-class LogLevel(enum.Enum):
+class LogLevel(enum.IntEnum):
     """Enumeration of log levels."""
     BULK = 0   # For frequent messages
     DEBUG = 1  # Less frequent debug type messages
@@ -105,7 +105,7 @@ class LogLevel(enum.Enum):
     STDOUT = 6 # Standard output - unconditionally displayed.
 
 
-class LogFormat(enum.Enum):
+class LogFormat(enum.IntEnum):
     """Enumeration of log formats."""
     RESET = 0
     RED = 1
@@ -230,7 +230,7 @@ cdef class FGPropagate:
         return _convertToNumpyVec(deref(self.thisptr).GetUVW())
 
 
-class Attribute(enum.Enum):
+class Attribute(enum.IntEnum):
     NO_ATTR = 0
     READ = 1
     WRITE = 2
@@ -517,7 +517,7 @@ cdef class FGAircraft:
         return _convertToNumpyVec(deref(self.thisptr).GetXYZrp())
 
 
-class eTemperature(enum.Enum):
+class eTemperature(enum.IntEnum):
     eNoTempUnit = 0
     eFahrenheit = 1
     eCelsius    = 2
@@ -525,7 +525,7 @@ class eTemperature(enum.Enum):
     eKelvin     = 4
 
 
-class ePressure(enum.Enum):
+class ePressure(enum.IntEnum):
     eNoPressUnit= 0
     ePSF        = 1
     eMillibars  = 2
