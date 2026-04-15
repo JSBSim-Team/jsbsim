@@ -70,10 +70,18 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   auto PropertyManager = fcs->GetPropertyManager();
   Element* gain_element = element->FindElement("gain");
-  if (gain_element)
+  if (gain_element) {
     Gain = new FGParameterValue(gain_element, PropertyManager);
-  else
+    // Warn if duplicate <gain> elements are provided
+    if (element->FindNextElement("gain")) {
+      FGXMLLogging log(element, LogLevel::ERROR);
+      log << "      Multiple <gain> elements specified.\n"
+          << "      Only the first <gain> value will be used,"
+          << " the remaining ones are ignored.\n";
+    }
+  } else {
     Gain = new FGRealValue(1.0);
+  }
 
   if (Type == "AEROSURFACE_SCALE") {
     Element* scale_element = element->FindElement("domain");
