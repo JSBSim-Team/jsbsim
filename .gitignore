@@ -35,6 +35,13 @@ TAGS
 initfile.*.xml
 
 #################
+## Leonardo
+#################
+aircraft/m345*
+engine/m345*
+systems/m345*
+
+#################
 ## Python
 #################
 __pycache__/
