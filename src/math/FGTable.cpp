@@ -47,18 +47,15 @@ INCLUDES
 
 using namespace std;
 
-namespace JSBSim
-{
+namespace JSBSim {
 
-  namespace
-  {
+  namespace { // anonymous namespace for helper functions
 
     unsigned int FindNumColumns(const string &test_line)
     {
       size_t position = 0;
       unsigned int nCols = 0;
-      while ((position = test_line.find_first_not_of(" \t", position)) != string::npos)
-      {
+      while ((position = test_line.find_first_not_of(" \t", position)) != string::npos) {
         nCols++;
         position = test_line.find_first_of(" \t", position);
       }
@@ -68,8 +65,7 @@ namespace JSBSim
     unsigned int InferLeafDimension(Element *tableData)
     {
       const unsigned int nLines = tableData->GetNumDataLines();
-      if (nLines == 0u)
-      {
+      if (nLines == 0u) {
         XMLLogException err(tableData);
         err << "<tableData> is empty.\n";
         throw err;
@@ -77,10 +73,8 @@ namespace JSBSim
 
       const unsigned int firstLineColumns = FindNumColumns(tableData->GetDataLine(0));
 
-      if (nLines == 1u)
-      {
-        if (firstLineColumns != 2u)
-        {
+      if (nLines == 1u) {
+        if (firstLineColumns != 2u) {
           XMLLogException err(tableData);
           err << "Too many columns for a 1D table\n";
           throw err;
@@ -89,12 +83,9 @@ namespace JSBSim
       }
 
       const unsigned int secondLineColumns = FindNumColumns(tableData->GetDataLine(1));
-      if (secondLineColumns == firstLineColumns + 1u)
-      {
-        for (unsigned int i = 1; i < nLines; ++i)
-        {
-          if (FindNumColumns(tableData->GetDataLine(i)) != secondLineColumns)
-          {
+      if (secondLineColumns == firstLineColumns + 1u) {
+        for (unsigned int i = 1; i < nLines; ++i) {
+          if (FindNumColumns(tableData->GetDataLine(i)) != secondLineColumns) {
             XMLLogException err(tableData);
             err << "Invalid number of columns in line "
                 << tableData->GetLineNumber() + i << "\n";
@@ -104,17 +95,14 @@ namespace JSBSim
         return 2u;
       }
 
-      if (firstLineColumns != 2u)
-      {
+      if (firstLineColumns != 2u) {
         XMLLogException err(tableData);
         err << "Too many columns for a 1D table\n";
         throw err;
       }
 
-      for (unsigned int i = 1; i < nLines; ++i)
-      {
-        if (FindNumColumns(tableData->GetDataLine(i)) != 2u)
-        {
+      for (unsigned int i = 1; i < nLines; ++i) {
+        if (FindNumColumns(tableData->GetDataLine(i)) != 2u) {
           XMLLogException err(tableData);
           err << "Invalid number of columns in line "
               << tableData->GetLineNumber() + i << "\n";
@@ -134,14 +122,12 @@ namespace JSBSim
       if (lookup_axis == "table" || lookup_axis == "axis3")
         return 2u;
 
-      if (lookup_axis.rfind("axis", 0) == 0)
-      {
+      if (lookup_axis.rfind("axis", 0) == 0) {
         const string suffix = lookup_axis.substr(4);
         if (!suffix.empty() &&
             std::all_of(suffix.begin(), suffix.end(),
                         [](unsigned char c)
-                        { return std::isdigit(c) != 0; }))
-        {
+                        { return std::isdigit(c) != 0; })) {
           const unsigned long axis = std::stoul(suffix);
           if (axis >= 1ul)
             return static_cast<unsigned int>(axis - 1ul);
@@ -164,11 +150,9 @@ namespace JSBSim
 
     void AppendNumericData(Element *tableData, stringstream &buf)
     {
-      for (unsigned int i = 0; i < tableData->GetNumDataLines(); ++i)
-      {
+      for (unsigned int i = 0; i < tableData->GetNumDataLines(); ++i) {
         const string line = tableData->GetDataLine(i);
-        if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos)
-        {
+        if (line.find_first_not_of("0123456789.-+eE \t\n") != string::npos) {
           XMLLogException err(tableData);
           err << "   Illegal character found in line "
               << tableData->GetLineNumber() + i + 1 << ": \n"
@@ -186,8 +170,7 @@ namespace JSBSim
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
   FGTable::FGTable(int NRows)
-      : nRows(NRows), nCols(1u), nDims(1u)
-  {
+      : nRows(NRows), nCols(1u), nDims(1u) {
     Type = tt1D;
     Data.push_back(std::numeric_limits<double>::quiet_NaN());
     Data.push_back(std::numeric_limits<double>::quiet_NaN());
@@ -197,8 +180,7 @@ namespace JSBSim
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   FGTable::FGTable(int NRows, int NCols)
-      : nRows(NRows), nCols(NCols), nDims(2u)
-  {
+      : nRows(NRows), nCols(NCols), nDims(2u) {
     Type = tt2D;
     Data.push_back(std::numeric_limits<double>::quiet_NaN());
     Debug(0);
@@ -207,8 +189,7 @@ namespace JSBSim
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   FGTable::FGTable(const FGTable &t)
-      : PropertyManager(t.PropertyManager)
-  {
+      : PropertyManager(t.PropertyManager) {
     Type = t.Type;
     nRows = t.nRows;
     nCols = t.nCols;
@@ -226,36 +207,16 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  /* Superseded
-  unsigned int FindNumColumns(const string &test_line)
-  {
-    // determine number of data columns in table (first column is row lookup - don't count)
-    size_t position = 0;
-    unsigned int nCols = 0;
-    while ((position = test_line.find_first_not_of(" \t", position)) != string::npos)
-    {
-      nCols++;
-      position = test_line.find_first_of(" \t", position);
-    }
-    return nCols;
-  }
-  */
-
-  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
   FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element *el,
                    const std::string &Prefix)
-      : PropertyManager(pm)
-  {
+      : PropertyManager(pm) {
     Name = el->GetAttributeValue("name");
 
     const string call_type = el->GetAttributeValue("type");
-    if (call_type == "internal")
-    {
+    if (call_type == "internal") {
       internal = true;
     }
-    else if (!call_type.empty())
-    {
+    else if (!call_type.empty()) {
       XMLLogException err(el);
       err << "  An unknown table type attribute is listed: " << call_type << "\n";
       throw err;
@@ -264,10 +225,8 @@ namespace JSBSim
     unsigned int declared_dimension = 0u;
 
     Element *axisElement = el->FindElement("independentVar");
-    if (axisElement)
-    {
-      if (internal)
-      {
+    if (axisElement) {
+      if (internal) {
         FGXMLLogging log(el, LogLevel::ERROR);
         log << LogFormat::RED
             << "  This table specifies both 'internal' call type\n"
@@ -278,8 +237,7 @@ namespace JSBSim
         internal = false;
       }
 
-      while (axisElement)
-      {
+      while (axisElement) {
         string property_string = axisElement->GetDataLine();
         if (property_string.find("#") != string::npos && is_number(Prefix))
           property_string = replace(property_string, "#", Prefix);
@@ -288,8 +246,7 @@ namespace JSBSim
                                                        PropertyManager, axisElement);
 
         const unsigned int axis = ParseLookupAxis(axisElement->GetAttributeValue("lookup"));
-        if (HasLookupProperty(axis))
-        {
+        if (HasLookupProperty(axis)) {
           XMLLogException err(axisElement);
           err << "FGTable: duplicate lookup axis \"" << LookupAxisName(axis) << "\"\n";
           throw err;
@@ -301,8 +258,7 @@ namespace JSBSim
       }
     }
     else if (!internal && el->GetAttributeValue("breakPoint").empty() &&
-             el->GetName() != "tableData")
-    {
+             el->GetName() != "tableData") {
       XMLLogException err(el);
       err << "No independentVars found, and table is not marked as internal,"
           << " nor is it a sliced sub-table.\n";
@@ -311,24 +267,20 @@ namespace JSBSim
 
     Element *leafData = nullptr;
 
-    if (el->GetName() == "tableData")
-    {
+    if (el->GetName() == "tableData") {
       leafData = el;
     }
-    else
-    {
+    else {
       const unsigned int nTableData = el->GetNumElements("tableData");
       const unsigned int nSlices = el->GetNumElements("slice");
 
-      if (nTableData > 0u && nSlices > 0u)
-      {
+      if (nTableData > 0u && nSlices > 0u) {
         XMLLogException err(el);
         err << "FGTable: mixed <slice> and <tableData> children are not allowed\n";
         throw err;
       }
 
-      if (nSlices > 0u || nTableData > 1u)
-      {
+      if (nSlices > 0u || nTableData > 1u) {
         Type = ttND;
         Data.push_back(std::numeric_limits<double>::quiet_NaN());
         nCols = 1u;
@@ -336,11 +288,9 @@ namespace JSBSim
         const char *child_name = (nSlices > 0u) ? "slice" : "tableData";
         Element *child = el->FindElement(child_name);
 
-        while (child)
-        {
+        while (child) {
           const string brkpt_string = child->GetAttributeValue("breakPoint");
-          if (brkpt_string.empty())
-          {
+          if (brkpt_string.empty()) {
             XMLLogException err(child);
             err << "FGTable: missing breakPoint on <" << child_name << ">\n";
             throw err;
@@ -348,25 +298,21 @@ namespace JSBSim
 
           auto subtable = std::make_unique<FGTable>(PropertyManager, child);
 
-          if (nDims == 0u)
-          {
+          if (nDims == 0u) {
             nDims = subtable->nDims + 1u;
-            if (nDims < 3u)
-            {
+            if (nDims < 3u) {
               XMLLogException err(child);
               err << "FGTable: sliced tables must contain at least 2D subtables\n";
               throw err;
             }
           }
-          else if (subtable->nDims + 1u != nDims)
-          {
+          else if (subtable->nDims + 1u != nDims) {
             XMLLogException err(child);
             err << "FGTable: inconsistent sub-table dimensionality in sliced table\n";
             throw err;
           }
 
-          for (unsigned int axis = 0u; axis + 1u < nDims; ++axis)
-          {
+          for (unsigned int axis = 0u; axis + 1u < nDims; ++axis) {
             if (HasLookupProperty(axis) && !subtable->HasLookupProperty(axis))
               subtable->SetLookupProperty(axis, lookupProperty[axis]);
           }
@@ -378,8 +324,7 @@ namespace JSBSim
 
         nRows = static_cast<unsigned int>(Tables.size());
 
-        if (declared_dimension != 0u && declared_dimension != nDims)
-        {
+        if (declared_dimension != 0u && declared_dimension != nDims) {
           XMLLogException err(el);
           err << "FGTable: " << declared_dimension
               << " lookup axes were declared, but the slice nesting implies a "
@@ -387,24 +332,20 @@ namespace JSBSim
           throw err;
         }
       }
-      else if (nTableData == 1u)
-      {
+      else if (nTableData == 1u) {
         leafData = el->FindElement("tableData");
       }
-      else
-      {
+      else {
         XMLLogException err(el);
         err << "FGTable: <tableData> or <slice> elements are missing\n";
         throw err;
       }
     }
 
-    if (leafData)
-    {
+    if (leafData) {
       const unsigned int dimension = InferLeafDimension(leafData);
 
-      if (declared_dimension != 0u && declared_dimension != dimension)
-      {
+      if (declared_dimension != 0u && declared_dimension != dimension) {
         XMLLogException err(el);
         err << "FGTable: " << declared_dimension
             << " lookup axes were declared, but the data layout is "
@@ -417,8 +358,7 @@ namespace JSBSim
       stringstream buf;
       AppendNumericData(leafData, buf);
 
-      switch (dimension)
-      {
+      switch (dimension) {
       case 1u:
         nRows = leafData->GetNumDataLines();
         nCols = 1u;
@@ -442,12 +382,9 @@ namespace JSBSim
       }
     }
 
-    if (!internal && el->GetAttributeValue("breakPoint").empty())
-    {
-      for (unsigned int axis = 0u; axis < nDims; ++axis)
-      {
-        if (!HasLookupProperty(axis))
-        {
+    if (!internal && el->GetAttributeValue("breakPoint").empty()) {
+      for (unsigned int axis = 0u; axis < nDims; ++axis) {
+        if (!HasLookupProperty(axis)) {
           XMLLogException err(el);
           err << "FGTable: missing lookup axis \"" << LookupAxisName(axis) << "\"\n";
           throw err;
@@ -461,12 +398,9 @@ namespace JSBSim
     while (nameel && nameel->GetAttributeValue("name") == "")
       nameel = nameel->GetParent();
 
-    if (Type == ttND)
-    {
-      for (unsigned int b = 2; b <= Tables.size(); ++b)
-      {
-        if (Data[b] <= Data[b - 1])
-        {
+    if (Type == ttND) {
+      for (unsigned int b = 2; b <= Tables.size(); ++b) {
+        if (Data[b] <= Data[b - 1]) {
           XMLLogException err(el);
           err << LogFormat::RED << LogFormat::BOLD
               << "  FGTable: breakpoint lookup is not monotonically increasing\n"
@@ -481,12 +415,9 @@ namespace JSBSim
       }
     }
 
-    if (Type == tt2D)
-    {
-      for (unsigned int c = 2; c <= nCols; ++c)
-      {
-        if (Data[c] <= Data[c - 1])
-        {
+    if (Type == tt2D) {
+      for (unsigned int c = 2; c <= nCols; ++c) {
+        if (Data[c] <= Data[c - 1]) {
           XMLLogException err(el);
           err << LogFormat::RED << LogFormat::BOLD
               << "  FGTable: column lookup is not monotonically increasing\n"
@@ -501,12 +432,9 @@ namespace JSBSim
       }
     }
 
-    if (Type != ttND)
-    {
-      for (size_t r = 2; r <= nRows; ++r)
-      {
-        if (Data[r * (nCols + 1)] <= Data[(r - 1) * (nCols + 1)])
-        {
+    if (Type != ttND) {
+      for (size_t r = 2; r <= nRows; ++r) {
+        if (Data[r * (nCols + 1)] <= Data[(r - 1) * (nCols + 1)]) {
           XMLLogException err(el);
           err << LogFormat::RED << LogFormat::BOLD
               << "  FGTable: row lookup is not monotonically increasing\n"
@@ -521,8 +449,7 @@ namespace JSBSim
       }
     }
 
-    switch (Type)
-    {
+    switch (Type) {
     case tt1D:
       if (Data.size() != 2u * nRows + 2u)
         missingData(el, 2u * nRows, Data.size() - 2u);
@@ -548,7 +475,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  void FGTable::missingData(Element *el, unsigned int expected_size, size_t actual_size)
+  void FGTable::missingData(Element *el, unsigned int expected_size, size_t actual_size) 
   {
     XMLLogException err(el);
     err << LogFormat::RED << LogFormat::BOLD
@@ -564,12 +491,11 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  FGTable::~FGTable()
+  FGTable::~FGTable() 
   {
     // Untie the bound property so that it makes no further reference to this
     // instance of FGTable after the destruction is completed.
-    if (!Name.empty() && !internal)
-    {
+    if (!Name.empty() && !internal) {
       string tmp = PropertyManager->mkPropertyName(Name, false);
       SGPropertyNode *node = PropertyManager->GetNode(tmp);
       if (node && node->isTied())
@@ -581,11 +507,10 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetElement(unsigned int r, unsigned int c) const
+  double FGTable::GetElement(unsigned int r, unsigned int c) const 
   {
     assert(r <= nRows && c <= nCols);
-    if (Type == ttND)
-    {
+    if (Type == ttND) {
       assert(Data.size() == nRows + 1u);
       return Data[r];
     }
@@ -595,14 +520,13 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(void) const
+  double FGTable::GetValue(void) const 
   {
     assert(!internal);
     assert(nDims > 0u);
 
     std::vector<double> keys(nDims);
-    for (unsigned int axis = 0u; axis < nDims; ++axis)
-    {
+    for (unsigned int axis = 0u; axis < nDims; ++axis) {
       assert(HasLookupProperty(axis));
       keys[axis] = lookupProperty[axis]->getDoubleValue();
     }
@@ -612,7 +536,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(const std::vector<double> &keys) const
+  double FGTable::GetValue(const std::vector<double> &keys) const 
   {
     assert(!keys.empty());
     return GetValue(keys.data(), static_cast<unsigned int>(keys.size()));
@@ -620,7 +544,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(const double *keys, unsigned int dimension) const
+  double FGTable::GetValue(const double *keys, unsigned int dimension) const 
   {
     assert(dimension == nDims);
 
@@ -657,7 +581,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(double key) const
+  double FGTable::GetValue(double key) const 
   {
     assert((Type == tt1D) || (Type == tt2D && nCols == 1u));
     assert(Data.size() == 2u * nRows + 2u);
@@ -683,7 +607,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(double rowKey, double colKey) const
+  double FGTable::GetValue(double rowKey, double colKey) const 
   {
     if (Type == tt1D || (Type == tt2D && nCols == 1u))
       return GetValue(rowKey);
@@ -699,8 +623,7 @@ namespace JSBSim
     assert(span > 0.0);
     double cFactor = Constrain(0.0, (colKey - x0) / span, 1.0);
 
-    if (nRows == 1u)
-    {
+    if (nRows == 1u) {
       const double y0 = Data[(nCols + 1u) + c - 1u];
       return cFactor * (Data[(nCols + 1u) + c] - y0) + y0;
     }
@@ -726,7 +649,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
+  double FGTable::GetValue(double rowKey, double colKey, double tableKey) const 
   {
     const double keys[3] = {rowKey, colKey, tableKey};
     return GetValue(keys, 3u);
@@ -734,7 +657,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(double a1, double a2, double a3, double a4) const
+  double FGTable::GetValue(double a1, double a2, double a3, double a4) const 
   {
     const double keys[4] = {a1, a2, a3, a4};
     return GetValue(keys, 4u);
@@ -742,7 +665,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetValue(double a1, double a2, double a3, double a4, double a5) const
+  double FGTable::GetValue(double a1, double a2, double a3, double a4, double a5) const 
   {
     const double keys[5] = {a1, a2, a3, a4, a5};
     return GetValue(keys, 5u);
@@ -751,7 +674,7 @@ namespace JSBSim
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   double FGTable::GetValue(double a1, double a2, double a3, double a4,
-                           double a5, double a6) const
+                           double a5, double a6) const 
   {
     const double keys[6] = {a1, a2, a3, a4, a5, a6};
     return GetValue(keys, 6u);
@@ -759,7 +682,7 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  double FGTable::GetMinValue(void) const
+  double FGTable::GetMinValue(void) const 
   {
     assert(Type == tt1D);
     assert(Data.size() == 2 * nRows + 2);
@@ -774,14 +697,13 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  void FGTable::operator<<(istream &in_stream)
+  void FGTable::operator<<(istream &in_stream) 
   {
     double x;
     assert(Type != ttND);
 
     in_stream >> x;
-    while (in_stream)
-    {
+    while (in_stream) {
       Data.push_back(x);
       in_stream >> x;
     }
@@ -789,23 +711,21 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  FGTable &FGTable::operator<<(const double x)
+  FGTable &FGTable::operator<<(const double x) 
   {
     assert(Type != ttND);
     Data.push_back(x);
 
     // Check column is monotically increasing
     size_t n = Data.size();
-    if (Type == tt2D && nCols > 1 && n >= 3 && n <= nCols + 1)
-    {
+    if (Type == tt2D && nCols > 1 && n >= 3 && n <= nCols + 1) {
       if (Data.at(n - 1) <= Data.at(n - 2))
         throw BaseException("FGTable: column lookup is not monotonically increasing");
     }
 
     // Check row is monotically increasing
     size_t row = (n - 1) / (nCols + 1);
-    if (row >= 2 && row * (nCols + 1) == n - 1)
-    {
+    if (row >= 2 && row * (nCols + 1) == n - 1) {
       if (Data.at(row * (nCols + 1)) <= Data.at((row - 1) * (nCols + 1)))
         throw BaseException("FGTable: row lookup is not monotonically increasing");
     }
@@ -815,13 +735,12 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  void FGTable::Print(void)
+  void FGTable::Print(void) 
   {
     FGLogging out(LogLevel::STDOUT);
     out << std::setprecision(4);
 
-    switch (Type)
-    {
+    switch (Type) {
     case tt1D:
       out << "    1 dimensional table with " << nRows << " rows.\n";
       break;
@@ -836,30 +755,25 @@ namespace JSBSim
     unsigned int startCol = 1, startRow = 1;
     unsigned int p = 1;
 
-    if (Type == tt1D)
-    {
+    if (Type == tt1D) {
       startCol = 0;
       p = 2;
     }
     if (Type == tt2D)
       startRow = 0;
 
-    for (unsigned int r = startRow; r <= nRows; r++)
-    {
+    for (unsigned int r = startRow; r <= nRows; r++) {
       out << "\t";
-      if (Type == tt2D)
-      {
+      if (Type == tt2D) {
         if (r == startRow)
           out << "\t";
         else
           startCol = 0;
       }
 
-      for (unsigned int c = startCol; c <= nCols; c++)
-      {
+      for (unsigned int c = startCol; c <= nCols; c++) {
         out << Data[p++] << "\t";
-        if (Type == ttND)
-        {
+        if (Type == ttND) {
           out << "\n";
           Tables[r - 1]->Print();
         }
@@ -871,20 +785,15 @@ namespace JSBSim
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  void FGTable::bind(Element *el, const string &Prefix)
+  void FGTable::bind(Element *el, const string &Prefix) 
   {
-    if (!Name.empty() && !internal)
-    {
-      if (!Prefix.empty())
-      {
-        if (is_number(Prefix))
-        {
-          if (Name.find("#") != string::npos)
-          {
+    if (!Name.empty() && !internal) {
+      if (!Prefix.empty()) {
+        if (is_number(Prefix)) {
+          if (Name.find("#") != string::npos) {
             Name = replace(Name, "#", Prefix);
           }
-          else
-          {
+          else {
             XMLLogException err(el);
             err << "Malformed table name with number: " << Prefix
                 << " and property name: " << Name
@@ -892,18 +801,15 @@ namespace JSBSim
             throw err;
           }
         }
-        else
-        {
+        else {
           Name = Prefix + "/" + Name;
         }
       }
       string tmp = PropertyManager->mkPropertyName(Name, false);
 
-      if (PropertyManager->HasNode(tmp))
-      {
+      if (PropertyManager->HasNode(tmp)) {
         SGPropertyNode *_property = PropertyManager->GetNode(tmp);
-        if (_property->isTied())
-        {
+        if (_property->isTied()) {
           XMLLogException err(el);
           err << "Property " << tmp << " has already been successfully bound (late).\n";
           throw err;
@@ -932,38 +838,30 @@ namespace JSBSim
   //    16: When set various parameters are sanity checked and
   //       a message is printed out when they go out of bounds
 
-  void FGTable::Debug(int from)
+  void FGTable::Debug(int from) 
   {
     if (debug_lvl <= 0)
       return;
 
-    if (debug_lvl & 1)
-    { // Standard console startup message output
-      if (from == 0)
-      {
+    if (debug_lvl & 1) { // Standard console startup message output
+      if (from == 0) {
       } // Constructor
     }
-    if (debug_lvl & 2)
-    { // Instantiation/Destruction notification
+    if (debug_lvl & 2) { // Instantiation/Destruction notification
       FGLogging log(LogLevel::DEBUG);
       if (from == 0)
         log << "Instantiated: FGTable\n";
       if (from == 1)
         log << "Destroyed:    FGTable\n";
     }
-    if (debug_lvl & 4)
-    { // Run() method entry print for FGModel-derived objects
+    if (debug_lvl & 4) { // Run() method entry print for FGModel-derived objects
     }
-    if (debug_lvl & 8)
-    { // Runtime state variables
+    if (debug_lvl & 8) { // Runtime state variables
     }
-    if (debug_lvl & 16)
-    { // Sanity checking
+    if (debug_lvl & 16) { // Sanity checking
     }
-    if (debug_lvl & 64)
-    {
-      if (from == 0)
-      { // Constructor
+    if (debug_lvl & 64) {
+      if (from == 0) { // Constructor
       }
     }
   }

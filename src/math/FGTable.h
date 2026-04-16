@@ -200,6 +200,95 @@ Here's an example:
 </table>
 @endcode
 
+Example of a 4D table (outer axis is axis4, then axis3/table, row, column):
+
+@code
+<table>
+  <independentVar lookup="row">fcs/row-value</independentVar>
+  <independentVar lookup="column">fcs/column-value</independentVar>
+  <independentVar lookup="table">fcs/table-value</independentVar>
+  <independentVar lookup="axis4">fcs/axis4-value</independentVar>
+
+  <slice breakPoint="-1.0">
+    <tableData breakPoint="0.0">
+               0.0     10.0
+      0.0      1.0      2.0
+      1.0      3.0      4.0
+    </tableData>
+    <tableData breakPoint="1.0">
+               0.0     10.0
+      0.0      2.0      3.0
+      1.0      4.0      5.0
+    </tableData>
+  </slice>
+
+  <slice breakPoint="1.0">
+    <tableData breakPoint="0.0">
+               0.0     10.0
+      0.0      6.0      7.0
+      1.0      8.0      9.0
+    </tableData>
+    <tableData breakPoint="1.0">
+               0.0     10.0
+      0.0      7.0      8.0
+      1.0      9.0     10.0
+    </tableData>
+  </slice>
+</table>
+@endcode
+
+Example of a 5D table (outer axis is axis5, then axis4, axis3/table, row, column):
+
+@code
+<table>
+  <independentVar lookup="row">fcs/row-value</independentVar>
+  <independentVar lookup="column">fcs/column-value</independentVar>
+  <independentVar lookup="table">fcs/table-value</independentVar>
+  <independentVar lookup="axis4">fcs/axis4-value</independentVar>
+  <independentVar lookup="axis5">fcs/axis5-value</independentVar>
+
+  <slice breakPoint="100.0"> <!-- axis5 -->
+    <slice breakPoint="-1.0"> <!-- axis4 -->
+      <tableData breakPoint="0.0"> <!-- axis3/table -->
+                 0.0     10.0
+        0.0      1.0      2.0
+        1.0      3.0      4.0
+      </tableData>
+      <tableData breakPoint="1.0">
+                 0.0     10.0
+        0.0      2.0      3.0
+        1.0      4.0      5.0
+      </tableData>
+    </slice>
+
+    <slice breakPoint="1.0">
+      <tableData breakPoint="0.0">
+                 0.0     10.0
+        0.0      6.0      7.0
+        1.0      8.0      9.0
+      </tableData>
+      <tableData breakPoint="1.0">
+                 0.0     10.0
+        0.0      7.0      8.0
+        1.0      9.0     10.0
+      </tableData>
+    </slice>
+  </slice>
+
+  <slice breakPoint="200.0"> <!-- axis5 -->
+    <slice breakPoint="-1.0"> <!-- axis4 -->
+      <tableData breakPoint="0.0">
+                 0.0     10.0
+        0.0     11.0     12.0
+        1.0     13.0     14.0
+      </tableData>
+    </slice>
+  </slice>
+</table>
+@endcode
+
+
+
 In addition to using a Table for something like a coefficient, where all the
 row and column elements are read in from a file, a Table could be created
 and populated completely within program code:
