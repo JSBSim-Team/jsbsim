@@ -243,6 +243,13 @@ class GenerateStub(Interpreter):
         param_type = self.visit(tree.children[1])
         return param_name, param_type
 
+    def ctypedparam(self, tree: Tree) -> Tuple[str, str]:
+        assert len(tree.children) == 2
+        param_type = rule_name(tree.children[0])
+        assert isinstance(tree.children[1], Tree)
+        param_name = rule_name(tree.children[1])
+        return param_name, param_type
+
     def python__number(self, tree: Tree) -> str:
         assert len(tree.children) == 1
         assert isinstance(tree.children[0], Token)
@@ -261,81 +268,93 @@ class GenerateStub(Interpreter):
         if decorator_name[0] != "_":
             self.output.write(f"\n{self.TAB_SPACES*self.indent}@{decorator_name}")
 
+    def cyfuncdef(self, tree:Tree) -> None:
+        self.funcdef(tree)
+
+    def cdeclare_var(self, _tree:Tree) -> None:
+        pass
+
+    def cparameters(self, tree:Tree) -> List[str]:
+        parameters: List[str] = []
+        for parameter in tree.children:
+            if parameter is None:
+                continue
+
+            assert isinstance(parameter, Tree)
+            if isinstance(parameter.data, Token):
+                assert parameter.data.type == "RULE"
+                if parameter.data.value == "name":
+                    parameters.append(rule_name(parameter))
+                elif parameter.data.value in ("paramvalue", "cparamvalue"):
+                    assert len(parameter.children) == 2
+                    pname, ptype = self.visit(parameter.children[0])
+                    value = parameter.children[1]
+                    assert isinstance(value, Tree)
+                    if value.data in (
+                        "python__number",
+                        "python__string",
+                    ):
+                        pvalue = self.visit(value)
+                    elif value.data == "python__getattr":
+                        pvalue = ".".join(self.visit(value))
+                    else:
+                        pvalue = get_constant(value)
+                    parameters.append(f"{pname}: {ptype} = {pvalue}")
+                elif parameter.data.value == "ctypedparam":
+                    pname, ptype = self.visit(parameter)
+                    parameters.append(f"{pname}: {ptype}")
+                elif parameter.data.value == "starparams":
+                    pass
+                else:
+                    raise TypeError(
+                        f"Unknown parameter type: {repr(parameter)}"
+                    )
+            elif isinstance(parameter.data, str) and parameter.data in (
+                "python__typedparam",
+                "ctypedparam",
+            ):
+                pname, ptype = self.visit(parameter)
+                parameters.append(f"{pname}: {ptype}")
+            else:
+                raise TypeError(
+                    f"Unknown parameter type: {repr(parameter)}"
+                )
+
+        return parameters
+
     def funcdef(self, tree: Tree) -> None:
         func_name: str = ""
         docstring: str = ""
-        for i, child in enumerate(tree.children):
-            if child is None:
-                if i == 1:
-                    func_name += "()"  # This function has no parameter
-                continue
 
-            assert isinstance(child, Tree)
-            child_type: Union[str, Token] = child.data
-            if isinstance(child_type, Token):
-                if child_type.value == "name":  # Get the function
-                    func_name = rule_name(child)
-                    if func_name in ("__cinit__", "__dealloc__"):
-                        return
-                    if func_name[0] == "_" and func_name[1] != "_":
-                        return
-                elif child_type.value == "cparameters":  # Get the function parameters
-                    parameters: List[str] = []
-                    for cparameter in child.children:
-                        if cparameter is None:
-                            continue
+        func_name = rule_name(tree.children[0])
+        is_cinit = func_name == "__cinit__"
+        if is_cinit:
+            func_name = "__init__"
+        elif func_name[0] == "_":
+            if func_name[1] != "_":
+                return
+            if func_name[-2:] != "__" or func_name == "__dealloc__":
+                return
 
-                        assert isinstance(cparameter, Tree)
-                        cparam_type: Token = cparameter.data
-                        assert isinstance(cparam_type, Token)
-                        if cparam_type.value == "cparameter":
-                            assert len(cparameter.children) == 1
-                            parameter = cparameter.children[0]
-                            assert isinstance(parameter, Tree)
-                            if isinstance(parameter.data, Token):
-                                if parameter.data == "name":
-                                    parameters.append(rule_name(parameter))
-                                elif parameter.data == "paramvalue":
-                                    assert len(parameter.children) == 2
-                                    pname, ptype = self.visit(parameter.children[0])
-                                    value = parameter.children[1]
-                                    assert isinstance(value, Tree)
-                                    if value.data in (
-                                        "python__number",
-                                        "python__string",
-                                    ):
-                                        pvalue = self.visit(value)
-                                    elif value.data == "python__getattr":
-                                        pvalue = ".".join(self.visit(value))
-                                    else:
-                                        pvalue = get_constant(value)
-                                    parameters.append(f"{pname}: {ptype} = {pvalue}")
-                                else:
-                                    raise TypeError(
-                                        f"Unknown parameter type in {func_name}: {repr(parameter)}"
-                                    )
-                            elif (
-                                isinstance(parameter.data, str)
-                                and parameter.data == "python__typedparam"
-                            ):
-                                pname, ptype = self.visit(parameter)
-                                parameters.append(f"{pname}: {ptype}")
-                            else:
-                                raise TypeError(
-                                    f"Uknown parameter type in {func_name}: {repr(parameter)}"
-                                )
-                        else:
-                            raise TypeError(
-                                f"Unknown parameter type in {func_name}: {repr(cparameter)}"
-                            )
-                    func_name += f"({', '.join(parameters)})"
-                else:
-                    assert child_type.value == "suite"
-                    docstring = self.extract_docstring(child)
-            elif isinstance(child_type, str):
-                func_name += f" -> {self.get_varname(child)}"
-            else:
-                raise TypeError(f"Unknown parameter in {func_name}: {repr(child)}")
+        params_item = tree.children[1]
+        if params_item is None:
+            func_name += "()"
+        else:
+            parameters = self.visit(params_item)
+            func_name += f"({', '.join(parameters)})"
+
+        output_type = tree.children[2]
+        if output_type is not None:
+            assert isinstance(output_type, Tree)
+            if isinstance(output_type.data, str):
+                func_name += f" -> {self.get_varname(output_type)}"
+
+        suite_item = tree.children[3]
+        assert isinstance(suite_item, Tree)
+        assert isinstance(suite_item.data, Token)
+        assert suite_item.data.type == "RULE"
+        assert suite_item.data == "suite"
+        docstring = self.extract_docstring(suite_item)
 
         self.has_members = True
         prefix = self.TAB_SPACES * self.indent
