@@ -22,7 +22,7 @@
 
 import argparse
 import io
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 from lark import Lark
 from lark.indenter import PythonIndenter
@@ -197,6 +197,26 @@ class GenerateStub(Interpreter):
         else:
             return get_constant(tree)
 
+    def python__annassign(self, tree: Tree) -> None:
+        assert len(tree.children) == 3
+        name = self.get_varname(tree.children[0])
+        typename = self.get_varname(tree.children[1])
+        value = self.visit(tree.children[2])
+        instruction = f"{name}: {typename} = {value}"
+        if self.indent == 0:
+            self.output.write(f"\n{instruction}\n")
+        else:
+            self.output.write(f"\n{self.TAB_SPACES * self.indent}{instruction}")
+
+    def python__assign(self, tree: Tree) -> None:
+        name = self.get_varname(tree.children[0])
+        value_item = tree.children[1]
+        value = self.visit(value_item)
+        if value_item.data == "python__getattr":
+            value = ".".join(value)
+        self.has_members = True
+        self.output.write(f"\n{self.TAB_SPACES * self.indent}{name} = {value}")
+
     def python__classdef(self, tree: Tree) -> None:
         class_name: str = ""
         for child in tree.children:
@@ -268,13 +288,13 @@ class GenerateStub(Interpreter):
         if decorator_name[0] != "_":
             self.output.write(f"\n{self.TAB_SPACES*self.indent}@{decorator_name}")
 
-    def cyfuncdef(self, tree:Tree) -> None:
+    def cyfuncdef(self, tree: Tree) -> None:
         self.funcdef(tree)
 
-    def cdeclare_var(self, _tree:Tree) -> None:
+    def cdeclare_var(self, _tree: Tree) -> None:
         pass
 
-    def cparameters(self, tree:Tree) -> List[str]:
+    def cparameters(self, tree: Tree) -> List[str]:
         parameters: List[str] = []
         for parameter in tree.children:
             if parameter is None:
@@ -306,9 +326,7 @@ class GenerateStub(Interpreter):
                 elif parameter.data.value == "starparams":
                     pass
                 else:
-                    raise TypeError(
-                        f"Unknown parameter type: {repr(parameter)}"
-                    )
+                    raise TypeError(f"Unknown parameter type: {repr(parameter)}")
             elif isinstance(parameter.data, str) and parameter.data in (
                 "python__typedparam",
                 "ctypedparam",
@@ -316,9 +334,7 @@ class GenerateStub(Interpreter):
                 pname, ptype = self.visit(parameter)
                 parameters.append(f"{pname}: {ptype}")
             else:
-                raise TypeError(
-                    f"Unknown parameter type: {repr(parameter)}"
-                )
+                raise TypeError(f"Unknown parameter type: {repr(parameter)}")
 
         return parameters
 
