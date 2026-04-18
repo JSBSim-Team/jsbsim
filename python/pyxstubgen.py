@@ -113,32 +113,16 @@ class GenerateStub(Interpreter):
         if not tree.children or not isinstance(tree.children[0], Tree):
             return ""
 
-        # Navigate through the AST to find a string literal
-        # Expected path: tree -> simple_stmt -> expr_stmt -> string
-        current = tree.children[0]
-
-        while isinstance(current, Tree):
-            stmt_data: Union[str, Token] = current.data
-
-            if isinstance(stmt_data, Token):
-                if stmt_data.value in ("simple_stmt", "expr_stmt") and current.children:
-                    current = current.children[0]
-                    continue
-            elif isinstance(stmt_data, str):
-                if stmt_data == "python__string":
-                    # Found a string - this is our docstring
-                    return self.visit(current)
-                elif (
-                    stmt_data in ("python__simple_stmt", "python__expr_stmt")
-                    and current.children
-                ):
-                    current = current.children[0]
-                    continue
-
-            # If we get here, we couldn't navigate further or it's not a docstring
+        first_statement = tree.children[0]
+        if first_statement.data != "python__expr_stmt" or not first_statement.children:
             return ""
 
-        return ""
+        assert len(first_statement.children) == 1
+        content = first_statement.children[0]
+        if not isinstance(content, Tree) or content.data != "python__string":
+            return ""
+
+        return self.visit(content)
 
     def python__dotted_as_name(self, tree: Tree) -> str:
         assert len(tree.children) == 2
@@ -293,7 +277,7 @@ class GenerateStub(Interpreter):
                     func_name = rule_name(child)
                     if func_name in ("__cinit__", "__dealloc__"):
                         return
-                    if  func_name[0] == "_" and func_name[1] != '_':
+                    if func_name[0] == "_" and func_name[1] != "_":
                         return
                 elif child_type.value == "cparameters":  # Get the function parameters
                     parameters: List[str] = []
@@ -322,7 +306,7 @@ class GenerateStub(Interpreter):
                                     ):
                                         pvalue = self.visit(value)
                                     elif value.data == "python__getattr":
-                                        pvalue = '.'.join(self.visit(value))
+                                        pvalue = ".".join(self.visit(value))
                                     else:
                                         pvalue = get_constant(value)
                                     parameters.append(f"{pname}: {ptype} = {pvalue}")
