@@ -193,7 +193,7 @@ bool FGScript::LoadScript(const SGPath& script, double default_dT,
   }
 
   auto IC = FDMExec->GetIC();
-  if ( ! IC->Load( initialize )) {
+  if ( ! IC->Load( initialize )) { // here
     FGLogging log(LogLevel::ERROR);
     log << "Initialization unsuccessful\n";
     return false;
