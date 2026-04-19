@@ -3,6 +3,7 @@ set(SOURCES FGElectric.cpp
             FGForce.cpp
             FGNozzle.cpp
             FGPiston.cpp
+            FGPistonDiesel.cpp
             FGPropeller.cpp
             FGRocket.cpp
             FGTank.cpp
@@ -18,6 +19,7 @@ set(HEADERS FGElectric.h
             FGForce.h
             FGNozzle.h
             FGPiston.h
+            FGPistonDiesel.h
             FGPropeller.h
             FGRocket.h
             FGTank.h

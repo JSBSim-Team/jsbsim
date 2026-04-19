@@ -55,6 +55,7 @@ INCLUDES
 #include "models/propulsion/FGRocket.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGPiston.h"
+#include "models/propulsion/FGPistonDiesel.h"
 #include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
@@ -406,6 +407,9 @@ bool FGPropulsion::Load(Element* el)
       if (engine_element->FindElement("piston_engine")) {
         Element *element = engine_element->FindElement("piston_engine");
         Engines.push_back(make_shared<FGPiston>(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("diesel_engine")) {
+        Element *element = engine_element->FindElement("diesel_engine");
+        Engines.push_back(make_shared<FGPistonDiesel>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("turbine_engine")) {
         Element *element = engine_element->FindElement("turbine_engine");
         Engines.push_back(make_shared<FGTurbine>(FDMExec, element, numEngines, in));
@@ -821,10 +825,12 @@ void FGPropulsion::SetFuelFreeze(bool f)
 void FGPropulsion::bind(void)
 {
   bool HavePistonEngine = false;
+  bool HavePistonDieselEngine = false;
   bool HaveTurboEngine = false;
 
   for (const auto& engine: Engines) {
     if (!HavePistonEngine && engine->GetType() == FGEngine::etPiston) HavePistonEngine = true;
+    if (!HavePistonDieselEngine && engine->GetType() == FGEngine::etPistonDiesel) HavePistonDieselEngine = true;
     if (!HaveTurboEngine && engine->GetType() == FGEngine::etTurbine) HaveTurboEngine = true;
     if (!HaveTurboEngine && engine->GetType() == FGEngine::etTurboprop) HaveTurboEngine = true;
   }
@@ -834,6 +840,10 @@ void FGPropulsion::bind(void)
   if (HaveTurboEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
     PropertyManager->Tie("propulsion/cutoff_cmd", this,  &FGPropulsion::GetCutoff, &FGPropulsion::SetCutoff);
+  }
+
+  if (HavePistonDieselEngine) {
+      PropertyManager->Tie("propulsion/starter_cmd", this, &FGPropulsion::GetStarter, &FGPropulsion::SetStarter);
   }
 
   if (HavePistonEngine) {

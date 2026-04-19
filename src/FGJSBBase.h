@@ -314,6 +314,7 @@ protected:
   static constexpr double lbtoslug = 1.0/slugtolb;
   static constexpr double kgtolb = 2.20462;
   static constexpr double kgtoslug = 0.06852168;
+  static constexpr double intom = 0.0254;
   static const std::string needed_cfg_version;
   static const std::string JSBSim_version;
 

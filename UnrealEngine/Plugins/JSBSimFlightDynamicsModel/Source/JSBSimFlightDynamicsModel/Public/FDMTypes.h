@@ -41,7 +41,7 @@ struct FTank
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 		double TemperatureCelcius = 0;
 
-	// Possible Other Functions - Fill, Drain... 
+	// Possible Other Functions - Fill, Drain...
 
 	FString GetDebugMessage()
 	{
@@ -67,7 +67,7 @@ struct FGear
 	double NormalizedPosition = 1;
 
     /*
-    * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations 
+    * Doesn't exist in JSBSim, but need to be set in Editor in case you want to do separate gear animations
     */
     UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsFrontBogey = false;
@@ -104,12 +104,12 @@ struct FGear
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	FVector Force = FVector(FVector::ZeroVector);
 
-	// Possible Other Functions - Steering, Compression... 
+	// Possible Other Functions - Steering, Compression...
 
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
-		FString UpDownState("I"); 
+		FString UpDownState("I");
 		if (NormalizedPosition == 0) UpDownState = FString("U");
 		if (NormalizedPosition == 1) UpDownState = FString("D");
 		DebugMessage += FString::Printf(TEXT("      NormPosition %.2f [%s]    WOW %d    RollLinVel %.1f    Force %.1f"), NormalizedPosition, *UpDownState, HasWeightOnWheel, WheelRollLinearVelocityMetersPerSec, Force.Length()) + LINE_TERMINATOR;
@@ -123,6 +123,7 @@ enum class EEngineType : uint8 {
 	Unknown,
 	Rocket,
 	Piston,
+  PistonDiesel,
 	Turbine,
 	Turboprop,
 	Electric
@@ -151,11 +152,11 @@ struct FEngineCommand
     /* Normalized [0..1] value expected */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	double Throttle = 0.0f;
-	
+
     /* Normalized [0..1] value expected */
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	double Mixture = 0.0f;
-	
+
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool Starter = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -176,13 +177,13 @@ struct FEngineCommand
 	bool Injection = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Ignition = 0;
-	
+
 	// Turbine & TurboPropeller Engine Commands
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool Reverse = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool CutOff = false;
-	
+
 	// TurboPropeller Engine Commands
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool GeneratorPower = false;
@@ -222,7 +223,7 @@ struct FEngineState
 	double Thrust = 0;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	double EngineRPM = 0;
-	
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	double N1 = 0; // Turbine
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -236,7 +237,7 @@ struct FEngineState
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool CutOff = false; // Turbine + TurboProp
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	int Ignition = 0; // Turbine + 
+	int Ignition = 0; // Turbine +
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	bool GeneratorPower = false; // TurboProp
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
@@ -244,7 +245,7 @@ struct FEngineState
 
     UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
     EMagnetosMode Magnetos = EMagnetosMode::Off; // Piston
-    
+
 	FString GetDebugMessage()
 	{
 		FString DebugMessage;
@@ -254,12 +255,12 @@ struct FEngineState
 		{
 			DebugMessage += FString::Printf(TEXT("                  N1 %.2f N2 %.2f CutOff %d Augmentation %d Reversed %d Injection %d Ignition %d"), N1, N2, CutOff, Augmentation, Reversed, Injection, Ignition) + LINE_TERMINATOR;
 		}
-		
+
         if (EngineType == EEngineType::Piston)
         {
           DebugMessage += FString::Printf(TEXT("                  Magnetos %s "), *UEnum::GetValueAsName(Magnetos).ToString()) + LINE_TERMINATOR;
         }
-    
+
 		return DebugMessage;
 	}
 };
@@ -387,22 +388,22 @@ struct FAircraftState
 	double AltitudeRateFtps = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Speed")
 	double StallWarning = 0;
-	
-	
+
+
 	// Transformation
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	FVector ECEFLocation = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	double Latitude = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
-	double Longitude = 0; 
+	double Longitude = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	FRotator LocalEulerAngles = FRotator::ZeroRotator;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	FVector EulerRates = FVector::ZeroVector;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Transformation")
 	FVector UEForwardHorizontal = FVector::ZeroVector;
-	
+
 	// Misc
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Misc")
 	bool Crashed = false;
@@ -448,7 +449,7 @@ enum class ETurbType:uint8
 	Milspec UMETA(DisplayName = "Milspec turbulence model (Dryden spectrum)"),
 	//Similar to ttMilspec, this model also uses the Dryden spectrum. The main difference lies in how the transfer functions are implemented based on the specifications in the military document. It helps in simulating realistic turbulence under similar conditions as the Milspec model.
 	Tustin UMETA(DisplayName = "Tustin turbulence model (Dryden spectrum)") ,
-	
+
 };
 /*
  * Wind State
@@ -495,8 +496,8 @@ struct JSBSIMFLIGHTDYNAMICSMODEL_API FSimpleWindState
 		static const FSimpleWindState StandardNorthZephyr;
 		//South wind, a wind speed that people perceive as relatively strong.
 		static const FSimpleWindState StandardSouthZephyr;
-	
-	
-	
+
+
+
 };
 

@@ -668,7 +668,7 @@ jobs:
           find . -type f -name *.exe -exec cp {} dist/. \;
           find . -type f -name *.deb -exec cp {} dist/. \;
       - name: Rolling release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -724,7 +724,7 @@ jobs:
           export MSVC_VERSION=`cat MSVC_version.txt`
           echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
       - name: GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

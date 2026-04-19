@@ -321,6 +321,8 @@ class GenerateStub(Interpreter):
                                         "python__string",
                                     ):
                                         pvalue = self.visit(value)
+                                    elif value.data == "python__getattr":
+                                        pvalue = '.'.join(self.visit(value))
                                     else:
                                         pvalue = get_constant(value)
                                     parameters.append(f"{pname}: {ptype} = {pvalue}")
