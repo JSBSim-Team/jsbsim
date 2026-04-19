@@ -223,6 +223,14 @@ We are also on Facebook: <https://www.facebook.com/jsbsim/>
 
 # Legal Notice
 
+<p><a href="https://opensource.org/licenses/LGPL-2.1">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://opensource.org/wp-content/themes/osi/assets/img/osi-badge-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://opensource.org/wp-content/uploads/2022/10/osi-badge-dark.svg">
+    <img src="https://opensource.org/wp-content/uploads/2022/10/osi-badge-dark.svg" alt="OSI approved license badge for LGPL-2.1" width="180">
+  </picture>
+</a></p>
+
 The JSBSim library is open source and is licensed under the [LGPL 2.1 license](https://opensource.org/licenses/LGPL-2.1). The license is included in the source code file [COPYING](https://github.com/JSBSim-Team/jsbsim/blob/master/COPYING).
 
 The Unreal Engine Reference Application for JSBSim is open source and is licensed under the [MIT license](https://opensource.org/licenses/MIT). The license is included in the source code file [UnrealEngine/LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/LICENSE.txt).
