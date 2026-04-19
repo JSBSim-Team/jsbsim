@@ -205,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="src\models\propulsion\FGPiston.cpp">
       <Filter>Source Files</Filter>
+    <ClCompile Include="src\models\propulsion\FGPistonDiesel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     </ClCompile>
     <ClCompile Include="src\models\FGPropagate.cpp">
       <Filter>Source Files</Filter>

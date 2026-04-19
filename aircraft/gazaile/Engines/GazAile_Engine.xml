@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+  File:     GazAile_Engine.xml
+  Author:   Aero-Matic v 0.83
+
+  Inputs:
+    name:           GazAile_Engine
+    type:           piston
+    power:          55 hp
+    augmented?      no
+    injected?       no
+-->
+
+<diesel_engine name="GazAile_Engine">
+  <!-- PSA TUD3 — 1,360 cc IDI naturally aspirated diesel
+       75 mm bore × 77 mm stroke, 4-cylinder, compression ratio 22.5:1
+       53 PS (52 hp / 39 kW) @ 5,000 RPM, 84 N·m @ 2,500 RPM
+       Indirect injection with Lucas/Bosch rotary distributor pump -->
+
+  <displacement unit="IN3"> 83.0 </displacement>
+  <maxhp>                   52   </maxhp>
+  <maxrpm>               5500   </maxrpm>
+  <rated-rpm>            5000   </rated-rpm>
+  <peak-torque-rpm>      2500   </peak-torque-rpm>
+  <idlerpm>               1700   </idlerpm>
+  <cycles>                  4   </cycles>
+  <bore unit="IN">          2.953  </bore>
+  <stroke unit="IN">        3.0315 </stroke>
+  <cylinders>               4      </cylinders>
+  <compression-ratio>      22   </compression-ratio>
+  <static-friction unit="HP"> 1.0 </static-friction>
+  <starter-torque>         30.0   </starter-torque>
+  <starter-rpm>          2000     </starter-rpm>
+  <injection-type>         IDI    </injection-type>
+  <static-fmep unit="PA">  20000 </static-fmep>
+  <dynamic-fmep unit="PA"> 9000 </dynamic-fmep>
+</diesel_engine>

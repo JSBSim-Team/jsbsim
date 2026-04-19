@@ -1,0 +1,4 @@
+<?xml version="1.0"?> 
+<electric_engine name="GazAile_Elec_Engine">
+ <power unit="WATTS"> 41000 </power> <!-- 41000 Watts Equivalent to ~55hp -->
+</electric_engine>

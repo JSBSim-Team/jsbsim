@@ -35,6 +35,7 @@
 #include "models/FGMassBalance.h"
 #include "models/propulsion/FGThruster.h"
 #include "models/propulsion/FGPiston.h"
+#include "models/propulsion/FGPistonDiesel.h"
 #include "models/propulsion/FGTurbine.h"
 #include "models/propulsion/FGTurboProp.h"
 #include "models/propulsion/FGTank.h"
@@ -356,7 +357,7 @@ void UJSBSimMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
         FTransform ENUTransform = GeoReferencingSystem->GetTangentTransformAtECEFLocation(AircraftState.ECEFLocation);
         FRotator LocalUERotation(AircraftState.LocalEulerAngles);
         LocalUERotation.Yaw -= 90.0; // JSBSim heading is aero heading (0 at north). We have to remove 90 because in UE, 0 is pointing east.
-        if (GeoReferencingSystem->PlanetShape == EPlanetShape::FlatPlanet) //Fix for Flat Planet bug 
+        if (GeoReferencingSystem->PlanetShape == EPlanetShape::FlatPlanet) //Fix for Flat Planet bug
         {
           LocalUERotation.Yaw -= 180.0;
           ECEFForwardHorizontal.Y *= -1.0;
@@ -1079,6 +1080,15 @@ void UJSBSimMovementComponent::GetEnginesStates()
       std::shared_ptr < JSBSim::FGPiston> PistonEngine = std::static_pointer_cast<JSBSim::FGPiston>(Engine);
       EngineStates[i].Magnetos = (EMagnetosMode)PistonEngine->GetMagnetos();
       break;
+    }
+    case JSBSim::FGEngine::etPistonDiesel:
+    {
+    std::shared_ptr<JSBSim::FGPistonDiesel> DieselEngine =
+        std::static_pointer_cast<JSBSim::FGPistonDiesel>(Engine);
+    EngineStates[i].FuelRack = DieselEngine->getFuelRack();
+    EngineStates[i].CoolantTemp = DieselEngine->getCoolantTemp_degF();
+    EngineStates[i].GlowPlugOn = DieselEngine->getGlowPlugOn();
+    break;
     }
     case JSBSim::FGEngine::etTurbine:
     {

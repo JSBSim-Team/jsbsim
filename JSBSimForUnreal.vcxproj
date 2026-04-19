@@ -214,6 +214,7 @@
     <ClInclude Include="src\math\FGParameter.h" />
     <ClInclude Include="src\models\flight_control\FGPID.h" />
     <ClInclude Include="src\models\propulsion\FGPiston.h" />
+    <ClInclude Include="src\models\propulsion\FGPistonDiesel.h" />
     <ClInclude Include="src\models\FGPropagate.h" />
     <ClInclude Include="src\models\propulsion\FGPropeller.h" />
     <ClInclude Include="src\input_output\FGPropertyManager.h" />
