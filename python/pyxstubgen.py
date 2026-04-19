@@ -200,6 +200,8 @@ class GenerateStub(Interpreter):
     def python__annassign(self, tree: Tree) -> None:
         assert len(tree.children) == 3
         name = self.get_varname(tree.children[0])
+        if name[0] == "_" and (name[1] != "_" or name[-2:] != "__"):
+            return
         typename = self.get_varname(tree.children[1])
         value = self.visit(tree.children[2])
         instruction = f"{name}: {typename} = {value}"
@@ -210,6 +212,8 @@ class GenerateStub(Interpreter):
 
     def python__assign(self, tree: Tree) -> None:
         name = self.get_varname(tree.children[0])
+        if name[0] == "_" and (name[1] != "_" or name[-2:] != "__"):
+            return
         value_item = tree.children[1]
         value = self.visit(value_item)
         if value_item.data == "python__getattr":
