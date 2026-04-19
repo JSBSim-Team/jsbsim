@@ -37,8 +37,6 @@ ADM  2026/04/17      Added support for 4D and higher tables.
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <algorithm>
-#include <cctype>
 #include <limits>
 #include <assert.h>
 
@@ -127,9 +125,7 @@ unsigned int ParseLookupAxis(const string& lookup_axis)
   if (lookup_axis.rfind("axis", 0) == 0) {
     const string suffix = lookup_axis.substr(4);
     if (!suffix.empty() &&
-        std::all_of(suffix.begin(), suffix.end(),
-                    [](unsigned char c)
-                    { return std::isdigit(c) != 0; })) {
+        suffix.find_first_not_of("0123456789") == string::npos) {
       const unsigned long axis = std::stoul(suffix);
       if (axis >= 1ul)
         return static_cast<unsigned int>(axis - 1ul);
@@ -270,6 +266,15 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       axisElement = el->FindNextElement("independentVar");
     }
 
+    // Check that the lookup axes match the declared dimension of the table.
+    for (unsigned int axis=0u; axis<declared_dimension; ++axis) {
+      if (!HasLookupProperty(axis)) {
+        XMLLogException err(el);
+        err << "FGTable: missing lookup axis \"" << LookupAxisName(axis) << "\"\n";
+        throw err;
+      }
+    }
+
   } else if (!internal && el->GetAttributeValue("breakPoint").empty() &&
              el->GetName() != "tableData") {
     // no independentVars found, and table is not marked as internal, nor is it
@@ -327,25 +332,12 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
           throw err;
         }
 
-        for (unsigned int axis=0u; axis+1u<nDims; ++axis) {
-          if (HasLookupProperty(axis) && !subtable->HasLookupProperty(axis))
-            subtable->SetLookupProperty(axis, lookupProperty[axis]);
-        }
-
         Data.push_back(child->GetAttributeValueAsNumber("breakPoint"));
         Tables.push_back(std::move(subtable));
         child = el->FindNextElement(child_name);
       }
 
       nRows = static_cast<unsigned int>(Tables.size());
-
-      if (declared_dimension != 0u && declared_dimension != nDims) {
-        XMLLogException err(el);
-        err << "FGTable: " << declared_dimension
-            << " lookup axes were declared, but the slice nesting implies a "
-            << nDims << "D table.\n";
-        throw err;
-      }
     } else if (nTableData == 1u) {
       leafData = el->FindElement("tableData");
     } else {
@@ -356,22 +348,12 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   }
 
   if (leafData) {
-    const unsigned int dimension = InferLeafDimension(leafData);
-
-    if (declared_dimension != 0u && declared_dimension != dimension) {
-      XMLLogException err(el);
-      err << "FGTable: " << declared_dimension
-          << " lookup axes were declared, but the data layout is "
-          << dimension << "D.\n";
-      throw err;
-    }
-
-    nDims = dimension;
-
     stringstream buf;
     AppendNumericData(leafData, buf);
 
-    switch (dimension) {
+    nDims = InferLeafDimension(leafData);
+
+    switch (nDims) {
     case 1u:
       nRows = leafData->GetNumDataLines();
       nCols = 1u;
@@ -395,15 +377,12 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     }
   }
 
-  // Check that the lookup axes match the declared dimension of the table.
-  if (!internal && el->GetAttributeValue("breakPoint").empty()) {
-    for (unsigned int axis=0u; axis<nDims; ++axis) {
-      if (!HasLookupProperty(axis)) {
-        XMLLogException err(el);
-        err << "FGTable: missing lookup axis \"" << LookupAxisName(axis) << "\"\n";
-        throw err;
-      }
-    }
+  if (declared_dimension != 0u && declared_dimension != nDims) {
+    XMLLogException err(el);
+    err << "FGTable: " << declared_dimension
+        << " lookup axes were declared, but the slice nesting implies a "
+        << nDims << "D table.\n";
+    throw err;
   }
 
   Debug(0);
@@ -536,13 +515,25 @@ double FGTable::GetValue(void) const
   assert(!internal);
   assert(nDims > 0u);
 
-  std::vector<double> keys(nDims);
-  for (unsigned int axis=0u; axis<nDims; ++axis) {
-    assert(HasLookupProperty(axis));
-    keys[axis] = lookupProperty[axis]->getDoubleValue();
-  }
+  switch(Type) {
+  case tt1D:
+    return GetValue(lookupProperty[eRow]->getDoubleValue());
+  case tt2D:
+    return GetValue(lookupProperty[eRow]->getDoubleValue(),
+                    lookupProperty[eColumn]->getDoubleValue());
+  case ttND:
+  {
+    std::vector<double> keys(nDims);
+    for (unsigned int axis=0u; axis<nDims; ++axis) {
+      assert(HasLookupProperty(axis));
+      keys[axis] = lookupProperty[axis]->getDoubleValue();
+    }
 
-  return GetValue(keys.data(), nDims);
+    return GetValue(keys.data());
+  }
+  default:
+    assert(false);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -550,15 +541,14 @@ double FGTable::GetValue(void) const
 double FGTable::GetValue(const std::vector<double>& keys) const
 {
   assert(!keys.empty());
-  return GetValue(keys.data(), static_cast<unsigned int>(keys.size()));
+  assert(keys.size() >= nDims);
+  return GetValue(keys.data());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTable::GetValue(const double* keys, unsigned int dimension) const
+double FGTable::GetValue(const double* keys) const
 {
-  assert(dimension == nDims);
-
   if (Type == tt1D)
     return GetValue(keys[0]);
 
@@ -566,17 +556,16 @@ double FGTable::GetValue(const double* keys, unsigned int dimension) const
     return GetValue(keys[0], keys[1]);
 
   assert(Type == ttND);
-  assert(dimension >= 3u);
   assert(Data.size() == nRows+1);
 
-  const double outerKey = keys[dimension-1u];
+  const double outerKey = keys[nDims-1];
 
   // If the key is off the end (or before the beginning) of the table, just
   // return the boundary-table value, do not extrapolate.
   if (outerKey <= Data[1])
-    return Tables[0]->GetValue(keys, dimension-1u);
+    return Tables[0]->GetValue(keys);
   else if (outerKey >= Data[nRows])
-    return Tables[nRows-1]->GetValue(keys, dimension-1u);
+    return Tables[nRows-1]->GetValue(keys);
 
   // Search for the right breakpoint.
   // This is a linear search, the algorithm is O(n).
@@ -589,8 +578,8 @@ double FGTable::GetValue(const double* keys, unsigned int dimension) const
   double Factor = (outerKey - x0) / Span;
   assert(Factor >= 0.0 && Factor <= 1.0);
 
-  double y0 = Tables[r-2u]->GetValue(keys, dimension-1u);
-  return Factor*(Tables[r-1u]->GetValue(keys, dimension-1u) - y0) + y0;
+  double y0 = Tables[r-2u]->GetValue(keys);
+  return Factor*(Tables[r-1u]->GetValue(keys) - y0) + y0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -625,11 +614,10 @@ double FGTable::GetValue(double key) const
 
 double FGTable::GetValue(double rowKey, double colKey) const
 {
-  if (Type == tt1D || (Type == tt2D && nCols == 1))
-    return GetValue(rowKey);
-
   assert(Type == tt2D);
   assert(Data.size() == (nCols+1)*(nRows+1));
+
+  if (nCols == 1) return GetValue(rowKey);
 
   unsigned int c = 2;
   while(Data[c] < colKey && c < nCols) c++;
@@ -660,7 +648,8 @@ double FGTable::GetValue(double rowKey, double colKey) const
 double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
   const double keys[3] = {rowKey, colKey, tableKey};
-  return GetValue(keys, 3u);
+  assert(nDims == 3);
+  return GetValue(keys);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -668,7 +657,8 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 double FGTable::GetValue(double a1, double a2, double a3, double a4) const
 {
   const double keys[4] = {a1, a2, a3, a4};
-  return GetValue(keys, 4u);
+  assert(nDims == 4);
+  return GetValue(keys);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -676,7 +666,8 @@ double FGTable::GetValue(double a1, double a2, double a3, double a4) const
 double FGTable::GetValue(double a1, double a2, double a3, double a4, double a5) const
 {
   const double keys[5] = {a1, a2, a3, a4, a5};
-  return GetValue(keys, 5u);
+  assert(nDims == 5);
+  return GetValue(keys);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -685,7 +676,8 @@ double FGTable::GetValue(double a1, double a2, double a3, double a4,
                          double a5, double a6) const
 {
   const double keys[6] = {a1, a2, a3, a4, a5, a6};
-  return GetValue(keys, 6u);
+  assert(nDims == 6);
+  return GetValue(keys);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

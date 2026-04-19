@@ -26,7 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 JSB  1/9/00          Created
-ADM  2026/04/17      Added support for 4D and higher tables. 
+ADM  2026/04/17      Added support for 4D and higher tables.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -437,7 +437,7 @@ private:
     return axis < lookupProperty.size() && lookupProperty[axis];
   }
 
-  double GetValue(const double* keys, unsigned int dimension) const;
+  double GetValue(const double* keys) const;
   void bind(Element* el, const std::string& Prefix);
   void missingData(Element *el, unsigned int expected_size, size_t actual_size);
   void Debug(int from);
