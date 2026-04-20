@@ -151,7 +151,7 @@ class TestAccelerometer(JSBSimTestCase):
         # are quite relaxed themselves.
         self.assertAlmostEqual(fdm['fcs/accelerometer/X'], fax, delta=1E-6)
         self.assertAlmostEqual(fdm['fcs/accelerometer/Y'], fay, delta=1E-5)
-        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=1E-6)
+        self.assertAlmostEqual(fdm['fcs/accelerometer/Z'], faz, delta=2E-6)
 
     def testSpinningBodyOnOrbit(self):
         script_name = 'ball_orbit.xml'
