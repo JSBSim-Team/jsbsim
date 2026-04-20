@@ -853,6 +853,28 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("rpm", eng->getRPM());
         } // end FGPiston code block
         break;
+      case FGEngine::etPistonDiesel:
+        {
+        FGPistonDiesel* eng = (FGPistonDiesel*)Propulsion->GetEngine(i);
+        node->setDoubleValue("egt-degf", eng->getExhaustGasTemp_degF());
+        node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
+        node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
+        node->setDoubleValue("mp-osi", eng->getManifoldPressure_inHg());
+        node->setDoubleValue("mp-inhg", eng->getManifoldPressure_inHg());
+        node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
+        node->setDoubleValue("rpm", eng->getRPM());
+        node->setDoubleValue("coolant-temperature-degf", eng->getCoolantTemperature_degF());
+        node->setDoubleValue("fuel-rack", eng->getFuelRack());
+        node->setDoubleValue("afr", eng->getAFR());
+        node->setDoubleValue("glow-plug-on", eng->getGlowPlugOn());
+        node->setDoubleValue("boost-pa", eng->getBoostPa());
+        node->setDoubleValue("power-hp", eng->getHP());
+        node->setDoubleValue("combustion-efficiency", eng->getCombustionEfficiency());
+        node->setDoubleValue("ve-reduced", eng->getVolumetricEfficiencyReduced());
+        node->setDoubleValue("indicated-hp", eng->getIndicatedHorsePower());
+        node->setDoubleValue("torque-si", eng->getTorque_SI());
+        } // end FGPistonDiesel code block
+        break; // end FGPistonDiesel code block
       case FGEngine::etRocket:
         { // FGRocket code block
 //        FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);

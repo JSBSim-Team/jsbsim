@@ -66,13 +66,13 @@ CLASS DOCUMENTATION
 
 /** Base class for all engines.
     This base class contains methods and members common to all engines, such as
-    logic to drain fuel from the appropriate tank, etc. 
+    logic to drain fuel from the appropriate tank, etc.
     <br>
     <h3>Configuration File Format:</h3>
 @code
         <engine file="{string}">
             <feed> {integer} </feed>
-            ... optional more feed tank index numbers ... 
+            ... optional more feed tank index numbers ...
             <thruster file="{string}">
                 <location unit="{IN | M}">
                     <x> {number} </x>
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
 
   Not all thruster types can be matched with a given engine type.  See the class
   documentation for engine and thruster classes.
-</pre>     
+</pre>
     @author Jon S. Berndt
 */
 
@@ -133,7 +133,7 @@ public:
   FGEngine(int engine_number, struct Inputs& input);
   ~FGEngine() override;
 
-  enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etTurboprop, etElectric};
+  enum EngineType {etUnknown, etRocket, etPiston, etPistonDiesel, etTurbine, etTurboprop, etElectric};
 
   EngineType GetType(void) const { return Type; }
   virtual const std::string&  GetName(void) const { return Name; }
@@ -171,7 +171,7 @@ public:
   virtual void Calculate(void) = 0;
 
   virtual double GetThrust(void) const;
-    
+
   /** The fuel need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
