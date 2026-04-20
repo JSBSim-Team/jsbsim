@@ -275,76 +275,69 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       }
     }
 
-  } else if (!internal && el->GetAttributeValue("breakPoint").empty() &&
-             el->GetName() != "tableData") {
+  } else if (!internal && el->GetName() != "tableData") {
     // no independentVars found, and table is not marked as internal, nor is it
-    // a sliced sub-table
+    // a nested sub-table
     XMLLogException err(el);
     err << "No independentVars found, and table is not marked as internal,"
-        << " nor is it a sliced sub-table.\n";
+        << " nor is it a nested sub-table.\n";
     throw err;
   }
   // end lookup property code
 
   Element* leafData = nullptr;
 
-  if (el->GetName() == "tableData") {
+  const unsigned int nChildTableData = el->GetNumElements("tableData");
+
+  if (el->GetName() == "tableData" && nChildTableData == 0u) {
+    // This is a leaf <tableData> element with numeric content
     leafData = el;
-  } else {
-    const unsigned int nTableData = el->GetNumElements("tableData");
-    const unsigned int nSlices = el->GetNumElements("slice");
+  } else if (nChildTableData > 1u
+             || (el->GetName() == "tableData" && nChildTableData > 0u)) {
+    // N-dimensional table: multiple <tableData> children (3D+), or a container
+    // <tableData> with nested <tableData> children (4D+)
+    Type = ttND;
+    // Fill unused elements with NaNs to detect illegal access.
+    Data.push_back(std::numeric_limits<double>::quiet_NaN());
+    nCols = 1u;
 
-    if (nTableData > 0u && nSlices > 0u) {
-      XMLLogException err(el);
-      err << "FGTable: mixed <slice> and <tableData> children are not allowed\n";
-      throw err;
-    }
+    Element* child = el->FindElement("tableData");
 
-    if (nSlices > 0u || nTableData > 1u) {
-      Type = ttND;
-      // Fill unused elements with NaNs to detect illegal access.
-      Data.push_back(std::numeric_limits<double>::quiet_NaN());
-      nCols = 1u;
-
-      const char* child_name = (nSlices > 0u) ? "slice" : "tableData";
-      Element* child = el->FindElement(child_name);
-
-      while (child) {
-        const string brkpt_string = child->GetAttributeValue("breakPoint");
-        if (brkpt_string.empty()) {
-          XMLLogException err(child);
-          err << "FGTable: missing breakPoint on <" << child_name << ">\n";
-          throw err;
-        }
-
-        auto subtable = std::make_unique<FGTable>(PropertyManager, child);
-
-        if (nDims == 0u) {
-          nDims = subtable->nDims + 1u;
-          if (nDims < 3u) {
-            XMLLogException err(child);
-            err << "FGTable: sliced tables must contain at least 2D subtables\n";
-            throw err;
-          }
-        } else if (subtable->nDims + 1u != nDims) {
-          XMLLogException err(child);
-          err << "FGTable: inconsistent sub-table dimensionality in sliced table\n";
-          throw err;
-        }
-
-        Data.push_back(child->GetAttributeValueAsNumber("breakPoint"));
-        Tables.push_back(std::move(subtable));
-        child = el->FindNextElement(child_name);
+    while (child) {
+      const string brkpt_string = child->GetAttributeValue("breakPoint");
+      if (brkpt_string.empty()) {
+        XMLLogException err(child);
+        err << "FGTable: missing breakPoint on <tableData>\n";
+        throw err;
       }
 
-      nRows = static_cast<unsigned int>(Tables.size());
-    } else if (nTableData == 1u) {
-      leafData = el->FindElement("tableData");
-    } else {
-      XMLLogException err(el);
-      err << "FGTable: <tableData> or <slice> elements are missing\n";
-      throw err;
+      auto subtable = std::make_unique<FGTable>(PropertyManager, child);
+
+      if (nDims == 0u) {
+        nDims = subtable->nDims + 1u;
+        if (nDims < 3u) {
+          XMLLogException err(child);
+          err << "FGTable: nested tables must contain at least 2D subtables\n";
+          throw err;
+        }
+      } else if (subtable->nDims + 1u != nDims) {
+        XMLLogException err(child);
+        err << "FGTable: inconsistent sub-table dimensionality in nested table\n";
+        throw err;
+      }
+
+      Data.push_back(child->GetAttributeValueAsNumber("breakPoint"));
+      Tables.push_back(std::move(subtable));
+      child = el->FindNextElement("tableData");
     }
+
+    nRows = static_cast<unsigned int>(Tables.size());
+  } else if (nChildTableData == 1u) {
+    leafData = el->FindElement("tableData");
+  } else {
+    XMLLogException err(el);
+    err << "FGTable: <tableData> elements are missing\n";
+    throw err;
   }
 
   if (leafData) {
@@ -380,7 +373,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   if (declared_dimension != 0u && declared_dimension != nDims) {
     XMLLogException err(el);
     err << "FGTable: " << declared_dimension
-        << " lookup axes were declared, but the slice nesting implies a "
+        << " lookup axes were declared, but the tableData nesting implies a "
         << nDims << "D table.\n";
     throw err;
   }

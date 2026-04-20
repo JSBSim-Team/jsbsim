@@ -63,7 +63,7 @@ and function definitions.
 
 The legacy 1D/2D/3D XML syntax is preserved. For 4D and higher, add
 independent variables with lookup="axis4", lookup="axis5", ... and
-nest <slice breakPoint="..."> elements.
+nest \<tableData breakPoint="..."\> elements.
 
 For a single "vector" lookup table, the format is as follows:
 
@@ -210,7 +210,7 @@ Example of a 4D table (outer axis is axis4, then axis3/table, row, column):
   <independentVar lookup="table">fcs/table-value</independentVar>
   <independentVar lookup="axis4">fcs/axis4-value</independentVar>
 
-  <slice breakPoint="-1.0">
+  <tableData breakPoint="-1.0">
     <tableData breakPoint="0.0">
                0.0     10.0
       0.0      1.0      2.0
@@ -221,9 +221,9 @@ Example of a 4D table (outer axis is axis4, then axis3/table, row, column):
       0.0      2.0      3.0
       1.0      4.0      5.0
     </tableData>
-  </slice>
+  </tableData>
 
-  <slice breakPoint="1.0">
+  <tableData breakPoint="1.0">
     <tableData breakPoint="0.0">
                0.0     10.0
       0.0      6.0      7.0
@@ -234,7 +234,7 @@ Example of a 4D table (outer axis is axis4, then axis3/table, row, column):
       0.0      7.0      8.0
       1.0      9.0     10.0
     </tableData>
-  </slice>
+  </tableData>
 </table>
 @endcode
 
@@ -248,8 +248,8 @@ Example of a 5D table (outer axis is axis5, then axis4, axis3/table, row, column
   <independentVar lookup="axis4">fcs/axis4-value</independentVar>
   <independentVar lookup="axis5">fcs/axis5-value</independentVar>
 
-  <slice breakPoint="100.0"> <!-- axis5 -->
-    <slice breakPoint="-1.0"> <!-- axis4 -->
+  <tableData breakPoint="100.0"> <!-- axis5 -->
+    <tableData breakPoint="-1.0"> <!-- axis4 -->
       <tableData breakPoint="0.0"> <!-- axis3/table -->
                  0.0     10.0
         0.0      1.0      2.0
@@ -260,9 +260,9 @@ Example of a 5D table (outer axis is axis5, then axis4, axis3/table, row, column
         0.0      2.0      3.0
         1.0      4.0      5.0
       </tableData>
-    </slice>
+    </tableData>
 
-    <slice breakPoint="1.0">
+    <tableData breakPoint="1.0">
       <tableData breakPoint="0.0">
                  0.0     10.0
         0.0      6.0      7.0
@@ -273,18 +273,18 @@ Example of a 5D table (outer axis is axis5, then axis4, axis3/table, row, column
         0.0      7.0      8.0
         1.0      9.0     10.0
       </tableData>
-    </slice>
-  </slice>
+    </tableData>
+  </tableData>
 
-  <slice breakPoint="200.0"> <!-- axis5 -->
-    <slice breakPoint="-1.0"> <!-- axis4 -->
+  <tableData breakPoint="200.0"> <!-- axis5 -->
+    <tableData breakPoint="-1.0"> <!-- axis4 -->
       <tableData breakPoint="0.0">
                  0.0     10.0
         0.0     11.0     12.0
         1.0     13.0     14.0
       </tableData>
-    </slice>
-  </slice>
+    </tableData>
+  </tableData>
 </table>
 @endcode
 
