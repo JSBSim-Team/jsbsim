@@ -825,11 +825,11 @@ cdef class FGFDMExec(FGJSBBase):
     cdef c_FGFDMExec *thisptr      # hold a C++ instance which we're wrapping
     cdef dict properties_cache     # Dictionary cache of property nodes
 
-    def __cinit__(self, root_dir, FGPropertyManager pm_root=None, *args,
-                  **kwargs):
+    def __cinit__(self, root_dir: Optional[str],
+                  pm_root: Optional[FGPropertyManager] = None, *args, **kwargs):
         cdef c_FGPropertyManager* root
 
-        if pm_root:
+        if pm_root is not None:
             root = pm_root.thisptr.get()
         else:
             root = NULL
@@ -838,7 +838,7 @@ cdef class FGFDMExec(FGJSBBase):
         if self.thisptr is NULL:
             raise MemoryError()
 
-        if root_dir:
+        if root_dir is not None:
             if not os.path.isdir(root_dir):
                 raise IOError("Can't find root directory: {0}".format(root_dir))
             self.set_root_dir(root_dir)
