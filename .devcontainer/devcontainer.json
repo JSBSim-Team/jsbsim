@@ -1,0 +1,68 @@
+{
+  "name": "JSBSim",
+  "image": "mcr.microsoft.com/devcontainers/cpp:1-ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
+  },
+  "onCreateCommand": "sudo apt-get update && sudo apt-get install -y cxxtest valgrind binutils-dev libxml2-utils",
+  "postCreateCommand": ".devcontainer/postCreateCommand.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-python.python",
+        "redhat.vscode-xml"
+      ],
+      "settings": {
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.configureOnOpen": true,
+        "cmake.buildType": "Debug",
+        "cmake.parallelJobs": 0,
+        "cmake.sourceDirectory": "${workspaceFolder}",
+        "cmake.configureEnvironment": {
+          "PYTHONPATH": "${workspaceFolder}/build/tests"
+        },
+        "python.defaultInterpreterPath": "/usr/local/python/current/bin/python3",
+        "python.envFile": "${workspaceFolder}/.env",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": false,
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+          "tests"
+        ],
+        "terminal.integrated.env.linux": {
+          "PYTHONPATH": "${workspaceFolder}/build/tests",
+          "JSBSIM_ROOT": "${workspaceFolder}",
+          "CMAKE_BUILD_DIR": "${workspaceFolder}/build"
+        },
+
+        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+        "C_Cpp.intelliSenseEngine": "default",
+        "[cpp]": {
+          "editor.wordBasedSuggestions": "off",
+          "editor.suggestOnTriggerCharacters": true
+        },
+        "files.associations": {
+          "*.xml": "xml",
+          "*.pyx": "cython",
+          "*.pxd": "cython",
+          "*.xsd": "xml"
+        },
+        "editor.formatOnSave": false,
+        "editor.rulers": [
+          80,
+          100
+        ],
+        "search.exclude": {
+          "**/build": true,
+          "**/.git": true,
+          "**/node_modules": true
+        },
+        "extensions.ignoreRecommendations": false
+      }
+    }
+  }
+}
