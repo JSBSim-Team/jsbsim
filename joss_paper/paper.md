@@ -79,7 +79,7 @@ Almost 30 years later, and with the participation of many contributors and colla
 
 # Development and Design Choices
 
-JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase. 
+JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@jsbsim-an-open-source-flight-dynamics-model-in-cpp-2004]. 
 
 In a nutshell, the flow of the code can be illustrated as follows:
 
@@ -159,7 +159,7 @@ Running the above command results in the ball characteristics being read in, pla
 JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. It's use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms.
 
 Examples of use cases include:
-
+  
 - Modeling flight dynamics within a full-featured flight simulator, such as FlightGear, MIXR (formerly known as OpenEaagles), the Outerra world simulator, or Epic Games’ Unreal Engine 5. 
 
 - Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition).
@@ -168,10 +168,12 @@ Examples of use cases include:
 
 - [additional examples here, look at some of the Google Scholar citations for different/interesting use cases]
 
+See also the selection of use cases reported by the authors in 2009 [@progress-on-and-usage-of-the-open-source-flight-dynamics-2009].
+
 
 # Implementation and Engineering Practices
 
-A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the NASA Engineering Safety Center undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation. 
+A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the NASA Engineering Safety Center undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@open-aerospace-jsbsim-nasa-test-cases,open-aerospace-jsbsim-nasa-test-cases-case-01]. 
 
 [description of JSBSim development and version management, etc.]
 
@@ -192,6 +194,8 @@ Agostino De Marco
 Sean McLeod
 
 # References
+
+ - CAVEAT: this section should be left blank. It will be populated by the automatic production workflow of the JOSS paper, based on the citations found in the running text.
 
 Jon Berndt. 
 ["JSBSim: An Open Source Flight Dynamics Model in C++,"](https://arc.aiaa.org/doi/10.2514/6.2004-4923) AIAA 2004-4923. AIAA Modeling and Simulation Technologies Conference and Exhibit. August 2004
