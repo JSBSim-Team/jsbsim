@@ -73,7 +73,7 @@ ipch/
 .vscode/
 .devcontainer/
 
-env.
+.env
 .devcontainer/
 .venv/
 
