@@ -399,7 +399,7 @@ jobs:
           pip install -r python/requirements.txt
           pip install build lark
       - name: Set up Julia
-        uses: julia-actions/setup-julia@v2
+        uses: julia-actions/setup-julia@v3
       - name: Install & Configure Doxygen
         if: env.release == 'true'
         run: |
@@ -780,7 +780,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           # upload entire directory
           path: 'build/documentation/html'
