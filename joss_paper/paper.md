@@ -68,11 +68,6 @@ JSBSim has been in development since 1996; in 2018, its codebase was moved to Gi
 
 The JSBSim XML-based model definitions support validation, and scriptable running supports reproducibility.
 
-Examples of use cases include:
-
-- Modeling flight dynamics within a full-featured flight simulator, such as FlightGear, MIXR (formerly known as OpenEaagles), the Outerra world simulator, or Epic Games’ Unreal Engine 5. 
-
-- [… additional examples here …]
 
 # Early Motivation
 
@@ -161,9 +156,18 @@ Running the above command results in the ball characteristics being read in, pla
 
 # Use Cases and Research Applications
 
-JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. 
+JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. It's use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms.
 
-[Add more here]
+Examples of use cases include:
+
+- Modeling flight dynamics within a full-featured flight simulator, such as FlightGear, MIXR (formerly known as OpenEaagles), the Outerra world simulator, or Epic Games’ Unreal Engine 5. 
+
+- Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition).
+
+- SITL (Software In The Loop) Drone autopilot testing:  [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
+
+- [additional examples here, look at some of the Google Scholar citations for different/interesting use cases]
+
 
 # Implementation and Engineering Practices
 
