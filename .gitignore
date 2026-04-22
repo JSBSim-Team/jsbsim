@@ -71,6 +71,7 @@ ipch/
 
 .vs/
 .vscode/
+.devcontainer/
 
 env.
 .devcontainer/
