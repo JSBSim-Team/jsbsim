@@ -76,6 +76,10 @@ env.
 .devcontainer/
 .venv/
 
+‎.github/workflows/matlab-sfunction-ubuntu.yml
+‎.github/workflows/matlab-sfunction.yml
+‎.github/workflows/cpp-python-build.yml
+
 #################
 ## Jupyter
 #################
