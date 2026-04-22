@@ -39,9 +39,26 @@ bibliography: paper.bib
 
 # Summary
 
-JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions.
+JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions. 
 
-[Mention the languages? In an abstract for JOSS might make sense — Developed in standard-compliant (which one?) C++, exposing a Python API (v3.11+), a MATLAB/Simulink S-Function, as well as various bindings to other languages and environments.]
+JSBSim can be used in batch mode running faster than real-time for flight analysis or AI training or run within a flight simulator environment like FlightGear in real-time.
+
+Features include:
+
+- Rigid body dynamics with support for 6 DoF.
+- Fully configurable aerodynamics, flight control system, propulsion, landing gear arrangement, etc. through XML-based text file format.
+- Accurate Earth model including:
+   - Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
+   - Oblate spherical shape and geodetic coordinates according to the WGS84 geodetic system.
+   - Atmosphere modeled according to the International Standard Atmosphere (1976).
+- Configurable data output formats to screen, file, socket, or any combination of those.
+
+Developed in standard-compliant C++17, JSBSim also includes the following bindings and interfaces:
+
+- Python module (compatible with Python 3.10+)
+- MATLAB S-Function that interfaces JSBSim with MATLAB Simulink
+- Julia bindings
+- Unreal Engine plugin
 
 # Statement of Need
 
