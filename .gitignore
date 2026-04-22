@@ -72,6 +72,10 @@ ipch/
 .vs/
 .vscode/
 
+env.
+.devcontainer/
+.venv/
+
 #################
 ## Jupyter
 #################
