@@ -27,7 +27,7 @@ authors:
 affiliations:
  - name: Jon's affiliation
    index: 1
- - name: Bertrands's affiliation
+ - name: Bertrand's affiliation
    index: 2
  - name: University of Naples Federico II, Italy
    index: 3
@@ -71,9 +71,9 @@ The JSBSim XML-based model definitions support validation, and scriptable runnin
 
 # Early Motivation
 
-While electro-mechanical flight *trainers** (such as Linkís Blue Box) have been around for almost 100 years, flight simulation codebases have been around since the mid-70s, beginning with Bruce Artwickís first foray into computer-based flight simulation, as part of his engineering thesis - fifty years ago! Some of the earliest codebases were written in Fortran and evolved over the years into very capable and trusted tools. However, over the years, additions to those codebases by various contributors resulted in code that was less cohesive, brittle, and hard to read.
+While electro-mechanical flight *trainers** (such as Link‚Äôs Blue Box) have been around for almost 100 years, flight simulation codebases have been around since the mid-70s, beginning with Bruce Artwick‚Äôs first foray into computer-based flight simulation, as part of his engineering thesis - fifty years ago! Some of the earliest codebases were written in Fortran and evolved over the years into very capable and trusted tools. However, over the years, additions to those codebases by various contributors resulted in code that was less cohesive, brittle, and hard to read.
 
-The C++ programming language emerged in the mid-1980ís and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990ís after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, ìthereís got to be a better way,î and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation. 
+The C++ programming language emerged in the mid-1980‚Äôs and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990‚Äôs after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, ‚Äúthere‚Äôs got to be a better way,‚Äù and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation. 
 
 Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim is a great example of what the Open Source paradigm can achieve. 
 
@@ -85,7 +85,7 @@ In a nutshell, the flow of the code can be illustrated as follows:
 
 [diagram or explanation of the architecture of the code and how it is instantiated]
 
-JSBSim is data-driven, with all specific model characteristics contained in data files. Hereís a ìHello Worldî view of a minimal JSBSim invocation, modeling a ball in low Earth orbit. First, here is the XML file containing the characteristics of the ìvehicleî - here, just a ball - in the file named minimal_ball.xml:
+JSBSim is data-driven, with all specific model characteristics contained in data files. Here‚Äôs a ‚ÄúHello World‚Äù view of a minimal JSBSim invocation, modeling a ball in low Earth orbit. First, here is the XML file containing the characteristics of the ‚Äúvehicle‚Äù - here, just a ball - in the file named minimal_ball.xml:
 
 ```xml
 <?xml version="1.0"?>
@@ -160,7 +160,7 @@ JSBSim is used across a broad range of aerospace applications, including flight 
 
 Examples of use cases include:
 
-- Modeling flight dynamics within a full-featured flight simulator, such as FlightGear, MIXR (formerly known as OpenEaagles), the Outerra world simulator, or Epic Gamesí Unreal Engine 5. 
+- Modeling flight dynamics within a full-featured flight simulator, such as FlightGear, MIXR (formerly known as OpenEaagles), the Outerra world simulator, or Epic Games‚Äô Unreal Engine 5. 
 
 - Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition).
 
@@ -194,8 +194,8 @@ Sean McLeod
 # References
 
 Jon Berndt. 
-["JSBSim: An Open Source Flight Dynamics Model in C++,"](https://arc.aiaa.org/doi/10.2514/6.2004-4923)†AIAA 2004-4923. AIAA Modeling and Simulation Technologies Conference and Exhibit. August 2004
+["JSBSim: An Open Source Flight Dynamics Model in C++,"](https://arc.aiaa.org/doi/10.2514/6.2004-4923)¬†AIAA 2004-4923. AIAA Modeling and Simulation Technologies Conference and Exhibit. August 2004
 
-Jon Berndt and Agostino De Marco. ["Progress On and Usage of the Open Source Flight Dynamics Model Software Library, JSBSim,"](https://arc.aiaa.org/doi/10.2514/6.2009-5699)†AIAA 2009-5699. AIAA Modeling and Simulation Technologies Conference. August 2009
+Jon Berndt and Agostino De Marco. ["Progress On and Usage of the Open Source Flight Dynamics Model Software Library, JSBSim,"](https://arc.aiaa.org/doi/10.2514/6.2009-5699)¬†AIAA 2009-5699. AIAA Modeling and Simulation Technologies Conference. August 2009
 
 Daniel G. Murri, E. Bruce Jackson, Robert O. Shelton. ["Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle Simulations,"](https://ntrs.nasa.gov/api/citations/20150001263/downloads/20150001263.pdf) NASA/TM-2015-218675/Volume I
