@@ -29,7 +29,7 @@ affiliations:
    index: 1
  - name: Bertrand's affiliation
    index: 2
- - name: University of Naples Federico II, Italy
+ - name: Professor of Flight Mechanics, University of Naples Federico II, Italy
    index: 3
  - name: Professional Software Developer
    index: 4
