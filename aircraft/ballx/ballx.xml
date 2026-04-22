@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="BALL" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+    <fileheader>
+      <author> Agostino De Marco </author>
+      <filecreationdate>2026-04-22</filecreationdate>
+      <version> Version 1.0 </version>
+      <description> Test file </description>
+      <note>
+        This model of a ballx was created by copying the ball model by Jon S. Berndt.
+        This model is meant to be used as a test case for various scenarios, such as 
+          - N-dimensional lookup tables,
+          - etc. TBD.
+      </note>
+    </fileheader>
+
+    <metrics>
+        <wingarea unit="FT2"> 1 </wingarea>
+        <wingspan unit="FT"> 1 </wingspan>
+        <chord unit="FT"> 1 </chord>
+        <htailarea unit="FT2"> 0 </htailarea>
+        <htailarm unit="FT"> 0 </htailarm>
+        <vtailarea unit="FT2"> 0 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 20 </ixx>
+        <iyy unit="SLUG*FT2"> 10 </iyy>
+        <izz unit="SLUG*FT2"> 10 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <emptywt unit="LBS"> 20000 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <pointmass name="M0">
+            <weight unit="LBS"> 10 </weight>
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+        <pointmass name="M1">
+            <weight unit="LBS"> 0 </weight>
+            <location unit="FT">
+                <x> 0 </x>
+                <y> -5 </y>
+                <z> 0 </z>
+            </location>
+        </pointmass>
+    </mass_balance>
+
+    <ground_reactions>
+        <contact type="BOGEY" name="CONTACT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 0 </static_friction>
+            <dynamic_friction> 0 </dynamic_friction>
+            <rolling_friction> 0 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 200000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+
+    <external_reactions>
+      <!-- "Declare" the reefing term -->
+      <property>fcs/parachute_reef_pos_norm</property>
+      <property>propulsion/rocket_thrust</property>
+
+      <force name="parachute" frame="WIND">
+        <function>
+          <product>
+            <property>aero/qbar-psf</property>
+            <property>fcs/parachute_reef_pos_norm</property>
+            <value> 1.0 </value>  <!-- Full drag coefficient -->
+            <value> 10000.0 </value> <!-- Full parachute area -->
+          </product>
+        </function>
+        <!-- The location below is in structural frame (x positive
+             aft), so this location describes a point 1 foot aft
+             of the origin. In this case, the origin is the center. -->
+        <location unit="FT">
+          <x>1</x>
+          <y>0</y>
+          <z>0</z>
+        </location>
+        <!-- The direction describes a unit vector. In this case, since
+             the selected frame is the WIND frame, the "-1" x component
+             describes a direction exactly opposite of the direction
+             into the WIND vector. That is, the direction specified below
+             is the direction that the drag force acts in. -->
+        <direction>
+          <x> -1 </x>
+          <y>  0 </y>
+          <z>  0 </z>
+        </direction>
+      </force>
+
+      <force name="rocket" frame="INERTIAL">
+        <function>
+          <property> propulsion/rocket_thrust </property>
+        </function>
+        <location unit="FT">
+          <x>0</x>
+          <y>0</y>
+          <z>0</z>
+        </location>
+        <!-- The direction that the thrust acts in is defined below in the Pointing
+             channel of the flight_control section, through the creation of a unit
+             pointing vector. That is, the direction specified below
+             is the direction that the drag force acts in. -->
+      </force>
+
+    </external_reactions>
+
+    <propulsion/>
+
+    <flight_control name="FGFCS">
+
+      <channel name="Pointing">
+
+        <fcs_function name="propulsion/tvc_inertial_x">
+          <function>
+            <quotient>
+              <property>  velocities/eci-x-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/x </output>
+        </fcs_function>
+
+        <fcs_function name="propulsion/tvc_inertial_y">
+          <function>
+            <quotient>
+              <property>  velocities/eci-y-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/y </output>
+        </fcs_function>
+
+        <fcs_function name="propulsion/tvc_inertial_z">
+          <function>
+            <quotient>
+              <property>  velocities/eci-z-fps            </property>
+              <property>  velocities/eci-velocity-mag-fps </property>
+            </quotient>
+          </function>
+          <output> external_reactions/rocket/z </output>
+        </fcs_function>
+
+      </channel>
+
+    </flight_control>
+
+    <aerodynamics>
+
+        <!-- ============================================================
+             4-Dimensional lookup table example
+             Independent variables:
+               axis1 (row)    : aero/alpha-deg        [-5, 0, 5, 10]
+               axis2 (column) : aero/beta-deg         [0, 5, 10]
+               axis3 (table)  : fcs/flap-pos-deg      breakPoints: 0, 20
+               axis4          : fcs/throttle-cmd-norm  breakPoints: 0.0, 1.0
+
+             The outer dimension (axis4) slices the 3D sub-table;
+             each 3D sub-table is itself sliced by axis3 into 2D tables.
+        ============================================================ -->
+        <function name="aero/dummy4D">
+          <description>
+            Example 4-dimensional lookup table:
+            f(alpha_deg, beta_deg, flap_deg, throttle) -> dimensionless coefficient
+          </description>
+          <table>
+            <independentVar lookup="row">aero/alpha-deg</independentVar>
+            <independentVar lookup="column">aero/beta-deg</independentVar>
+            <independentVar lookup="table">fcs/flap-pos-deg</independentVar>
+            <independentVar lookup="axis4">fcs/throttle-cmd-norm</independentVar>
+
+            <!-- ── axis4 = 0.0 (idle throttle) ─────────────────────── -->
+            <tableData breakPoint="0.0">
+
+              <!-- axis3 = 0 deg flap -->
+              <tableData breakPoint="0">
+                <!--              beta=0    beta=5    beta=10 -->
+                <!-- alpha=-5 -->  -5.0      0.10      0.18      0.24
+                <!-- alpha= 0 -->   0.0      0.20      0.28      0.34
+                <!-- alpha= 5 -->   5.0      0.30      0.38      0.44
+                <!-- alpha=10 -->  10.0      0.40      0.48      0.54
+              </tableData>
+
+              <!-- axis3 = 20 deg flap -->
+              <tableData breakPoint="20">
+                <!--              beta=0    beta=5    beta=10 -->
+                <!-- alpha=-5 -->  -5.0      0.22      0.30      0.36
+                <!-- alpha= 0 -->   0.0      0.32      0.40      0.46
+                <!-- alpha= 5 -->   5.0      0.42      0.50      0.56
+                <!-- alpha=10 -->  10.0      0.52      0.60      0.66
+              </tableData>
+
+            </tableData>
+
+            <!-- ── axis4 = 1.0 (full throttle) ──────────────────────── -->
+            <tableData breakPoint="1.0">
+
+              <!-- axis3 = 0 deg flap -->
+              <tableData breakPoint="0">
+                <!--              beta=0    beta=5    beta=10 -->
+                <!-- alpha=-5 -->  -5.0      0.15      0.23      0.29
+                <!-- alpha= 0 -->   0.0      0.25      0.33      0.39
+                <!-- alpha= 5 -->   5.0      0.35      0.43      0.49
+                <!-- alpha=10 -->  10.0      0.45      0.53      0.59
+              </tableData>
+
+              <!-- axis3 = 20 deg flap -->
+              <tableData breakPoint="20">
+                <!--              beta=0    beta=5    beta=10 -->
+                <!-- alpha=-5 -->  -5.0      0.27      0.35      0.41
+                <!-- alpha= 0 -->   0.0      0.37      0.45      0.51
+                <!-- alpha= 5 -->   5.0      0.47      0.55      0.61
+                <!-- alpha=10 -->  10.0      0.57      0.65      0.71
+              </tableData>
+
+            </tableData>
+
+          </table>
+        </function>
+
+        <axis name="DRAG">
+            <function name="aero/coefficient/CD">
+                <description>Drag</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <value>0.000</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+
+    <output name="BallXOut.csv" type="CSV" rate="1">
+        <rates> ON </rates>
+        <velocities> ON </velocities>
+        <position> ON </position>
+        <massprops> ON </massprops>
+        <forces> ON </forces>
+        <moments> ON </moments>
+        <property> position/vrp-gc-latitude_deg </property>
+        <property> position/vrp-longitude_deg </property>
+        <property> position/vrp-radius-ft </property>
+    </output>
+</fdm_config>
