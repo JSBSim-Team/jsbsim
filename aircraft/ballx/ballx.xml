@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="BALL" version="2.0" release="BETA"
+<fdm_config name="BALLX" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
@@ -184,75 +184,76 @@
 
     <aerodynamics>
 
+        <function name="aero/dummy1">
+	        <table>
+	        	<independentVar lookup="row">aero/dummy1/row-val</independentVar>
+	        	<independentVar lookup="column">aero/dummy1/col-val</independentVar>
+	        	<tableData>
+                   1.0  2.0  3.0
+	        	  1.0  0.0  7.0  8.0
+	        	  2.0  3.0  4.0  7.0
+	        	  4.0  1.0  3.0  4.0
+	        	</tableData>
+	        </table>
+        </function>
+
         <!-- ============================================================
              4-Dimensional lookup table example
              Independent variables:
                axis1 (row)    : aero/alpha-deg        [-5, 0, 5, 10]
                axis2 (column) : aero/beta-deg         [0, 5, 10]
                axis3 (table)  : fcs/flap-pos-deg      breakPoints: 0, 20
-               axis4          : fcs/throttle-cmd-norm  breakPoints: 0.0, 1.0
+               axis4          : fcs/parachute_reef_pos_norm  breakPoints: 0.0, 1.0
 
              The outer dimension (axis4) slices the 3D sub-table;
              each 3D sub-table is itself sliced by axis3 into 2D tables.
         ============================================================ -->
         <function name="aero/dummy4D">
           <description>
-            Example 4-dimensional lookup table:
-            f(alpha_deg, beta_deg, flap_deg, throttle) -> dimensionless coefficient
+            Example 4-dimensional lookup table
           </description>
-          <table>
-            <independentVar lookup="row">aero/alpha-deg</independentVar>
-            <independentVar lookup="column">aero/beta-deg</independentVar>
-            <independentVar lookup="table">fcs/flap-pos-deg</independentVar>
-            <independentVar lookup="axis4">fcs/throttle-cmd-norm</independentVar>
+          <product>
+            <value> 1.0 </value>
+            <table>
+              <independentVar lookup="row">aero/alpha-deg</independentVar>                <!-- axis1 = -5.0, 0.0, 5.0, 10.0 -->
+              <independentVar lookup="column">aero/beta-deg</independentVar>              <!-- axis2 = -5.0, 0.0, 5.0 -->
+              <independentVar lookup="table">fcs/flap-pos-deg</independentVar>            <!-- axis3 = 0, 20 -->
+              <independentVar lookup="axis4">fcs/parachute_reef_pos_norm</independentVar> <!-- axis4 = 0.0, 1.0 -->
 
-            <!-- ── axis4 = 0.0 (idle throttle) ─────────────────────── -->
-            <tableData breakPoint="0.0">
-
-              <!-- axis3 = 0 deg flap -->
-              <tableData breakPoint="0">
-                <!--              beta=0    beta=5    beta=10 -->
-                <!-- alpha=-5 -->  -5.0      0.10      0.18      0.24
-                <!-- alpha= 0 -->   0.0      0.20      0.28      0.34
-                <!-- alpha= 5 -->   5.0      0.30      0.38      0.44
-                <!-- alpha=10 -->  10.0      0.40      0.48      0.54
+              <tableData breakPoint="0.0"> <!-- axis4 = 0.0 (no parachute) -->
+                <tableData breakPoint="0"> <!-- axis3 = 0 deg flap -->
+                                -5         0         5
+                    -5.0      0.10      0.18      0.24
+                     0.0      0.20      0.28      0.34
+                     5.0      0.30      0.38      0.44
+                    10.0      0.40      0.48      0.54
+                </tableData>
+                <tableData breakPoint="20"> <!-- axis3 = 20 deg flap -->
+                                -5         0         5
+                    -5.0      0.22      0.30      0.36
+                     0.0      0.32      0.40      0.46
+                     5.0      0.42      0.50      0.56
+                    10.0      0.52      0.60      0.66
+                  </tableData>
+                </tableData>
+              <tableData breakPoint="1.0"> <!-- axis4 = 1.0 (full parachute) -->
+                <tableData breakPoint="0"> <!-- axis3 = 0 deg flap -->
+                                -5         0         5
+                    -5.0      0.15      0.23      0.29
+                     0.0      0.25      0.33      0.39
+                     5.0      0.35      0.43      0.49
+                    10.0      0.45      0.53      0.59
+                </tableData>
+                <tableData breakPoint="20"> <!-- axis3 = 20 deg flap -->
+                                -5         0         5
+                    -5.0      0.27      0.35      0.41
+                     0.0      0.37      0.45      0.51
+                     5.0      0.47      0.55      0.61
+                    10.0      0.57      0.65      0.71
+                </tableData>
               </tableData>
-
-              <!-- axis3 = 20 deg flap -->
-              <tableData breakPoint="20">
-                <!--              beta=0    beta=5    beta=10 -->
-                <!-- alpha=-5 -->  -5.0      0.22      0.30      0.36
-                <!-- alpha= 0 -->   0.0      0.32      0.40      0.46
-                <!-- alpha= 5 -->   5.0      0.42      0.50      0.56
-                <!-- alpha=10 -->  10.0      0.52      0.60      0.66
-              </tableData>
-
-            </tableData>
-
-            <!-- ── axis4 = 1.0 (full throttle) ──────────────────────── -->
-            <tableData breakPoint="1.0">
-
-              <!-- axis3 = 0 deg flap -->
-              <tableData breakPoint="0">
-                <!--              beta=0    beta=5    beta=10 -->
-                <!-- alpha=-5 -->  -5.0      0.15      0.23      0.29
-                <!-- alpha= 0 -->   0.0      0.25      0.33      0.39
-                <!-- alpha= 5 -->   5.0      0.35      0.43      0.49
-                <!-- alpha=10 -->  10.0      0.45      0.53      0.59
-              </tableData>
-
-              <!-- axis3 = 20 deg flap -->
-              <tableData breakPoint="20">
-                <!--              beta=0    beta=5    beta=10 -->
-                <!-- alpha=-5 -->  -5.0      0.27      0.35      0.41
-                <!-- alpha= 0 -->   0.0      0.37      0.45      0.51
-                <!-- alpha= 5 -->   5.0      0.47      0.55      0.61
-                <!-- alpha=10 -->  10.0      0.57      0.65      0.71
-              </tableData>
-
-            </tableData>
-
-          </table>
+            </table>
+          </product>
         </function>
 
         <axis name="DRAG">
@@ -268,12 +269,12 @@
     </aerodynamics>
 
     <output name="BallXOut.csv" type="CSV" rate="1">
-        <rates> ON </rates>
+        <rates> OFF </rates>
         <velocities> ON </velocities>
         <position> ON </position>
-        <massprops> ON </massprops>
+        <massprops> OFF </massprops>
         <forces> ON </forces>
-        <moments> ON </moments>
+        <moments> OFF </moments>
         <property> position/vrp-gc-latitude_deg </property>
         <property> position/vrp-longitude_deg </property>
         <property> position/vrp-radius-ft </property>
