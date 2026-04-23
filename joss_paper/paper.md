@@ -170,6 +170,7 @@ Examples of use cases include:
 
 See also the selection of use cases reported by the authors in 2009 [@progress-on-and-usage-of-the-open-source-flight-dynamics-2009].
 
+JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
 
 # Implementation and Engineering Practices
 
