@@ -154,6 +154,8 @@ Running the above command results in the ball characteristics being read in, pla
 
 [further explanation of JSBSim]
 
+[An example of script file would be appropriate]
+
 # Use Cases and Research Applications
 
 JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. It's use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms.
