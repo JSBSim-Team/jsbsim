@@ -1,4 +1,3 @@
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/agodemar/jsbsim)
 [![C/C++ build](https://github.com/JSBSim-Team/jsbsim/actions/workflows/cpp-python-build.yml/badge.svg)](https://github.com/JSBSim-Team/jsbsim/actions/workflows/cpp-python-build.yml)
 [![PyPI](https://img.shields.io/pypi/v/jsbsim)](https://pypi.org/project/JSBSim)
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
