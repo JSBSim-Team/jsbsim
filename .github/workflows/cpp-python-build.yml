@@ -51,6 +51,72 @@ jobs:
                 xmllint --noout --schema JSBSim.xsd $filename
             fi
           done
+
+  MSIS-validation:
+    name: MSIS code validation
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v6
+      - name: Configure the MSIS test program
+        run: |
+          mkdir build && cd build
+          cmake ../src/models/atmosphere/MSIS
+      - name: Build the JSBSim test program
+        working-directory: build
+        run: make --jobs=3
+      - name: Run the NRLMSIS-00 C package
+        working-directory: src/models/atmosphere/MSIS
+        run: |
+          if [[ $(head -261 DOCUMENTATION | tail -104 | diff -urN <(../../../../build/nrlmsise-test) - | wc -c) -ne 0 ]]; then
+            echo "Failed."
+            exit 1
+          fi
+
+  Linux:
+    name: C/C++ build (Linux)
+    needs: [XML-validation, MSIS-validation]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        expat: [ON, OFF]
+        shared_libs: [ON, OFF]
+        build_julia: [OFF]
+        display_stack_trace: [ON]
+        include:
+          - os: ubuntu-22.04
+            expat: OFF
+            shared_libs: OFF
+            build_julia: ON
+            display_stack_trace: OFF
+    env:
+      static_link: ${{ matrix.expat == 'OFF' && matrix.shared_libs == 'OFF' }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install cxxtest valgrind binutils-dev
+      - name: Checkout JSBSim
+        uses: actions/checkout@v6
+      - name: Cache Python packages & CTest cost data
+        # CTestCostData.txt is used by CTest to optimize the distribution of the
+        # tests between the CPU cores and reduce execution time.
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/pip
+            build/Testing/Temporary/CTestCostData.txt
+          key: ${{ runner.os }}-3.10-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
       - name: Install Python packages
         run: |
           pip install -r python/requirements.txt
@@ -115,6 +181,72 @@ jobs:
         with:
           name: Linux-${{ matrix.os }}.binaries
           path: build/*.deb
+
+  Matlab-SFunction:
+    name: Matlab S-Function
+    needs: [ Linux, MacOSX, Windows-MSVC ]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-14, ubuntu-22.04, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v6
+      - name: Set up Matlab
+        uses: matlab-actions/setup-matlab@v3
+        with:
+          release: R2023b
+          products: Simulink
+      - name: Configure JSBSim
+        run: |
+          mkdir build
+          cd build
+          cmake -DBUILD_MATLAB_SFUNCTION=ON ..
+      - name: Build JSBSim S-Function
+        working-directory: build
+        run: cmake --build . --config RelWithDebInfo --target JSBSim_SFunction --parallel 3
+      - name: Prepare Tests
+        working-directory: matlab
+        # The script will be run from the directory 'matlab' so we need to copy
+        # the folders that will be used by JSBSim
+        run: |
+          cp -R ../aircraft .
+          cp -R ../engine .
+          cp -R ../systems .
+          cp -R ../scripts .
+      - name: Force Matlab using the system libstdc++ rather than its own (Linux)
+          # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
+        if: runner.os == 'Linux'
+        run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
+      - name: Run Tests (Linux & MacOSX)
+        if: runner.os != 'Windows'
+        id: tests-unix
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('build/matlab'), run('matlab/TestJSBSim.m')
+      - name: Run Tests (Windows)
+        if: runner.os == 'Windows'
+        id: tests-windows
+        uses: matlab-actions/run-command@v3
+        with:
+          command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
+
+      - name: Upload Files for Release (Linux & MacOSX)
+        if: steps.tests-unix.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: Matlab-SFunction-${{ runner.os }}.binaries
+          path: build/matlab/JSBSim_SFunction.mex*
+      - name: Upload Files for Release (Windows)
+        if: steps.tests-windows.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: Matlab-SFunction-${{ runner.os }}.binaries
+          path: |
+            build/JSBSim.iss
+            build/matlab/JSBSimSimulinkCompile.m
+            build/matlab/RelWithDebInfo/JSBSim_SFunction.mex*
 
   Windows-MinGW:
     name: C/C++ build (MinGW)
