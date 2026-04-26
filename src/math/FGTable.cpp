@@ -334,8 +334,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     }
 
     nRows = static_cast<unsigned int>(Tables.size());
-  } else if (nChildTableData == 1u) {
-    leafData = el->FindElement("tableData");
   } else {
     XMLLogException err(el);
     err << "FGTable: <tableData> elements are missing\n";
