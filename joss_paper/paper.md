@@ -83,34 +83,324 @@ In a nutshell, the flow of the code can be illustrated as follows:
 
 [diagram or explanation of the architecture of the code and how it is instantiated]
 
-JSBSim is data-driven, with all specific model characteristics contained in data files. Here’s a “Hello World” view of a minimal JSBSim invocation, modeling a ball in low Earth orbit. First, here is the XML file containing the characteristics of the “vehicle” - here, just a ball - in the file named minimal_ball.xml:
+JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics. 
+
+## JSBSim FDM Definition
+
+A brief introduction to the various XML based components that make up a JSBSim FDM.
+
+The FDM is defined in one or more XML files which define the mass configuration, ground reactions for the gear, propulsion, the flight control system and the forces and moments for the 6 axes.
+
+### Mass
+
+The `mass_balance` element is used to define the aircraft’s empty weight, the center of gravity at empty weight and the moments of inertia at empty weight.
 
 ```xml
-<?xml version="1.0"?>
-<fdm_config name="Ball" version="2.0">
-
-  <metrics>
-    <wingarea unit="FT2"> 1.0 </wingarea>
-    <wingspan unit="FT"> 1.0 </wingspan>
-    <chord unit="FT"> 1.0 </chord>
-    <location name="AERORP" unit="IN">
-      <x> 0.0 </x> <y> 0.0 </y> <z> 0.0 </z>
-    </location>
-  </metrics>
-
-  <mass_balance>
-    <ixx unit="SLUG*FT2"> 1.0 </ixx>
-    <iyy unit="SLUG*FT2"> 1.0 </iyy>
-    <izz unit="SLUG*FT2"> 1.0 </izz>
-    <emptywt unit="LBS"> 10.0 </emptywt>
-  </mass_balance>
-
-  <output name="BallOut.csv" type="CSV" rate="1">
-    <position> ON </position>
-  </output>
-
-</fdm_config>
+<mass_balance negated_crossproduct_inertia="true" >
+    <ixx unit="SLUG*FT2" > 562000 </ixx >
+    <iyy unit="SLUG*FT2" > 1.473e+06 </iyy >
+    <izz unit="SLUG*FT2" > 1.894e+06 </izz >
+    <ixy unit="SLUG*FT2" > 0 </ixy >
+    <ixz unit="SLUG*FT2" > 8000 </ixz >
+    <iyz unit="SLUG*FT2" > 0 </iyz >
+    <emptywt unit="LBS" > 83000 </emptywt >
+    <location name="CG" unit="IN" >
+        <x > 639 </x >
+        <y > 0 </y >
+        <z > -40 </z >
+    </location >
+</mass_balance >
 ```
+
+Additional mass can be added via `tank` and `pointmass` elements.
+
+```xml
+<tank type="FUEL" ><! -- Left wing tank -->
+    <location unit="IN" >
+        <x > 520 </x >
+        <y > -80 </y >
+        <z > -18 </z >
+    </location >
+    <type >JET -A </type >
+    <capacity unit="LBS" > 10200 </capacity >
+    <contents unit="LBS" > 10000 </contents >
+</tank >
+```
+
+A `pointmass` element can also be used to model external stores that can be released during flight.
+
+```xml
+<pointmass name="forward -cargo" >
+    <weight unit="LBS" > 5000 </weight >
+    <location name="POINTMASS" unit="IN" >
+        <x > 157.6 </x >
+        <y > 0 </y >
+        <z > -39.4 </z >
+    </location >
+</pointmass>
+```
+
+During each simulation timestep JSBSim sums up the current mass of each of the tank elements taking into account any mass loss due to engine fuel burn plus the mass of the set of `pointmass` elements. In addition to calculating the current total mass of the aircraft, the center of gravity is also updated based on the physical location of the various masses and lastly the moments of inertia are also updated.
+
+### Ground Reactions
+
+The `contact`` element is used to define either landing gear contacts or structural contacts. JSBSimuses their location, friction coefficients, spring and damping coefficients in order to calculate the forces and moments from their interaction with the ground.
+
+Landing gear contacts (`BOGEY`) also define additional properties in terms of whether they can be used for steering, whether they include brakes and whether they’re retractable.
+
+```xml
+<contact name="Left Main Gear" type="BOGEY" >
+    <location unit="IN" >
+        <x > 648 </x >
+        <y > -100 </y >
+        <z > -84 </z >
+    </location >
+    <static_friction > 0.80 </static_friction >
+    <dynamic_friction > 0.50 </dynamic_friction >
+    <rolling_friction > 0.02 </rolling_friction >
+    <spring_coeff unit="LBS/FT" > 120000 </spring_coeff >
+    <damping_coeff unit="LBS/FT/SEC" > 10000 </damping_coeff >
+    <damping_coeff_rebound unit="LBS/FT/SEC" > 20000 </damping_coeff_rebound >
+    <max_steer unit="DEG" > 0.0 </max_steer >
+    <brake_group > LEFT </brake_group >
+    <retractable > 1 </retractable >
+</contact >
+```
+
+A `STRUCTURE` contact can be defined for example to provide a contact point at the rear of the fuselage for performing a velocity minimum unstick $V_{MU}$ simulation flight test.
+
+```xml
+<contact type="STRUCTURE" name="TAIL_STRIKE" >
+    <location unit="IN" >
+        <x > 924.93864 </x >
+        <y > 0 </y >
+        <z > 3.41992 </z >
+    </location >
+    <static_friction > 0.5 </static_friction >
+    <dynamic_friction > 0.4 </dynamic_friction >
+    <spring_coeff unit="LBS/FT" > 100000 </spring_coeff >
+    <damping_coeff unit="LBS/FT/SEC" > 20000 </damping_coeff >
+    <brake_group > NONE </brake_group >
+    <retractable >0 </retractable >
+</contact >
+```
+
+### Aerodynamic Force and Moments
+
+All aerodynamic forces and moments have to specified within the FDM. JSBSim itself doesn’t define any forces or moments. The forces and moments can be specified in one of 3 reference frames, the body axes, stability axes or the wind axes.
+
+The author of the FDM is free to define as many or as few forces and moments based on the level of fidelity they want to implement and based on the aerodynamic data that they have available to them for the aircraft type.
+
+JSBSim provides a number of mathematical functions for use in calculating a force or moment. A lookup table element is also provided.
+
+```xml
+<function name="aero/coefficient/CLalpha" >
+    <description >Lift_due_to_alpha </description >
+    <product >
+        <property >aero/qbar -psf </property >
+        <property >metrics/Sw -sqft </property >
+        <table >
+            <independentVar >aero/alpha -rad </independentVar >
+            <tableData >
+               -0.20 -0.68
+                0.00  0.20
+                0.23  1.20
+                0.46  0.20
+            </tableData >
+        </table >
+    </product >
+</function >
+```
+
+JSBSim provides a number of pre-calculated properties, e.g. `aero/qbar-psf`` is the dynamic pressure $\frac{1}{2}\rhoV^2^$ calculated based on the current air density of the aircraft within the atmosphere model and the aircraft’s true airspeed.
+
+During each time step JSBSim evaluates each function defining a force for each axis and sums all the forces in order to calculate the net force per axis. 
+
+The Moment Reference Center (MRC), named as `AERORP`, needs to be defined within the `metrics` element.
+
+```xml
+<metrics >
+    <location name="AERORP" unit="IN" >
+        <x > 625 </x >
+        <y > 0 </y >
+        <z > 24 </z >
+    </location >
+</metrics>
+```
+
+The moments and forces can also reference properties that define control positions, e.g. `fcs/elevator-pos-rad` as shown below. The example below also shows how Mach effects may be modelled, in this case to change $C_{m_{\delta_e}}$ based on Mach.
+
+```xml
+<function name="aero/coefficient/Cmde" >
+    <description >Pitch_moment_due_to_elevator </description >
+    <product >
+        <property >aero/qbar -psf </property >
+        <property >metrics/Sw -sqft </property >
+        <property >metrics/cbarw -ft </property >
+        <property >fcs/elevator -pos -rad </property >
+        <table >
+            <independentVar >velocities/mach </independentVar >
+            <tableData >
+                0.0 -1.20
+                2.0 -0.30
+            </tableData >
+        </table >
+    </product >
+</function >
+```
+
+All the moment definitions are evaluated and summed for each axis. JSBSim then calculates an additional moment based on the current forces and the moment arm between the current cg and the MRC.
+
+### Propulsion
+
+JSBSim includes engine models covering piston, turbine, turboprop, rocket and electric engines. Configuration parameters are defined to specify the performance of specific engines.
+
+A `propulsion` element is defined which specifies an engine file for the specific engine, it’s physical location and orientation on the aircraft.
+
+```xml
+<propulsion >
+    <engine file="CFM56" >
+    <feed >0 </feed >
+    <feed >2 </feed >
+    <thruster file="direct" >
+        <location unit="IN" >
+            <x > 540 </x >
+            <y > -193 </y >
+            <z > -40 </z >
+        </location >
+        <orient unit="DEG" >
+            <roll > 0 </roll >
+            <pitch > 0 </pitch >
+            <yaw > 0 </yaw >
+        </orient >
+    </thruster >
+    </engine >
+```
+
+Below is an example of a specific turbine engine type.
+
+```xml
+<turbine_engine name="CFM56">
+  <milthrust> 20000.0 </milthrust>
+  <bypassratio>     5.9 </bypassratio>
+  <tsfc>            0.657 </tsfc>
+  <bleed>           0.04 </bleed>
+  <idlen1>         30.0 </idlen1>
+  <idlen2>         60.0 </idlen2>
+  <maxn1>         100.0 </maxn1>
+  <maxn2>         100.0 </maxn2>
+  <augmented>         0 </augmented>
+  <injected>          0 </injected>
+
+  <function name="IdleThrust">
+    <table>
+      <independentVar 
+        lookup="row">velocities/mach</independentVar>
+      <independentVar 
+        lookup="column">atmosphere/density-altitude</independentVar>
+      <tableData>
+                 -10000  0       10000   20000   30000   40000   50000   60000
+            0.0  0.0420  0.0436  0.0528  0.0694  0.0899  0.1183  0.1467  0.0
+            0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342  0.0
+            0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203  0.0
+            0.6  0.0     0.0     0.0     0.0     0.0276  0.0718  0.1073  0.0
+            0.8  0.0     0.0     0.0     0.0     0.0174  0.0468  0.0900  0.0
+            1.0  0.0     0.0     0.0     0.0     0.0     0.0422  0.0700  0.0
+      </tableData>
+    </table>
+  </function>
+
+  <function name="MilThrust">
+    <table>
+      <independentVar 
+        lookup="row">velocities/mach</independentVar>
+      <independentVar 
+        lookup="column">atmosphere/density-altitude</independentVar>
+      <tableData>
+                  -10000  0       10000   20000   30000   40000   50000   60000
+            0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490  0.0
+            0.2   1.1710  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430  0.0
+            0.4   1.1500  0.9210  0.6920  0.5060  0.3570  0.2330  0.1450  0.0
+            0.6   1.1810  0.9510  0.7210  0.5320  0.3780  0.2480  0.1540  0.0
+            0.8   1.2580  1.0200  0.7820  0.5820  0.4170  0.2750  0.1700  0.0
+            1.0   1.3690  1.1200  0.8710  0.6510  0.4750  0.3150  0.1950  0.0
+            1.2   0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0
+      </tableData>
+    </table>
+  </function>
+</turbine_engine>
+```
+
+If JSBSim’s specific engine modelling doesn’t meet the FDM author’s requirements a propulsion force can be added as an `external_reaction` with the FDM author calcuating the magnitude of the force which JSBSim will then apply.
+
+```xml
+<external_reactions>
+    <force name="pushback" frame="BODY" >
+        <location unit="IN" >
+            <x> -980.19 </x>
+            <y> 0.00 </y>
+            <z> -65.00 </z>
+        </location >
+        <direction >
+            <x> 1 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </direction>
+    </force>
+</external_reactions>
+```
+
+### FCS
+
+The Flight Control System can be as simple as modelling a direct physical connection mapping the pilot’s control input in the range from `[-1, +1]` linearly to an angular position for the relevant control position. Or a complete Fly-By-Wire (FBW) FCS can be implemented.
+
+The control position property is then used by functions in the aerodynamic section for calculating forces and moments.
+
+```xml
+<channel name="Pitch" >
+
+    <summer name="Pitch Trim Sum" >
+        <input> fcs/elevator-cmd-norm </input >
+        <input> fcs/pitch-trim-cmd-norm </input >
+        <clipto>
+            <min>-1</min >
+            <max> 1 </max >
+        </clipto>
+    </summer >
+
+    <aerosurface_scale name="Elevator Control" >
+        <input> fcs/pitch-trim-sum </input >
+        <range>
+            <min> -0.3 </min >
+            <max> 0.3 </max >
+        </range>
+        <output> fcs/elevator-pos-rad </output >
+    </aerosurface_scale>
+```
+
+A `pid` element is provided for use in defining an FCS that makes use of feedback control.
+
+```xml
+<! --
+    - Calculate the difference between actual roll-rate and
+    - commanded roll-rate.
+-->
+
+<summer name="fcs/roll-trim-error" >
+    <input> fcs/aileron-cmd-norm </input >
+    <input> -fcs/roll-rate-norm </input >
+</summer >
+
+<pid name="fcs/roll-rate-pid" >
+    <trigger> fcs/aileron-pid-trigger </trigger >
+    <input> fcs/roll-trim-error </input >
+    <kp> 3.00000 </kp>
+    <ki> 0.00050 </ki>
+    <kd> -0.00125 </kd>
+</pid >
+```
+
+XXXXXXXXXXX
 
 We also have to tell JSBSim, at time zero, where to place the ball in space, and how fast it is going, in which direction, etc. That is contained in the file, reset00_v2.xml:
 
@@ -149,8 +439,6 @@ And here is how we invoke the batch version of JSBSim from the command line, whi
 ```
 
 Running the above command results in the ball characteristics being read in, placed at the state specified in the  reset00_v2.xml file, and running for 5400 seconds. The position of the ball is logged at 1 Hz in a file named BallOut.csv.
-
-[further explanation of JSBSim]
 
 [An example of script file would be appropriate]
 
