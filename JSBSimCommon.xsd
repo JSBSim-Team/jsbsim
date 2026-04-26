@@ -148,7 +148,7 @@
     <xs:complexContent>
       <xs:extension base="unnamed-table">
         <xs:attribute name="name" use="optional" type="xs:string"/>
-        <xs:attribute name="type" use="optional" type="xs:string"/>
+        <xs:attribute name="type" use="optional" fixed="internal"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
