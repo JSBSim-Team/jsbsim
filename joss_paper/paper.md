@@ -64,8 +64,6 @@ Developed in standard-compliant C++17, JSBSim also includes the following bindin
 
 Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either  proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects. 
 
-JSBSim has been in development since 1996; in 2018, its codebase was moved to GitHub under the organization JSBSim-Team.
-
 The JSBSim XML-based model definitions support validation, and scriptable running supports reproducibility.
 
 
@@ -155,6 +153,8 @@ Running the above command results in the ball characteristics being read in, pla
 [further explanation of JSBSim]
 
 [An example of script file would be appropriate]
+
+JSBSim has been in development since 1996; in 2018, its codebase was moved to GitHub under the organization JSBSim-Team.
 
 # Use Cases and Research Applications
 
