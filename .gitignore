@@ -74,7 +74,6 @@ ipch/
 .devcontainer/
 
 .env
-.devcontainer/
 .venv/
 
 #################
