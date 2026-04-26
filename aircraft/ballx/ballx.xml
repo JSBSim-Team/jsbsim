@@ -11,7 +11,7 @@
       <description> Test file </description>
       <note>
         This model of a ballx was created by copying the ball model by Jon S. Berndt.
-        This model is meant to be used as a test case for various scenarios, such as 
+        This model is meant to be used as a test case for various scenarios, such as
           - N-dimensional lookup tables,
           - etc. TBD.
       </note>
@@ -183,6 +183,8 @@
     </flight_control>
 
     <aerodynamics>
+        <property value="2.0">aero/dummy1/row-val</property>
+        <property value="3.0">aero/dummy1/col-val</property>
 
         <function name="aero/dummy1">
 	        <table>
