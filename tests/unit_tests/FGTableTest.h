@@ -1960,10 +1960,10 @@ class FGTable4DTest : public CxxTest::TestSuite
 public:
   void testLoad4DFromXML() {
     auto pm = std::make_shared<FGPropertyManager>();
-    auto a1 = pm->GetNode("axis1", true);
-    auto a2 = pm->GetNode("axis2", true);
-    auto a3 = pm->GetNode("axis3", true);
-    auto a4 = pm->GetNode("axis4", true);
+    pm->GetNode("axis1", true);
+    pm->GetNode("axis2", true);
+    pm->GetNode("axis3", true);
+    pm->GetNode("axis4", true);
 
     // 4D table: nested <tableData> levels wrapping 2D tableData leaves
     // axis4 (outer tableData): breakPoints 0.0, 1.0
@@ -2006,6 +2006,18 @@ public:
     FGTable t4d(pm, el_table);
     TS_ASSERT_EQUALS(t4d.GetName(), std::string("test4d"));
     TS_ASSERT(t4d.GetNumRows() > 0);
+
+    a1->setDoubleValue(2.0);
+    a2->setDoubleValue(1.0);
+    a3->setDoubleValue(10.0);
+    a4->setDoubleValue(1.0);
+    TS_ASSERT_DELTA(t4d.GetValue(), 8.0, epsilon);
+
+    a1->setDoubleValue(1.5);
+    a2->setDoubleValue(0.5);
+    a3->setDoubleValue(5.0);
+    a4->setDoubleValue(0.5);
+    TS_ASSERT_DELTA(t4d.GetValue(), 4.5, epsilon);
   }
 };
 
@@ -2015,11 +2027,11 @@ class FGTable5DTest : public CxxTest::TestSuite
 public:
   void testLoad5DFromXML() {
     auto pm = std::make_shared<FGPropertyManager>();
-    auto a1 = pm->GetNode("axis1", true);
-    auto a2 = pm->GetNode("axis2", true);
-    auto a3 = pm->GetNode("axis3", true);
-    auto a4 = pm->GetNode("axis4", true);
-    auto a5 = pm->GetNode("axis5", true);
+    pm->GetNode("axis1", true);
+    pm->GetNode("axis2", true);
+    pm->GetNode("axis3", true);
+    pm->GetNode("axis4", true);
+    pm->GetNode("axis5", true);
 
     // 5D table: nested <tableData> levels wrapping 2D tableData leaves
     // axis5 (outermost): breakPoints 0.0, 1.0
@@ -2084,6 +2096,14 @@ public:
     FGTable t5d(pm, el_table);
     TS_ASSERT_EQUALS(t5d.GetName(), std::string("test5d"));
     TS_ASSERT(t5d.GetNumRows() > 0);
+
+    // Verify exact values at breakpoints so 5D indexing/regression issues are caught.
+    TS_ASSERT_DELTA(t5d.GetValue(0.0, 0.0, 0.0, 0.0, 0.0), 0.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 0.0, 0.0, 0.0), 11.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 10.0, 1.0, 1.0), 11111.0, epsilon);
+
+    // Verify interpolation across all five dimensions.
+    TS_ASSERT_DELTA(t5d.GetValue(0.5, 0.5, 5.0, 0.5, 0.5), 5555.5, epsilon);
   }
 };
 
@@ -2093,12 +2113,12 @@ class FGTable6DTest : public CxxTest::TestSuite
 public:
   void testLoad6DFromXML() {
     auto pm = std::make_shared<FGPropertyManager>();
-    auto a1 = pm->GetNode("axis1", true);
-    auto a2 = pm->GetNode("axis2", true);
-    auto a3 = pm->GetNode("axis3", true);
-    auto a4 = pm->GetNode("axis4", true);
-    auto a5 = pm->GetNode("axis5", true);
-    auto a6 = pm->GetNode("axis6", true);
+    pm->GetNode("axis1", true);
+    pm->GetNode("axis2", true);
+    pm->GetNode("axis3", true);
+    pm->GetNode("axis4", true);
+    pm->GetNode("axis5", true);
+    pm->GetNode("axis6", true);
 
     // 6D table: nested <tableData> levels wrapping 2D tableData leaves
     // axis6 (outermost):  breakPoints 0.0, 1.0
@@ -2213,5 +2233,21 @@ public:
     FGTable t6d(pm, el_table);
     TS_ASSERT_EQUALS(t6d.GetName(), std::string("test6d"));
     TS_ASSERT(t6d.GetNumRows() > 0);
+
+    // Exact-grid lookup at the last 2D leaf:
+    // axis3=10.0, axis4=1.0, axis5=1.0, axis6=1.0 and row/column 1.0,1.0
+    // should return the exact table value 6.0.
+    a1->setDoubleValue(1.0);
+    a2->setDoubleValue(1.0);
+    a3->setDoubleValue(10.0);
+    a4->setDoubleValue(1.0);
+    a5->setDoubleValue(1.0);
+    a6->setDoubleValue(1.0);
+    TS_ASSERT_DELTA(t6d.GetValue(), 6.0, epsilon);
+
+    // Interpolated lookup in the same leaf: row 1.0, column 0.5
+    // interpolates between 5.0 and 6.0, yielding 5.5.
+    a2->setDoubleValue(0.5);
+    TS_ASSERT_DELTA(t6d.GetValue(), 5.5, epsilon);
   }
 };
