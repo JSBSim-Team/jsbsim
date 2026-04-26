@@ -314,19 +314,22 @@ void FGGasCell::Calculate(double dt)
   //        an ad hoc formula which might not be a good representation
   //        of reality.
   if ((ValveCoefficient > 0.0) && (ValveOpen > 0.0)) {
-    // First compute the difference in pressure between the gas in the
-    // cell and the air above it.
-    // FixMe: CellHeight should depend on current volume.
-    const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
-    const double GasMass    = Contents * M_gas();                     // [slug]
+    // Scale CellHeight by the ratio of current gas volume to maximum
+    // volume so that as the cell deflates, the buoyancy-driven pressure
+    // differential diminishes naturally toward zero.
     const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft^3]
-    const double GasDensity = GasMass / GasVolume;
+    const double CellHeight = (2 * Zradius + Zwidth) *
+      std::min(1.0, GasVolume / MaxVolume);                           // [ft]
+    const double GasMass    = Contents * M_gas();                     // [slug]
+    const double GasDensity = GasVolume > 0.0 ? GasMass / GasVolume : 0.0;
     const double DeltaPressure =
       Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
-    const double VolumeValved =
-      ValveOpen * ValveCoefficient * DeltaPressure * dt;
-    Contents =
-      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+    if (DeltaPressure > 0.0) {
+      const double VolumeValved =
+        ValveOpen * ValveCoefficient * DeltaPressure * dt;
+      Contents =
+        max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+    }
   }
 
   //-- Update ballonets. --
@@ -755,8 +758,12 @@ void FGBallonet::Calculate(double dt)
     const double VolumeValved =
       ((Pressure > AirPressure + MaxOverpressure) ? 1.0 : ValveOpen) *
       ValveCoefficient * DeltaPressure * dt;
+    // Clamp Contents to the equilibrium value where Pressure == AirPressure.
+    // Below this point, venting would create a vacuum, violating the 2nd law.
+    const double ContentsEquilibrium =
+      AirPressure * MaxVolume / (R * Temperature);
     Contents =
-      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(ContentsEquilibrium, Contents - Pressure * VolumeValved / (R * Temperature));
   }
 
   //-- Handle empty ballonet. --
