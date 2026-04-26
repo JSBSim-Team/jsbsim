@@ -184,18 +184,6 @@ A key requirement of an FDM is accuracy, as would be expected. That is, the unde
 
 JSBSim is currently being maintained and developed by Bertrand Coconnier, Sean McLeod, and Agostino De Marco, along with contributions from the broader community. Initial architecture and development was done by Jon Berndt, with major contributions from Tony Peden, David Megginson, and David Culp. Initial integration into the FlightGear open source flight simulator was assisted by Curt Olson. 
 
-# Authors
-
-Jon S. Berndt
-
-[Add other names as applicable]
-
-Bertrand Coconnier
-
-Agostino De Marco
-
-Sean McLeod
-
 # References
 
  - CAVEAT: this section should be left blank. It will be populated by the automatic production workflow of the JOSS paper, based on the citations found in the running text.
