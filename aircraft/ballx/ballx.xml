@@ -203,7 +203,7 @@
              4-Dimensional lookup table example
              Independent variables:
                axis1 (row)    : aero/alpha-deg        [-5, 0, 5, 10]
-               axis2 (column) : aero/beta-deg         [0, 5, 10]
+               axis2 (column) : aero/beta-deg         [-5, 0, 5]
                axis3 (table)  : fcs/flap-pos-deg      breakPoints: 0, 20
                axis4          : fcs/parachute_reef_pos_norm  breakPoints: 0.0, 1.0
 
