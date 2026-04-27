@@ -31,7 +31,7 @@ affiliations:
    index: 2
  - name: Professor of Flight Mechanics, University of Naples Federico II, Italy
    index: 3
- - name: Professional Software Developer
+ - name: Independent Developer, South Africa
    index: 4
 date: XY april 2026
 bibliography: paper.bib 
