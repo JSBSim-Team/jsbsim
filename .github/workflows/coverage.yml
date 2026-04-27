@@ -4,7 +4,11 @@ on:
   push:
     branches-ignore:
       - 'dependabot/**'
+    paths-ignore:
+      - "joss_paper/**"
   pull_request:
+    paths-ignore:
+      - "joss_paper/**"
 
 jobs:
   Codecov:
