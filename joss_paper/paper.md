@@ -25,7 +25,7 @@ authors:
     orcid: 0009-0003-1039-8307
     affiliation: 4 
 affiliations:
- - name: Jon's affiliation
+ - name: Independent Developer, United States
    index: 1
  - name: Bertrand's affiliation
    index: 2
