@@ -96,47 +96,47 @@ The FDM is defined in one or more XML files which define the mass configuration,
 The `mass_balance` element is used to define the aircraft’s empty weight, the center of gravity at empty weight and the moments of inertia at empty weight.
 
 ```xml
-<mass_balance negated_crossproduct_inertia="true" >
-    <ixx unit="SLUG*FT2" > 562000 </ixx >
-    <iyy unit="SLUG*FT2" > 1.473e+06 </iyy >
-    <izz unit="SLUG*FT2" > 1.894e+06 </izz >
-    <ixy unit="SLUG*FT2" > 0 </ixy >
-    <ixz unit="SLUG*FT2" > 8000 </ixz >
-    <iyz unit="SLUG*FT2" > 0 </iyz >
-    <emptywt unit="LBS" > 83000 </emptywt >
-    <location name="CG" unit="IN" >
-        <x > 639 </x >
-        <y > 0 </y >
-        <z > -40 </z >
-    </location >
-</mass_balance >
+<mass_balance negated_crossproduct_inertia="true">
+    <ixx unit="SLUG*FT2"> 562000 </ixx>
+    <iyy unit="SLUG*FT2"> 1.473e+06 </iyy>
+    <izz unit="SLUG*FT2"> 1.894e+06 </izz>
+    <ixy unit="SLUG*FT2"> 0 </ixy>
+    <ixz unit="SLUG*FT2"> 8000 </ixz>
+    <iyz unit="SLUG*FT2"> 0 </iyz>
+    <emptywt unit="LBS"> 83000 </emptywt>
+    <location name="CG" unit="IN">
+        <x> 639 </x>
+        <y> 0 </y>
+        <z> -40 </z>
+    </location>
+</mass_balance>
 ```
 
 Additional mass can be added via `tank` and `pointmass` elements.
 
 ```xml
-<tank type="FUEL" ><! -- Left wing tank -->
-    <location unit="IN" >
-        <x > 520 </x >
-        <y > -80 </y >
-        <z > -18 </z >
-    </location >
-    <type >JET -A </type >
-    <capacity unit="LBS" > 10200 </capacity >
-    <contents unit="LBS" > 10000 </contents >
-</tank >
+<tank type="FUEL"><! -- Left wing tank -->
+    <location unit="IN">
+        <x> 520 </x>
+        <y> -80 </y>
+        <z> -18 </z>
+    </location>
+    <type>JET-A</type>
+    <capacity unit="LBS"> 10200 </capacity>
+    <contents unit="LBS"> 10000 </contents>
+</tank>
 ```
 
 A `pointmass` element can also be used to model external stores that can be released during flight.
 
 ```xml
-<pointmass name="forward -cargo" >
-    <weight unit="LBS" > 5000 </weight >
-    <location name="POINTMASS" unit="IN" >
-        <x > 157.6 </x >
-        <y > 0 </y >
-        <z > -39.4 </z >
-    </location >
+<pointmass name="forward-cargo">
+    <weight unit="LBS"> 5000 </weight>
+    <location name="POINTMASS" unit="IN">
+        <x> 157.6 </x>
+        <y> 0 </y>
+        <z> -39.4 </z>
+    </location>
 </pointmass>
 ```
 
@@ -144,45 +144,45 @@ During each simulation timestep JSBSim sums up the current mass of each of the t
 
 ### Ground Reactions
 
-The `contact`` element is used to define either landing gear contacts or structural contacts. JSBSimuses their location, friction coefficients, spring and damping coefficients in order to calculate the forces and moments from their interaction with the ground.
+The `contact` element is used to define either landing gear contacts or structural contacts. JSBSim uses their location, friction coefficients, spring and damping coefficients in order to calculate the forces and moments from their interaction with the ground.
 
 Landing gear contacts (`BOGEY`) also define additional properties in terms of whether they can be used for steering, whether they include brakes and whether they’re retractable.
 
 ```xml
-<contact name="Left Main Gear" type="BOGEY" >
-    <location unit="IN" >
-        <x > 648 </x >
-        <y > -100 </y >
-        <z > -84 </z >
-    </location >
-    <static_friction > 0.80 </static_friction >
-    <dynamic_friction > 0.50 </dynamic_friction >
-    <rolling_friction > 0.02 </rolling_friction >
-    <spring_coeff unit="LBS/FT" > 120000 </spring_coeff >
-    <damping_coeff unit="LBS/FT/SEC" > 10000 </damping_coeff >
-    <damping_coeff_rebound unit="LBS/FT/SEC" > 20000 </damping_coeff_rebound >
-    <max_steer unit="DEG" > 0.0 </max_steer >
-    <brake_group > LEFT </brake_group >
-    <retractable > 1 </retractable >
-</contact >
+<contact name="Left Main Gear" type="BOGEY">
+    <location unit="IN">
+        <x> 648 </x>
+        <y> -100 </y>
+        <z> -84 </z>
+    </location>
+    <static_friction> 0.80 </static_friction>
+    <dynamic_friction> 0.50 </dynamic_friction>
+    <rolling_friction> 0.02 </rolling_friction>
+    <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
+    <damping_coeff_rebound unit="LBS/FT/SEC"> 20000 </damping_coeff_rebound>
+    <max_steer unit="DEG"> 0.0 </max_steer>
+    <brake_group> LEFT </brake_group>
+    <retractable> 1 </retractable>
+</contact>
 ```
 
 A `STRUCTURE` contact can be defined for example to provide a contact point at the rear of the fuselage for performing a velocity minimum unstick $V_{MU}$ simulation flight test.
 
 ```xml
-<contact type="STRUCTURE" name="TAIL_STRIKE" >
-    <location unit="IN" >
-        <x > 924.93864 </x >
-        <y > 0 </y >
-        <z > 3.41992 </z >
-    </location >
-    <static_friction > 0.5 </static_friction >
-    <dynamic_friction > 0.4 </dynamic_friction >
-    <spring_coeff unit="LBS/FT" > 100000 </spring_coeff >
-    <damping_coeff unit="LBS/FT/SEC" > 20000 </damping_coeff >
-    <brake_group > NONE </brake_group >
-    <retractable >0 </retractable >
-</contact >
+<contact type="STRUCTURE" name="TAIL_STRIKE">
+    <location unit="IN">
+        <x> 924.93864 </x>
+        <y> 0 </y>
+        <z> 3.41992 </z>
+    </location>
+    <static_friction> 0.5 </static_friction>
+    <dynamic_friction> 0.4 </dynamic_friction>
+    <spring_coeff unit="LBS/FT"> 100000 </spring_coeff>
+    <damping_coeff unit="LBS/FT/SEC"> 20000 </damping_coeff>
+    <brake_group> NONE </brake_group>
+    <retractable> 0 </retractable>
+</contact>
 ```
 
 ### Aerodynamic Force and Moments
@@ -194,59 +194,59 @@ The author of the FDM is free to define as many or as few forces and moments bas
 JSBSim provides a number of mathematical functions for use in calculating a force or moment. A lookup table element is also provided.
 
 ```xml
-<function name="aero/coefficient/CLalpha" >
-    <description >Lift_due_to_alpha </description >
-    <product >
-        <property >aero/qbar -psf </property >
-        <property >metrics/Sw -sqft </property >
-        <table >
-            <independentVar >aero/alpha -rad </independentVar >
-            <tableData >
+<function name="aero/coefficient/CLalpha">
+    <description>Lift_due_to_alpha</description>
+    <product>
+        <property>aero/qbar-psf</property>
+        <property>metrics/Sw-sqft</property>
+        <table>
+            <independentVar>aero/alpha-rad</independentVar>
+            <tableData>
                -0.20 -0.68
                 0.00  0.20
                 0.23  1.20
                 0.46  0.20
-            </tableData >
-        </table >
-    </product >
-</function >
+            </tableData>
+        </table>
+    </product>
+</function>
 ```
 
-JSBSim provides a number of pre-calculated properties, e.g. `aero/qbar-psf`` is the dynamic pressure $\frac{1}{2}\rhoV^2^$ calculated based on the current air density of the aircraft within the atmosphere model and the aircraft’s true airspeed.
+JSBSim provides a number of pre-calculated properties, e.g. `aero/qbar-psf` is the dynamic pressure $\frac{1}{2} \rho V^2$ calculated based on the current air density of the aircraft within the atmosphere model and the aircraft’s true airspeed.
 
 During each time step JSBSim evaluates each function defining a force for each axis and sums all the forces in order to calculate the net force per axis. 
 
 The Moment Reference Center (MRC), named as `AERORP`, needs to be defined within the `metrics` element.
 
 ```xml
-<metrics >
-    <location name="AERORP" unit="IN" >
-        <x > 625 </x >
-        <y > 0 </y >
-        <z > 24 </z >
-    </location >
+<metrics>
+    <location name="AERORP" unit="IN">
+        <x> 625 </x>
+        <y> 0 </y>
+        <z> 24 </z>
+    </location>
 </metrics>
 ```
 
 The moments and forces can also reference properties that define control positions, e.g. `fcs/elevator-pos-rad` as shown below. The example below also shows how Mach effects may be modelled, in this case to change $C_{m_{\delta_e}}$ based on Mach.
 
 ```xml
-<function name="aero/coefficient/Cmde" >
-    <description >Pitch_moment_due_to_elevator </description >
-    <product >
-        <property >aero/qbar -psf </property >
-        <property >metrics/Sw -sqft </property >
-        <property >metrics/cbarw -ft </property >
-        <property >fcs/elevator -pos -rad </property >
-        <table >
-            <independentVar >velocities/mach </independentVar >
-            <tableData >
+<function name="aero/coefficient/Cmde">
+    <description>Pitch_moment_due_to_elevator</description>
+    <product>
+        <property>aero/qbar-psf</property>
+        <property>metrics/Sw-sqft</property>
+        <property>metrics/cbarw-ft</property>
+        <property>fcs/elevator-pos-rad</property>
+        <table>
+            <independentVar>velocities/mach</independentVar>
+            <tableData>
                 0.0 -1.20
                 2.0 -0.30
-            </tableData >
-        </table >
-    </product >
-</function >
+            </tableData>
+        </table>
+    </product>
+</function>
 ```
 
 All the moment definitions are evaluated and summed for each axis. JSBSim then calculates an additional moment based on the current forces and the moment arm between the current cg and the MRC.
@@ -258,23 +258,24 @@ JSBSim includes engine models covering piston, turbine, turboprop, rocket and el
 A `propulsion` element is defined which specifies an engine file for the specific engine, it’s physical location and orientation on the aircraft.
 
 ```xml
-<propulsion >
-    <engine file="CFM56" >
-    <feed >0 </feed >
-    <feed >2 </feed >
-    <thruster file="direct" >
-        <location unit="IN" >
-            <x > 540 </x >
-            <y > -193 </y >
-            <z > -40 </z >
-        </location >
-        <orient unit="DEG" >
-            <roll > 0 </roll >
-            <pitch > 0 </pitch >
-            <yaw > 0 </yaw >
-        </orient >
-    </thruster >
-    </engine >
+<propulsion>
+    <engine file="CFM56">
+        <feed>0</feed>
+        <feed>2</feed>
+        <thruster file="direct">
+            <location unit="IN">
+                <x> 540 </x>
+                <y> -193 </y>
+                <z> -40 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0 </roll>
+                <pitch> 0 </pitch>
+                <yaw> 0 </yaw>
+            </orient>
+        </thruster>
+    </engine>
+</propulsion>
 ```
 
 Below is an example of a specific turbine engine type.
@@ -294,10 +295,8 @@ Below is an example of a specific turbine engine type.
 
   <function name="IdleThrust">
     <table>
-      <independentVar 
-        lookup="row">velocities/mach</independentVar>
-      <independentVar 
-        lookup="column">atmosphere/density-altitude</independentVar>
+      <independentVar lookup="row">velocities/mach</independentVar>
+      <independentVar lookup="column">atmosphere/density-altitude</independentVar>
       <tableData>
                  -10000  0       10000   20000   30000   40000   50000   60000
             0.0  0.0420  0.0436  0.0528  0.0694  0.0899  0.1183  0.1467  0.0
@@ -312,10 +311,8 @@ Below is an example of a specific turbine engine type.
 
   <function name="MilThrust">
     <table>
-      <independentVar 
-        lookup="row">velocities/mach</independentVar>
-      <independentVar 
-        lookup="column">atmosphere/density-altitude</independentVar>
+      <independentVar lookup="row">velocities/mach</independentVar>
+      <independentVar lookup="column">atmosphere/density-altitude</independentVar>
       <tableData>
                   -10000  0       10000   20000   30000   40000   50000   60000
             0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490  0.0
@@ -335,13 +332,13 @@ If JSBSim’s specific engine modelling doesn’t meet the FDM author’s requir
 
 ```xml
 <external_reactions>
-    <force name="pushback" frame="BODY" >
-        <location unit="IN" >
+    <force name="pushback" frame="BODY">
+        <location unit="IN">
             <x> -980.19 </x>
             <y> 0.00 </y>
             <z> -65.00 </z>
-        </location >
-        <direction >
+        </location>
+        <direction>
             <x> 1 </x>
             <y> 0 </y>
             <z> 0 </z>
@@ -357,24 +354,24 @@ The Flight Control System can be as simple as modelling a direct physical connec
 The control position property is then used by functions in the aerodynamic section for calculating forces and moments.
 
 ```xml
-<channel name="Pitch" >
+<channel name="Pitch">
 
-    <summer name="Pitch Trim Sum" >
-        <input> fcs/elevator-cmd-norm </input >
-        <input> fcs/pitch-trim-cmd-norm </input >
+    <summer name="Pitch Trim Sum">
+        <input>fcs/elevator-cmd-norm</input>
+        <input>fcs/pitch-trim-cmd-norm</input>
         <clipto>
-            <min>-1</min >
-            <max> 1 </max >
+            <min>-1</min>
+            <max> 1 </max>
         </clipto>
-    </summer >
+    </summer>
 
-    <aerosurface_scale name="Elevator Control" >
-        <input> fcs/pitch-trim-sum </input >
+    <aerosurface_scale name="Elevator Control">
+        <input>fcs/pitch-trim-sum</input>
         <range>
-            <min> -0.3 </min >
-            <max> 0.3 </max >
+            <min> -0.3 </min>
+            <max> 0.3 </max>
         </range>
-        <output> fcs/elevator-pos-rad </output >
+        <output>fcs/elevator-pos-rad</output>
     </aerosurface_scale>
 ```
 
@@ -386,18 +383,18 @@ A `pid` element is provided for use in defining an FCS that makes use of feedbac
     - commanded roll-rate.
 -->
 
-<summer name="fcs/roll-trim-error" >
-    <input> fcs/aileron-cmd-norm </input >
-    <input> -fcs/roll-rate-norm </input >
-</summer >
+<summer name="fcs/roll-trim-error">
+    <input> fcs/aileron-cmd-norm </input>
+    <input> -fcs/roll-rate-norm </input>
+</summer>
 
-<pid name="fcs/roll-rate-pid" >
-    <trigger> fcs/aileron-pid-trigger </trigger >
-    <input> fcs/roll-trim-error </input >
+<pid name="fcs/roll-rate-pid">
+    <trigger>fcs/aileron-pid-trigger</trigger>
+    <input>fcs/roll-trim-error</input>
     <kp> 3.00000 </kp>
     <ki> 0.00050 </ki>
     <kd> -0.00125 </kd>
-</pid >
+</pid>
 ```
 
 XXXXXXXXXXX
