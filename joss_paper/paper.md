@@ -471,11 +471,3 @@ JSBSim is currently being maintained and developed by Bertrand Coconnier, Sean M
 
 # References
 
- - CAVEAT: this section should be left blank. It will be populated by the automatic production workflow of the JOSS paper, based on the citations found in the running text.
-
-Jon Berndt. 
-["JSBSim: An Open Source Flight Dynamics Model in C++,"](https://arc.aiaa.org/doi/10.2514/6.2004-4923) AIAA 2004-4923. AIAA Modeling and Simulation Technologies Conference and Exhibit. August 2004
-
-Jon Berndt and Agostino De Marco. ["Progress On and Usage of the Open Source Flight Dynamics Model Software Library, JSBSim,"](https://arc.aiaa.org/doi/10.2514/6.2009-5699) AIAA 2009-5699. AIAA Modeling and Simulation Technologies Conference. August 2009
-
-Daniel G. Murri, E. Bruce Jackson, Robert O. Shelton. ["Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle Simulations,"](https://ntrs.nasa.gov/api/citations/20150001263/downloads/20150001263.pdf) NASA/TM-2015-218675/Volume I
