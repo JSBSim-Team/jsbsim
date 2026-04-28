@@ -439,7 +439,7 @@ Running the above command results in the ball characteristics being read in, pla
 
 [An example of script file would be appropriate]
 
-JSBSim has been in development since 1996; in 2018, its codebase was moved to GitHub under the organization JSBSim-Team.
+JSBSim has been in development since 1996; in 2018, its codebase was moved to GitHub under the organization JSBSim-Team. To date more than 60 different contributors have contributed to the codebase.
 
 # Use Cases and Research Applications
 
