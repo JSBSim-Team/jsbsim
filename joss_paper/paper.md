@@ -469,7 +469,7 @@ Selected research papers:
 
 - Sensor assessment and Human Factor: @McAnanama:2018:OpenSource:FDM:IMU, @Zhang:2010:Mathematical:Models:Pilot.
 
-- Simulation integration: @Trang:2026:Building:Flight:Simulation, @Saber:2025:Integration:JSBSim:Unreal, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim.
+- Simulation integration: @Trang:2026:Building:Flight:Simulation, @Saber:2025:Integration:JSBSim:Unreal, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim.
 
 - TBD
 
