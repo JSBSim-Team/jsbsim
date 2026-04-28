@@ -467,6 +467,12 @@ Selected research papers:
 
 - Rocket trajectory simulations: @Abdulkerim:2022:Simulating:Rocket:Trajectory, @Braun:2006:Design:ARES, @Kenney:2003:Simulating:ARES, @Braun:2006:Design:ARES, @Kenney:2011:Flight:Simulation:ARES, @Gomez:2003:Active:Guidance
 
+- Sensor assessment and Human Factor: @McAnanama:2018:OpenSource:FDM:IMU, @Zhang:2010:Mathematical:Models:Pilot.
+
+- Simulation integration: @Trang:2026:Building:Flight:Simulation, @Saber:2025:Integration:JSBSim:Unreal, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim.
+
+- TBD
+
 # Implementation and Engineering Practices
 
 A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the NASA Engineering Safety Center undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@Murri:2015:Check:Cases]. 
