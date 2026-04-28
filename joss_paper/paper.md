@@ -77,7 +77,7 @@ Almost 30 years later, and with the participation of many contributors and colla
 
 # Development and Design Choices
 
-JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@jsbsim-an-open-source-flight-dynamics-model-in-cpp-2004]. 
+JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim]. 
 
 In a nutshell, the flow of the code can be illustrated as follows:
 
