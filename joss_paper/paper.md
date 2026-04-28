@@ -455,9 +455,13 @@ Examples of use cases include:
 
 - [additional examples here, look at some of the Google Scholar citations for different/interesting use cases]
 
-See also the selection of use cases reported by the authors in 2009 [@progress-on-and-usage-of-the-open-source-flight-dynamics-2009].
+See also the selection of use cases reported by the authors in 2009 [@Berndt:DeMarco:2009:Progress:JSBSim].
 
 JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
+
+Selected research papers: 
+- Control system design: [@Vogeltanz:2020:Control:System:Designer,@Vogeltanz:2018:Development:Control:System:Designer]
+- RL/Combat: [@Shen:2025:Autonomous:Control] more TBD
 
 # Implementation and Engineering Practices
 
