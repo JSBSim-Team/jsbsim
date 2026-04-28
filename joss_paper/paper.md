@@ -460,7 +460,7 @@ See also the selection of use cases reported by the authors in 2009 [@Berndt:DeM
 JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
 
 Selected research papers: 
-- Control system design: [@Vogeltanz:2020:Control:System:Designer,@Vogeltanz:2018:Development:Control:System:Designer]
+- Control system design: [@Vogeltanz:2020:Control:System:Designer],[@Vogeltanz:2018:Development:Control:System:Designer]
 - RL/Combat: [@Shen:2025:Autonomous:Control,@Salhi:2025:Leveraging:JSBSim] more TBD
 - More TBD
 
