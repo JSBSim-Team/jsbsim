@@ -5,9 +5,11 @@ on:
     branches-ignore:
       - 'dependabot/**'
     paths-ignore:
+      - "**/*.md"
       - "joss_paper/**"
   pull_request:
     paths-ignore:
+      - "**/*.md"
       - "joss_paper/**"
 
 jobs:
