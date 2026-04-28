@@ -460,9 +460,9 @@ See also the selection of use cases reported by the authors in 2009 [@Berndt:DeM
 JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
 
 Selected research papers: 
-- Control system design: [@Vogeltanz:2020:Control:System:Designer;@Vogeltanz:2018:Development:Control:System:Designer]
+- Control system design: @Vogeltanz:2020:Control:System:Designer;@Vogeltanz:2018:Development:Control:System:Designer
 
-- RL/Combat: [@Shen:2025:Autonomous:Control,@Salhi:2025:Leveraging:JSBSim], [@DeMarco:2023:DRL:Hight:Performance:Aircraft], [@Pope:2023:Hierarchical:RL:DARPA:Trials], [@Chen:2026:Physics:Informed:Target:Aiming]
+- RL/Combat: @Shen:2025:Autonomous:Control;@Salhi:2025:Leveraging:JSBSim, @DeMarco:2023:DRL:Hight:Performance:Aircraft, [@Pope:2023:Hierarchical:RL:DARPA:Trials], [@Chen:2026:Physics:Informed:Target:Aiming], [@Fu:2024:Distributed:Advantage:Based], [@Wang:2024:Enhancing:Multi:UAV], [@Wang:2023:Air:Combat:2v2], [@Richter:2022:Attitude:Control:QLearning]
 
 - More TBD
 
