@@ -461,7 +461,7 @@ JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
 
 # Implementation and Engineering Practices
 
-A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the NASA Engineering Safety Center undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@open-aerospace-jsbsim-nasa-test-cases,open-aerospace-jsbsim-nasa-test-cases-case-01]. 
+A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the NASA Engineering Safety Center undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@Murri:2015:Check:Cases]. 
 
 [description of JSBSim development and version management, etc.]
 
