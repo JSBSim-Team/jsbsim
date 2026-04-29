@@ -84,7 +84,6 @@ In a nutshell, the flow of the code can be illustrated as follows:
 [diagram or explanation of the architecture of the code and how it is instantiated]
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics. 
-A quite unique feature of the FDM is that users can also define *custom functions* in their XML configuration files. The functions may access to whole set of properties exposed by the model, which can be variables and updated at runtime, and define themselves new variables. This enables all kind of special behaviors and interconnections between subsystem and allows to confine the specific model's peculiarities in the input files rather than cluttering the code.
 
 ## JSBSim FDM Definition
 
@@ -196,6 +195,14 @@ JSBSim provides a number of mathematical functions for use in calculating a forc
 
 ```xml
 <function name="aero/coefficient/CLalpha">
+    <!--- This is a legacy way of naming this type of property.
+          Actually, this function exposes a force in pounds, 
+          i.e. a contribution to the instantaneous lift dependent 
+          on the instantaneous angle of attack (AoA).
+          The term 'coefficient' refers to the aerodynamic coefficient,
+          here defined as a table lookup function of AoA,
+          that multiplies the instantaneous dynamic pressure 
+          and the wing area. -->
     <description>Lift_due_to_alpha</description>
     <product>
         <property>aero/qbar-psf</property>
@@ -251,6 +258,8 @@ The moments and forces can also reference properties that define control positio
 ```
 
 All the moment definitions are evaluated and summed for each axis. JSBSim then calculates an additional moment based on the current forces and the moment arm between the current cg and the MRC.
+
+A quite unique feature of the FDM is that users can also define *custom functions* in their XML configuration files. The functions may access to the whole set of properties exposed by the model, which can be variables and updated at runtime, and define themselves new variables. This enables all kind of special behaviors and interconnections between subsystem and allows to confine the specific model's peculiarities in the input files rather than cluttering the code.
 
 ### Propulsion
 
