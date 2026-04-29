@@ -45,7 +45,7 @@ JSBSim can be used in batch mode running faster than real-time for flight analys
 
 Features include:
 
-- Rigid body dynamics with support for 6 DoF.
+- Rigid body dynamics with support for 6-degrees-of-freedom (6-DoF) simulations.
 - Fully configurable aerodynamics, flight control system, propulsion, landing gear arrangement, etc. through XML-based text file format.
 - Accurate Earth model including:
    - Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
@@ -55,10 +55,10 @@ Features include:
 
 Developed in standard-compliant C++17, JSBSim also includes the following bindings and interfaces:
 
-- Python module (compatible with Python 3.10+)
-- MATLAB S-Function that interfaces JSBSim with MATLAB Simulink
-- Julia bindings
-- Unreal Engine plugin
+- Python module (compatible with Python 3.10+).
+- MATLAB S-Function that interfaces JSBSim with MATLAB Simulink.
+- Julia bindings.
+- Unreal Engine plugin.
 
 # Statement of Need
 
@@ -84,6 +84,7 @@ In a nutshell, the flow of the code can be illustrated as follows:
 [diagram or explanation of the architecture of the code and how it is instantiated]
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics. 
+A quite unique feature of the FDM is that users can also define *custom functions* in their XML configuration files. The functions may access to whole set of properties exposed by the model, which can be variables and updated at runtime, and define themselves new variables. This enables all kind of special behaviors and interconnections between subsystem and allows to confine the specific model's peculiarities in the input files rather than cluttering the code.
 
 ## JSBSim FDM Definition
 
@@ -115,7 +116,7 @@ The `mass_balance` element is used to define the aircraft’s empty weight, the 
 Additional mass can be added via `tank` and `pointmass` elements.
 
 ```xml
-<tank type="FUEL"><! -- Left wing tank -->
+<tank type="FUEL"> <!-- Left wing tank -->
     <location unit="IN">
         <x> 520 </x>
         <y> -80 </y>
@@ -151,9 +152,9 @@ Landing gear contacts (`BOGEY`) also define additional properties in terms of wh
 ```xml
 <contact name="Left Main Gear" type="BOGEY">
     <location unit="IN">
-        <x> 648 </x>
+        <x>  648 </x>
         <y> -100 </y>
-        <z> -84 </z>
+        <z>  -84 </z>
     </location>
     <static_friction> 0.80 </static_friction>
     <dynamic_friction> 0.50 </dynamic_friction>
@@ -173,8 +174,8 @@ A `STRUCTURE` contact can be defined for example to provide a contact point at t
 <contact type="STRUCTURE" name="TAIL_STRIKE">
     <location unit="IN">
         <x> 924.93864 </x>
-        <y> 0 </y>
-        <z> 3.41992 </z>
+        <y>   0       </y>
+        <z>   3.41992 </z>
     </location>
     <static_friction> 0.5 </static_friction>
     <dynamic_friction> 0.4 </dynamic_friction>
@@ -378,7 +379,7 @@ The control position property is then used by functions in the aerodynamic secti
 A `pid` element is provided for use in defining an FCS that makes use of feedback control.
 
 ```xml
-<! --
+<!--
     - Calculate the difference between actual roll-rate and
     - commanded roll-rate.
 -->
@@ -451,7 +452,7 @@ Examples of use cases include:
 
 - Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition).
 
-- SITL (Software In The Loop) Drone autopilot testing:  [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
+- SITL (Software In The Loop) Drone autopilot testing: [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
 
 - [additional examples here, look at some of the Google Scholar citations for different/interesting use cases]
 
