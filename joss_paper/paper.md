@@ -27,7 +27,7 @@ authors:
 affiliations:
  - name: Independent Developer, United States
    index: 1
- - name: Bertrand's affiliation
+ - name: Independent Developer, France
    index: 2
  - name: Professor of Flight Mechanics, University of Naples Federico II, Italy
    index: 3
