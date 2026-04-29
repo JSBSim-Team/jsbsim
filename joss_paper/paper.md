@@ -195,19 +195,19 @@ JSBSim provides a number of mathematical functions for use in calculating a forc
 
 ```xml
 <function name="aero/coefficient/CLalpha">
-    <!--- This is a legacy way of naming this type of property.
+    <!--- This is a legacy way of naming such a property.
           Actually, this function exposes a force in pounds, 
-          i.e. a contribution to the instantaneous lift dependent 
-          on the instantaneous angle of attack (AoA).
+          i.e. a contribution to the instantaneous lift, dependent 
+          on the instantaneous angle of attack (AoA) value.
           The term 'coefficient' refers to the aerodynamic coefficient,
           here defined as a table lookup function of AoA,
           that multiplies the instantaneous dynamic pressure 
           and the wing area. -->
-    <description>Lift_due_to_alpha</description>
+    <description>Lift due to alpha</description>
     <product>
         <property>aero/qbar-psf</property>
         <property>metrics/Sw-sqft</property>
-        <table>
+        <table> <!-- lookup table, 1D tabular function -->
             <independentVar>aero/alpha-rad</independentVar>
             <tableData>
                -0.20 -0.68
@@ -236,19 +236,19 @@ The Moment Reference Center (MRC), named as `AERORP`, needs to be defined within
 </metrics>
 ```
 
-The moments and forces can also reference properties that define control positions, e.g. `fcs/elevator-pos-rad` as shown below. The example below also shows how Mach effects may be modelled, in this case to change $C_{m_{\delta_e}}$ based on Mach.
+The moments and forces can also reference properties that define control positions, e.g. `fcs/elevator-pos-rad` as shown below. The next XML snippet is also an example of how Mach effects may be modelled. In this case the control power $C_{m_{\delta_e}}$ is defined as a simple 1D tabular function of the instantaneous Mach number (`velocities/mach`):
 
 ```xml
 <function name="aero/coefficient/Cmde">
-    <description>Pitch_moment_due_to_elevator</description>
+    <description>Pitch moment due to elevator</description>
     <product>
         <property>aero/qbar-psf</property>
         <property>metrics/Sw-sqft</property>
         <property>metrics/cbarw-ft</property>
         <property>fcs/elevator-pos-rad</property>
-        <table>
+        <table> <!-- 1D tabular function -->
             <independentVar>velocities/mach</independentVar>
-            <tableData>
+            <tableData> <!-- lookup table -->
                 0.0 -1.20
                 2.0 -0.30
             </tableData>
@@ -304,10 +304,10 @@ Below is an example of a specific turbine engine type.
   <injected>          0 </injected>
 
   <function name="IdleThrust">
-    <table>
+    <table> <!-- 2D tabular function -->
       <independentVar lookup="row">velocities/mach</independentVar>
       <independentVar lookup="column">atmosphere/density-altitude</independentVar>
-      <tableData>
+      <tableData> <!-- lookup table -->
                  -10000  0       10000   20000   30000   40000   50000   60000
             0.0  0.0420  0.0436  0.0528  0.0694  0.0899  0.1183  0.1467  0.0
             0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342  0.0
@@ -345,8 +345,8 @@ If JSBSim’s specific engine modelling doesn’t meet the FDM author’s requir
     <force name="pushback" frame="BODY">
         <location unit="IN">
             <x> -980.19 </x>
-            <y> 0.00 </y>
-            <z> -65.00 </z>
+            <y>    0.00 </y>
+            <z>  -65.00 </z>
         </location>
         <direction>
             <x> 1 </x>
@@ -379,7 +379,7 @@ The control position property is then used by functions in the aerodynamic secti
         <input>fcs/pitch-trim-sum</input>
         <range>
             <min> -0.3 </min>
-            <max> 0.3 </max>
+            <max>  0.3 </max>
         </range>
         <output>fcs/elevator-pos-rad</output>
     </aerosurface_scale>
@@ -401,8 +401,8 @@ A `pid` element is provided for use in defining an FCS that makes use of feedbac
 <pid name="fcs/roll-rate-pid">
     <trigger>fcs/aileron-pid-trigger</trigger>
     <input>fcs/roll-trim-error</input>
-    <kp> 3.00000 </kp>
-    <ki> 0.00050 </ki>
+    <kp>  3.00000 </kp>
+    <ki>  0.00050 </ki>
     <kd> -0.00125 </kd>
 </pid>
 ```
