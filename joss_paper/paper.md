@@ -461,17 +461,17 @@ JSBSim has been included in the [SPEC CPU](https://www.spec.org/) benchmark.
 
 Selected research papers: 
 
-- Control system design: @Vogeltanz:2020:Control:System:Designer;@Vogeltanz:2018:Development:Control:System:Designer.
+- Control system design: @Vogeltanz:2018:Development:Control:System:Designer;@Vogeltanz:2020:Control:System:Designer.
 
-- RL/Combat: @Shen:2025:Autonomous:Control, @Salhi:2025:Leveraging:JSBSim, @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Chen:2026:Physics:Informed:Target:Aiming, @Fu:2024:Distributed:Advantage:Based, @Wang:2024:Enhancing:Multi:UAV, @Wang:2023:Air:Combat:2v2, @Richter:2022:Attitude:Control:QLearning.
+- RL/Combat: @Richter:2022:Attitude:Control:QLearning, @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Wang:2023:Air:Combat:2v2, @Wang:2024:Enhancing:Multi:UAV, @Fu:2024:Distributed:Advantage:Based, @Shen:2025:Autonomous:Control, @Salhi:2025:Leveraging:JSBSim, @Chen:2026:Physics:Informed:Target:Aiming.
 
-- Rocket trajectory simulations: @Abdulkerim:2022:Simulating:Rocket:Trajectory, @Braun:2006:Design:ARES, @Kenney:2003:Simulating:ARES, @Braun:2006:Design:ARES, @Kenney:2011:Flight:Simulation:ARES, @Gomez:2003:Active:Guidance
+- Rocket trajectory simulations: @Kenney:2003:Simulating:ARES, @Gomez:2003:Active:Guidance, @Braun:2006:Design:ARES, @Braun:2006:Design:ARES, @Kenney:2011:Flight:Simulation:ARES, @Abdulkerim:2022:Simulating:Rocket:Trajectory
 
-- Sensor assessment and Human Factor: @McAnanama:2018:OpenSource:FDM:IMU, @Zhang:2010:Mathematical:Models:Pilot.
+- Sensor assessment and Human Factor: @Zhang:2010:Mathematical:Models:Pilot, @McAnanama:2018:OpenSource:FDM:IMU.
 
-- Simulation integration: @Trang:2026:Building:Flight:Simulation, @Saber:2025:Integration:JSBSim:Unreal, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim.
+- Simulation integration: @Park:2008:Experimental:Evaluation:UAV:TMO, @Gimenes:2008:Using:Flight:Simulation, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim, @Saber:2025:Integration:JSBSim:Unreal, @Trang:2026:Building:Flight:Simulation.
 
-- TBD
+- UAV modeling: @Goppert:DeMarco:2011:Trim:Strategies:JSBSim, @Yuceol:2013:Modeling:Simulation:SmallUAV, @Moallemi:2016:Flight:Dynamics:Global5000, @Kim:2016:Flying:Qualities:JSBSim, @Kamal:2016:Modeling:Flight:Simulation:UAV, @CerecedaCantarelo:2017:Validation:Discussion:UAV, @Varriale:DeMarco:2018:Flight:Load:Assessment, @Cereceda:2019:Giant:BigStik, @Zumegen:2021:Evaluation:Formation:Flights.
 
 # Implementation and Engineering Practices
 
