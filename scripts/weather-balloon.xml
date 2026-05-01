@@ -31,6 +31,7 @@
         <property>velocities/vt-fps</property>
         <property>metrics/radius-ft</property>
       </notify>
+      <set name="buoyant_forces/gas-cell/contents-mol" value="0.001"/>
       <condition> buoyant_forces/gas-cell/burst ge 0.5 </condition>
     </event>
 
