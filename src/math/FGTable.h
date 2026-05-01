@@ -421,6 +421,7 @@ private:
   bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
   std::vector<FGPropertyValue_ptr> lookupProperty;
+  mutable std::vector<double> lookupPropertyValues;
   std::vector<double> Data;
   std::vector<std::unique_ptr<FGTable>> Tables;
   unsigned int nRows = 0u, nCols = 0u, nDims = 0u;

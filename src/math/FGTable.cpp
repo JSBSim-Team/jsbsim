@@ -208,6 +208,7 @@ FGTable::FGTable(const FGTable& t)
   for(const auto& table: t.Tables)
     Tables.push_back(std::make_unique<FGTable>(*table));
 
+  lookupPropertyValues.resize(nDims);
   Data = t.Data;
 }
 
@@ -464,6 +465,8 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     break;
   }
 
+  lookupPropertyValues.resize(nDims);
+
   bind(el, Prefix);
 
   if (debug_lvl & 1) Print();
@@ -527,13 +530,12 @@ double FGTable::GetValue(void) const
                     lookupProperty[eColumn]->getDoubleValue());
   case ttND:
   {
-    std::vector<double> keys(nDims);
     for (unsigned int axis=0u; axis<nDims; ++axis) {
       assert(HasLookupProperty(axis));
-      keys[axis] = lookupProperty[axis]->getDoubleValue();
+      lookupPropertyValues[axis] = lookupProperty[axis]->getDoubleValue();
     }
 
-    return GetValue(keys.data());
+    return GetValue(lookupPropertyValues.data());
   }
   default:
     assert(false);
