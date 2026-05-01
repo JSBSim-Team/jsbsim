@@ -544,8 +544,13 @@ double FGTable::GetValue(void) const
 
 double FGTable::GetValue(const std::vector<double>& keys) const
 {
-  assert(!keys.empty());
-  assert(keys.size() >= nDims);
+  if (keys.size() < nDims) {
+    // If we do not throw here then we will segfault in FGTable::GetValue(const double*)
+    LogException err;
+    err << "Keys size does not match the table dimensions.\n";
+    throw err;
+  }
+
   return GetValue(keys.data());
 }
 
