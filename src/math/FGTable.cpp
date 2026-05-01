@@ -37,8 +37,9 @@ ADM  2026/04/17      Added support for 4D and higher tables.
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <limits>
 #include <assert.h>
+#include <limits>
+#include <optional>
 
 #include "FGTable.h"
 #include "input_output/FGXMLElement.h"
@@ -113,7 +114,7 @@ unsigned int InferLeafDimension(Element* tableData)
   return 1u;
 }
 
-unsigned int ParseLookupAxis(const string& lookup_axis)
+std::optional<unsigned int> ParseLookupAxis(const string& lookup_axis)
 {
   if (lookup_axis.empty() || lookup_axis == "row" || lookup_axis == "axis1")
     return 0u;
@@ -122,17 +123,19 @@ unsigned int ParseLookupAxis(const string& lookup_axis)
   if (lookup_axis == "table" || lookup_axis == "axis3")
     return 2u;
 
-  if (lookup_axis.rfind("axis", 0) == 0) {
-    const string suffix = lookup_axis.substr(4);
-    if (!suffix.empty() &&
-        suffix.find_first_not_of("0123456789") == string::npos) {
+  try {
+    if (lookup_axis.rfind("axis", 0) == 0) {
+      const string suffix = lookup_axis.substr(4);
       const unsigned long axis = std::stoul(suffix);
       if (axis >= 1ul)
         return static_cast<unsigned int>(axis - 1ul);
     }
+  } catch (std::exception& e) {
+    FGLogging err(LogLevel::ERROR);
+    err << e.what() << "\n";
   }
 
-  throw BaseException("Lookup table axis specification not understood: " + lookup_axis);
+  return std::nullopt;
 }
 
 string LookupAxisName(unsigned int axis)
@@ -254,15 +257,23 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       FGPropertyValue_ptr node = new FGPropertyValue(property_string,
                                                      PropertyManager, axisElement);
 
-      const unsigned int axis = ParseLookupAxis(axisElement->GetAttributeValue("lookup"));
-      if (HasLookupProperty(axis)) {
+      const std::string lookup_axis = axisElement->GetAttributeValue("lookup");
+      const std::optional<unsigned int> axis = ParseLookupAxis(lookup_axis);
+
+      if (!axis.has_value()) {
         XMLLogException err(axisElement);
-        err << "FGTable: duplicate lookup axis \"" << LookupAxisName(axis) << "\"\n";
+        err << "FGTable: lookup axis specification not understood: " << lookup_axis <<"\n";
         throw err;
       }
 
-      SetLookupProperty(axis, node);
-      declared_dimension = std::max(declared_dimension, axis + 1u);
+      if (HasLookupProperty(*axis)) {
+        XMLLogException err(axisElement);
+        err << "FGTable: duplicate lookup axis \"" << LookupAxisName(*axis) << "\"\n";
+        throw err;
+      }
+
+      SetLookupProperty(*axis, node);
+      declared_dimension = std::max(declared_dimension, *axis + 1u);
       axisElement = el->FindNextElement("independentVar");
     }
 
