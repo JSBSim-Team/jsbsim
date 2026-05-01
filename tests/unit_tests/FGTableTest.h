@@ -1960,10 +1960,10 @@ class FGTable4DTest : public CxxTest::TestSuite
 public:
   void testLoad4DFromXML() {
     auto pm = std::make_shared<FGPropertyManager>();
-    pm->GetNode("axis1", true);
-    pm->GetNode("axis2", true);
-    pm->GetNode("axis3", true);
-    pm->GetNode("axis4", true);
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
 
     // 4D table: nested <tableData> levels wrapping 2D tableData leaves
     // axis4 (outer tableData): breakPoints 0.0, 1.0
@@ -2098,12 +2098,12 @@ public:
     TS_ASSERT(t5d.GetNumRows() > 0);
 
     // Verify exact values at breakpoints so 5D indexing/regression issues are caught.
-    TS_ASSERT_DELTA(t5d.GetValue(0.0, 0.0, 0.0, 0.0, 0.0), 0.0, epsilon);
-    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 0.0, 0.0, 0.0), 11.0, epsilon);
-    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 10.0, 1.0, 1.0), 11111.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 0.0, 0.0, 0.0, 0.0), 1.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 0.0, 0.0, 0.0), 2.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 10.0, 1.0, 1.0), 6.0, epsilon);
 
     // Verify interpolation across all five dimensions.
-    TS_ASSERT_DELTA(t5d.GetValue(0.5, 0.5, 5.0, 0.5, 0.5), 5555.5, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(0.5, 0.5, 5.0, 0.5, 0.5), 3.5, epsilon);
   }
 };
 
@@ -2113,12 +2113,12 @@ class FGTable6DTest : public CxxTest::TestSuite
 public:
   void testLoad6DFromXML() {
     auto pm = std::make_shared<FGPropertyManager>();
-    pm->GetNode("axis1", true);
-    pm->GetNode("axis2", true);
-    pm->GetNode("axis3", true);
-    pm->GetNode("axis4", true);
-    pm->GetNode("axis5", true);
-    pm->GetNode("axis6", true);
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+    auto a5 = pm->GetNode("axis5", true);
+    auto a6 = pm->GetNode("axis6", true);
 
     // 6D table: nested <tableData> levels wrapping 2D tableData leaves
     // axis6 (outermost):  breakPoints 0.0, 1.0

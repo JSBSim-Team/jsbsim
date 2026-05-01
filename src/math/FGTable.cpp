@@ -292,7 +292,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   if (el->GetName() == "tableData" && nChildTableData == 0u) {
     // This is a leaf <tableData> element with numeric content
     leafData = el;
-  } else if (el->GetName() == "table" && nChildTableData == 1u) {
+  } else if (el->GetName() != "tableData" && nChildTableData == 1u) {
     // 1D and 2D tables
     leafData = el->FindElement("tableData");
   } else if (nChildTableData > 1u) {
