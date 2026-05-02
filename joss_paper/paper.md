@@ -346,7 +346,49 @@ Running the above command results in the ball characteristics being read in, pla
 
 ## JSBSim Scripting
 
-[An example of script file would be appropriate]
+JSBSim provides an XML based scripting facility which allows the user to reproduce the same starting conditions and inputs while for example comparing the output as some aerodynamic coefficients are changed to see the effect they have on the aircraft's response.
+
+Here is a simple example which specifies a specific aircraft model and initial conditions, then instructs JSBSim to trim the aircraft at these initial conditions, and finally input an elevator doublet, and run the test for 20s. Relevant parameters like pitch attitude, angle of attack etc. can be logged and then used for example to calculate the aircraft's short period response.
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="Elevator doublet test">
+
+	<description>
+		Trim the aircraft and then input an elevator doublet.
+	</description>
+
+	<use aircraft="737" initialize="elevator_doublet_init"/>
+
+	<run start="0" end="20" dt="0.008333">
+
+		<event name="Start Trim">
+			<condition> simulation/sim-time-sec ge 0 </condition>
+			<set name="simulation/do_simple_trim" value="1"/>  <!-- 1 - Full trim -->
+		</event>
+
+		<event name="StartDoublet">
+			<condition> simulation/sim-time-sec ge 1.0 </condition>
+			<set name="fcs/elevator-cmd-norm" value="-0.2" />
+		</event>
+
+		<event name="ReverseDoublet">
+			<condition> simulation/sim-time-sec ge 2.0 </condition>
+			<set name="fcs/elevator-cmd-norm" value="0.2" />
+		</event>
+
+		<event name="EndDoublet">
+			<condition> simulation/sim-time-sec ge 3.0 </condition>
+			<set name="fcs/elevator-cmd-norm" value="0.0" />
+		</event>
+
+	</run>
+
+</runscript>
+```
 
 # Implementation and Engineering Practices
 
