@@ -152,12 +152,12 @@ The author of the FDM is free to define as many or as few forces and moments bas
 JSBSim provides a number of mathematical functions for use in calculating a force or moment. A lookup table element is also provided.
 
 ```xml
-<function name="aero/coefficient/CLalpha">
+<function name="aero/Lift_alpha">
     <description>Lift due to alpha</description>
     <product>
         <property>aero/qbar-psf</property>
         <property>metrics/Sw-sqft</property>
-        <table> <!-- lookup table, 1D tabular function -->
+        <table> <!-- CLalpha coefficient lookup table, 1D tabular function -->
             <independentVar>aero/alpha-rad</independentVar>
             <tableData>
                -0.20 -0.68
@@ -189,7 +189,7 @@ The Moment Reference Center (MRC), named as `AERORP`, needs to be defined within
 The moments and forces can also reference properties that define control positions, e.g. `fcs/elevator-pos-rad` as shown below. The next XML snippet is also an example of how Mach effects may be modelled. In this case the control power $C_{m_{\delta_e}}$ is defined as a simple 1D tabular function of the instantaneous Mach number (`velocities/mach`):
 
 ```xml
-<function name="aero/coefficient/Cmde">
+<function name="aero/PitchMoment_elevator">
     <description>Pitch moment due to elevator</description>
     <product>
         <property>aero/qbar-psf</property>
@@ -198,7 +198,7 @@ The moments and forces can also reference properties that define control positio
         <property>fcs/elevator-pos-rad</property>
         <table> <!-- 1D tabular function -->
             <independentVar>velocities/mach</independentVar>
-            <tableData> <!-- lookup table -->
+            <tableData> <!-- lookup table - Cmde coefficient -->
                 0.0 -1.20
                 2.0 -0.30
             </tableData>
