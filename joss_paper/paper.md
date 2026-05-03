@@ -14,16 +14,16 @@ tags:
 authors:
   - name: Jon S. Berndt
     orcid: 0009-0009-9701-2182
-    affiliation: 1 
+    affiliation: 1
   - name: Bertrand Coconnier
     orcid: 0009-0000-0065-3704
-    affiliation: 2 
+    affiliation: 2
   - name: Agostino De Marco
     orcid: 0000-0001-5985-9950
-    affiliation: 3 
+    affiliation: 3
   - name: Sean McLeod
     orcid: 0009-0003-1039-8307
-    affiliation: 4 
+    affiliation: 4
 affiliations:
  - name: Independent Developer, United States
    index: 1
@@ -34,12 +34,12 @@ affiliations:
  - name: Independent Developer, South Africa
    index: 4
 date: XY april 2026
-bibliography: paper.bib 
+bibliography: paper.bib
 ---
 
 # Summary
 
-JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions. 
+JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions.
 
 JSBSim can be used in batch mode running faster than real-time for flight analysis or AI training or run within a flight simulator environment like FlightGear in real-time.
 
@@ -62,7 +62,7 @@ Developed in standard-compliant C++17, JSBSim also includes the following bindin
 
 # Statement of Need
 
-Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either  proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects. 
+Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either  proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects.
 
 The JSBSim XML-based model definitions support validation, and scriptable running supports reproducibility.
 
@@ -70,20 +70,23 @@ The JSBSim XML-based model definitions support validation, and scriptable runnin
 
 While electro-mechanical flight *trainers* (such as Link’s Blue Box) have been around for almost 100 years, flight simulation codebases have been around since the mid-70s, beginning with Bruce Artwick’s first foray into computer-based flight simulation, as part of his engineering thesis - fifty years ago! Some of the earliest codebases were written in Fortran and evolved over the years into very capable and trusted tools. However, over the years, additions to those codebases by various contributors resulted in code that was less cohesive, brittle, and hard to read.
 
-The C++ programming language emerged in the mid-1980’s and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990’s after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, “there’s got to be a better way,” and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation. 
+The C++ programming language emerged in the mid-1980’s and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990’s after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, “there’s got to be a better way,” and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation.
 
-Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim is a great example of what the Open Source paradigm can achieve. 
+Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim is a great example of what the Open Source paradigm can achieve.
 
 # Development and Design Choices
 
-JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim]. 
+JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim].
 
 In a nutshell, the flow of the code can be illustrated as follows:
 
 [diagram or explanation of the architecture of the code and how it is instantiated]
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
+
 This is a key design feature of JSBSim, which allows users to define an entire FDM model using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters required writing and re-compiling C code.
+
+Furthermore, JSBSim's low computational footprint allows it to run on virtually any personal computer. The reliance on XML for configuration and CSV for output enables a lightweight development workflow. Users can create and refine complex FDMs using any basic text editor and process simulation results with ubiquitous tools such as Microsoft Excel or Gnuplot. This approach eliminates the need for specialized development environments.
 
 ## JSBSim FDM Definition
 
@@ -143,9 +146,13 @@ Landing gear contacts (`BOGEY`) also define additional properties in terms of wh
 
 A `STRUCTURE` contact can be defined for example to provide a contact point at the rear of the fuselage for performing a velocity minimum unstick $V_{MU}$ simulation flight test.
 
+A fundamental physical distinction between the two is the direction of the reaction force. For `BOGEY` elements, the force is oriented along the gear's mechanical axis (defined by its orientation), allowing for accurate modeling of strut compression. In contrast, `STRUCTURE` elements represent airframe parts where the reaction force is always normal to the ground surface. `BOGEY` contacts also support specialized features such as steering, braking, and retraction, as shown in the example above.
+
+The calculation of friction forces in JSBSim is an adaptation of the algorithm described in Erin Catto's paper 'Iterative Dynamics with Temporal Coherence'. The implementation relies on a projected Gauss-Seidel algorithm to handle the inequalities induced by the Coulomb friction law, providing a robust solution for multi-point ground contacts.
+
 ### Aerodynamic Force and Moments
 
-All aerodynamic forces and moments have to specified within the FDM. JSBSim itself doesn’t define any forces or moments. The forces and moments can be specified in one of 3 reference frames, the body axes, stability axes or the wind axes.
+All aerodynamic forces and moments have to be specified within the FDM. JSBSim itself doesn’t define any forces or moments. The forces and moments can be specified in one of 3 reference frames, the body axes, stability axes or the wind axes.
 
 The author of the FDM is free to define as many or as few forces and moments based on the level of fidelity they want to implement and based on the aerodynamic data that they have available to them for the aircraft type.
 
@@ -172,9 +179,11 @@ JSBSim provides a number of mathematical functions for use in calculating a forc
 
 JSBSim provides a number of pre-calculated properties, e.g. `aero/qbar-psf` is the dynamic pressure $\frac{1}{2} \rho V^2$ calculated based on the current air density of the aircraft within the atmosphere model and the aircraft’s true airspeed.
 
-During each time step JSBSim evaluates each function defining a force for each axis and sums all the forces in order to calculate the net force per axis. 
+The property system used by JSBSim, which is essentially the same as the one used by [FlightGear](https://www.flightgear.org), is a highly versatile way to create and access data using a hierarchical structure. This hierarchy organizes parameters into logical groups, as seen in the examples above: aerodynamic properties are grouped under the `aero/` prefix (e.g., `aero/qbar-psf`, `aero/alpha-rad` for angle of attack, or `aero/beta-rad` for sideslip angle), while geometric parameters are stored under `metrics/` (e.g., `metrics/Sw-sqft` for wing area or `metrics/cbarw-ft` for mean aerodynamic chord). This structured approach ensures data organization and promotes naming consistency across different aircraft models.
 
-The Moment Reference Center (MRC), named as `AERORP`, needs to be defined within the `metrics` element.
+During each time step JSBSim evaluates each function defining a force for each axis and sums all the forces in order to calculate the net force per axis.
+
+The Moment Reference Center (MRC), defined by the `AERORP` element within the `metrics` section, is the reference point around which all aerodynamic moments are calculated. This point is crucial as it defines the pivot for the aircraft's aerodynamic stability and control moments before they are translated to the center of gravity.
 
 ```xml
 <metrics>
@@ -210,8 +219,6 @@ The moments and forces can also reference properties that define control positio
 All the moment definitions are evaluated and summed for each axis. JSBSim then calculates an additional moment based on the current forces and the moment arm between the current cg and the MRC.
 
 A quite unique feature of the FDM is that users can also define *custom functions* in their XML configuration files. The functions may access to the whole set of properties exposed by the model, which can be variables and updated at runtime, and define themselves new variables. This enables all kind of special behaviors and interconnections between subsystem and allows to confine the specific model's peculiarities in the input files rather than cluttering the code.
-
-The property system used by JSBSim, which is essentially the same as the one used by [FlightGear](https://www.flightgear.org), is a highly versatile way to create and access data using a hierarchical structure.
 
 ### Propulsion
 
@@ -302,7 +309,7 @@ The control position property is then used by functions in the aerodynamic secti
     </aerosurface_scale>
 ```
 
-A `pid` element is provided for use in defining an FCS that makes use of feedback control.
+The JSBSim FCS is capable of modeling a wide variety of control laws, ranging from simple open-loop systems to sophisticated closed-loop architectures. This is achieved through a comprehensive set of components, including filters, summers, switches, and `pid` elements for feedback control.
 
 ### Initialization
 
@@ -342,7 +349,7 @@ And here is how we invoke the batch version of JSBSim from the command line, whi
 ./JSBSim --end=5400 --aircraft=minimal_ball --initfile=reset00_v2
 ```
 
-Running the above command results in the ball characteristics being read in, placed at the state specified in the  reset00_v2.xml file, and running for 5400 seconds. The position of the ball is logged at 1 Hz in a file named BallOut.csv.
+Running the above command results in the ball characteristics being read in, placed at the state specified in the `reset00_v2.xml` file, and running for 5400 seconds. The position of the ball is logged at 1 Hz in a file named `BallOut.csv`.
 
 ## JSBSim Scripting
 
@@ -350,57 +357,58 @@ JSBSim provides an XML based scripting facility which allows the user to reprodu
 
 Here is a simple example which specifies a specific aircraft model and initial conditions, then instructs JSBSim to trim the aircraft at these initial conditions, and finally input an elevator doublet, and run the test for 20s. Relevant parameters like pitch attitude, angle of attack etc. can be logged and then used for example to calculate the aircraft's short period response.
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="Elevator doublet test">
 
-	<description>
-		Trim the aircraft and then input an elevator doublet.
-	</description>
+  <description>
+    Trim the aircraft and then input an elevator doublet.
+  </description>
 
-	<use aircraft="737" initialize="elevator_doublet_init"/>
+  <use aircraft="737" initialize="elevator_doublet_init"/>
 
-	<run start="0" end="20" dt="0.008333">
+  <run start="0" end="20" dt="0.008333">
+    <event name="Start Trim">
+      <condition> simulation/sim-time-sec ge 0 </condition>
+      <set name="simulation/do_simple_trim" value="1"/>  <!-- 1 - Full trim -->
+    </event>
 
-		<event name="Start Trim">
-			<condition> simulation/sim-time-sec ge 0 </condition>
-			<set name="simulation/do_simple_trim" value="1"/>  <!-- 1 - Full trim -->
-		</event>
+    <event name="StartDoublet">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <set name="fcs/elevator-cmd-norm" value="-0.2" />
+    </event>
 
-		<event name="StartDoublet">
-			<condition> simulation/sim-time-sec ge 1.0 </condition>
-			<set name="fcs/elevator-cmd-norm" value="-0.2" />
-		</event>
+    <event name="ReverseDoublet">
+      <condition> simulation/sim-time-sec ge 2.0 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.2" />
+   </event>
 
-		<event name="ReverseDoublet">
-			<condition> simulation/sim-time-sec ge 2.0 </condition>
-			<set name="fcs/elevator-cmd-norm" value="0.2" />
-		</event>
-
-		<event name="EndDoublet">
-			<condition> simulation/sim-time-sec ge 3.0 </condition>
-			<set name="fcs/elevator-cmd-norm" value="0.0" />
-		</event>
-
-	</run>
-
+    <event name="EndDoublet">
+      <condition> simulation/sim-time-sec ge 3.0 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.0" />
+    </event>
+  </run>
 </runscript>
 ```
 
 # Implementation and Engineering Practices
 
-A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the [NASA Engineering Safety Center](https://www.nasa.gov/nesc) undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@Murri:2015:Check:Cases]. 
+A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the [NASA Engineering Safety Center](https://www.nasa.gov/nesc) undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@Murri:2015:Check:Cases].
+
+The library also leverages the broader open-source ecosystem by integrating mature and specialized components. For XML parsing, JSBSim relies on Expat, a foundational and industry-standard library in the open-source community. Additionally, complex geodesic calculations required for high-fidelity trajectory modeling on the WGS84 oblate spheroid are performed using Charles Karney’s GeographicLib, ensuring precision in geospatial positioning and navigation.
+
+JSBSim adheres to modern open-source Quality Assurance (QA) standards through an extensive Continuous Integration and Continuous Deployment (CI/CD) workflow powered by GitHub Actions. Every commit and Pull Request undergoes automated builds and testing across all major supported platforms (Windows, macOS, and Linux) to ensure cross-platform compatibility and prevent regressions. This pipeline also tracks code coverage to monitor testing depth. Furthermore, the CD workflow automates the release process, including the deployment of Python packages to PyPI, the creation of Ubuntu packages, and the generation of Windows installers, ensuring that users can easily access stable versions of the software.
 
 # GitHub Repository Maintenance
 
 JSBSim has been in development since 1996. In 2018, its codebase was moved to GitHub under the organization JSBSim-Team. To date more than 60 different contributors have contributed to the codebase. Its maintenance is characterized by the following practices:
 
-- Collaborative Leadership. The project is actively maintained by a core team, including Bertrand Coconnier, Agostino De Marco, and Sean McLeod, following the original development by Jon Berndt. 
+- Collaborative Leadership. The project is actively maintained by a core team, including Bertrand Coconnier, Agostino De Marco, and Sean McLeod, following the original development by Jon Berndt.
 
-- Structured Technical Planning. The team uses GitHub Discussions to deliberate on significant architectural changes.
+- Structured Technical Planning. The team utilizes public GitHub Discussions to debate major technical changes, fostering a transparent environment where the community can follow and contribute to the project's evolution.
 
 - Modern Development Workflow. Maintenance follows standard GitHub practices, utilizing Issues for bug tracking and Pull Requests for contributing source code changes
 
@@ -417,8 +425,8 @@ The figure below shows number of stars received by the GitHub repository of JSBS
 JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. It's use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms. In the existing scientific literature, the key works on JSBSim are those by @Berndt:2004:JSBSim, @DeMarco:2007:General:Solution:Trim, @Berndt:DeMarco:2009:Progress:JSBSim, @Murri:2015:Check:Cases.
 
 Examples of use cases include:
-  
-- Modeling flight dynamics within a full-featured flight simulator, such as [FlightGear](https://www.flightgear.org), [MIXR (Mixed Reality Simulation Platform)](https://www.mixr.dev) (formerly known as OpenEaagles), the [Outerra world simulator](https://outerra.com), or [Epic Games' Unreal Engine 5](https://www.unrealengine.com/unreal-engine-5). 
+
+- Modeling flight dynamics within a full-featured flight simulator, such as [FlightGear](https://www.flightgear.org), [MIXR (Mixed Reality Simulation Platform)](https://www.mixr.dev) (formerly known as OpenEaagles), the [Outerra world simulator](https://outerra.com), or [Epic Games' Unreal Engine 5](https://www.unrealengine.com/unreal-engine-5).
 
 - CPU performance benchmarking. JSBSim has been included in the [SPEC CPU](https://www.spec.org/), a widely recognized benchmark suite designed to measure the performance of a computer's processor, memory, and compiler efficiency using compute-intensive workloads.
 
@@ -426,7 +434,7 @@ Examples of use cases include:
 
 - Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition). See also the works by @Richter:2022:Attitude:Control:QLearning, @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Wang:2023:Air:Combat:2v2, @Wang:2024:Enhancing:Multi:UAV, @Fu:2024:Distributed:Advantage:Based, @Shen:2025:Autonomous:Control, @Salhi:2025:Leveraging:JSBSim, @Chen:2026:Physics:Informed:Target:Aiming.
 
-- SITL (Software In The Loop) Drone autopilot testing: [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation). 
+- SITL (Software In The Loop) Drone autopilot testing: [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation).
 
 - UAV modeling. See @Goppert:DeMarco:2011:Trim:Strategies:JSBSim, @Yuceol:2013:Modeling:Simulation:SmallUAV, @Moallemi:2016:Flight:Dynamics:Global5000, @Kim:2016:Flying:Qualities:JSBSim, @Kamal:2016:Modeling:Flight:Simulation:UAV, @CerecedaCantarelo:2017:Validation:Discussion:UAV, @Varriale:DeMarco:2018:Flight:Load:Assessment, @Cereceda:2019:Giant:BigStik, @Zumegen:2021:Evaluation:Formation:Flights.
 
@@ -436,9 +444,10 @@ Examples of use cases include:
 
 - Simulation integration. See @Park:2008:Experimental:Evaluation:UAV:TMO, @Gimenes:2008:Using:Flight:Simulation, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Xin:2022:Hardware:In:Loop:UAV:Swarm, @Chen:2023:IMFlySim, @Saber:2025:Integration:JSBSim:Unreal, @Trang:2026:Building:Flight:Simulation.
 
+JSBSim's versatility is further expanded by its blossoming Python ecosystem, which has seen over one million cumulative downloads across PyPI and Conda. While its established C++ integration remains fundamental, there is a significant growth in users leveraging Python's ubiquity in the research, engineering, and AI communities. This trend is reflected in a growing number of applications that utilize interactive notebooks to provide a didactic interface, effectively lowering the barrier to entry. Moreover, Python enables a more dynamic approach to simulation, allowing users to complement traditional XML scripting with complex programmatic scenarios and to develop sophisticated aerodynamic or propulsion models through the `external_reactions` interface.
+
 # Acknowledgements
 
-JSBSim is currently being maintained and developed by Bertrand Coconnier, Sean McLeod, and Agostino De Marco, along with contributions from the broader community. Initial architecture and development was done by Jon Berndt, with major contributions from Tony Peden, David Megginson, and David Culp. Initial integration into the FlightGear open source flight simulator was assisted by Curt Olson. 
+JSBSim is currently being maintained and developed by Bertrand Coconnier, Sean McLeod, and Agostino De Marco, along with contributions from the broader community. Initial architecture and development was done by Jon Berndt, with major contributions from Tony Peden, David Megginson, and David Culp. Initial integration into the FlightGear open source flight simulator was assisted by Curt Olson.
 
 # References
-
