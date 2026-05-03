@@ -80,7 +80,7 @@ JSBSim was designed from the ground up with several features in mind. One was to
 
 In a nutshell, the flow of the code can be illustrated as follows:
 
-[diagram or explanation of the architecture of the code and how it is instantiated]
+![Diagram or explanation of the architecture of the code and how it is instantiated.](assets/jsbsim_workflow.png)
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
 
