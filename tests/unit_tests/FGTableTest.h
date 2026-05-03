@@ -1953,3 +1953,301 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2x2(pm, el_table), BaseException&);
   }
 };
+
+
+class FGTable4DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad4DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+
+    // 4D table: nested <tableData> levels wrapping 2D tableData leaves
+    // axis4 (outer tableData): breakPoints 0.0, 1.0
+    // axis3 (inner tableData): breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData leaf
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test4d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <tableData breakPoint=\"0.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        2.0   3.0  4.0\n"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"10.0\">"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        2.0   7.0  8.0\n"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "              0.0  1.0\n"
+                                  "        1.0   1.0  2.0\n"
+                                  "        2.0   3.0  4.0\n"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"10.0\">"
+                                  "              0.0  1.0\n"
+                                  "        1.0   5.0  6.0\n"
+                                  "        2.0   7.0  8.0\n"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t4d(pm, el_table);
+    TS_ASSERT_EQUALS(t4d.GetName(), std::string("test4d"));
+    TS_ASSERT(t4d.GetNumRows() > 0);
+
+    a1->setDoubleValue(2.0);
+    a2->setDoubleValue(1.0);
+    a3->setDoubleValue(10.0);
+    a4->setDoubleValue(1.0);
+    TS_ASSERT_DELTA(t4d.GetValue(), 8.0, epsilon);
+
+    a1->setDoubleValue(1.5);
+    a2->setDoubleValue(0.5);
+    a3->setDoubleValue(5.0);
+    a4->setDoubleValue(0.5);
+    TS_ASSERT_DELTA(t4d.GetValue(), 4.5, epsilon);
+  }
+};
+
+
+class FGTable5DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad5DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    pm->GetNode("axis1", true);
+    pm->GetNode("axis2", true);
+    pm->GetNode("axis3", true);
+    pm->GetNode("axis4", true);
+    pm->GetNode("axis5", true);
+
+    // 5D table: nested <tableData> levels wrapping 2D tableData leaves
+    // axis5 (outermost): breakPoints 0.0, 1.0
+    // axis4 (middle):    breakPoints 0.0, 1.0
+    // axis3 (inner):     breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData leaf
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test5d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <independentVar lookup=\"axis5\">axis5</independentVar>"
+                                  "    <tableData breakPoint=\"0.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"10.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"1.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"10.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"10.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"1.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   1.0  2.0\n"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"10.0\">"
+                                  "                0.0  1.0\n"
+                                  "          1.0   5.0  6.0\n"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t5d(pm, el_table);
+    TS_ASSERT_EQUALS(t5d.GetName(), std::string("test5d"));
+    TS_ASSERT(t5d.GetNumRows() > 0);
+
+    // Verify exact values at breakpoints so 5D indexing/regression issues are caught.
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 0.0, 0.0, 0.0, 0.0), 1.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 0.0, 0.0, 0.0), 2.0, epsilon);
+    TS_ASSERT_DELTA(t5d.GetValue(1.0, 1.0, 10.0, 1.0, 1.0), 6.0, epsilon);
+
+    // Verify interpolation across all five dimensions.
+    TS_ASSERT_DELTA(t5d.GetValue(0.5, 0.5, 5.0, 0.5, 0.5), 3.5, epsilon);
+  }
+};
+
+
+class FGTable6DTest : public CxxTest::TestSuite
+{
+public:
+  void testLoad6DFromXML() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    auto a1 = pm->GetNode("axis1", true);
+    auto a2 = pm->GetNode("axis2", true);
+    auto a3 = pm->GetNode("axis3", true);
+    auto a4 = pm->GetNode("axis4", true);
+    auto a5 = pm->GetNode("axis5", true);
+    auto a6 = pm->GetNode("axis6", true);
+
+    // 6D table: nested <tableData> levels wrapping 2D tableData leaves
+    // axis6 (outermost):  breakPoints 0.0, 1.0
+    // axis5 (level 3):    breakPoints 0.0, 1.0
+    // axis4 (level 2):    breakPoints 0.0, 1.0
+    // axis3 (inner):      breakPoints 0.0, 10.0
+    // axis1 (row), axis2 (column): inside each 2D tableData leaf
+    Element_ptr elm = readFromXML("<dummy>"
+                                  "  <table name=\"test6d\">"
+                                  "    <independentVar lookup=\"row\">axis1</independentVar>"
+                                  "    <independentVar lookup=\"column\">axis2</independentVar>"
+                                  "    <independentVar lookup=\"axis3\">axis3</independentVar>"
+                                  "    <independentVar lookup=\"axis4\">axis4</independentVar>"
+                                  "    <independentVar lookup=\"axis5\">axis5</independentVar>"
+                                  "    <independentVar lookup=\"axis6\">axis6</independentVar>"
+                                  "    <tableData breakPoint=\"0.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"1.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"1.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"1.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "    <tableData breakPoint=\"1.0\">"
+                                  "      <tableData breakPoint=\"0.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"1.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "      <tableData breakPoint=\"1.0\">"
+                                  "        <tableData breakPoint=\"0.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "        <tableData breakPoint=\"1.0\">"
+                                  "          <tableData breakPoint=\"0.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   1.0  2.0\n"
+                                  "          </tableData>"
+                                  "          <tableData breakPoint=\"10.0\">"
+                                  "                  0.0  1.0\n"
+                                  "            1.0   5.0  6.0\n"
+                                  "          </tableData>"
+                                  "        </tableData>"
+                                  "      </tableData>"
+                                  "    </tableData>"
+                                  "  </table>"
+                                  "</dummy>");
+    Element* el_table = elm->FindElement("table");
+
+    FGTable t6d(pm, el_table);
+    TS_ASSERT_EQUALS(t6d.GetName(), std::string("test6d"));
+    TS_ASSERT(t6d.GetNumRows() > 0);
+
+    // Exact-grid lookup at the last 2D leaf:
+    // axis3=10.0, axis4=1.0, axis5=1.0, axis6=1.0 and row/column 1.0,1.0
+    // should return the exact table value 6.0.
+    a1->setDoubleValue(1.0);
+    a2->setDoubleValue(1.0);
+    a3->setDoubleValue(10.0);
+    a4->setDoubleValue(1.0);
+    a5->setDoubleValue(1.0);
+    a6->setDoubleValue(1.0);
+    TS_ASSERT_DELTA(t6d.GetValue(), 6.0, epsilon);
+
+    // Interpolated lookup in the same leaf: row 1.0, column 0.5
+    // interpolates between 5.0 and 6.0, yielding 5.5.
+    a2->setDoubleValue(0.5);
+    TS_ASSERT_DELTA(t6d.GetValue(), 5.5, epsilon);
+  }
+};

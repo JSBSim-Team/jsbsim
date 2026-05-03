@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 JSB  1/9/00          Created
+ADM  2026/04/17      Added support for 4D and higher tables.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -37,6 +38,9 @@ SENTRY
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <memory>
+#include <vector>
 
 #include "FGParameter.h"
 #include "math/FGPropertyValue.h"
@@ -54,8 +58,12 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Lookup table class.
-Models a one, two, or three dimensional lookup table for use in aerodynamics
+Models a one or more dimensional lookup table for use in aerodynamics
 and function definitions.
+
+The legacy 1D/2D/3D XML syntax is preserved. For 4D and higher, add
+independent variables with lookup="axis4", lookup="axis5", ... and
+nest \<tableData breakPoint="..."\> elements.
 
 For a single "vector" lookup table, the format is as follows:
 
@@ -193,6 +201,95 @@ Here's an example:
 </table>
 @endcode
 
+Example of a 4D table (outer axis is axis4, then axis3/table, row, column):
+
+@code
+<table>
+  <independentVar lookup="row">fcs/row-value</independentVar>
+  <independentVar lookup="column">fcs/column-value</independentVar>
+  <independentVar lookup="table">fcs/table-value</independentVar>
+  <independentVar lookup="axis4">fcs/axis4-value</independentVar>
+
+  <tableData breakPoint="-1.0">
+    <tableData breakPoint="0.0">
+               0.0     10.0
+      0.0      1.0      2.0
+      1.0      3.0      4.0
+    </tableData>
+    <tableData breakPoint="1.0">
+               0.0     10.0
+      0.0      2.0      3.0
+      1.0      4.0      5.0
+    </tableData>
+  </tableData>
+
+  <tableData breakPoint="1.0">
+    <tableData breakPoint="0.0">
+               0.0     10.0
+      0.0      6.0      7.0
+      1.0      8.0      9.0
+    </tableData>
+    <tableData breakPoint="1.0">
+               0.0     10.0
+      0.0      7.0      8.0
+      1.0      9.0     10.0
+    </tableData>
+  </tableData>
+</table>
+@endcode
+
+Example of a 5D table (outer axis is axis5, then axis4, axis3/table, row, column):
+
+@code
+<table>
+  <independentVar lookup="row">fcs/row-value</independentVar>
+  <independentVar lookup="column">fcs/column-value</independentVar>
+  <independentVar lookup="table">fcs/table-value</independentVar>
+  <independentVar lookup="axis4">fcs/axis4-value</independentVar>
+  <independentVar lookup="axis5">fcs/axis5-value</independentVar>
+
+  <tableData breakPoint="100.0"> <!-- axis5 -->
+    <tableData breakPoint="-1.0"> <!-- axis4 -->
+      <tableData breakPoint="0.0"> <!-- axis3/table -->
+                 0.0     10.0
+        0.0      1.0      2.0
+        1.0      3.0      4.0
+      </tableData>
+      <tableData breakPoint="1.0">
+                 0.0     10.0
+        0.0      2.0      3.0
+        1.0      4.0      5.0
+      </tableData>
+    </tableData>
+
+    <tableData breakPoint="1.0">
+      <tableData breakPoint="0.0">
+                 0.0     10.0
+        0.0      6.0      7.0
+        1.0      8.0      9.0
+      </tableData>
+      <tableData breakPoint="1.0">
+                 0.0     10.0
+        0.0      7.0      8.0
+        1.0      9.0     10.0
+      </tableData>
+    </tableData>
+  </tableData>
+
+  <tableData breakPoint="200.0"> <!-- axis5 -->
+    <tableData breakPoint="-1.0"> <!-- axis4 -->
+      <tableData breakPoint="0.0">
+                 0.0     10.0
+        0.0     11.0     12.0
+        1.0     13.0     14.0
+      </tableData>
+    </tableData>
+  </tableData>
+</table>
+@endcode
+
+
+
 In addition to using a Table for something like a coefficient, where all the
 row and column elements are read in from a file, a Table could be created
 and populated completely within program code:
@@ -268,6 +365,11 @@ public:
   /// @param TableKey Table coordinate at which the value must be interpolated
   /// @return The interpolated value
   double GetValue(double rowKey, double colKey, double TableKey) const;
+  double GetValue(double a1, double a2, double a3, double a4) const;
+  double GetValue(double a1, double a2, double a3, double a4, double a5) const;
+  double GetValue(double a1, double a2, double a3, double a4, double a5,
+                  double a6) const;
+  double GetValue(const std::vector<double>& keys) const;
 
   double GetMinValue(void) const;
   double GetMinValue(double colKey) const;
@@ -303,9 +405,9 @@ public:
   { return GetElement(r, c); }
 
   void SetRowIndexProperty(SGPropertyNode *node)
-  { lookupProperty[eRow] = new FGPropertyValue(node); }
+  { SetLookupProperty(eRow, new FGPropertyValue(node)); }
   void SetColumnIndexProperty(SGPropertyNode *node)
-  { lookupProperty[eColumn] = new FGPropertyValue(node); }
+  { SetLookupProperty(eColumn, new FGPropertyValue(node)); }
 
   unsigned int GetNumRows() const {return nRows;}
 
@@ -314,15 +416,29 @@ public:
   std::string GetName(void) const {return Name;}
 
 private:
-  enum type {tt1D, tt2D, tt3D} Type;
+  enum type {tt1D, tt2D, ttND} Type;
   enum axis {eRow=0, eColumn, eTable};
   bool internal = false;
   std::shared_ptr<FGPropertyManager> PropertyManager; // Property root used to do late binding.
-  FGPropertyValue_ptr lookupProperty[3];
+  std::vector<FGPropertyValue_ptr> lookupProperty;
+  mutable std::vector<double> lookupPropertyValues;
   std::vector<double> Data;
   std::vector<std::unique_ptr<FGTable>> Tables;
-  unsigned int nRows, nCols;
+  unsigned int nRows = 0u, nCols = 0u, nDims = 0u;
   std::string Name;
+
+  void SetLookupProperty(unsigned int axis, FGPropertyValue_ptr node)
+  {
+    if (lookupProperty.size() <= axis) lookupProperty.resize(axis + 1u);
+    lookupProperty[axis] = node;
+  }
+
+  bool HasLookupProperty(unsigned int axis) const
+  {
+    return axis < lookupProperty.size() && lookupProperty[axis];
+  }
+
+  double GetValue(const double* keys) const;
   void bind(Element* el, const std::string& Prefix);
   void missingData(Element *el, unsigned int expected_size, size_t actual_size);
   void Debug(int from);
