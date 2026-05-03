@@ -1,5 +1,64 @@
 % JSBSim reference list in JOSS-compatible BibTeX/BibLaTeX form.
 
+% --- Double-checked references
+%==========================================================================================
+
+% --- Must-cite references
+
+@report{Murri:2015:Check:Cases,
+  author      = {Murri, Daniel G. and Jackson, E. Bruce and Shelton, Robert O.},
+  title       = {Check-Cases for Verification of 6-Degree-of-Freedom Flight Vehicle Simulations},
+  type        = {NASA Technical Memorandum},
+  institution = {NASA Langley Research Center},
+  number      = {NASA/TM-2015-218675/Vol. I},
+  date        = {2015},
+  location    = {Hampton, VA},
+  doi         = {10.64631/IGUD7952},
+  url         = {https://ntrs.nasa.gov/citations/20150001263},
+  note        = {NESC-RP-12-00770}
+}
+
+@inproceedings{Berndt:DeMarco:2009:Progress:JSBSim,
+  author       = {Berndt, Jon S. and De Marco, Agostino},
+  title        = {Progress on and Usage of the Open Source Flight Dynamics Model Software Library, JSBSim},
+  booktitle    = {AIAA Modeling and Simulation Technologies Conference},
+  eventdate    = {2009-08-10/2009-08-13},
+  venue        = {Chicago, Illinois},
+  date         = {2009},
+  number       = {AIAA 2009-5699},
+  pages        = {1-17},
+  isbn         = {9781615674503},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  doi          = {10.2514/6.2009-5699},
+  url          = {https://arc.aiaa.org/doi/abs/10.2514/6.2009-5699}
+}
+
+@inproceedings{Berndt:2004:JSBSim,
+  author       = {Berndt, Jon S.},
+  title        = {JSBSim: An Open Source Flight Dynamics Model in C++},
+  booktitle    = {AIAA Modeling and Simulation Technologies Conference and Exhibit},
+  eventdate    = {2004-08-16/2004-08-19},
+  venue        = {Providence, RI},
+  date         = {2004},
+  number       = {AIAA 2004-4923},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  doi          = {10.2514/6.2004-4923},
+  url          = {https://arc.aiaa.org/doi/abs/10.2514/6.2004-4923}
+}
+
+@inproceedings{Catto:2005:Iterative:Dynamics,
+  author       = {Catto, Erin},
+  title        = {Iterative Dynamics with Temporal Coherence},
+  booktitle    = {Game Developer Conference 2005},
+  eventdate    = {2005-03-07/2005-03-11},
+  venue        = {Moscone Center West, San Francisco, California, United States},
+  date         = {2005},
+  publisher    = {CMP Media and United Business Media},
+  url          = {https://box2d.org/files/ErinCatto_IterativeDynamics_GDC2005.pdf},
+  urldate      = {2026-05-03},
+  keywords     = {rigid body dynamics, temporal coherence, constraint solvers, contact caching, game physics}
+}
+
 % --- Autopilot / SITL ---
 
 @misc{ardupilot-sitl-with-jsbsim,
@@ -29,113 +88,186 @@
   keywords = {JSBSim, Autopilot / SITL, SITL, Autopilot integration}
 }
 
+@software{Karney:2025:GeographicLib,
+  author       = {Karney, Charles},
+  title        = {GeographicLib 2.7},
+  month        = nov,
+  year         = 2025,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.18011538},
+  url          = {https://doi.org/10.5281/zenodo.18011538},
+}
+
+@software{Rother:2026:PathSim:Zenodo,
+  author       = {Rother, Milan},
+  title        = {PathSim - A System Simulation Framework},
+  month        = mar,
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v0.20.0},
+  doi          = {10.5281/zenodo.19247795},
+  url          = {https://doi.org/10.5281/zenodo.19247795},
+}
+
+@article{Rother:2025:PathSim:JOSS,
+  author = {Rother, Milan},
+  title = {PathSim - A System Simulation Framework},
+  journal = {Journal of Open Source Software},
+  year = {2025},
+  volume = {10},
+  number = {109},
+  pages = {8158},
+  doi = {10.21105/joss.08158}
+}
+
 % --- Core Literature ---
 
-@inproceedings{control-system-designer-for-jsbsim-with-algorithm-of-automatic-ziegler-2020,
-  title = {Control system designer for {JSBSim} with algorithm of automatic Ziegler-Nichols sustained-oscillation method},
-  year = {2020},
-  booktitle = {Conference proceedings},
-  url = {https://pubs.aip.org/aip/acp/article/2293/1/080006/690073/Control-system-designer-for-JSBSim-with-algorithm},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Core Literature, control design, Application paper}
+@inproceedings{Vogeltanz:2020:Control:System:Designer,
+  author       = {Vogeltanz, Tomáš},
+  title        = {Control System Designer for JSBSim with Algorithm of Automatic Ziegler-Nichols Sustained-Oscillation Method},
+  booktitle    = {AIP Conference Proceedings},
+  eventtitle   = {International Conference of Numerical Analysis and Applied Mathematics 2019},
+  eventdate    = {2019-09-23/2019-09-28},
+  venue        = {Rhodes, Greece},
+  editor       = {Simos, Theodore and Tsitouras, Charalambos},
+  volume       = {2293},
+  number       = {1},
+  eid          = {080006},
+  date         = {2020-11-24},
+  publisher    = {AIP Publishing},
+  doi          = {10.1063/5.0026623},
+  url          = {https://pubs.aip.org/aip/acp/article/2293/1/080006/690073/Control-system-designer-for-JSBSim-with-algorithm}
 }
 
-@inproceedings{development-of-control-system-designer-for-jsbsim-fdm-2018,
-  title = {Development of control system designer for {JSBSim} {FDM}},
-  year = {2018},
-  booktitle = {Conference proceedings},
-  url = {https://pubs.aip.org/aip/acp/article/1978/1/060019/796623/Development-of-control-system-designer-for-JSBSim},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Core Literature, control design, Application paper}
+@article{Nicolosi:DeMarco:2018:Roll:Performance:Assessment,
+  author       = {Nicolosi, Fabrizio and De Marco, Agostino and Sabetta, Vito and Della Vecchia, Pierluigi},
+  title        = {Roll Performance Assessment of a Light Aircraft: Flight Simulations and Flight Tests},
+  journaltitle = {Aerospace Science and Technology},
+  date         = {2018},
+  volume       = {76},
+  pages        = {471--483},
+  doi          = {10.1016/j.ast.2018.01.041},
+  url          = {https://www.sciencedirect.com/science/article/abs/pii/S1270963817317418}
 }
 
-
-@inproceedings{progress-on-and-usage-of-the-open-source-flight-dynamics-2009,
-  title = {Progress On and Usage of the Open Source Flight Dynamics Model Software Library, {JSBSim}},
-  year = {2009},
-  booktitle = {Conference proceedings},
-  url = {https://www.iris.unina.it/handle/11588/373874},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Core Literature, foundational / software, Core JSBSim paper}
+@inproceedings{Vogeltanz:2018:Development:Control:System:Designer,
+  author       = {Vogeltanz, Tomáš},
+  title        = {Development of Control System Designer for JSBSim FDM},
+  booktitle    = {AIP Conference Proceedings},
+  eventtitle   = {International Conference of Numerical Analysis and Applied Mathematics (ICNAAM 2017)},
+  eventdate    = {2017-09-25/2017-09-30},
+  venue        = {Thessaloniki, Greece},
+  editor       = {Simos, Theodore and Tsitouras, Charalambos},
+  volume       = {1978},
+  number       = {1},
+  eid          = {060019},
+  date         = {2018-07-10},
+  publisher    = {AIP Publishing},
+  doi          = {10.1063/1.5043721},
+  url          = {https://pubs.aip.org/aip/acp/article/1978/1/060019/796623/Development-of-control-system-designer-for-JSBSim}
 }
 
-@inproceedings{jsbsim-an-open-source-flight-dynamics-model-in-cpp-2004,
-  author = {Jon S. Berndt},
-  title = {{JSBSim}: An Open Source Flight Dynamics Model in {C++}},
-  year = {2004},
-  publisher = {JSBSim Team},
-  booktitle = {Conference proceedings},
-  url = {https://jsbsim.sourceforge.net/JSBSimAnOpenSourceFlightDynamicsModelinCPP.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Core Literature, foundational / software, Core JSBSim paper}
+@inproceedings{DeMarco:2007:General:Solution:Trim,
+  author       = {De Marco, Agostino and Duke, Eugene L. and Berndt, Jon S.},
+  title        = {A General Solution to the Aircraft Trim Problem},
+  booktitle    = {AIAA Modeling and Simulation Technologies Conference and Exhibit},
+  eventtitle   = {AIAA Modeling and Simulation Technologies Conference and Exhibit},
+  eventdate    = {2007-08-20/2007-08-23},
+  venue        = {Hilton Head, South Carolina},
+  date         = {2007},
+  number       = {AIAA 2007-6703},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  doi          = {10.2514/6.2007-6703},
+  url          = {http://wpage.unina.it/agodemar/DSV-DQV/AIAA-2007-6703-905_DeMarco_Duke_Berndt.pdf}
 }
 
 % --- RL / Air Combat ---
 
-@incollection{autonomous-control-of-simulated-aircraft-based-on-deep-reinforcement-learning-2025,
-  title = {Autonomous Control of Simulated Aircraft Based on Deep Reinforcement Learning},
-  year = {2025},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-981-96-2468-3_47},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Uses JSBSim}
+@article{Chen:2026:Physics:Informed:Target:Aiming,
+  author       = {Chen, Yi Ho and Chiang, Meng Huan and Peng, Chao Chung},
+  title        = {Physics-informed reinforcement learning for air-to-air F16 target aiming},
+  journaltitle = {Advanced Engineering Informatics},
+  date         = {2026-01},
+  volume       = {69},
+  eid          = {103988},
+  issn         = {1474-0346},
+  doi          = {10.1016/j.aei.2025.103988},
+  url          = {https://www.sciencedirect.com/science/article/pii/S147403462500881X},
+  publisher    = {Elsevier}
 }
 
-@incollection{leveraging-jsbsim-and-gymnasium-a-reinforcement-learning-framework-for-air-2025,
-  title = {Leveraging {JSBSim} and Gymnasium: A Reinforcement Learning Framework for Air Combat Simulation},
-  year = {2025},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-3-031-85628-0_20},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, Uses JSBSim}
+@inproceedings{Shen:2025:Autonomous:Control,
+  author       = {Shen, Xinglong and Liu, Yang and Zhao, Dequn},
+  title        = {Autonomous Control of Simulated Aircraft Based on Deep Reinforcement Learning Driven by Limited State Information},
+  booktitle    = {Proceedings of the 3rd International Conference on Machine Learning, Cloud Computing and Intelligent Mining (MLCCIM2024)},
+  eventtitle   = {International Conference on Machine Learning, Cloud Computing and Intelligent Mining},
+  venue        = {Shennongjia, China},
+  series       = {Lecture Notes in Electrical Engineering},
+  volume       = {1326},
+  pages        = {560--570},
+  editor       = {Sun, Fuchun and Wang, Hesheng and Long, Han and Wei, Yifei and Yu, Hongqi},
+  date         = {2025-03-22},
+  publisher    = {Springer},
+  location     = {Singapore},
+  isbn         = {978-981-96-2467-6},
+  eisbn        = {978-981-96-2468-3},
+  doi          = {10.1007/978-981-96-2468-3_47},
+  url          = {https://link.springer.com/chapter/10.1007/978-981-96-2468-3_47}
 }
 
-@article{physics-informed-reinforcement-learning-for-air-to-air-f16-target-2025,
-  title = {Physics-informed reinforcement learning for air-to-air {F16} target aiming},
-  year = {2025},
-  journal = {Journal article},
-  url = {https://www.sciencedirect.com/science/article/pii/S147403462500881X},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, Uses / mentions JSBSim}
+@inproceedings{Salhi:2025:Leveraging:JSBSim,
+  author       = {Salhi, Abderahim and Jabour, Joseph E. and Arnolds, Thomas L. and Ross, James E. and Dozier, Haley R.},
+  title        = {Leveraging JSBSim and Gymnasium: A Reinforcement Learning Approach for Air Combat Simulation},
+  booktitle    = {Applied Cognitive Computing and Artificial Intelligence},
+  eventtitle   = {8th International Conference, ACC 2024, and 26th International Conference, ICAI 2024, held as part of the World Congress in Computer Science, Computer Engineering and Applied Computing, CSCE 2024},
+  eventdate    = {2024-07-22/2024-07-25},
+  venue        = {Las Vegas, NV, USA},
+  series       = {Communications in Computer and Information Science},
+  volume       = {2251},
+  pages        = {271--283},
+  editor       = {Arabnia, Hamid R. and Ferens, Ken and Deligiannidis, Leonidas},
+  date         = {2025-03-30},
+  publisher    = {Springer},
+  location     = {Cham},
+  isbn         = {978-3-031-85627-3},
+  eisbn        = {978-3-031-85628-0},
+  doi          = {10.1007/978-3-031-85628-0_20},
+  url          = {https://link.springer.com/chapter/10.1007/978-3-031-85628-0_20}
 }
 
-@article{bvr-gym-a-reinforcement-learning-environment-for-beyond-visual-range-2024,
-  title = {{BVR} Gym: A Reinforcement Learning Environment for Beyond-Visual-Range Air Combat},
-  year = {2024},
-  journal = {Preprint},
-  url = {https://arxiv.org/abs/2403.17533},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, Uses JSBSim}
+@inproceedings{Fu:2024:Distributed:Advantage:Based,
+  author       = {Fu, Yupeng and Xiao, Yuan and Fang, Jun and Deng, Xiangyang and Zhu, Ziqiang and Zhang, Limin},
+  title        = {Distributed Advantage-Based Weights Reshaping Algorithm with Sparse Reward},
+  booktitle    = {Advances in Swarm Intelligence},
+  eventtitle   = {15th International Conference on Swarm Intelligence (ICSI 2024)},
+  eventdate    = {2024-08-23/2024-08-26},
+  venue        = {Xining, China},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {14788},
+  pages        = {391--400},
+  editor       = {Tan, Ying and Shi, Yuhui},
+  date         = {2024-08-21},
+  publisher    = {Springer},
+  location     = {Singapore},
+  isbn         = {978-981-97-7180-6},
+  eisbn        = {978-981-97-7181-3},
+  doi          = {10.1007/978-981-97-7181-3_31},
+  url          = {https://link.springer.com/chapter/10.1007/978-981-97-7181-3_31}
 }
 
-@incollection{distributed-advantage-based-weights-reshaping-algorithm-with-sparse-reward-2024,
-  title = {Distributed Advantage-Based Weights Reshaping Algorithm with Sparse Reward},
-  year = {2024},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-981-97-7181-3_31},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, Uses air-combat simulator stack mentioning JSBSim}
+@article{Wang:2024:Enhancing:Multi:UAV,
+  author       = {Wang, Huan and Wang, Jintao},
+  title        = {Enhancing multi-{UAV} air combat decision making via hierarchical reinforcement learning},
+  journaltitle = {Scientific Reports},
+  date         = {2024-02-23},
+  volume       = {14},
+  number       = {1},
+  eid          = {4458},
+  doi          = {10.1038/s41598-024-54938-5},
+  url          = {https://pmc.ncbi.nlm.nih.gov/articles/PMC10891071}
 }
 
-@article{enhancing-multi-uav-air-combat-decision-making-via-hierarchical-reinforcement-2024,
-  title = {Enhancing multi-{UAV} air combat decision making via hierarchical reinforcement learning},
-  year = {2024},
-  journal = {Journal article},
-  url = {https://pmc.ncbi.nlm.nih.gov/articles/PMC10891071/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / multi-agent air combat, Uses JSBSim}
-}
-
-@incollection{2v2-air-combat-confrontation-strategy-based-on-reinforcement-learning-2023,
-  title = {2v2 Air Combat Confrontation Strategy Based on Reinforcement Learning},
-  year = {2023},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-981-99-0479-2_125},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, Uses JSBSim-based 6-DoF simulation core}
-}
-
-@article{a-deep-reinforcement-learning-control-approach-for-high-performance-aircraft-2023,
+@article{DeMarco:2023:DRL:Hight:Performance:Aircraft,
   author = {De Marco, Agostino and D'Onza, Paolo Maria and Manfredi, Sabato},
   title = {A deep reinforcement learning control approach for high-performance aircraft},
   journal = {Nonlinear Dynamics},
@@ -148,7 +280,7 @@
   keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Uses JSBSim}
 }
 
-@article{hierarchical-reinforcement-learning-for-air-combat-at-darpas-alphadogfight-trials-2023,
+@article{Pope:2023:Hierarchical:RL:DARPA:Trials,
   author = {Adrian P. Pope and Jaime S. Ide and Daria Mićović and Henry Díaz and Jason C. Twedt and Kevin Alcedo and Thayne T. Walker and David Rosenbluth and Lee Ritholtz and Daniel Javorsek},
   title = {Hierarchical Reinforcement Learning for Air Combat at {DARPA}'s AlphaDogfight Trials},
   journal = {IEEE Transactions on Artificial Intelligence},
@@ -162,44 +294,396 @@
   keywords = {JSBSim, RL / Air Combat, reinforcement learning / air combat, AlphaDogfight / F-16}
 }
 
-@incollection{attitude-control-for-fixed-wing-aircraft-using-q-learning-2021,
-  title = {Attitude Control for Fixed-Wing Aircraft Using {Q-Learning}},
-  year = {2021},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-3-030-98404-5_59},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Uses QPlane with JSBSim}
+@inproceedings{Wang:2023:Air:Combat:2v2,
+  author       = {Wang, Jinlin and Zhu, Longtao and Yang, Hongyu and Ji, Yulong and Wang, Xiaoming},
+  title        = {2v2 Air Combat Confrontation Strategy Based on Reinforcement Learning},
+  booktitle    = {Proceedings of 2022 International Conference on Autonomous Unmanned Systems (ICAUS 2022)},
+  eventtitle   = {International Conference on Autonomous Unmanned Systems (ICAUS 2022)},
+  eventdate    = {2022-09-23/2022-09-25},
+  venue        = {Xi'an, China},
+  series       = {Lecture Notes in Electrical Engineering},
+  volume       = {1010},
+  pages        = {1368--1377},
+  editor       = {Fu, Wenxing and Gu, Mancang and Niu, Yifeng},
+  date         = {2023-03-10},
+  publisher    = {Springer},
+  location     = {Singapore},
+  isbn         = {978-981-99-0478-5},
+  eisbn        = {978-981-99-0479-2},
+  doi          = {10.1007/978-981-99-0479-2_125},
+  url          = {https://link.springer.com/chapter/10.1007/978-981-99-0479-2_125}
 }
 
-@thesis{simulated-fixed-wing-aircraft-attitude-control-using-reinforcement-learning-methods-2021,
-  author = {David J. Richter},
-  title = {Simulated Fixed-Wing Aircraft Attitude Control using Reinforcement Learning Methods},
-  year = {2021},
-  type = {Thesis},
-  url = {https://figshare.com/articles/thesis/Simulated_Fixed-Wing_Aircraft_Attitude_Control_using_Reinforcement_Learning_Methods/17156267/1},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Uses JSBSim}
+@inproceedings{Richter:2022:Attitude:Control:QLearning,
+  author       = {Richter, David J. and Natonski, Lance James and Shen, Xiaxin and Calix, Ricardo A.},
+  title        = {Attitude Control for Fixed-Wing Aircraft Using Q-Learning},
+  booktitle    = {Intelligent Human Computer Interaction},
+  eventtitle   = {13th International Conference on Intelligent Human Computer Interaction (IHCI 2021)},
+  eventdate    = {2021-12-20/2021-12-22},
+  venue        = {Kent, OH, USA},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {13184},
+  pages        = {647--658},
+  editor       = {Kim, Jong-Hoon and Singh, Madhusudan and Khan, Javed and Tiwary, Uma Shanker and Sur, Marigankar and Singh, Dhananjay},
+  date         = {2022-03-20},
+  publisher    = {Springer},
+  location     = {Cham},
+  isbn         = {978-3-030-98403-8},
+  eisbn        = {978-3-030-98404-5},
+  doi          = {10.1007/978-3-030-98404-5_59},
+  url          = {https://link.springer.com/chapter/10.1007/978-3-030-98404-5_59}
 }
 
-@misc{darpa-virtual-air-combat-competition-2019,
-  author = {{DARPA}},
-  title = {{DARPA} Virtual Air Combat Competition},
-  year = {2019},
-  publisher = {DARPA},
-  url = {https://www.darpa.mil/news/2019/virtual-air-combat-competition},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, air combat / autonomy, Competition used JSBSim}
+% --- Rocket / Space ---
+
+@article{Abdulkerim:2022:Simulating:Rocket:Trajectory,
+  author       = {Abdulkerim, Sohayb},
+  title        = {Simulating Rocket Trajectory Using {JSBSim} and Optimal Thrust Profile for Maximizing Altitude of a Sounding Rocket},
+  journaltitle = {Celal Bayar University Journal of Science},
+  date         = {2022-12-26},
+  volume       = {18},
+  number       = {4},
+  pages        = {417--424},
+  doi          = {10.18466/cbayarfbe.1107088},
+  url          = {https://dergipark.org.tr/en/doi/10.18466/cbayarfbe.1107088}
 }
 
-@thesis{autonomous-control-of-simulated-fixed-wing-aircraft-using-deep-reinforcement-2018,
-  author = {Gordon Rennie},
-  title = {Autonomous Control of Simulated Fixed Wing Aircraft using Deep Reinforcement Learning},
-  year = {2018},
-  type = {Thesis},
-  url = {https://purehost.bath.ac.uk/ws/files/216919613/Rennie_Gordon.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Uses JSBSim}
+@article{Kenney:2011:Flight:Simulation:ARES,
+  author       = {Kenney, P. Sean and Croom, Mark A.},
+  title        = {Flight Simulation of {ARES} in the Mars Environment},
+  journaltitle = {NASA Tech Briefs},
+  date         = {2011-08-01},
+  volume       = {35},
+  number       = {8},
+  publisher    = {Tech Briefs Media Group},
+  note         = {LAR-17458},
+  url          = {https://ntrs.nasa.gov/citations/20120006630}
 }
+
+@article{Braun:2006:Design:ARES,
+  author       = {Braun, Robert D. and Wright, Henry S. and Croom, Mark A. and Levine, Joel S. and Spencer, David A.},
+  title        = {Design of the {ARES} Mars Airplane and Mission Architecture},
+  journaltitle = {Journal of Spacecraft and Rockets},
+  date         = {2006},
+  volume       = {43},
+  number       = {5},
+  pages        = {1026--1034},
+  doi          = {10.2514/1.17956},
+  url          = {https://ntrs.nasa.gov/api/citations/20080015501/downloads/20080015501.pdf}
+}
+
+@inproceedings{Guynn2003EvolutionMarsAirplane,
+  author       = {Guynn, Mark D. and Croom, Mark A. and Smith, Stephen C. and Parks, Robert W. and Gelhausen, Paul A.},
+  title        = {Evolution of a Mars Airplane Concept for the {ARES} Mars Scout Mission},
+  booktitle    = {2nd AIAA Unmanned Unlimited Systems, Technologies, and Operations Conference},
+  eventtitle   = {2nd AIAA Unmanned Unlimited Systems, Technologies, and Operations Conference},
+  eventdate    = {2003-09-15/2003-09-18},
+  venue        = {San Diego, CA, USA},
+  date         = {2003-09},
+  number       = {AIAA 2003-6578},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  doi          = {10.2514/6.2003-6578},
+  url          = {https://ntrs.nasa.gov/citations/20040034201}
+}
+
+@inproceedings{Kenney:2003:Simulating:ARES,
+  author       = {Kenney, P. Sean and Croom, Mark A.},
+  title        = {Simulating the {ARES} Aircraft in the Mars Environment},
+  booktitle    = {2nd AIAA Unmanned Unlimited Systems, Technologies, and Operations Conference},
+  eventtitle   = {2nd AIAA Unmanned Unlimited Systems, Technologies, and Operations Conference},
+  eventdate    = {2003-09-15/2003-09-18},
+  venue        = {San Diego, CA, USA},
+  date         = {2003-09},
+  number       = {AIAA 2003-6579},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  url          = {https://ntrs.nasa.gov/citations/20040034718}
+}
+
+@inproceedings{Gomez:2003:Active:Guidance,
+  author       = {Gomez, Faustino J. and Miikkulainen, Risto},
+  title        = {Active Guidance for a Finless Rocket Using Neuroevolution},
+  booktitle    = {Genetic and Evolutionary Computation --- {GECCO} 2003},
+  eventtitle   = {Genetic and Evolutionary Computation Conference},
+  eventdate    = {2003-07-12/2003-07-16},
+  venue        = {Chicago, IL, USA},
+  series       = {Lecture Notes in Computer Science},
+  volume       = {2724},
+  pages        = {2084--2095},
+  date         = {2003},
+  publisher    = {Springer},
+  location     = {Berlin, Heidelberg},
+  doi          = {10.1007/3-540-45110-2_105},
+  url          = {https://www.cs.york.ac.uk/rts/docs/GECCO_2003/papers/2724/27242084.pdf}
+}
+
+% --- Sensors / Human Factors ---
+
+@inproceedings{McAnanama:2018:OpenSource:FDM:IMU,
+  author       = {McAnanama, James G. and Marsden, Greg},
+  title        = {An Open Source Flight Dynamics Model and {IMU} Signal Simulator},
+  booktitle    = {2018 IEEE/ION Position, Location and Navigation Symposium (PLANS)},
+  eventtitle   = {IEEE/ION Position, Location and Navigation Symposium},
+  eventdate    = {2018-04-23/2018-04-26},
+  venue        = {Monterey, CA, USA},
+  pages        = {874--881},
+  date         = {2018-04},
+  publisher    = {IEEE},
+  doi          = {10.1109/PLANS.2018.8373465},
+  url          = {https://www.ion.org/publications/abstract.cfm?articleID=15730}
+}
+
+@inproceedings{Zhang:2010:Mathematical:Models:Pilot,
+  author       = {Zhang, Yan and McGovern, Seamus M.},
+  title        = {Mathematical Models for Human Pilot Maneuvers in Aircraft Flight Simulation},
+  booktitle    = {Proceedings of the ASME 2009 International Mechanical Engineering Congress and Exposition},
+  eventtitle   = {ASME 2009 International Mechanical Engineering Congress and Exposition},
+  eventdate    = {2009-11-13/2009-11-19},
+  venue        = {Lake Buena Vista, FL, USA},
+  volume       = {13},
+  pages        = {35--39},
+  date         = {2010-07-08},
+  number       = {IMECE2009-10503},
+  publisher    = {ASME},
+  doi          = {10.1115/IMECE2009-10503},
+  url          = {https://rosap.ntl.bts.gov/view/dot/38964}
+}
+
+
+% --- Simulation / Integration ---
+
+@inproceedings{Trang:2026:Building:Flight:Simulation,
+  author       = {Trang, Nghi Vinh and Ly, Hung Anh and Vu, Long Duc Thien and Long, Hung Gia and Le, Hieu Trung},
+  title        = {Building Flight Simulation Program with Auxiliary Custom Aircraft Design Integration Module},
+  booktitle    = {Technologies in Aviation Maintenance, Repair, and Overhaul Operations},
+  eventtitle   = {International Symposium on Aircraft Technology, MRO \& Operations (ISATECH 2024)},
+  eventdate    = {2024-08-27/2024-08-29},
+  venue        = {Ho Chi Minh City, Vietnam},
+  series       = {Sustainable Aviation},
+  pages        = {308--313},
+  editor       = {Karakoc, T. Hikmet and Nguyen Thi Hai Hang and Nguyen The Hoang and Thi Thu Tra Nguyen and Adam Voak and Alper Dalkiran and Bahadır Cinoğlu},
+  date         = {2026-04-01},
+  publisher    = {Springer},
+  location     = {Cham},
+  isbn         = {978-3-032-18524-2},
+  eisbn        = {978-3-032-18525-9},
+  doi          = {10.1007/978-3-032-18525-9_37},
+  url          = {https://link.springer.com/chapter/10.1007/978-3-032-18525-9_37}
+}
+
+@article{Saber:2025:Integration:JSBSim:Unreal,
+  author       = {Saber, Mohamed Awd and Zakaria, Mohamed Y. and Kamal, Ashraf M.},
+  title        = {Integration of {JSBSim} and Unreal Engine for Flight Simulator Development: A Case Study on the Cessna {T-37}},
+  journaltitle = {Journal of Physics: Conference Series},
+  date         = {2025-09},
+  volume       = {3070},
+  number       = {1},
+  eid          = {012009},
+  pages        = {1--14},
+  doi          = {10.1088/1742-6596/3070/1/012009},
+  url          = {https://journals.ekb.eg/article_453595.html}
+}
+
+% --- Swarm / Battlefield ---
+
+@inproceedings{Xin:2022:Hardware:In:Loop:UAV:Swarm,
+  author       = {Xin, Ziwei and Li, Jie and Wang, Ziquan and Li, Juan},
+  title        = {A Hardware-in-the-Loop Simulation Platform for {UAV} Swarm Decision-Making},
+  booktitle    = {Proceedings of 2021 5th Chinese Conference on Swarm Intelligence and Cooperative Control},
+  eventtitle   = {5th Chinese Conference on Swarm Intelligence and Cooperative Control ({CCSICC} 2021)},
+  eventdate    = {2022-01-19/2022-01-22},
+  venue        = {Shenzhen, China},
+  series       = {Lecture Notes in Electrical Engineering},
+  volume       = {934},
+  pages        = {189--199},
+  editor       = {Ren, Zhang and Wang, Mengyi and Hua, Yongzhao},
+  date         = {2022-07-29},
+  publisher    = {Springer},
+  location     = {Singapore},
+  isbn         = {978-981-19-3997-6},
+  eisbn        = {978-981-19-3998-3},
+  doi          = {10.1007/978-981-19-3998-3_19},
+  url          = {https://link.springer.com/chapter/10.1007/978-981-19-3998-3_19}
+}
+
+@inproceedings{Chen:2023:IMFlySim,
+  author       = {Chen, Shi and Zhang, Cheng and Yang, Chengwei and Li, Juan and Liu, Chang and Wang, Zhenbei and Li, Jie and Yang, Yu},
+  title        = {{IMFlySim}: A High-Fidelity Simulation Platform for {UAV} Swarms},
+  booktitle    = {Proceedings of 2021 5th Chinese Conference on Swarm Intelligence and Cooperative Control},
+  eventtitle   = {5th Chinese Conference on Swarm Intelligence and Cooperative Control ({CCSICC} 2021)},
+  eventdate    = {2022-01-19/2022-01-22},
+  venue        = {Shenzhen, China},
+  series       = {Lecture Notes in Electrical Engineering},
+  volume       = {934},
+  pages        = {209--220},
+  editor       = {Ren, Zhang and Wang, Mengyi and Hua, Yongzhao},
+  date         = {2022-07-29},
+  publisher    = {Springer},
+  location     = {Singapore},
+  isbn         = {978-981-19-3997-6},
+  eisbn        = {978-981-19-3998-3},
+  doi          = {10.1007/978-981-19-3998-3_21},
+  url          = {https://link.springer.com/chapter/10.1007/978-981-19-3998-3_21}
+}
+
+@article{Park:2008:Experimental:Evaluation:UAV:TMO,
+  author       = {Park, Hansol and Kim, Doo-Hyun and Kim, Jung-Guk and Chang, Chun-Hyon},
+  title        = {Experimental Evaluation of Unmanned Aerial Vehicle System Software Based on the {TMO} Model},
+  journaltitle = {Journal of Computing Science and Engineering},
+  date         = {2008-12},
+  volume       = {2},
+  number       = {4},
+  pages        = {357--374},
+  url          = {https://koreascience.kr/article/JAKO200807841288866.pdf}
+}
+
+@inproceedings{Gimenes:2008:Using:Flight:Simulation,
+  author       = {Gimenes, Ricardo Alexandre Veiga and Silva, Daniel Castro and Reis, Luís Paulo Gonçalves dos and Oliveira, Eugénio da Costa},
+  title        = {Using Flight Simulation Environments with Agent-Controlled {UAVs}},
+  booktitle    = {Autonomous Robot Systems and Competitions: Proceedings of the 8th Conference},
+  eventtitle   = {8th Conference on Autonomous Robot Systems and Competitions},
+  eventdate    = {2008-04-02},
+  venue        = {Aveiro, Portugal},
+  editor       = {Seabra Lopes, Luís and Silva, Filipe and Santos, Vítor},
+  pages        = {21--26},
+  date         = {2008-04-02},
+  publisher    = {Universidade de Aveiro},
+  url          = {https://sigarra.up.pt/feup/pt/pub_geral.pub_view?pi_pub_base_id=55866}
+}
+
+% --- UAV Modeling ---
+
+@inproceedings{Zumegen:2021:Evaluation:Formation:Flights,
+  author       = {Zumegen, Jan Clemens and Marks, T. and Stumpf, Eike},
+  title        = {Evaluation of Formation Flights with Long Range Aircraft for Different Flight Conditions and Atmospheric Disturbances},
+  booktitle    = {Luft- und Raumfahrt --- Verantwortung in allen Dimensionen: Deutscher Luft- und Raumfahrtkongress 2020},
+  eventtitle   = {69. Deutscher Luft- und Raumfahrtkongress (DLRK 2020)},
+  eventdate    = {2020-09-01/2020-09-03},
+  venue        = {Online},
+  pages        = {1--11},
+  date         = {2021},
+  publisher    = {Deutsche Gesellschaft für Luft- und Raumfahrt - Lilienthal-Oberth e.V.},
+  location     = {Bonn},
+  note         = {DocumentID 530159},
+  doi          = {10.25967/530159},
+  url          = {https://www.dglr.de/publikationen/2020/530159.pdf}
+}
+
+@article{Cereceda:2019:Giant:BigStik,
+  author       = {Cereceda, Oihane and Rolland, Luc and O'Young, Siu},
+  title        = {Giant Big Stik {R/C} {UAV} Computer Model Development in {JSBSim} for Sense and Avoid Applications},
+  journaltitle = {Drones},
+  date         = {2019-06-18},
+  volume       = {3},
+  number       = {2},
+  eid          = {48},
+  doi          = {10.3390/drones3020048},
+  url          = {https://www.mdpi.com/2504-446X/3/2/48},
+  publisher    = {MDPI}
+}
+
+@article{Varriale:DeMarco:2018:Flight:Load:Assessment,
+  author       = {Varriale, Carmine and De Marco, Agostino and Daniele, Elia and Schmidt, Jonas and Stoevesandt, Bernhard},
+  title        = {Flight Load Assessment for Light Aircraft Landing Trajectories in Windy Atmosphere and Near Wind Farms},
+  journaltitle = {Aerospace},
+  date         = {2018-04-10},
+  volume       = {5},
+  number       = {2},
+  eid          = {42},
+  doi          = {10.3390/aerospace5020042},
+  url          = {https://www.mdpi.com/2226-4310/5/2/42},
+  publisher    = {MDPI}
+}
+
+@inproceedings{CerecedaCantarelo:2017:Validation:Discussion:UAV,
+  author       = {Cereceda Cantarelo, Oihane and Rolland, Luc and O'Young, Siu},
+  title        = {Validation discussion of an Unmanned Aerial Vehicle ({UAV}) using {JSBSim} Flight Dynamics Model compared to {MATLAB/Simulink} AeroSim Blockset},
+  booktitle    = {2016 IEEE International Conference on Systems, Man, and Cybernetics (SMC)},
+  eventtitle   = {IEEE International Conference on Systems, Man, and Cybernetics},
+  eventdate    = {2016-10-09/2016-10-12},
+  venue        = {Budapest, Hungary},
+  pages        = {3989--3994},
+  date         = {2017-02-09},
+  publisher    = {IEEE},
+  isbn         = {978-1-5090-1898-7},
+  doi          = {10.1109/SMC.2016.7844857},
+  url          = {https://research-portal.uws.ac.uk/en/publications/validation-discussion-of-an-unmanned-aerial-vehicle-uav-using-jsb/}
+}
+
+@inproceedings{Moallemi:2016:Flight:Dynamics:Global5000,
+  author       = {Moallemi, Mohammad and Jafer, Shafagh and Towhidnejad, Massood},
+  title        = {Flight Dynamics Model of Bombardier Global 5000 Aircraft},
+  booktitle    = {AIAA Modeling and Simulation Technologies Conference},
+  eventtitle   = {AIAA Modeling and Simulation Technologies Conference},
+  eventdate    = {2016-06-13/2016-06-17},
+  venue        = {Washington, DC, USA},
+  date         = {2016-06},
+  number       = {AIAA 2016-3525},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  isbn         = {978-1-5108-2734-9},
+  doi          = {10.2514/6.2016-3525},
+  url          = {https://portfolio.erau.edu/en/publications/flight-dynamics-model-of-bombardier-global-5000-aircraft/}
+}
+
+@inproceedings{Kim:2016:Flying:Qualities:JSBSim,
+  author       = {Kim, Joshua P. and Kunz, Donald L.},
+  title        = {Flying Qualities Evaluation of an Unmanned Aircraft Using {JSBSim}},
+  booktitle    = {AIAA Atmospheric Flight Mechanics Conference},
+  eventtitle   = {AIAA Atmospheric Flight Mechanics Conference},
+  eventdate    = {2016-06-13/2016-06-17},
+  venue        = {Washington, DC, USA},
+  date         = {2016-06},
+  number       = {AIAA 2016-3542},
+  pages        = {1--16},
+  publisher    = {American Institute of Aeronautics and Astronautics},
+  isbn         = {978-1-5108-2743-1},
+  doi          = {10.2514/6.2016-3542},
+  url          = {https://arc.aiaa.org/doi/full/10.2514/6.2016-3542}
+}
+
+@article{Kamal:2016:Modeling:Flight:Simulation:UAV,
+  author       = {Kamal, Ashraf M. and Bayoumy, A. M. and Elshabka, A. M.},
+  title        = {Modeling and flight simulation of unmanned aerial vehicle enhanced with fine tuning},
+  journaltitle = {Aerospace Science and Technology},
+  date         = {2016-04},
+  volume       = {51},
+  pages        = {106--117},
+  doi          = {10.1016/j.ast.2016.01.022},
+  url          = {https://www.sciencedirect.com/science/article/pii/S1270963816300335}
+}
+
+@inproceedings{Yuceol:2013:Modeling:Simulation:SmallUAV,
+  author       = {Yuceol, Ozan Eren and Akbulut, Ahmet},
+  title        = {Modeling and Simulation of a Small Unmanned Aerial Vehicle},
+  booktitle    = {Nostradamus 2013: Prediction, Modeling and Analysis of Complex Systems},
+  eventtitle   = {Nostradamus 2013},
+  series       = {Advances in Intelligent Systems and Computing},
+  volume       = {210},
+  pages        = {245--255},
+  editor       = {Zelinka, Ivan and Chen, Guanrong and R{\"o}ssler, Otto E. and Snasel, V{\'a}clav and Abraham, Ajith},
+  date         = {2013},
+  publisher    = {Springer},
+  location     = {Heidelberg},
+  isbn         = {978-3-319-00541-6},
+  eisbn        = {978-3-319-00542-3},
+  doi          = {10.1007/978-3-319-00542-3_25},
+  url          = {https://link.springer.com/chapter/10.1007/978-3-319-00542-3_25}
+}
+
+@inproceedings{Goppert:DeMarco:2011:Trim:Strategies:JSBSim,
+  author       = {Goppert, James M. and De Marco, Agostino and Hwang, Inseok},
+  title        = {On Some Trim Strategies for Nonlinear Aircraft Flight Dynamics Models with Open Source Software {JSBSim}},
+  booktitle    = {Proceedings of 3rd CEAS Conference},
+  eventtitle   = {3rd CEAS Air \& Space Conference},
+  eventdate    = {2011-10-24/2011-10-28},
+  venue        = {Venice, Italy},
+  pages        = {784--799},
+  date         = {2011-10},
+  isbn         = {9788896427187},
+  url          = {https://www.iris.unina.it/handle/11588/403686}
+}
+
+% --- UNCHECKED references
+%==========================================================================================
 
 @misc{bvrgym,
   author = {{xcwoid}},
@@ -259,365 +743,4 @@
   url = {https://github.com/JDatPNW/QPlane},
   urldate = {2026-04-16},
   keywords = {JSBSim, RL / Air Combat, reinforcement learning / control, Toolkit using JSBSim and X-Plane}
-}
-
-% --- Rocket / Space ---
-
-@article{simulating-rocket-trajectory-using-jsbsim-and-optimal-thrust-profile-for-2022,
-  title = {Simulating Rocket Trajectory Using {JSBSim} and Optimal Thrust Profile for Maximizing Altitude of a Sounding Rocket},
-  year = {2022},
-  journal = {Journal article},
-  url = {https://dergipark.org.tr/en/download/article-file/2388967},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, rocket trajectory optimization, Uses JSBSim}
-}
-
-@report{flight-simulation-of-ares-in-the-mars-environment-2012,
-  title = {Flight Simulation of {ARES} in the {Mars} Environment},
-  year = {2012},
-  publisher = {NASA Technical Reports Server},
-  type = {Report},
-  url = {https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20120006630.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, Mars airplane simulation, Uses JSBSim}
-}
-
-@report{design-of-the-ares-mars-airplane-and-mission-architecture-2008,
-  title = {Design of the {ARES} {Mars} Airplane and Mission Architecture},
-  year = {2008},
-  publisher = {NASA Technical Reports Server},
-  type = {Report},
-  url = {https://ntrs.nasa.gov/api/citations/20080015501/downloads/20080015501.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, Mars airplane mission design, Mentions / uses JSBSim-based simulation}
-}
-
-@report{evolution-of-a-mars-airplane-concept-for-the-ares-mars-2004,
-  title = {Evolution of a {Mars} Airplane Concept for the {ARES} {Mars} Scout Mission},
-  year = {2004},
-  publisher = {NASA Technical Reports Server},
-  type = {Report},
-  url = {https://ntrs.nasa.gov/api/citations/20040034201/downloads/20040034201.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, Mars airplane concept, Mentions / uses JSBSim-based simulation}
-}
-
-@inproceedings{simulating-the-ares-aircraft-in-the-mars-environment-2004,
-  title = {Simulating the {ARES} Aircraft in the {Mars} Environment},
-  year = {2004},
-  publisher = {NASA Technical Reports Server},
-  booktitle = {Conference proceedings},
-  url = {https://ntrs.nasa.gov/citations/20040034718},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, Mars airplane simulation, Uses JSBSim}
-}
-
-@inproceedings{active-guidance-for-a-finless-rocket-using-neuroevolution-2003,
-  title = {Active Guidance for a Finless Rocket Using Neuroevolution},
-  year = {2003},
-  booktitle = {Conference proceedings},
-  url = {https://www.cs.york.ac.uk/rts/docs/GECCO_2003/papers/2724/27242084.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Rocket / Space, rocket guidance, Uses JSBSim}
-}
-
-
-% --- Sensors / Human Factors ---
-
-@article{agisim-2024,
-  title = {AGISim},
-  year = {2024},
-  journal = {Preprint},
-  url = {https://arxiv.org/abs/2411.01038},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Sensors / Human Factors, IMU / GPS simulation, Uses / compares with JSBSim}
-}
-
-@inproceedings{an-open-source-flight-dynamics-model-and-imu-signal-simulator-2018,
-  title = {An Open Source Flight Dynamics Model and {IMU} Signal Simulator},
-  year = {2018},
-  booktitle = {Conference proceedings},
-  url = {https://www.ion.org/publications/abstract.cfm?articleID=15730},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Sensors / Human Factors, IMU / navigation, Uses JSBSim}
-}
-
-@inproceedings{characterization-of-derived-angle-of-attack-and-sideslip-angle-algorithms-2017,
-  title = {Characterization of Derived Angle-of-Attack and Sideslip Angle Algorithms Using Monte Carlo and Piloted Simulation},
-  year = {2017},
-  booktitle = {Conference proceedings},
-  url = {https://vscl.tamu.edu/conference-papers/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Sensors / Human Factors, air data estimation / piloted simulation, Uses / mentions JSBSim}
-}
-
-@report{pilot-gaze-and-glideslope-control-2010,
-  title = {Pilot Gaze and Glideslope Control},
-  year = {2010},
-  type = {Report},
-  url = {https://www.eecs.yorku.ca/~rallison/papers/juno%202010.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Sensors / Human Factors, human factors / landing simulation, Uses JSBSim}
-}
-
-@inproceedings{mathematical-models-for-human-pilot-maneuvers-in-aircraft-flight-simulation-2009,
-  title = {Mathematical Models for Human Pilot Maneuvers in Aircraft Flight Simulation},
-  year = {2009},
-  publisher = {U.S. Department of Transportation},
-  booktitle = {Conference proceedings},
-  url = {https://rosap.ntl.bts.gov/view/dot/38964},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Sensors / Human Factors, human factors / pilot modeling, Uses JSBSim}
-}
-
-% --- Simulation / Integration ---
-
-@incollection{building-flight-simulation-program-with-auxiliary-custom-aircraft-for-simulation-2025,
-  title = {Building Flight Simulation Program with Auxiliary Custom Aircraft for Simulation Learning Environment by Integrating {JSBSim} with {Unreal Engine} 5},
-  year = {2025},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-3-032-18525-9_37},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, game engine / visualization, Uses JSBSim}
-}
-
-@article{integration-of-jsbsim-and-unreal-engine-for-flight-simulator-development-2025,
-  title = {Integration of {JSBSim} and {Unreal Engine} for Flight Simulator Development: A Case Study on the Cessna T-37},
-  year = {2025},
-  journal = {Journal article},
-  url = {https://journals.ekb.eg/article_453595.html},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, game engine / visualization, Uses JSBSim}
-}
-
-@report{development-of-a-novel-low-cost-flight-simulator-for-pilot-2009,
-  title = {Development of a Novel Low-Cost Flight Simulator for Pilot Training},
-  year = {2009},
-  type = {Report},
-  url = {https://zenodo.org/records/1079280},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, pilot training / simulator design, Mentions / evaluates JSBSim}
-}
-
-@article{flight-test-on-ultralight-motorglider-aerodynamic-model-estimation-and-use-2008,
-  title = {Flight Test on Ultralight Motorglider, Aerodynamic Model Estimation and Use in a {6DOF} Flight Simulator},
-  year = {2008},
-  journal = {Journal article},
-  url = {https://www.iris.unina.it/handle/11588/117386},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, flight test / simulator validation, Uses JSBSim}
-}
-
-@misc{jsbsim-unreal-engine-readme,
-  author = {{JSBSim Team}},
-  title = {{JSBSim} {Unreal Engine} README},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  url = {https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README.md},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, game engine / visualization, Official Unreal integration}
-}
-
-@misc{open-aerospace-jsbsim-nasa-test-cases,
-  author = {{Open Aerospace}},
-  title = {{Open Aerospace}: {JSBSim} {NASA} test cases},
-  publisher = {Open Aerospace},
-  url = {https://open-aerospace.github.io/jsbsim-nasa-test-cases/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, validation, Verification / comparison project}
-}
-
-@misc{open-aerospace-jsbsim-nasa-test-cases-case-01,
-  author = {{Open Aerospace}},
-  title = {{Open Aerospace}: {JSBSim} {NASA} test cases - Case 01},
-  publisher = {Open Aerospace},
-  url = {https://open-aerospace.github.io/jsbsim-nasa-test-cases/case-01/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, validation, Verification / comparison case}
-}
-
-@misc{open-aerospace-project-home,
-  author = {{Open Aerospace}},
-  title = {{Open Aerospace} project home},
-  publisher = {Open Aerospace},
-  url = {https://open-aerospace.github.io/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, simulation tooling, Project ecosystem page}
-}
-
-@misc{outerra-modified-jsbsim-repository,
-  author = {{Outerra}},
-  title = {Outerra {JSBSim} repository},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  url = {https://github.com/Outerra/jsbsim},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Simulation / Integration, game engine / visualization, Fork / integration}
-}
-
-% --- Swarm / Battlefield ---
-
-@incollection{a-hardware-in-the-loop-simulation-platform-for-distributed-uav-2022,
-  title = {A hardware-in-the-loop simulation platform for distributed {UAV} swarms},
-  year = {2022},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-981-19-3998-3_19},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Swarm / Battlefield, HIL / swarm simulation, Uses JSBSim}
-}
-
-@incollection{imflysim-a-high-fidelity-simulation-platform-for-uav-swarms-2022,
-  title = {IMFlySim: A High-Fidelity Simulation Platform for {UAV} Swarms},
-  year = {2022},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-981-19-3998-3_21},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Swarm / Battlefield, swarm simulation / visualization, Uses JSBSim}
-}
-
-@article{experimental-evaluation-of-unmanned-aerial-vehicle-system-software-based-on-2008,
-  title = {Experimental Evaluation of Unmanned Aerial Vehicle System Software Based on the TMO Model},
-  year = {2008},
-  journal = {Journal article},
-  url = {https://koreascience.kr/article/JAKO200807841288866.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Swarm / Battlefield, multi-agent UAV simulation, Uses JSBSim / FlightGear stack}
-}
-
-@inproceedings{using-flight-simulation-environments-with-agent-controlled-uavs-2008,
-  title = {Using Flight Simulation Environments with Agent-Controlled {UAV}s},
-  year = {2008},
-  booktitle = {Conference proceedings},
-  url = {https://sigarra.up.pt/feup/pt/pub_geral.pub_view?pi_pub_base_id=55866},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Swarm / Battlefield, multi-agent UAV simulation, Uses JSBSim}
-}
-
-@thesis{extending-a-battlefield-simulator-with-large-scale-terrain-rendering-and-2005,
-  title = {Extending a battlefield simulator with large scale terrain rendering and flight simulator functionality},
-  year = {2005},
-  type = {Thesis},
-  url = {https://www.diva-portal.org/smash/get/diva2%3A21408/FULLTEXT01.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, Swarm / Battlefield, battlefield simulation / visualization, Integrates open-source FDM such as JSBSim}
-}
-
-% --- UAV Modeling ---
-
-@thesis{flight-simulator-integration-in-test-rig-2021,
-  title = {Flight Simulator Integration in Test Rig},
-  year = {2021},
-  type = {Thesis},
-  url = {https://kth.diva-portal.org/smash/record.jsf?pid=diva2%3A1583510},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, simulator integration / HIL, Uses JSBSim}
-}
-
-@inproceedings{evaluation-of-formation-flights-with-long-range-aircraft-for-different-2020,
-  title = {Evaluation of Formation Flights with Long Range Aircraft for Different Flight Conditions and Atmospheric Disturbances},
-  year = {2020},
-  booktitle = {Conference proceedings},
-  url = {https://www.dglr.de/publikationen/2020/530159.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, formation flight, Uses JSBSim}
-}
-
-@article{giant-big-stik-r-c-uav-computer-model-development-in-2019,
-  title = {Giant Big Stik R/C {UAV} Computer Model Development in {JSBSim} for Sense and Avoid Applications},
-  year = {2019},
-  journal = {Journal article},
-  url = {https://www.mdpi.com/2504-446X/3/2/48},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, sense-and-avoid / UAV, Uses JSBSim}
-}
-
-@article{flight-load-assessment-for-light-aircraft-landing-trajectories-in-windy-2018,
-  title = {Flight Load Assessment for Light Aircraft Landing Trajectories in Windy Atmosphere and Near Wind Farms},
-  year = {2018},
-  journal = {Journal article},
-  url = {https://www.mdpi.com/2226-4310/5/2/42},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, loads / landing simulation, Uses JSBSim}
-}
-
-@inproceedings{flight-dynamics-model-of-bombardier-global-5000-aircraft-2016,
-  title = {Flight Dynamics Model of Bombardier Global 5000 Aircraft},
-  year = {2016},
-  booktitle = {Conference proceedings},
-  url = {https://portfolio.erau.edu/en/publications/flight-dynamics-model-of-bombardier-global-5000-aircraft/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, aircraft model development, Uses JSBSim}
-}
-
-@inproceedings{flying-qualities-evaluation-of-an-unmanned-aircraft-using-jsbsim-2016,
-  title = {Flying Qualities Evaluation of an Unmanned Aircraft Using {JSBSim}},
-  year = {2016},
-  booktitle = {Conference proceedings},
-  url = {https://arc.aiaa.org/doi/full/10.2514/6.2016-3542},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, flying qualities / UAV, Uses JSBSim}
-}
-
-@article{modeling-and-flight-simulation-of-unmanned-aerial-vehicle-enhanced-with-2016,
-  title = {Modeling and flight simulation of unmanned aerial vehicle enhanced with fine tuning},
-  year = {2016},
-  journal = {Journal article},
-  url = {https://www.sciencedirect.com/science/article/pii/S1270963816300335},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, UAV modeling / simulation, Uses JSBSim}
-}
-
-@inproceedings{validation-discussion-of-an-unmanned-aerial-vehicle-uav-using-jsbsim-2016,
-  title = {Validation discussion of an Unmanned Aerial Vehicle ({UAV}) using {JSBSim} Flight Dynamics Model compared to MATLAB/Simulink AeroSim Blockset},
-  year = {2016},
-  booktitle = {Conference proceedings},
-  url = {https://research-portal.uws.ac.uk/en/publications/validation-discussion-of-an-unmanned-aerial-vehicle-uav-using-jsb/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, validation / UAV modeling, Uses JSBSim}
-}
-
-@thesis{evaluation-of-unmanned-aircraft-flying-qualities-using-jsbsim-2015,
-  title = {Evaluation of Unmanned Aircraft Flying Qualities Using {JSBSim}},
-  year = {2015},
-  publisher = {Air Force Institute of Technology},
-  type = {Thesis},
-  url = {https://scholar.afit.edu/etd/434/},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, flying qualities / UAV, Uses JSBSim}
-}
-
-@inproceedings{jsbsim-library-for-flight-dynamics-modelling-of-a-mini-uav-2015,
-  title = {{JSBSim} library for flight dynamics modelling of a mini-{UAV}},
-  year = {2015},
-  booktitle = {Conference proceedings},
-  url = {https://pubs.aip.org/aip/acp/article/1648/1/550015/802923/JSBSim-library-for-flight-dynamics-modelling-of-a},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, UAV modeling, Uses JSBSim}
-}
-
-@incollection{modeling-and-simulation-of-a-small-unmanned-aerial-vehicle-2014,
-  title = {Modeling and Simulation of a Small Unmanned Aerial Vehicle},
-  year = {2014},
-  booktitle = {Book chapter},
-  url = {https://link.springer.com/chapter/10.1007/978-3-319-00542-3_25},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, UAV modeling / autopilot, Uses / mentions JSBSim}
-}
-
-@inproceedings{on-some-trim-strategies-for-nonlinear-aircraft-flight-dynamics-models-2010,
-  title = {On Some Trim Strategies for Nonlinear Aircraft Flight Dynamics Models and Simulation},
-  year = {2010},
-  booktitle = {Conference proceedings},
-  url = {https://www.iris.unina.it/handle/11588/403686},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, trim / numerical methods, Uses JSBSim}
-}
-
-@report{formation-flight-stanford-cs229-project-2009,
-  title = {Formation Flight (Stanford CS229 project)},
-  year = {2009},
-  type = {Report},
-  url = {https://cs229.stanford.edu/proj2009/MahboubiWang.pdf},
-  urldate = {2026-04-16},
-  keywords = {JSBSim, UAV Modeling, formation flight / control, Uses JSBSim}
 }
