@@ -74,6 +74,24 @@ The C++ programming language emerged in the mid-1980’s and began to see widesp
 
 Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim is a great example of what the Open Source paradigm can achieve.
 
+# State of the Field
+
+In the research community, several tools are used to model flight dynamics, but they often present significant limitations for automated research or high-fidelity academic studies.
+
+## Comparative Analysis
+
+Within the open-source and free-to-use landscape, [YASim](https://wiki.flightgear.org/YASim) (used in FlightGear) offers a quick-solving approach where the FDM is automatically generated from geometry and performance points using Blade Element Theory. While efficient for rapid prototyping, it generates plausible but low-fidelity models. It lacks essential features for research, such as a scriptable environment, a flight control system (FCS), or the ability to use medium or high fidelity aerodynamic models.
+
+In the simulation space, [X-Plane](https://www.x-plane.com/) also utilizes the Blade Element Theory. However it cannot run natively in a headless mode ([requiring a workaround with dummy graphical interfaces](https://github.com/adderbyte/GYM_XPLANE_ML/tree/master/XPlane_HeadlessMode_And_DockerFile)), which hinders its use in massive parallel simulation or cloud-based AI training. Furthermore, its closed-source nature makes it difficult to extend or integrate deeply into custom research pipelines without complex, third-party interfaces.
+
+Engineering-focused tools like the [MATLAB Aerospace Toolbox](https://www.mathworks.com/products/aerospace-toolbox.html) provide high-fidelity components but are proprietary and require the MATLAB/Simulink ecosystem. They often consist of discrete blocks that the user must "glue" together with custom code, increasing the complexity and maintenance overhead of the simulation.
+
+## Unique Scholarly Contribution
+
+JSBSim’s unique contribution is providing a standalone, coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by [C. Sequeira et al.](https://doi.org/10.2514/6.2006-1254) demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics.
+
+By providing a complete, turnkey solution, JSBSim allows researchers to bypass the complexity of building a simulation engine from scratch and focus entirely on their specific area of study. Furthermore, for research topics that require modeling beyond the standard stability derivative approach, JSBSim's `external_reactions` feature offers the flexibility to interface with any external aerodynamic or propulsive simulation method, ensuring the library remains extensible for even the most unconventional aerospace designs.
+
 # Development and Design Choices
 
 JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim].
