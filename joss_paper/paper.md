@@ -80,19 +80,19 @@ In the research community, several tools are used to model flight dynamics, but 
 
 ## Comparative Analysis
 
-Within the open-source and free-to-use landscape, [YASim](https://wiki.flightgear.org/YASim) (used in FlightGear) offers a quick-solving approach where the FDM is automatically generated from geometry and performance points using Blade Element Theory. While efficient for rapid prototyping, it generates plausible but low-fidelity models. It lacks essential features for research, such as a scriptable environment, a flight control system (FCS), or the ability to use medium or high fidelity aerodynamic models.
+Within the open-source and free-to-use landscape, [YASim](https://wiki.flightgear.org/YASim) (used in [FlightGear](https://www.flightgear.org)) offers a quick-solving approach where the FDM is automatically generated from geometry and performance points using Blade Element Theory. While efficient for rapid prototyping, it generates plausible but low-fidelity models. It lacks essential features for research, such as a scriptable environment, a flight control system (FCS), or the ability to use medium or high fidelity aerodynamic models.
 
 In the simulation space, [X-Plane](https://www.x-plane.com/) also utilizes the Blade Element Theory. However it cannot run natively in a headless mode ([requiring a workaround with dummy graphical interfaces](https://github.com/adderbyte/GYM_XPLANE_ML/tree/master/XPlane_HeadlessMode_And_DockerFile)), which hinders its use in massive parallel simulation or cloud-based AI training. Furthermore, its closed-source nature makes it difficult to extend or integrate deeply into custom research pipelines without complex, third-party interfaces.
 
-Engineering-focused tools like the [MATLAB Aerospace Toolbox](https://www.mathworks.com/products/aerospace-toolbox.html) provide high-fidelity components but are proprietary and require the MATLAB/Simulink ecosystem. They often consist of discrete blocks that the user must "glue" together with custom code, increasing the complexity and maintenance overhead of the simulation.
+Engineering-focused tools like the [MATLAB Aerospace Toolbox](https://www.mathworks.com/products/aerospace-toolbox.html) provide high-fidelity components but are proprietary and require the MATLAB/Simulink ecosystem. They often consist of discrete blocks that the user must `glue' together with custom code, increasing the complexity and maintenance overhead of the simulation.
 
 ## Unique Scholarly Contribution
 
-JSBSim’s unique contribution is providing a standalone, coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by [C. Sequeira et al.](https://doi.org/10.2514/6.2006-1254) demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics.
+JSBSim's unique contribution is providing a standalone, coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by @Sequeira:2006:Comparing:Aerodynamic:Models demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics. Stability derivatives can be constant or functionally dependent on other state and input variables. However, the use of stability derivatives is not the only option available to FDM model authors. The XML-based metalanguage provided by JSBSim allows for the use of general, nonlinear, and multidimensional lookup tables to model any type of behavior within the FDM model.
 
 By providing a complete, turnkey solution, JSBSim allows researchers to bypass the complexity of building a simulation engine from scratch and focus entirely on their specific area of study. Furthermore, for research topics that require modeling beyond the standard stability derivative approach, JSBSim's `external_reactions` feature offers the flexibility to interface with any external aerodynamic or propulsive simulation method, ensuring the library remains extensible for even the most unconventional aerospace designs.
 
-# Development and Design Choices
+# Software Design
 
 JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim].
 
@@ -102,15 +102,13 @@ In a nutshell, the flow of the code can be illustrated as follows:
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
 
-This is a key design feature of JSBSim, which allows users to define an entire FDM model using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters required writing and re-compiling C code.
+This is a key design feature of JSBSim, which allows users to define an entire FDM model using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters requires writing and re-compiling C code.
 
 Furthermore, JSBSim's low computational footprint allows it to run on virtually any personal computer. The reliance on XML for configuration and CSV for output enables a lightweight development workflow. Users can create and refine complex FDMs using any basic text editor and process simulation results with ubiquitous tools such as Microsoft Excel or Gnuplot. This approach eliminates the need for specialized development environments.
 
 ## JSBSim FDM Definition
 
-A brief introduction to the various XML based components that make up a JSBSim FDM.
-
-The FDM is defined in one or more XML files which define the mass configuration, ground reactions for the gear, propulsion, the flight control system and the forces and moments for the 6 axes.
+The FDM in JSBSim is defined in one or more XML files which define the mass configuration, ground reactions for the gear, propulsion, the flight control system as well as forces and moments projected onto properly chosen reference axes.
 
 ### Mass
 
@@ -197,7 +195,7 @@ JSBSim provides a number of mathematical functions for use in calculating a forc
 
 JSBSim provides a number of pre-calculated properties, e.g. `aero/qbar-psf` is the dynamic pressure $\frac{1}{2} \rho V^2$ calculated based on the current air density of the aircraft within the atmosphere model and the aircraft’s true airspeed.
 
-The property system used by JSBSim, which is essentially the same as the one used by [FlightGear](https://www.flightgear.org), is a highly versatile way to create and access data using a hierarchical structure. This hierarchy organizes parameters into logical groups, as seen in the examples above: aerodynamic properties are grouped under the `aero/` prefix (e.g., `aero/qbar-psf`, `aero/alpha-rad` for angle of attack, or `aero/beta-rad` for sideslip angle), while geometric parameters are stored under `metrics/` (e.g., `metrics/Sw-sqft` for wing area or `metrics/cbarw-ft` for mean aerodynamic chord). This structured approach ensures data organization and promotes naming consistency across different aircraft models.
+The property system used by JSBSim, which is essentially the same as the one used by FlightGear, is a highly versatile way to create and access data using a hierarchical structure. This hierarchy organizes parameters into logical groups, as seen in the examples above: aerodynamic properties are grouped under the `aero/` prefix (e.g., `aero/qbar-psf`, `aero/alpha-rad` for angle of attack, or `aero/beta-rad` for sideslip angle), while geometric parameters are stored under `metrics/` (e.g., `metrics/Sw-sqft` for wing area or `metrics/cbarw-ft` for mean aerodynamic chord). This structured approach ensures data organization and promotes naming consistency across different aircraft models.
 
 During each time step JSBSim evaluates each function defining a force for each axis and sums all the forces in order to calculate the net force per axis.
 
@@ -446,7 +444,7 @@ The figure below shows number of stars received by the GitHub repository of JSBS
 
 ![Number of stars received by the JSBSim GitHub repository from 2018 to 2026.](assets/jsbsim_stargazers.png)
 
-# Use Cases and Research Applications
+# Research Impact Statement
 
 JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. It's use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms. In the existing scientific literature, the key works on JSBSim are those by @Berndt:2004:JSBSim, @DeMarco:2007:General:Solution:Trim, @Berndt:DeMarco:2009:Progress:JSBSim, @Murri:2015:Check:Cases.
 
@@ -478,4 +476,9 @@ JSBSim's versatility is further expanded by its blossoming Python ecosystem, whi
 
 JSBSim is currently being maintained and developed by Bertrand Coconnier, Sean McLeod, and Agostino De Marco, along with contributions from the broader community. Initial architecture and development was done by Jon Berndt, with major contributions from Tony Peden, David Megginson, and David Culp. Initial integration into the FlightGear open source flight simulator was assisted by Curt Olson.
 
+# AI Usage Disclosure 
+
+During the preparation of this manuscript, AI‑based tools were used basically to support clarity, language refinement, and the management of bibliographic information. All outputs were critically reviewed and edited by the authors. The authors remain fully responsible for the content of the manuscript, including its accuracy, validity, and compliance with ethical and scholarly standards.
+In terms of coding, data generation and scientific claims—due to the fact that JSBSim largely predates the advent of AI—most of the software development has been made by humans and all the contributions are reviewed by humans.
+ 
 # References
