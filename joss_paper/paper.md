@@ -96,9 +96,9 @@ By providing a complete, turnkey solution, JSBSim allows researchers to bypass t
 
 JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim].
 
-In a nutshell, the flow of the code can be illustrated as follows:
+In a nutshell, the flow of the code, when run in batch mode, can is illustrated in \autoref{fig:jsbsim:execution}.
 
-![Diagram or explanation of the architecture of the code and how it is instantiated.](assets/jsbsim_workflow.png)
+![JSBSim executable workflow.\label{fig:jsbsim:execution}](assets/JSBSim_Execution.png){ width=60% }
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
 
@@ -412,7 +412,7 @@ Here is a simple example which specifies a specific aircraft model and initial c
 
 ## Case Study: Flight Envelope Trimming
 
-To demonstrate the practical application of the JSBSim-Python integration, the following example illustrates the computation of a comprehensive flight trim envelope. Figure \ref{fig:trim:envelope} shows the required thrust and angle of attack (AoA) for a transport aircraft across a varying range of airspeeds and flight path angles ($\gamma$).
+To demonstrate the practical application of the JSBSim-Python integration, the following example illustrates the computation of a comprehensive flight trim envelope. \autoref{fig:trim:envelope} shows the required thrust and angle of attack (AoA) for a transport aircraft across a varying range of airspeeds and flight path angles ($\gamma$).
 
 ![Flight trim envelope for a transport aircraft computed by JSBSim.\label{fig:trim:envelope}](assets/trim_envelope.png)
 
@@ -423,7 +423,7 @@ This result was achieved through a Python-based automation script that iterative
 JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes.
 For this research, a framework of software applications has been developed for generating and controlling a population of flight simulation scenarios in presence of assigned wind and turbulence fields. JSBSim's autopilot system has been used to simulate a realistic pilot behavior during navigation. 
 A high-fidelity wind distribution behind a reference wind turbine has been calculated with OpenFOAM, and used as input for the flight dynamics model.
-Figure \ref{fig:wake:crossing} shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal relative-wind component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in proximity of aeolic parks.
+\autoref{fig:wake:crossing} shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal relative-wind component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in proximity of aeolic parks.
 
 ![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots.png)
 
