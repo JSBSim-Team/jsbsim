@@ -420,9 +420,12 @@ This result was achieved through a Python-based automation script that iterative
 
 ## Case Study: Flight Load Assessment Light Aircraft Flying near Wind Turbine Wake
 
+JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes.
+For this research, a framework of software applications has been developed for generating and controlling a population of flight simulation scenarios in presence of assigned wind and turbulence fields. JSBSim's autopilot system has been used to simulate a realistic pilot behavior during navigation. 
+A high-fidelity wind distribution behind a reference wind turbine has been calculated with OpenFOAM, and used as input for the flight dynamics model.
+The figure below shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal gust component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in proximity of aeolic parks.
+
 ![Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.](assets/turbine_wake_crossing_scheme_plots.png){label="wake_crossing"}
-
-
 
 # Implementation and Engineering Practices
 
