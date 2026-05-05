@@ -412,7 +412,7 @@ Here is a simple example which specifies a specific aircraft model and initial c
 
 ## Case Study: Flight Envelope Trimming
 
-To demonstrate the practical application of the JSBSim-Python integration, the following example illustrates the computation of a comprehensive flight trim envelope. Figure~\ref{fig:trim:envelope} shows the required thrust and angle of attack (AoA) for a transport aircraft across a varying range of airspeeds and flight path angles ($\gamma$).
+To demonstrate the practical application of the JSBSim-Python integration, the following example illustrates the computation of a comprehensive flight trim envelope. Figure \ref{fig:trim:envelope} shows the required thrust and angle of attack (AoA) for a transport aircraft across a varying range of airspeeds and flight path angles ($\gamma$).
 
 ![Flight trim envelope for a transport aircraft computed by JSBSim. \label{fig:trim:envelope}](assets/trim_envelope.png)
 
