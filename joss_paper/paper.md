@@ -452,7 +452,7 @@ Examples of use cases include:
 
 - Modeling flight dynamics within a full-featured flight simulator, such as [FlightGear](https://www.flightgear.org), [MIXR (Mixed Reality Simulation Platform)](https://www.mixr.dev) (formerly known as OpenEaagles), the [Outerra world simulator](https://outerra.com), or [Epic Games' Unreal Engine 5](https://www.unrealengine.com/unreal-engine-5).
 
-- CPU performance benchmarking. JSBSim has been included in the [SPEC CPU](https://www.spec.org/), a widely recognized benchmark suite designed to measure the performance of a computer's processor, memory, and compiler efficiency using compute-intensive workloads.
+- CPU performance benchmarking. JSBSim has been included in the [SPEC CPU 2026](https://www.spec.org/cpu2026/), a widely recognized benchmark suite designed to measure the performance of a computer's processor, memory, and compiler efficiency using compute-intensive workloads.
 
 - Control system design. See the articles by @Vogeltanz:2018:Development:Control:System:Designer;@Vogeltanz:2020:Control:System:Designer.
 
