@@ -98,7 +98,7 @@ JSBSim was designed from the ground up with several features in mind. One was to
 
 In a nutshell, the flow of the code when run in batch mode is illustrated by \autoref{fig:jsbsim:execution}.
 
-![JSBSim executable workflow.\label{fig:jsbsim:execution}](assets/JSBSim_Execution.png){ width=80% }
+![JSBSim executable workflow.\label{fig:jsbsim:execution}](assets/JSBSim_Execution.png)
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
 
