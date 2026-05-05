@@ -449,9 +449,9 @@ JSBSim has been in development since 1996. In 2018, its codebase was moved to Gi
 
 - Community Engagement. The developers interact with the user base through GitHub Discussions to provide support and gather feedback.
 
-The figure below shows number of stars received by the GitHub repository of JSBSim from March 2018 to May 2026. At the time of writing this paper, JSBSim counts more than 2000 stargazers, more than 6000 commits, and more than 500 forks.
+The \autoref{fig:jsbsim:stargazers} shows number of stars received by the GitHub repository of JSBSim from March 2018 to May 2026. At the time of writing this paper, JSBSim counts more than 2000 stargazers, more than 6000 commits, and more than 500 forks.
 
-![Number of stars received by the JSBSim GitHub repository from 2018 to 2026.](assets/jsbsim_stargazers.png)
+![Number of stars received by the JSBSim GitHub repository from 2018 to 2026.\label{fig:jsbsim:stargazers}](assets/jsbsim_stargazers.png)
 
 # Research Impact Statement
 
