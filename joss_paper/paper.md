@@ -96,7 +96,7 @@ By providing a complete, turnkey solution, JSBSim allows researchers to bypass t
 
 JSBSim was designed from the ground up with several features in mind. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase [@Berndt:2004:JSBSim].
 
-In a nutshell, the flow of the code, when run in batch mode, can is illustrated in \autoref{fig:jsbsim:execution}.
+In a nutshell, the flow of the code when run in batch mode is illustrated by \autoref{fig:jsbsim:execution}.
 
 ![JSBSim executable workflow.\label{fig:jsbsim:execution}](assets/JSBSim_Execution.png){ width=80% }
 
