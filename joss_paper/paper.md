@@ -418,6 +418,12 @@ To demonstrate the practical application of the JSBSim-Python integration, the f
 
 This result was achieved through a Python-based automation script that iteratively explores the aircraft's operating limits. For each flight condition, the script invokes JSBSim's trimming routine to solve for the equilibrium state where all forces and moments are balanced. This type of high-level performance analysis showcases JSBSim’s capability to serve as a robust computational core for complex aerospace engineering tasks and sensitivity studies.
 
+## Case Study: Flight Load Assessment Light Aircraft Flying near Wind Turbine Wake
+
+![Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.](assets/turbine_wake_crossing_scheme_plots.png){label="wake_crossing"}
+
+
+
 # Implementation and Engineering Practices
 
 A key requirement of an FDM is accuracy, as would be expected. That is, the underlying math model of rigid body motion needs to be implemented properly. But how can one verify this? One way is through comparison with other similar flight simulation applications. To this end, the [NASA Engineering Safety Center](https://www.nasa.gov/nesc) undertook an effort in 2015 to develop a set of check cases that could serve as a basis for comparing time-history data across simulations. JSBSim was included in this effort as the only non-NASA simulation [@Murri:2015:Check:Cases].
