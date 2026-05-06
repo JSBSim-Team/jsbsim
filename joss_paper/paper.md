@@ -46,7 +46,7 @@ JSBSim can be used in batch mode running faster than real-time for flight analys
 Features include:
 
 - Rigid body dynamics with support for 6-degrees-of-freedom (6-DoF) simulations.
-- Quaternion-based compution of the aircraft attitude to avoid the gimbal lock of Euler angles.
+- Quaternion-based computation of the aircraft attitude to avoid the gimbal lock of Euler angles.
 - Fully configurable aerodynamics, flight control system, propulsion, landing gear arrangement, etc. through XML-based text file format.
 - Accurate Earth model including:
    - Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
