@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<fdm_config version="2.0" release="ALPHA">
+  <fileheader/>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="KG*M2"> 10.0 </ixx>
+    <iyy unit="KG*M2"> 20.0 </iyy>
+    <izz unit="KG*M2"> 26.0 </izz>
+    <emptywt unit="KG"> 6.0 </emptywt>
+  </mass_balance>
+  <ground_reactions/>
+  <aerodynamics/>
+</fdm_config>
