@@ -275,6 +275,7 @@ Below is an example of a specific turbine engine type.
   <idlen2>         60.0 </idlen2>
   <maxn1>         100.0 </maxn1>
   <maxn2>         100.0 </maxn2>
+
   <function name="MilThrust">
     <table> <!-- 2D tabular function -->
       <independentVar lookup="row">velocities/mach</independentVar>
@@ -320,6 +321,7 @@ The control position property is then used by functions in the aerodynamic secti
         </range>
         <output>fcs/elevator-pos-rad</output>
     </aerosurface_scale>
+</channel>
 ```
 
 The JSBSim FCS is capable of modeling a wide variety of control laws, ranging from simple open-loop systems to sophisticated closed-loop architectures. This is achieved through a comprehensive set of components, including filters, summers, switches, and `pid` elements for feedback control.
@@ -370,28 +372,35 @@ Here is a simple example which specifies a specific aircraft model and initial c
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="Elevator doublet test">
+
   <description>
     Trim the aircraft and then input an elevator doublet.
   </description>
+
   <use aircraft="737" initialize="elevator_doublet_init"/>
+
   <run start="0" end="20" dt="0.008333">
     <event name="Start Trim">
       <condition> simulation/sim-time-sec ge 0 </condition>
       <set name="simulation/do_simple_trim" value="1"/>  <!-- 1 - Full trim -->
     </event>
+
     <event name="StartDoublet">
       <condition> simulation/sim-time-sec ge 1.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="-0.2" />
     </event>
+
     <event name="ReverseDoublet">
       <condition> simulation/sim-time-sec ge 2.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.2" />
    </event>
+
    <event name="EndDoublet">
       <condition> simulation/sim-time-sec ge 3.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.0" />
     </event>
   </run>
+
 </runscript>
 ```
 
