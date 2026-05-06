@@ -41,24 +41,24 @@ bibliography: paper.bib
 
 JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions.
 
-JSBSim can be used in batch mode running faster than real-time for flight analysis or AI training or run within a flight simulator environment like FlightGear in real-time.
+JSBSim can be used in batch mode, running faster than real-time for flight analysis, monte carlo analysis, AI training, or incorporated into an interactive flight simulator environment such as FlightGear, Unreal Engine, or Outerra and run in real-time.
 
 Features include:
 
-- Rigid body dynamics with support for 6-degrees-of-freedom (6-DoF) simulations.
-- Quaternion-based computation of the aircraft attitude to avoid the gimbal lock of Euler angles.
-- Fully configurable aerodynamics, flight control system, propulsion, landing gear arrangement, etc. through XML-based text file format.
-- Accurate Earth model including:
-   - Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
-   - Oblate spherical shape and geodetic coordinates according to the WGS84 geodetic system.
-   - Atmosphere modeled according to the International Standard Atmosphere (1976).
-- Configurable data output formats to screen, file, socket, or any combination of those.
+* Rigid body dynamics with support for 6-degrees-of-freedom (6-DoF) simulations.
+* Quaternion-based computation of the aircraft attitude to avoid the gimbal lock of Euler angles.
+* Fully configurable aerodynamics, flight control (and other) systems, propulsion, landing gear arrangement, etc., through XML-based text file format.
+* Accurate Earth model including:
+  * Rotational effects on the equations of motion (Coriolis and centrifugal acceleration modeled).
+  * Oblate spherical shape and geodetic coordinates according to the WGS84 geodetic system.
+  * Atmosphere modeled according to the International Standard Atmosphere (1976).
+* Configurable data output formats to screen, file, socket, or any combination of those.
 
 Developed in standard-compliant C++17, JSBSim also includes the following bindings and interfaces:
 
-- Python module (compatible with Python 3.10+).
-- MATLAB S-Function that interfaces JSBSim with MATLAB Simulink.
-- Unreal Engine plugin.
+* Python module (compatible with Python 3.10+).
+* MATLAB S-Function that interfaces JSBSim with MATLAB Simulink.
+* Unreal Engine plugin.
 
 # Statement of Need
 
