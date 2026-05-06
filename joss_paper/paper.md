@@ -275,7 +275,6 @@ Below is an example of a specific turbine engine type.
   <idlen2>         60.0 </idlen2>
   <maxn1>         100.0 </maxn1>
   <maxn2>         100.0 </maxn2>
-
   <function name="MilThrust">
     <table> <!-- 2D tabular function -->
       <independentVar lookup="row">velocities/mach</independentVar>
@@ -305,7 +304,6 @@ The control position property is then used by functions in the aerodynamic secti
 
 ```xml
 <channel name="Pitch">
-
     <summer name="Pitch Trim Sum">
         <input>fcs/elevator-cmd-norm</input>
         <input>fcs/pitch-trim-cmd-norm</input>
@@ -314,7 +312,6 @@ The control position property is then used by functions in the aerodynamic secti
             <max> 1 </max>
         </clipto>
     </summer>
-
     <aerosurface_scale name="Elevator Control">
         <input>fcs/pitch-trim-sum</input>
         <range>
@@ -334,28 +331,21 @@ In the `ball.xml` example, the user must also specify to JSBSim, at time zero an
 ```xml
 <?xml version="1.0"?>
 <initialize name="reset00" version="2.0">
-
-  <!-- This file sets up the spacecraft to start off
-       at altitude and orbital velocity. -->
-
+  <!-- Sets up initial altitude and orbital velocity -->
   <position frame="ECEF">
     <altitudeMSL unit="FT"> 800000.0  </altitudeMSL>
   </position>
-
   <orientation unit="DEG" frame="LOCAL">
     <yaw>   90.0  </yaw>
   </orientation>
-
   <velocity unit="FT/SEC" frame="BODY">
     <x> 23889.146 </x>
   </velocity>
-
   <attitude_rate unit="DEG/SEC" frame="ECI">
     <x> 0.0 </x>
     <y> 0.0 </y>
     <z> 0.0 </z>
   </attitude_rate>
-
 </initialize>
 ```
 
@@ -376,33 +366,28 @@ Here is a simple example which specifies a specific aircraft model and initial c
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
-<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<runscript 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="Elevator doublet test">
-
   <description>
     Trim the aircraft and then input an elevator doublet.
   </description>
-
   <use aircraft="737" initialize="elevator_doublet_init"/>
-
   <run start="0" end="20" dt="0.008333">
     <event name="Start Trim">
       <condition> simulation/sim-time-sec ge 0 </condition>
       <set name="simulation/do_simple_trim" value="1"/>  <!-- 1 - Full trim -->
     </event>
-
     <event name="StartDoublet">
       <condition> simulation/sim-time-sec ge 1.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="-0.2" />
     </event>
-
     <event name="ReverseDoublet">
       <condition> simulation/sim-time-sec ge 2.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.2" />
    </event>
-
-    <event name="EndDoublet">
+   <event name="EndDoublet">
       <condition> simulation/sim-time-sec ge 3.0 </condition>
       <set name="fcs/elevator-cmd-norm" value="0.0" />
     </event>
