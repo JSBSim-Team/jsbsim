@@ -39,7 +39,7 @@ bibliography: paper.bib
 
 # Summary
 
-JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides a high-fidelity, fully scriptable environment for modeling aircraft dynamics, propulsion, control systems, and flight conditions.
+JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides high-fidelity modeling of aerospace vehicle dynamics, and includes propulsion, control systems, and aerodynamics models, as well as environmental models such as atmosphere, gravity, and geodesy.
 
 JSBSim can be used in batch mode, running faster than real-time for flight analysis, monte carlo analysis, AI training, or incorporated into an interactive flight simulator environment such as FlightGear, Unreal Engine, or Outerra and run in real-time.
 
@@ -62,13 +62,13 @@ Developed in standard-compliant C++17, JSBSim also includes the following bindin
 
 # Statement of Need
 
-Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either  proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects.
+Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects.
 
-The JSBSim XML-based model definitions support validation, and scriptable running supports reproducibility.
+The JSBSim XML-based model definitions support validation, and scriptable running supports testing and reproduceibility.
 
 # Early Motivation
 
-While electro-mechanical flight *trainers* (such as Link’s Blue Box) have been around for almost 100 years, flight simulation codebases have been around since the mid-70s, beginning with Bruce Artwick’s first foray into computer-based flight simulation, as part of his engineering thesis - fifty years ago! Some of the earliest codebases were written in Fortran and evolved over the years into very capable and trusted tools. However, over the years, additions to those codebases by various contributors resulted in code that was less cohesive, brittle, and hard to read.
+While electro-mechanical flight *trainers* (such as Link’s Blue Box) have been around for almost 100 years, flight simulation codebases have been around since the mid-70s, beginning with Bruce Artwick’s first foray into computer-based flight simulation, as part of his engineering thesis - fifty years ago! Some of the earliest codebases were written in Fortran and evolved over the years into very capable and trusted tools. However, over decades, additions to those codebases by various contributors resulted in code that was less cohesive, brittle, and hard to read.
 
 The C++ programming language emerged in the mid-1980’s and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990’s after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, “there’s got to be a better way,” and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation.
 
@@ -76,7 +76,7 @@ Almost 30 years later, and with the participation of many contributors and colla
 
 # State of the Field
 
-In the research community, several tools are used to model flight dynamics, but they often present significant limitations for automated research or high-fidelity academic studies.
+In the research community, several tools are used to model flight dynamics, but they are often unavailable for public use or present significant limitations for automated research or high-fidelity academic studies. The Trick simulation environment, developed at NASA Johnson Space Center, was released as open source software in 2015. POST2 - successor to POST, Program to Optimize Simulated Trajectories, developed over 50 years ago - is still used internally within NASA to this day, as a trusted and well-verified tool.
 
 ## Comparative Analysis
 
@@ -88,7 +88,7 @@ Engineering-focused tools like the [MATLAB Aerospace Toolbox](https://www.mathwo
 
 ## Unique Scholarly Contribution
 
-JSBSim's unique contribution is providing a standalone, coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by @Sequeira:2006:Comparing:Aerodynamic:Models demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics. Stability derivatives can be constant or functionally dependent on other state and input variables. However, the use of stability derivatives is not the only option available to FDM model authors. The XML-based metalanguage provided by JSBSim allows for the use of general, nonlinear, and multidimensional lookup tables to model any type of behavior within the FDM model.
+JSBSim's unique contribution is providing a standalone, traditional coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by @Sequeira:2006:Comparing:Aerodynamic:Models demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics. Stability derivatives can be constant or functionally dependent on other state and input variables. However, the use of stability derivatives is not the only option available to FDM model authors. The XML-based metalanguage provided by JSBSim allows for the use of general, nonlinear, and multidimensional lookup tables to model any type of behavior within the FDM model.
 
 By providing a complete, turnkey solution, JSBSim allows researchers to bypass the complexity of building a simulation engine from scratch and focus entirely on their specific area of study. Furthermore, for research topics that require modeling beyond the standard stability derivative approach, JSBSim's `external_reactions` feature offers the flexibility to interface with any external aerodynamic or propulsive simulation method, ensuring the library remains extensible for even the most unconventional aerospace designs.
 
@@ -104,7 +104,7 @@ JSBSim is data-driven, with all specific model characteristics contained in data
 
 This is a key design feature of JSBSim, which allows users to define an entire FDM model using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters requires writing and re-compiling C code.
 
-Furthermore, JSBSim's low computational footprint allows it to run on virtually any personal computer. The reliance on XML for configuration and CSV for output enables a lightweight development workflow. Users can create and refine complex FDMs using any basic text editor and process simulation results with ubiquitous tools such as Microsoft Excel or Gnuplot. This approach eliminates the need for specialized development environments.
+Furthermore, JSBSim's low computational footprint allows it to run on virtually any personal computer. The reliance on XML for configuration and CSV for output enables a lightweight development workflow. Users can create and refine complex FDMs using any basic text editor and process simulation results with ubiquitous tools such as Microsoft Excel, Octave, or Gnuplot. This approach eliminates the need for specialized development environments.
 
 ## JSBSim FDM Definition
 
@@ -238,7 +238,7 @@ A quite unique feature of the FDM is that users can also define *custom function
 
 ### Propulsion
 
-JSBSim includes engine models covering piston, turbine, turboprop, rocket and electric engines. Configuration parameters are defined to specify the performance of specific engines.
+JSBSim includes engine models covering piston, turbine, turboprop, rocket (liquid and solid), and electric engines. Configuration parameters are defined to specify the performance of specific engines.
 
 A `propulsion` element is defined which specifies an engine file for the specific engine, it’s physical location and orientation on the aircraft.
 
