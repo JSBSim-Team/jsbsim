@@ -6,11 +6,13 @@ on:
       - 'dependabot/**'
     paths-ignore:
       - "**/*.md"
+      - "**/*.ipynb"
       - "joss_paper/**"
       - "**/*.ipynb"
   pull_request:
     paths-ignore:
       - "**/*.md"
+      - "**/*.ipynb"
       - "joss_paper/**"
       - "**/*.ipynb"
 
