@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <fdm_config version="2.0" release="ALPHA">
   <fileheader/>
+  <planet>
+    <rotation_rate>0.0</rotation_rate>
+  </planet>
   <metrics/>
   <mass_balance>
     <ixx unit="KG*M2"> 10.0 </ixx>
