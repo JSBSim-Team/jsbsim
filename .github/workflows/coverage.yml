@@ -7,10 +7,12 @@ on:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "**/*.ipynb"
   pull_request:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "**/*.ipynb"
 
 jobs:
   Codecov:
