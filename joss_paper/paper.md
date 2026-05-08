@@ -60,6 +60,8 @@ Developed in standard-compliant C++17, JSBSim also includes the following bindin
 * MATLAB S-Function that interfaces JSBSim with MATLAB Simulink.
 * Unreal Engine plugin.
 
+JSBSim has been in active development for almost 30 years.
+
 # Statement of Need
 
 Aerospace researchers, instructors, and engineers often need a flight dynamics model (FDM) that is scientifically credible and openly accessible. Existing FDMs are either proprietary, tightly integrated with specific simulators, or lack extensibility for custom modeling, automated testing, or integration into research pipelines. Others have been in development for so long that they have become difficult to adapt or even to understand. JSBSim fills this gap by offering a standalone, open-source FDM with a clear architecture, straightforward and predictable behavior, and a long history in academic, government, and open-source projects.
@@ -72,11 +74,11 @@ While electro-mechanical flight *trainers* (such as Link’s Blue Box) have been
 
 The C++ programming language emerged in the mid-1980’s and began to see widespread use due in part to its support for object-oriented design concepts. In the mid-1990’s after having worked for ten years on flight simulation tasks involving older, hard to read and use legacy code, the original JSBSim developer thought, “there’s got to be a better way,” and began experimenting with flight simulation code in C++, which seemed to be a very well-suited language for flight simulation.
 
-Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim is a great example of what the Open Source paradigm can achieve.
+Almost 30 years later, and with the participation of many contributors and collaborators, JSBSim has benefitted greatly from the Open Source paradigm.
 
 # State of the Field
 
-In the research community, several tools are used to model flight dynamics, but they are often unavailable for public use or present significant limitations for automated research or high-fidelity academic studies. The Trick simulation environment, developed at NASA Johnson Space Center, was released as open source software in 2015. POST2 - successor to POST, Program to Optimize Simulated Trajectories, developed over 50 years ago - is still used internally within NASA to this day, as a trusted and well-verified tool.
+In the research community, several tools are currently used to model flight dynamics, but they are often unavailable for public use or present significant limitations for automated research or high-fidelity academic studies. The [Trick simulation environment](https://github.com/nasa/trick), developed at NASA Johnson Space Center, was released as open source software in 2015. [POST2](https://www.nasa.gov/post2/) - successor to POST, Program to Optimize Simulated Trajectories, developed over 50 years ago - is still used internally within NASA to this day, as a trusted and well-verified tool.
 
 ## Comparative Analysis
 
