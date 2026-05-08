@@ -39,9 +39,9 @@ bibliography: paper.bib
 
 # Summary
 
-JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides high-fidelity modeling of aerospace vehicle dynamics, and includes propulsion, control systems, and aerodynamics models, as well as environmental models such as atmosphere, gravity, and geodesy.
+JSBSim is an open-source, platform-independent, data-driven flight dynamics software library for aerospace research, simulation development, and education. It provides high-fidelity modeling of aerospace vehicle dynamics, and includes propulsion, control systems, aerodynamics, and other subsystem models, as well as environmental models such as atmosphere, gravity, and geodesy.
 
-JSBSim can be used in batch mode, running faster than real-time for flight analysis, monte carlo analysis, AI training, or incorporated into an interactive flight simulator environment such as FlightGear, Unreal Engine, or Outerra and run in real-time.
+JSBSim can be invoked from the command line - running faster than real time for scripted flight scenarios, Monte Carlo studies, or AI training - or integrated into an interactive simulator codebase such as FlightGear, Unreal Engine, or Outerra and run in real time.
 
 Features include:
 
@@ -88,7 +88,7 @@ Engineering-focused tools like the [MATLAB Aerospace Toolbox](https://www.mathwo
 
 ## Unique Scholarly Contribution
 
-JSBSim's unique contribution is providing a standalone, traditional coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by @Sequeira:2006:Comparing:Aerodynamic:Models demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics. Stability derivatives can be constant or functionally dependent on other state and input variables. However, the use of stability derivatives is not the only option available to FDM model authors. The XML-based metalanguage provided by JSBSim allows for the use of general, nonlinear, and multidimensional lookup tables to model any type of behavior within the FDM model.
+JSBSim's unique contribution is providing a standalone, traditional coefficient-based FDM that bridges the gap between these alternatives. Unlike YASim and X-Plane, JSBSim primarily uses stability derivatives to model vehicle dynamics. While more complex transient models (like Blade Element Theory, Vortex Lattice or panels method) exist, research by @Sequeira:2006:Comparing:Aerodynamic:Models demonstrates that for most designs, a well-defined stability derivative model provides comparable fidelity without the computational cost of transient aerodynamics. Stability derivatives can be constant or functionally dependent on other state and input variables. However, the use of stability derivatives is not the only option available to FDM authors. The XML-based metalanguage provided by JSBSim allows for the use of general, nonlinear, and multidimensional lookup tables to model any type of behavior within the FDM.
 
 By providing a complete, turnkey solution, JSBSim allows researchers to bypass the complexity of building a simulation engine from scratch and focus entirely on their specific area of study. Furthermore, for research topics that require modeling beyond the standard stability derivative approach, JSBSim's `external_reactions` feature offers the flexibility to interface with any external aerodynamic or propulsive simulation method, ensuring the library remains extensible for even the most unconventional aerospace designs.
 
@@ -102,7 +102,69 @@ In a nutshell, the flow of the code when run in batch mode is illustrated by \au
 
 JSBSim is data-driven, with all specific model characteristics contained in data files, therefore there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics.
 
-This is a key design feature of JSBSim, which allows users to define an entire FDM model using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters requires writing and re-compiling C code.
+This is a key design feature of JSBSim, which allows users to define an entire FDM  using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), a similar generic flight simulation library developed by NASA, where modifying aircraft parameters requires writing and re-compiling C code.
+
+To illustrate, here’s a “Hello World” view of a minimal JSBSim invocation that models a ball in low Earth orbit. First, here is the XML file containing the characteristics of the “vehicle” - here, just a ball - in the file named minimal_ball.xml:
+```xml
+<?xml version="1.0"?>
+<fdm_config name="Ball" version="2.0">
+
+  <metrics>
+    <wingarea unit="FT2"> 1.0 </wingarea>
+    <wingspan unit="FT"> 1.0 </wingspan>
+    <chord unit="FT"> 1.0 </chord>
+    <location name="AERORP" unit="IN">
+      <x> 0.0 </x> <y> 0.0 </y> <z> 0.0 </z>
+    </location>
+  </metrics>
+
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 1.0 </ixx>
+    <iyy unit="SLUG*FT2"> 1.0 </iyy>
+    <izz unit="SLUG*FT2"> 1.0 </izz>
+    <emptywt unit="LBS"> 10.0 </emptywt>
+  </mass_balance>
+
+  <output name="BallOut.csv" type="CSV" rate="1">
+    <position> ON </position>
+  </output>
+
+</fdm_config>
+```
+We also have to tell JSBSim, at time zero, where to place the ball in space, and how fast it is going, in which direction, etc. That is contained in the file, reset00_v2.xml:
+```xml
+<?xml version="1.0"?>
+<initialize name="reset00" version="2.0">
+
+  <!-- This file sets up the ball to start off at orbital altitude and velocity. -->
+
+  <position frame="ECEF">
+    <altitudeMSL unit="FT"> 800000.0  </altitudeMSL>
+  </position>
+
+  <orientation unit="DEG" frame="LOCAL">
+    <yaw>   90.0  </yaw>
+  </orientation>
+
+  <velocity unit="FT/SEC" frame="BODY">
+    <x> 23889.145167 </x>
+  </velocity>
+
+  <attitude_rate unit="DEG/SEC" frame="ECI">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </attitude_rate>
+
+</initialize>
+```
+And here is how we invoke the batch version of JSBSim from the command line, which reads the above inputs:
+
+./JSBSim --end=5400 --aircraft=minimal_ball --initfile=reset00_v2
+
+Executing the above command results in the ball characteristics being read, initialized to the state specified in the reset00_v2.xml file, and run for 5400 seconds. The position of the ball is logged at 1 Hz in a file named BallOut.csv. The output file can be read and plotted quickly using tools such as Octave or Excel.
+
+While this is a minimal example, JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems — all specified through data files alone.
 
 Furthermore, JSBSim's low computational footprint allows it to run on virtually any personal computer. The reliance on XML for configuration and CSV for output enables a lightweight development workflow. Users can create and refine complex FDMs using any basic text editor and process simulation results with ubiquitous tools such as Microsoft Excel, Octave, or Gnuplot. This approach eliminates the need for specialized development environments.
 
