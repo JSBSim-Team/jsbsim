@@ -2,7 +2,7 @@
 <system name="SAS">
   <!-- Properties definition -->
   <property value="0">   fcs/sas-active-switch </property>
-  <property value="0.0"> fcs/pitch-sas-logic   </property>
+  <property value="0.0"> fcs/pitch-sas-command   </property>
 
   <channel name="Pitch SAS">
     <pure_gain name="fcs/pitch-sas-command">
