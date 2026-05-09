@@ -195,6 +195,8 @@
 
  </propulsion>
 
+<system file = "sas_pitch"/> <!-- SAS pitch file-->
+
  <flight_control name="FCS: A-4">
 
   <channel name="Pitch">
@@ -216,6 +218,26 @@
       <output>fcs/elevator-pos-rad</output>
    </aerosurface_scale>
 
+<!-- SAS pitch system-->
+  <summer name="fcs/sum-control-law">
+    <input>fcs/elevator-control</input>
+    <input>fcs/pitch-sas-output</input>
+  </summer>
+
+<!-- 
+Elevator actuator
+first order transfer function 1/(0.1s + 1) with tau = 0.1
+-->
+  <actuator name="fcs/elevator-actuator">
+    <input> fcs/sum-control-law </input>
+    <lag> 10 </lag> 
+    <clipto>
+   	  <min> -0.34 </min>
+   	  <max>  0.34 </max>
+  	</clipto>
+    <output>fcs/elevator-pos-rad</output>
+  </actuator>
+  
   </channel>
 
   <channel name="Roll">
