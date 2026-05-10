@@ -32,7 +32,7 @@ JSBSim is coded in standard C++17 and has no dependencies, so all you need is a 
 
 ### Building with CMake
 
-CMake is a multiplatform tool to build and test software. It can produce files to build JSBSim with GNU make or Microsoft Visual Studio. To keep the build files separated from the source code, it is preferable to build JSBSim in a separate directory.
+CMake is a multiplatform tool to build and test software. It can produce files to build JSBSim with a wide variety of tools (GNU make, Microsoft Visual Studio, Ninja, etc.). To keep the build files separated from the source code, it is preferable to build JSBSim in a separate directory.
 
 ```bash
 > cd jsbsim-code
@@ -40,13 +40,13 @@ CMake is a multiplatform tool to build and test software. It can produce files t
 > cd build
 ```
 
-CMake *does not build* software, it produces files *for* a multitude of build tools. The following commands are assuming that you are using GNU make to build JSBSim.
+The following commands are assuming that you are using the command line to build JSBSim.
 
-First, you should invoke CMake and then execute `make`
+First, you should invoke CMake and then execute the build:
 
 ```bash
 > cmake ..
-> make
+> cmake --build .
 ```
 
 This will compile the various classes, and build the JSBSim application which will be located in `build/src`
@@ -61,14 +61,14 @@ If you want to set compiler options, you can pass flags to CMake to build a `Deb
 
 ```bash
 > cmake -DCMAKE_CXX_FLAGS_DEBUG="-g -Wall" -DCMAKE_C_FLAGS_DEBUG="-g -Wall" -DCMAKE_BUILD_TYPE=Debug ..
-> make
+> cmake --build .
 ```
 
-Or alternatively you can build a `Release` version of JSBSim and request GNU Make to use 4 cores to build the executable faster.
+Or alternatively you can build a `Release` version of JSBSim and request CMake to use 4 cores to build the executable faster.
 
 ```bash
 > cmake -DCMAKE_CXX_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_C_FLAGS_RELEASE="-O3 -march=native -mtune=native" -DCMAKE_BUILD_TYPE=Release ..
-> make -j4
+> cmake --build . -j4
 ```
 
 ##### Building Expat or using the system library
@@ -77,7 +77,7 @@ JSBSim uses the [Expat library](https://libexpat.github.io/) to read XML files. 
 
 ```bash
 > cmake -DSYSTEM_EXPAT=ON ..
-> make
+> cmake --build .
 ```
 
 ##### Building shared libraries
@@ -87,7 +87,7 @@ The option `BUILD_SHARED_LIBS` must then be passed to CMake
 
 ```bash
 > cmake -DBUILD_SHARED_LIBS=ON ..
-> make
+> cmake --build .
 ```
 
 #### Building the Python module of JSBSim
@@ -126,33 +126,45 @@ A code coverage report is automatically generated and is available at: <https://
 
 ## Installing JSBSim
 
-Once JSBSim is built and tested, you can install the C++ headers and library. For that, you can invoke GNU make from the `build` directory
+Once JSBSim is built and tested, you can install it. It is now recommended to use `cmake --install` instead of `make install`. This allows you to install specific components of JSBSim:
+
+- `runtime`: To install the `JSBSim` executable (`JSBSim.exe` on Windows).
+- `devel`: To install the C++ headers and library.
+- `pymodules`: To install the Python module.
+
+For instance, to install the headers and the library, you can invoke the following command from the `build` directory:
 
 ```bash
-> make install
+> cmake --install . --component devel
+```
+
+Several components can be installed at once by repeating the `--component` option. For instance, to install the `JSBSim` executable and the Python module, you can invoke the following command from the `build` directory:
+
+```bash
+> cmake --install . --component runtime --component pymodules
 ```
 
 By default, CMake copies the files to a location where the headers and library are available platform wide (typically `/usr/include`, `/usr/lib` or `/usr/local/include`, `/usr/local/lib` for *nix OSes). If you want to install the files in another location you can pass the flag `CMAKE_INSTALL_PREFIX` to cmake.
 
 ```bash
-cmake -DCMAKE_INSTALL_PREFIX=/path/to/install ..
-make
-make install
+> cmake -DCMAKE_INSTALL_PREFIX=/path/to/install ..
+> cmake --build .
+> cmake --install . --component devel
 ```
 
 ### Installing the Python module
 
 #### Installation with CMake
 
-If you plan to install the Python module of JSBSim in addition to the C++ headers and library, then you must pass the flag `INSTALL_JSBSIM_PYTHON_MODULE` to CMake. This is the procedure you should follow if you plan to package JSBSim with CPack.
+If you plan to install the Python module of JSBSim, then you must pass the flag `INSTALL_JSBSIM_PYTHON_MODULE` to CMake. This is the procedure you should follow if you plan to package JSBSim with CPack.
 
 ```bash
 > cmake -DINSTALL_JSBSIM_PYTHON_MODULE=ON ..
-> make
-> make install
+> cmake --build .
+> cmake --install . --component pymodules
 ```
 
-**Note:** `make install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html) in order to install the Python module platform wide (i.e. in a directory such as `/usr/lib/python`). If you want the Python module installation process to comply with your virtual environment, you should use the Python `distutils` as described below.
+**Note:** `cmake --install` will attempt to override [Python virtual environments](https://docs.python.org/3/tutorial/venv.html) in order to install the Python module platform wide (i.e. in a directory such as `/usr/lib/python`). If you want the Python module installation process to comply with your virtual environment, you should use the `pip` installation as described below.
 
 #### Installation of the Python module
 
@@ -186,7 +198,7 @@ The packaging can be done by passing the option `CPACK_GENERATOR` to CMake then 
 
 ```bash
 > cmake -DCPACK_GENERATOR=DEB .. # or RPM
-> make
+> cmake --build .
 > cpack
 ```
 
@@ -205,7 +217,7 @@ The JSBSim C++ API documentation is built from the source code with [Doxygen](ht
 If you modify the documentation, you might need to generate the documentation locally in which case you should run the following command after `cmake` has been executed
 
 ```bash
-> make doc
+> cmake --build . --target doc
 ```
 
 The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](www.doxygen.org) and [Graphviz](www.graphviz.org) to be installed.
@@ -250,7 +262,7 @@ You can find more informations about `ctest` from its [manual page](https://cmak
 
 ### When I try to run `ctest`, most of the tests fail
 
-**Q:** Before running `make install`, I want to execute `ctest` but most of the tests fail. And when I check in the file `Testing/Temporary/LastTestsFailed.log` it reports many Python `ImportError` such as
+**Q:** Before installing JSBSim, I want to execute `ctest` but most of the tests fail. And when I check in the file `Testing/Temporary/LastTestsFailed.log` it reports many Python `ImportError` such as
 
 ```text
 31: Traceback (most recent call last):
@@ -276,3 +288,9 @@ To avoid prepending every `ctest` command with `LD_LIBRARY_PATH=$PWD/src` you ca
 ```
 
 Please note that as soon as your shell session will be terminated, the modification to `LD_LIBRARY_PATH` will be lost.
+
+### When I try to run `make install`, I get errors about missing files
+
+**Q:** I am trying to install JSBSim using `make install` but I encounter errors stating that some files cannot be found.
+
+**A:** The use of `make install` is no longer supported for installing JSBSim. You should instead use `cmake` as described in the [Installing JSBSim](#installing-jsbsim) section above. This new method allows for a more granular installation by selecting specific components (such as `runtime`, `devel`, or `pymodules`).
