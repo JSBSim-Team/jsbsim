@@ -105,13 +105,13 @@ While this is a minimal example, JSBSim scales to highly complex aerospace vehic
 
 The more common execution from the command line involves running from a script, which interacts with the simulation by modifying properties based on conditional logic. While JSBSim handles the continuous physics of flight, the script acts as a state-machine-driven mission controller, providing the discrete logical transitions required to navigate complex flight scenarios.
 
+![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots.png)
+
 # Research Use: Flight Load Assessment Light Aircraft Flying near Wind Turbine Wake
 
 JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes.
 For this research, a framework of software applications has been developed for generating and controlling a population of flight simulation scenarios in presence of assigned wind and turbulence fields. JSBSim's autopilot system has been used to simulate a realistic pilot behavior during navigation. 
 \autoref{fig:wake:crossing} shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal relative-wind component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in proximity of wind farms.
-
-![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots.png)
 
 # Implementation and Engineering Practices
 
