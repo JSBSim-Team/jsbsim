@@ -96,14 +96,14 @@ We also have to tell JSBSim, at time zero, where to place the ball in space, and
 </initialize>
 ```
 And here is how we invoke the batch version of JSBSim from the command line, which reads the above inputs:
-```bash
-user@machine:path/to/jsbsim-root$./JSBSim --end=5400 --aircraft=minimal_ball --initfile=reset00_v2
+```sh
+./JSBSim --end=5400 --aircraft=minimal_ball --initfile=reset00_v2
 ```
 
 Executing the above command results in the ball characteristics being read, initialized to the state specified in the reset00_v2.xml file, and run for 5400 seconds. The position of the ball is logged at 1 Hz in a file named BallOut.csv. The output file can be read and plotted quickly using tools such as Octave or Excel.
 
-While this is a minimal example, JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems and large aerodynamic databases derived from wind tunnel testing — all specified through data files alone. The input metalanguage offers great flexibility in terms of defining properties within a specific FDM, with the availability of a large number of mathematical operators, N-dimensional table lookups and access to the aircraft's metrics and state via the property system.
-The following snippet is an example of how user can define the contribution to the aerodynamic pitching moment:
+While this is a minimal example, JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems and large aerodynamic databases derived from wind tunnel testing — all specified through data files alone. In fact, the input metalanguage offers great flexibility in terms of defining properties within a specific FDM, with the availability of a large number of mathematical operators, N-dimensional table lookups and access to the aircraft's metrics and state via the property system.
+The following is an example of how the dimensional pitch control power can be defined as a function of Mach number:
 ```xml
 <function name="aero/PitchMoment_elevator">
     <description>Pitch moment due to elevator</description>
@@ -116,22 +116,24 @@ The following snippet is an example of how user can define the contribution to t
             <independentVar>velocities/mach</independentVar>
             <tableData> <!-- lookup table - Cmde coefficient -->
                 0.0 -1.20
+                1.0 -1.00
                 2.0 -0.30
             </tableData>
         </table>
     </product>
 </function>
 ```
+![Pitching control power coefficient as a tabulated function of Mach number.](assets/PitchMoment_elevator.png){ width=70% }
 
 The more common execution from the command line involves running from a script, which interacts with the simulation by modifying properties based on conditional logic. While JSBSim handles the continuous physics of flight, the script acts as a state-machine-driven mission controller, providing the discrete logical transitions required to navigate complex flight scenarios.
-
-![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots.png)
 
 # Research Use: Flight Load Assessment Light Aircraft Flying near Wind Turbine Wake
 
 JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes.
 For this research, a framework of software applications has been developed for generating and controlling a population of flight simulation scenarios in presence of assigned wind and turbulence fields. JSBSim's autopilot system has been used to simulate a realistic pilot behavior during navigation. 
 \autoref{fig:wake:crossing} shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal relative-wind component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in proximity of wind farms.
+
+![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots.png)
 
 # Implementation and Engineering Practices
 
@@ -151,19 +153,19 @@ Examples of use cases include:
 
 - Control system design. See the articles by @Vogeltanz:2018:Development:Control:System:Designer;@Vogeltanz:2020:Control:System:Designer.
 
-- Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition). See also the works by @Richter:2022:Attitude:Control:QLearning, @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Salhi:2025:Leveraging:JSBSim, @Chen:2026:Physics:Informed:Target:Aiming.
+- Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being it's use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition). See also the works by @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Chen:2026:Physics:Informed:Target:Aiming.
 
 - SITL (Software In The Loop) Drone autopilot testing: [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation).
 
 - Integration with CFD. @Varriale:DeMarco:2018:Flight:Load:Assessment used CFD to model the three-dimensional velocity field behind wind turbines and then integrated it with JSBSim, simulating the flight of a light aircraft through that field to observe the aircraft's response.
 
-- UAV modeling. See @Moallemi:2016:Flight:Dynamics:Global5000, @Kamal:2016:Modeling:Flight:Simulation:UAV, @Cereceda:2019:Giant:BigStik, @Zumegen:2021:Evaluation:Formation:Flights.
+- UAV modeling. See @Kamal:2016:Modeling:Flight:Simulation:UAV, @Cereceda:2019:Giant:BigStik.
 
-- Rocket trajectory simulations. See @Gomez:2003:Active:Guidance, @Braun:2006:Design:ARES, @Kenney:2011:Flight:Simulation:ARES, @Abdulkerim:2022:Simulating:Rocket:Trajectory
+- Rocket trajectory simulations. See @Gomez:2003:Active:Guidance, @Braun:2006:Design:ARES, @Kenney:2011:Flight:Simulation:ARES.
 
 - Sensor assessment and Human Factor. See @Zhang:2010:Mathematical:Models:Pilot, @McAnanama:2018:OpenSource:FDM:IMU.
 
-- Simulation integration. See @Park:2008:Experimental:Evaluation:UAV:TMO, @Gimenes:2008:Using:Flight:Simulation, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Saber:2025:Integration:JSBSim:Unreal.
+- Simulation integration. See @Park:2008:Experimental:Evaluation:UAV:TMO, @Nicolosi:DeMarco:2018:Roll:Performance:Assessment, @Saber:2025:Integration:JSBSim:Unreal.
 
 - CPU performance benchmarking. JSBSim has been included in the [SPEC CPU 2026](https://www.spec.org/cpu2026/) [@Madhav:2026:SPEC:CPU:Next:Generation], a widely recognized benchmark suite designed to measure the performance of a computer's processor, memory, and compiler efficiency using compute-intensive workloads.
 
