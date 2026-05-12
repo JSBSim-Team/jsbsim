@@ -103,7 +103,7 @@ And here is how we invoke the batch version of JSBSim from the command line, whi
 Executing the above command results in the ball characteristics being read, initialized to the state specified in the reset00_v2.xml file, and run for 5400 seconds. The position of the ball is logged at 1 Hz in a file named BallOut.csv. The output file can be read and plotted quickly using tools such as Octave or Excel.
 
 While this is a minimal example, JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems and large aerodynamic databases derived from wind tunnel testing — all specified through data files alone. In fact, the input metalanguage offers great flexibility in terms of defining properties within a specific FDM, with the availability of a large number of mathematical operators, N-dimensional table lookups and access to the aircraft's metrics and state via the property system.
-The following is an example of how the dimensional pitch control power can be defined as a function of Mach number:
+The following is an example of how the dimensional pitch control power can be defined as a function of Mach number (see also \autoref{fig:Cm_delta:e}):
 ```xml
 <function name="aero/PitchMoment_elevator">
     <description>Pitch moment due to elevator</description>
@@ -123,7 +123,7 @@ The following is an example of how the dimensional pitch control power can be de
     </product>
 </function>
 ```
-![Pitching control power coefficient as a tabulated function of Mach number.](assets/PitchMoment_elevator.png)
+![Pitching control power coefficient as a tabulated function of Mach number.\label{fig:Cm_delta:e}](assets/PitchMoment_elevator.png)
 
 The more common execution from the command line involves running from a script, which interacts with the simulation by modifying properties based on conditional logic. While JSBSim handles the continuous physics of flight, the script acts as a state-machine-driven mission controller, providing the discrete logical transitions required to navigate complex flight scenarios.
 
