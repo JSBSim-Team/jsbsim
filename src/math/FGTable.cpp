@@ -542,6 +542,9 @@ double FGTable::GetValue(void) const
   }
   default:
     assert(false);
+    LogException err;
+    err << "Unknown table type.\n";
+    throw err;
   }
 }
 
