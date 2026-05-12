@@ -123,7 +123,7 @@ The following is an example of how the dimensional pitch control power can be de
     </product>
 </function>
 ```
-![Pitching control power coefficient as a tabulated function of Mach number.](assets/PitchMoment_elevator.png){ width=70% }
+![Pitching control power coefficient as a tabulated function of Mach number.](assets/PitchMoment_elevator.png){ width=90% }
 
 The more common execution from the command line involves running from a script, which interacts with the simulation by modifying properties based on conditional logic. While JSBSim handles the continuous physics of flight, the script acts as a state-machine-driven mission controller, providing the discrete logical transitions required to navigate complex flight scenarios.
 
