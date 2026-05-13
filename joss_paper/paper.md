@@ -49,7 +49,7 @@ Features include:
 * Quaternion-based computation of the aircraft attitude to avoid the gimbal lock of Euler angles.
 * Accurate environment models (geodesy, atmosphere, rotational planet effects).
 * Fully configurable input model characteristics and output logging.
-* Developed in standard-compliant C++17, with bindings for Python, and MATLAB/Simulink.
+* Developed in standard-compliant C++17, with bindings for Python, and MATLAB (includes a Simulink S-Function).
 
 JSBSim has been in active development for almost 30 years.
 
@@ -132,7 +132,7 @@ In the following example the pitch moment due to elevator (linearly dependent on
 
 The more common execution from the command line involves running from a script, which interacts with the simulation by modifying properties based on conditional logic. While JSBSim handles the continuous physics of flight, the script acts as a state-machine-driven mission controller, providing the discrete logical transitions required to navigate complex flight scenarios. JSBSim scripts are coded as XML-based input files, with their specific metalanguage.
 
-# A Selected Example of Use in Research: Flight Load Assessment Light Aircraft Flying near Wind Turbine Wake
+# A Selected Example of Use in Research: Flight Load Assessment for Light Aircraft Flying near Wind Turbine Wake
 
 JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes. For this research, a framework of software applications has been developed for generating and controlling a population of flight simulation scenarios in the presence of CFD calculated wind and turbulence fields. JSBSim's autopilot system has been used to simulate realistic pilot behavior during navigation. 
 \autoref{fig:wake:crossing} shows the top view of a selected flight scenario (left). The figure also reports the time histories of the normal relative-wind component ($V_{\mathrm{w},z_\mathrm{B}}$, along z-body axis) induced by the turbine wake, and the normal load factor $n_{z_\mathrm{B}}$. Based on these results, preliminary guidelines and recommendations on safe encounter distances have been provided for general aviation aircraft when flying in the proximity of wind farms.
