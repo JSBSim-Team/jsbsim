@@ -76,7 +76,7 @@ By providing a complete, turnkey solution, JSBSim allows researchers to bypass t
 
 JSBSim was designed from the ground up with several features in mind [@Berndt:2004:JSBSim]. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase. With all specific model characteristics contained in data files, there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics. This is a key design feature of JSBSim, which allows users to define an entire FDM using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), where modifying aircraft parameters requires writing and re-compiling C code.
 
-To illustrate, here’s a “Hello World” view of a minimal JSBSim invocation that models a ball in low Earth orbit. First, here is the format of the XML file containing the characteristics of the “vehicle” — here, just a ball — in the file named `minimal_ball.xml`:
+To illustrate, here’s a “Hello World” view of a minimal JSBSim invocation that models a ball in low Earth orbit. First, here is the format of a simplified XML file containing the characteristics of the “vehicle” — here, just a ball — in the file named `minimal_ball.xml`:
 ```xml
 <?xml version="1.0"?>
 <fdm_config name="Ball" version="2.0">
