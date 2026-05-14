@@ -33,21 +33,10 @@ set(HEADERS FGFDMExec.h
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
-add_library(libJSBSim ${SOURCES}
-  $<TARGET_OBJECTS:Init>
-  $<TARGET_OBJECTS:Atmosphere>
-  $<TARGET_OBJECTS:FlightControl>
-  $<TARGET_OBJECTS:Propulsion>
-  $<TARGET_OBJECTS:Models>
-  $<TARGET_OBJECTS:Math>
-  $<TARGET_OBJECTS:InputOutput>
-  $<TARGET_OBJECTS:Properties>
-  $<TARGET_OBJECTS:Xml>
-  $<TARGET_OBJECTS:Magvar>
-  $<TARGET_OBJECTS:Misc>
-  $<TARGET_OBJECTS:IOStreams>
-  $<TARGET_OBJECTS:GeographicLib>
-  )
+add_library(libJSBSim ${SOURCES})
+target_link_libraries(libJSBSim PRIVATE Init Atmosphere FlightControl Propulsion
+                                        Models Math InputOutput Properties Xml
+                                        Magvar Misc IOStreams GeographicLib)
 
 target_compile_definitions(libJSBSim PUBLIC
                            JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
@@ -56,7 +45,7 @@ target_include_directories(libJSBSim PUBLIC
 
 if(WIN32)
   target_compile_definitions(libJSBSim PUBLIC _USE_MATH_DEFINES)
-  target_link_libraries(libJSBSim wsock32 ws2_32)
+  target_link_libraries(libJSBSim PUBLIC wsock32 ws2_32)
 
   if(BUILD_SHARED_LIBS)
     set(JSBSIM_LIBRARY_TYPE JSBSIM_EXPORT)
@@ -76,7 +65,7 @@ if(WIN32)
     endif()
   endforeach(OBJECT)
 elseif(UNIX)
-  target_link_libraries(libJSBSim m)
+  target_link_libraries(libJSBSim PUBLIC m)
 endif(WIN32)
 
 set_target_properties(libJSBSim PROPERTIES
