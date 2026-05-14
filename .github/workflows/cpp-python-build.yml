@@ -309,6 +309,7 @@ jobs:
       fail-fast: false
       matrix:
         shared_libs: [ON, OFF]
+        expat: [ON, OFF]
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v6
@@ -327,6 +328,9 @@ jobs:
           python-version: '3.10'
       - name: Install Python packages
         run: pip install -r python/requirements.txt
+      - name: Install Expat
+        if: matrix.expat == 'ON'
+        run:  vcpkg install expat
       - name: Checkout CxxTest
         uses: actions/checkout@v6
         with:
@@ -353,7 +357,7 @@ jobs:
         run: |
           New-Item -Path .\build -ItemType Directory -Force
           cd build
-          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE ..
+          cmake -DCMAKE_INCLUDE_PATH="$(get-location)\..\cxxtest" -DCMAKE_PREFIX_PATH="$(get-location)\..\backward-cpp" -DBUILD_SHARED_LIBS=${{matrix.shared_libs}} -DSYSTEM_EXPAT=${{matrix.expat}} -DFPECTL_DISPLAY_STACK_TRACE=ON -DSTACK_DETAILS_AUTO_DETECT=FALSE -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake ..
       - name: Build JSBSim
         working-directory: build
         run: cmake --build . --config RelWithDebInfo --parallel $Env:NUMBER_OF_PROCESSORS
