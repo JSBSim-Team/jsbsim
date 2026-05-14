@@ -33,10 +33,22 @@ set(HEADERS FGFDMExec.h
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
+set(OBJECT_LIBS Atmosphere
+                FlightControl
+                GeographicLib
+                Init
+                InputOutput
+                IOStreams
+                Magvar
+                Math
+                Misc
+                Models
+                Properties
+                Propulsion
+                Xml)
+
 add_library(libJSBSim ${SOURCES})
-target_link_libraries(libJSBSim PRIVATE Init Atmosphere FlightControl Propulsion
-                                        Models Math InputOutput Properties Xml
-                                        Magvar Misc IOStreams GeographicLib)
+target_link_libraries(libJSBSim PRIVATE ${OBJECT_LIBS})
 
 target_compile_definitions(libJSBSim PUBLIC
                            JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
@@ -58,11 +70,8 @@ if(WIN32)
     target_compile_definitions(libJSBSim PUBLIC JSBSIM_STATIC_LINK)
   endif(BUILD_SHARED_LIBS)
 
-  get_target_property(libJSBSim_SOURCE_FILES libJSBSim SOURCES)
-  foreach(OBJECT ${libJSBSim_SOURCE_FILES})
-    if (${OBJECT} MATCHES "TARGET_OBJECTS:([^ >]+)")
-      target_compile_definitions(${CMAKE_MATCH_1} PRIVATE ${JSBSIM_LIBRARY_TYPE})
-    endif()
+  foreach(OBJECT ${OBJECT_LIBS})
+    target_compile_definitions(${OBJECT} PRIVATE ${JSBSIM_LIBRARY_TYPE})
   endforeach(OBJECT)
 elseif(UNIX)
   target_link_libraries(libJSBSim PUBLIC m)
