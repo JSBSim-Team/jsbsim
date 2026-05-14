@@ -54,15 +54,6 @@ target_compile_definitions(libJSBSim PUBLIC
 target_include_directories(libJSBSim PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if(EXPAT_FOUND)
-  target_include_directories(libJSBSim PRIVATE ${EXPAT_INCLUDE_DIRS})
-  if (PKG_CONFIG_FOUND)
-    target_link_libraries(libJSBSim ${PC_EXPAT_LIBRARIES})
-  else()
-    target_link_libraries(libJSBSim ${EXPAT_LIBRARIES})
-  endif()
-endif(EXPAT_FOUND)
-
 if(WIN32)
   target_compile_definitions(libJSBSim PUBLIC _USE_MATH_DEFINES)
   target_link_libraries(libJSBSim wsock32 ws2_32)
