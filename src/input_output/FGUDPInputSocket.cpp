@@ -51,8 +51,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGUDPInputSocket::FGUDPInputSocket(FGFDMExec* fdmex) :
-  FGInputSocket(fdmex), rate(20), oldTimeStamp(0.0)
+FGUDPInputSocket::FGUDPInputSocket(FGFDMExec* fdmex, bool isEnabled) :
+  FGInputSocket(fdmex, isEnabled), rate(20), oldTimeStamp(0.0)
 {
   SockPort = 5139;
   SockProtocol = FGfdmSocket::ptUDP;

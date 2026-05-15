@@ -76,7 +76,7 @@ public:
   /** Constructor (implement the FGModel interface).
       @param fdmex a pointer to the parent executive object
    */
-  FGInputType(FGFDMExec* fdmex);
+  FGInputType(FGFDMExec* fdmex, bool isEnabled=true);
 
   /// Destructor
   ~FGInputType() override;
@@ -109,13 +109,13 @@ public:
   virtual void Read(bool Holding) = 0;
 
   /// Enables the input generation.
-  void Enable(void) { enabled = true; }
+  virtual void Enable(void) { enabled = true; }
   /// Disables the input generation.
-  void Disable(void) { enabled = false; }
+  virtual void Disable(void) { enabled = false; }
   /** Toggles the input generation.
       @result the input generation status i.e. true if the input has been
               enabled, false if the input has been disabled. */
-  bool Toggle(void) {enabled = !enabled; return enabled;}
+  virtual bool Toggle(void) {enabled = !enabled; return enabled;}
 
   /** Overwrites the name identifier under which the input will be read.
       This method is taken into account if it is called before
