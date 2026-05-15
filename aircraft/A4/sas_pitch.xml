@@ -2,12 +2,13 @@
 <system name="SAS">
   <!-- Properties definition -->
   <property value="0">   fcs/sas-active-switch </property>
-  <property value="0.0"> fcs/pitch-sas-command   </property>
+  <property value="0.0"> fcs/pitch-sas-command </property>
+  <property value="0.869"> fcs/pitch-sas-kq    </property>
 
   <channel name="Pitch SAS">
     <pure_gain name="fcs/pitch-sas-command">
       <input>velocities/q-rad_sec</input>
-      <gain>0.869</gain>
+      <gain>fcs/pitch-sas-kq</gain>
     </pure_gain>
 
     <!-- The Switch: if fcs/sas-active-switch is 1, pass the logic. Else, 0. -->
