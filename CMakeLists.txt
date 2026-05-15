@@ -16,9 +16,6 @@ set(LIBRARY_VERSION ${PROJECT_VERSION})
 set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
 option(SYSTEM_EXPAT "Set to ON to build JSBSim using the system libExpat" OFF)
-if (SYSTEM_EXPAT)
-  find_package(EXPAT)
-endif()
 
 function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
   string(REPLACE ${SEPARATOR} " " TEMP_LIST ${INPUT_STRING})
@@ -134,7 +131,7 @@ endif(CXXTEST_FOUND)
 # Packaging                                                                    #
 ################################################################################
 
-if (PKG_CONFIG_FOUND)
+if (PkgConfig_FOUND)
   if (NOT BUILD_SHARED_LIBS)
     get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
     foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
