@@ -98,7 +98,6 @@ bool FGInputSocket::InitModel(void)
 
 bool FGInputSocket::CreateSocket()
 {
-  socket.reset(); // close any existing socket
   socket = std::make_unique<FGfdmSocket>(SockPort, SockProtocol);
 
   if (!socket) return false;
