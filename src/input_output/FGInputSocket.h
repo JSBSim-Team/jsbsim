@@ -65,9 +65,6 @@ public:
   /** Constructor. */
   FGInputSocket(FGFDMExec* fdmex, bool isEnabled);
 
-  /** Destructor. */
-  ~FGInputSocket() override;
-
   /** Init the input directives from an XML file.
       @param element XML Element that is pointing to the input directives
   */

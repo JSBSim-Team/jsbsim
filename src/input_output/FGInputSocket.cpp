@@ -61,13 +61,6 @@ FGInputSocket::FGInputSocket(FGFDMExec* fdmex, bool isEnabled) :
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGInputSocket::~FGInputSocket()
-{
-  socket.reset();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 bool FGInputSocket::Load(Element* el)
 {
   if (!FGInputType::Load(el))
