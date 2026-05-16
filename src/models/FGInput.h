@@ -118,9 +118,9 @@ public:
   bool SetDirectivesFile(const SGPath& fname);
 
   /// Enables the input generation for all input instances.
-  void Enable(void) { enabled = true; }
+  void Enable(void);
   /// Disables the input generation for all input instances.
-  void Disable(void) { enabled = false; }
+  void Disable(void);
   /** Toggles the input generation of each input instance.
       @param idx ID of the input instance which input generation will be
                  toggled.

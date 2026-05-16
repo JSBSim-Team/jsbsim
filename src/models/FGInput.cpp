@@ -101,9 +101,9 @@ bool FGInput::Load(Element* el)
   type = to_upper(type);
 
   if (type.empty() || type == "SOCKET") {
-    Input = new FGInputSocket(FDMExec);
+    Input = new FGInputSocket(FDMExec, enabled);
   } else if (type == "QTJSBSIM") {
-    Input = new FGUDPInputSocket(FDMExec);
+    Input = new FGUDPInputSocket(FDMExec, enabled);
   } else if (type != string("NONE")) {
     FGXMLLogging log(element, LogLevel::ERROR);
     log << "Unknown type of input specified in config file" << endl;
@@ -203,6 +203,23 @@ string FGInput::GetInputName(unsigned int idx) const
   return name;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/// Enables the input generation for all input instances.
+void FGInput::Enable(void)
+{
+  enabled = true;
+  for (auto input : InputTypes)
+    input->Enable();
+}
+
+/// Disables the input generation for all input instances.
+void FGInput::Disable(void)
+{
+  enabled = false;
+  for (auto input : InputTypes)
+    input->Disable();
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

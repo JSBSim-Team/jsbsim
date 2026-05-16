@@ -45,6 +45,7 @@ INCLUDES
 
 #include "models/FGPropagate.h"
 #include "models/FGOutput.h"
+#include "models/FGInput.h"
 #include "math/FGTemplateFunc.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +67,6 @@ class FGExternalReactions;
 class FGGroundReactions;
 class FGFCS;
 class FGInertial;
-class FGInput;
 class FGPropulsion;
 class FGMassBalance;
 class FGLogger;
@@ -485,6 +485,10 @@ public:
   void DisableOutput(void) { Output->Disable(); }
   /// Enables data logging to all outputs.
   void EnableOutput(void) { Output->Enable(); }
+  /// Disables input from all inputs.
+  void DisableInput(void) { Input->Disable(); }
+  /// Enables input from all inputs.
+  void EnableInput(void) { Input->Enable(); }
   /// Pauses execution by preventing time from incrementing.
   void Hold(void) {holding = true;}
   /// Turn on hold after increment
