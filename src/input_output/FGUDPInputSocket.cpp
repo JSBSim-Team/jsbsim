@@ -90,7 +90,7 @@ bool FGUDPInputSocket::Load(Element* el)
 
 void FGUDPInputSocket::Read(bool Holding)
 {
-  if (socket == 0) return;
+  if (!socket) return;
 
   data = socket->Receive();
 
