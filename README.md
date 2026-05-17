@@ -3,6 +3,7 @@
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
 [![PyPI Downloads](https://static.pepy.tech/badge/jsbsim/week)](https://pepy.tech/projects/jsbsim)
 [![Downloads GitHub](https://img.shields.io/github/downloads/JSBSim-Team/jsbsim/total?label=Downloads%20GitHub)](https://github.com/JSBSim-Team/jsbsim/releases)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20258621.svg)](https://doi.org/10.5281/zenodo.20258621)
 
 <p align="center">
 <img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
