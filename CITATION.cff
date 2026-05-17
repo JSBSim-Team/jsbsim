@@ -1,4 +1,6 @@
 cff-version: "1.2.0"
+title: "JSBSim - An Open Source Flight Dynamics Software Library"
+abstract: "JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. JSBSim is a research software that can be run in a standalone batch mode flight simulator (no graphical displays a.k.a. console mode) for testing and study, or it can be integrated with the Unreal engine, FlightGear and many other simulation environments."
 authors:
 - family-names: Berndt
   given-names: Jon S.
@@ -9,36 +11,22 @@ authors:
 - family-names: De Marco
   given-names: Agostino
   orcid: "https://orcid.org/0000-0001-5985-9950"
+  affiliation: "University of Naples Federico II, Italy"
 - family-names: McLeod
   given-names: Sean
   orcid: "https://orcid.org/0009-0003-1039-8307"
-doi: TBD, Zenodo
-message: If you use this software, please cite our article in the
-  Journal of Open Source Software.
-preferred-citation:
-  authors:
-  - family-names: Berndt
-    given-names: Jon S.
-    orcid: "https://orcid.org/0009-0009-9701-2182"
-  - family-names: Coconnier
-    given-names: Bertrand
-    orcid: "https://orcid.org/0009-0000-0065-3704"
-  - family-names: De Marco
-    given-names: Agostino
-    orcid: "https://orcid.org/0000-0001-5985-9950"
-  - family-names: McLeod
-    given-names: Sean
-    orcid: "https://orcid.org/0009-0003-1039-8307"
-  date-published: 2026-MM-DD
-  doi: 10.21105/joss.ToBeDone
-  issn: 2475-9066
-  issue: XYZ
-  journal: Journal of Open Source Software
-  publisher:
-    name: Open Journals
-  start: XXXX
-  title: JSBSim - An Open Source Flight Dynamics Software Library
-  type: article
-  url: "https://joss.theoj.org/papers/TBD-DOI"
-  volume: XX
-title: JSBSim - An Open Source Flight Dynamics Software Library
+date-released: "2026-05-17"
+identifiers:
+  - description: "This is the collection of archived snapshots of all versions of JSBSim"
+    type: doi
+    value: 10.5281/zenodo.20258621
+  - description: "This is the archived snapshot of version 1.3.1 of JSBSim"
+    type: doi
+    value: 10.5281/zenodo.20258622
+keywords:
+  - Flight Dynamics Modeling
+  - Flight simulation
+license: "LGPL 2.1"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/JSBSim-Team/jsbsim"
+doi: 10.5281/zenodo.20258621
