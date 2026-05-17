@@ -32,17 +32,19 @@ ctemplate_type: name "[" ctype "]"
 pointer_type: (name | ctemplate_type) "*"
 ref_type: (name | ctemplate_type) "&"
 const_type: "const" (name | ref_type | pointer_type | ctemplate_type)
-ctype: name | ref_type | pointer_type | const_type | ctemplate_type
+?ctype: name | ref_type | pointer_type | const_type | ctemplate_type
 
 conversion: "<" ctype ">" name
 new_param: "new" name "(" [arguments] ")"
 cyassign: testlist_star_expr "=" (testlist_star_expr "=")* (new_param | conversion | ctemplate_type "(" [cparameters] ")")
-?ctypedparam: ctype name
-cparameter: (ctypedparam ("=" test)?) | conversion | paramvalue
+ctypedparam: ctype name
+ref_argvalue: "&" argvalue
+?cparamvalue: ctypedparam ("=" (argvalue | ref_argvalue))?
+?cparameter: cparamvalue | conversion | paramvalue
 cparameters: cparameter ("," cparameter)* ["," [starparams | kwparams]]
 cyfuncdef: name "(" [cparameters] ")" ":" suite
 cyclassdef: "class" name ["(" [arguments] ")"] ":" suite
-cdeclare_var: ctypedparam ("=" "&"? argvalue)? _NEWLINE
+cdeclare_var: cparamvalue _NEWLINE
 cdef_stmt: "cdef" (cdeclare_var | cyfuncdef | cyclassdef)
 
 %extend import_stmt: cimport_from

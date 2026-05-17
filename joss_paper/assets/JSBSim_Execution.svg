@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="186.8569mm"
+   height="61.436104mm"
+   viewBox="0 0 186.8569 61.436104"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="JSBSim_Execution.svg"
+   inkscape:export-filename="JSBSim_Execution.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.4049793"
+     inkscape:cx="324.32712"
+     inkscape:cy="154.47118"
+     inkscape:window-width="4096"
+     inkscape:window-height="2050"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ConcaveTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Concave triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.7)"
+         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         id="path10" />
+    </marker>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath10">
+      <path
+         d="M -14.49306,0 H 1463.2461 V 1912.3682 H -14.49306 Z"
+         clip-rule="evenodd"
+         id="path103"
+         style="stroke-width:0.579506" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath12">
+      <path
+         d="M 0,0 H 2550 V 3300 H 0 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path12" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath9">
+      <path
+         d="M 25,0 H 2525 V 19862.5 H 25 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path9" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7">
+      <path
+         d="m 522.90784,153.57922 h 13.80487 v 13.80487 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-111.25001,388.78506)"
+         id="path7" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath8">
+      <path
+         d="m 522.90784,153.57922 h 13.80487 v 13.80487 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-111.25001,388.78506)"
+         id="path8" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath120">
+      <path
+         d="M 379.84433,26.746944 H 680.10034 V 68.16156 H 379.84433 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         clip-rule="evenodd"
+         id="path120" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath119">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-307.02818,-160)"
+         clip-rule="evenodd"
+         id="path119" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath70">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-14.49298,0)"
+         clip-rule="evenodd"
+         id="path70" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath76">
+      <path
+         d="M 0,0 H 2550 V 3300 H 0 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path76" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath73">
+      <path
+         d="M 25,0 H 2525 V 19862.5 H 25 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path73" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath71">
+      <path
+         d="m 789.57489,2509.9263 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-1818.1451,581.95372)"
+         id="path71" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath72">
+      <path
+         d="m 789.57489,2509.9263 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-1818.1451,581.95372)"
+         id="path72" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath78">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-14.49298,0)"
+         clip-rule="evenodd"
+         id="path78" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath84">
+      <path
+         d="M 0,0 H 2550 V 3300 H 0 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path84" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath81">
+      <path
+         d="M 25,0 H 2525 V 19862.5 H 25 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path81" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath79">
+      <path
+         d="m 789.57489,2813.6333 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2038.145,581.95372)"
+         id="path79" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath80">
+      <path
+         d="m 789.57489,2813.6333 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2038.145,581.95372)"
+         id="path80" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath86">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-14.49298,0)"
+         clip-rule="evenodd"
+         id="path86" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath92">
+      <path
+         d="M 0,0 H 2550 V 3300 H 0 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path92" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath89">
+      <path
+         d="M 25,0 H 2525 V 19862.5 H 25 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path89" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath87">
+      <path
+         d="m 522.10547,3206.2905 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2322.5787,388.20374)"
+         id="path87" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath88">
+      <path
+         d="m 522.10547,3206.2905 h 13.80487 v 13.8049 h -13.80487 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2322.5787,388.20374)"
+         id="path88" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath94">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-14.49298,0)"
+         clip-rule="evenodd"
+         id="path94" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath100">
+      <path
+         d="M 0,0 H 2550 V 3300 H 0 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path100" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath97">
+      <path
+         d="M 25,0 H 2525 V 19862.5 H 25 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         id="path97" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath95">
+      <path
+         d="m 1057.0442,3206.2905 h 13.8049 v 13.8049 h -13.8049 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2322.5787,775.7037)"
+         id="path95" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath96">
+      <path
+         d="m 1057.0442,3206.2905 h 13.8049 v 13.8049 h -13.8049 z"
+         transform="matrix(0,-0.72438189,0.72438189,0,-2322.5787,775.7037)"
+         id="path96" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath165">
+      <path
+         d="m 623.91693,2549.6145 h 345.12183 v 165.6584 H 623.91693 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         clip-rule="evenodd"
+         id="path165" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath164">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-385.28985,-1792.0626)"
+         clip-rule="evenodd"
+         id="path164" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath168">
+      <path
+         d="m 710.58838,2939.2112 h 172.56091 v 41.4146 H 710.58838 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         clip-rule="evenodd"
+         id="path168" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath167">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-306.56331,-1929.0625)"
+         clip-rule="evenodd"
+         id="path167" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath171">
+      <path
+         d="M 356.44751,3245.979 H 701.56934 V 3300 H 356.44751 Z"
+         transform="matrix(0.31999999,0,0,0.31999999,836,0)"
+         clip-rule="evenodd"
+         id="path171" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath170">
+      <path
+         d="M 25,0 H 2525 V 3300 H 25 Z"
+         transform="matrix(0.57950549,0,0,0.57950549,-616.56326,-1929.0625)"
+         clip-rule="evenodd"
+         id="path170" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-10.798894,-8.0552979)">
+    <g
+       id="g35"
+       transform="matrix(1.5663577,0,0,1.5663577,-7.2487526,-5.6948959)">
+      <path
+         id="path31"
+         d="M 296.53522,47.5 V 66.050232"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,65.24828,27.744987)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <g
+         class="node default"
+         id="g27"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,217.73016,100.98555)">
+        <path
+           id="path26"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           class="basic label-container"
+           d="m -463.95706,-299.33243 h 102.78566 l 6,24.12348 -6,24.12348 h -102.78566 l -6,-24.12348 z"
+           sodipodi:nodetypes="ccccccc" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g26"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect26"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <path
+         id="path11"
+         d="M 296.53522,47.5 V 66.050232"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,-15.207887,22.679958)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <path
+         id="path4"
+         d="M 296.53522,47.5 V 66.050232"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,-15.207887,11.084408)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <path
+         id="path13"
+         d="m 170.08738,226.94121 h 31.41457 V 68.180842 h 24.79896"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,18.451529,4.1445834)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cccc" />
+      <path
+         id="path19"
+         d="m 170.08738,226.94121 h 31.41457 V 49.015266 h 32.5813"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,58.241769,6.6259434)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cccc" />
+      <g
+         class="node default"
+         id="g19"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,217.73016,89.385961)">
+        <rect
+           class="basic label-container"
+           x="-469.95706"
+           y="-299.33243"
+           width="114.78566"
+           height="29.618801"
+           id="rect17"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           ry="11.926565" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g18"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect18"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <g
+         class="node default"
+         id="g17"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,177.06423,115.06246)">
+        <rect
+           class="basic label-container"
+           x="-469.95706"
+           y="-299.33243"
+           width="114.78566"
+           height="29.618801"
+           id="rect15"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           ry="11.926565" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g16"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect16"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <g
+         class="node default"
+         id="g15"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,177.06423,89.385961)">
+        <path
+           id="rect13"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           class="basic label-container"
+           d="m -469.95706,-299.33243 h 114.78566 v 82.32286 h -114.78566 z"
+           sodipodi:nodetypes="ccccc" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g14"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect14"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <g
+         class="node default"
+         id="g13"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,137.27399,112.5811)">
+        <rect
+           class="basic label-container"
+           x="-469.95706"
+           y="-299.33243"
+           width="114.78566"
+           height="29.618801"
+           id="rect11"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           ry="11.926565" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g12"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect12"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <g
+         class="node default"
+         id="my-svg-flowchart-B-1"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,137.27399,89.385961)">
+        <rect
+           class="basic label-container"
+           x="-469.95706"
+           y="-299.33243"
+           width="114.78566"
+           height="29.618801"
+           id="rect191"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           ry="11.926565" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g192"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect192"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <g
+         id="g171"
+         transform="matrix(0.26458333,0,0,0.26458333,-283.00683,-239.17281)">
+        <text
+           id="text171"
+           xml:space="preserve"
+           transform="matrix(0.55219492,0,0,0.55219492,1139.2331,1048.1006)"><tspan
+             id="tspan171"
+             style="font-variant:normal;font-weight:normal;font-size:16px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             x="0"
+             y="0">Create FGFDMExec</tspan></text>
+      </g>
+      <g
+         id="g117"
+         clip-path="url(#clipPath120)"
+         transform="matrix(0.26458333,0,0,0.26458333,-237.94057,9.708025)">
+        <text
+           id="text117"
+           xml:space="preserve"
+           transform="matrix(0.55219492,0,0,0.55219492,957.55018,17.946335)"><tspan
+             id="tspan117"
+             style="font-variant:normal;font-weight:normal;font-size:16px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             x="0"
+             y="0">Start JSBSim executable</tspan></text>
+      </g>
+      <g
+         class="node default"
+         id="g3"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,137.27399,100.84922)">
+        <rect
+           class="basic label-container"
+           x="-469.95706"
+           y="-299.33243"
+           width="114.78566"
+           height="29.618801"
+           id="rect1"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g2"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect2"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:2.33763px;line-height:1.05;font-family:Sans;-inkscape-font-specification:'Sans, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+         x="28.059303"
+         y="24.994808"
+         id="text6"><tspan
+           sodipodi:role="line"
+           id="tspan6"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="28.059303"
+           y="24.994808">Parse command line</tspan><tspan
+           sodipodi:role="line"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="28.059303"
+           y="27.44932"
+           id="tspan7">options</tspan></text>
+      <text
+         id="text263"
+         xml:space="preserve"
+         x="16.831949"
+         y="44.08754"
+         style="font-size:1.75322px;fill:#748077;fill-opacity:1;stroke:none;stroke-width:0.146102;stroke-opacity:1"><tspan
+           id="tspan263"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#748077;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102;stroke-opacity:1"
+           x="16.831949"
+           y="44.08754">Central JSBSim flight </tspan></text>
+      <text
+         id="text264"
+         xml:space="preserve"
+         x="14.600786"
+         y="46.244476"
+         style="font-size:1.75322px;fill:#748077;fill-opacity:1;stroke:none;stroke-width:0.146102;stroke-opacity:1"><tspan
+           id="tspan264"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#748077;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102;stroke-opacity:1"
+           x="14.600786"
+           y="46.244476">dynamics execution object</tspan></text>
+      <text
+         id="text266"
+         xml:space="preserve"
+         x="54.255524"
+         y="14.005465"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan266"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="54.255524"
+           y="14.005465">Configure JSBSim paths:</tspan></text>
+      <text
+         id="text267"
+         xml:space="preserve"
+         x="54.164211"
+         y="17.31015"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan267"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="54.164211"
+           dx="0 0 -0.094737738"
+           y="17.31015">&lt;Root directory&gt;</tspan></text>
+      <text
+         id="text268"
+         xml:space="preserve"
+         x="58.834728"
+         y="20.614836"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan268"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="58.834728"
+           y="20.614836">aircraft/</tspan></text>
+      <text
+         id="text269"
+         xml:space="preserve"
+         x="58.851849"
+         y="23.424145"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan269"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="58.851849"
+           y="23.424145">engine/</tspan></text>
+      <text
+         id="text270"
+         xml:space="preserve"
+         x="58.851849"
+         y="26.684315"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan270"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="58.851849"
+           y="26.684315">systems/</tspan></text>
+      <text
+         id="text271"
+         xml:space="preserve"
+         x="58.754829"
+         y="29.989"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan271"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="58.754829"
+           y="29.989">&lt;output path&gt;</tspan></text>
+      <text
+         id="text557"
+         xml:space="preserve"
+         x="57.505985"
+         y="40.632767"
+         style="font-size:1.75322px;stroke-width:0.146102"><tspan
+           id="tspan557"
+           style="font-variant:normal;font-weight:normal;font-size:2.33763px;font-family:'Trebuchet MS';writing-mode:lr-tb;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.146102"
+           x="57.505985"
+           y="40.632767">Load aircraft model</tspan></text>
+      <path
+         id="path15"
+         d="M 296.53522,47.5 V 66.050232"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,24.582351,25.161313)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <text
+         xml:space="preserve"
+         style="font-size:2.33763px;line-height:1.05;font-family:Sans;-inkscape-font-specification:'Sans, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+         x="108.52061"
+         y="13.748989"
+         id="text22"><tspan
+           sodipodi:role="line"
+           id="tspan21"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.52061"
+           y="13.748989">Load &amp; Run </tspan><tspan
+           sodipodi:role="line"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.52061"
+           y="16.203501"
+           id="tspan22">initial conditions</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:2.33763px;line-height:1.05;font-family:Sans;-inkscape-font-specification:'Sans, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+         x="108.5617"
+         y="26.585672"
+         id="text25"><tspan
+           sodipodi:role="line"
+           id="tspan24"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.5617"
+           y="26.585672">Cycle</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.33763px;line-height:1.05;font-family:'Courier New';-inkscape-font-specification:'Courier New, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.5617"
+           y="29.040184"
+           id="tspan27">FDMExec-&gt;Run()</tspan><tspan
+           sodipodi:role="line"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.5617"
+           y="31.577555"
+           id="tspan25">method</tspan></text>
+      <path
+         id="path25"
+         d="M 296.53522,47.5 V 66.050232"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,65.24828,11.084408)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <g
+         class="node default"
+         id="g29"
+         data-look="classic"
+         transform="matrix(0.26458333,0,0,0.26458333,210.69774,115.06246)">
+        <rect
+           class="basic label-container"
+           x="-416.79865"
+           y="-289.79117"
+           width="61.62727"
+           height="20.077545"
+           id="rect27"
+           style="fill:#ececff;stroke:#9370db;stroke-width:1px"
+           ry="8.4661884" />
+        <g
+           class="label"
+           transform="translate(-100,-48)"
+           id="g28"
+           style="color:#333333;font-family:'trebuchet ms', verdana, arial, sans-serif;text-align:center">
+          <rect
+             id="rect28"
+             width="0"
+             height="0"
+             x="0"
+             y="0"
+             style="fill:#ececff;stroke:#9370db;stroke-width:1px" />
+          <foreignObject
+             width="200"
+             height="96">
+            <xhtml:div
+               style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;">
+              <xhtml:span
+                 class="nodeLabel">
+                <xhtml:p>main(argc, argv)<xhtml:br />
+<xhtml:br />
+Entry point of the standalone application</xhtml:p>
+              </xhtml:span>
+            </xhtml:div>
+          </foreignObject>
+        </g>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:2.33763px;line-height:1.05;font-family:Sans;-inkscape-font-specification:'Sans, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;stroke-width:0.264583"
+         x="108.5577"
+         y="41.674706"
+         id="text30"><tspan
+           sodipodi:role="line"
+           style="line-height:1.05;text-align:center;text-anchor:middle;stroke-width:0.264583"
+           x="108.5577"
+           y="41.674706"
+           id="tspan30">Stop</tspan></text>
+      <path
+         id="path32"
+         d="m 296.53522,47.5 c -0.2893,27.545143 9.5036,31.397293 17.71234,33.97771"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(0.14610157,0,0,0.14610157,73.94243,27.744987)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+      <text
+         xml:space="preserve"
+         style="font-size:2.33763px;line-height:1.05;font-family:Sans;-inkscape-font-specification:'Sans, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#748077;fill-opacity:1;stroke-width:0.264583"
+         x="125.18799"
+         y="39.736309"
+         id="text35"><tspan
+           sodipodi:role="line"
+           id="tspan34"
+           style="line-height:1.05;text-align:center;text-anchor:middle;fill:#748077;fill-opacity:1;stroke-width:0.264583"
+           x="125.18799"
+           y="39.736309">Fetch</tspan><tspan
+           sodipodi:role="line"
+           style="line-height:1.05;text-align:center;text-anchor:middle;fill:#748077;fill-opacity:1;stroke-width:0.264583"
+           x="125.18799"
+           y="42.190819"
+           id="tspan35">outputs</tspan></text>
+      <path
+         id="path35"
+         d="m 296.53522,51.12191 c -0.2893,23.328299 3.69992,32.429836 11.90866,35.010253"
+         style="fill:none;stroke:#333333;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#ConcaveTriangle)"
+         transform="matrix(-0.14610157,0,0,-0.14610157,168.92045,44.580554)"
+         clip-path="url(#clipPath10)"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <rect
+       style="fill:#ff0800;fill-opacity:1;stroke:none;stroke-width:0.460198;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:5.5;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect35"
+       width="2"
+       height="2"
+       x="3.0978575"
+       y="-3.0561976" />
+    <rect
+       style="fill:#ff0800;fill-opacity:1;stroke:none;stroke-width:0.460198;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:5.5;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect36"
+       width="2"
+       height="2"
+       x="199.94637"
+       y="71.891991" />
+  </g>
+</svg>

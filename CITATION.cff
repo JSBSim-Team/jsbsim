@@ -1,0 +1,44 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Berndt
+  given-names: Jon S.
+  orcid: "https://orcid.org/0009-0009-9701-2182"
+- family-names: Coconnier
+  given-names: Bertrand
+  orcid: "https://orcid.org/0009-0000-0065-3704"
+- family-names: De Marco
+  given-names: Agostino
+  orcid: "https://orcid.org/0000-0001-5985-9950"
+- family-names: McLeod
+  given-names: Sean
+  orcid: "https://orcid.org/0009-0003-1039-8307"
+doi: TBD, Zenodo
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Berndt
+    given-names: Jon S.
+    orcid: "https://orcid.org/0009-0009-9701-2182"
+  - family-names: Coconnier
+    given-names: Bertrand
+    orcid: "https://orcid.org/0009-0000-0065-3704"
+  - family-names: De Marco
+    given-names: Agostino
+    orcid: "https://orcid.org/0000-0001-5985-9950"
+  - family-names: McLeod
+    given-names: Sean
+    orcid: "https://orcid.org/0009-0003-1039-8307"
+  date-published: 2026-MM-DD
+  doi: 10.21105/joss.ToBeDone
+  issn: 2475-9066
+  issue: XYZ
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: XXXX
+  title: JSBSim - An Open Source Flight Dynamics Software Library
+  type: article
+  url: "https://joss.theoj.org/papers/TBD-DOI"
+  volume: XX
+title: JSBSim - An Open Source Flight Dynamics Software Library

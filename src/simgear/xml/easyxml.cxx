@@ -14,18 +14,19 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "../compiler.h"
-
 #include <string.h>
-
-#include "easyxml.hxx"
-#include "expat.h"
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-#include "FGJSBBase.h"
+#ifdef SYSTEM_EXPAT
+#include <expat.h>
+#else
+#include "expat.h"
+#endif
+
+#include "../compiler.h"
+#include "easyxml.hxx"
 #include "input_output/FGLog.h"
 
 using std::istream;
