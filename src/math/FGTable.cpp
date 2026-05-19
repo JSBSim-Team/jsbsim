@@ -749,6 +749,12 @@ FGTable& FGTable::operator<<(const double x)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGTable::Print()
+{
+  FGLogging out(LogLevel::STDOUT);
+  Print(out);
+}
+
 void FGTable::Print(FGLogging& out)
 {
   out << std::setprecision(4);
