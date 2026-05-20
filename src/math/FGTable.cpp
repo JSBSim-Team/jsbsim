@@ -469,7 +469,10 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   bind(el, Prefix);
 
-  if (debug_lvl & 1) Print();
+  if (debug_lvl & 1) {
+    FGLogging out(LogLevel::DEBUG);
+    Print(out);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -746,9 +749,14 @@ FGTable& FGTable::operator<<(const double x)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::Print(void)
+void FGTable::Print()
 {
   FGLogging out(LogLevel::STDOUT);
+  Print(out);
+}
+
+void FGTable::Print(FGLogging& out)
+{
   out << std::setprecision(4);
 
   switch(Type) {
@@ -785,7 +793,7 @@ void FGTable::Print(void)
       out << Data[p++] << "\t";
       if (Type == ttND) {
         out << "\n";
-        Tables[r-1]->Print();
+        Tables[r-1]->Print(out);
       }
     }
     out << "\n";
