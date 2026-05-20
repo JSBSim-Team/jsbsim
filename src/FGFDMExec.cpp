@@ -801,11 +801,11 @@ bool FGFDMExec::LoadPlanet(Element* element)
       }
 
       std::shared_ptr<FGAtmosphere> newAtmosphere;
-      if (model == "MSIS")
+      if (model == "miss")
         newAtmosphere = std::make_shared<FGMSIS>(this);
-      else if (model == "Mars")
+      else if (model == "mars")
         newAtmosphere = std::make_shared<FGMars>(this);
-      else if (model == "Null")
+      else if (model == "null")
         newAtmosphere = std::make_shared<FGNullAtmosphere>(this);
 
       if (newAtmosphere) {
