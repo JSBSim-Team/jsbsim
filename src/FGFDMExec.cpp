@@ -796,8 +796,7 @@ bool FGFDMExec::LoadPlanet(Element* element)
       // tie any property already owned by the previous model and leave the new
       // model's properties dangling (reads return stale values from the old
       // instance).
-      bool willReplace = (model == "MSIS" || model == "Mars" || model == "Null");
-      if (willReplace) {
+      if (model == "msis" || model == "mars" || model == "null") {
         instance->Unbind(Models[eAtmosphere]);
       }
 
