@@ -20,17 +20,17 @@ Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsb
 
 Windows users continue below:
 
-### 1. Install Unreal Engine 5.x
-The project is compatible with engine versions UE5.6 - UE5.0
-The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download
+### 1. Install Unreal Engine 5.5 or higher
+The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/gallonmate/jsbsim/edit/Enhanced-Input-5.5-test/UnrealEngine/README.md#update-version-101) <br>
+The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download <br>
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
 In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. Visual Studio Community can be used (It's free). You can setup Visual Studio and the required tools for Unreal using the following procedure:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 
-UE5.5 - UE5.4 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
+UE5.5 and UE5.6 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
 
-UE5.3 - UE5.6 require Visual Studio 2022. Visual Studio 2022 and 2019 can be used with UE5.0 - UE5.2.
+UE5.7 and UE5.8 require toolchain MSVC v14.44, which might not be included in the default tools release of Visual Studio, it can be manually installed.
 
 Optional extension setup:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
@@ -62,19 +62,19 @@ To make this process easier, there is a new solution named JSBSimForUnreal.sln a
  
 ### 4. Build/Open the Unreal Project
 
+Note that Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
+
 **Option 1** : Simply double click on the `UnrealEngine\UEReferenceApp.uproject` file.
 It will open a popup complaining about missing modules (UEReferenceApp, JSBSimFlightDynamicsModel, JSBSimFlightDynamicsModelEditor). 
-Answer Yes, and the build will be triggered as a background task. 
+Answer Yes, and the build will be triggered as a background task.
 
-Once done, the UE Editor will open. If you get an error message, build manually using Option 2 below. 
+Once done, the UE Editor will open. If you get an error message, build manually using Option 2 below, but before doing so, double click CleanProject.bat file in the project folder.
 
 **Option 2** : Generate a project solution, and build it using Visual Studio. 
 Right click on the  `UnrealEngine\UEReferenceApp.uproject` 
 A contextual menu will appear. Select "Generate Visual Studio project files"
 After a short time, a new solution file `UEReferenceApp.sln` will appear beside the uproject file. 
-Open it, and if prompted click Ok to retarget to v143, then you can Build the UERefferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
-
-Note that this Option 2 is the recommended way to edit the plugin code, and then you can run and debug it like any other VS application. 
+Open it, and if a prompt appears to change Windows SDK version or if the prompt information is empty, just click Ok. Then you can Build the UEReferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
 
 ## Learning more about Unreal Engine
 You can find many free learning resources on Unreal Engine Developer Community portal : 
@@ -142,6 +142,10 @@ Gamepad Layout
 |Time of day - Dawn Preset| INSERT|
 |Time of day - Noon Preset| HOME|
 |Time of day - Dusk Preset| PAGE UP|
+
+## Project updated to Enhanced Input and based project to UE5.5 and higher
+- The main branch was updated to use Enhanced Input and based on UE5.5 
+- For prior engine version compatibility or to use legacy engine inputs, please use the branch which supports versions UE5.0 - UE5.7 [UE5.0 Legacy Input](https://github.com/gallonmate/jsbsim/tree/UE5.0-5.7-Legacy-Input-Controls) <br>
 
 ## Update: version 1.01
  - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
