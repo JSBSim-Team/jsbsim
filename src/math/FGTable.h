@@ -411,7 +411,8 @@ public:
 
   unsigned int GetNumRows() const {return nRows;}
 
-  void Print(void);
+  void Print();
+  void Print(FGLogging& out);
 
   std::string GetName(void) const {return Name;}
 

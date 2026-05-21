@@ -53,17 +53,10 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGInputSocket::FGInputSocket(FGFDMExec* fdmex) :
-  FGInputType(fdmex), socket(0), SockProtocol(FGfdmSocket::ptTCP),
+FGInputSocket::FGInputSocket(FGFDMExec* fdmex, bool isEnabled) :
+  FGInputType(fdmex, isEnabled), SockProtocol(FGfdmSocket::ptTCP),
   BlockingInput(false)
 {
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGInputSocket::~FGInputSocket()
-{
-  delete socket;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,17 +85,55 @@ bool FGInputSocket::Load(Element* el)
 
 bool FGInputSocket::InitModel(void)
 {
-  if (FGInputType::InitModel()) {
-    delete socket;
-    socket = new FGfdmSocket(SockPort, SockProtocol);
+  if (!FGInputType::InitModel())
+    return false;
 
-    if (socket == 0) return false;
-    if (!socket->GetConnectStatus()) return false;
+  if (enabled)
+    return CreateSocket();
 
-    return true;
-  }
+  return true;
+}
 
-  return false;
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInputSocket::CreateSocket()
+{
+  socket = std::make_unique<FGfdmSocket>(SockPort, SockProtocol);
+
+  if (!socket) return false;
+  if (!socket->GetConnectStatus()) return false;
+
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInputSocket::Enable()
+{
+  if (enabled) return; // already enabled
+  FGInputType::Enable();
+  CreateSocket();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInputSocket::Disable()
+{
+  FGInputType::Disable();
+  socket.reset();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInputSocket::Toggle()
+{
+  bool enabled_status = FGInputType::Toggle();
+  if (enabled_status)
+    CreateSocket();
+  else
+    socket.reset();
+
+  return enabled_status;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

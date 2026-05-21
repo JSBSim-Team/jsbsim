@@ -63,10 +63,7 @@ class FGInputSocket : public FGInputType
 {
 public:
   /** Constructor. */
-  FGInputSocket(FGFDMExec* fdmex);
-
-  /** Destructor. */
-  ~FGInputSocket() override;
+  FGInputSocket(FGFDMExec* fdmex, bool isEnabled);
 
   /** Init the input directives from an XML file.
       @param element XML Element that is pointing to the input directives
@@ -82,10 +79,17 @@ public:
   /// Generates the input.
   void Read(bool Holding) override;
 
+  /// Methods to enable, disable and toggle the input
+  void Enable() override;
+  void Disable() override;
+  bool Toggle() override;
+
 protected:
 
+  bool CreateSocket();
+
   unsigned int SockPort;
-  FGfdmSocket* socket;
+  std::unique_ptr<FGfdmSocket> socket;
   FGfdmSocket::ProtocolType SockProtocol;
   std::string data;
   bool BlockingInput;

@@ -49,8 +49,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGInputType::FGInputType(FGFDMExec* fdmex) :
-  FGModel(fdmex), enabled(true)
+FGInputType::FGInputType(FGFDMExec* fdmex, bool isEnabled) :
+  FGModel(fdmex), enabled(isEnabled)
 {
   Debug(0);
 }

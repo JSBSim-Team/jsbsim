@@ -214,7 +214,7 @@ void FGGain::Debug(int from)
       }
       if (Table) {
         log << "      Scheduled by table:\n";
-        Table->Print();
+        Table->Print(log);
       }
     }
   }

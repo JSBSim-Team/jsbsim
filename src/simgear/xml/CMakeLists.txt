@@ -1,7 +1,7 @@
 set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
-if(NOT EXPAT_FOUND)
+if(NOT SYSTEM_EXPAT)
   list(APPEND SOURCES xmlparse.c
                       xmltok.c
                       xmlrole.c)
@@ -25,12 +25,20 @@ if(NOT EXPAT_FOUND)
                       siphash.h)
   set_property(SOURCE xmltok_impl.c PROPERTY HEADER_FILE_ONLY)
   set_property(SOURCE xmltok_ns.c PROPERTY HEADER_FILE_ONLY)
-endif(NOT EXPAT_FOUND)
+endif(NOT SYSTEM_EXPAT)
 
 add_library(Xml OBJECT ${SOURCES})
-target_include_directories(Xml PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-if(WIN32 AND NOT EXPAT_FOUND)
+if(SYSTEM_EXPAT)
+  target_compile_definitions(Xml PRIVATE SYSTEM_EXPAT)
+  if (PkgConfig_FOUND)
+    pkg_check_modules(PC_EXPAT IMPORTED_TARGET expat)
+    target_link_libraries(Xml PkgConfig::PC_EXPAT)
+  else()
+    find_package(EXPAT)
+    target_link_libraries(Xml EXPAT::EXPAT)
+  endif()
+elseif(WIN32)
   target_compile_definitions(Xml PRIVATE XML_STATIC)
 endif()
 

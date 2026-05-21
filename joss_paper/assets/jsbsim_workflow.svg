@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="288.9632"
+   width="520.98999"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="jsbsim_workflow.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   inkscape:export-filename="jsbsim_workflow.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     id="namedview24"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.99"
+     inkscape:cx="167.72575"
+     inkscape:cy="151.50502"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24" />
+  <style
+     type="text/css"
+     id="style1">
+path { fill: none; stroke: rgb(51,51,51); }
+path.series { stroke: #6b63ff; }
+rect.background { fill: rgb(255,255,255); stroke: none; }
+
+text {
+	stroke-width: 0;
+	stroke: none;
+	fill: rgba(51,51,51,1.0);
+	font-size: 12.8px;
+	font-family: 'Roboto Medium', sans-serif;
+}
+</style>
+  <path
+     id="rect1"
+     style="fill:#e1d2d2;stroke:none;stroke-width:2.06127;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers;fill-opacity:1"
+     d="M 0,0 H 520.98997 V 288.96321 H 0 Z" />
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:26.6667px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';text-align:center;text-anchor:middle;fill:#ff0000;fill-opacity:1"
+     x="260.48849"
+     y="153.30974"
+     id="text1"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       x="260.48849"
+       y="153.30974">JSBSim Workflow</tspan></text>
+</svg>

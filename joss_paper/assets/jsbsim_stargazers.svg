@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="400px"
+   width="1024px"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="jsbsim_stargazers.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   inkscape:export-filename="jsbsim_stargazers.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs24" />
+  <sodipodi:namedview
+     id="namedview24"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.1142493"
+     inkscape:cx="521.93467"
+     inkscape:cy="182.57071"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24" />
+  <style
+     type="text/css"
+     id="style1">
+path { fill: none; stroke: rgb(51,51,51); }
+path.series { stroke: #6b63ff; }
+rect.background { fill: rgb(255,255,255); stroke: none; }
+
+text {
+	stroke-width: 0;
+	stroke: none;
+	fill: rgba(51,51,51,1.0);
+	font-size: 12.8px;
+	font-family: 'Roboto Medium', sans-serif;
+}
+</style>
+  <rect
+     class="background"
+     rx="8"
+     x="0"
+     y="0"
+     width="1024px"
+     height="400px"
+     id="rect1" />
+  <path
+     stroke-width="2"
+     class="series"
+     d="M 58 345 L 323 314 L 391 298 L 506 267 L 515 251 L 558 235 L 636 204 L 672 188 L 728 157 L 763 141 L 792 125 L 848 94 L 870 78 L 920 47 L 933 31 L 937 26"
+     id="path1"
+     style="stroke-width:3.4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+  <path
+     stroke-width="2"
+     d="M 937 346 L 937.000000 15.000000"
+     id="path2" />
+  <path
+     stroke-width="2"
+     d="M 937 346 L 942 346"
+     id="path3" />
+  <text
+     x="947"
+     y="352"
+     id="text3">0</text>
+  <path
+     stroke-width="2"
+     d="M 937 308 L 942 308"
+     id="path4" />
+  <text
+     x="947"
+     y="314"
+     id="text4">240</text>
+  <path
+     stroke-width="2"
+     d="M 937 272 L 942 272"
+     id="path5" />
+  <text
+     x="947"
+     y="278"
+     id="text5">470</text>
+  <path
+     stroke-width="2"
+     d="M 937 236 L 942 236"
+     id="path6" />
+  <text
+     x="947"
+     y="242"
+     id="text6">700</text>
+  <path
+     stroke-width="2"
+     d="M 937 198 L 942 198"
+     id="path7" />
+  <text
+     x="947"
+     y="204"
+     id="text7">940</text>
+  <path
+     stroke-width="2"
+     d="M 937 162 L 942 162"
+     id="path8" />
+  <text
+     x="947"
+     y="168"
+     id="text8">1170</text>
+  <path
+     stroke-width="2"
+     d="M 937 126 L 942 126"
+     id="path9" />
+  <text
+     x="947"
+     y="132"
+     id="text9">1400</text>
+  <path
+     stroke-width="2"
+     d="M 937 88 L 942 88"
+     id="path10" />
+  <text
+     x="947"
+     y="94"
+     id="text10">1640</text>
+  <path
+     stroke-width="2"
+     d="M 937 52 L 942 52"
+     id="path11" />
+  <text
+     x="947"
+     y="58"
+     id="text11">1870</text>
+  <path
+     d="M 937 16 L 942 16"
+     stroke-width="2"
+     id="path12" />
+  <text
+     x="947"
+     y="22"
+     id="text12">2100</text>
+  <text
+     transform="rotate(90.00,987,175)"
+     x="987"
+     y="175"
+     id="text13">Stargazers</text>
+  <path
+     stroke-width="2"
+     d="M 57.000000 346.000000 L 937 346"
+     id="path13" />
+  <path
+     stroke-width="2"
+     d="M 58 346 L 58 351"
+     id="path14" />
+  <text
+     x="25"
+     y="368"
+     id="text14">2018-03-11</text>
+  <path
+     stroke-width="2"
+     d="M 156 346 L 156 351"
+     id="path15" />
+  <text
+     x="123"
+     y="368"
+     id="text15">2019-02-05</text>
+  <path
+     stroke-width="2"
+     d="M 254 346 L 254 351"
+     id="path16" />
+  <text
+     x="221"
+     y="368"
+     id="text16">2020-01-01</text>
+  <path
+     stroke-width="2"
+     d="M 352 346 L 352 351"
+     id="path17" />
+  <text
+     x="319"
+     y="368"
+     id="text17">2020-11-26</text>
+  <path
+     stroke-width="2"
+     d="M 449 346 L 449 351"
+     id="path18" />
+  <text
+     x="416"
+     y="368"
+     id="text18">2021-10-23</text>
+  <path
+     stroke-width="2"
+     d="M 547 346 L 547 351"
+     id="path19" />
+  <text
+     x="514"
+     y="368"
+     id="text19">2022-09-18</text>
+  <path
+     stroke-width="2"
+     d="M 645 346 L 645 351"
+     id="path20" />
+  <text
+     x="612"
+     y="368"
+     id="text20">2023-08-14</text>
+  <path
+     stroke-width="2"
+     d="M 742 346 L 742 351"
+     id="path21" />
+  <text
+     x="709"
+     y="368"
+     id="text21">2024-07-10</text>
+  <path
+     stroke-width="2"
+     d="M 840 346 L 840 351"
+     id="path22" />
+  <text
+     x="807"
+     y="368"
+     id="text22">2025-06-05</text>
+  <path
+     stroke-width="2"
+     d="M 937 346 L 937 351"
+     id="path23" />
+  <text
+     x="904"
+     y="368"
+     id="text23">2026-05-01</text>
+  <text
+     x="483"
+     y="390"
+     id="text24">Time</text>
+</svg>

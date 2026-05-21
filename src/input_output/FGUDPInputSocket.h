@@ -61,7 +61,7 @@ class FGUDPInputSocket : public FGInputSocket
 {
 public:
   /** Constructor. */
-  FGUDPInputSocket(FGFDMExec* fdmex);
+  FGUDPInputSocket(FGFDMExec* fdmex, bool isEnabled=true);
 
   /** Reads the property names from an XML file.
       @param element The root XML Element of the input file.
