@@ -21,7 +21,7 @@ Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsb
 Windows users continue below:
 
 ### 1. Install Unreal Engine 5.5 or higher
-The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/JSBSim-Team/jsbsim/tree/master/UnrealEngine#project-updated-to-enhanced-input-and-based-project-to-ue55-and-higher) <br>
+The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README.md#project-updated-to-enhanced-input-and-based-project-to-ue55-and-higher) <br>
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download <br>
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
