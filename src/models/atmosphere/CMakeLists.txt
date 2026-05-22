@@ -1,6 +1,5 @@
 set(SOURCES FGMSIS.cpp
             FGMars.cpp
-            FGNullAtmosphere.cpp
             FGStandardAtmosphere.cpp
             FGWinds.cpp
             MSIS/nrlmsise-00.c
@@ -8,7 +7,6 @@ set(SOURCES FGMSIS.cpp
 
 set(HEADERS FGMSIS.h
             FGMars.h
-            FGNullAtmosphere.h
             FGStandardAtmosphere.h
             FGWinds.h
             MSIS/nrlmsise-00.h)

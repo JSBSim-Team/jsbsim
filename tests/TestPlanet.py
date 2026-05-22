@@ -118,24 +118,6 @@ class TestPlanet(JSBSimTestCase):
         self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
         self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3'], 1.4308e-5, delta=1E-8)
 
-    def test_load_Null_atmosphere(self):
-        # Vacuum atmosphere for airless bodies (Moon, Mercury). Pressure and
-        # density must be exactly zero so that aerodynamic forces vanish.
-        # Temperature is set to the cosmic microwave background (~2.725 K =
-        # 4.905 R) only so callers see a non-zero finite value.
-        tripod = FlightModel(self, 'tripod')
-        moon_file = self.sandbox.path_to_jsbsim_file('tests/moon.xml')
-        self.fdm = tripod.start()
-        self.fdm.load_planet(moon_file, False)
-        self.fdm['ic/h-agl-ft'] = 0.2
-        self.fdm['ic/long-gc-deg'] = 0.0
-        self.fdm['ic/lat-geod-deg'] = 0.0
-        self.fdm.run_ic()
-
-        self.assertEqual(self.fdm['atmosphere/P-psf'], 0.0)
-        self.assertEqual(self.fdm['atmosphere/rho-slugs_ft3'], 0.0)
-        self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 4.905, delta=1E-3)
-
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception
         tripod = FlightModel(self, 'tripod')

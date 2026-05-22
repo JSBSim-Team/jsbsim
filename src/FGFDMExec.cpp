@@ -48,7 +48,6 @@ INCLUDES
 #include "models/atmosphere/FGStandardAtmosphere.h"
 #include "models/atmosphere/FGMSIS.h"
 #include "models/atmosphere/FGMars.h"
-#include "models/atmosphere/FGNullAtmosphere.h"
 #include "models/atmosphere/FGWinds.h"
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
@@ -65,6 +64,7 @@ INCLUDES
 #include "initialization/FGLinearization.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
+#include "input_output/string_utilities.h"
 #include "initialization/FGInitialCondition.h"
 #include "input_output/FGLog.h"
 
@@ -791,22 +791,15 @@ bool FGFDMExec::LoadPlanet(Element* element)
     if (atm_element && atm_element->HasAttribute("model")) {
       string model = to_lower(atm_element->GetAttributeValue("model"));
 
-      // Unbind the existing atmosphere BEFORE constructing the replacement.
-      // FGAtmosphere's constructor calls bind(), which would silently fail to
-      // tie any property already owned by the previous model and leave the new
-      // model's properties dangling (reads return stale values from the old
-      // instance).
-      if (model == "msis" || model == "mars" || model == "null") {
+      if (model == "msis" || model == "mars") {
         instance->Unbind(Models[eAtmosphere]);
       }
 
       std::shared_ptr<FGAtmosphere> newAtmosphere;
-      if (model == "miss")
+      if (model == "msis")
         newAtmosphere = std::make_shared<FGMSIS>(this);
       else if (model == "mars")
         newAtmosphere = std::make_shared<FGMars>(this);
-      else if (model == "null")
-        newAtmosphere = std::make_shared<FGNullAtmosphere>(this);
 
       if (newAtmosphere) {
         Models[eAtmosphere] = newAtmosphere;
