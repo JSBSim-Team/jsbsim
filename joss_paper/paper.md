@@ -33,7 +33,7 @@ affiliations:
    index: 3
  - name: Independent Developer, South Africa
    index: 4
-date: XY april 2026
+date: 23 May 2026
 bibliography: paper.bib
 ---
 
