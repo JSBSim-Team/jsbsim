@@ -789,7 +789,8 @@ bool FGFDMExec::LoadPlanet(Element* element)
     // Process the atmosphere element. This element is OPTIONAL.
     Element* atm_element = element->FindElement("atmosphere");
     if (atm_element && atm_element->HasAttribute("model")) {
-      string model = to_lower(atm_element->GetAttributeValue("model"));
+      string model = atm_element->GetAttributeValue("model");
+      to_lower(model);
 
       if (model == "msis" || model == "mars") {
         instance->Unbind(Models[eAtmosphere]);
