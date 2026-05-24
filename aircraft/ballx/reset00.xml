@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up the ball in orbit.
+    Velocity of Earth surface at equator:                   1525.92 ft/sec. at ground level.
+    Velocity of Earth surface-synchronous point at equator: 1584.26 ft/sec. at 800 kft.
+    1584.2593825 + 23869.9759596 = 25454.235342 ft/sec
+  -->
+  <ubody unit="FT/SEC"> 23869.9759596 </ubody> 
+  <latitude unit="DEG">     0.0  </latitude>
+  <longitude unit="DEG">    0.0  </longitude>
+  <psi unit="DEG">         90.0  </psi>
+  <altitude unit="FT"> 800000.0  </altitude>
+</initialize>

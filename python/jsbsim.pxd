@@ -249,6 +249,8 @@ cdef extern from "FGFDMExec.h" namespace "JSBSim":
         void DoTrim(int mode) except +convertJSBSimToPyExc
         void DisableOutput()
         void EnableOutput()
+        void DisableInput()
+        void EnableInput()
         void Hold()
         void EnableIncrementThenHold(int time_steps)
         void CheckIncrementalHold()

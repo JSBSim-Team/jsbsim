@@ -1018,6 +1018,14 @@ cdef class FGFDMExec(FGJSBBase):
         """@Dox(JSBSim::FGFDMExec::EnableOutput)"""
         self.thisptr.EnableOutput()
 
+    def disable_input(self) -> None:
+        """@Dox(JSBSim::FGFDMExec::DisableInput)"""
+        self.thisptr.DisableInput()
+
+    def enable_input(self) -> None:
+        """@Dox(JSBSim::FGFDMExec::EnableInput)"""
+        self.thisptr.EnableInput()
+
     def hold(self) -> None:
         """@Dox(JSBSim::FGFDMExec::Hold)"""
         self.thisptr.Hold()

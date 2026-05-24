@@ -3,6 +3,7 @@
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
 [![PyPI Downloads](https://static.pepy.tech/badge/jsbsim/week)](https://pepy.tech/projects/jsbsim)
 [![Downloads GitHub](https://img.shields.io/github/downloads/JSBSim-Team/jsbsim/total?label=Downloads%20GitHub)](https://github.com/JSBSim-Team/jsbsim/releases)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20258621.svg)](https://doi.org/10.5281/zenodo.20258621)
 
 <p align="center">
 <img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
@@ -58,7 +59,7 @@ Another more advanced application within the field of Deep Reinforcement Learnin
 
 ### Windows
 
-A Windows installer `JSBSim-1.3.0-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.3.0). It installs the 2 executables along with aircraft data and some example scripts:
+A Windows installer `JSBSim-1.3.1-setup.exe` is available in the [release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.3.1). It installs the 2 executables along with aircraft data and some example scripts:
 
 * `JSBSim.exe` which runs FDM simulations.
 * `aeromatic.exe` which builds aircraft definitions from Question/Answer interface
@@ -69,11 +70,11 @@ The Windows installer also contains the files needed to build the JSBSim Matlab 
 
 ### Ubuntu Linux
 
-Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.3.0). There are 3 packages for each platform:
+Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 bits platforms are also available in the [JSBSim project release section](https://github.com/JSBSim-Team/jsbsim/releases/tag/v1.3.1). There are 3 packages for each platform:
 
-* `JSBSim_1.3.0-1742.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
-* `JSBSim-devel_1.3.0-1742.amd64.deb` which installs the development resources (headers and libraries)
-* `python3-JSBSim_1.3.0-1742.amd64.deb` which installs the Python module of JSBSim
+* `JSBSim_1.3.1-1837.amd64.deb` which installs the executables `JSBSim` and `aeromatic`
+* `JSBSim-devel_1.3.1-1837.amd64.deb` which installs the development resources (headers and libraries)
+* `python3-JSBSim_1.3.1-1837.amd64.deb` which installs the Python module of JSBSim
 
 ### Python module
 
@@ -121,7 +122,7 @@ At the moment, JSBSim does not provide binaries for platforms other than Windows
 
 ### Aircraft data and example scripts
 
-JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.3.0.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.3.0.tar.gz).
+JSBSim aircraft data and example scripts are automatically installed if you are using [Python wheel packages](https://github.com/bcoconni/jsbsim#python-module). Otherwise, you can get aircraft data and example scripts by downloading either the [zip package](https://github.com/JSBSim-Team/jsbsim/archive/v1.3.1.zip) or the [tar.gz package](https://github.com/JSBSim-Team/jsbsim/archive/v1.3.1.tar.gz).
 
 ## Quick start
 

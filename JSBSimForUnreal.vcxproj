@@ -14,17 +14,17 @@
     <ProjectGuid>{AF971B4F-3D53-4655-8A03-97E8054DC58B}</ProjectGuid>
     <RootNamespace>JSBSim</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <WholeProgramOptimization>PGOptimize</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -56,7 +56,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.3.1.dev1";WIN32;NOMINMAX;XML_STATIC;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.3.2.dev1";WIN32;NOMINMAX;XML_STATIC;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -95,7 +95,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.3.1.dev1";WIN32;NOMINMAX;XML_STATIC;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JSBSIM_EXPORT;JSBSIM_VERSION="1.3.2.dev1";WIN32;NOMINMAX;XML_STATIC;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -389,7 +389,7 @@
   </ImportGroup>
   <ItemDefinitionGroup>
     <PostBuildEvent>
-        <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
+      <Command>mkdir UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include
   
   robocopy "$(SolutionDir)src" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Source\ThirdParty\JSBSim\Include" *.h *.hxx /E
   
@@ -407,6 +407,6 @@
   robocopy "$(SolutionDir)systems" "$(SolutionDir)UnrealEngine\Plugins\JSBSimFlightDynamicsModel\Resources\JSBSim\systems" /E
   
   exit/B %errlev%</Command>
-      </PostBuildEvent>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
 </Project>
