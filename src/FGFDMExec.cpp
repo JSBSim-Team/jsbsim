@@ -47,6 +47,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "models/atmosphere/FGStandardAtmosphere.h"
 #include "models/atmosphere/FGMSIS.h"
+#include "models/atmosphere/FGMars.h"
 #include "models/atmosphere/FGWinds.h"
 #include "models/FGFCS.h"
 #include "models/FGPropulsion.h"
@@ -63,6 +64,7 @@ INCLUDES
 #include "initialization/FGLinearization.h"
 #include "input_output/FGScript.h"
 #include "input_output/FGXMLFileRead.h"
+#include "input_output/string_utilities.h"
 #include "initialization/FGInitialCondition.h"
 #include "input_output/FGLog.h"
 
@@ -788,10 +790,20 @@ bool FGFDMExec::LoadPlanet(Element* element)
     Element* atm_element = element->FindElement("atmosphere");
     if (atm_element && atm_element->HasAttribute("model")) {
       string model = atm_element->GetAttributeValue("model");
-      if (model == "MSIS") {
-        // Replace the existing atmosphere model
+      to_lower(model);
+
+      if (model == "msis" || model == "mars") {
         instance->Unbind(Models[eAtmosphere]);
-        Models[eAtmosphere] = std::make_shared<FGMSIS>(this);
+      }
+
+      std::shared_ptr<FGAtmosphere> newAtmosphere;
+      if (model == "msis")
+        newAtmosphere = std::make_shared<FGMSIS>(this);
+      else if (model == "mars")
+        newAtmosphere = std::make_shared<FGMars>(this);
+
+      if (newAtmosphere) {
+        Models[eAtmosphere] = newAtmosphere;
         Atmosphere = static_cast<FGAtmosphere*>(Models[eAtmosphere].get());
 
         // Model initialization sequence

@@ -75,6 +75,49 @@ class TestPlanet(JSBSimTestCase):
         self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/0.001940318, 1.263428, delta=1E-6)
         self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 2132.294, delta=1E-3)
 
+    def test_mars_atmosphere(self):
+        # Mars atmosphere via <planet><atmosphere model="Mars"/></planet>.
+        # Reference values are the closed-form output of FGMars::Calculate at
+        # altitude = 0:
+        #   T = -25.68 + 459.67 = 433.99 R         (~241.1 K)
+        #   P = 14.62 psf                          (~7 mbar)
+        #   rho = P / (Reng * T), Reng = 53.5*44.01 (CO2)
+        tripod = FlightModel(self, 'tripod')
+        mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
+        tripod.include_planet_test_file(mars_file)
+        self.fdm = tripod.start()
+        self.fdm['ic/h-agl-ft'] = 0.0
+        self.fdm['ic/long-gc-deg'] = 0.0
+        self.fdm['ic/lat-geod-deg'] = 0.0
+        self.fdm.run_ic()
+
+        # Mars equatorial radius = 3396.2 km
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/3396200, 1.0)
+        # Surface gravity ~3.71-3.72 m/s^2 (JSBSim uses oblate-spheroid gravity,
+        # not point-mass GM/R^2, so the value is a few mGal above textbook).
+        self.assertAlmostEqual(self.fdm['accelerations/gravity-ft_sec2']*0.3048, 3.72, delta=5E-2)
+
+        self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
+        self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
+        # rho = 14.62 / (53.5*44.01 * 433.99) ~ 1.4308e-5 slugs/ft^3
+        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3'], 1.4308e-5, delta=1E-8)
+
+    def test_load_Mars_atmosphere(self):
+        # Same as above but using FGFDMExec::LoadPlanet at runtime instead of
+        # including the planet file at FDM construction time.
+        tripod = FlightModel(self, 'tripod')
+        mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
+        self.fdm = tripod.start()
+        self.fdm.load_planet(mars_file, False)
+        self.fdm['ic/h-agl-ft'] = 0.0
+        self.fdm['ic/long-gc-deg'] = 0.0
+        self.fdm['ic/lat-geod-deg'] = 0.0
+        self.fdm.run_ic()
+
+        self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
+        self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
+        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3'], 1.4308e-5, delta=1E-8)
+
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception
         tripod = FlightModel(self, 'tripod')
