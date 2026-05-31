@@ -48,6 +48,8 @@ INCLUDES
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+class SGPropertyNode;
+
 namespace JSBSim {
 
 class FGFDMExec;
@@ -93,6 +95,16 @@ public:
   unsigned int GetRate(void) const { return rate; }
   FGFDMExec* GetExec(void) const { return FDMExec; }
 
+  /** Bind this model's execution-enable flag to the property
+      simulation/models/<name>/enabled (default true), using the stable
+      canonical name supplied by FGFDMExec. When that property is set false,
+      Run() is skipped while the model's last state and property bindings are
+      preserved. This is the property-tree mechanism by which an external system
+      can replace a model, for example external propagation owning FGPropagate,
+      or a host physics engine owning FGGroundReactions. Behaviour is unchanged
+      unless the property is explicitly set false. */
+  void BindModelEnabled(const std::string& name);
+
   void SetPropertyManager(std::shared_ptr<FGPropertyManager> fgpm) { PropertyManager=fgpm;}
   virtual SGPath FindFullPathName(const SGPath& path) const;
   const std::string& GetName(void) const { return Name; }
@@ -101,6 +113,7 @@ public:
 protected:
   unsigned int exe_ctr;
   unsigned int rate;
+  SGPropertyNode* ModelEnabled = nullptr;
   std::string Name;
 
   /** Uploads this model in memory.

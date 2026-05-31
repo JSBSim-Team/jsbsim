@@ -162,6 +162,23 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   instance->Tie("simulation/trim-completed", &trim_completed);
   instance->Tie("forces/hold-down", this, &FGFDMExec::GetHoldDown, &FGFDMExec::SetHoldDown);
 
+  // Per-model execution-enable property: simulation/models/<name>/enabled
+  // (default true). Setting one false skips that model's Run() while preserving
+  // its state. This is the property-tree mechanism by which an external system
+  // can replace a model, for example external propagation or host-owned ground
+  // reactions. Names use the stable canonical eModels order, independent of
+  // FGModel::Name.
+  static const char* const modelEnableNames[] = {
+    "propagate", "input", "inertial", "atmosphere", "winds", "systems",
+    "massbalance", "auxiliary", "propulsion", "aerodynamics", "groundreactions",
+    "externalreactions", "buoyantforces", "aircraft", "accelerations", "output"
+  };
+  static_assert(sizeof(modelEnableNames)/sizeof(*modelEnableNames) == eNumStandardModels,
+                "modelEnableNames must stay in step with eModels");
+  for (unsigned int i = 0; i < Models.size(); ++i)
+    if (Models[i])
+      Models[i]->BindModelEnabled(modelEnableNames[i]);
+
   Constructing = false;
 }
 
