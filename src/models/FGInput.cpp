@@ -40,6 +40,7 @@ INCLUDES
 
 #include "FGInput.h"
 #include "FGFDMExec.h"
+#include "input_output/FGInputSocket.h"
 #include "input_output/FGUDPInputSocket.h"
 #include "input_output/FGXMLFileRead.h"
 #include "input_output/FGModelLoader.h"
@@ -113,6 +114,25 @@ bool FGInput::Load(Element* el)
 
   Input->SetIdx(idx);
   Input->Load(element);
+
+  // Reject a socket input whose port and protocol duplicate one already
+  // registered, so the same port is not bound twice (which fails on reload).
+  FGInputSocket* newSocket = dynamic_cast<FGInputSocket*>(Input);
+  if (newSocket && newSocket->GetPort() != 0) {
+    for (auto existing : InputTypes) {
+      FGInputSocket* existingSocket = dynamic_cast<FGInputSocket*>(existing);
+      if (existingSocket
+          && existingSocket->GetPort() == newSocket->GetPort()
+          && existingSocket->GetProtocol() == newSocket->GetProtocol()) {
+        FGLogging log(LogLevel::WARN);
+        log << "Input socket on port " << newSocket->GetPort()
+            << " already registered, skipping duplicate.\n";
+        delete Input;
+        return false;
+      }
+    }
+  }
+
   PostLoad(element, FDMExec);
 
   InputTypes.push_back(Input);

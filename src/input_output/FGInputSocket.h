@@ -70,6 +70,11 @@ public:
   */
   bool Load(Element* el) override;
 
+  /// @return the port this input socket is bound to (0 if not yet loaded).
+  unsigned int GetPort(void) const { return SockPort; }
+  /// @return the protocol (TCP/UDP) this input socket uses.
+  FGfdmSocket::ProtocolType GetProtocol(void) const { return SockProtocol; }
+
   /** Initializes the instance. This method basically opens the socket to which
       inputs will be directed.
       @result true if the execution succeeded.
