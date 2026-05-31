@@ -211,6 +211,9 @@ You can also quickly try it out using Google Colab by clicking on the icon.
 - [Thrust Vectoring Analysis.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb)
 
+- [Pitch SAS Implementation.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Pitch%20SAS%20Implementation.ipynb) implement a pitch Stability Augmentation Systen (SAS) to improve the pitch damping of an A4 fighter.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JSBSim-Team/jsbsim/blob/master/examples/python/Pitch%20SAS%20Implementation.ipynb)
+
 # Contributing Source Code Changes
 
 If you would like to contribute source code changes please take a look at the [Contributing Source Code Changes to JSBSim](https://github.com/JSBSim-Team/jsbsim/wiki/Contributing-Source-Code-Changes-to-JSBSim) Wiki page for instructions on how to go about contributing.
