@@ -100,7 +100,10 @@ public:
       the next call to SetStartNewOutput().
       @param name new name */
   void SetOutputName(const std::string& fname) override {
-    Name = (FDMExec->GetOutputPath()/fname).utf8Str();
+    // An absolute name is used as-is; only a relative name is taken under the
+    // output path.
+    SGPath p(fname);
+    Name = p.isAbsolute() ? fname : (FDMExec->GetOutputPath()/fname).utf8Str();
     runID_postfix = -1;
     Filename = SGPath();
   }
