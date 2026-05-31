@@ -291,6 +291,16 @@ public:
 
   void SetAeroPQR(const FGColumnVector3& tt) { vAeroPQR = tt; }
 
+  // External-injection setters for a host that owns the state integration
+  // (propagation and ground reactions) and provides the derived quantities
+  // Auxiliary would otherwise compute from the propagation it no longer runs:
+  // the alpha/beta rates and the body-axis load factors.
+  void Setadot(double v) { adot = v; }
+  void Setbdot(double v) { bdot = v; }
+  void SetNx(double v) { Nx = v; }
+  void SetNy(double v) { Ny = v; }
+  void SetNz(double v) { Nz = v; }
+
   struct Inputs {
     double Pressure;
     double Density;
