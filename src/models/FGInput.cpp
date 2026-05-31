@@ -115,8 +115,12 @@ bool FGInput::Load(Element* el)
   Input->SetIdx(idx);
   Input->Load(element);
 
-  // Reject a socket input whose port and protocol duplicate one already
-  // registered, so the same port is not bound twice (which fails on reload).
+  // It is legitimately possible for more than one <input> directive to name the
+  // same port and protocol. For example one declared in a script and another in the
+  // aircraft XML. That would create two FGInputSocket objects, and the second
+  // one's bind() would fail at InitModel with only a low-level "could not bind"
+  // errno, leaving that input silently dead. Detect the collision here and skip
+  // the duplicate with a clear warning instead.
   FGInputSocket* newSocket = dynamic_cast<FGInputSocket*>(Input);
   if (newSocket && newSocket->GetPort() != 0) {
     for (auto existing : InputTypes) {
