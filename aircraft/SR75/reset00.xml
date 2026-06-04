@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<initialize name="SR75 ground start">
+
+  <!-- Launch location -->
+  <latitude unit="DEG">32.5378085</latitude>
+  <longitude unit="DEG">74.3661944</longitude>
+
+  <!-- Ground elevation / launch altitude -->
+  <altitude unit="M">240.2</altitude>
+
+  <!-- Initial speed.
+       JSBSim expects vt in knots, so use KTS here. -->
+  <vt unit="KTS">0.0</vt>
+
+  <!-- Flight path angle -->
+  <gamma unit="DEG">0.0</gamma>
+
+  <!-- Initial heading -->
+  <psi unit="DEG">315</psi>
+
+  <!-- Initial attitude -->
+  <phi unit="DEG">0.0</phi>
+  <theta unit="DEG">0.0</theta>
+
+</initialize>

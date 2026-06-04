@@ -1,0 +1,390 @@
+<?xml version="1.0"?>
+
+<fdm_config name="SR75" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+  <fileheader>
+    <author>SR-75 Team</author>
+    <description>SR-75 basic 6-DOF JSBSim model for standalone simulation and future ArduPilot SITL integration</description>
+  </fileheader>
+
+  <!--
+    ============================================================
+    1. AIRCRAFT GEOMETRY / METRICS
+    ============================================================
+
+    These values define the basic reference geometry of SR-75.
+
+    wingarea  = reference wing area
+    wingspan  = wing span
+    chord     = mean aerodynamic chord
+
+    These are used by JSBSim to scale aerodynamic forces and moments.
+  -->
+  <metrics>
+    <wingarea unit="M2">1.0</wingarea>
+    <wingspan unit="M">1.6</wingspan>
+    <chord unit="M">0.625</chord>
+
+    <!-- Initial placeholder tail geometry.
+         These values are required for completeness but will be refined later. -->
+    <htailarea unit="M2">0.20</htailarea>
+    <htailarm unit="M">1.0</htailarm>
+    <vtailarea unit="M2">0.15</vtailarea>
+    <vtailarm unit="M">1.0</vtailarm>
+
+    <!-- Aerodynamic reference point -->
+    <location name="AERORP" unit="M">
+      <x>0.0</x>
+      <y>0.0</y>
+      <z>0.0</z>
+    </location>
+
+    <!-- Pilot/camera reference point, not critical for dynamics -->
+    <location name="EYEPOINT" unit="M">
+      <x>0.5</x>
+      <y>0.0</y>
+      <z>0.2</z>
+    </location>
+
+    <!-- Visual reference point -->
+    <location name="VRP" unit="M">
+      <x>0.0</x>
+      <y>0.0</y>
+      <z>0.0</z>
+    </location>
+  </metrics>
+
+  <!--
+    ============================================================
+    2. MASS BALANCE
+    ============================================================
+
+    This section defines mass, CG, and inertia.
+
+    emptywt = aircraft empty mass
+    ixx     = roll inertia
+    iyy     = pitch inertia
+    izz     = yaw inertia
+    ixz     = product of inertia
+
+    These are initial engineering estimates and must be refined later
+    using CAD/mass distribution.
+  -->
+  <mass_balance>
+    <ixx unit="KG*M2">18.0</ixx>
+    <iyy unit="KG*M2">45.0</iyy>
+    <izz unit="KG*M2">55.0</izz>
+    <ixz unit="KG*M2">0.0</ixz>
+
+    <emptywt unit="KG">82.5</emptywt>
+
+    <!-- Initial CG offset assumption -->
+    <location name="CG" unit="M">
+      <x>-0.15</x>
+      <y>0.0</y>
+      <z>-0.05</z>
+    </location>
+  </mass_balance>
+
+  <!--
+    ============================================================
+    3. GROUND REACTIONS
+    ============================================================
+
+    This is a simplified 3-point landing gear/contact model.
+
+    Current purpose:
+    - Allow JSBSim to load and run the model.
+    - Support future takeoff/landing testing.
+
+    Current limitation:
+    - At low altitude, long runs may hit the ground and cause numerical instability.
+    - Gear stiffness/damping must be tuned later.
+  -->
+  <ground_reactions>
+
+    <contact type="BOGEY" name="NOSE">
+      <location unit="M">
+        <x>0.8</x>
+        <y>0.0</y>
+        <z>-0.25</z>
+      </location>
+      <static_friction>0.6</static_friction>
+      <dynamic_friction>0.4</dynamic_friction>
+      <spring_coeff unit="N/M">8000</spring_coeff>
+      <damping_coeff unit="N/M/SEC">1500</damping_coeff>
+      <max_steer unit="DEG">10</max_steer>
+      <brake_group>NONE</brake_group>
+    </contact>
+
+    <contact type="BOGEY" name="LEFT_MAIN">
+      <location unit="M">
+        <x>-0.3</x>
+        <y>-0.35</y>
+        <z>-0.25</z>
+      </location>
+      <static_friction>0.6</static_friction>
+      <dynamic_friction>0.4</dynamic_friction>
+      <spring_coeff unit="N/M">10000</spring_coeff>
+      <damping_coeff unit="N/M/SEC">2000</damping_coeff>
+      <brake_group>LEFT</brake_group>
+    </contact>
+
+    <contact type="BOGEY" name="RIGHT_MAIN">
+      <location unit="M">
+        <x>-0.3</x>
+        <y>0.35</y>
+        <z>-0.25</z>
+      </location>
+      <static_friction>0.6</static_friction>
+      <dynamic_friction>0.4</dynamic_friction>
+      <spring_coeff unit="N/M">10000</spring_coeff>
+      <damping_coeff unit="N/M/SEC">2000</damping_coeff>
+      <brake_group>RIGHT</brake_group>
+    </contact>
+
+  </ground_reactions>
+
+  <!--
+    ============================================================
+    4. PROPULSION
+    ============================================================
+
+    Current validated configuration:
+    - Fuel tank is active.
+    - One turbine engine is active.
+    - Direct thruster is active.
+
+    Why one engine first?
+    - During debugging, the fuel tank-only model worked.
+    - The custom turbojet model caused segmentation fault.
+    - A known working F4N turbine/direct engine format worked.
+    - One engine is validated first before adding the second engine.
+
+    Next step:
+    - Add second engine after one-engine simulation remains stable.
+    - Tune engine thrust down to SR-75 realistic thrust level.
+  -->
+  <propulsion>
+
+    <tank type="FUEL">
+      <location unit="M">
+        <x>0.0</x>
+        <y>0.0</y>
+        <z>0.0</z>
+      </location>
+      <capacity unit="KG">20</capacity>
+      <contents unit="KG">20</contents>
+    </tank>
+
+    <!-- Validated single-engine baseline -->
+    <engine file="turbojet">
+      <feed>0</feed>
+      <thruster file="direct">
+        <location unit="M">
+          <x>-0.5</x>
+          <y>0.0</y>
+          <z>0.0</z>
+        </location>
+        <orient unit="DEG">
+          <roll>0</roll>
+          <pitch>0</pitch>
+          <yaw>0</yaw>
+        </orient>
+      </thruster>
+    </engine>
+
+    <!--
+    Future twin-engine configuration.
+    Enable only after single-engine baseline is stable.
+
+    <engine file="turbojet">
+      <feed>0</feed>
+      <thruster file="direct">
+        <location unit="M">
+          <x>-0.5</x>
+          <y>-0.2</y>
+          <z>0.0</z>
+        </location>
+        <orient unit="DEG">
+          <roll>0</roll>
+          <pitch>0</pitch>
+          <yaw>0</yaw>
+        </orient>
+      </thruster>
+    </engine>
+
+    <engine file="turbojet">
+      <feed>0</feed>
+      <thruster file="direct">
+        <location unit="M">
+          <x>-0.5</x>
+          <y>0.2</y>
+          <z>0.0</z>
+        </location>
+        <orient unit="DEG">
+          <roll>0</roll>
+          <pitch>0</pitch>
+          <yaw>0</yaw>
+        </orient>
+      </thruster>
+    </engine>
+    -->
+
+  </propulsion>
+
+  <!--
+    ============================================================
+    5. FLIGHT CONTROL SYSTEM
+    ============================================================
+
+    These channels connect command inputs to normalized control surface outputs.
+
+    ArduPilot will later command these properties:
+    - elevator
+    - aileron
+    - rudder
+
+    JSBSim uses those values in the aerodynamic moment equations.
+  -->
+  <flight_control name="SR75 Flight Control">
+
+    <channel name="Pitch">
+      <summer name="Pitch Command">
+        <input>fcs/elevator-cmd-norm</input>
+        <clipto>
+          <min>-1</min>
+          <max>1</max>
+        </clipto>
+        <output>fcs/elevator-pos-norm</output>
+      </summer>
+    </channel>
+
+    <channel name="Roll">
+      <summer name="Roll Command">
+        <input>fcs/aileron-cmd-norm</input>
+        <clipto>
+          <min>-1</min>
+          <max>1</max>
+        </clipto>
+        <output>fcs/aileron-pos-norm</output>
+      </summer>
+    </channel>
+
+    <channel name="Yaw">
+      <summer name="Yaw Command">
+        <input>fcs/rudder-cmd-norm</input>
+        <clipto>
+          <min>-1</min>
+          <max>1</max>
+        </clipto>
+        <output>fcs/rudder-pos-norm</output>
+      </summer>
+    </channel>
+
+  </flight_control>
+
+  <!--
+    ============================================================
+    6. BASIC AERODYNAMIC MODEL
+    ============================================================
+
+    This is the first simplified aerodynamic model.
+
+    It contains:
+    - Lift coefficient CL
+    - Drag coefficient CD
+    - Pitch moment Cm
+    - Roll moment Cl
+    - Yaw moment Cn
+
+    These are placeholder first-order assumptions.
+    Later, DATCOM / AVL outputs should replace or refine these values.
+  -->
+  <aerodynamics>
+
+    <axis name="LIFT">
+      <function name="aero/coefficient/CL">
+        <description>Basic SR-75 lift coefficient</description>
+        <sum>
+          <value>0.2</value>
+          <product>
+            <value>5.0</value>
+            <property>aero/alpha-rad</property>
+          </product>
+        </sum>
+      </function>
+    </axis>
+
+    <axis name="DRAG">
+      <function name="aero/coefficient/CD">
+        <description>Basic SR-75 drag coefficient</description>
+        <sum>
+          <value>0.04</value>
+          <product>
+            <value>0.08</value>
+            <property>fcs/elevator-pos-norm</property>
+            <property>fcs/elevator-pos-norm</property>
+          </product>
+        </sum>
+      </function>
+    </axis>
+
+    <axis name="PITCH">
+      <function name="aero/coefficient/Cm">
+        <description>Basic SR-75 pitch moment coefficient</description>
+        <sum>
+          <value>0.0</value>
+          <product>
+            <value>-0.5</value>
+            <property>aero/alpha-rad</property>
+          </product>
+          <product>
+            <value>-15.0</value>
+            <property>velocities/q-aero-rad_sec</property>
+          </product>
+          <product>
+            <value>1.2</value>
+            <property>fcs/elevator-pos-norm</property>
+          </product>
+        </sum>
+      </function>
+    </axis>
+
+    <axis name="ROLL">
+      <function name="aero/coefficient/Cl">
+        <description>Basic SR-75 roll moment coefficient</description>
+        <sum>
+          <product>
+            <value>-0.5</value>
+            <property>velocities/p-aero-rad_sec</property>
+          </product>
+          <product>
+            <value>0.2</value>
+            <property>fcs/aileron-pos-norm</property>
+          </product>
+        </sum>
+      </function>
+    </axis>
+
+    <axis name="YAW">
+      <function name="aero/coefficient/Cn">
+        <description>Basic SR-75 yaw moment coefficient</description>
+        <sum>
+          <product>
+            <value>-0.15</value>
+            <property>velocities/r-aero-rad_sec</property>
+          </product>
+          <product>
+            <value>-0.1</value>
+            <property>fcs/rudder-pos-norm</property>
+          </product>
+        </sum>
+      </function>
+    </axis>
+
+  </aerodynamics>
+
+</fdm_config>
