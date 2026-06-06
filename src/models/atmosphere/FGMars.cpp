@@ -61,7 +61,6 @@ FGMars::FGMars(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
   Name = "FGMars";
   Reng = 53.5 * 44.01;
 
-  bind();
   Debug(0);
 }
 
@@ -74,9 +73,9 @@ void FGMars::Calculate(double altitude)
   // LIMIT the temperatures so they do not descend below absolute zero.
 
   if (altitude < 22960.0) {
-    Temperature = -25.68 - 0.000548*altitude; // Deg Fahrenheit
+    Temperature = -25.68 - 0.000548*altitude + 459.67; // Convert F to Rankine
   } else {
-    Temperature = -10.34 - 0.001217*altitude; // Deg Fahrenheit
+    Temperature = -10.34 - 0.001217*altitude + 459.67; // Convert F to Rankine
   }
   Pressure = 14.62*exp(-0.00003*altitude); // psf - 14.62 psf =~ 7 millibars
   Density = Pressure/(Reng*Temperature); // slugs/ft^3 (needs deg R. as input

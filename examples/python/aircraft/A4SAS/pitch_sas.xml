@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<system name="SAS">
+  <!-- Properties definition -->
+  <property value="0">   fcs/sas-active-switch </property>
+  <property value="0.0"> fcs/pitch-sas-command </property>
+  <property value="0.869"> fcs/pitch-sas-kq    </property>
+
+  <channel name="Pitch SAS">
+    <pure_gain name="fcs/pitch-sas-command">
+      <input>velocities/q-rad_sec</input>
+      <gain>fcs/pitch-sas-kq</gain>
+    </pure_gain>
+
+    <!-- The Switch: if fcs/sas-active-switch is 1, pass the logic. Else, 0. -->
+    <switch name="fcs/pitch-sas-output">
+      <default value="0.0"/>
+      <test value="fcs/pitch-sas-command">
+        fcs/sas-active-switch == 1
+      </test>
+    </switch>
+  </channel>
+</system>

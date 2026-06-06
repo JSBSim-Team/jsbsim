@@ -45,6 +45,35 @@ INCLUDES
 #include "input_output/FGXMLElement.h"
 #include "input_output/string_utilities.h"
 
+/******************************************************************************
+UNREACHABLE(msg) macro is designed to optimize impossible code branches away
+in release optimized builds and to assert in debug builds with a custom message.
+
+Often used for unreachable default in fully covered switches.
+
+Only use for invariants that can be proven from the structure of the code, not
+for assumptions about external inputs like user input, deserialized data etc.
+
+c++23 defines std::unreachable(), however JSBSim currently assumes c++17 as
+the minimum, so if being compiled with c++ < 23 the macro makes use of a
+compiler specific intrinsic.
+******************************************************************************/
+
+#ifdef NDEBUG
+#if __cplusplus >= 202302L
+#include <utility>
+#define UNREACHABLE(msg) std::unreachable();
+#elif defined(__GNUC__) || defined(__clang__)
+#define UNREACHABLE(msg) __builtin_unreachable();
+#elif defined(_MSC_VER)
+#define UNREACHABLE(msg) __assume(false);
+#else
+#define UNREACHABLE(msg) do { } while(0); // fallback: no-op
+#endif
+#else
+#define UNREACHABLE(msg) assert(false && msg); std::abort();
+#endif
+
 using namespace std;
 
 namespace JSBSim {
@@ -377,7 +406,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       *this << buf;
       break;
     default:
-      assert(false); // Should never be called
+      UNREACHABLE("invalid table type") // Should never be called
       break;
     }
   }
@@ -461,7 +490,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
     if (Data.size() != nRows+1) missingData(el, nRows, Data.size()-1);
     break;
   default:
-    assert(false);  // Should never be called
+    UNREACHABLE("invalid table type") // Should never be called
     break;
   }
 
@@ -541,7 +570,7 @@ double FGTable::GetValue(void) const
     return GetValue(lookupPropertyValues.data());
   }
   default:
-    assert(false);
+    UNREACHABLE("invalid table type") // Should never be called
   }
 }
 

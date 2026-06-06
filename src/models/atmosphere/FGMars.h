@@ -63,10 +63,13 @@ public:
   /// Constructor
   FGMars(FGFDMExec*);
 
-private:
-  void Calculate(double altitude);
+  double GetTemperature(double altitude) const override { return Temperature; }
+  double GetPressure(double altitude) const override { return Pressure; }
+  void SetTemperature(double t, double h, eTemperature unit) override {}
 
-  void Debug(int from);
+private:
+  void Calculate(double altitude) override;
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim
