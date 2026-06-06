@@ -714,6 +714,7 @@ private:
 
   bool Load_v1(Element* document);
   bool Load_v2(Element* document);
+  void Load_running(Element* document);
 
   void SetEulerAngleRadIC(int idx, double angle);
   void SetBodyVelFpsIC(int idx, double vel);
