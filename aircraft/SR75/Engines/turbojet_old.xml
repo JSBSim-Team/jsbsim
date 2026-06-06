@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<turbine_engine name="SR75_Turbojet">
+
+  <milthrust unit="N">400</milthrust>
+  <maxthrust unit="N">400</maxthrust>
+
+  <bypassratio>0.0</bypassratio>
+  <bleed>0.0</bleed>
+
+  <tsfc>0.8</tsfc>
+  <atsfc>0.8</atsfc>
+
+  <idlen1>30.0</idlen1>
+  <idlen2>60.0</idlen2>
+  <maxn1>100.0</maxn1>
+  <maxn2>100.0</maxn2>
+
+  <augmented>0</augmented>
+  <injected>0</injected>
+
+</turbine_engine>

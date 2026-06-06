@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+  File:     J79-GE-11A.xml
+  Author:   Aero-Matic v 0.8
+
+  Inputs:
+    name:           J79-GE-11A
+    type:           turbine
+    thrust:         10000.0 lb
+    augmented?      yes
+    injected?       no
+-->
+
+<turbine_engine name="J79">
+  <milthrust>   10000.0 </milthrust>
+  <maxthrust>   15800.0 </maxthrust>
+  <bypassratio>     0.0 </bypassratio>
+  <tsfc>            0.98 </tsfc>
+  <atsfc>           1.96 </atsfc>
+  <idlen1>          0.0 </idlen1>
+  <idlen2>         53.0 </idlen2>
+  <maxn1>         100.0 </maxn1>
+  <maxn2>         100.0 </maxn2>
+  <augmented>         1 </augmented>
+  <augmethod>         1 </augmethod>
+  <injected>          0 </injected>
+
+  <function name="IdleThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000     0     10000   20000   30000   40000   50000
+     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.1467
+     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342
+     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
+     0.6  0.0     0.0     0.0     0.0     0.0276  0.0718  0.1073
+     0.8  0.0     0.0     0.0     0.0     0.0474  0.0868  0.0900
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0552  0.0800
+    </tableData>
+   </table>
+  </function>
+
+  <function name="MilThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+          -10000       0   10000   20000   30000   40000   50000
+     0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
+     0.2   1.1710  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430
+     0.4   1.1500  0.9210  0.6920  0.5060  0.3570  0.2330  0.1450
+     0.6   1.1810  0.9510  0.7210  0.5320  0.3780  0.2480  0.1540
+     0.8   1.2580  1.0200  0.7820  0.5820  0.4170  0.2750  0.1700
+     1.0   1.3690  1.1200  0.8710  0.6510  0.4750  0.3150  0.2050
+     1.2   1.4850  1.2300  0.9750  0.7440  0.5980  0.3990  0.2450
+     1.4   1.5941  1.3400  1.0860  0.8450  0.7380  0.5340  0.2930
+     2.4   2.1396  1.8900  1.6410  1.3500  1.0430  0.7240  0.4530   
+    </tableData>
+   </table>
+  </function>
+
+  <function name="AugThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+           -10000       0   10000   20000   30000   40000   50000
+     0.0    1.1816  1.0000  0.8184  0.6627  0.5280  0.3756  0.2327
+     0.2    1.1308  0.9599  0.7890  0.6406  0.5116  0.3645  0.2258
+     0.4    1.1150  0.9474  0.7798  0.6340  0.5070  0.3615  0.2240
+     0.6    1.1284  0.9589  0.7894  0.6420  0.5134  0.3661  0.2268
+     0.8    1.1707  0.9942  0.8177  0.6647  0.5309  0.3784  0.2345
+     1.0    1.2411  1.0529  0.8648  0.7017  0.5596  0.3983  0.2467
+     1.2    1.3287  1.1254  0.9221  0.7462  0.5936  0.4219  0.2614
+     1.4    1.4365  1.2149  0.9933  0.8221  0.6360  0.4709  0.2994
+     1.6    1.5711  1.3260  1.0809  0.8900  0.6974  0.5060  0.3311
+     1.8    1.7301  1.4579  1.1857  0.9712  0.7595  0.5489  0.3777
+     2.0    1.8314  1.5700  1.3086  1.0774  0.8316  0.5986  0.3985
+     2.2    1.9700  1.6900  1.4100  1.2700  0.9300  0.6559  0.4340
+     2.4    2.0700  1.8000  1.5300  1.3700  1.0300  0.7500  0.4900
+     2.6    2.2000  1.9200  1.6400  1.4800  1.1400  0.8400  0.5600
+    </tableData>
+   </table>
+  </function>
+
+</turbine_engine>

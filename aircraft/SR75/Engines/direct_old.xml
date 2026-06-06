@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<direct name="SR75_Direct">
+  <location unit="M">
+    <x>0.0</x>
+    <y>0.0</y>
+    <z>0.0</z>
+  </location>
+  <orient unit="DEG">
+    <pitch>0</pitch>
+    <yaw>0</yaw>
+    <roll>0</roll>
+  </orient>
+</direct>
