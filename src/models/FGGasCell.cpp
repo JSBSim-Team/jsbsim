@@ -40,9 +40,11 @@ INCLUDES
 #include "FGGasCell.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGLog.h"
+#include <algorithm>
 
 using std::string;
 using std::max;
+using std::min;
 
 namespace JSBSim {
 
@@ -314,19 +316,19 @@ void FGGasCell::Calculate(double dt)
   //        an ad hoc formula which might not be a good representation
   //        of reality.
   if ((ValveCoefficient > 0.0) && (ValveOpen > 0.0)) {
-    // First compute the difference in pressure between the gas in the
-    // cell and the air above it.
-    // FixMe: CellHeight should depend on current volume.
-    const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
-    const double GasMass    = Contents * M_gas();                     // [slug]
+    // Scale CellHeight by the ratio of current gas volume to maximum
+    // volume so that as the cell deflates, the buoyancy-driven pressure
+    // differential diminishes naturally toward zero.
     const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft^3]
-    const double GasDensity = GasMass / GasVolume;
-    const double DeltaPressure =
-      Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
+    const double CellHeight = (2 * Zradius + Zwidth) *
+      min(1.0, GasVolume / MaxVolume);                                // [ft]
+    const double GasDensity = M_gas() * Pressure / (R * Temperature);
+    const double DeltaPressure = max(0.0,
+      Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure);
     const double VolumeValved =
       ValveOpen * ValveCoefficient * DeltaPressure * dt;
     Contents =
-      max(1E-8, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
   }
 
   //-- Update ballonets. --
@@ -346,6 +348,30 @@ void FGGasCell::Calculate(double dt)
     Contents =
       (AirPressure + MaxOverpressure) *
       (MaxVolume - BallonetsVolume) / (R * Temperature);
+  }
+
+  //-- Handle empty gas cell. --
+  // When Contents reach zero (e.g. balloon burst), set physically correct
+  // values for an empty envelope and skip the rest of the calculation to
+  // avoid divisions by zero.
+  if (Contents <= 0.0) {
+    Contents = 0.0;
+    Pressure = AirPressure;
+    Volume = BallonetsVolume;
+    dVolumeIdeal = 0.0;
+    Buoyancy = Volume * AirDensity * g;
+    vFn = {0.0, 0.0, - Buoyancy};
+    gasCellJ.InitMatrix();
+    Mass = 0.0;
+    gasCellM.InitMatrix();
+    for (i = 0; i < no_ballonets; i++) {
+      Mass += Ballonet[i]->GetMass();
+      gasCellM(eX) += Ballonet[i]->GetXYZ(eX) * Ballonet[i]->GetMass()*slugtolb;
+      gasCellM(eY) += Ballonet[i]->GetXYZ(eY) * Ballonet[i]->GetMass()*slugtolb;
+      gasCellM(eZ) += Ballonet[i]->GetXYZ(eZ) * Ballonet[i]->GetMass()*slugtolb;
+      gasCellJ += Ballonet[i]->GetInertia();
+    }
+    return;
   }
 
   //-- Volume --
@@ -729,10 +755,22 @@ void FGBallonet::Calculate(double dt)
     const double VolumeValved =
       ((Pressure > AirPressure + MaxOverpressure) ? 1.0 : ValveOpen) *
       ValveCoefficient * DeltaPressure * dt;
-    // FIXME: Too small values of Contents sometimes leads to NaN.
-    //        Currently the minimum is restricted to a safe value.
-    Contents =
-      max(1.0, Contents - Pressure * VolumeValved / (R * Temperature));
+    // Clamp Contents to the equilibrium value where Pressure == AirPressure.
+    // Below this point, venting would create a vacuum, violating the 2nd law.
+    const double ContentsEquilibrium =
+      AirPressure * MaxVolume / (R * Temperature);
+    Contents = max(ContentsEquilibrium,
+                   Contents - Pressure * VolumeValved / (R * Temperature));
+  }
+
+  //-- Handle empty ballonet. --
+  if (Contents <= 0.0) {
+    Contents = 0.0;
+    Pressure = ParentPressure;
+    Volume = 0.0;
+    dVolumeIdeal = 0.0;
+    ballonetJ.InitMatrix();
+    return;
   }
 
   //-- Volume --
