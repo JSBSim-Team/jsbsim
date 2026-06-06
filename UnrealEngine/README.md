@@ -18,10 +18,10 @@ Enjoy, and Simulation for the win!
 
 Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README-Unix.md) 
 
-Windows users continue below:
+Windows users continue below: 
 
 ### 1. Install Unreal Engine 5.5 or higher
-The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README.md#project-updated-to-enhanced-input-and-based-project-to-ue55-and-higher) <br>
+The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README.md#update-version-12) <br>
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download <br>
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
@@ -111,6 +111,7 @@ Gamepad Layout
 |Rudder - Left| NUM 0| ZL
 |Rudder - Right|NUM ENTER| ZR
 |Center Aileron & Rudder |NUM 5|
+|Toggle Auto Recenter |Double press NUM 5|
 |Aileron Trim - Left| CTRL-LEFT |
 |Aileron Trim - Right|CTRL-RIGHT|
 |Elevator Trim - Up| CTRL-DOWN|
@@ -126,7 +127,7 @@ Gamepad Layout
 ### Application
 |Command|Shortcut|
 |-|-|
-|Toggle Pilot/Orbit Camera | TAB |
+|Toggle Pilot/Orbit/Follow Camera | TAB |
 |Toggle FDM Debug Infos | D |
 |Toggle Aircraft Trails | T |
 |Orbit Camera Up/Dowm | RightMouseButton + Mouse Up/Down |
@@ -143,11 +144,16 @@ Gamepad Layout
 |Time of day - Noon Preset| HOME|
 |Time of day - Dusk Preset| PAGE UP|
 
-## Project updated to Enhanced Input and based project to UE5.5 and higher
-- The main branch was updated to use Enhanced Input and based on UE5.5 
+## Updates:
+Version 1.2 (Latest Update)
+- Project updated to Enhanced Input and based to UE5.5
 - For prior engine version compatibility or to use legacy engine inputs, please use the branch which supports versions UE5.0 - UE5.7 [UE5.0 Legacy Input](https://github.com/gallonmate/jsbsim/tree/UE5.0-5.7-Legacy-Input-Controls) <br>
-
-## Update: version 1.01
+- Added a follow camera
+- Added "Auto return to center" keyboard control, for easier flying, quicker reaction towards full deflection, etc. Enabled by double pressing NUM 5
+- Added aircraft selection list to the details panel for the BP_Airliner, new aircraft can be add to the list manually or automatically with Right Click-Run tool in AircraftPicker folder.
+- Prior updates that weren't noted here: Added Wind Type selection and blueprint node. Added Linux and Mac Support. Various bug fixes.
+  
+Version 1.01
  - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
  - Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
 -  Added new functions and blueprint nodes to access any JSBSim property. This is useful for getting and setting commands which are not currently coded in the plugin. See the next section.
