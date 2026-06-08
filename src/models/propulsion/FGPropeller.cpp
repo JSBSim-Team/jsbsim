@@ -64,7 +64,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   GearRatio = 1.0;
   CtFactor = CpFactor = 1.0;
   ConstantSpeed = 0;
-  cThrust = cPower = CtMach = CpMach = 0;
+  cThrust = cPower = CtMach = CpMach = cThrustRPM = cPowerRPM = 0;
   Vinduced = 0.0;
 
   if (prop_element->FindElement("ixx"))
@@ -106,6 +106,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
         CtMach = new FGTable(PropertyManager, table_element);
       } else if (name == "CP_MACH") {
         CpMach = new FGTable(PropertyManager, table_element);
+      } else if (name == "CT_RPM_FACTOR") {
+        cThrustRPM = new FGTable(PropertyManager, table_element);
+      } else if (name == "CP_RPM_FACTOR") {
+        cPowerRPM = new FGTable(PropertyManager, table_element);
       } else {
         FGXMLLogging log(table_element, LogLevel::ERROR);
         log << "Unknown table type: " << name << " in propeller definition.\n";
@@ -186,6 +190,8 @@ FGPropeller::~FGPropeller()
   delete cPower;
   delete CtMach;
   delete CpMach;
+  delete cThrustRPM;
+  delete cPowerRPM;
 
   Debug(1);
 }
@@ -245,6 +251,9 @@ double FGPropeller::Calculate(double EnginePower)
 
   // Apply optional Mach effects from CT_MACH table
   if (CtMach) ThrustCoeff *= CtMach->GetValue(HelicalTipMach);
+
+  // Apply optional Reynolds-number correction indexed by RPM
+  if (cThrustRPM) ThrustCoeff *= cThrustRPM->GetValue(RPM);
 
   Thrust = ThrustCoeff*RPS*RPS*D4*rho;
 
@@ -362,6 +371,9 @@ double FGPropeller::GetPowerRequired(void)
 
   // Apply optional Mach effects from CP_MACH table
   if (CpMach) cPReq *= CpMach->GetValue(HelicalTipMach);
+
+  // Apply optional Reynolds-number correction indexed by RPM
+  if (cPowerRPM) cPReq *= cPowerRPM->GetValue(RPM);
 
   double RPS = RPM / 60.0;
   double local_RPS = RPS < 0.01 ? 0.01 : RPS;
