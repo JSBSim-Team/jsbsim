@@ -135,7 +135,17 @@ if (PkgConfig_FOUND)
   if (NOT BUILD_SHARED_LIBS)
     get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
     foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
+
+      # Ensure this library is not a CMake object library or interface library
+      if (TARGET ${_LIB}) # Non-CMake libraries are ok (specifically libm)
+        get_target_property(LINK_LIB_TYPE ${_LIB} TYPE)
+        if (NOT ((${LINK_LIB_TYPE} STREQUAL "STATIC_LIBRARY") OR (${LINK_LIB_TYPE} STREQUAL "SHARED_LIBRARY")))
+          continue()
+        endif()
+      endif()
+
       set(JSBSIM_PKG_CONFIG_LINK_LIBRARIES "${JSBSIM_PKG_CONFIG_LINK_LIBRARIES} -l${_LIB}")
+
     endforeach(_LIB)
   endif(NOT BUILD_SHARED_LIBS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.pc.in ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc @ONLY)
