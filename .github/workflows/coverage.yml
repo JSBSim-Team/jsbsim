@@ -25,7 +25,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install cxxtest lcov
       - name: Checkout JSBSim
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
@@ -40,7 +40,7 @@ jobs:
         working-directory: build
         run: make lcov
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
