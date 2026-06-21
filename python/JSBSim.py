@@ -27,23 +27,25 @@ import sys
 import time
 import xml.etree.ElementTree as et
 
-import _jsbsim
+import jsbsim
 
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("input", nargs='?', help="script file name")
     parser.add_argument("--version", action="version",
-                        version="%(prog)s {}".format(_jsbsim.FGJSBBase().get_version()))
-    parser.add_argument("--outputlogfile", action="append", metavar="<filename>",
-                        help="sets (overrides) the name of a data output file")
-    parser.add_argument("--logdirectivefile", action="append", metavar="<filename>",
-                        help="specifies the name of a data logging directives file")
+                        version="%(prog)s {}".format(jsbsim.FGJSBBase().get_version()))
     parser.add_argument("--root", default='.', metavar="<path>",
                         help="specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)")
     parser.add_argument("--aircraft", metavar="<filename>",
                         help="specifies the name of the aircraft to be modeled")
     parser.add_argument("--script", metavar="<filename>",
                         help="specifies a script to run")
+    parser.add_argument("--outputlogfile", action="append", metavar="<filename>",
+                        help="sets (overrides) the name of a data output file")
+    parser.add_argument("--logdirectivefile", action="append", metavar="<filename>",
+                        help="specifies the name of a data logging directives file")
+    parser.add_argument("--outputpath", metavar="<filename>",
+                        help="specifies the directory where the output files will be written.")
     parser.add_argument("--realtime", default=False, action="store_true",
                         help="specifies to run in real world time")
     parser.add_argument("--nice", default=False, action="store_true",
@@ -113,10 +115,15 @@ def main():
             else:
                 args.aircraft = args.input
 
-    fdm = _jsbsim.FGFDMExec(args.root, None)
+    fdm = jsbsim.FGFDMExec(args.root, None)
 
     if args.nohighlight:
         fdm.disable_highlighting()
+
+    if args.outputpath:
+        fdm.set_output_path(args.outputpath)
+    else:
+        fdm.set_output_path(".")
 
     if args.simulation_rate:
         if args.simulation_rate < 1.0:
