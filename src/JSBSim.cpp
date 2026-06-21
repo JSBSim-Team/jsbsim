@@ -854,6 +854,8 @@ void PrintHelp(void)
     cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
+    cout << "    --initfile=<filename>  specifies an initialization file" << endl;
+    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
     cout << "    --outputlogfile=<filename>  sets (overrides) the name of a data output file" << endl;
     cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
     cout << "                                   (can appear multiple times)" << endl;
@@ -862,8 +864,6 @@ void PrintHelp(void)
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-    cout << "    --initfile=<filename>  specifies an initialization file" << endl;
-    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;

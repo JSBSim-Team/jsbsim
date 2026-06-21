@@ -33,13 +33,17 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("input", nargs='?', help="script file name")
     parser.add_argument("--version", action="version",
-                        version="%(prog)s {}".format(jsbsim.FGJSBBase().get_version()))
+                        version=f"{jsbsim.FGJSBBase().get_version()}")
     parser.add_argument("--root", default='.', metavar="<path>",
                         help="specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)")
     parser.add_argument("--aircraft", metavar="<filename>",
                         help="specifies the name of the aircraft to be modeled")
     parser.add_argument("--script", metavar="<filename>",
                         help="specifies a script to run")
+    parser.add_argument("--initfile", metavar="<filename>",
+                        help="specifies an initialization file")
+    parser.add_argument("--planet", metavar="<filename>",
+                        help="specifies a planet definition file")
     parser.add_argument("--outputlogfile", action="append", metavar="<filename>",
                         help="sets (overrides) the name of a data output file")
     parser.add_argument("--logdirectivefile", action="append", metavar="<filename>",
@@ -54,10 +58,6 @@ def main():
                         help="specifies that console output should be pure text only (no color)")
     parser.add_argument("--suspend", default=False, action="store_true",
                         help="specifies to suspend the simulation after initialization")
-    parser.add_argument("--initfile", metavar="<filename>",
-                        help="specifies an initialization file")
-    parser.add_argument("--planet", metavar="<filename>",
-                        help="specifies a planet definition file")
     parser.add_argument("--catalog", default=False, action="store_true",
                         help="specifies that all properties for this aircraft model should be printed")
     parser.add_argument("--property", action="append", metavar="<name=value>",
