@@ -86,6 +86,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 SGPath RootDir;
+SGPath OutputPath;
 SGPath ScriptName;
 string AircraftName;
 SGPath ResetName;
@@ -364,6 +365,7 @@ int real_main(int argc, char* argv[])
   AircraftName = "";
   ResetName = "";
   PlanetName = "";
+  OutputPath = SGPath(".");
   LogOutputName.clear();
   LogDirectiveName.clear();
   bool result = false, success;
@@ -394,7 +396,7 @@ int real_main(int argc, char* argv[])
   FDMExec->SetAircraftPath(SGPath("aircraft"));
   FDMExec->SetEnginePath(SGPath("engine"));
   FDMExec->SetSystemsPath(SGPath("systems"));
-  FDMExec->SetOutputPath(SGPath("."));
+  FDMExec->SetOutputPath(OutputPath);
   FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
   FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
@@ -712,6 +714,13 @@ bool options(int count, char **arg)
         gripe;
         exit(1);
       }
+    } else if (keyword == "--outputpath") {
+      if (n != string::npos) {
+        OutputPath = SGPath::fromLocal8Bit(value.c_str());
+      } else {
+        gripe;
+        exit(1);
+      }
     } else if (keyword == "--aircraft") {
       if (n != string::npos) {
         AircraftName = value;
@@ -842,18 +851,19 @@ void PrintHelp(void)
   cout << "  options:" << endl;
     cout << "    --help  returns this message" << endl;
     cout << "    --version  returns the version number" << endl;
-    cout << "    --outputlogfile=<filename>  sets (overrides) the name of a data output file" << endl;
-    cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
-    cout << "                                   (can appear multiple times)" << endl;
     cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
+    cout << "    --initfile=<filename>  specifies an initialization file" << endl;
+    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
+    cout << "    --outputlogfile=<filename>  sets (overrides) the name of a data output file" << endl;
+    cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
+    cout << "                                   (can appear multiple times)" << endl;
+    cout << "    --outputpath=<path> specifies the directory where the output files will be written." << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-    cout << "    --initfile=<filename>  specifies an initialization file" << endl;
-    cout << "    --planet=<filename>  specifies a planet definition file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl;
     cout << "              (catalog=aircraftname is an optional format)" << endl;
     cout << "    --property=<name=value> e.g. --property=simulation/integrator/rate/rotational=1" << endl;
