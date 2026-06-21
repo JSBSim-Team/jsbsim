@@ -859,7 +859,7 @@ void PrintHelp(void)
     cout << "    --outputlogfile=<filename>  sets (overrides) the name of a data output file" << endl;
     cout << "    --logdirectivefile=<filename>  specifies the name of a data logging directives file" << endl;
     cout << "                                   (can appear multiple times)" << endl;
-    cout << "    --outputpath=<filename> specifies the directory where the output files will be written." << endl;
+    cout << "    --outputpath=<path> specifies the directory where the output files will be written." << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
     cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --nohighlight  specifies that console output should be pure text only (no color)" << endl;

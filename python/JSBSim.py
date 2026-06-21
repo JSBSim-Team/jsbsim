@@ -48,7 +48,7 @@ def main():
                         help="sets (overrides) the name of a data output file")
     parser.add_argument("--logdirectivefile", action="append", metavar="<filename>",
                         help="specifies the name of a data logging directives file")
-    parser.add_argument("--outputpath", metavar="<filename>",
+    parser.add_argument("--outputpath", metavar="<path>",
                         help="specifies the directory where the output files will be written.")
     parser.add_argument("--realtime", default=False, action="store_true",
                         help="specifies to run in real world time")
