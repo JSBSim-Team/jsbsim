@@ -177,7 +177,7 @@ FGFDMExec::~FGFDMExec()
     log << "Caught error: " << msg << endl;
   }
 
-  if (!FDMctr) (*FDMctr)--;
+  if (FDMctr) (*FDMctr)--;
 
   Debug(1);
 }
