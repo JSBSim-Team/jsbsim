@@ -40,7 +40,6 @@ INCLUDES
 #include "FGGasCell.h"
 #include "input_output/FGXMLElement.h"
 #include "input_output/FGLog.h"
-#include <algorithm>
 
 using std::string;
 using std::max;
