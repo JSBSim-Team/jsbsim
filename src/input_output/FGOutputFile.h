@@ -95,12 +95,15 @@ public:
   */
   void SetStartNewOutput(void) override;
   /** Overwrites the name identifier under which the output will be logged.
+      If fname is a relative filepath then prepend the configured output path,
+      otherwise use the absolute filepath.
       For this method to take effect, it must be called prior to
       FGFDMExec::RunIC(). If it is called after, it will not take effect before
       the next call to SetStartNewOutput().
-      @param name new name */
+      @param fname new name */
   void SetOutputName(const std::string& fname) override {
-    Name = (FDMExec->GetOutputPath()/fname).utf8Str();
+    SGPath p(fname);
+    Name = p.isAbsolute() ? fname : (FDMExec->GetOutputPath()/fname).utf8Str();
     runID_postfix = -1;
     Filename = SGPath();
   }
