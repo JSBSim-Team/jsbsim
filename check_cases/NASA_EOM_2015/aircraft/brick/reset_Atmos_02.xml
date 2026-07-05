@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<initialize name="Check case C1.2" version="2.0">
+  <position frame="ECEF">
+    <altitudeMSL unit="FT"> 30000.0 </altitudeMSL>
+  </position>
+  <velocity frame="LOCAL">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+  </velocity>
+  <attitude_rate unit="DEG/SEC" frame="BODY">
+    <x> 9.995821927 </x>
+    <y> 20.0 </y>
+    <z> 30.0 </z>
+  </attitude_rate>
+</initialize>
