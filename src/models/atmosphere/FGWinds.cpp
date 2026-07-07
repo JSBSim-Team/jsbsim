@@ -73,7 +73,7 @@ static inline double square_signed (double value)
 constexpr double sqr(double x) { return x*x; }
 
 FGWinds::FGWinds(FGFDMExec* fdmex)
-  : FGModel(fdmex), generator(fdmex->GetRandomGenerator())
+  : FGModel(fdmex, "winds"), generator(fdmex->GetRandomGenerator())
 {
   Name = "FGWinds";
 

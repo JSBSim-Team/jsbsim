@@ -55,7 +55,7 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
+FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex, "output")
 {
   Name = "FGOutput";
   enabled = true;

@@ -56,7 +56,7 @@ GLOBAL DECLARATIONS
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModel::FGModel(FGFDMExec* fdmex)
+FGModel::FGModel(FGFDMExec* fdmex, const std::string& enableName)
 {
   FDMExec     = fdmex;
 
@@ -67,6 +67,8 @@ FGModel::FGModel(FGFDMExec* fdmex)
 
   exe_ctr     = 1;
   rate        = 1;
+
+  if (!enableName.empty()) BindModelEnabled(enableName);
 
   Debug(0);
 }

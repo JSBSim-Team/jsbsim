@@ -71,7 +71,7 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm), ChannelRate(1)
+FGFCS::FGFCS(FGFDMExec* fdm) : FGModel(fdm, "systems"), ChannelRate(1)
 {
   int i;
   Name = "FGFCS";

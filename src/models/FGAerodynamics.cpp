@@ -50,7 +50,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
+FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec, "aerodynamics")
 {
   Name = "FGAerodynamics";
 

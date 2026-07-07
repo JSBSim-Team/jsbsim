@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 
 
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "massbalance")
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;

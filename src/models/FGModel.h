@@ -72,8 +72,12 @@ class JSBSIM_API FGModel : public FGModelFunctions
 {
 public:
 
-  /// Constructor
-  explicit FGModel(FGFDMExec*);
+  /** Constructor.
+      @param enableName optional stable canonical name for this model. When
+                        non-empty it binds simulation/models/<enableName>/enabled
+                        (default true); setting that property false skips this
+                        model's Run(). Empty means the model has no enable flag. */
+  explicit FGModel(FGFDMExec*, const std::string& enableName = "");
   /// Destructor
   ~FGModel() override;
 
@@ -95,16 +99,6 @@ public:
   unsigned int GetRate(void) const { return rate; }
   FGFDMExec* GetExec(void) const { return FDMExec; }
 
-  /** Bind this model's execution-enable flag to the property
-      simulation/models/<name>/enabled (default true), using the stable
-      canonical name supplied by FGFDMExec. When that property is set false,
-      Run() is skipped while the model's last state and property bindings are
-      preserved. This is the property-tree mechanism by which an external system
-      can replace a model, for example external propagation owning FGPropagate,
-      or a host physics engine owning FGGroundReactions. Behaviour is unchanged
-      unless the property is explicitly set false. */
-  void BindModelEnabled(const std::string& name);
-
   void SetPropertyManager(std::shared_ptr<FGPropertyManager> fgpm) { PropertyManager=fgpm;}
   virtual SGPath FindFullPathName(const SGPath& path) const;
   const std::string& GetName(void) const { return Name; }
@@ -115,6 +109,15 @@ protected:
   unsigned int rate;
   SGPropertyNode* ModelEnabled = nullptr;
   std::string Name;
+
+  /** Bind this model's execution-enable flag to
+      simulation/models/<name>/enabled (default true), where name is the stable
+      canonical name passed to the constructor. When that property is set false,
+      Run() is skipped while the model's last state and property bindings are
+      preserved, the property-tree mechanism by which an external system can
+      replace a model, for example external propagation owning FGPropagate or a
+      host physics engine owning FGGroundReactions. */
+  void BindModelEnabled(const std::string& name);
 
   /** Uploads this model in memory.
       Uploads the model in memory if its contents are contained in a separate

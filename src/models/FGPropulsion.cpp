@@ -72,7 +72,7 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
+FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec, "propulsion")
 {
   Name = "FGPropulsion";
 

@@ -51,7 +51,7 @@ CLASS IMPLEMENTATION
 
 
 FGInertial::FGInertial(FGFDMExec* fgex)
-  : FGModel(fgex)
+  : FGModel(fgex, "inertial")
 {
   Name = "Earth";
 

@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) :
-   FGModel(fgex),
+   FGModel(fgex, "groundreactions"),
    FGSurface(fgex),
    DsCmd(0.0)
 {
