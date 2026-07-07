@@ -66,7 +66,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "accelerations")
 {
   Debug(0);
   Name = "FGAccelerations";

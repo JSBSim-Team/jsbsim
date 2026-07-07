@@ -54,7 +54,7 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
+FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex, "input")
 {
   Name = "FGInput";
   enabled = true;

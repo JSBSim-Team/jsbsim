@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
-  : FGModel(fdmex),
+  : FGModel(fdmex, "atmosphere"),
     StdDaySLsoundspeed(sqrt(SHRatio*Reng0*StdDaySLtemperature))
 {
   Name = "FGAtmosphere";

@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex, "auxiliary")
 {
   Name = "FGAuxiliary";
   pt = FGAtmosphere::StdDaySLpressure;     // ISA SL pressure

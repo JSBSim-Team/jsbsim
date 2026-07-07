@@ -81,7 +81,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "propagate")
 {
   Name = "FGPropagate";
 
