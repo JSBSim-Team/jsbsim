@@ -1,0 +1,588 @@
+# =============================================================================
+# UnrealEngine/Makefile.sim -- build/CI pipeline for the Unreal work in the
+# sim-team fork: UEReferenceApp + Plugins/JSBSimFlightDynamicsModel.
+#
+# All pipeline logic lives HERE. .github/workflows/sim-ci-unreal.yml is a thin
+# wrapper that only checks out the repo and calls this Makefile. If
+# `make -f UnrealEngine/Makefile.sim ci` passes locally, that workflow must
+# pass. Never add build/test/lint logic to the workflow.
+#
+# This file is owned by the unreal-devops role. The fork-level pipeline for
+# the JSBSim C++ core is the ROOT Makefile.sim (owned by jsbsim-devops) -- do
+# not duplicate or edit it. Both are named Makefile.sim so they can never
+# collide with upstream files. Invoke every target as:
+#
+#     make -f UnrealEngine/Makefile.sim <target>        (from the fork root)
+#     make -f Makefile.sim <target>                     (from UnrealEngine/)
+#
+# Standard target contract:
+#     setup     locate an Unreal Engine install (honors UE_ROOT env var, then
+#               common install paths) and verify UnrealBuildTool/UAT presence.
+#               Reports clearly when UE is absent; only fails on missing
+#               baseline tools (python3, git).
+#     build     compile plugin (RunUAT BuildPlugin) + project editor target
+#               (UnrealBuildTool). Requires UE; fails loudly without it.
+#     validate  static checks needing NO Unreal install: .uproject/.uplugin
+#               JSON validity, module/dependency declaration consistency
+#               against Source/ trees and Build.cs files, C++ header hygiene
+#               (pragma once, reflection macros, *.generated.h includes),
+#               nDisplay config syntax, Config/*.ini sanity.
+#     test      UE automation tests via UnrealEditor-Cmd
+#               (-ExecCmds="Automation RunTests $(TEST_FILTER)").
+#               Requires UE; fails loudly without it.
+#     lint      checks OUR changes under UnrealEngine/ only (diff vs
+#               $(BASE_REF)); never reformats/flags untouched upstream code.
+#     ci        setup + validate + lint always; build + test only when UE is
+#               detected, otherwise a prominent SKIPPED marker is printed
+#               (and written to $GITHUB_STEP_SUMMARY when set). A skipped UE
+#               build must never look like a pass.
+#     clean     remove $(BUILD_DIR) (plugin packages, automation reports)
+#
+# NOTE: jq is intentionally not used anywhere -- JSON parsing is python3.
+# =============================================================================
+
+SHELL       := /usr/bin/env bash
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS   += --no-builtin-rules
+
+THIS_FILE   := $(abspath $(lastword $(MAKEFILE_LIST)))
+UE_PRJ_ROOT := $(abspath $(dir $(THIS_FILE)))
+REPO_ROOT   := $(abspath $(UE_PRJ_ROOT)/..)
+
+UPROJECT    := $(UE_PRJ_ROOT)/UEReferenceApp.uproject
+PLUGIN_DESC := $(UE_PRJ_ROOT)/Plugins/JSBSimFlightDynamicsModel/JSBSimFlightDynamicsModel.uplugin
+BUILD_DIR   ?= $(UE_PRJ_ROOT)/build-sim
+
+EDITOR_TARGET ?= UEReferenceAppEditor
+UE_PLATFORM   ?= Linux
+BUILD_CONFIG  ?= Development
+TEST_FILTER   ?= JSBSim
+
+# Ref our changes are linted against (fork policy: upstream base is master).
+# If it does not exist locally (shallow CI checkouts), origin/$(BASE_REF) is
+# tried before giving up.
+BASE_REF    ?= master
+
+# ---------------------------------------------------------------------------
+# Unreal Engine detection. UE_ROOT env var wins; otherwise common install
+# locations are probed. A directory counts as a UE install iff it contains
+# Engine/Build/BatchFiles/RunUAT.sh. Empty UE_DIR == "no UE on this machine".
+# ---------------------------------------------------------------------------
+UE_SEARCH_HINT := UE_ROOT, $$HOME/UnrealEngine*, $$HOME/UE_5*, $$HOME/UE_4*, /opt/UnrealEngine*, /opt/unreal-engine*, /opt/UE_5*, /usr/local/UnrealEngine*
+UE_DIR := $(strip $(shell for d in "$${UE_ROOT:-}" "$$HOME"/UnrealEngine* "$$HOME"/UE_5* "$$HOME"/UE_4* /opt/UnrealEngine* /opt/unreal-engine* /opt/UE_5* /usr/local/UnrealEngine*; do if [ -n "$$d" ] && [ -f "$$d/Engine/Build/BatchFiles/RunUAT.sh" ]; then echo "$$d"; break; fi; done; true))
+
+RUNUAT   := $(UE_DIR)/Engine/Build/BatchFiles/RunUAT.sh
+UBT_SH   := $(UE_DIR)/Engine/Build/BatchFiles/$(UE_PLATFORM)/Build.sh
+UED_CMD  := $(UE_DIR)/Engine/Binaries/$(UE_PLATFORM)/UnrealEditor-Cmd
+
+.PHONY: setup build validate test lint ci clean help _require-ue
+
+# -----------------------------------------------------------------------------
+# Aggregate target. setup/validate/lint always run; build/test are gated on a
+# detected UE install and otherwise reported as SKIPPED -- prominently, and in
+# the GitHub job summary when running under Actions. SKIPPED is not a pass.
+# -----------------------------------------------------------------------------
+ci: setup validate lint
+	@if [ -n "$(UE_DIR)" ]; then \
+	    $(MAKE) -f $(THIS_FILE) build test; \
+	    if [ -n "$${GITHUB_STEP_SUMMARY:-}" ]; then \
+	        { echo "## Sim CI (Unreal)"; \
+	          echo ""; \
+	          echo "| stage | result |"; \
+	          echo "|---|---|"; \
+	          echo "| validate | PASSED |"; \
+	          echo "| lint | PASSED |"; \
+	          echo "| build (UE) | PASSED |"; \
+	          echo "| test (UE automation) | PASSED |"; } >> "$$GITHUB_STEP_SUMMARY"; \
+	    fi; \
+	    echo "== ci: PASSED (setup, validate, lint, build, test) =="; \
+	else \
+	    echo ""; \
+	    echo "################################################################"; \
+	    echo "##                                                            ##"; \
+	    echo "##   SKIPPED: UE build + UE automation tests                  ##"; \
+	    echo "##                                                            ##"; \
+	    echo "##   No Unreal Engine install was detected on this machine.  ##"; \
+	    echo "##   validate + lint passed, but this is NOT a full pass:    ##"; \
+	    echo "##   nothing was compiled and no automation tests ran.       ##"; \
+	    echo "##                                                            ##"; \
+	    echo "##   For the full pipeline run on a machine with UE:         ##"; \
+	    echo "##     UE_ROOT=/path/to/UnrealEngine \\                       ##"; \
+	    echo "##       make -f UnrealEngine/Makefile.sim ci                 ##"; \
+	    echo "##                                                            ##"; \
+	    echo "################################################################"; \
+	    if [ -n "$${GITHUB_STEP_SUMMARY:-}" ]; then \
+	        { echo "## Sim CI (Unreal)"; \
+	          echo ""; \
+	          echo "| stage | result |"; \
+	          echo "|---|---|"; \
+	          echo "| validate | PASSED |"; \
+	          echo "| lint | PASSED |"; \
+	          echo "| build (UE) | :warning: **SKIPPED -- no Unreal Engine on this runner** |"; \
+	          echo "| test (UE automation) | :warning: **SKIPPED -- no Unreal Engine on this runner** |"; \
+	          echo ""; \
+	          echo "A skipped UE build is **not** a pass. Full build/test needs the"; \
+	          echo "self-hosted runner (see docs/setup/ci-unreal.md in the umbrella repo)."; } >> "$$GITHUB_STEP_SUMMARY"; \
+	    fi; \
+	    echo "== ci: validate+lint PASSED; build+test SKIPPED (no UE detected) =="; \
+	fi
+
+help:
+	@echo "Usage: make -f UnrealEngine/Makefile.sim <target>   (from the fork root)"
+	@echo "Targets: setup build validate test lint ci clean"
+	@echo "Vars:    UE_ROOT=<UE install> UE_PLATFORM=$(UE_PLATFORM) BUILD_CONFIG=$(BUILD_CONFIG) TEST_FILTER=$(TEST_FILTER) BASE_REF=$(BASE_REF)"
+	@echo "Docs:    docs/setup/ci-unreal.md (umbrella repo)"
+
+# -----------------------------------------------------------------------------
+# setup -- locate UE + verify tooling. Missing UE is reported, not fatal
+# (ci degrades to validate+lint with a SKIPPED marker). Missing baseline
+# tools (python3, git) ARE fatal: validate/lint cannot run without them.
+# -----------------------------------------------------------------------------
+setup:
+	@echo "== setup: baseline tools =="
+	@missing=""; \
+	command -v python3 >/dev/null || { echo "MISSING (required): python3"; missing="$$missing python3"; }; \
+	command -v git     >/dev/null || { echo "MISSING (required): git";     missing="$$missing git"; }; \
+	if [ -n "$$missing" ]; then \
+	    echo "setup: FAILED -- required tools missing:$$missing"; \
+	    echo "  install with: sudo apt-get update && sudo apt-get install -y$$missing"; \
+	    exit 1; \
+	fi; \
+	echo "setup: baseline OK (python $$(python3 -c 'import sys; print(sys.version.split()[0])'), git $$(git --version | awk '{print $$3}'))"
+	@echo "== setup: locating Unreal Engine =="
+	@if [ -n "$(UE_DIR)" ]; then \
+	    ver=$$(python3 -c "import json,sys; v=json.load(open(sys.argv[1])); print('%s.%s.%s' % (v.get('MajorVersion','?'), v.get('MinorVersion','?'), v.get('PatchVersion','?')))" "$(UE_DIR)/Engine/Build/Build.version" 2>/dev/null || echo "unknown"); \
+	    echo "setup: Unreal Engine FOUND at $(UE_DIR) (version $$ver)"; \
+	    [ -f "$(RUNUAT)" ]  && echo "  ok   : RunUAT.sh present"        || { echo "  ERROR: RunUAT.sh missing"; exit 1; }; \
+	    [ -f "$(UBT_SH)" ]  && echo "  ok   : $(UE_PLATFORM)/Build.sh (UnrealBuildTool wrapper) present" || { echo "  ERROR: $(UBT_SH) missing -- is this a $(UE_PLATFORM) UE install?"; exit 1; }; \
+	    if [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTool.dll" ] || [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool.exe" ]; then \
+	        echo "  ok   : UnrealBuildTool binaries present"; \
+	    else \
+	        echo "  ERROR: UnrealBuildTool binaries not found under Engine/Binaries/DotNET/"; exit 1; \
+	    fi; \
+	    [ -x "$(UED_CMD)" ] && echo "  ok   : UnrealEditor-Cmd present (automation tests available)" \
+	                        || echo "  warn : UnrealEditor-Cmd not found -- 'test' will fail until the editor is built"; \
+	else \
+	    if [ -n "$${UE_ROOT:-}" ]; then \
+	        echo "setup: WARNING -- UE_ROOT is set to '$$UE_ROOT' but it does not look like a UE install"; \
+	        echo "       (expected $$UE_ROOT/Engine/Build/BatchFiles/RunUAT.sh)"; \
+	    fi; \
+	    echo "setup: Unreal Engine NOT FOUND on this machine."; \
+	    echo "  searched: $(UE_SEARCH_HINT)"; \
+	    echo "  'validate' and 'lint' still work; 'build' and 'test' will be"; \
+	    echo "  SKIPPED by 'ci' (and fail if invoked directly)."; \
+	    echo "  To enable them: export UE_ROOT=/path/to/UnrealEngine"; \
+	fi
+
+_require-ue:
+	@if [ -z "$(UE_DIR)" ]; then \
+	    echo "ERROR: this target needs an Unreal Engine install and none was found."; \
+	    echo "  searched: $(UE_SEARCH_HINT)"; \
+	    echo "  set UE_ROOT=/path/to/UnrealEngine and re-run."; \
+	    exit 1; \
+	fi
+
+# -----------------------------------------------------------------------------
+# build -- plugin first (standalone BuildPlugin package proves the .uplugin is
+# self-contained), then the project editor target via UnrealBuildTool.
+# -----------------------------------------------------------------------------
+build: _require-ue
+	@echo "== build: BuildPlugin JSBSimFlightDynamicsModel ($(UE_PLATFORM)) =="
+	"$(RUNUAT)" BuildPlugin \
+	    -Plugin="$(PLUGIN_DESC)" \
+	    -Package="$(BUILD_DIR)/JSBSimFlightDynamicsModel" \
+	    -TargetPlatforms=$(UE_PLATFORM) \
+	    -Unversioned
+	@echo "== build: $(EDITOR_TARGET) $(UE_PLATFORM) $(BUILD_CONFIG) =="
+	"$(UBT_SH)" $(EDITOR_TARGET) $(UE_PLATFORM) $(BUILD_CONFIG) \
+	    -Project="$(UPROJECT)" -Progress
+	@echo "build: OK"
+
+# -----------------------------------------------------------------------------
+# test -- UE automation tests, headless (NullRHI). TEST_FILTER selects the
+# test group/prefix; reports land in $(BUILD_DIR)/automation-report.
+# -----------------------------------------------------------------------------
+test: _require-ue
+	@echo "== test: Automation RunTests $(TEST_FILTER) =="
+	@if [ ! -x "$(UED_CMD)" ]; then \
+	    echo "test: FAILED -- $(UED_CMD) not found; run 'make -f Makefile.sim build' first"; \
+	    exit 1; \
+	fi
+	"$(UED_CMD)" "$(UPROJECT)" \
+	    -ExecCmds="Automation RunTests $(TEST_FILTER); Quit" \
+	    -TestExit="Automation Test Queue Empty" \
+	    -ReportOutputPath="$(BUILD_DIR)/automation-report" \
+	    -unattended -nopause -nosplash -NullRHI -log
+	@echo "test: OK (report: $(BUILD_DIR)/automation-report)"
+
+# -----------------------------------------------------------------------------
+# validate -- static checks, always runnable, NO Unreal install required.
+# Implemented as an embedded python3 script (VALIDATE_PY below) so this file
+# stays the single source of pipeline logic. jq is never used.
+# -----------------------------------------------------------------------------
+validate:
+	@echo "== validate: static Unreal project checks (no UE required) =="
+	@python3 -c "$$VALIDATE_PY" "$(UE_PRJ_ROOT)"
+
+define VALIDATE_PY
+import json, os, re, sys
+
+ROOT = os.path.abspath(sys.argv[1])
+SKIP_DIRS = {"Binaries", "Intermediate", "Saved", "DerivedDataCache",
+             "Content", "build-sim", ".git"}
+errors, warnings = [], []
+
+def rel(p):
+    return os.path.relpath(p, ROOT)
+
+def err(msg):
+    errors.append(msg)
+    print("  ERROR: " + msg)
+
+def warn(msg):
+    warnings.append(msg)
+    print("  warn : " + msg)
+
+def ok(msg):
+    print("  ok   : " + msg)
+
+def read(p):
+    with open(p, encoding="utf-8", errors="replace") as f:
+        return f.read()
+
+def walk(top):
+    for dp, dns, fns in os.walk(top):
+        dns[:] = sorted(d for d in dns if d not in SKIP_DIRS)
+        yield dp, dns, fns
+
+def load_json(path):
+    try:
+        with open(path, encoding="utf-8-sig") as f:
+            return json.load(f)
+    except Exception as e:
+        err("%s: invalid JSON: %s" % (rel(path), e))
+        return None
+
+uprojects, uplugins, ndisplay_json, legacy_cfg, inis = [], [], [], [], []
+for dp, dns, fns in walk(ROOT):
+    for fn in sorted(fns):
+        p = os.path.join(dp, fn)
+        if fn.endswith(".uproject"):
+            uprojects.append(p)
+        elif fn.endswith(".uplugin"):
+            uplugins.append(p)
+        elif fn.endswith(".ndisplay"):
+            ndisplay_json.append(p)
+        elif fn.endswith(".cfg"):
+            legacy_cfg.append(p)
+        elif fn.endswith(".ini") and "Config" in dp.split(os.sep):
+            inis.append(p)
+
+print("-- descriptor JSON validity")
+descriptors = {}
+for p in uprojects + uplugins:
+    d = load_json(p)
+    if d is not None:
+        descriptors[p] = d
+        ok("%s: valid JSON, %d module(s), %d plugin ref(s)"
+           % (rel(p), len(d.get("Modules", [])), len(d.get("Plugins", []))))
+if not uprojects:
+    err("no .uproject file found under %s" % ROOT)
+
+VALID_TYPES = {"Runtime", "RuntimeNoCommandlet", "RuntimeAndProgram",
+               "CookedOnly", "UncookedOnly", "Developer", "DeveloperTool",
+               "Editor", "EditorNoCommandlet", "EditorAndProgram", "Program",
+               "ServerOnly", "ClientOnly", "ClientOnlyNoCommandlet",
+               "External"}
+VALID_PHASES = {"EarliestPossible", "PostConfigInit", "PostSplashScreen",
+                "PreEarlyLoadingScreen", "PreLoadingScreen", "PreDefault",
+                "Default", "PostDefault", "PostEngineInit", "None"}
+
+def build_cs_map(source_dir):
+    mods = {}
+    if not os.path.isdir(source_dir):
+        return mods
+    for dp, dns, fns in walk(source_dir):
+        for fn in fns:
+            if fn.endswith(".Build.cs"):
+                mods[fn[:-len(".Build.cs")]] = os.path.join(dp, fn)
+    return mods
+
+print("-- module declarations vs Source/ trees")
+local_modules = {}
+module_owner = {}
+declared_by_desc = {}
+for p, d in descriptors.items():
+    src = os.path.join(os.path.dirname(p), "Source")
+    built = build_cs_map(src)
+    local_modules.update(built)
+    owner = os.path.basename(p)
+    for name in built:
+        module_owner.setdefault(name, owner)
+    declared = set()
+    for m in d.get("Modules", []):
+        name = m.get("Name")
+        if not name:
+            err("%s: module entry without a Name" % rel(p))
+            continue
+        declared.add(name)
+        if m.get("Type") not in VALID_TYPES:
+            err("%s: module '%s': invalid Type '%s'" % (rel(p), name, m.get("Type")))
+        if "LoadingPhase" in m and m["LoadingPhase"] not in VALID_PHASES:
+            err("%s: module '%s': invalid LoadingPhase '%s'"
+                % (rel(p), name, m["LoadingPhase"]))
+        if name in built:
+            ok("%s: module '%s' -> %s" % (rel(p), name, rel(built[name])))
+        else:
+            err("%s: module '%s' declared but %s.Build.cs not found under %s"
+                % (rel(p), name, name, rel(src)))
+    declared_by_desc[p] = declared
+    for name, bpath in sorted(built.items()):
+        if name not in declared and "ThirdParty" not in rel(bpath).split(os.sep):
+            warn("%s: module '%s' has a Build.cs but is not declared in %s"
+                 % (rel(bpath), name, rel(p)))
+
+print("-- Build.cs class names match module names")
+for name, bpath in sorted(local_modules.items()):
+    m = re.search(r"class\s+(\w+)\s*:\s*ModuleRules", read(bpath))
+    if not m:
+        warn("%s: no 'class <Name> : ModuleRules' declaration found" % rel(bpath))
+    elif m.group(1) != name:
+        err("%s: rules class '%s' does not match module name '%s'"
+            % (rel(bpath), m.group(1), name))
+    else:
+        ok("%s: class %s" % (rel(bpath), name))
+
+print("-- dependency declarations (Build.cs) vs locally defined modules")
+DEP_RE = re.compile(r"(?:Public|Private)DependencyModuleNames[^;]*?;", re.S)
+STR_RE = re.compile(r'"([^"]+)"')
+disabled_plugins = set()
+for p, d in descriptors.items():
+    if p.endswith(".uproject"):
+        for pl in d.get("Plugins", []):
+            if pl.get("Enabled") is False and pl.get("Name"):
+                disabled_plugins.add(pl["Name"])
+module_plugin = {}
+for p, d in descriptors.items():
+    if p.endswith(".uplugin"):
+        pname = os.path.basename(p)[:-len(".uplugin")]
+        for name in build_cs_map(os.path.join(os.path.dirname(p), "Source")):
+            module_plugin[name] = pname
+for name, bpath in sorted(local_modules.items()):
+    deps = []
+    for block in DEP_RE.findall(read(bpath)):
+        deps += STR_RE.findall(block)
+    local_deps = sorted(set(d for d in deps if d in local_modules))
+    for dep in sorted(set(deps)):
+        if dep in disabled_plugins or module_plugin.get(dep) in disabled_plugins:
+            err("%s: depends on '%s', but its plugin is disabled in the .uproject"
+                % (rel(bpath), dep))
+    ok("module '%s': %d dep(s), locally resolved: %s (engine modules not "
+       "checkable without UE)" % (name, len(set(deps)), local_deps or "none"))
+
+print("-- project modules covered by Target.cs files")
+for p, d in descriptors.items():
+    if not p.endswith(".uproject"):
+        continue
+    src = os.path.join(os.path.dirname(p), "Source")
+    targets = []
+    if os.path.isdir(src):
+        targets = [os.path.join(src, f) for f in sorted(os.listdir(src))
+                   if f.endswith(".Target.cs")]
+    if not targets:
+        err("%s: no *.Target.cs files under %s" % (rel(p), rel(src)))
+        continue
+    names = set()
+    for t in targets:
+        names |= set(STR_RE.findall(read(t)))
+    for mod in sorted(declared_by_desc.get(p, ())):
+        if mod in names:
+            ok("%s: module '%s' referenced by a Target.cs" % (rel(p), mod))
+        else:
+            err("%s: module '%s' not listed in any Target.cs ExtraModuleNames"
+                % (rel(p), mod))
+
+print("-- module entry points (IMPLEMENT_MODULE)")
+IMPL_RE = re.compile(r"IMPLEMENT_(?:PRIMARY_GAME_|GAME_)?MODULE")
+for p, d in descriptors.items():
+    for mod in sorted(declared_by_desc.get(p, ())):
+        bpath = local_modules.get(mod)
+        if not bpath:
+            continue
+        mdir = os.path.dirname(bpath)
+        found = None
+        for dp, dns, fns in walk(mdir):
+            for fn in sorted(fns):
+                if fn.endswith(".cpp") and IMPL_RE.search(read(os.path.join(dp, fn))):
+                    found = os.path.join(dp, fn)
+                    break
+            if found:
+                break
+        if found:
+            ok("module '%s': entry point in %s" % (mod, rel(found)))
+        else:
+            err("module '%s': no IMPLEMENT_MODULE/IMPLEMENT_PRIMARY_GAME_MODULE "
+                "in any .cpp under %s" % (mod, rel(mdir)))
+
+print("-- C++ header hygiene (ThirdParty excluded)")
+REFLECT_RE = re.compile(r"^\s*(?:UCLASS|USTRUCT|UINTERFACE|UENUM|UDELEGATE)\s*\(", re.M)
+NEEDS_BODY_RE = re.compile(r"^\s*(?:UCLASS|USTRUCT|UINTERFACE)\s*\(", re.M)
+BODY_RE = re.compile(r"^\s*GENERATED_(?:UCLASS_|USTRUCT_|UINTERFACE_|IINTERFACE_)?BODY\s*\(", re.M)
+INC_RE = re.compile(r'^\s*#\s*include\s+[<"]([^>"]+)[>"]', re.M)
+checked = 0
+for dp, dns, fns in walk(ROOT):
+    parts = dp.split(os.sep)
+    if "Source" not in parts or "ThirdParty" in parts:
+        continue
+    for fn in sorted(fns):
+        if not fn.endswith(".h"):
+            continue
+        p = os.path.join(dp, fn)
+        txt = read(p)
+        checked += 1
+        if "#pragma once" not in txt:
+            err("%s: missing '#pragma once'" % rel(p))
+        includes = INC_RE.findall(txt)
+        gen = fn[:-2] + ".generated.h"
+        if REFLECT_RE.search(txt):
+            base_incs = [os.path.basename(i) for i in includes]
+            if gen not in base_incs:
+                err('%s: uses UHT reflection macros but never includes "%s"'
+                    % (rel(p), gen))
+            elif base_incs[-1] != gen:
+                err('%s: "%s" must be the LAST #include (currently last: %s)'
+                    % (rel(p), gen, includes[-1]))
+        n_need = len(NEEDS_BODY_RE.findall(txt))
+        n_body = len(BODY_RE.findall(txt))
+        if n_need and n_body < n_need:
+            err("%s: %d UCLASS/USTRUCT/UINTERFACE macro(s) but only %d "
+                "GENERATED_BODY macro(s)" % (rel(p), n_need, n_body))
+ok("%d header(s) checked" % checked)
+
+print("-- nDisplay configuration files")
+ndisplay_found = 0
+for p in ndisplay_json:
+    ndisplay_found += 1
+    d = load_json(p)
+    if d is None:
+        continue
+    if "nDisplay" not in d:
+        err("%s: valid JSON but missing top-level 'nDisplay' object" % rel(p))
+        continue
+    nd = d["nDisplay"]
+    cluster = nd.get("cluster") or {}
+    nodes = cluster.get("nodes") or {}
+    if not nodes:
+        warn("%s: nDisplay config declares no cluster nodes" % rel(p))
+    masters = cluster.get("primaryNode") or cluster.get("masterNode") or {}
+    if nodes and masters.get("id") not in nodes:
+        err("%s: primary/master node id %r is not a defined cluster node"
+            % (rel(p), masters.get("id")))
+    ok("%s: nDisplay JSON OK (%d node(s))" % (rel(p), len(nodes)))
+for p in legacy_cfg:
+    txt = read(p)
+    if "[cluster_node]" not in txt and "[window]" not in txt:
+        continue
+    ndisplay_found += 1
+    for i, line in enumerate(txt.splitlines(), 1):
+        s = line.strip()
+        if not s or s.startswith("#") or s.startswith("//"):
+            continue
+        if not re.match(r"\[[A-Za-z_]+\]", s):
+            err("%s:%d: legacy nDisplay line must start with a [section] tag: %r"
+                % (rel(p), i, s[:60]))
+    ok("%s: legacy nDisplay cfg scanned" % rel(p))
+if not ndisplay_found:
+    ok("no nDisplay config files present -- nothing to check")
+
+print("-- Config/*.ini sanity (warnings only)")
+for p in inis:
+    suspicious = 0
+    for i, line in enumerate(read(p).splitlines(), 1):
+        s = line.strip()
+        if not s or s.startswith(";") or s.startswith("#") or s.startswith("//"):
+            continue
+        if s.startswith("[") and s.endswith("]"):
+            continue
+        if "=" in s:
+            continue
+        suspicious += 1
+        if suspicious <= 3:
+            warn("%s:%d: neither [section] nor key=value: %r" % (rel(p), i, s[:60]))
+    if not suspicious:
+        ok("%s" % rel(p))
+
+print("")
+if errors:
+    print("validate: FAILED -- %d error(s), %d warning(s)" % (len(errors), len(warnings)))
+    sys.exit(1)
+print("validate: OK (0 errors, %d warning(s))" % len(warnings))
+endef
+export VALIDATE_PY
+
+# -----------------------------------------------------------------------------
+# lint -- checks OUR changes under UnrealEngine/ only, relative to $(BASE_REF).
+#   * whitespace errors on changed lines only (git diff --check)
+#   * JSON validity of changed .uproject/.uplugin/.json/.ndisplay
+#   * python/XML/YAML syntax of changed files
+#   * clang-format on C++ files we ADDED only (never ThirdParty, never
+#     modified upstream files) -- upstream code is never reformatted/flagged.
+# -----------------------------------------------------------------------------
+lint:
+	@echo "== lint: UnrealEngine/ changes relative to $(BASE_REF) =="
+	@cd $(REPO_ROOT); \
+	base="$(BASE_REF)"; \
+	git rev-parse -q --verify "$$base^{commit}" >/dev/null || base="origin/$(BASE_REF)"; \
+	if ! git rev-parse -q --verify "$$base^{commit}" >/dev/null; then \
+	    echo "lint: base ref '$(BASE_REF)' (and origin/$(BASE_REF)) not found -- skipping"; \
+	    exit 0; \
+	fi; \
+	merge_base=$$(git merge-base "$$base" HEAD); \
+	changed=$$(git diff --name-only --diff-filter=ACMR "$$merge_base" HEAD -- UnrealEngine/); \
+	added=$$(git diff --name-only --diff-filter=A "$$merge_base" HEAD -- UnrealEngine/); \
+	if [ -z "$$changed" ]; then \
+	    echo "lint: no UnrealEngine/ changes relative to $$base -- nothing to lint"; \
+	    exit 0; \
+	fi; \
+	echo "$$changed" | sed 's/^/  changed: /'; \
+	fail=0; \
+	git diff --check "$$merge_base" HEAD -- UnrealEngine/ \
+	    || { echo "lint: whitespace errors on changed lines (see above)"; fail=1; }; \
+	for f in $$changed; do \
+	    [ -f "$$f" ] || continue; \
+	    case "$$f" in \
+	        *.uproject|*.uplugin|*.json|*.ndisplay) \
+	               python3 -c "import sys,json; json.load(open(sys.argv[1], encoding='utf-8-sig'))" "$$f" \
+	                   || { echo "lint: invalid JSON in $$f"; fail=1; } ;; \
+	        *.py)  python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
+	                   || { echo "lint: python syntax error in $$f"; fail=1; } ;; \
+	        *.xml) python3 -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
+	                   || { echo "lint: malformed XML in $$f"; fail=1; } ;; \
+	        *.yml|*.yaml) \
+	               if python3 -c "import yaml" 2>/dev/null; then \
+	                   python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
+	                       || { echo "lint: invalid YAML in $$f"; fail=1; }; \
+	               else \
+	                   echo "lint: note: PyYAML not installed -- skipping YAML check for $$f"; \
+	               fi ;; \
+	    esac; \
+	done; \
+	if command -v clang-format >/dev/null; then \
+	    for f in $$added; do \
+	        [ -f "$$f" ] || continue; \
+	        case "$$f" in \
+	            *ThirdParty*) ;; \
+	            *.cpp|*.cxx|*.cc|*.h|*.hpp) \
+	                clang-format --dry-run --Werror "$$f" \
+	                    || { echo "lint: clang-format violations in $$f (file added by us)"; fail=1; } ;; \
+	        esac; \
+	    done; \
+	else \
+	    echo "lint: note: clang-format not installed -- style check on added C++ files skipped"; \
+	fi; \
+	if [ $$fail -ne 0 ]; then echo "lint: FAILED"; exit 1; fi; \
+	echo "lint: OK"
+
+# -----------------------------------------------------------------------------
+clean:
+	rm -rf $(BUILD_DIR)
