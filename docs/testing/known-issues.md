@@ -64,6 +64,13 @@ pipeline's pass/fail criteria.
 **Status**: open, tracked here. Not a CI-pipeline bug — plugin/engine-config
 territory (`unreal-plugin-developer` or `unreal-programmer`), not devops.
 
+**Confirmed on both UE 5.4 and UE 5.8** (`UE_ROOT=/c/Program Files/Epic
+Games/UE_5.8 make -f UnrealEngine/Makefile.sim build`, same failure,
+identical message apart from the path) — this is not a one-install fluke;
+`UserToolBoxBasicCommand` ships enabled by default across at least these two
+engine versions, so this will reproduce on most stock UE installs, not just
+this machine's.
+
 **Symptom**: `make -f UnrealEngine/Makefile.sim build` fails during
 UnrealHeaderTool's header parse pass:
 
