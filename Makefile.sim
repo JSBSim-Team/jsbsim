@@ -56,8 +56,15 @@ MAKEFLAGS   += --no-builtin-rules
 
 # Make-level OS branch (no shell-out) -- Windows_NT is set by the real
 # Windows environment and inherited by Git Bash/MSYS2 regardless of which
-# shell launched make.
-IS_WINDOWS  := $(filter Windows_NT,$(OS))
+# shell launched make. IS_WINDOWS must be exactly "1" or empty (every
+# ifeq ($(IS_WINDOWS),1) branch below depends on that) -- $(filter ...)
+# alone would yield the literal string "Windows_NT" instead, which never
+# equals "1" and silently makes every Windows branch dead code.
+ifeq ($(OS),Windows_NT)
+IS_WINDOWS  := 1
+else
+IS_WINDOWS  :=
+endif
 
 REPO_ROOT   := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR   ?= $(REPO_ROOT)/build
@@ -78,7 +85,7 @@ PYTHON      := $(shell python3 -c "print(1)" >/dev/null 2>&1 && echo python3 || 
 ifeq ($(IS_WINDOWS),1)
 JSBSIM_BIN  := $(REPO_ROOT)/Release/JSBSim.exe
 VSWHERE     := C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe
-MSBUILD_WIN := $(shell "$(VSWHERE)" -latest -products '*' -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe 2>/dev/null | head -n1)
+MSBUILD_WIN := $(shell "$(VSWHERE)" -latest -products '*' -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe" 2>/dev/null | head -n1)
 WIN_REPO_ROOT := $(shell cygpath -w "$(REPO_ROOT)" 2>/dev/null)
 else
 JSBSIM_BIN  := $(BUILD_DIR)/src/JSBSim
@@ -214,12 +221,24 @@ endif
 # -----------------------------------------------------------------------------
 ifeq ($(IS_WINDOWS),1)
 build:
-	@echo "== build: MSBuild JSBSim.sln (Release|x64) =="
-	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSim.sln" -p:Configuration=Release -p:Platform=x64 -m -nologo
+	@echo "== build: MSBuild JSBSim.sln, JSBSim project only (Release|x64) =="
+	@# -t:JSBSim builds ONLY the JSBSim project, not the whole solution.
+	@# JSBSim.sln also contains prep_plot and aeromatic -- unrelated utility
+	@# tools this pipeline does not need -- and (confirmed live) they are
+	@# pinned to a specific old Windows SDK (10.0.10586.0) that a fresh
+	@# VS2022 install does not have, which fails the FULL-solution build
+	@# even though the JSBSim project itself compiles cleanly. Scoping the
+	@# target avoids depending on those two projects' SDK pin entirely.
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSim.sln" -t:JSBSim -p:Configuration=Release -p:Platform=x64 -m -nologo
+	@# JSBSimForUnreal.vcxproj is pinned to Windows SDK 10.0.18362.0, which a
+	@# fresh VS2022 install does not have (confirmed live: fails with MSB8036
+	@# otherwise). -p:WindowsTargetPlatformVersion=10.0 (no specific build
+	@# number) tells MSBuild to auto-resolve to whatever 10.0.x SDK IS
+	@# installed, without hardcoding a version tied to this one machine.
 	@echo "== build: MSBuild JSBSimForUnreal.sln (1_Release|x64) =="
-	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=1_Release -p:Platform=x64 -m -nologo
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=1_Release -p:Platform=x64 -p:WindowsTargetPlatformVersion=10.0 -m -nologo
 	@echo "== build: MSBuild JSBSimForUnreal.sln (2_Debug|x64) =="
-	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=2_Debug -p:Platform=x64 -m -nologo
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=2_Debug -p:Platform=x64 -p:WindowsTargetPlatformVersion=10.0 -m -nologo
 	@echo "build: OK ($(JSBSIM_BIN); UE plugin ThirdParty lib staged)"
 else
 build:
