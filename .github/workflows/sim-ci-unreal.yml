@@ -1,0 +1,106 @@
+# sim-ci-unreal.yml -- thin CI wrapper for the Unreal work in the sim fork
+# (UnrealEngine/: UEReferenceApp + Plugins/JSBSimFlightDynamicsModel).
+#
+# ALL pipeline logic lives in UnrealEngine/Makefile.sim; this workflow only
+# provisions the runner and calls the Makefile. If
+# `make -f UnrealEngine/Makefile.sim ci` passes locally, this workflow must
+# pass. Never add build/test/lint logic here.
+#
+# GitHub-hosted runners have NO Unreal Engine install, so on them the `ci`
+# target runs validate + lint and reports build/test as SKIPPED -- the
+# Makefile writes an explicit SKIPPED marker into the job summary
+# ($GITHUB_STEP_SUMMARY). A skipped UE build is never presented as a pass.
+# The full build/test stages need the self-hosted job below (disabled until
+# a runner with UE exists -- see docs/setup/ci-unreal.md in the umbrella
+# repo for runner setup).
+#
+# This file is owned by the unreal-devops role. The fork-level pipeline
+# (sim-ci.yml + root Makefile.sim) is owned by jsbsim-devops; upstream
+# workflow files (cpp-python-build.yml, etc.) must never be edited.
+
+name: Sim CI (Unreal)
+
+on:
+  push:
+    branches:
+      - sim-main
+      - 'feature/**'
+      - 'fix/**'
+      - 'ci/**'
+    paths:
+      - 'UnrealEngine/**'
+      - '.github/workflows/sim-ci-unreal.yml'
+  pull_request:
+    branches:
+      - sim-main
+      - 'feature/**'
+      - 'fix/**'
+      - 'ci/**'
+    paths:
+      - 'UnrealEngine/**'
+      - '.github/workflows/sim-ci-unreal.yml'
+
+concurrency:
+  group: sim-ci-unreal-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Hosted runner: no Unreal Engine. The Makefile `ci` target detects that,
+  # runs validate + lint, and marks build/test SKIPPED in the job summary.
+  validate-lint:
+    name: validate + lint (UE build/test SKIPPED on hosted runners)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so `lint` can diff our changes against master.
+          fetch-depth: 0
+
+      - name: Install lint tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends clang-format
+
+      - name: Run pipeline (validate + lint; build/test SKIPPED without UE)
+        run: make -f UnrealEngine/Makefile.sim ci
+
+  # ---------------------------------------------------------------------------
+  # Full UE build + automation tests -- requires a SELF-HOSTED runner with an
+  # Unreal Engine 5.x source or installed build. DISABLED until such a runner
+  # is registered. To enable:
+  #
+  #   1. Provision a Linux machine (>=64 GB RAM, >=250 GB disk) with UE 5.x,
+  #      e.g. cloned+built at /opt/UnrealEngine (needs Epic GitHub access).
+  #   2. Register it as a self-hosted GitHub runner on this repo with labels:
+  #      [self-hosted, linux, unreal-engine]
+  #      (repo Settings -> Actions -> Runners -> New self-hosted runner).
+  #   3. Ensure UE_ROOT points at the install (set below, or in the runner's
+  #      environment).
+  #   4. Uncomment the job below.
+  #
+  # Full setup instructions: docs/setup/ci-unreal.md in the umbrella repo.
+  # ---------------------------------------------------------------------------
+  # build-test-ue:
+  #   name: full UE build + automation tests (self-hosted)
+  #   runs-on: [self-hosted, linux, unreal-engine]
+  #   timeout-minutes: 180
+  #   env:
+  #     UE_ROOT: /opt/UnrealEngine
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #
+  #     - name: Run full pipeline (validate + lint + build + test)
+  #       run: make -f UnrealEngine/Makefile.sim ci
+  #
+  #     - name: Upload automation test report
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ue-automation-report
+  #         path: UnrealEngine/build-sim/automation-report
+  #         if-no-files-found: ignore
