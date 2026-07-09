@@ -17,11 +17,26 @@
 #
 # Standard target contract:
 #     setup     locate an Unreal Engine install (honors UE_ROOT env var, then
-#               common install paths) and verify UnrealBuildTool/UAT presence.
-#               Reports clearly when UE is absent; only fails on missing
-#               baseline tools (python3, git).
-#     build     compile plugin (RunUAT BuildPlugin) + project editor target
-#               (UnrealBuildTool). Requires UE; fails loudly without it.
+#               common install paths -- dual-OS: native Windows under
+#               C:\Program Files\Epic Games\UE_5.*|UE_4.* using
+#               Engine\Build\BatchFiles\RunUAT.bat/Build.bat (NOT nested in a
+#               per-platform subfolder there, unlike Linux/Mac) and
+#               Engine\Binaries\Win64\UnrealEditor-Cmd.exe, selected
+#               automatically via Make's OS env var; Linux paths/tooling are
+#               unchanged) and verify UnrealBuildTool/UAT presence. Reports
+#               clearly when UE is absent; only fails on missing baseline
+#               tools (python3, git) -- python3 is actually exec'd, not just
+#               located, so the Windows Store "python3" execution-alias stub
+#               is caught and reported by name instead of failing opaquely.
+#     build     _require-jsbsim-staged, then _require-ue, then compile plugin
+#               (RunUAT BuildPlugin) + project editor target
+#               (UnrealBuildTool). _require-jsbsim-staged fails loudly with an
+#               actionable message if the JSBSim ThirdParty headers/lib under
+#               Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim
+#               are not yet staged (that staging is produced by the ROOT
+#               Makefile.sim's build, owned by jsbsim-devops) -- this avoids
+#               the opaque UBT BuildException that JSBSim.Build.cs otherwise
+#               throws. Requires UE; fails loudly without it.
 #     validate  static checks needing NO Unreal install: .uproject/.uplugin
 #               JSON validity, module/dependency declaration consistency
 #               against Source/ trees and Build.cs files, C++ header hygiene
@@ -54,9 +69,14 @@ PLUGIN_DESC := $(UE_PRJ_ROOT)/Plugins/JSBSimFlightDynamicsModel/JSBSimFlightDyna
 BUILD_DIR   ?= $(UE_PRJ_ROOT)/build-sim
 
 EDITOR_TARGET ?= UEReferenceAppEditor
-UE_PLATFORM   ?= Linux
 BUILD_CONFIG  ?= Development
 TEST_FILTER   ?= JSBSim
+
+# python3 wins if it actually runs; otherwise fall back to python (a stock
+# Windows/python.org install only provides python.exe, not python3.exe).
+# Resolved by actually invoking the interpreter -- see setup's diagnostics
+# below for why a bare `command -v` check is not enough on Windows.
+PYTHON        ?= $(shell python3 -c "print(1)" >/dev/null 2>&1 && echo python3 || echo python)
 
 # Ref our changes are linted against (fork policy: upstream base is master).
 # If it does not exist locally (shallow CI checkouts), origin/$(BASE_REF) is
@@ -66,16 +86,36 @@ BASE_REF    ?= master
 # ---------------------------------------------------------------------------
 # Unreal Engine detection. UE_ROOT env var wins; otherwise common install
 # locations are probed. A directory counts as a UE install iff it contains
-# Engine/Build/BatchFiles/RunUAT.sh. Empty UE_DIR == "no UE on this machine".
+# the platform's RunUAT wrapper. Empty UE_DIR == "no UE on this machine".
+#
+# Dual-OS: native Windows (Git Bash/MSYS2 shell, $(OS)=Windows_NT) and Linux
+# are both supported side by side -- Mac keeps working via the Linux-shaped
+# else branch since it shares the per-platform BatchFiles/<Platform>/ layout.
+# On Windows, Build.bat/RunUAT.bat live directly under Engine/Build/
+# BatchFiles/ (NOT nested in a BatchFiles/Win64/ subfolder the way Linux/Mac
+# nest under BatchFiles/<Platform>/) -- that's the one path shape that must
+# NOT be copied over when adapting the Linux block below.
 # ---------------------------------------------------------------------------
+ifeq ($(OS),Windows_NT)
+UE_PLATFORM ?= Win64
+UE_SEARCH_HINT := UE_ROOT, C:\Program Files\Epic Games\UE_5.*, C:\Program Files\Epic Games\UE_4.*
+UE_DIR := $(strip $(shell for d in "$${UE_ROOT:-}" "/c/Program Files/Epic Games"/UE_5* "/c/Program Files/Epic Games"/UE_4*; do \
+    if [ -n "$$d" ] && [ -f "$$d/Engine/Build/BatchFiles/RunUAT.bat" ]; then echo "$$d"; break; fi; done; true))
+
+RUNUAT   := $(UE_DIR)/Engine/Build/BatchFiles/RunUAT.bat
+UBT_SH   := $(UE_DIR)/Engine/Build/BatchFiles/Build.bat
+UED_CMD  := $(UE_DIR)/Engine/Binaries/Win64/UnrealEditor-Cmd.exe
+else
+UE_PLATFORM ?= Linux
 UE_SEARCH_HINT := UE_ROOT, $$HOME/UnrealEngine*, $$HOME/UE_5*, $$HOME/UE_4*, /opt/UnrealEngine*, /opt/unreal-engine*, /opt/UE_5*, /usr/local/UnrealEngine*
 UE_DIR := $(strip $(shell for d in "$${UE_ROOT:-}" "$$HOME"/UnrealEngine* "$$HOME"/UE_5* "$$HOME"/UE_4* /opt/UnrealEngine* /opt/unreal-engine* /opt/UE_5* /usr/local/UnrealEngine*; do if [ -n "$$d" ] && [ -f "$$d/Engine/Build/BatchFiles/RunUAT.sh" ]; then echo "$$d"; break; fi; done; true))
 
 RUNUAT   := $(UE_DIR)/Engine/Build/BatchFiles/RunUAT.sh
 UBT_SH   := $(UE_DIR)/Engine/Build/BatchFiles/$(UE_PLATFORM)/Build.sh
 UED_CMD  := $(UE_DIR)/Engine/Binaries/$(UE_PLATFORM)/UnrealEditor-Cmd
+endif
 
-.PHONY: setup build validate test lint ci clean help _require-ue
+.PHONY: setup build validate test lint ci clean help _require-ue _require-jsbsim-staged
 
 # -----------------------------------------------------------------------------
 # Aggregate target. setup/validate/lint always run; build/test are gated on a
@@ -141,27 +181,48 @@ help:
 setup:
 	@echo "== setup: baseline tools =="
 	@missing=""; \
-	command -v python3 >/dev/null || { echo "MISSING (required): python3"; missing="$$missing python3"; }; \
+	if $(PYTHON) -c "print(1)" >/dev/null 2>&1; then \
+	    :; \
+	else \
+	    echo "MISSING (required): $(PYTHON) (found on PATH but would not execute)"; \
+	    case "$$(command -v $(PYTHON) 2>/dev/null)" in \
+	        */WindowsApps/*) \
+	            echo "  -> that path is the Microsoft Store execution-alias stub, not a real"; \
+	            echo "     Python interpreter -- it launches the Store listing instead of running."; \
+	            echo "     Fix: install real Python (python.org installer, or"; \
+	            echo "     'winget install Python.Python.3.12') and make sure it comes before"; \
+	            echo "     WindowsApps on PATH, or disable the alias under Settings > Apps >"; \
+	            echo "     Advanced app settings > App execution aliases." ;; \
+	        "") echo "  -> $(PYTHON) not found on PATH at all." ;; \
+	        *) echo "  -> '$(PYTHON) -c \"print(1)\"' failed; check your Python install." ;; \
+	    esac; \
+	    missing="$$missing python"; \
+	fi; \
 	command -v git     >/dev/null || { echo "MISSING (required): git";     missing="$$missing git"; }; \
 	if [ -n "$$missing" ]; then \
 	    echo "setup: FAILED -- required tools missing:$$missing"; \
-	    echo "  install with: sudo apt-get update && sudo apt-get install -y$$missing"; \
+	    echo "  Linux : install with: sudo apt-get update && sudo apt-get install -y$$missing"; \
+	    echo "  Windows: install real Python from python.org or 'winget install Python.Python.3.12';"; \
+	    echo "           git from git-scm.com or 'winget install Git.Git'"; \
 	    exit 1; \
 	fi; \
-	echo "setup: baseline OK (python $$(python3 -c 'import sys; print(sys.version.split()[0])'), git $$(git --version | awk '{print $$3}'))"
+	echo "setup: baseline OK (python $$($(PYTHON) -c 'import sys; print(sys.version.split()[0])'), git $$(git --version | awk '{print $$3}'))"
 	@echo "== setup: locating Unreal Engine =="
 	@if [ -n "$(UE_DIR)" ]; then \
-	    ver=$$(python3 -c "import json,sys; v=json.load(open(sys.argv[1])); print('%s.%s.%s' % (v.get('MajorVersion','?'), v.get('MinorVersion','?'), v.get('PatchVersion','?')))" "$(UE_DIR)/Engine/Build/Build.version" 2>/dev/null || echo "unknown"); \
-	    echo "setup: Unreal Engine FOUND at $(UE_DIR) (version $$ver)"; \
-	    [ -f "$(RUNUAT)" ]  && echo "  ok   : RunUAT.sh present"        || { echo "  ERROR: RunUAT.sh missing"; exit 1; }; \
-	    [ -f "$(UBT_SH)" ]  && echo "  ok   : $(UE_PLATFORM)/Build.sh (UnrealBuildTool wrapper) present" || { echo "  ERROR: $(UBT_SH) missing -- is this a $(UE_PLATFORM) UE install?"; exit 1; }; \
+	    ver=$$($(PYTHON) -c "import json,sys; v=json.load(open(sys.argv[1])); print('%s.%s.%s' % (v.get('MajorVersion','?'), v.get('MinorVersion','?'), v.get('PatchVersion','?')))" "$(UE_DIR)/Engine/Build/Build.version" 2>/dev/null || echo "unknown"); \
+	    echo "setup: Unreal Engine FOUND at $(UE_DIR) (version $$ver) [platform: $(UE_PLATFORM)]"; \
+	    [ -f "$(RUNUAT)" ]  && echo "  ok   : $$(basename "$(RUNUAT)") present"        || { echo "  ERROR: $$(basename "$(RUNUAT)") missing at $(RUNUAT)"; exit 1; }; \
+	    [ -f "$(UBT_SH)" ]  && echo "  ok   : $$(basename "$(UBT_SH)") (UnrealBuildTool wrapper) present" || { echo "  ERROR: $(UBT_SH) missing -- is this a $(UE_PLATFORM) UE install?"; exit 1; }; \
 	    if [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTool.dll" ] || [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool.exe" ]; then \
 	        echo "  ok   : UnrealBuildTool binaries present"; \
 	    else \
 	        echo "  ERROR: UnrealBuildTool binaries not found under Engine/Binaries/DotNET/"; exit 1; \
 	    fi; \
-	    [ -x "$(UED_CMD)" ] && echo "  ok   : UnrealEditor-Cmd present (automation tests available)" \
-	                        || echo "  warn : UnrealEditor-Cmd not found -- 'test' will fail until the editor is built"; \
+	    if [ -x "$(UED_CMD)" ] || [ -f "$(UED_CMD)" ]; then \
+	        echo "  ok   : $$(basename "$(UED_CMD)") present (automation tests available)"; \
+	    else \
+	        echo "  warn : $$(basename "$(UED_CMD)") not found -- 'test' will fail until the editor is built"; \
+	    fi; \
 	else \
 	    if [ -n "$${UE_ROOT:-}" ]; then \
 	        echo "setup: WARNING -- UE_ROOT is set to '$$UE_ROOT' but it does not look like a UE install"; \
@@ -183,10 +244,45 @@ _require-ue:
 	fi
 
 # -----------------------------------------------------------------------------
+# _require-jsbsim-staged -- the JSBSimFlightDynamicsModel plugin's
+# Source/ThirdParty/JSBSim.Build.cs is an External module: it links a
+# prebuilt JSBSim.lib/JSBSim.dll (Windows) or libJSBSim.so/.dylib
+# (Linux/Mac) that must already be staged under
+# Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim/{Include,Lib}
+# before UBT runs. That staging is produced by the ROOT Makefile.sim's
+# `build` target (owned by jsbsim-devops), NOT by this file. Checking for it
+# here turns an opaque UBT BuildException (CheckForFile throwing mid-compile)
+# into a clear, actionable error before we even invoke RunUAT/UBT.
+# -----------------------------------------------------------------------------
+_require-jsbsim-staged:
+	@echo "== build precondition: JSBSim ThirdParty headers/lib staged =="
+	@tp="$(UE_PRJ_ROOT)/Plugins/JSBSimFlightDynamicsModel/Source/ThirdParty/JSBSim"; \
+	inc="$$tp/Include"; \
+	if [ "$(UE_PLATFORM)" = "Win64" ]; then \
+	    libglob="$$tp/Lib/JSBSim.* $$tp/LibDebug/JSBSim.*"; \
+	else \
+	    libglob="$$tp/Lib/$(UE_PLATFORM)/libJSBSim.*"; \
+	fi; \
+	ok=1; \
+	[ -d "$$inc" ] || { echo "  ERROR: missing headers dir: $$inc"; ok=0; }; \
+	ls $$libglob >/dev/null 2>&1 || { echo "  ERROR: missing library (expected one of: $$libglob)"; ok=0; }; \
+	if [ "$$ok" -ne 1 ]; then \
+	    echo ""; \
+	    echo "ERROR: JSBSim ThirdParty lib/headers not staged. Run 'make -f Makefile.sim build'"; \
+	    echo "at the repo root first (jsbsim-devops's build stages the lib this plugin links"; \
+	    echo "against) before building the Unreal plugin/project."; \
+	    exit 1; \
+	fi; \
+	echo "  ok   : headers present ($$inc)"; \
+	echo "  ok   : library present"
+
+# -----------------------------------------------------------------------------
 # build -- plugin first (standalone BuildPlugin package proves the .uplugin is
 # self-contained), then the project editor target via UnrealBuildTool.
+# Preconditions: the JSBSim ThirdParty lib must already be staged (see
+# _require-jsbsim-staged above), and an Unreal Engine install must be found.
 # -----------------------------------------------------------------------------
-build: _require-ue
+build: _require-jsbsim-staged _require-ue
 	@echo "== build: BuildPlugin JSBSimFlightDynamicsModel ($(UE_PLATFORM)) =="
 	"$(RUNUAT)" BuildPlugin \
 	    -Plugin="$(PLUGIN_DESC)" \
@@ -222,7 +318,7 @@ test: _require-ue
 # -----------------------------------------------------------------------------
 validate:
 	@echo "== validate: static Unreal project checks (no UE required) =="
-	@python3 -c "$$VALIDATE_PY" "$(UE_PRJ_ROOT)"
+	@$(PYTHON) -c "$$VALIDATE_PY" "$(UE_PRJ_ROOT)"
 
 define VALIDATE_PY
 import json, os, re, sys
@@ -552,15 +648,15 @@ lint:
 	    [ -f "$$f" ] || continue; \
 	    case "$$f" in \
 	        *.uproject|*.uplugin|*.json|*.ndisplay) \
-	               python3 -c "import sys,json; json.load(open(sys.argv[1], encoding='utf-8-sig'))" "$$f" \
+	               $(PYTHON) -c "import sys,json; json.load(open(sys.argv[1], encoding='utf-8-sig'))" "$$f" \
 	                   || { echo "lint: invalid JSON in $$f"; fail=1; } ;; \
-	        *.py)  python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
+	        *.py)  $(PYTHON) -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
 	                   || { echo "lint: python syntax error in $$f"; fail=1; } ;; \
-	        *.xml) python3 -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
+	        *.xml) $(PYTHON) -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
 	                   || { echo "lint: malformed XML in $$f"; fail=1; } ;; \
 	        *.yml|*.yaml) \
-	               if python3 -c "import yaml" 2>/dev/null; then \
-	                   python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
+	               if $(PYTHON) -c "import yaml" 2>/dev/null; then \
+	                   $(PYTHON) -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
 	                       || { echo "lint: invalid YAML in $$f"; fail=1; }; \
 	               else \
 	                   echo "lint: note: PyYAML not installed -- skipping YAML check for $$f"; \

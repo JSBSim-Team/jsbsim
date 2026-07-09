@@ -12,23 +12,59 @@
 #
 # Standard target contract (stable across all sim teams):
 #     setup                verify toolchain deps; print install commands for
-#                          anything missing (never sudo-installs)
-#     build                cmake configure + build into build/
-#     test                 ctest unit/functional tests
+#                          anything missing (never sudo-installs).
+#                            Linux:   cmake, g++/clang++, make, git, python
+#                                     (real interpreter, see PYTHON below)
+#                            Windows: vswhere.exe -> MSBuild.exe, git, python
+#                                     (cmake/g++/make-as-build-tool are NOT
+#                                     needed on this path and are not checked)
+#     build                Linux:   cmake configure + build into build/
+#                          Windows: MSBuild via the Unreal/Visual-Studio
+#                                   toolchain (JSBSim.sln Release|x64, then
+#                                   JSBSimForUnreal.sln 1_Release|x64 and
+#                                   2_Debug|x64) -- NOT cmake+gcc
+#     test                 Linux:   ctest unit/functional tests
+#                          Windows: SKIPPED (prominent banner) -- no cmake/
+#                                   cxxtest/python-module configure step on
+#                                   this path; test-regression is the local
+#                                   substitute
 #     test-regression      fast check_cases subset + our scripts/test_*.xml
 #                          (feature-branch scope)
 #     test-regression-full full check_cases suite incl. reference-data
 #                          comparison (sim-main scope)
 #     lint                 checks on OUR changes only (diff vs master);
 #                          never reformats/flags untouched upstream code
-#     ci                   setup + build + test + test-regression + lint
+#     ci                   Linux:   setup + build + test + test-regression + lint
+#                          Windows: setup + build + test-regression + lint
+#                                   (test dropped -- SKIPPED is never silently
+#                                   swallowed into a pass)
 #     ci-full              like ci, but with test-regression-full
-#     clean                remove the build directory
+#     clean                Linux: remove build/. Windows: remove the MSBuild
+#                          output dirs (Release/, Debug/, x64/) -- there is
+#                          no build/ dir on that path
+#
+# PYTHON: on some Windows machines, `python3`/`python` on PATH resolve to
+# Windows Store execution-alias stubs that exit non-zero instead of running --
+# a `command -v` presence check is not enough. Every target below uses the
+# $(PYTHON) variable (computed once by actually invoking the interpreter),
+# never a hardcoded `python3`.
 # =============================================================================
 
 SHELL       := /usr/bin/env bash
 .SHELLFLAGS := -eu -o pipefail -c
 MAKEFLAGS   += --no-builtin-rules
+
+# Make-level OS branch (no shell-out) -- Windows_NT is set by the real
+# Windows environment and inherited by Git Bash/MSYS2 regardless of which
+# shell launched make. IS_WINDOWS must be exactly "1" or empty (every
+# ifeq ($(IS_WINDOWS),1) branch below depends on that) -- $(filter ...)
+# alone would yield the literal string "Windows_NT" instead, which never
+# equals "1" and silently makes every Windows branch dead code.
+ifeq ($(OS),Windows_NT)
+IS_WINDOWS  := 1
+else
+IS_WINDOWS  :=
+endif
 
 REPO_ROOT   := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR   ?= $(REPO_ROOT)/build
@@ -41,7 +77,19 @@ BASE_REF    ?= master
 CMAKE_BUILD_TYPE ?= RelWithDebInfo
 CMAKE_FLAGS      ?= -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -DBUILD_PYTHON_MODULE=ON
 
+# PYTHON is resolved once, by actually invoking the interpreter (a
+# `command -v` presence check is not enough -- see the PYTHON note above).
+# python3 wins if it actually runs; otherwise fall back to python.
+PYTHON      := $(shell python3 -c "print(1)" >/dev/null 2>&1 && echo python3 || echo python)
+
+ifeq ($(IS_WINDOWS),1)
+JSBSIM_BIN  := $(REPO_ROOT)/Release/JSBSim.exe
+VSWHERE     := C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe
+MSBUILD_WIN := $(shell "$(VSWHERE)" -latest -products '*' -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe" 2>/dev/null | head -n1)
+WIN_REPO_ROOT := $(shell cygpath -w "$(REPO_ROOT)" 2>/dev/null)
+else
 JSBSIM_BIN  := $(BUILD_DIR)/src/JSBSim
+endif
 REG_DIR     := $(BUILD_DIR)/regression
 REG_TOL     ?= 1e-5
 
@@ -55,12 +103,22 @@ CHECK_CASES_FULL := ground_tests piston_takeoff orbit
 
 # -----------------------------------------------------------------------------
 # Aggregate targets (fail fast: make stops at the first failing prerequisite)
+# Windows drops `test` (SKIPPED, see the target below) rather than silently
+# swallowing it into a pass -- ci/ci-full are NOT identical across OSes.
 # -----------------------------------------------------------------------------
+ifeq ($(IS_WINDOWS),1)
+ci: setup build test-regression lint
+	@echo "== ci: PASSED (setup, build, test-regression, lint) -- test SKIPPED on Windows, see 'make -f Makefile.sim test' =="
+
+ci-full: setup build test-regression-full lint
+	@echo "== ci-full: PASSED (setup, build, test-regression-full, lint) -- test SKIPPED on Windows, see 'make -f Makefile.sim test' =="
+else
 ci: setup build test test-regression lint
 	@echo "== ci: all stages passed =="
 
 ci-full: setup build test test-regression-full lint
 	@echo "== ci-full: all stages passed =="
+endif
 
 help:
 	@echo "Usage: make -f Makefile.sim <target>"
@@ -69,11 +127,50 @@ help:
 
 # -----------------------------------------------------------------------------
 # setup -- verify the toolchain. Prints exact install commands for anything
-# missing. Never sudo-installs. Python packages are pip-installed (user-level,
-# no sudo) when pip is available, because they are also needed at *configure*
-# time (cython) for the python test suite to be registered with ctest.
-# Required tools missing => exit 1. Optional deps only produce warnings.
+# missing. Never sudo-installs. Required tools missing => exit 1. Optional
+# deps only produce warnings.
+#   Linux:   cmake, g++/clang++, make, git, python (real interpreter)
+#   Windows: vswhere.exe -> MSBuild.exe (via VS2022), git, python. cmake/g++/
+#            make-as-build-tool are not needed on this path and not checked.
 # -----------------------------------------------------------------------------
+ifeq ($(IS_WINDOWS),1)
+setup:
+	@echo "== setup: verifying toolchain (Windows / MSBuild path) =="
+	@missing=""; \
+	if [ ! -f "$(VSWHERE)" ]; then \
+	    echo "MISSING (required): vswhere.exe not found at '$(VSWHERE)'"; \
+	    echo "  Install Visual Studio 2022 (Community is free, ships vswhere.exe)."; \
+	    missing="$$missing vswhere"; \
+	elif [ -z "$(MSBUILD_WIN)" ]; then \
+	    echo "MISSING (required): MSBuild.exe (vswhere found no install with the MSBuild component)"; \
+	    missing="$$missing msbuild"; \
+	else \
+	    echo "ok   : MSBuild.exe -> $(MSBUILD_WIN)"; \
+	fi; \
+	if [ -n "$$missing" ]; then \
+	    echo ""; \
+	    echo "  Install Visual Studio 2022 (free Community edition is fine) with the"; \
+	    echo "  'Desktop development with C++' workload, then in the VS Installer ->"; \
+	    echo "  Individual Components, add BOTH of these (they are not installed by"; \
+	    echo "  default and both .sln files in this repo need them):"; \
+	    echo "    - MSVC v142 - VS 2019 C++ x64/x86 build tools   (needed by JSBSimForUnreal.vcxproj)"; \
+	    echo "    - MSVC v143 x64/x86 build tools (v14.38-17.X)   (needed by JSBSim.vcxproj; must be"; \
+	    echo "      this specific v14.38 sub-version, not just 'latest v143' -- UE5.4/5.5 pin it)"; \
+	fi; \
+	command -v git >/dev/null || { echo "MISSING (required): git"; missing="$$missing git"; }; \
+	if $(PYTHON) -c "print(1)" >/dev/null 2>&1; then \
+	    echo "ok   : python -> $$(command -v $(PYTHON)) ($$($(PYTHON) -c 'import sys; print(sys.version.split()[0])'))"; \
+	else \
+	    echo "MISSING (required): a working python -- 'python3'/'python' on PATH resolve to a"; \
+	    echo "  Windows Store execution-alias stub, not a real interpreter (it passes a"; \
+	    echo "  'command -v' presence check but exits without running anything). Install"; \
+	    echo "  Python from python.org (check 'Add python.exe to PATH'), or disable the stub"; \
+	    echo "  at Settings > Apps > Advanced app settings > App execution aliases."; \
+	    missing="$$missing python"; \
+	fi; \
+	if [ -n "$$missing" ]; then echo ""; echo "setup: FAILED -- required tools missing:$$missing"; exit 1; fi; \
+	echo "setup: OK"
+else
 setup:
 	@echo "== setup: verifying toolchain =="
 	@missing_pkgs=""; \
@@ -81,14 +178,19 @@ setup:
 	command -v g++     >/dev/null || command -v clang++ >/dev/null \
 	                              || { echo "MISSING (required): C++ compiler (g++)"; missing_pkgs="$$missing_pkgs g++"; }; \
 	command -v make    >/dev/null || { echo "MISSING (required): make";               missing_pkgs="$$missing_pkgs make"; }; \
-	command -v python3 >/dev/null || { echo "MISSING (required): python3";            missing_pkgs="$$missing_pkgs python3"; }; \
 	command -v git     >/dev/null || { echo "MISSING (required): git";                missing_pkgs="$$missing_pkgs git"; }; \
+	if $(PYTHON) -c "print(1)" >/dev/null 2>&1; then \
+	    : ; \
+	else \
+	    echo "MISSING (required): a working python3/python interpreter"; \
+	    missing_pkgs="$$missing_pkgs python3"; \
+	fi; \
 	command -v cxxtestgen >/dev/null \
 	    || echo "WARNING (optional): cxxtest not found -- C++ unit tests will not be built."$$'\n'"  install with: sudo apt-get install -y cxxtest"; \
-	if python3 -m pip --version >/dev/null 2>&1; then \
+	if $(PYTHON) -m pip --version >/dev/null 2>&1; then \
 	    echo "-- installing/verifying python deps (requirements-sim.txt, user-level, no sudo)"; \
-	    python3 -m pip install --disable-pip-version-check -q -r $(REPO_ROOT)/requirements-sim.txt \
-	    || echo "WARNING (optional): could not pip-install python deps (externally-managed env?)."$$'\n'"  Use a venv: python3 -m venv ~/.venvs/jsbsim && source ~/.venvs/jsbsim/bin/activate && pip install -r requirements-sim.txt"$$'\n'"  Without cython+numpy+pandas+scipy the python module and its ctest suite are skipped."; \
+	    $(PYTHON) -m pip install --disable-pip-version-check -q -r $(REPO_ROOT)/requirements-sim.txt \
+	    || echo "WARNING (optional): could not pip-install python deps (externally-managed env?)."$$'\n'"  Use a venv: $(PYTHON) -m venv ~/.venvs/jsbsim && source ~/.venvs/jsbsim/bin/activate && pip install -r requirements-sim.txt"$$'\n'"  Without cython+numpy+pandas+scipy the python module and its ctest suite are skipped."; \
 	else \
 	    echo "WARNING (optional): pip not available -- python module tests will be skipped."; \
 	    echo "  install with: sudo apt-get install -y python3-pip python3-venv"; \
@@ -100,21 +202,82 @@ setup:
 	    echo "  (this target never installs system packages itself)"; \
 	    exit 1; \
 	fi; \
-	echo "setup: OK (cmake $$(cmake --version | head -n1 | awk '{print $$3}'), $$(g++ --version 2>/dev/null | head -n1 || clang++ --version | head -n1), python $$(python3 -c 'import sys; print(sys.version.split()[0])'))"
+	echo "setup: OK (cmake $$(cmake --version | head -n1 | awk '{print $$3}'), $$(g++ --version 2>/dev/null | head -n1 || clang++ --version | head -n1), python $$($(PYTHON) -c 'import sys; print(sys.version.split()[0])'))"
+endif
 
 # -----------------------------------------------------------------------------
-# build -- configure + compile into build/
+# build
+#   Linux:   cmake configure + compile into build/
+#   Windows: MSBuild via the Unreal/Visual-Studio toolchain -- JSBSim.sln
+#            (Release|x64, produces Release/JSBSim.exe for test-regression)
+#            then JSBSimForUnreal.sln, BOTH 1_Release|x64 and 2_Debug|x64
+#            (exact solution-config names -- stages the UE-plugin-consumable
+#            lib/dll into UnrealEngine/Plugins/.../ThirdParty/JSBSim/; the
+#            Debug config must also be built or a UE DebugGame build breaks,
+#            since JSBSim.Build.cs only looks in LibDebug/ for that config).
+#            NOT cmake+gcc on this path. Repo paths are converted with
+#            cygpath -w before being passed to MSBuild -- it's a native tool
+#            and doesn't reliably parse MSYS/Git-Bash POSIX paths.
 # -----------------------------------------------------------------------------
+ifeq ($(IS_WINDOWS),1)
+build:
+	@echo "== build: MSBuild JSBSim.sln, JSBSim project only (Release|x64) =="
+	@# -t:JSBSim builds ONLY the JSBSim project, not the whole solution.
+	@# JSBSim.sln also contains prep_plot and aeromatic -- unrelated utility
+	@# tools this pipeline does not need -- and (confirmed live) they are
+	@# pinned to a specific old Windows SDK (10.0.10586.0) that a fresh
+	@# VS2022 install does not have, which fails the FULL-solution build
+	@# even though the JSBSim project itself compiles cleanly. Scoping the
+	@# target avoids depending on those two projects' SDK pin entirely.
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSim.sln" -t:JSBSim -p:Configuration=Release -p:Platform=x64 -m -nologo
+	@# JSBSimForUnreal.vcxproj is pinned to Windows SDK 10.0.18362.0, which a
+	@# fresh VS2022 install does not have (confirmed live: fails with MSB8036
+	@# otherwise). -p:WindowsTargetPlatformVersion=10.0 (no specific build
+	@# number) tells MSBuild to auto-resolve to whatever 10.0.x SDK IS
+	@# installed, without hardcoding a version tied to this one machine.
+	@echo "== build: MSBuild JSBSimForUnreal.sln (1_Release|x64) =="
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=1_Release -p:Platform=x64 -p:WindowsTargetPlatformVersion=10.0 -m -nologo
+	@echo "== build: MSBuild JSBSimForUnreal.sln (2_Debug|x64) =="
+	"$(MSBUILD_WIN)" "$(WIN_REPO_ROOT)\JSBSimForUnreal.sln" -p:Configuration=2_Debug -p:Platform=x64 -p:WindowsTargetPlatformVersion=10.0 -m -nologo
+	@echo "build: OK ($(JSBSIM_BIN); UE plugin ThirdParty lib staged)"
+else
 build:
 	@echo "== build: cmake configure + build ($(CMAKE_BUILD_TYPE), -j$(JOBS)) =="
 	cmake -S $(REPO_ROOT) -B $(BUILD_DIR) $(CMAKE_FLAGS)
 	cmake --build $(BUILD_DIR) -j $(JOBS)
+endif
 
 # -----------------------------------------------------------------------------
 # test -- unit/functional tests via ctest.
 # Registered tests depend on what was available at configure time:
 # cxxtest => C++ unit tests, cython/numpy/pandas => python test suite.
+#
+# Windows: SKIPPED, not a silent pass. Neither JSBSim.sln nor
+# JSBSimForUnreal.sln has a test project -- cxxtest and the python-module
+# ctest suite are both wired through the cmake configure step, which this
+# path deliberately avoids (MSVC/UBT toolchain, not cmake+gcc). Reintroducing
+# cmake+gcc just for this one target would mean a second, separate compiler
+# and build tree -- two sources of truth for "does it compile" -- for
+# marginal benefit. test-regression (which DOES run for real on Windows
+# against the MSBuild-produced JSBSim.exe) is the local substitute; ci/ci-full
+# drop `test` from the aggregate on Windows rather than swallowing it.
 # -----------------------------------------------------------------------------
+ifeq ($(IS_WINDOWS),1)
+test:
+	@echo ""
+	@echo "################################################################"
+	@echo "##                                                            ##"
+	@echo "##   SKIPPED: JSBSim C++/python unit tests (ctest)            ##"
+	@echo "##                                                            ##"
+	@echo "##   This target requires the Linux/cmake+cxxtest CI path.    ##"
+	@echo "##   The Windows build uses MSBuild (JSBSim.sln +             ##"
+	@echo "##   JSBSimForUnreal.sln), which has no test project.         ##"
+	@echo "##   Use 'make -f Makefile.sim test-regression' for local     ##"
+	@echo "##   verification on Windows instead.                        ##"
+	@echo "##                                                            ##"
+	@echo "################################################################"
+	@echo "== test: SKIPPED (Windows -- no cmake/cxxtest on this path) =="
+else
 test:
 	@echo "== test: ctest (-j$(JOBS)) =="
 	@if [ ! -f $(BUILD_DIR)/CTestTestfile.cmake ]; then \
@@ -122,6 +285,7 @@ test:
 	    exit 1; \
 	fi
 	cd $(BUILD_DIR) && ctest --output-on-failure --no-tests=error -j $(JOBS)
+endif
 
 # -----------------------------------------------------------------------------
 # test-regression / test-regression-full
@@ -132,8 +296,11 @@ test:
 #      CSV outputs JSBSim writes into its root dir.
 #   2. OUR aircraft regression scripts scripts/test_*.xml (files WE add; the
 #      upstream *_test.xml scripts are not ours and are not run here). These
-#      run against a symlink-farm root in build/regression/repo-scripts, so
-#      our scripts must write outputs to bare filenames (no data_output/).
+#      run against a copied-tree root in build/regression/repo-scripts (a
+#      plain `cp -r`, not a symlink farm -- symlinks are unreliable/
+#      unprivileged on Windows, and REG_DIR is wiped+rebuilt every run so
+#      there's no dirtying downside to copying on any OS), so our scripts
+#      must write outputs to bare filenames (no data_output/).
 #
 # The full variant additionally compares every produced CSV against the
 # matching file in check_cases/<case>/logged_data/ with tolerance REG_TOL,
@@ -183,7 +350,7 @@ export COMPARE_PY
 
 _run-regression:
 	@echo "== test-regression: cases [$(CASES)] compare=$(COMPARE) tol=$(REG_TOL) =="
-	@if [ ! -x $(JSBSIM_BIN) ]; then \
+	@if [ ! -f $(JSBSIM_BIN) ]; then \
 	    echo "test-regression: FAILED -- $(JSBSIM_BIN) not found; run 'make -f Makefile.sim build' first"; \
 	    exit 1; \
 	fi
@@ -205,7 +372,7 @@ _run-regression:
 	            out="$$dst/$$(basename "$$ref")"; \
 	            if [ -f "$$out" ]; then \
 	                echo "[regression] check_case $$case :: compare $$(basename "$$ref")"; \
-	                python3 -c "$$COMPARE_PY" "$$ref" "$$out" $(REG_TOL) || fail=1; \
+	                $(PYTHON) -c "$$COMPARE_PY" "$$ref" "$$out" $(REG_TOL) || fail=1; \
 	            fi; \
 	        done; \
 	    fi; \
@@ -216,7 +383,7 @@ _run-regression:
 	else \
 	    dst=$(REG_DIR)/repo-scripts; rm -rf "$$dst"; mkdir -p "$$dst"; \
 	    for d in aircraft engine systems scripts; do \
-	        [ -d $(REPO_ROOT)/$$d ] && ln -s $(REPO_ROOT)/$$d "$$dst/$$d"; \
+	        [ -d $(REPO_ROOT)/$$d ] && cp -r $(REPO_ROOT)/$$d "$$dst/$$d"; \
 	    done; \
 	    for script in "$${own_scripts[@]}"; do \
 	        name=$$(basename "$$script"); \
@@ -259,13 +426,13 @@ lint:
 	for f in $$changed; do \
 	    [ -f "$$f" ] || continue; \
 	    case "$$f" in \
-	        *.py)  python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
+	        *.py)  $(PYTHON) -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
 	                   || { echo "lint: python syntax error in $$f"; fail=1; } ;; \
-	        *.xml) python3 -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
+	        *.xml) $(PYTHON) -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
 	                   || { echo "lint: malformed XML in $$f"; fail=1; } ;; \
 	        *.yml|*.yaml) \
-	               if python3 -c "import yaml" 2>/dev/null; then \
-	                   python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
+	               if $(PYTHON) -c "import yaml" 2>/dev/null; then \
+	                   $(PYTHON) -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
 	                       || { echo "lint: invalid YAML in $$f"; fail=1; }; \
 	               else \
 	                   echo "lint: note: PyYAML not installed -- skipping YAML check for $$f"; \
@@ -288,5 +455,14 @@ lint:
 	echo "lint: OK"
 
 # -----------------------------------------------------------------------------
+# clean -- Linux: remove the cmake build/ dir. Windows: remove the MSBuild
+# output dirs for both .sln files (Release/, Debug/, x64/ -- already in
+# .gitignore); there is no build/ dir on this path.
+# -----------------------------------------------------------------------------
+ifeq ($(IS_WINDOWS),1)
+clean:
+	rm -rf "$(REPO_ROOT)/Release" "$(REPO_ROOT)/Debug" "$(REPO_ROOT)/x64"
+else
 clean:
 	rm -rf $(BUILD_DIR)
+endif
