@@ -1,0 +1,73 @@
+# sim-ci.yml -- thin CI wrapper for the sim-team fork.
+#
+# ALL pipeline logic lives in Makefile.sim at the repo root; this workflow
+# only provisions the runner (toolchain, caches) and calls the Makefile.
+# If `make -f Makefile.sim ci` passes locally, this workflow must pass.
+# Never add build/test/lint logic here.
+#
+# This file is owned by the sim team. Upstream workflow files
+# (cpp-python-build.yml, etc.) must never be edited.
+
+name: Sim CI
+
+on:
+  push:
+    branches:
+      - sim-main
+      - 'feature/**'
+      - 'fix/**'
+      - 'ci/**'
+  pull_request:
+    branches:
+      - sim-main
+      - 'feature/**'
+      - 'fix/**'
+      - 'ci/**'
+
+concurrency:
+  group: sim-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so `lint` can diff our changes against master.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          # Pinned <3.13: the upstream python test suite still imports
+          # telnetlib, which was removed in Python 3.13.
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-sim.txt
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ make cxxtest clang-format
+
+      - name: Cache build directory
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: sim-build-${{ runner.os }}-${{ hashFiles('CMakeLists.txt', 'src/**', 'tests/**', 'python/**', 'requirements-sim.txt') }}
+          restore-keys: |
+            sim-build-${{ runner.os }}-
+
+      - name: Run pipeline
+        # Full regression suite on pushes to sim-main; fast subset elsewhere.
+        # Target selection is the only branch awareness allowed here -- the
+        # targets themselves live in Makefile.sim.
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref_name }}" = "sim-main" ]; then
+            make -f Makefile.sim ci-full
+          else
+            make -f Makefile.sim ci
+          fi
