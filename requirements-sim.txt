@@ -1,0 +1,9 @@
+# Python dependencies for the sim-team JSBSim pipeline (Makefile.sim).
+# Needed at CMake *configure* time (cython) and by the ctest python suite.
+# The CI workflow keys its pip cache on this file.
+setuptools
+cython>=3.0
+numpy
+pandas
+scipy
+PyYAML

@@ -1,0 +1,292 @@
+# =============================================================================
+# Makefile.sim -- sim-team build/CI pipeline for the JSBSim fork
+#
+# All pipeline logic lives HERE. .github/workflows/sim-ci.yml is a thin
+# wrapper that only provisions the runner and calls `make -f Makefile.sim ci`.
+# If `make -f Makefile.sim ci` passes locally, CI must pass.
+#
+# This file is deliberately named Makefile.sim so it can never collide with
+# upstream (JSBSim-Team/jsbsim) files. Invoke every target as:
+#
+#     make -f Makefile.sim <target>
+#
+# Standard target contract (stable across all sim teams):
+#     setup                verify toolchain deps; print install commands for
+#                          anything missing (never sudo-installs)
+#     build                cmake configure + build into build/
+#     test                 ctest unit/functional tests
+#     test-regression      fast check_cases subset + our scripts/test_*.xml
+#                          (feature-branch scope)
+#     test-regression-full full check_cases suite incl. reference-data
+#                          comparison (sim-main scope)
+#     lint                 checks on OUR changes only (diff vs master);
+#                          never reformats/flags untouched upstream code
+#     ci                   setup + build + test + test-regression + lint
+#     ci-full              like ci, but with test-regression-full
+#     clean                remove the build directory
+# =============================================================================
+
+SHELL       := /usr/bin/env bash
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS   += --no-builtin-rules
+
+REPO_ROOT   := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+BUILD_DIR   ?= $(REPO_ROOT)/build
+JOBS        ?= $(shell nproc 2>/dev/null || echo 2)
+
+# Ref our changes are linted against. If it does not exist locally (shallow
+# CI checkouts), origin/$(BASE_REF) is tried before giving up.
+BASE_REF    ?= master
+
+CMAKE_BUILD_TYPE ?= RelWithDebInfo
+CMAKE_FLAGS      ?= -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) -DBUILD_PYTHON_MODULE=ON
+
+JSBSIM_BIN  := $(BUILD_DIR)/src/JSBSim
+REG_DIR     := $(BUILD_DIR)/regression
+REG_TOL     ?= 1e-5
+
+# check_cases/ subdirectories to run. FAST is the feature-branch subset;
+# FULL adds the long-running orbit case and reference CSV comparison.
+CHECK_CASES_FAST := ground_tests piston_takeoff
+CHECK_CASES_FULL := ground_tests piston_takeoff orbit
+
+.PHONY: setup build test test-regression test-regression-full lint \
+        ci ci-full clean help _run-regression
+
+# -----------------------------------------------------------------------------
+# Aggregate targets (fail fast: make stops at the first failing prerequisite)
+# -----------------------------------------------------------------------------
+ci: setup build test test-regression lint
+	@echo "== ci: all stages passed =="
+
+ci-full: setup build test test-regression-full lint
+	@echo "== ci-full: all stages passed =="
+
+help:
+	@echo "Usage: make -f Makefile.sim <target>"
+	@echo "Targets: setup build test test-regression test-regression-full lint ci ci-full clean"
+	@echo "Docs:    docs/setup/ci-jsbsim.md (umbrella repo)"
+
+# -----------------------------------------------------------------------------
+# setup -- verify the toolchain. Prints exact install commands for anything
+# missing. Never sudo-installs. Python packages are pip-installed (user-level,
+# no sudo) when pip is available, because they are also needed at *configure*
+# time (cython) for the python test suite to be registered with ctest.
+# Required tools missing => exit 1. Optional deps only produce warnings.
+# -----------------------------------------------------------------------------
+setup:
+	@echo "== setup: verifying toolchain =="
+	@missing_pkgs=""; \
+	command -v cmake   >/dev/null || { echo "MISSING (required): cmake";              missing_pkgs="$$missing_pkgs cmake"; }; \
+	command -v g++     >/dev/null || command -v clang++ >/dev/null \
+	                              || { echo "MISSING (required): C++ compiler (g++)"; missing_pkgs="$$missing_pkgs g++"; }; \
+	command -v make    >/dev/null || { echo "MISSING (required): make";               missing_pkgs="$$missing_pkgs make"; }; \
+	command -v python3 >/dev/null || { echo "MISSING (required): python3";            missing_pkgs="$$missing_pkgs python3"; }; \
+	command -v git     >/dev/null || { echo "MISSING (required): git";                missing_pkgs="$$missing_pkgs git"; }; \
+	command -v cxxtestgen >/dev/null \
+	    || echo "WARNING (optional): cxxtest not found -- C++ unit tests will not be built."$$'\n'"  install with: sudo apt-get install -y cxxtest"; \
+	if python3 -m pip --version >/dev/null 2>&1; then \
+	    echo "-- installing/verifying python deps (requirements-sim.txt, user-level, no sudo)"; \
+	    python3 -m pip install --disable-pip-version-check -q -r $(REPO_ROOT)/requirements-sim.txt \
+	    || echo "WARNING (optional): could not pip-install python deps (externally-managed env?)."$$'\n'"  Use a venv: python3 -m venv ~/.venvs/jsbsim && source ~/.venvs/jsbsim/bin/activate && pip install -r requirements-sim.txt"$$'\n'"  Without cython+numpy+pandas+scipy the python module and its ctest suite are skipped."; \
+	else \
+	    echo "WARNING (optional): pip not available -- python module tests will be skipped."; \
+	    echo "  install with: sudo apt-get install -y python3-pip python3-venv"; \
+	fi; \
+	if [ -n "$$missing_pkgs" ]; then \
+	    echo ""; \
+	    echo "setup: FAILED -- required tools missing:$$missing_pkgs"; \
+	    echo "  install with: sudo apt-get update && sudo apt-get install -y$$missing_pkgs"; \
+	    echo "  (this target never installs system packages itself)"; \
+	    exit 1; \
+	fi; \
+	echo "setup: OK (cmake $$(cmake --version | head -n1 | awk '{print $$3}'), $$(g++ --version 2>/dev/null | head -n1 || clang++ --version | head -n1), python $$(python3 -c 'import sys; print(sys.version.split()[0])'))"
+
+# -----------------------------------------------------------------------------
+# build -- configure + compile into build/
+# -----------------------------------------------------------------------------
+build:
+	@echo "== build: cmake configure + build ($(CMAKE_BUILD_TYPE), -j$(JOBS)) =="
+	cmake -S $(REPO_ROOT) -B $(BUILD_DIR) $(CMAKE_FLAGS)
+	cmake --build $(BUILD_DIR) -j $(JOBS)
+
+# -----------------------------------------------------------------------------
+# test -- unit/functional tests via ctest.
+# Registered tests depend on what was available at configure time:
+# cxxtest => C++ unit tests, cython/numpy/pandas => python test suite.
+# -----------------------------------------------------------------------------
+test:
+	@echo "== test: ctest (-j$(JOBS)) =="
+	@if [ ! -f $(BUILD_DIR)/CTestTestfile.cmake ]; then \
+	    echo "test: FAILED -- no ctest configuration in $(BUILD_DIR); run 'make -f Makefile.sim build' first"; \
+	    exit 1; \
+	fi
+	cd $(BUILD_DIR) && ctest --output-on-failure --no-tests=error -j $(JOBS)
+
+# -----------------------------------------------------------------------------
+# test-regression / test-regression-full
+#
+# Runs the JSBSim binary directly (no python module needed) on:
+#   1. check_cases/<case>/scripts/*.xml  -- each case dir is copied into
+#      build/regression/<case> so the source tree is never dirtied by the
+#      CSV outputs JSBSim writes into its root dir.
+#   2. OUR aircraft regression scripts scripts/test_*.xml (files WE add; the
+#      upstream *_test.xml scripts are not ours and are not run here). These
+#      run against a symlink-farm root in build/regression/repo-scripts, so
+#      our scripts must write outputs to bare filenames (no data_output/).
+#
+# The full variant additionally compares every produced CSV against the
+# matching file in check_cases/<case>/logged_data/ with tolerance REG_TOL,
+# mirroring upstream's RunCheckCases.py acceptance criterion (1e-5).
+# -----------------------------------------------------------------------------
+test-regression: CASES := $(CHECK_CASES_FAST)
+test-regression: COMPARE := 0
+test-regression: _run-regression
+
+test-regression-full: CASES := $(CHECK_CASES_FULL)
+test-regression-full: COMPARE := 1
+test-regression-full: _run-regression
+
+# Stdlib-only CSV comparator (ref, current, tolerance). No pandas dependency.
+define COMPARE_PY
+import csv, sys
+ref_path, cur_path, tol = sys.argv[1], sys.argv[2], float(sys.argv[3])
+def load(path):
+    with open(path, newline="") as f:
+        rows = list(csv.reader(f))
+    return [c.strip() for c in rows[0]], rows[1:]
+ref_hdr, ref = load(ref_path)
+cur_hdr, cur = load(cur_path)
+if ref_hdr != cur_hdr:
+    sys.exit("compare: column mismatch between " + ref_path + " and " + cur_path)
+if len(ref) != len(cur):
+    sys.exit("compare: row count mismatch: ref=" + str(len(ref)) + " cur=" + str(len(cur)))
+bad = 0
+for i, (r, c) in enumerate(zip(ref, cur)):
+    for j, (a, b) in enumerate(zip(r, c)):
+        try:
+            x, y = float(a), float(b)
+        except ValueError:
+            if a.strip() != b.strip():
+                bad += 1
+            continue
+        if abs(x - y) > tol:
+            bad += 1
+            if bad <= 10:
+                print("compare: row %d col '%s': ref=%g cur=%g |diff|=%g"
+                      % (i + 2, ref_hdr[j], x, y, abs(x - y)))
+if bad:
+    sys.exit("compare: FAILED -- %d value(s) differ by more than %g" % (bad, tol))
+print("compare: OK (%d rows, tol %g)" % (len(ref), tol))
+endef
+export COMPARE_PY
+
+_run-regression:
+	@echo "== test-regression: cases [$(CASES)] compare=$(COMPARE) tol=$(REG_TOL) =="
+	@if [ ! -x $(JSBSIM_BIN) ]; then \
+	    echo "test-regression: FAILED -- $(JSBSIM_BIN) not found; run 'make -f Makefile.sim build' first"; \
+	    exit 1; \
+	fi
+	@fail=0; \
+	for case in $(CASES); do \
+	    src=$(REPO_ROOT)/check_cases/$$case; dst=$(REG_DIR)/$$case; \
+	    rm -rf "$$dst"; mkdir -p $(REG_DIR); cp -r "$$src" "$$dst"; \
+	    for script in "$$dst"/scripts/*.xml; do \
+	        name=$$(basename "$$script"); \
+	        echo "[regression] check_case $$case :: $$name"; \
+	        if ! (cd "$$dst" && $(JSBSIM_BIN) --root=./ --script=scripts/$$name > "$$name.log" 2>&1); then \
+	            echo "[regression] FAIL: $$case/$$name (JSBSim exited non-zero) -- last 40 log lines:"; \
+	            tail -n 40 "$$dst/$$name.log"; \
+	            fail=1; \
+	        fi; \
+	    done; \
+	    if [ "$(COMPARE)" = "1" ] && [ -d "$$src/logged_data" ]; then \
+	        for ref in "$$src"/logged_data/*.csv; do \
+	            out="$$dst/$$(basename "$$ref")"; \
+	            if [ -f "$$out" ]; then \
+	                echo "[regression] check_case $$case :: compare $$(basename "$$ref")"; \
+	                python3 -c "$$COMPARE_PY" "$$ref" "$$out" $(REG_TOL) || fail=1; \
+	            fi; \
+	        done; \
+	    fi; \
+	done; \
+	shopt -s nullglob; own_scripts=($(REPO_ROOT)/scripts/test_*.xml); \
+	if [ $${#own_scripts[@]} -eq 0 ]; then \
+	    echo "[regression] no scripts/test_*.xml present yet -- skipping fork aircraft regressions"; \
+	else \
+	    dst=$(REG_DIR)/repo-scripts; rm -rf "$$dst"; mkdir -p "$$dst"; \
+	    for d in aircraft engine systems scripts; do \
+	        [ -d $(REPO_ROOT)/$$d ] && ln -s $(REPO_ROOT)/$$d "$$dst/$$d"; \
+	    done; \
+	    for script in "$${own_scripts[@]}"; do \
+	        name=$$(basename "$$script"); \
+	        echo "[regression] fork script :: $$name"; \
+	        if ! (cd "$$dst" && $(JSBSIM_BIN) --root=./ --script=scripts/$$name > "$$name.log" 2>&1); then \
+	            echo "[regression] FAIL: scripts/$$name (JSBSim exited non-zero) -- last 40 log lines:"; \
+	            tail -n 40 "$$dst/$$name.log"; \
+	            fail=1; \
+	        fi; \
+	    done; \
+	fi; \
+	if [ $$fail -ne 0 ]; then echo "test-regression: FAILED"; exit 1; fi; \
+	echo "test-regression: OK"
+
+# -----------------------------------------------------------------------------
+# lint -- checks OUR changes only, relative to $(BASE_REF).
+#   * whitespace errors on changed lines only (git diff --check)
+#   * python syntax (ast.parse -- leaves no .pyc files behind)
+#   * XML well-formedness (stdlib)
+#   * YAML validity (only if PyYAML is installed)
+#   * clang-format on files we ADDED only -- modified upstream files are
+#     never style-checked, so upstream code is never reformatted/flagged.
+# -----------------------------------------------------------------------------
+lint:
+	@echo "== lint: checking changes relative to $(BASE_REF) =="
+	@cd $(REPO_ROOT); \
+	base="$(BASE_REF)"; \
+	git rev-parse -q --verify "$$base^{commit}" >/dev/null || base="origin/$(BASE_REF)"; \
+	if ! git rev-parse -q --verify "$$base^{commit}" >/dev/null; then \
+	    echo "lint: base ref '$(BASE_REF)' (and origin/$(BASE_REF)) not found -- skipping"; \
+	    exit 0; \
+	fi; \
+	merge_base=$$(git merge-base "$$base" HEAD); \
+	changed=$$(git diff --name-only --diff-filter=ACMR "$$merge_base" HEAD); \
+	added=$$(git diff --name-only --diff-filter=A "$$merge_base" HEAD); \
+	if [ -z "$$changed" ]; then echo "lint: no changes relative to $$base -- nothing to lint"; exit 0; fi; \
+	echo "$$changed" | sed 's/^/  changed: /'; \
+	fail=0; \
+	git diff --check "$$merge_base" HEAD || { echo "lint: whitespace errors on changed lines (see above)"; fail=1; }; \
+	for f in $$changed; do \
+	    [ -f "$$f" ] || continue; \
+	    case "$$f" in \
+	        *.py)  python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
+	                   || { echo "lint: python syntax error in $$f"; fail=1; } ;; \
+	        *.xml) python3 -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
+	                   || { echo "lint: malformed XML in $$f"; fail=1; } ;; \
+	        *.yml|*.yaml) \
+	               if python3 -c "import yaml" 2>/dev/null; then \
+	                   python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
+	                       || { echo "lint: invalid YAML in $$f"; fail=1; }; \
+	               else \
+	                   echo "lint: note: PyYAML not installed -- skipping YAML check for $$f"; \
+	               fi ;; \
+	    esac; \
+	done; \
+	if command -v clang-format >/dev/null; then \
+	    for f in $$added; do \
+	        [ -f "$$f" ] || continue; \
+	        case "$$f" in \
+	            *.cpp|*.cxx|*.cc|*.h|*.hpp) \
+	                clang-format --dry-run --Werror "$$f" \
+	                    || { echo "lint: clang-format violations in $$f (file added by us)"; fail=1; } ;; \
+	        esac; \
+	    done; \
+	else \
+	    echo "lint: note: clang-format not installed -- style check on added C++ files skipped"; \
+	fi; \
+	if [ $$fail -ne 0 ]; then echo "lint: FAILED"; exit 1; fi; \
+	echo "lint: OK"
+
+# -----------------------------------------------------------------------------
+clean:
+	rm -rf $(BUILD_DIR)
