@@ -72,6 +72,12 @@ EDITOR_TARGET ?= UEReferenceAppEditor
 BUILD_CONFIG  ?= Development
 TEST_FILTER   ?= JSBSim
 
+# python3 wins if it actually runs; otherwise fall back to python (a stock
+# Windows/python.org install only provides python.exe, not python3.exe).
+# Resolved by actually invoking the interpreter -- see setup's diagnostics
+# below for why a bare `command -v` check is not enough on Windows.
+PYTHON        ?= $(shell python3 -c "print(1)" >/dev/null 2>&1 && echo python3 || echo python)
+
 # Ref our changes are linted against (fork policy: upstream base is master).
 # If it does not exist locally (shallow CI checkouts), origin/$(BASE_REF) is
 # tried before giving up.
@@ -175,11 +181,11 @@ help:
 setup:
 	@echo "== setup: baseline tools =="
 	@missing=""; \
-	if command -v python3 >/dev/null 2>&1 && python3 -c "print(1)" >/dev/null 2>&1; then \
+	if $(PYTHON) -c "print(1)" >/dev/null 2>&1; then \
 	    :; \
-	elif command -v python3 >/dev/null 2>&1; then \
-	    echo "MISSING (required): python3 (found on PATH but would not execute)"; \
-	    case "$$(command -v python3)" in \
+	else \
+	    echo "MISSING (required): $(PYTHON) (found on PATH but would not execute)"; \
+	    case "$$(command -v $(PYTHON) 2>/dev/null)" in \
 	        */WindowsApps/*) \
 	            echo "  -> that path is the Microsoft Store execution-alias stub, not a real"; \
 	            echo "     Python interpreter -- it launches the Store listing instead of running."; \
@@ -187,12 +193,10 @@ setup:
 	            echo "     'winget install Python.Python.3.12') and make sure it comes before"; \
 	            echo "     WindowsApps on PATH, or disable the alias under Settings > Apps >"; \
 	            echo "     Advanced app settings > App execution aliases." ;; \
-	        *) echo "  -> 'python3 -c \"print(1)\"' failed; check your Python install." ;; \
+	        "") echo "  -> $(PYTHON) not found on PATH at all." ;; \
+	        *) echo "  -> '$(PYTHON) -c \"print(1)\"' failed; check your Python install." ;; \
 	    esac; \
-	    missing="$$missing python3"; \
-	else \
-	    echo "MISSING (required): python3"; \
-	    missing="$$missing python3"; \
+	    missing="$$missing python"; \
 	fi; \
 	command -v git     >/dev/null || { echo "MISSING (required): git";     missing="$$missing git"; }; \
 	if [ -n "$$missing" ]; then \
@@ -202,22 +206,22 @@ setup:
 	    echo "           git from git-scm.com or 'winget install Git.Git'"; \
 	    exit 1; \
 	fi; \
-	echo "setup: baseline OK (python $$(python3 -c 'import sys; print(sys.version.split()[0])'), git $$(git --version | awk '{print $$3}'))"
+	echo "setup: baseline OK (python $$($(PYTHON) -c 'import sys; print(sys.version.split()[0])'), git $$(git --version | awk '{print $$3}'))"
 	@echo "== setup: locating Unreal Engine =="
 	@if [ -n "$(UE_DIR)" ]; then \
-	    ver=$$(python3 -c "import json,sys; v=json.load(open(sys.argv[1])); print('%s.%s.%s' % (v.get('MajorVersion','?'), v.get('MinorVersion','?'), v.get('PatchVersion','?')))" "$(UE_DIR)/Engine/Build/Build.version" 2>/dev/null || echo "unknown"); \
+	    ver=$$($(PYTHON) -c "import json,sys; v=json.load(open(sys.argv[1])); print('%s.%s.%s' % (v.get('MajorVersion','?'), v.get('MinorVersion','?'), v.get('PatchVersion','?')))" "$(UE_DIR)/Engine/Build/Build.version" 2>/dev/null || echo "unknown"); \
 	    echo "setup: Unreal Engine FOUND at $(UE_DIR) (version $$ver) [platform: $(UE_PLATFORM)]"; \
-	    [ -f "$(RUNUAT)" ]  && echo "  ok   : $(notdir $(RUNUAT)) present"        || { echo "  ERROR: $(notdir $(RUNUAT)) missing at $(RUNUAT)"; exit 1; }; \
-	    [ -f "$(UBT_SH)" ]  && echo "  ok   : $(notdir $(UBT_SH)) (UnrealBuildTool wrapper) present" || { echo "  ERROR: $(UBT_SH) missing -- is this a $(UE_PLATFORM) UE install?"; exit 1; }; \
+	    [ -f "$(RUNUAT)" ]  && echo "  ok   : $$(basename "$(RUNUAT)") present"        || { echo "  ERROR: $$(basename "$(RUNUAT)") missing at $(RUNUAT)"; exit 1; }; \
+	    [ -f "$(UBT_SH)" ]  && echo "  ok   : $$(basename "$(UBT_SH)") (UnrealBuildTool wrapper) present" || { echo "  ERROR: $(UBT_SH) missing -- is this a $(UE_PLATFORM) UE install?"; exit 1; }; \
 	    if [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTool.dll" ] || [ -f "$(UE_DIR)/Engine/Binaries/DotNET/UnrealBuildTool.exe" ]; then \
 	        echo "  ok   : UnrealBuildTool binaries present"; \
 	    else \
 	        echo "  ERROR: UnrealBuildTool binaries not found under Engine/Binaries/DotNET/"; exit 1; \
 	    fi; \
 	    if [ -x "$(UED_CMD)" ] || [ -f "$(UED_CMD)" ]; then \
-	        echo "  ok   : $(notdir $(UED_CMD)) present (automation tests available)"; \
+	        echo "  ok   : $$(basename "$(UED_CMD)") present (automation tests available)"; \
 	    else \
-	        echo "  warn : $(notdir $(UED_CMD)) not found -- 'test' will fail until the editor is built"; \
+	        echo "  warn : $$(basename "$(UED_CMD)") not found -- 'test' will fail until the editor is built"; \
 	    fi; \
 	else \
 	    if [ -n "$${UE_ROOT:-}" ]; then \
@@ -314,7 +318,7 @@ test: _require-ue
 # -----------------------------------------------------------------------------
 validate:
 	@echo "== validate: static Unreal project checks (no UE required) =="
-	@python3 -c "$$VALIDATE_PY" "$(UE_PRJ_ROOT)"
+	@$(PYTHON) -c "$$VALIDATE_PY" "$(UE_PRJ_ROOT)"
 
 define VALIDATE_PY
 import json, os, re, sys
@@ -644,15 +648,15 @@ lint:
 	    [ -f "$$f" ] || continue; \
 	    case "$$f" in \
 	        *.uproject|*.uplugin|*.json|*.ndisplay) \
-	               python3 -c "import sys,json; json.load(open(sys.argv[1], encoding='utf-8-sig'))" "$$f" \
+	               $(PYTHON) -c "import sys,json; json.load(open(sys.argv[1], encoding='utf-8-sig'))" "$$f" \
 	                   || { echo "lint: invalid JSON in $$f"; fail=1; } ;; \
-	        *.py)  python3 -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
+	        *.py)  $(PYTHON) -c "import ast,sys; ast.parse(open(sys.argv[1]).read(), sys.argv[1])" "$$f" \
 	                   || { echo "lint: python syntax error in $$f"; fail=1; } ;; \
-	        *.xml) python3 -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
+	        *.xml) $(PYTHON) -c "import sys,xml.dom.minidom as m; m.parse(sys.argv[1])" "$$f" >/dev/null \
 	                   || { echo "lint: malformed XML in $$f"; fail=1; } ;; \
 	        *.yml|*.yaml) \
-	               if python3 -c "import yaml" 2>/dev/null; then \
-	                   python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
+	               if $(PYTHON) -c "import yaml" 2>/dev/null; then \
+	                   $(PYTHON) -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$$f" \
 	                       || { echo "lint: invalid YAML in $$f"; fail=1; }; \
 	               else \
 	                   echo "lint: note: PyYAML not installed -- skipping YAML check for $$f"; \
