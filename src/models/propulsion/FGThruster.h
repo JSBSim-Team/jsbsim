@@ -100,6 +100,12 @@ public:
   double GetReverserAngle(void) const {return ReverserAngle;}
   virtual double GetRPM(void) const { return 0.0; };
   virtual double GetEngineRPM(void) const { return 0.0; };
+  /** Returns the reaction torque fed back into the shaft driving this
+      thruster, if applicable (e.g. a rotor's aerodynamic torque). Thrusters
+      that have no such concept (propellers, nozzles, direct) return 0.0.
+      Used by FGGearbox to resolve a combined shaft's RPM from summed engine
+      torque minus this reaction torque. */
+  virtual double GetTorque(void) const { return 0.0; }
   double GetGearRatio(void) {return GearRatio; }
   virtual std::string GetThrusterLabels(int id, const std::string& delimeter);
   virtual std::string GetThrusterValues(int id, const std::string& delimeter);

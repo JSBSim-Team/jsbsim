@@ -45,6 +45,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGElectric.h"
 #include "FGPropeller.h"
+#include "FGGearbox.h"
 #include "input_output/FGXMLElement.h"
 
 using namespace std;
@@ -100,7 +101,15 @@ void FGElectric::Calculate(void)
   // Filters out negative powers when the propeller is not rotating.
   double power = HP * hptoftlbssec;
   if (RPM <= 0.1) power = max(power, 0.0);
-  Thruster->Calculate(power);
+  // A gearbox-fed engine hands its power to its channel instead of driving
+  // its (shared) Thruster directly -- the owning FGGearbox calls
+  // Thruster->Calculate() once, from summed channel torque, after every
+  // engine has run. See docs/interfaces/twin-engine-gearbox-interface.md
+  // section 3. Every other (non-gearbox) engine is unaffected.
+  if (FeedsGearbox())
+    GetGearbox()->SetChannelPower(EngineNumber, power);
+  else
+    Thruster->Calculate(power);
 
   RunPostFunctions();
 }

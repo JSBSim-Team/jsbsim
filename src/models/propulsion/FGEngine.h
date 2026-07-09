@@ -57,6 +57,7 @@ namespace JSBSim {
 
 class FGFDMExec;
 class FGThruster;
+class FGGearbox;
 class Element;
 class FGPropertyManager;
 
@@ -188,6 +189,29 @@ public:
   void LoadThruster(FGFDMExec* exec, Element *el);
   FGThruster* GetThruster(void) const {return Thruster;}
 
+  /** True if this engine feeds a shared FGGearbox channel instead of owning
+      (and driving) a personal FGThruster directly. When true, FGPropulsion::
+      Run() must not call this engine's Thruster->Calculate() itself -- the
+      owning FGGearbox does that once, from summed channel torque, after all
+      engines have computed their power for the frame.
+      See docs/interfaces/twin-engine-gearbox-interface.md */
+  bool FeedsGearbox(void) const {return Gearbox != nullptr;}
+  FGGearbox* GetGearbox(void) const {return Gearbox;}
+  int GetGearboxChannel(void) const {return GearboxChannel;}
+
+  /** Associates this engine with a shared gearbox channel. The engine no
+      longer owns its Thruster (the gearbox does, and deletes it); this
+      engine merely gets a non-owning pointer to the gearbox's shared
+      thruster so existing thrust/force/moment accessors keep working
+      unchanged. Called once, from FGPropulsion::Load(), for each <input
+      engine="x"> found under a <gearbox> element.
+      @param gearbox the shared gearbox this engine feeds
+      @param channel this engine's channel index within the gearbox
+      @param shared_thruster the gearbox's shared thruster, non-owning */
+  void AssignGearboxThruster(FGGearbox* gearbox, int channel,
+                              FGThruster* shared_thruster,
+                              FGPropertyManager* PropertyManager);
+
   unsigned int GetSourceTank(unsigned int i) const;
   size_t GetNumSourceTanks() const {return SourceTanks.size();}
 
@@ -221,6 +245,9 @@ protected:
   double FuelDensity;
 
   FGThruster* Thruster;
+  bool OwnsThruster;      // false when Thruster is a shared gearbox thruster
+  FGGearbox* Gearbox;     // non-null when this engine feeds a shared gearbox
+  int GearboxChannel;
 
   std::vector <int> SourceTanks;
 

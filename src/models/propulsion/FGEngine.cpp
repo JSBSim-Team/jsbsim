@@ -61,6 +61,10 @@ FGEngine::FGEngine(int engine_number, struct Inputs& input)
   MaxThrottle = 1.0;
   MinThrottle = 0.0;
   FuelDensity = 6.02;
+  Thruster = nullptr;
+  OwnsThruster = true;
+  Gearbox = nullptr;
+  GearboxChannel = -1;
   Debug(0);
 }
 
@@ -68,7 +72,9 @@ FGEngine::FGEngine(int engine_number, struct Inputs& input)
 
 FGEngine::~FGEngine()
 {
-  delete Thruster;
+  // A gearbox-fed engine does not own its Thruster -- the FGGearbox that
+  // owns the shared thruster is responsible for deleting it exactly once.
+  if (OwnsThruster) delete Thruster;
   Debug(1);
 }
 
@@ -85,7 +91,11 @@ void FGEngine::ResetToIC(void)
   FuelFlowRate = 0.0;
   FuelFreeze = false;
   FuelUsedLbs = 0.0;
-  Thruster->ResetToIC();
+  // A gearbox-fed engine may not have its shared thruster assigned yet the
+  // first time ResetToIC() runs (it is assigned after all engines and
+  // gearboxes have been parsed). A shared thruster gets reset once per
+  // feeding engine thereafter, which is harmless (idempotent).
+  if (Thruster) Thruster->ResetToIC();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,7 +217,12 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
       throw("Error loading engine " + Name + ". " + str);
     }
   } else {
-    cerr << "No thruster definition supplied with engine definition." << endl;
+    // No inline <thruster>: this is only valid if a <gearbox> claims this
+    // engine via <input engine="x">. FGPropulsion::Load() validates that
+    // after all <engine> and <gearbox> elements have been parsed, and fails
+    // the load with a clear message if neither applies to this engine.
+    cerr << "No thruster definition supplied with engine definition "
+         << "(expecting a <gearbox> to claim this engine)." << endl;
   }
 
   ResetToIC(); // initialize dynamic terms
@@ -225,8 +240,14 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
 
   property_name = base_property_name + "/set-running";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetRunning, &FGEngine::SetRunning );
-  property_name = base_property_name + "/thrust-lbs";
-  PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
+  // A gearbox-fed engine has no <thruster> child (Thruster is still null at
+  // this point -- it gets assigned, and this property tied, once its
+  // <gearbox> is parsed by FGPropulsion::Load()). All other engines are
+  // unaffected: Thruster is already set by LoadThruster() above.
+  if (Thruster) {
+    property_name = base_property_name + "/thrust-lbs";
+    PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
+  }
   property_name = base_property_name + "/fuel-flow-rate-pps";
   PropertyManager->Tie( property_name.c_str(), this, &FGEngine::GetFuelFlowRate);
   property_name = base_property_name + "/fuel-flow-rate-gph";
@@ -239,6 +260,24 @@ bool FGEngine::Load(FGFDMExec *exec, Element *engine_element)
   Debug(0);
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGEngine::AssignGearboxThruster(FGGearbox* gearbox, int channel,
+                                      FGThruster* shared_thruster,
+                                      FGPropertyManager* PropertyManager)
+{
+  Gearbox = gearbox;
+  GearboxChannel = channel;
+  Thruster = shared_thruster;
+  OwnsThruster = false;
+
+  // Deferred from Load(): the "thrust-lbs" tie could not be made there
+  // because this engine had no <thruster> child of its own at that time.
+  string base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNumber);
+  string property_name = base_property_name + "/thrust-lbs";
+  PropertyManager->Tie( property_name.c_str(), Thruster, &FGThruster::GetThrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

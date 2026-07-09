@@ -62,6 +62,9 @@
     <ClCompile Include="src\models\flight_control\FGWaypoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGGearbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\models\propulsion\FGTransmission.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -395,6 +398,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\flight_control\FGWaypoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGGearbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\propulsion\FGTransmission.h">

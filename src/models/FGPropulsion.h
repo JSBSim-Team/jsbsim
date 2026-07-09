@@ -53,6 +53,7 @@ namespace JSBSim {
 
 class FGTank;
 class FGEngine;
+class FGGearbox;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -134,6 +135,19 @@ public:
     return Engines[index];
   }
 
+  /// Retrieves the number of combining gearboxes defined for the aircraft.
+  /// Zero for every pre-existing (non-gearbox) aircraft configuration.
+  size_t GetNumGearboxes(void) const {return Gearboxes.size();}
+
+  /** Retrieves a gearbox object pointer from the list of gearboxes.
+      @param index the gearbox index within the vector container
+      @return the address of the specific gearbox, or zero if no such
+              gearbox is available */
+  auto GetGearbox(unsigned int index) const {
+    assert(index < Gearboxes.size());
+    return Gearboxes[index];
+  }
+
   /// Retrieves the number of tanks defined for the aircraft.
   size_t GetNumTanks(void) const {return Tanks.size();}
 
@@ -186,6 +200,7 @@ public:
 
 private:
   std::vector<std::shared_ptr<FGEngine>> Engines;
+  std::vector<std::shared_ptr<FGGearbox>> Gearboxes;
   std::vector<std::shared_ptr<FGTank>>   Tanks;
   int ActiveEngine;
   FGColumnVector3 vForces;

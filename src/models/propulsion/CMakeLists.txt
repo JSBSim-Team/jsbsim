@@ -11,6 +11,7 @@ set(SOURCES FGElectric.cpp
             FGTurboProp.cpp
             FGTransmission.cpp
             FGRotor.cpp
+            FGGearbox.cpp
             FGBrushLessDCMotor.cpp)
 
 set(HEADERS FGElectric.h
@@ -26,6 +27,7 @@ set(HEADERS FGElectric.h
             FGTurboProp.h
             FGTransmission.h
             FGRotor.h
+            FGGearbox.h
             FGBrushLessDCMotor.h)
 
 add_library(Propulsion OBJECT ${HEADERS} ${SOURCES})
