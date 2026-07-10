@@ -76,38 +76,7 @@ By providing a complete, turnkey solution, JSBSim allows researchers to bypass t
 
 JSBSim was designed from the ground up with several features in mind [@Berndt:2004:JSBSim]. One was to make the codebase easily comprehensible and expandable, and another was to completely separate the characteristics of a specific vehicle from a completely generic codebase. This was done in part to keep possibly proprietary information out of the codebase. With all specific model characteristics contained in data files, there is no need to recompile the code to model a different vehicle, or changes to the vehicle characteristics. This is a key design feature of JSBSim, which allows users to define an entire FDM using XML files—unlike, for example, [LaRCSim](https://ntrs.nasa.gov/citations/19950023906), where modifying aircraft parameters requires writing and re-compiling C code.
 
-To illustrate, here’s a “Hello World” view of a minimal JSBSim invocation that models a ball in low Earth orbit. First, here is the format of a simplified XML file containing the characteristics of the “vehicle” — here, just a ball — in the file named `minimal_ball.xml`:
-```xml
-<?xml version="1.0"?>
-<fdm_config name="Ball" version="2.0">
-  <metrics> ... </metrics>
-  <mass_balance> ... </mass_balance>
-  ...
-  <external_reactions> ... </external_reactions>
-  ...
-  <flight_control> ... </flight_control>
-  ...
-  <aerodynamics> ... </aerodynamics>
-  <output name="BallOut.csv" type="CSV" rate="1"> ... </output>
-</fdm_config>
-```
-The user also has to tell JSBSim, at time zero, where to place the ball in space, and how fast it is going, in which direction, etc. That is contained in the file, `reset00_v2.xml`:
-```xml
-<?xml version="1.0"?>
-<initialize name="reset00" version="2.0">
-  <position frame="ECEF"> ... </position>
-  <orientation unit="DEG" frame="LOCAL"> ... </orientation>
-  <velocity unit="FT/SEC" frame="BODY"> ... </velocity>
-  <attitude_rate unit="DEG/SEC" frame="ECI"> ... </attitude_rate>
-</initialize>
-```
-And here is how the batch version of JSBSim can be invoked from the command line:
-```sh
-./JSBSim --end=5400 --aircraft=minimal_ball --initfile=reset00_v2
-```
-where the directives `--aircraft` and `--initfile` instruct the program to read the above inputs. The execution results in the ball characteristics being read, initialized to the state specified in the `reset00_v2.xml` file, and in a state propagation being run from time zero to 5400 simulated seconds. The instantaneous position of the ball is logged at 1 Hz in a file named `BallOut.csv` (see the `<output>` block in the file `minimal_ball.xml`). The output file can be quickly read and examined using a wide range of commonly available scientific visualization tools.
-
-While this is a minimal example, JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems and large aerodynamic databases derived from wind tunnel testing — all specified through data files alone. In fact, the input metalanguage offers great flexibility in terms of defining properties within a specific FDM, with the availability of a large number of mathematical operators, interpolating functions from data arranged in tabular form, and access to the aircraft's metrics and state via the property system.
+JSBSim scales to highly complex aerospace vehicles — even rockets with GNC systems and large aerodynamic databases derived from wind tunnel testing — all specified through data files alone. In fact, the input metalanguage offers great flexibility in terms of defining properties within a specific FDM, with the availability of a large number of mathematical operators, interpolating functions from data arranged in tabular form, and access to the aircraft's metrics and state via the property system.
 In the following example the pitch moment due to elevator (linearly dependent on its deflection $\delta_{\mathrm{e}}$) is defined in terms of a control power coefficient $C_{m_{\delta_\mathrm{e}}}$, function of Mach number $M_{\infty}$ (see also \autoref{fig:Cm_delta:e}):
 ```xml
 <function name="aero/PitchMoment_elevator">
@@ -145,7 +114,7 @@ A key requirement of an FDM is accuracy. The JSBSim equations of motion were ver
 
 The library also leverages the broader open-source ecosystem by integrating mature and specialized components. For XML parsing, JSBSim relies on [Expat](https://libexpat.github.io/), a foundational and industry-standard library in the open-source community. Additionally, complex geodesic calculations required for high-fidelity trajectory modeling on the WGS84 oblate spheroid are performed using Charles Karney’s [GeographicLib](https://geographiclib.sourceforge.io/), ensuring precision in geospatial positioning and navigation [@Karney:2025:GeographicLib].
 
-JSBSim adheres to modern open-source Quality Assurance (QA) standards through an extensive Continuous Integration and Continuous Deployment. Every commit and Pull Request undergoes automated builds and testing across all major supported platforms. This pipeline also tracks code coverage to monitor testing depth. Furthermore, the CD workflow automates the release process.
+JSBSim adheres to modern open-source Quality Assurance standards through an extensive Continuous Integration and Continuous Deployment.
 
 # Research Impact Statement
 
