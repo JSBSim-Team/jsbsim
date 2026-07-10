@@ -307,7 +307,22 @@ bool FGPropulsion::GetSteadyState(void)
     // reach a steady state.
     in.TotalDeltaT = 0.5;
 
+    // Pass 1: engines that own their own thruster converge exactly as
+    // before this function was made gearbox-aware. A gearbox-fed engine's
+    // Calculate() only stages power into its FGGearbox channel (see
+    // FGEngine::FeedsGearbox()) and never advances the shared thruster, so
+    // its own GetThrust() would never change here and its forces/moments
+    // must not be summed in this pass -- summing them once per feeding
+    // engine would double-count a thruster shared by several engines,
+    // exactly the bug the Run() pass-2 split (see the comment there) exists
+    // to avoid. Gearbox-fed engines are converged together with their
+    // gearbox in pass 2 below instead.
+    //
+    // For every non-gearbox aircraft, FeedsGearbox() is always false, so
+    // this loop is exactly the original single-pass loop.
     for (auto& engine: Engines) {
+      if (engine->FeedsGearbox()) continue;
+
       steady=false;
       steady_count=0;
       j=0;
@@ -327,6 +342,42 @@ bool FGPropulsion::GetSteadyState(void)
       }
       vForces  += engine->GetBodyForces();  // sum body frame forces
       vMoments += engine->GetMoments();     // sum body frame moments
+    }
+
+    // Pass 2: each gearbox's feeding engines are driven to convergence
+    // together with the gearbox itself -- the shared thruster only ever
+    // advances when FGGearbox::Calculate() runs, so it must be called every
+    // iteration alongside its feeding engines' Calculate(), mirroring the
+    // two-pass split in FGPropulsion::Run(). Convergence is judged on the
+    // shared thruster's thrust, then its forces/moments are summed exactly
+    // once. Empty for every aircraft with no <gearbox> configured.
+    for (auto& gearbox: Gearboxes) {
+      FGThruster* thruster = gearbox->GetThruster();
+
+      steady=false;
+      steady_count=0;
+      j=0;
+      currentThrust = 0; lastThrust = -1;
+      while (!steady && j < 6000) {
+        for (auto& engine: Engines)
+          if (engine->GetGearbox() == gearbox.get()) engine->Calculate();
+
+        gearbox->Calculate(in.TotalDeltaT);
+
+        lastThrust = currentThrust;
+        currentThrust = thruster->GetThrust();
+        if (fabs(lastThrust-currentThrust) < 0.0001) {
+          steady_count++;
+          if (steady_count > 120) {
+            steady=true;
+          }
+        } else {
+          steady_count=0;
+        }
+        j++;
+      }
+      vForces  += thruster->GetBodyForces();  // sum body frame forces
+      vMoments += thruster->GetMoments();     // sum body frame moments
     }
 
     FDMExec->SetTrimStatus(TrimMode);
@@ -411,6 +462,11 @@ bool FGPropulsion::Load(Element* el)
   ReadingEngine = true;
   Element* engine_element = el->FindElement("engine");
   unsigned int numEngines = 0;
+  // Parallel to Engines, so the "no thruster" check below can attribute its
+  // error to the specific offending <engine> element rather than the whole
+  // <propulsion> element (matches FGGearbox's own validation, which always
+  // points at the precise element -- see FGGearbox.cpp).
+  std::vector<Element*> engine_elements;
 
   while (engine_element) {
     if (!ModelLoader.Open(engine_element)) return false;
@@ -469,6 +525,7 @@ bool FGPropulsion::Load(Element* el)
       return false;
     }
 
+    engine_elements.push_back(engine_element);
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
@@ -525,7 +582,7 @@ bool FGPropulsion::Load(Element* el)
   // <input>, or a <gearbox> that was simply forgotten.
   for (unsigned int i = 0; i < Engines.size(); i++) {
     if (!Engines[i]->GetThruster()) {
-      XMLLogException err(FDMExec->GetLogger(), el);
+      XMLLogException err(FDMExec->GetLogger(), engine_elements[i]);
       err << "Engine " << i << " (" << Engines[i]->GetName() << ") has no "
           << "<thruster> definition and is not referenced by any <gearbox> "
           << "<input engine=\"" << i << "\">.";

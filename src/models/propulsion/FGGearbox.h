@@ -219,7 +219,14 @@ private:
   struct Channel {
     FGEngine* Engine = nullptr;
     int EngineIndex = -1;
-    double GearRatio = 1.0;        // reporting only, mirrors FGRotor's own <gearratio>
+    double GearRatio = 1.0;        // reporting only (scoped simplification --
+                                    // all channels share ONE combined output
+                                    // shaft, see the load-time consistency
+                                    // check/warning in the constructor and
+                                    // docs/interfaces/
+                                    // twin-engine-gearbox-interface.md
+                                    // section 1); mirrors FGRotor's own
+                                    // <gearratio>
     double EngineMoment = 1.0;     // <enginemoment>, SLUG*FT2
     double EngineFriction = 0.0;   // <enginefriction>, converted to FT*LBS/SEC
     double ClutchCtrlNorm = 1.0;

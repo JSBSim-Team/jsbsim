@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<!--
+  Throwaway rotor config for the REQ-003 gearbox verification aircraft
+  (aircraft/gearbox_test). Copy of aircraft/ah1s/Engines/ah1s_rotor.xml with
+  <ExternalRPM>-1</ExternalRPM> added, which FGGearbox requires of any
+  <rotor> thruster it drives (see FGGearbox.cpp / twin-engine-gearbox-
+  interface.md) so FGRotor does not instantiate its own internal
+  single-engine FGTransmission.
+-->
+
+<rotor name="gearbox_test_rotor">
+
+  <ExternalRPM>-1</ExternalRPM>
+
+  <diameter  unit="FT">                  44.0 </diameter>
+  <numblades>                               2 </numblades>
+  <gearratio>                           20.37 </gearratio>
+  <nominalrpm>                          324.0 </nominalrpm> <!-- engine 6600rpm / 20.37  -->
+  <chord unit="FT">                      2.25 </chord>
+  <liftcurveslope>                        6.0 </liftcurveslope>
+  <flappingmoment unit="SLUG*FT2">     1382.0 </flappingmoment> <!-- mass approx. 8.57 slug -->
+  <twist>                              -0.175 </twist>
+  <massmoment>                           85.0 </massmoment> <!-- SLUG*FT, estimated from mass -->
+  <tiplossfactor>                         1.0 </tiplossfactor>
+  <polarmoment unit="SLUG*FT2">        2900.0 </polarmoment>
+  <inflowlag>                            0.09 </inflowlag>
+  <hingeoffset unit="FT">                3.30 </hingeoffset> <!-- hingeless 15% -->
+
+  <groundeffectexp>                     0.19 </groundeffectexp>
+  <groundeffectshift unit="FT">           10 </groundeffectshift>
+
+</rotor>

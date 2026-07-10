@@ -115,6 +115,25 @@ FGGearbox::FGGearbox(FGFDMExec* exec, Element* gearbox_element, int num,
       throw err;
     }
 
+    // Reject a second <input engine="x"> for the same engine within THIS
+    // <gearbox> element, before Channels grows to include it. This must be
+    // checked here, against the Channels built so far by this loop -- the
+    // engine->GetThruster() check below only becomes non-null once
+    // AssignGearboxThruster() runs for every channel, which happens after
+    // this whole <input>-parsing loop completes, so it cannot see a
+    // same-gearbox duplicate (it only catches an engine already claimed by
+    // its own inline <thruster> or an earlier <gearbox>).
+    for (const auto& existing : Channels) {
+      if (existing.EngineIndex == engine_index) {
+        XMLLogException err(exec->GetLogger(), input_element);
+        err << "<gearbox name=\"" << Name << "\"> has more than one <input "
+            << "engine=\"" << engine_index << "\"> element referencing the "
+            << "same engine. Each engine may appear in at most one <input> "
+            << "per <gearbox>.";
+        throw err;
+      }
+    }
+
     FGEngine* engine = engines[engine_index].get();
     // Per ADR-001 ("Explicitly out of scope"): FGGearbox only works with
     // power/torque-based engines. FGElectric and FGTurboProp are the only
@@ -170,6 +189,32 @@ FGGearbox::FGGearbox(FGFDMExec* exec, Element* gearbox_element, int num,
     throw err;
   }
 
+  // Per-channel <input><gearratio> is reporting-only (see Channel::GearRatio
+  // and docs/interfaces/twin-engine-gearbox-interface.md section 1): all
+  // channels physically share ONE combined output shaft/RPM (ThrusterRPM)
+  // by construction, so Calculate() derives every channel's engine-RPM
+  // feedback from that single shared value, never from a channel's own
+  // GearRatio. A <gearbox> whose <input> elements specify differing
+  // <gearratio> values would therefore silently mislead anything reading
+  // that value back (telemetry, docs, a future governor), even though the
+  // simulated physics is unaffected -- flag it at load time rather than
+  // leaving it a silent trap.
+  for (size_t i = 1; i < Channels.size(); i++) {
+    if (std::fabs(Channels[i].GearRatio - Channels[0].GearRatio) > 1e-9) {
+      FGXMLLogging log(exec->GetLogger(), gearbox_element, LogLevel::WARN);
+      log << "<gearbox name=\"" << Name << "\"> <input> elements specify "
+          << "differing <gearratio> values (engine " << Channels[0].EngineIndex
+          << ": " << Channels[0].GearRatio << ", engine "
+          << Channels[i].EngineIndex << ": " << Channels[i].GearRatio
+          << "). All channels in one <gearbox> share a single combined "
+          << "output shaft, so <gearratio> is reporting-only and every "
+          << "channel's engine-RPM feedback is derived from that one "
+          << "shared shaft RPM regardless of this value -- differing "
+          << "values here do not change the simulated physics, but will "
+          << "misreport intended mechanical ratio.";
+    }
+  }
+
   // The lowest referenced engine index is used as the shared thruster's
   // "engine number" for property-tie purposes (propulsion/engine[x]/
   // collective-ctrl-rad, rotor-rpm, etc.) -- the same slot a single dummy
@@ -179,6 +224,18 @@ FGGearbox::FGGearbox(FGFDMExec* exec, Element* gearbox_element, int num,
     if (c.EngineIndex < thruster_engine_num) thruster_engine_num = c.EngineIndex;
 
   // --- Construct the shared <thruster> ------------------------------------
+  //
+  // ACCEPTED RISK (noted in REQ-003 code review, not fixed here): Thruster
+  // is allocated via raw `new` below, before the rest of this constructor
+  // (AssignGearboxThruster/BindGearbox/BindChannel calls) runs. None of
+  // that remaining code can currently throw, so this is not a live leak
+  // today -- but it is fragile against a future edit that adds a throwing
+  // call between the `new` and the destructor becoming reachable (the
+  // destructor's `delete Thruster` never runs if the constructor exits via
+  // exception). If more logic is added here, prefer wrapping this in
+  // std::unique_ptr<FGThruster> (releasing it into the raw Thruster member
+  // only after everything that could throw has run) over patching around
+  // this note.
 
   Element* thruster_element = gearbox_element->FindElement("thruster");
   if (!thruster_element) {

@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<fdm_config name="gearbox-test" release="ALPHA" version="2.0">
+
+  <fileheader>
+    <author> jsbsim-programmer </author>
+    <description>
+      Throwaway two-engine gearbox test aircraft, built to verify the
+      REQ-003 review fixes: MAJOR #1 (FGPropulsion::GetSteadyState()
+      gearbox-awareness) and MAJOR #2 (duplicate &lt;input engine="x"&gt;
+      rejection at load time). Not intended to fly -- minimal/no
+      aerodynamics. See docs/requirements/REQ-003-fggearbox-core-class.md
+      and docs/requirements/REQ-004-gearbox-xml-parsing.md.
+    </description>
+  </fileheader>
+
+  <metrics>
+    <wingarea unit="FT2">  16.60 </wingarea>
+    <wingspan unit="FT">   10.75 </wingspan>
+    <chord unit="FT">       1.54 </chord>
+    <htailarea unit="FT2">   0.0 </htailarea>
+    <htailarm unit="FT">     0.0 </htailarm>
+    <vtailarea unit="FT2">   0.0 </vtailarea>
+    <vtailarm unit="FT">     0.0 </vtailarm>
+
+    <location name="AERORP" unit="IN">
+       <x> 176.0 </x>
+       <y>   0.0 </y>
+       <z>  55.0 </z>
+    </location>
+    <location name="EYEPOINT" unit="IN">
+       <x> 121.0 </x>
+       <y>   0.0 </y>
+       <z>  86.0 </z>
+    </location>
+    <location name="VRP" unit="IN">
+      <x>   0.0 </x>
+      <y>   0.0 </y>
+      <z>   0.0 </z>
+    </location>
+  </metrics>
+
+  <mass_balance>
+    <ixx unit="SLUG*FT2">    2593.0 </ixx>
+    <iyy unit="SLUG*FT2">   14320.0 </iyy>
+    <izz unit="SLUG*FT2">   12330.0 </izz>
+    <ixz unit="SLUG*FT2">       0.0 </ixz>
+    <emptywt unit="LBS">    8500.0 </emptywt>
+    <location name="CG" unit="IN">
+      <x>   172.0 </x>
+      <y>     0.0 </y>
+      <z>    75.0 </z>
+    </location>
+  </mass_balance>
+
+  <ground_reactions>
+    <contact type="BOGEY" name="skid_left">
+      <location unit="IN">
+        <x>    176.0 </x>
+        <y>    -42.0 </y>
+        <z>     -4.0 </z>
+      </location>
+      <static_friction>    0.85  </static_friction>
+      <dynamic_friction>   0.65  </dynamic_friction>
+      <rolling_friction>   0.65  </rolling_friction>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
+      <brake_group> NONE </brake_group>
+      <max_steer> 0 </max_steer>
+    </contact>
+    <contact type="BOGEY" name="skid_right">
+      <location unit="IN">
+        <x>    176.0 </x>
+        <y>     42.0 </y>
+        <z>     -4.0 </z>
+      </location>
+      <static_friction>    0.85  </static_friction>
+      <dynamic_friction>   0.65  </dynamic_friction>
+      <rolling_friction>   0.65  </rolling_friction>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
+      <brake_group> NONE </brake_group>
+      <max_steer> 0 </max_steer>
+    </contact>
+  </ground_reactions>
+
+  <propulsion>
+    <engine file="electric_1500hp">
+      <feed>0</feed>
+    </engine>
+    <engine file="electric_1500hp">
+      <feed>0</feed>
+    </engine>
+
+    <gearbox name="main-gearbox">
+      <!-- gearmoment/enginemoment scaled to match the reference ah1s
+           helicopter (same 1500 HP electric_1500hp engine, same rotor,
+           same 20.37 gearratio): FGRotor defaults its single-engine
+           Transmission's EngineMoment to 0.1*polarmoment
+           (aircraft/ah1s/Engines/ah1s_rotor.xml has polarmoment=2900, so
+           EngineMoment=290 there). This fixture originally used 5.0
+           SLUG*FT2 per channel (58x too small for a 1500 HP engine), which
+           let the P/omega torque spike at cold-start engine RPM~0 blow up
+           the shaft to unphysical RPM within GetSteadyState()'s large 0.5s
+           convergence-loop timestep: a fixture-tuning bug, not a
+           FGGearbox/GetSteadyState() defect (REQ-003 review MAJOR #1
+           verification notes). 145.0 per channel (x2 channels) combines to
+           the same 290 total as ah1s's single-engine case. -->
+      <gearmoment unit="SLUG*FT2"> 100.0 </gearmoment>
+      <maxbrakepower unit="HP">     50.0 </maxbrakepower>
+
+      <input engine="0">
+        <gearratio>                    20.37 </gearratio>
+        <enginemoment unit="SLUG*FT2"> 145.0 </enginemoment>
+        <enginefriction unit="HP">       1.0 </enginefriction>
+      </input>
+      <input engine="1">
+        <gearratio>                    20.37 </gearratio>
+        <enginemoment unit="SLUG*FT2"> 145.0 </enginemoment>
+        <enginefriction unit="HP">       1.0 </enginefriction>
+      </input>
+
+      <thruster file="gearbox_test_rotor">
+        <location unit="IN">
+          <x>   176.0 </x>
+          <y>     0.0 </y>
+          <z>   153.0 </z>
+        </location>
+        <orient unit="DEG">
+          <roll>   0.0 </roll>
+          <pitch> 90.0 </pitch>
+          <yaw>    0.0 </yaw>
+        </orient>
+        <sense> 1 </sense>
+      </thruster>
+    </gearbox>
+
+    <tank number="0" type="FUEL">
+      <location unit="IN">
+        <x>   146.0 </x>
+        <y>     0.0 </y>
+        <z>    38.0 </z>
+      </location>
+      <capacity unit="LBS">    890.0  </capacity>
+      <contents unit="LBS">      0.0  </contents>
+      <type>JP-5</type>
+    </tank>
+  </propulsion>
+
+  <flight_control name="gearbox-test fcs">
+  </flight_control>
+
+  <aerodynamics>
+  </aerodynamics>
+
+</fdm_config>

@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<fdm_config name="gearbox-test-duplicate-input" release="ALPHA" version="2.0">
+
+  <fileheader>
+    <author> jsbsim-programmer </author>
+    <description>
+      Malformed variant of aircraft/gearbox_test/gearbox_test.xml, used only
+      to verify the REQ-003 review MAJOR #2 fix: a second &lt;input
+      engine="0"&gt; within the SAME &lt;gearbox&gt; element must be
+      rejected at load time with a clear, actionable error. Deliberately
+      never loads successfully -- not part of the regular test-regression
+      suite (see scripts/test_gearbox_steadystate.xml for the aircraft this
+      is a broken copy of).
+    </description>
+  </fileheader>
+
+  <metrics>
+    <wingarea unit="FT2">  16.60 </wingarea>
+    <wingspan unit="FT">   10.75 </wingspan>
+    <chord unit="FT">       1.54 </chord>
+    <htailarea unit="FT2">   0.0 </htailarea>
+    <htailarm unit="FT">     0.0 </htailarm>
+    <vtailarea unit="FT2">   0.0 </vtailarea>
+    <vtailarm unit="FT">     0.0 </vtailarm>
+
+    <location name="AERORP" unit="IN">
+       <x> 176.0 </x>
+       <y>   0.0 </y>
+       <z>  55.0 </z>
+    </location>
+    <location name="EYEPOINT" unit="IN">
+       <x> 121.0 </x>
+       <y>   0.0 </y>
+       <z>  86.0 </z>
+    </location>
+    <location name="VRP" unit="IN">
+      <x>   0.0 </x>
+      <y>   0.0 </y>
+      <z>   0.0 </z>
+    </location>
+  </metrics>
+
+  <mass_balance>
+    <ixx unit="SLUG*FT2">    2593.0 </ixx>
+    <iyy unit="SLUG*FT2">   14320.0 </iyy>
+    <izz unit="SLUG*FT2">   12330.0 </izz>
+    <ixz unit="SLUG*FT2">       0.0 </ixz>
+    <emptywt unit="LBS">    8500.0 </emptywt>
+    <location name="CG" unit="IN">
+      <x>   172.0 </x>
+      <y>     0.0 </y>
+      <z>    75.0 </z>
+    </location>
+  </mass_balance>
+
+  <ground_reactions>
+    <contact type="BOGEY" name="skid_left">
+      <location unit="IN">
+        <x>    176.0 </x>
+        <y>    -42.0 </y>
+        <z>     -4.0 </z>
+      </location>
+      <static_friction>    0.85  </static_friction>
+      <dynamic_friction>   0.65  </dynamic_friction>
+      <rolling_friction>   0.65  </rolling_friction>
+      <spring_coeff unit="LBS/FT">        6375.0 </spring_coeff>
+      <damping_coeff unit="LBS/FT/SEC">   1275.0 </damping_coeff>
+      <brake_group> NONE </brake_group>
+      <max_steer> 0 </max_steer>
+    </contact>
+  </ground_reactions>
+
+  <propulsion>
+    <engine file="electric_1500hp">
+      <feed>0</feed>
+    </engine>
+    <engine file="electric_1500hp">
+      <feed>0</feed>
+    </engine>
+
+    <gearbox name="main-gearbox">
+      <gearmoment unit="SLUG*FT2"> 100.0 </gearmoment>
+      <maxbrakepower unit="HP">     50.0 </maxbrakepower>
+
+      <input engine="0">
+        <gearratio>                    20.37 </gearratio>
+        <enginemoment unit="SLUG*FT2">   5.0 </enginemoment>
+        <enginefriction unit="HP">       1.0 </enginefriction>
+      </input>
+      <!-- DELIBERATE BUG: engine="0" again, duplicate reference to the
+           same engine within this one gearbox. Must be rejected at load
+           time (REQ-003 review MAJOR #2), not silently create a second,
+           permanently zero-power channel that still contributes
+           EngineMoment/EngineFriction to the shared shaft. -->
+      <input engine="0">
+        <gearratio>                    20.37 </gearratio>
+        <enginemoment unit="SLUG*FT2">   5.0 </enginemoment>
+        <enginefriction unit="HP">       1.0 </enginefriction>
+      </input>
+
+      <thruster file="gearbox_test_rotor">
+        <location unit="IN">
+          <x>   176.0 </x>
+          <y>     0.0 </y>
+          <z>   153.0 </z>
+        </location>
+        <orient unit="DEG">
+          <roll>   0.0 </roll>
+          <pitch> 90.0 </pitch>
+          <yaw>    0.0 </yaw>
+        </orient>
+        <sense> 1 </sense>
+      </thruster>
+    </gearbox>
+
+    <tank number="0" type="FUEL">
+      <location unit="IN">
+        <x>   146.0 </x>
+        <y>     0.0 </y>
+        <z>    38.0 </z>
+      </location>
+      <capacity unit="LBS">    890.0  </capacity>
+      <contents unit="LBS">      0.0  </contents>
+      <type>JP-5</type>
+    </tank>
+  </propulsion>
+
+  <flight_control name="gearbox-test fcs">
+  </flight_control>
+
+  <aerodynamics>
+  </aerodynamics>
+
+</fdm_config>
