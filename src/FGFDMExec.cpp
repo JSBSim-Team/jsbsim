@@ -1138,7 +1138,7 @@ void FGFDMExec::PrintPropertyCatalog(void)
 {
   FGLogging out(LogLevel::STDOUT);
   out << endl
-      << "  " << LogFormat::BLUE << highint << LogFormat::UNDERLINE_ON
+      << "  " << LogFormat::BLUE << LogFormat::BOLD << LogFormat::UNDERLINE_ON
       << "Property Catalog for " << modelName << LogFormat::RESET << endl << endl;
   for (auto &catalogElm: PropertyCatalog)
     out << "    " << catalogElm << endl;
