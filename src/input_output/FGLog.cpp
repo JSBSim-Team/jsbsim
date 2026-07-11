@@ -226,6 +226,9 @@ void FGLogConsole::Format(LogFormat format) {
   case LogFormat::GREEN:
     buffer.append(fggreen);
     break;
+  case LogFormat::CYAN:
+    buffer.append(fgcyan);
+    break;
   case LogFormat::BOLD:
     buffer.append(highint);
     break;
