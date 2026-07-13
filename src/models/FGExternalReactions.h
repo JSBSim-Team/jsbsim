@@ -169,6 +169,7 @@ private:
   //unsigned int numForces;
   FGColumnVector3 vTotalForces;
   FGColumnVector3 vTotalMoments;
+  bool isBound = false;
 
   void bind(void);
   void Debug(int from) override;
