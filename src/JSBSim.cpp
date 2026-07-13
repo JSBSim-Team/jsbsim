@@ -415,7 +415,10 @@ int real_main(int argc, char* argv[])
     nohighlight = true;
 #endif
 
-  if (nohighlight) FDMExec->disableHighLighting();
+  if (nohighlight) {
+    auto logger = dynamic_cast<JSBSim::FGLogConsole*>(JSBSim::GetLogger().get());
+    if (logger) logger->DisableHighLighting();
+  }
 
   if (simulation_rate < 1.0 )
     FDMExec->Setdt(simulation_rate);
@@ -553,9 +556,13 @@ int real_main(int argc, char* argv[])
     }
   }
 
-  cout << endl << JSBSim::FGFDMExec::fggreen << JSBSim::FGFDMExec::highint
-       << "---- JSBSim Execution beginning ... --------------------------------------------"
-       << JSBSim::FGFDMExec::reset << endl << endl;
+  {
+    // Using FGLogging class so that the parameter --nohighlight can disable the formatting
+    JSBSim::FGLogging out(JSBSim::LogLevel::STDOUT);
+    out << endl << JSBSim::LogFormat::GREEN << JSBSim::LogFormat::BOLD
+        << "---- JSBSim Execution beginning ... --------------------------------------------"
+        << JSBSim::LogFormat::RESET << endl << endl;
+  }
 
   result = FDMExec->Run();  // MAKE AN INITIAL RUN
 

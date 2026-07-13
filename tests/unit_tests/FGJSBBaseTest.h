@@ -49,7 +49,6 @@ public:
 
   void testMisc() {
     std::string version = GetVersion();
-    disableHighLighting();
   }
 
   void testRandomNumberGenerator() {

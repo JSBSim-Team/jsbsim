@@ -29,6 +29,31 @@ import xml.etree.ElementTree as et
 
 import jsbsim
 
+
+class LogConsole(jsbsim.DefaultLogger):
+    def format(self, log_format:jsbsim.LogFormat):
+        if log_format == jsbsim.LogFormat.RED:
+            print("\x1b[31m\0", end="")
+        elif log_format == jsbsim.LogFormat.BLUE:
+            print("\x1b[34m\0", end="")
+        elif log_format == jsbsim.LogFormat.CYAN:
+            print("\x1b[36m\0", end="")
+        elif log_format == jsbsim.LogFormat.GREEN:
+            print("\x1b[32m\0", end="")
+        elif log_format == jsbsim.LogFormat.DEFAULT:
+            print("\x1b[39m\0", end="")
+        elif log_format == jsbsim.LogFormat.BOLD:
+            print("\x1b[1m\0", end="")
+        elif log_format == jsbsim.LogFormat.NORMAL:
+            print("\x1b[22m\0", end="")
+        elif log_format == jsbsim.LogFormat.UNDERLINE_ON:
+            print("\x1b[4m\0", end="")
+        elif log_format == jsbsim.LogFormat.UNDERLINE_OFF:
+            print("\x1b[24m\0", end="")
+        else:
+            print("\x1b[0m\0", end="")  # Reset
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("input", nargs='?', help="script file name")
@@ -117,8 +142,8 @@ def main():
 
     fdm = jsbsim.FGFDMExec(args.root, None)
 
-    if args.nohighlight:
-        fdm.disable_highlighting()
+    if not args.nohighlight:
+        jsbsim.set_logger(LogConsole())
 
     if args.outputpath:
         fdm.set_output_path(args.outputpath)
