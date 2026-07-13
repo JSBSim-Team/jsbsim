@@ -514,7 +514,7 @@ void FGMassBalance::Debug(int from)
       log << "    baseIxy: " << baseJ(1,2) << " slug-ft2" << endl;
       log << "    baseIxz: " << baseJ(1,3) << " slug-ft2" << endl;
       log << "    baseIyz: " << baseJ(2,3) << " slug-ft2" << endl;
-      log << "    Empty Weight: " << EmptyWeight << " lbm" << endl;
+      log << "    Empty Mass: " << EmptyWeight << " lbm" << endl;
       log << "    CG (x, y, z): " << vbaseXYZcg << endl;
       // ToDo: Need to add point mass outputs here
       for (unsigned int i=0; i<PointMasses.size(); i++) {
