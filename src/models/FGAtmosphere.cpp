@@ -55,10 +55,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
-  : FGModel(fdmex, "atmosphere"),
+  : FGModel(fdmex, "FGAtmosphere"),
     StdDaySLsoundspeed(sqrt(SHRatio*Reng0*StdDaySLtemperature))
 {
-  Name = "FGAtmosphere";
 
   bind();
   SGPropertyNode* root = PropertyManager->GetNode();

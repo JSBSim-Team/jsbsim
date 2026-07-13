@@ -61,6 +61,15 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Base class for all scheduled JSBSim models
+
+    Each model binds simulation/models/<Name>/enabled (default true), where Name
+    is the name passed to the constructor. Setting that property false skips the
+    model's Run(): its last state and its property bindings are preserved, which
+    is the property-tree mechanism by which an external system can replace a
+    model, for example a host physics engine owning FGGroundReactions. The
+    binding is made at construction, so a model that renames itself while
+    loading does not move its enable property.
+
     @author Jon S. Berndt
   */
 
@@ -73,11 +82,9 @@ class JSBSIM_API FGModel : public FGModelFunctions
 public:
 
   /** Constructor.
-      @param enableName optional stable canonical name for this model. When
-                        non-empty it binds simulation/models/<enableName>/enabled
-                        (default true); setting that property false skips this
-                        model's Run(). Empty means the model has no enable flag. */
-  explicit FGModel(FGFDMExec*, const std::string& enableName = "");
+      @param name the name of this model. It populates the member Name and binds
+                  simulation/models/<name>/enabled. */
+  FGModel(FGFDMExec*, const std::string& name);
   /// Destructor
   ~FGModel() override;
 
@@ -107,17 +114,8 @@ public:
 protected:
   unsigned int exe_ctr;
   unsigned int rate;
-  SGPropertyNode* ModelEnabled = nullptr;
+  bool enabled = true;
   std::string Name;
-
-  /** Bind this model's execution-enable flag to
-      simulation/models/<name>/enabled (default true), where name is the stable
-      canonical name passed to the constructor. When that property is set false,
-      Run() is skipped while the model's last state and property bindings are
-      preserved, the property-tree mechanism by which an external system can
-      replace a model, for example external propagation owning FGPropagate or a
-      host physics engine owning FGGroundReactions. */
-  void BindModelEnabled(const std::string& name);
 
   /** Uploads this model in memory.
       Uploads the model in memory if its contents are contained in a separate

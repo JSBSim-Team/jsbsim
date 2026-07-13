@@ -50,9 +50,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec, "aerodynamics")
+FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec, "FGAerodynamics")
 {
-  Name = "FGAerodynamics";
 
   AxisIdx["DRAG"]   = 0;
   AxisIdx["SIDE"]   = 1;

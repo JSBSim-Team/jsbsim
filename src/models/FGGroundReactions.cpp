@@ -52,11 +52,10 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) :
-   FGModel(fgex, "groundreactions"),
+   FGModel(fgex, "FGGroundReactions"),
    FGSurface(fgex),
    DsCmd(0.0)
 {
-  Name = "FGGroundReactions";
 
   bind();
 

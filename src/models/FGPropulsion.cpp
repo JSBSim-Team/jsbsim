@@ -72,9 +72,8 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec, "propulsion")
+FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec, "FGPropulsion")
 {
-  Name = "FGPropulsion";
 
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();

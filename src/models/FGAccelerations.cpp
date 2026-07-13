@@ -66,10 +66,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGAccelerations::FGAccelerations(FGFDMExec* fdmex)
-  : FGModel(fdmex, "accelerations")
+  : FGModel(fdmex, "FGAccelerations")
 {
   Debug(0);
-  Name = "FGAccelerations";
   gravTorque = false;
 
   vPQRidot.InitMatrix();

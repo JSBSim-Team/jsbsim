@@ -59,9 +59,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex, "auxiliary")
+FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex, "FGAuxiliary")
 {
-  Name = "FGAuxiliary";
   pt = FGAtmosphere::StdDaySLpressure;     // ISA SL pressure
   tat = FGAtmosphere::StdDaySLtemperature; // ISA SL temperature
   tatc = RankineToCelsius(tat);
