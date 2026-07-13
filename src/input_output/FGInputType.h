@@ -130,7 +130,6 @@ public:
 
 protected:
   unsigned int InputIdx;
-  bool enabled;
 
   void Debug(int from) override;
 };

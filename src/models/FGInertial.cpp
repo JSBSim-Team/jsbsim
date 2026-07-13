@@ -51,9 +51,8 @@ CLASS IMPLEMENTATION
 
 
 FGInertial::FGInertial(FGFDMExec* fgex)
-  : FGModel(fgex, "inertial")
+  : FGModel(fgex, "FGInertial")
 {
-  Name = "Earth";
 
   // Earth defaults
   double RotationRate    = 0.00007292115;

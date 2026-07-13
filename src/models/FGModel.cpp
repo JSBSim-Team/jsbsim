@@ -56,7 +56,8 @@ GLOBAL DECLARATIONS
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModel::FGModel(FGFDMExec* fdmex, const std::string& enableName)
+FGModel::FGModel(FGFDMExec* fdmex, const std::string& name)
+ : Name(name)
 {
   FDMExec     = fdmex;
 
@@ -68,7 +69,14 @@ FGModel::FGModel(FGFDMExec* fdmex, const std::string& enableName)
   exe_ctr     = 1;
   rate        = 1;
 
-  if (!enableName.empty()) BindModelEnabled(enableName);
+  // A model that is scheduled by FGFDMExec is named and gets an enable property.
+  // The input and output types are not scheduled: they are instantiated one per
+  // <input> and <output> element, so a shared property path would be tied more
+  // than once. They pass an empty name and are enabled through the per-instance
+  // property that FGOutputType::SetIdx already binds, or through Enable() and
+  // Disable().
+  if (!Name.empty())
+    PropertyManager->Tie("simulation/models/" + Name + "/enabled", &enabled);
 
   Debug(0);
 }
@@ -90,26 +98,11 @@ bool FGModel::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGModel::BindModelEnabled(const std::string& name)
-{
-  const string path = "simulation/models/" + name + "/enabled";
-  const bool existed = PropertyManager->HasNode(path);
-  ModelEnabled = PropertyManager->GetNode(path, true);
-  // Default to enabled; a freshly created node would otherwise read false.
-  if (!existed && ModelEnabled) ModelEnabled->setBoolValue(true);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 bool FGModel::Run(bool Holding)
 {
   FGModel::Debug(2);
 
-  // A model whose simulation/models/<name>/enabled property is false is skipped
-  // entirely: its Run() body does not execute, but its last state and property
-  // bindings are preserved so an external system can replace it, for example
-  // external propagation or host-owned ground reactions.
-  if (ModelEnabled && !ModelEnabled->getBoolValue()) return true;
+  if (!enabled) return true;
 
   if (rate == 1) return false; // Fast exit if nothing to do
 

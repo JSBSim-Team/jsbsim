@@ -73,9 +73,8 @@ static inline double square_signed (double value)
 constexpr double sqr(double x) { return x*x; }
 
 FGWinds::FGWinds(FGFDMExec* fdmex)
-  : FGModel(fdmex, "winds"), generator(fdmex->GetRandomGenerator())
+  : FGModel(fdmex, "FGWinds"), generator(fdmex->GetRandomGenerator())
 {
-  Name = "FGWinds";
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = TurbDirection = 0.0;
   SetTurbType( ttMilspec );

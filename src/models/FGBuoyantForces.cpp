@@ -49,9 +49,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGBuoyantForces::FGBuoyantForces(FGFDMExec* FDMExec) : FGModel(FDMExec, "buoyantforces")
+FGBuoyantForces::FGBuoyantForces(FGFDMExec* FDMExec) : FGModel(FDMExec, "FGBuoyantForces")
 {
-  Name = "FGBuoyantForces";
 
   NoneDefined = true;
 
