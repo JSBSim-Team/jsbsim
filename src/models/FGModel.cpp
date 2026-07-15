@@ -102,14 +102,13 @@ bool FGModel::Run(bool Holding)
 {
   FGModel::Debug(2);
 
-  if (!enabled) return true;
-
-  if (rate == 1) return false; // Fast exit if nothing to do
+  if (rate == 1) return !enabled; // Fast exit if nothing to do
 
   if (exe_ctr >= rate) exe_ctr = 0;
 
-  if (exe_ctr++ == 1) return false;
-  else              return true;
+  if (exe_ctr++ == 1) return !enabled;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
