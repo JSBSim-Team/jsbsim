@@ -55,9 +55,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
+FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex, "FGOutput")
 {
-  Name = "FGOutput";
   enabled = true;
 
   PropertyManager->Tie<FGOutput, int>("simulation/force-output", this, nullptr,
@@ -97,7 +96,6 @@ bool FGOutput::Run(bool Holding)
   if (FDMExec->GetTrimStatus()) return true;
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
-  if (!enabled) return true;
 
   for (auto output: OutputTypes)
     output->Run(Holding);

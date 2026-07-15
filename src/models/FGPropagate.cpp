@@ -81,9 +81,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "FGPropagate")
 {
-  Name = "FGPropagate";
 
   Inertial = FDMExec->GetInertial();
 

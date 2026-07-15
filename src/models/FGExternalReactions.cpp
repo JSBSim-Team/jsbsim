@@ -50,7 +50,7 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
+FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex, "FGExternalReactions")
 {
   Debug(0);
 }

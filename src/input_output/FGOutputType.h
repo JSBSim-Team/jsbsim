@@ -196,7 +196,6 @@ protected:
   int SubSystems;
   std::vector <FGPropertyValue*> OutputParameters;
   std::vector <std::string> OutputCaptions;
-  bool enabled;
 
   std::shared_ptr<FGAerodynamics> Aerodynamics;
   std::shared_ptr<FGAuxiliary> Auxiliary;
