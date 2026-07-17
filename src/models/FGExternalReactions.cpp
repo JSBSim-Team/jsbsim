@@ -85,7 +85,13 @@ bool FGExternalReactions::Load(Element* el)
 
   PostLoad(el, FDMExec);
 
-  if (!Forces.empty()) bind();
+  // Load() is public and may be called more than once to add further forces, so
+  // the properties must only be tied the first time. Tying them again fails and
+  // logs an error for each one.
+  if (!Forces.empty() && !isBound) {
+    bind();
+    isBound = true;
+  }
 
   return true;
 }

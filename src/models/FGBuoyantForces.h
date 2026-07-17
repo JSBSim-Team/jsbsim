@@ -178,6 +178,7 @@ private:
   FGColumnVector3 vXYZgasCell_arm; // [lbs in]
 
   bool NoneDefined;
+  bool isBound = false;
 
   void bind(void);
 
