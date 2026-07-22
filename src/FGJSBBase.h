@@ -39,9 +39,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <float.h>
-#include <queue>
-#include <string>
-#include <cmath>
 #include <stdexcept>
 #include <random>
 #include <chrono>
@@ -144,38 +141,9 @@ public:
     }
   };
 
-  ///@name JSBSim console output highlighting terms.
-  //@{
-  /// highlights text
-  static char highint[5];
-  /// low intensity text
-  static char halfint[5];
-  /// normal intensity text
-  static char normint[6];
-  /// resets text properties
-  static char reset[5];
-  /// underlines text
-  static char underon[5];
-  /// underline off
-  static char underoff[6];
-  /// blue text
-  static char fgblue[6];
-  /// cyan text
-  static char fgcyan[6];
-  /// red text
-  static char fgred[6];
-  /// green text
-  static char fggreen[6];
-  /// default text
-  static char fgdef[6];
-  //@}
-
   /** Returns the version number of JSBSim.
   *   @return The version number of JSBSim. */
   static const std::string& GetVersion(void) {return JSBSim_version;}
-
-  /// Disables highlighting in the console output.
-  void disableHighLighting(void);
 
   static short debug_lvl;
 

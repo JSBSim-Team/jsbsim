@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<fdm_config version="2.0" release="BETA">
+  <fileheader/>
+  <planet name="NASA EOM Earth">
+    <equatorial_radius>20925646.9951</equatorial_radius>
+    <semiminor_axis>20855487.2626682</semiminor_axis>
+    <rotation_rate>7.29211302386770E-05</rotation_rate>
+    <J2>1.08262982000000E-03</J2>
+  </planet>
+  <metrics/>
+  <mass_balance>
+    <ixx unit="SLUG*FT2"> 0.001894220 </ixx>
+    <iyy unit="SLUG*FT2"> 0.006211019 </iyy>
+    <izz unit="SLUG*FT2"> 0.007194665 </izz>
+    <emptywt unit="SLUG"> 0.155404754 </emptywt>
+  </mass_balance>
+  <ground_reactions/>
+  <aerodynamics/>
+</fdm_config>

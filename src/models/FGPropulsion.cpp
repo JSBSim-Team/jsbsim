@@ -565,7 +565,8 @@ string FGPropulsion::GetPropulsionTankReport()
       tankdesc += "Unknown tank type";
     }
     if (!tankname.empty()) tankdesc += ")";
-    outstream << highint << left << setw(4) << i++ << setw(30) << tankdesc << normint
+    outstream << fixed << setprecision(1)
+      << left << setw(4) << i++ << setw(30) << tankdesc
       << right << setw(12) << tank->GetContents() << setw(8) << tank->GetXYZ(eX)
       << setw(8) << tank->GetXYZ(eY) << setw(8) << tank->GetXYZ(eZ)
       << setw(12) << tank->GetIxx() << setw(12) << tank->GetIyy()

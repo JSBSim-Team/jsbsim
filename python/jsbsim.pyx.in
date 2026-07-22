@@ -633,10 +633,6 @@ cdef class FGJSBBase:
         """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
 
-    def disable_highlighting(self) -> None:
-        """@Dox(JSBSim::FGJSBBase::disableHighLighting)"""
-        self.baseptr.disableHighLighting()
-
 cdef class FGPropulsion:
     """@Dox(JSBSim::FGPropulsion)"""
 

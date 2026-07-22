@@ -227,12 +227,10 @@ void FGInputSocket::Read(bool Holding)
           socket->Reply("Unknown property\r\n");
           break;
         } else if (!node->hasValue()) {
-          if (Holding) { // if holding can query property list
-            string query = FDMExec->QueryPropertyCatalog(argument, "\r\n");
-            socket->Reply(query);
-          } else {
-            socket->Reply("Must be in HOLD to search properties\r\n");
-          }
+          // Not a leaf: return the matching entries from the (static) property
+          // catalog. This is a read-only lookup, so it no longer requires the
+          // client to place the sim in HOLD first.
+          socket->Reply(FDMExec->QueryPropertyCatalog(argument, "\r\n"));
         } else {
           ostringstream buf;
           buf << argument << " = " << setw(12) << setprecision(6) << node->getDoubleValue() << '\r' << endl;

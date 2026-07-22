@@ -188,7 +188,7 @@ parse_name (const string &path, int &i)
       name = ".";
     }
     if (i < max && path[i] != '/')
-      throw string("Illegal character after " + name);
+      throw string("Illegal character after " + name + " in '" + path + "'");
   }
 
   else if (isalpha(path[i]) || path[i] == '_') {
@@ -204,7 +204,7 @@ parse_name (const string &path, int &i)
       } else if (path[i] == '[' || path[i] == '/') {
         break;
       } else {
-        throw string("name may contain only ._- and alphanumeric characters");
+        throw string("name may contain only ._- and alphanumeric characters in '" + path + "'");
       }
       i++;
     }
@@ -212,7 +212,7 @@ parse_name (const string &path, int &i)
 
   else {
     if (name.size() == 0)
-      throw string("name must begin with alpha or '_'");
+      throw string("name must begin with alpha or '_' in '" + path + "'");
   }
 
   return name;
@@ -245,7 +245,7 @@ parse_index (const string &path, int &i)
     }
   }
 
-  throw string("unterminated index (looking for ']')");
+  throw string("unterminated index (looking for ']') in '" + path + "'");
 }
 
 /**

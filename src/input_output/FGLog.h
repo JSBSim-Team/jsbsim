@@ -209,8 +209,10 @@ public:
   void Format(LogFormat format) override;
   void Flush(void) override;
   ~FGLogConsole() override { Flush(); }
+  void DisableHighLighting(void) { highlighting = false; }
 
 protected:
+  bool highlighting = true;
   std::string buffer;
   LogLevel min_level = LogLevel::BULK;
 };

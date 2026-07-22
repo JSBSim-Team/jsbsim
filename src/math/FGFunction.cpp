@@ -54,12 +54,11 @@ constexpr unsigned int MaxArgs = 9999;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-class WrongNumberOfArguments : public BaseException
+class WrongNumberOfArguments : public XMLLogException
 {
 public:
-  WrongNumberOfArguments(const string &msg, const vector<FGParameter_ptr> &p,
-                         Element* el)
-    : BaseException(msg), Parameters(p), element(el) {}
+  WrongNumberOfArguments(const vector<FGParameter_ptr> &p, Element* el)
+    : XMLLogException(el), Parameters(p), element(el) {}
   size_t NumberOfArguments(void) const { return Parameters.size(); }
   FGParameter* FirstParameter(void) const { return *(Parameters.cbegin()); }
   const Element* GetElement(void) const { return element; }
@@ -113,11 +112,10 @@ public:
     : FGFunction(pm), f(_f)
   {
     if (el->GetNumElements() != 0) {
-      ostringstream buffer;
-      buffer << el->ReadFrom() << fgred << highint
-             << "<" << el->GetName() << "> should have no arguments." << reset
-             << endl;
-      throw WrongNumberOfArguments(buffer.str(), Parameters, el);
+      WrongNumberOfArguments err(Parameters, el);
+      err << LogFormat::RED << LogFormat::BOLD
+          << "<" << el->GetName() << "> should have no arguments.\n" << LogFormat::RESET;
+      throw err;
     }
 
     bind(el, Prefix);
@@ -245,11 +243,11 @@ FGFunction::FGFunction(FGFDMExec* fdmex, Element* el, const string& prefix,
 void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
 {
   if (Parameters.size() < _min) {
-    ostringstream buffer;
-    buffer << el->ReadFrom() << fgred << highint
-           << "<" << el->GetName() << "> should have at least " << _min
-           << " argument(s)." << reset << endl;
-    throw WrongNumberOfArguments(buffer.str(), Parameters, el);
+    WrongNumberOfArguments err(Parameters, el);
+    err << LogFormat::RED << LogFormat::BOLD
+        << "<" << el->GetName() << "> should have at least " << _min
+        << " argument(s).\n" << LogFormat::RESET;
+    throw err;
   }
 }
 
@@ -258,11 +256,11 @@ void FGFunction::CheckMinArguments(Element* el, unsigned int _min)
 void FGFunction::CheckMaxArguments(Element* el, unsigned int _max)
 {
   if (Parameters.size() > _max) {
-    ostringstream buffer;
-    buffer << el->ReadFrom() << fgred << highint
-           << "<" << el->GetName() << "> should have no more than " << _max
-           << " argument(s)." << reset << endl;
-    throw WrongNumberOfArguments(buffer.str(), Parameters, el);
+    WrongNumberOfArguments err(Parameters, el);
+    err << LogFormat::RED << LogFormat::BOLD
+        << "<" << el->GetName() << "> should have no more than " << _max
+        << " argument(s).\n" << LogFormat::RESET;
+    throw err;
   }
 }
 

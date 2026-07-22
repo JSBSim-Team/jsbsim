@@ -51,6 +51,17 @@ thread_local FGLogger_ptr GlobalLogger = std::make_shared<FGLogConsole>();
 void SetLogger(FGLogger_ptr logger) { GlobalLogger = logger; }
 FGLogger_ptr GetLogger(void) { return GlobalLogger; }
 
+const char highint[5]  = {27, '[', '1', 'm', '\0'      };
+const char halfint[5]  = {27, '[', '2', 'm', '\0'      };
+const char normint[6]  = {27, '[', '2', '2', 'm', '\0' };
+const char reset[5]    = {27, '[', '0', 'm', '\0'      };
+const char underon[5]  = {27, '[', '4', 'm', '\0'      };
+const char underoff[6] = {27, '[', '2', '4', 'm', '\0' };
+const char fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
+const char fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
+const char fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
+const char fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
+const char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -202,32 +213,40 @@ void FGLogConsole::Flush(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLogConsole::Format(LogFormat format) {
+  if (!highlighting) return;
+
   switch (format)
   {
   case LogFormat::RED:
-    buffer.append(FGJSBBase::fgred);
+    buffer.append(fgred);
     break;
   case LogFormat::BLUE:
-    buffer.append(FGJSBBase::fgblue);
+    buffer.append(fgblue);
+    break;
+  case LogFormat::GREEN:
+    buffer.append(fggreen);
+    break;
+  case LogFormat::CYAN:
+    buffer.append(fgcyan);
     break;
   case LogFormat::BOLD:
-    buffer.append(FGJSBBase::highint);
+    buffer.append(highint);
     break;
   case LogFormat::NORMAL:
-    buffer.append(FGJSBBase::normint);
+    buffer.append(normint);
     break;
   case LogFormat::UNDERLINE_ON:
-    buffer.append(FGJSBBase::underon);
+    buffer.append(underon);
     break;
   case LogFormat::UNDERLINE_OFF:
-    buffer.append(FGJSBBase::underoff);
+    buffer.append(underoff);
     break;
   case LogFormat::DEFAULT:
-    buffer.append(FGJSBBase::fgdef);
+    buffer.append(fgdef);
     break;
   case LogFormat::RESET:
   default:
-    buffer.append(FGJSBBase::reset);
+    buffer.append(reset);
     break;
   }
 }

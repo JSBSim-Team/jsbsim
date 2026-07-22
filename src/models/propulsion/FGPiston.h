@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
   <cylinder-head-mass unit="{KG | LBS}"> {number} </cylinder-head-mass>
   <bsfc unit="{LBS/HP*HR | "KG/KW*HR"}"> {number} </bsfc>
   <volumetric-efficiency> {number} </volumetric-efficiency>
-  <dynamic-fmep unit="{INHG | PA | ATM}"> {number} </dynamic-fmep>
+  <dynamic-fmep unit="{INHG | PA | ATM}"> {number} </dynamic-fmep>  - Note: Units are really Pressure/(velocity in m/s)
   <static-fmep unit="{INHG | PA | ATM}"> {number} </static-fmep>
   <numboostspeeds> {number} </numboostspeeds>
   <boostoverride> {0 | 1} </boostoverride>

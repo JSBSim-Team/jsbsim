@@ -102,6 +102,8 @@ Element::Element(const string& nm)
     convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
     convert["SLUG"]["KG"] = 14.59390;
     convert["KG"]["SLUG"] = 1.0/convert["SLUG"]["KG"];
+    convert["SLUG"]["LBS"] = convert["SLUG"]["KG"]/convert["LBS"]["KG"];
+    convert["LBS"]["SLUG"] = 1.0/convert["SLUG"]["LBS"];
     // Moments of Inertia
     convert["SLUG*FT2"]["KG*M2"] = 1.35594;
     convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
