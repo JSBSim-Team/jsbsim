@@ -116,7 +116,7 @@ jobs:
             build/Testing/Temporary/CTestCostData.txt
           key: ${{ runner.os }}-3.10-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
@@ -260,7 +260,7 @@ jobs:
         shared_libs: [ON, OFF]
     steps:
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Checkout JSBSim
@@ -323,7 +323,7 @@ jobs:
             build\Testing\Temporary\CTestCostData.txt
           key: ${{ runner.os }}-3.10-${{ hashFiles('tests\CMakeLists.txt', 'python\requirements.txt') }}
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
@@ -469,7 +469,7 @@ jobs:
             build/Testing/Temporary/CTestCostData.txt
           key: macos14-${{ hashFiles('tests/CMakeLists.txt', 'python/requirements.txt') }}
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
@@ -550,7 +550,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
@@ -613,7 +613,7 @@ jobs:
         with:
           package-dir: ${{ env.SDIST_PATH }}
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
@@ -718,7 +718,7 @@ jobs:
 
       # PyPI deployment
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: PyPI deployment
@@ -833,7 +833,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install doxygen graphviz
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.10'
       - name: Install Python packages
