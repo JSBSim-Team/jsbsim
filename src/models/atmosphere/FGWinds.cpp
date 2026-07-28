@@ -75,7 +75,6 @@ constexpr double sqr(double x) { return x*x; }
 FGWinds::FGWinds(FGFDMExec* fdmex)
   : FGModel(fdmex, "FGWinds"), generator(fdmex->GetRandomGenerator())
 {
-
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = TurbDirection = 0.0;
   SetTurbType( ttMilspec );
   TurbGain = 1.0;

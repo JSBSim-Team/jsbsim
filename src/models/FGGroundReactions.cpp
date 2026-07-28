@@ -56,7 +56,6 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) :
    FGSurface(fgex),
    DsCmd(0.0)
 {
-
   bind();
 
   Debug(0);

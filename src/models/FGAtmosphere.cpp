@@ -58,7 +58,6 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex)
   : FGModel(fdmex, "FGAtmosphere"),
     StdDaySLsoundspeed(sqrt(SHRatio*Reng0*StdDaySLtemperature))
 {
-
   bind();
   SGPropertyNode* root = PropertyManager->GetNode();
   atmosphere_node = root->getNode("atmosphere");

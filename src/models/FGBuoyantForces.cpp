@@ -51,7 +51,6 @@ CLASS IMPLEMENTATION
 
 FGBuoyantForces::FGBuoyantForces(FGFDMExec* FDMExec) : FGModel(FDMExec, "FGBuoyantForces")
 {
-
   NoneDefined = true;
 
   vTotalForces.InitMatrix();

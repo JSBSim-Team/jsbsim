@@ -74,7 +74,6 @@ CLASS IMPLEMENTATION
 
 FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec, "FGPropulsion")
 {
-
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
   DumpRate = 0.0;

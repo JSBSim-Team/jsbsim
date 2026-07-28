@@ -52,7 +52,6 @@ CLASS IMPLEMENTATION
 
 FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec, "FGAerodynamics")
 {
-
   AxisIdx["DRAG"]   = 0;
   AxisIdx["SIDE"]   = 1;
   AxisIdx["LIFT"]   = 2;
