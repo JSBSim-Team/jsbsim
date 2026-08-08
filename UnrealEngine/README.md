@@ -21,16 +21,19 @@ Linux and Mac steps found here: [README-Unix](https://github.com/JSBSim-Team/jsb
 Windows users continue below: 
 
 ### 1. Install Unreal Engine 5.5 or higher
-The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](https://github.com/JSBSim-Team/jsbsim/blob/master/UnrealEngine/README.md#updates) <br>
+The project is compatible with engine versions **UE5.5 to UE5.8**. For prior engine compatibility please see : [Update Note](#updates) <br>
+
+
 The procedure to install Unreal Engine is described here : https://www.unrealengine.com/en-US/download <br>
 For hobbyists, the [standard license](https://www.unrealengine.com/en-US/license) applies, and is 100% free! 
 
 In order to build C++ plugins for Unreal Engine in Windows, you need Visual Studio Build Tools, MSVC toolchain, Windows SDK, and .NET. Visual Studio Community can be used (It's free). You can setup Visual Studio and the required tools for Unreal using the following procedure:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine/)
 
+Please note: <br>
+UE5.7 requires toolchain MSVC v14.44, which might not be included in the default tools release of Visual Studio, it can be manually installed.
 UE5.5 and UE5.6 require toolchain MSVC v14.38, which is not the default tool in the latest release of Visual Studio, so it must be manually selected for install: `MSVC v143 x64/x86 build tools (v14.38-17.X)`
 
-UE5.7 and UE5.8 require toolchain MSVC v14.44, which might not be included in the default tools release of Visual Studio, it can be manually installed.
 
 Optional extension setup:
 [https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/](https://dev.epicgames.com/documentation/en-us/unreal-engine/using-the-unrealvs-extension-for-unreal-engine-cplusplus-projects/)
@@ -74,7 +77,7 @@ Once done, the UE Editor will open. If you get an error message, build manually 
 Right click on the  `UnrealEngine\UEReferenceApp.uproject` 
 A contextual menu will appear. Select "Generate Visual Studio project files"
 After a short time, a new solution file `UEReferenceApp.sln` will appear beside the uproject file. 
-Open it, and if a prompt appears to change Windows SDK version or if the prompt information is empty, just click Ok. Then you can Build the UEReferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
+Open 'UEReferenceApp.sln', then you can Build the UEReferenceApp or select "Build Startup project" from the UnrealVS Extension bar. 
 
 ## Learning more about Unreal Engine
 You can find many free learning resources on Unreal Engine Developer Community portal : 
@@ -145,18 +148,18 @@ Gamepad Layout
 |Time of day - Dusk Preset| PAGE UP|
 
 ## Updates:
-Version 1.2 (Latest Update)
+Version 1.2
 - Project updated to Enhanced Input and based to UE5.5
 - For prior engine version compatibility or to use legacy engine inputs, please use the branch which supports versions UE5.0 - UE5.7 [UE5.0 Legacy Input](https://github.com/gallonmate/jsbsim/tree/UE5.0-5.7-Legacy-Input-Controls) <br>
 - Added a follow camera
 - Added "Auto return to center" keyboard control, for easier flying, quicker reaction towards full deflection, etc. Enabled by double pressing NUM 5
 - Added aircraft selection list to the details panel for the BP_Airliner, new aircraft can be add to the list manually or automatically with Right Click-Run tool in AircraftPicker folder.
-- Prior updates that weren't noted here: Added Wind Type selection and blueprint node. Added Linux and Mac Support. Various bug fixes.
+- Prior updates that didn't make the readme until now: Added Wind Type selection with blueprint node. Added Linux and Mac Support. Various bug fixes.
   
 Version 1.01
- - The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
- - Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
--  Added new functions and blueprint nodes to access any JSBSim property. This is useful for getting and setting commands which are not currently coded in the plugin. See the next section.
+- The JSBSim interface is now updated to have a pseudo fixed rate of 120hz, independent of game framerate. This is done by stepping the sim x times per game frame.
+- Reduced the project/repo size by lowering aircraft model quality and removed unused assets. (full quality aircraft model in HD download link above)
+- Added new functions and blueprint nodes to access any JSBSim property. This is useful for getting and setting commands which are not currently coded in the plugin. See the next section.
 
 ## Extended Commands and Properties
  - JSBSim has a Property Manager to keep track of all properties, settings, and commands.
