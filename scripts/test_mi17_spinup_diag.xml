@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 <runscript
-       name="Mi-17 ground run (long-window spin-up trace)"
+       name="Mi-17 ground run (15 minute long-window spin-up/stability trace)"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
 
   <description>
-    Ground run: engines started, collective pinned flat (0.0, and the
-    fcs/adj/collective-bias default zeroed too) so the aircraft stays
-    grounded/chocked while the rotor spins up, over a 60s window with
-    reports every 5-10s. Isolates propulsion/RPM spin-up behavior from
-    aerodynamic lift/ground-contact instability -- this is what
-    exposed the calibration bugs fixed alongside this script (see
-    mi17_main_engine_1.xml/mi17_main_engine_2.xml's EnginePowerRPM_N1
-    comment, and mi17.xml's gearbox enginemoment/gearmoment comment):
-    without pinning collective, an uncontrolled liftoff on a still-
-    misbehaving engine model was indistinguishable from a genuine
-    ground-contact/flight-dynamics bug. Useful again for any future
-    propulsion retuning.
+    Ground run: engines started, throttle held full, collective pinned
+    flat (0.0, and the fcs/adj/collective-bias default zeroed too) so
+    the aircraft stays grounded/chocked while the rotor spins up, over
+    a 900s (15 minute) window with reports every 5-10s through the
+    first minute (transient) then every 60s out to 900s (long-term
+    stability, including ITT creep -- a real ground-run concern this
+    short-run version never had time to show). Isolates propulsion/
+    RPM spin-up and steady-state behavior from aerodynamic lift/
+    ground-contact instability; see mi17_main_engine_1.xml/
+    mi17_main_engine_2.xml's EnginePowerRPM_N1 comment and mi17.xml's
+    gearbox enginemoment/gearmoment comment for the calibration bugs
+    this script exposed and validated the fix for.
   </description>
 
   <use aircraft="mi17" initialize="reset00"/>
 
-  <run start="0.0" end="60.0" dt="0.0075">
+  <run start="0.0" end="900.0" dt="0.0075">
 
     <event name="start" persistent="false">
       <condition> simulation/sim-time-sec ge 0.0 </condition>
@@ -41,35 +41,112 @@
 
     <event name="t5" persistent="false">
       <condition> simulation/sim-time-sec ge 5.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t10" persistent="false">
       <condition> simulation/sim-time-sec ge 10.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t15" persistent="false">
       <condition> simulation/sim-time-sec ge 15.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t20" persistent="false">
       <condition> simulation/sim-time-sec ge 20.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t30" persistent="false">
       <condition> simulation/sim-time-sec ge 30.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t40" persistent="false">
       <condition> simulation/sim-time-sec ge 40.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t50" persistent="false">
       <condition> simulation/sim-time-sec ge 50.0 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
+
     <event name="t60" persistent="false">
-      <condition> simulation/sim-time-sec ge 59.9 </condition>
-      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+      <condition> simulation/sim-time-sec ge 60.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t120" persistent="false">
+      <condition> simulation/sim-time-sec ge 120.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t180" persistent="false">
+      <condition> simulation/sim-time-sec ge 180.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t240" persistent="false">
+      <condition> simulation/sim-time-sec ge 240.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t300" persistent="false">
+      <condition> simulation/sim-time-sec ge 300.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t360" persistent="false">
+      <condition> simulation/sim-time-sec ge 360.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t420" persistent="false">
+      <condition> simulation/sim-time-sec ge 420.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t480" persistent="false">
+      <condition> simulation/sim-time-sec ge 480.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t540" persistent="false">
+      <condition> simulation/sim-time-sec ge 540.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t600" persistent="false">
+      <condition> simulation/sim-time-sec ge 600.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t660" persistent="false">
+      <condition> simulation/sim-time-sec ge 660.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t720" persistent="false">
+      <condition> simulation/sim-time-sec ge 720.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t780" persistent="false">
+      <condition> simulation/sim-time-sec ge 780.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t840" persistent="false">
+      <condition> simulation/sim-time-sec ge 840.0 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
+    </event>
+
+    <event name="t900" persistent="false">
+      <condition> simulation/sim-time-sec ge 899.9 </condition>
+      <notify><property>simulation/sim-time-sec</property><property>propulsion/gearbox[0]/shaft-rpm</property><property>propulsion/engine[0]/n1</property><property>propulsion/engine[0]/itt-c</property><property>propulsion/engine[0]/output-torque-lbft</property><property>propulsion/engine[0]/thrust-lbs</property><property>propulsion/engine[0]/collective-ctrl-rad</property><property>position/h-agl-ft</property></notify>
     </event>
 
   </run>
