@@ -57,6 +57,8 @@
       <condition> simulation/sim-time-sec ge 2.0 </condition>
       <notify>
         <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/rotor-rpm </property>
+        <property> propulsion/engine[2]/rotor-rpm </property>
         <property> propulsion/engine[0]/output-torque-lbft </property>
         <property> propulsion/engine[1]/output-torque-lbft </property>
         <property> propulsion/engine[0]/thrust-lbs </property>
@@ -67,6 +69,8 @@
       <condition> simulation/sim-time-sec ge 4.0 </condition>
       <notify>
         <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/rotor-rpm </property>
+        <property> propulsion/engine[2]/rotor-rpm </property>
         <property> propulsion/engine[0]/output-torque-lbft </property>
         <property> propulsion/engine[1]/output-torque-lbft </property>
         <property> propulsion/engine[0]/thrust-lbs </property>

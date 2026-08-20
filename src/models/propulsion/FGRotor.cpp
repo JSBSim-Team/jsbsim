@@ -165,8 +165,17 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
         RPMdefinition = -1;
       } else {
         FGThruster *tr = exec->GetPropulsion()->GetEngine(RPMdefinition)->GetThruster();
-        SourceGearRatio = tr->GetGearRatio();
-        // cout << "# got sources' GearRatio: " << SourceGearRatio << endl;
+        if (tr) {
+          SourceGearRatio = tr->GetGearRatio();
+          // cout << "# got sources' GearRatio: " << SourceGearRatio << endl;
+        }
+        // else: the source engine exists but has no thruster yet -- e.g. it
+        // is fed by a <gearbox>, whose thruster is only assigned to its
+        // feeding engines after every <engine> element has already been
+        // constructed (see FGPropulsion::Load()). Left unresolved here
+        // rather than crashing; CalcRotorState() retries this every frame
+        // until the source becomes available, which is guaranteed by the
+        // time any Calculate() runs since all loading has completed by then.
       }
     }
     if (RPMdefinition != rdef) {
@@ -619,6 +628,19 @@ void FGRotor::CalcRotorState(void)
   InvTransform = Transform().Transposed();
 
   // handle RPM requirements, calc omega.
+  if (ExternalRPM && !ExtRPMsource && RPMdefinition >= 0) {
+    // Retry the ExternalRPM source binding that the constructor/bindmodel()
+    // could not complete yet (source engine had no thruster assigned at
+    // that point -- see the comment at the equivalent spot in the
+    // constructor). Cheap to retry every frame: this only runs at all
+    // while unresolved, and stops attempting once ExtRPMsource is set.
+    auto srcEngine = fdmex->GetPropulsion()->GetEngine(RPMdefinition);
+    if (srcEngine && srcEngine->GetThruster()) {
+      SourceGearRatio = srcEngine->GetThruster()->GetGearRatio();
+      string ipn = CreateIndexedPropertyName("propulsion/engine", RPMdefinition);
+      ExtRPMsource = fdmex->GetPropertyManager()->GetNode(ipn + "/rotor-rpm", false);
+    }
+  }
   if (ExternalRPM && ExtRPMsource) {
     RPM = ExtRPMsource->getDoubleValue() * ( SourceGearRatio / GearRatio );
   }
