@@ -15,7 +15,44 @@
     <inflowlag>                          0.10 </inflowlag> 
     <hingeoffset unit="FT">             0.02 </hingeoffset>
 
-    <ExternalRPM> 0 </ExternalRPM>
+    <!-- KNOWN LIMITATION, flagged for a later iteration; not fixed here:
+
+         On a real Mi-17, the tail rotor is NOT independently powered. It is
+         driven off the SAME combining transmission as the two main engines
+         (a second power-takeoff off the main gearbox, at its own ~4.2:1
+         ratio vs. the main rotor's 18.5:1), not a third engine. Physically
+         it should reference either the main gearbox's combined shaft RPM
+         or the engines' RPM directly; there is currently NO such
+         reference anywhere in this config. This rotor instead runs on its
+         own fully independent dummy engine (mi17_tail_engine, a flat 50 HP
+         electric_engine) with its own separate FGTransmission; it is not
+         an approximation of the shared-shaft coupling, it is simply
+         decoupled physics.
+
+         Why: the original (pre-gearbox) Mi-17 model slaved this rotor's
+         RPM to engine index 0 via <ExternalRPM>0</ExternalRPM>, which
+         worked when engine 0 was a normal engine with an immediately-
+         available inline thruster. On this branch, engine 0
+         (mi17_main_engine_1) is a gearbox-fed turboprop_engine whose
+         thruster isn't assigned until FGPropulsion::Load()'s <gearbox>
+         pass, which runs after every engine (including this tail engine)
+         has already finished its own Load(); so FGRotor's ExternalRPM
+         lookup (FGRotor.cpp, "avoid ourself and (still) unknown engines"
+         branch) crashed on a null Thruster, since engine 0 is a known
+         engine, just not yet thrustered at that point. <ExternalRPM> was
+         removed here to stop that crash, not because the coupling
+         requirement went away.
+
+         FGGearbox (src/models/propulsion/FGGearbox.h) is documented as
+         combining N engines onto ONE shared output shaft/thruster; it
+         has no concept of a second, independently-geared output today.
+         Properly complying with the real transmission needs either (a) a
+         genuine FGGearbox extension for a second output channel sharing
+         the same input torque pool, or (b) at minimum, driving this
+         rotor's RPM from a property expression referencing
+         propulsion/gearbox[0]/shaft-rpm scaled by the tail/main gear-ratio
+         ratio, rather than an unrelated independent engine. Neither is
+         done yet. -->
     <controlmap> TAIL </controlmap>
 
 </rotor>
