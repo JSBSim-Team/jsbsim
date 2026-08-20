@@ -22,7 +22,16 @@
          old (also placeholder) main rotor gearratio=18.5. -->
     <gearratio>                        12.5 </gearratio>
     <nominalrpm>                       1200.0 </nominalrpm>
-    <chord unit="FT">                     0.8 </chord>
+    <!-- chord: real Mi-17 manual figure, 270mm = 0.886 ft (previously
+         0.8 ft, an unsourced placeholder). Cross-checks well against
+         the manual's own stated rotor solidity (0.135): numblades(3) x
+         chord(0.886ft) / (pi x radius(6.411ft)) = 0.132, matching
+         within rounding. Manual also gives blade profile NACA-230M
+         (not separately representable here; liftcurveslope below is
+         left as-is, a generic value already in the right ballpark for
+         that airfoil family) and blade mass 13.5 kg (not currently
+         used by any property here). -->
+    <chord unit="FT">                  0.886 </chord>
     <flappingmoment unit="SLUG*FT2">     2.5 </flappingmoment>
     <liftcurveslope>                      6.0 </liftcurveslope>
     <twist>                               0.0 </twist>

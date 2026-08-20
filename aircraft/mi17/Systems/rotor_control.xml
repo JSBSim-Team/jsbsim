@@ -413,11 +413,42 @@
        for the one shared rotor, tied only at the gearbox's lowest
        engine index per FGGearbox's convention, not duplicated per
        engine: propulsion/engine[1]/torque-lbsft does not exist).
-       Solving so 27500 ft-lb maps to right at the tail rotor's own
-       0.45 rad pitch ceiling (full available authority at the real
-       worst-case load) gives gain = (0.45 - bias) / 27500 ~= 0.0000207
-       rad per ft-lb. -->
-  <property value='0.0000207'> fcs/adj/pedal-torque-mix-gain </property>
+
+       Solved so 27500 ft-lb maps to exactly the tail rotor's 0.45 rad
+       pitch ceiling (full available authority at the real worst-case
+       load): gain = (0.45 - bias) / 27500 ~= 0.0000207 rad per ft-lb.
+
+       This leaves antitorque-ctrl-rad pinned at exactly 0.450000
+       constantly during hover, with ap/sas-yaw-cmd's own rate-feedback
+       correction (afcs.xml, summed in via fcs/pedal-sum above) unable
+       to add anything on top since the output is already saturated.
+       Tried two ways to give the SAS term real headroom instead of
+       immediately re-saturating: raising the clamp to 0.55 (see the
+       clamp's own comment below: made both residual yaw and roll
+       worse), and reducing this gain to ~70% of the ceiling at typical
+       hover torque (0.0000158, leaving ~0.135 rad of nominal headroom).
+       Neither changed the outcome: with the reduced gain, antitorque-
+       ctrl-rad was STILL pinned at exactly 0.450000 and the residual
+       yaw rate was unchanged (-6.6 to -6.8 rad/sec, same as at full
+       gain). This proves the feedforward/feedback split doesn't matter
+       here: ap/sas-yaw-cmd alone, driven by the already-large steady r,
+       is enough on its own to push the sum straight back up to the
+       clamp regardless of how much of the budget the feedforward
+       claims. The constraint is the tail rotor's genuine maximum
+       thrust output at 0.45 rad pitch (confirmed adequate but not
+       generous against the ~853 lb needed, see the clamp's own comment
+       below), not a control-loop tuning problem; reverted to the
+       cleanly-justified 0.0000207 since the headroom rationale for
+       0.0000158 is now disproven.
+
+       Since then, got real Mi-17 manual figures for the tail rotor's
+       actual pitch range: 7 deg 20' (0.128 rad) to 20 deg 30' (0.358
+       rad) at the pedal extremes, tighter at the top end than the
+       0.45 rad this was sized against (see the clamp's own comment
+       below for the corrected clamp values). Resolved so the true
+       20.5 deg / 0.358 rad ceiling maps to 27500 ft-lb instead:
+       gain = (0.358 - bias) / 27500 ~= 0.0000174 rad per ft-lb. -->
+  <property value='0.0000174'> fcs/adj/pedal-torque-mix-gain </property>
   <property value='-0.12'> fcs/adj/pedal-col-mix-bias </property>
 
   <channel name="pedal">
@@ -501,16 +532,55 @@
            genuinely close, not fundamentally undersized. Tried raising
            max to 0.55 for more SAS headroom; that made BOTH the
            residual yaw rate (-6.7 -> -7.7 rad/sec) and roll (~0.2-0.3
-           -> ~0.4 rad) worse, not better, an unambiguous sign that more
-           commanded tail rotor pitch is adding a disturbance rather
-           than just providing more antitorque authority. Reverted to
-           0.45; points at the tail rotor's own reaction torque (its
-           <sense> defaults to the same CCW as the main rotor, since
-           neither rotor's XML specifies it) rather than the clamp
-           itself, see mi17_tail_rotor.xml. -->
+           -> ~0.4 rad) worse, not better. Also tried flipping the tail
+           rotor's own <sense> in mi17.xml (both rotors explicitly set
+           it to 1/CCW; hypothesis was that same-signed reaction torque
+           was compounding the disturbance): that made things far
+           worse still, r-rad_sec diverging from t=0 instead of the
+           steady ~-6.7 seen at sense=1, disproving that hypothesis;
+           sense=1 is providing real damping, not adding disturbance.
+           Reverted both. Left at 0.45; likely explanation for the
+           roll increase at 0.55 is the tail rotor's own ~60in vertical
+           offset from the CG (mi17.xml: tail rotor z=140in vs CG
+           z=80in) turning more commanded side thrust into more rolling
+           moment as a side effect, not just more yaw authority. See
+           fcs/adj/pedal-torque-mix-gain's comment above for the
+           current approach (give the SAS term headroom via a smaller
+           feedforward instead of a larger clamp).
+
+           Real Mi-17 manual figures for tail rotor pitch: 7 deg 20'
+           +-45' at the "left pedal forward" extreme, 20 deg 30' +-20'
+           at "right pedal forward". Narrower than the -0.26/0.45 rad
+           (-14.9/25.8 deg) placeholder range this was clamped to,
+           especially at the top end (20.5 deg real vs 25.8 deg
+           placeholder). Also got a real blade chord (270mm = 0.886 ft,
+           see mi17_tail_rotor.xml), ~11% more than the 0.8 ft
+           placeholder; the manual's own stated rotor solidity (0.135)
+           cross-checks well against that chord (computes to 0.132).
+
+           Naive linear scaling (more chord, less pitch) suggested the
+           real figures together would give slightly LESS max thrust
+           at full deflection than the placeholder combination, not
+           more. Empirically that was wrong: with both real figures in
+           place (and fcs/adj/pedal-torque-mix-gain re-solved for the
+           new 0.358 rad ceiling, see above), the residual hover yaw
+           rate dropped from a steady ~-6.7/-6.8 rad/sec to a steady
+           ~-5.2/-5.3 rad/sec, a real ~22% improvement, and tail rotor
+           thrust at the clamp (propulsion/engine[2]/thrust-lbs) now
+           regularly exceeds the ~853 lb needed rather than fluctuating
+           around it. FGRotor's actual thrust calculation isn't linear
+           in chord x pitch the way the naive estimate assumed; the
+           real chord's added blade area evidently matters more than
+           the reduced pitch ceiling costs. Still saturated at the
+           clamp continuously, so still not fully cancelled; whether
+           further real aerodynamic data (actual NACA-230M lift-curve-
+           slope, rather than the generic 6.0/rad placeholder still
+           used) would close the rest of the gap, or whether this
+           model's main rotor torque estimate is itself somewhat high
+           relative to reality, is unresolved. -->
       <clipto>
-        <min> -0.26 </min>
-        <max>  0.45 </max>
+        <min> -0.128 </min>
+        <max>  0.358 </max>
       </clipto>
       <!-- mind: tail rotor is on engine 1 -->
       <output> propulsion/engine[2]/antitorque-ctrl-rad </output>

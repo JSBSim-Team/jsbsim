@@ -232,18 +232,18 @@
           <pitch> 0.0 </pitch>
           <yaw>  90.0 </yaw>
         </orient>
-        <!-- 1 (CCW), same as the main rotor's own <sense> a few lines
-             up. Tried flipping to -1 (CW) to test whether the tail
-             rotor's own reaction torque (FGRotor::body_moments()'s
-             Torque*Sense term), same-signed as the main rotor's,
-             was adding to the residual hover yaw/roll disturbance
-             (raising the tail rotor's own commanded pitch made both
-             worse, not better, which is what motivated the test): that
-             caused an early, unrelated crash during the initial ground
-             settle instead, before any of the actual hover phase.
-             Reverted to 1; the sense/reaction-torque question is
-             unresolved, not ruled out, just not a safe change to make
-             this way. -->
+        <!-- 1 (CCW), same as the main rotor's own <sense>. Tested -1
+             (CW): rather than reducing the residual hover yaw, it
+             caused r-rad_sec to diverge from t=0 (-7.0 rad/sec at
+             t=0.39s, accelerating to -13.2 by t=0.95s, monotonically,
+             not settling) instead of the steady, bounded ~-6.7 rad/sec
+             seen at sense=1. This disproves the hypothesis that the
+             tail rotor's own reaction torque (FGRotor::body_moments()'s
+             Torque*Sense term, the only place Sense is read in
+             FGRotor.cpp) was compounding the disturbance at sense=1;
+             if anything sense=1 is providing real damping that sense=-1
+             removes. Root cause of the residual ~6.7 rad/sec yaw is
+             still open; see rotor_control.xml's antitorque comments. -->
         <sense> 1 </sense>
       </thruster>
     </engine>
