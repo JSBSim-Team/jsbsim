@@ -44,35 +44,46 @@
        matching the commonly-cited ~0.077-0.08 range for this rotor. -->
   <chord unit="FT">                   1.706 </chord>
   <liftcurveslope>                        6.0 </liftcurveslope>
-  <!-- flappingmoment/massmoment (both per-blade; see FGRotor.cpp's
-       "Blade..." naming and its own default-estimate formulas, which
-       divide/don't-multiply by numblades) and polarmoment (total
-       across all blades; FGRotor's own default estimate multiplies by
-       numblades) derived from a real blade mass, 137 kg = 9.387 slug,
-       treated as a uniform rectangular blade spanning from the hinge
-       (hingeoffset=4.0 ft, still an unsourced placeholder) to the tip
-       (radius=34.931 ft):
-         Lb = R - hingeoffset = 30.931 ft
-         flappingmoment = mass*Lb^2/3 = 2993.75 slug*ft2 (per blade,
+  <!-- flappingmoment/massmoment (both per-blade) and polarmoment (total
+       across all blades) derived from a real blade mass, 137 kg =
+       9.387 slug, treated as a uniform rectangular blade spanning from
+       the hinge (hingeoffset, see below) to the tip (radius=34.931 ft):
+         Lb = R - hingeoffset = 34.2092 ft
+         flappingmoment = mass*Lb^2/3 = 3661.96 slug*ft2 (per blade,
            uniform rod about its own hinged end)
-         massmoment = mass*(Lb/2) = 145.18 slug*ft (per blade, first
+         massmoment = mass*(Lb/2) = 160.57 slug*ft (per blade, first
            moment about the hinge)
          polarmoment = numblades * mass/Lb * (R^3-hingeoffset^3)/3
-           = 5 * 4305.41 = 21527.04 slug*ft2 (about the shaft axis,
-           summed over all blades)
-       Previously 2500.0/120.0/4500.0, unsourced placeholders sized
-       against the old 52 ft/3-blade rotor; notably polarmoment was
-       roughly 4.8x too small for the corrected rotor's real mass
-       distribution, which is likely why raising diameter/numblades/
-       chord alone (before this fix) caused a fast, severe pitch
-       divergence within ~2s of engine start: too little rotational
-       inertia makes the rotor respond explosively to torque
-       transients during spin-up. -->
-  <flappingmoment unit="SLUG*FT2">     2993.75 </flappingmoment>
-  <twist>                              -0.12 </twist>
-  <massmoment>                          145.18 </massmoment>
+           = 19493.24 slug*ft2 (about the shaft axis, summed over all
+           blades)
+       Recomputed for hingeoffset=0.72178 ft (real Mi-17 manual figure,
+       220mm); see that property's own comment for the history. -->
+  <flappingmoment unit="SLUG*FT2">     3661.96 </flappingmoment>
+  <!-- twist: real Mi-17 blade twist law (user-supplied): blade divided
+       into 20 sections, sections 1-4 (innermost 20% of span) flat at
+       5 deg, then a linear law down to 0 deg at the tip (section 20).
+       FGRotor.cpp only supports a single linear-twist-over-the-whole-
+       span parameter (BladeTwist = theta(tip) - theta(root), used as
+       t075 = theta_0 + 0.75*BladeTwist, the standard 3/4-radius pitch
+       approximation for a linearly-twisted blade); the real law isn't
+       perfectly linear (flat inner 20%, then linear outer 80%), but
+       root and tip pitch are the only two points FGRotor's model can
+       actually represent, so those are what this uses:
+         theta(root) = +5 deg, theta(tip) = 0 deg
+         BladeTwist = theta(tip) - theta(root) = -5 deg = -0.0873 rad
+       Previously -0.12 rad (-6.88 deg), an unsourced placeholder in
+       the same rough range but not derived from real data. Cross-
+       checked against a sibling repo (mi17-jsbsim-model, dev3 branch,
+       Engines/ah1s_rotor.xml used as the Mi-17's actual rotor there)
+       that went through the same real-dimension-update instability;
+       its final tweaked twist is a bare "-5" with no unit attribute,
+       which FGRotor.cpp defaults to RAD (i.e. -5 rad = -286 deg),
+       almost certainly a missing unit="DEG" bug there, not a value to
+       adopt. -->
+  <twist>                            -0.0873 </twist>
+  <massmoment>                          160.57 </massmoment>
   <tiplossfactor>                         0.98 </tiplossfactor>
-  <polarmoment unit="SLUG*FT2">       21527.04 </polarmoment>
+  <polarmoment unit="SLUG*FT2">       19493.24 </polarmoment>
   <!-- inflowlag: induced-velocity response time constant
        (FGRotor.cpp's nu update, calc_flow_and_thrust()). Previously
        0.12, unchanged from before the diameter/numblades/chord
@@ -95,7 +106,51 @@
        real work (see mi17.xml's gearbox comment and this branch's
        commit history for the full investigation). -->
   <inflowlag>                          0.32 </inflowlag>
-  <hingeoffset unit="FT">                4.0 </hingeoffset>
+  <!-- hingeoffset: real Mi-17 manual figure, 220mm = 0.72178 ft
+       (previously 4.0 ft, an unsourced placeholder; briefly tried
+       1.74655 ft, FGRotor.cpp's own default convention 0.05*Radius, as
+       an interim principled guess before this real figure was
+       available; see git history).
+
+       This property directly gates the aircraft's most serious
+       instability found this session: FGRotor.cpp computes flapping
+       angles a_1/b_1 algebraically every frame (no lag/damping, unlike
+       inflowlag's induced-velocity solve), then turns them into body
+       roll/pitch moments via body_moments()'s
+         mf = 0.5*HingeOffset*BladeNum*Omega^2*BladeMassMoment
+         M_roll  = mf*b1s ;  M_pitch = mf*a1s
+       diagnosed with scripts/test_mi17_openloop_climb.xml (autopilot
+       fully disabled, so this is the raw airframe+rotor plant, not a
+       control-loop problem): with hingeoffset=1.74655 ft, mf worked
+       out to ~275000 lb-ft per radian of flapping, and a1s/b1s of only
+       a few degrees (never large) was enough to roll the aircraft past
+       130 deg within about 4 seconds from a standing start, well
+       before any pilot/autopilot input; an undamped algebraic
+       feedback loop (body rate -> flapping -> huge moment -> more
+       rate), made worse by the corrected rotor's ~61% higher Lock
+       number (LiftCurveSlope*BladeChord*Radius^4/BladeFlappingMoment;
+       Radius^4 grew ~3.26x from the diameter correction, only
+       partially offset by the larger derived flappingmoment).
+
+       Cross-checked against mi17-jsbsim-model (dev3 branch): that repo
+       hit the identical failure signature (real-dimension update ->
+       crash -> fix crash -> uncontrolled rotation) on a similarly-
+       scaled rotor and, while debugging blind (no evidence it had real
+       hinge-offset data either), drove hingeoffset from an inherited
+       3.30 ft down to 0.05 ft on the main rotor and 0.015 ft on the
+       tail rotor, both toward zero, the same direction this real
+       figure points, though nowhere near as small.
+
+       With this real value, mf recomputes to ~117000 lb-ft/rad (2.35x
+       smaller than at 1.74655 ft) at nominal RPM. Not yet re-validated
+       against test_mi17_openloop_climb.xml; see this branch's commit
+       history for that result. inflowlag is deliberately left at 0.32
+       for that retest, to isolate the effect of this change alone;
+       the sibling repo never needed to raise inflowlag past its
+       original 0.09, suggesting 0.32 here was compensating for this
+       same hingeoffset problem rather than fixing anything real, and
+       remains a candidate to revisit once this is validated. -->
+  <hingeoffset unit="FT">           0.72178 </hingeoffset>
 
   <!-- Ground effect for Mi-17 -->
   <groundeffectexp>                     0.15 </groundeffectexp>

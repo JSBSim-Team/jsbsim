@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 open-loop collective step (no autopilot)"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Diagnostic: isolates whether the climb-transition instability seen
+    in test_mi17_hover.xml (violent roll/climb-rate divergence around
+    t=165s, collective-cmd-norm ~0.42) comes from the raw airframe/
+    rotor plant itself, or from ap/attitude-hold-on and ap/altitude-
+    hold-on fighting a strongly nonlinear thrust response. Both
+    autopilot modes are held OFF for the entire run; only pedal
+    (antitorque) authority comes from rotor_control.xml's own open-
+    loop torque feedforward, same as every other ground-run script in
+    this branch. Same validated settle sequence as test_mi17_hover.xml
+    (120s ground settle, then a 20s collective-bias ramp 0.0->0.15,
+    not a step) so this test starts from the same known-clean baseline,
+    then steps collective-cmd-norm through fixed values with a long
+    dwell (30s) at each, watching for divergence with no autopilot
+    correction in the loop at all.
+
+    Uses the corrected main rotor geometry/inertia and the hingeoffset
+    fix (4.0 -> 1.74655 ft, FGRotor.cpp's own default-estimate
+    convention; see mi17_main_rotor.xml's hingeoffset comment for the
+    cross-check this came from).
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <run start="0.0" end="400.0" dt="0.0075">
+
+    <event name="start" persistent="false">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="propulsion/set-running" value="-1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+    </event>
+
+    <event name="hold-autopilot-off" persistent="true">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+    </event>
+
+    <event name="hold-ground-settle" persistent="true">
+      <condition> simulation/sim-time-sec le 119.999 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="ramp-collective-bias" persistent="false">
+      <condition> simulation/sim-time-sec ge 120.0 </condition>
+      <set name="fcs/adj/collective-bias" value="0.15" action="FG_RAMP" tc="20.0"/>
+    </event>
+
+    <event name="flap-trace 138s" persistent="false">
+      <condition> simulation/sim-time-sec ge 138.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/adj/collective-bias </property>
+        <property> propulsion/engine[0]/a1-rad </property>
+        <property> propulsion/engine[0]/b1-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> attitude/roll-rad </property>
+        <property> attitude/pitch-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> ap/sas-roll-cmd </property>
+        <property> ap/total-aileron-cmd </property>
+        <property> propulsion/engine[0]/lateral-ctrl-rad </property>
+      </notify>
+    </event>
+    <event name="flap-trace 140s" persistent="false">
+      <condition> simulation/sim-time-sec ge 140.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/adj/collective-bias </property>
+        <property> propulsion/engine[0]/a1-rad </property>
+        <property> propulsion/engine[0]/b1-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> attitude/roll-rad </property>
+        <property> attitude/pitch-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> ap/sas-roll-cmd </property>
+        <property> ap/total-aileron-cmd </property>
+        <property> propulsion/engine[0]/lateral-ctrl-rad </property>
+      </notify>
+    </event>
+    <event name="flap-trace 141s" persistent="false">
+      <condition> simulation/sim-time-sec ge 141.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/adj/collective-bias </property>
+        <property> propulsion/engine[0]/a1-rad </property>
+        <property> propulsion/engine[0]/b1-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> attitude/roll-rad </property>
+        <property> attitude/pitch-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> ap/sas-roll-cmd </property>
+        <property> ap/total-aileron-cmd </property>
+        <property> propulsion/engine[0]/lateral-ctrl-rad </property>
+      </notify>
+    </event>
+    <event name="flap-trace 142s" persistent="false">
+      <condition> simulation/sim-time-sec ge 142.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/adj/collective-bias </property>
+        <property> propulsion/engine[0]/a1-rad </property>
+        <property> propulsion/engine[0]/b1-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> attitude/roll-rad </property>
+        <property> attitude/pitch-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> ap/sas-roll-cmd </property>
+        <property> ap/total-aileron-cmd </property>
+        <property> propulsion/engine[0]/lateral-ctrl-rad </property>
+      </notify>
+    </event>
+    <event name="flap-trace 143s" persistent="false">
+      <condition> simulation/sim-time-sec ge 143.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/adj/collective-bias </property>
+        <property> propulsion/engine[0]/a1-rad </property>
+        <property> propulsion/engine[0]/b1-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> attitude/roll-rad </property>
+        <property> attitude/pitch-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> ap/sas-roll-cmd </property>
+        <property> ap/total-aileron-cmd </property>
+        <property> propulsion/engine[0]/lateral-ctrl-rad </property>
+      </notify>
+    </event>
+
+    <event name="report baseline (145s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 145.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="collective 0.15" persistent="false">
+      <condition> simulation/sim-time-sec ge 150.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.15" action="FG_RAMP" tc="10.0"/>
+    </event>
+    <event name="report 0.15" persistent="false">
+      <condition> simulation/sim-time-sec ge 180.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="collective 0.30" persistent="false">
+      <condition> simulation/sim-time-sec ge 185.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.30" action="FG_RAMP" tc="10.0"/>
+    </event>
+    <event name="report 0.30" persistent="false">
+      <condition> simulation/sim-time-sec ge 215.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="collective 0.42" persistent="false">
+      <condition> simulation/sim-time-sec ge 220.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.42" action="FG_RAMP" tc="10.0"/>
+    </event>
+    <event name="report 0.42" persistent="false">
+      <condition> simulation/sim-time-sec ge 250.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="collective 0.55" persistent="false">
+      <condition> simulation/sim-time-sec ge 255.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.55" action="FG_RAMP" tc="10.0"/>
+    </event>
+    <event name="report 0.55" persistent="false">
+      <condition> simulation/sim-time-sec ge 285.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="final report (390s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 390.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
