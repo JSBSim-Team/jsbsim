@@ -33,6 +33,16 @@
         single-rotor thrust -- there is exactly one physical main rotor.
       - one-engine-inoperative should read false/0 with both engines
         healthy; see test_mi17_gearbox_oei.xml for the failure case.
+
+    Collective is pinned flat (fcs/collective-cmd-norm=0 and the
+    fcs/adj/collective-bias default of 0.15 rad zeroed too) throughout
+    -- a ground run, not a flight test. This validates the gearbox/
+    propulsion mechanism in isolation from flight dynamics; without
+    it, the engines now make enough power for an uncontrolled liftoff
+    (thrust up to ~35000 lbs observed vs. this model's ~15000 lbs max
+    weight) that couples into an unrelated ground-contact instability
+    (*CRASH DETECTED* in the sim log) having nothing to do with the
+    propulsion model itself.
   </description>
 
   <use aircraft="mi17" initialize="reset00"/>
@@ -42,6 +52,8 @@
     <event name="Start both engines (triggers InitRunning -> GetSteadyState)" persistent="false">
       <condition> simulation/sim-time-sec ge 0.0 </condition>
       <set name="propulsion/set-running" value="-1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
       <notify>
         <property> propulsion/gearbox[0]/shaft-rpm </property>
         <property> propulsion/engine[0]/output-torque-lbft </property>
@@ -51,6 +63,21 @@
         <property> propulsion/engine[0]/thrust-lbs </property>
         <property> propulsion/gearbox[0]/one-engine-inoperative </property>
       </notify>
+    </event>
+
+    <event name="Hold collective flat and throttle up (ground run)" persistent="true">
+      <!-- propulsion/set-running=-1 is a one-time start command, not a
+           held-throttle command: it forces ThrottlePos=1 for exactly one
+           frame, then normal fcs/throttle-cmd-norm processing (default
+           0.0, nothing else in this script commands it) overwrites that
+           and the engines decay back to idle over the next tens of
+           seconds. A real ground run also needs the throttle held open,
+           same as an engine start needs a pilot to keep advancing it. -->
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
     </event>
 
     <event name="Report at 2s" persistent="false">

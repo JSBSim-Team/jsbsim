@@ -8,8 +8,9 @@
   <description>
     Companion to test_mi17_gearbox_steadystate.xml: starts both
     aircraft/mi17 engines, lets the shaft settle, then stops engine[1]
-    only (propulsion/engine[1]/set-running=0) to exercise FGGearbox's
-    one-engine-inoperative path -- the actual real-world failure mode a
+    only (propulsion/active_engine=1, propulsion/cutoff_cmd=1) to
+    exercise FGGearbox's one-engine-inoperative path -- the actual
+    real-world failure mode a
     twin-turboshaft helicopter is built to survive, and specifically
     what makes a genuine two-engines-into-one-rotor model (vs. the
     single mocked "engine" this config replaced) worth having.
@@ -25,6 +26,10 @@
     input case correctly, not that the aircraft "should" maintain full
     RPM on one engine (it should not, at these throwaway per-side
     power tables).
+
+    Collective is pinned flat, same as test_mi17_gearbox_steadystate.xml
+    and for the same reason: this is a ground-run OEI test, isolating
+    the gearbox's response to an engine failure from flight dynamics.
   </description>
 
   <use aircraft="mi17" initialize="reset00"/>
@@ -34,12 +39,24 @@
     <event name="Start both engines (triggers InitRunning -> GetSteadyState)" persistent="false">
       <condition> simulation/sim-time-sec ge 0.0 </condition>
       <set name="propulsion/set-running" value="-1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
       <notify>
         <property> propulsion/gearbox[0]/shaft-rpm </property>
         <property> propulsion/engine[0]/output-torque-lbft </property>
         <property> propulsion/engine[1]/output-torque-lbft </property>
         <property> propulsion/gearbox[0]/one-engine-inoperative </property>
       </notify>
+    </event>
+
+    <event name="Hold collective flat and throttle up (ground run)" persistent="true">
+      <!-- See the identical event in test_mi17_gearbox_steadystate.xml for
+           why the throttle hold is needed alongside set-running=-1. -->
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
     </event>
 
     <event name="Two-engine steady-state report (3s, just before cutoff)" persistent="false">
@@ -53,8 +70,15 @@
     </event>
 
     <event name="Cut engine[1] (simulated engine failure)" persistent="false">
+      <!-- propulsion/engine[1]/set-running=0 does NOT work here: FGTurboProp::Run()
+           unconditionally sets Running=true on its very first line every frame, so
+           as long as phase stays tpRun, set-running gets silently overwritten the
+           very next Calculate() call. The actual stop mechanism is Cutoff, driven
+           through propulsion/active_engine + propulsion/cutoff_cmd (FGPropulsion::
+           SetCutoff() dispatches to whichever engine active_engine selects). -->
       <condition> simulation/sim-time-sec ge 3.0 </condition>
-      <set name="propulsion/engine[1]/set-running" value="0"/>
+      <set name="propulsion/active_engine" value="1"/>
+      <set name="propulsion/cutoff_cmd" value="1"/>
     </event>
 
     <event name="OEI report immediately after cutoff (3.5s)" persistent="false">

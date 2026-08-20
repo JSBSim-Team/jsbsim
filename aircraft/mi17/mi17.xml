@@ -165,17 +165,17 @@
            aircraft. gearratio matches mi17_main_rotor.xml's own
            gearratio (18.5) on both channels, since both engines drive
            the same shaft at the same ratio. -->
-      <gearmoment unit="SLUG*FT2"> 100.0 </gearmoment>
+      <gearmoment unit="SLUG*FT2"> 500.0 </gearmoment>
       <maxbrakepower unit="HP">     50.0 </maxbrakepower>
 
       <input engine="0">
         <gearratio>                    18.5 </gearratio>
-        <enginemoment unit="SLUG*FT2"> 225.0 </enginemoment>
+        <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
       <input engine="1">
         <gearratio>                    18.5 </gearratio>
-        <enginemoment unit="SLUG*FT2"> 225.0 </enginemoment>
+        <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
 
