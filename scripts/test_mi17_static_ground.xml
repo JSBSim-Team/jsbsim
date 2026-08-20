@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 static ground test (engines off)"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Aircraft sits on the ground with both engines off (propulsion/set-
+    running is never commanded, so both mi17_main_engine_1/2 stay in
+    their default not-running state; main rotor RPM and thrust stay at
+    zero throughout). No autopilot, no collective/pedal input beyond
+    holding them at zero. This isolates the landing gear model
+    (FGLGear, mi17.xml's main_gear_left/main_gear_right/nose_gear/
+    tail_bumper contacts) from all rotor/propulsion dynamics, to check
+    whether ground instability seen in powered runs (e.g. test_mi17_
+    hover.xml) originates in the gear/weight-on-wheels model itself or
+    only shows up once rotor thrust and torque are involved.
+
+    Expected result: the aircraft should settle from the initial
+    reset00 touchdown transient within a couple of seconds and then
+    sit still -- near-zero compression-velocity-fps on all gear units,
+    near-zero body rates, no growing oscillation in AGL/attitude, for
+    the full run. Any divergence here would point at the gear model
+    itself rather than at rotor/inertia/inflow tuning.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <run start="0.0" end="60.0" dt="0.0075">
+
+    <event name="hold everything neutral" persistent="true">
+      <!-- Engines are never started (no propulsion/set-running command);
+           this is a pure ground/gear test, not a propulsion test.
+           Controls held at zero/neutral every frame so nothing but the
+           gear model and gravity acts on the airframe. -->
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+    </event>
+
+    <event name="checkpoint 1s (initial settle)" persistent="false">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[0]/compression-velocity-fps </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[1]/compression-ft </property>
+        <property> gear/unit[2]/WOW </property>
+        <property> gear/unit[2]/compression-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 5s" persistent="false">
+      <condition> simulation/sim-time-sec ge 5.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[0]/compression-velocity-fps </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[1]/compression-ft </property>
+        <property> gear/unit[2]/WOW </property>
+        <property> gear/unit[2]/compression-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 15s" persistent="false">
+      <condition> simulation/sim-time-sec ge 15.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 30s" persistent="false">
+      <condition> simulation/sim-time-sec ge 30.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint 60s" persistent="false">
+      <condition> simulation/sim-time-sec ge 59.9 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
