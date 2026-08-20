@@ -23,6 +23,18 @@
   <property value="0.3"> ap/yaw-gain </property>
   <property value="0.4"> ap/collective-gain </property>
 
+  <!-- AFCS targets: never declared in the original model, only ever read
+       by the hold-mode error fcs_functions below. All hold modes default
+       off (see ap/*-hold-on above), so 0.0 is an inert placeholder until
+       something (pilot input, a future "engage autopilot at current
+       attitude" latch) actually sets these. -->
+  <property value="0.0"> ap/pitch-target-rad </property>
+  <property value="0.0"> ap/roll-target-rad </property>
+  <property value="0.0"> ap/heading-target-rad </property>
+  <property value="0.0"> ap/altitude-target-ft </property>
+  <property value="0.0"> ap/speed-target-fps </property>
+  <property value="0.0"> ap/vertical-speed-target-fps </property>
+
   <!-- Attitude hold -->
   <channel name="attitude hold">
     <fcs_function name="ap/pitch-error-rad">
@@ -70,7 +82,7 @@
       <function>
         <difference>
           <property> ap/heading-target-rad </property>
-          <property> attitude/heading-rad </property>
+          <property> attitude/heading-true-rad </property>
         </difference>
       </function>
     </fcs_function>
@@ -92,7 +104,7 @@
       <function>
         <difference>
           <property> ap/altitude-target-ft </property>
-          <property> position/altitude-ft </property>
+          <property> position/h-sl-ft </property>
         </difference>
       </function>
     </fcs_function>

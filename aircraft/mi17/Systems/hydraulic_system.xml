@@ -97,7 +97,7 @@
     <fcs_function name="hydraulic/main-pump-failure">
       <function>
         <table>
-          <independentVar> propulsion/engine/rpm </independentVar>
+          <independentVar> propulsion/gearbox[0]/shaft-rpm </independentVar>
           <tableData>
             0.0    0.0
             1000.0 0.0
@@ -119,7 +119,7 @@
           <property> hydraulic/main-pump-on </property>
           <property> hydraulic/main-pump-failure </property>
           <table>
-            <independentVar> propulsion/engine/rpm </independentVar>
+            <independentVar> propulsion/gearbox[0]/shaft-rpm </independentVar>
             <tableData>
               0.0    0.0
               1000.0 0.2
@@ -207,7 +207,7 @@
 
     <!-- Brake actuator response -->
     <lag_filter name="hydraulic/brake-response">
-      <input> gear/brake-pos-norm </input>
+      <input> fcs/center-brake-cmd-norm </input>
       <c1> 20.0 </c1>
       <output> hydraulic/brake-actuator-norm </output>
     </lag_filter>

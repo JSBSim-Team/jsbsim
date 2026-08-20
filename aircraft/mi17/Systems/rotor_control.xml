@@ -102,10 +102,10 @@
 
    Outputs for a decent helicopter (ie: big main rotor, smaller tail rotor for
    anti-torque):
-      propulsion/engine/collective-ctrl-rad
-      propulsion/engine/longitudinal-ctrl-rad
-      propulsion/engine/lateral-ctrl-rad
-      propulsion/engine[1]/antitorque-ctrl-rad
+      propulsion/engine[0]/collective-ctrl-rad
+      propulsion/engine[0]/longitudinal-ctrl-rad
+      propulsion/engine[0]/lateral-ctrl-rad
+      propulsion/engine[2]/antitorque-ctrl-rad
 
        ========================================================================= -->
 
@@ -231,7 +231,7 @@
         <min> 0.0 </min>
         <max> 0.8 </max>
       </clipto>
-      <output> propulsion/engine/collective-ctrl-rad </output>
+      <output> propulsion/engine[0]/collective-ctrl-rad </output>
     </lag_filter>
 
   </channel>
@@ -285,7 +285,7 @@
       <input> fcs/longitudinal-ctrl-rad </input>
       <!-- c1 ranges: 10.0 - 50.0 -->
       <c1>   25.0 </c1>
-      <output> propulsion/engine/longitudinal-ctrl-rad </output>
+      <output> propulsion/engine[0]/longitudinal-ctrl-rad </output>
     </lag_filter>
 
   </channel>
@@ -359,7 +359,7 @@
       <input> fcs/lateral-ctrl-rad </input>
       <!-- c1 ranges: 10.0 - 50.0 -->
       <c1>   25.0 </c1>
-      <output> propulsion/engine/lateral-ctrl-rad </output>
+      <output> propulsion/engine[0]/lateral-ctrl-rad </output>
     </lag_filter>
 
   </channel>
@@ -430,7 +430,7 @@
       <!-- c1 ranges: 10.0 - 50.0 -->
       <c1>   25.0 </c1>
       <!-- mind: tail rotor is on engine 1 -->
-      <output> propulsion/engine[1]/antitorque-ctrl-rad </output>
+      <output> propulsion/engine[2]/antitorque-ctrl-rad </output>
     </lag_filter>
 
   </channel>

@@ -24,7 +24,7 @@
       <function>
         <difference>
           <property> governor/target-rpm </property>
-          <property> propulsion/engine/rpm </property>
+          <property> propulsion/gearbox[0]/shaft-rpm </property>
         </difference>
       </function>
     </fcs_function>
@@ -100,7 +100,7 @@
     <fcs_function name="governor/throttle-output">
       <function>
         <sum>
-          <property> propulsion/engine/throttle-pos-norm </property>
+          <property> fcs/throttle-pos-norm[0] </property>
           <property> governor/throttle-limited </property>
         </sum>
       </function>

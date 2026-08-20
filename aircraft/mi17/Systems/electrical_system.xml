@@ -103,7 +103,7 @@
     <fcs_function name="electrical/main-generator-failure">
       <function>
         <table>
-          <independentVar> propulsion/engine/rpm </independentVar>
+          <independentVar> propulsion/gearbox[0]/shaft-rpm </independentVar>
           <tableData>
             0.0    0.0
             1000.0 0.0
@@ -125,7 +125,7 @@
           <property> electrical/main-generator-on </property>
           <property> electrical/main-generator-failure </property>
           <table>
-            <independentVar> propulsion/engine/rpm </independentVar>
+            <independentVar> propulsion/gearbox[0]/shaft-rpm </independentVar>
             <tableData>
               0.0    0.0
               1000.0 0.2
