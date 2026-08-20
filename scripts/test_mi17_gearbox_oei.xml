@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 twin-engine FGGearbox validation (one engine inoperative)"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Companion to test_mi17_gearbox_steadystate.xml: starts both
+    aircraft/mi17 engines, lets the shaft settle, then stops engine[1]
+    only (propulsion/engine[1]/set-running=0) to exercise FGGearbox's
+    one-engine-inoperative path -- the actual real-world failure mode a
+    twin-turboshaft helicopter is built to survive, and specifically
+    what makes a genuine two-engines-into-one-rotor model (vs. the
+    single mocked "engine" this config replaced) worth having.
+
+    What to check in the notified properties after the engine[1] cutoff
+    event: propulsion/gearbox[0]/one-engine-inoperative should flip to
+    true/1; engine[1]'s output-torque-lbft should decay toward zero
+    (windmilling, no fuel) while engine[0]'s stays substantial (it is
+    now carrying the full shaft load alone); shaft-rpm should sag from
+    its two-engine steady value but must remain positive/finite and
+    settle rather than diverge -- a NaN, negative, or unbounded
+    shaft-rpm here means the gearbox is not handling the asymmetric-
+    input case correctly, not that the aircraft "should" maintain full
+    RPM on one engine (it should not, at these throwaway per-side
+    power tables).
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <run start="0.0" end="8.0" dt="0.0075">
+
+    <event name="Start both engines (triggers InitRunning -> GetSteadyState)" persistent="false">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="propulsion/set-running" value="-1"/>
+      <notify>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+        <property> propulsion/gearbox[0]/one-engine-inoperative </property>
+      </notify>
+    </event>
+
+    <event name="Two-engine steady-state report (3s, just before cutoff)" persistent="false">
+      <condition> simulation/sim-time-sec ge 3.0 </condition>
+      <notify>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+        <property> propulsion/gearbox[0]/one-engine-inoperative </property>
+      </notify>
+    </event>
+
+    <event name="Cut engine[1] (simulated engine failure)" persistent="false">
+      <condition> simulation/sim-time-sec ge 3.0 </condition>
+      <set name="propulsion/engine[1]/set-running" value="0"/>
+    </event>
+
+    <event name="OEI report immediately after cutoff (3.5s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 3.5 </condition>
+      <notify>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+        <property> propulsion/gearbox[0]/one-engine-inoperative </property>
+      </notify>
+    </event>
+
+    <event name="OEI settled report (7s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 7.0 </condition>
+      <notify>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+        <property> propulsion/gearbox[0]/one-engine-inoperative </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
