@@ -9,7 +9,9 @@
 <turboprop_engine name="mi17_main_engine_2">
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
-  <maxpower unit="HP">         1000.0   </maxpower>
+  <!-- maxpower=2200 (real TV3-117VM MAX RATED, W/O PSS); see
+       mi17_main_engine_1.xml for the full derivation. -->
+  <maxpower unit="HP">         2200.0   </maxpower>
   <psfc unit="LBS/HR/HP">         0.55  </psfc>
   <n1idle_max_delay>              1     </n1idle_max_delay>
   <maxstartingtime>              20     </maxstartingtime>
@@ -39,19 +41,20 @@
   <table name="EnginePowerRPM_N1" type="internal">
     <description>
       Per-side engine power [HP], function of EngineRPM (rotor RPM x
-      gearratio 18.5) and N1 [%]. Nominal main-rotor speed (270 RPM)
-      corresponds to EngineRPM ~4995, between the 4700 and 5200 rows.
-      Rescaled to prevent low-RPM torque spikes; see the identical
+      gearratio 78.125) and N1 [%]. Nominal main-rotor speed (192 RPM)
+      corresponds to EngineRPM 15000, between the 14114 and 15616 rows.
+      Row axis rescaled by 15000/4995 from the old 18.5/270 placeholder
+      gearing to the real Mi-17 78.125/192 figures; see the identical
       table in mi17_main_engine_1.xml for the full rationale.
     </description>
     <tableData>
               0     5     60     86     94     95     96     97     98     99    100    101
          0    0   1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4
-      1900    0   0.5     38    217    380    413    456    500    544    576    630    674
-      2850    0   0.8     49    375    652    701    766    823    896    962   1044   1109
-      3800    0   1.1     11    522    956   1032   1108   1195   1293   1369   1478   1565
-      4700    0   0.3    0.3    605   1210   1330   1411   1519   1640   1747   1882   2003
-      5200    0   0.3    0.3    586   1257   1371   1471   1600   1729   1843   1986   2124
+      5706    0   0.5     38    217    380    413    456    500    544    576    630    674
+      8559    0   0.8     49    375    652    701    766    823    896    962   1044   1109
+     11411    0   1.1     11    522    956   1032   1108   1195   1293   1369   1478   1565
+     14114    0   0.3    0.3    605   1210   1330   1411   1519   1640   1747   1882   2003
+     15616    0   0.3    0.3    586   1257   1371   1471   1600   1729   1843   1986   2124
     </tableData>
   </table>
 

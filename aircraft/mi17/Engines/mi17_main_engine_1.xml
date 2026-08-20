@@ -16,18 +16,27 @@
   names (idlen1, maxn1, maxpower, psfc, tables, etc.), so the same
   1000 HP/side tables apply unchanged.
 
-  maxpower=1000 HP/side (2000 HP combined) preserves this model's
-  previously-documented total (mi17-jsbsim-model README.md: "TV3-117MT
-  turboshaft, 2,000 HP"); not sourced from a real TV3-117MT datasheet.
+  maxpower=2200 HP/side (4400 HP combined): real TV3-117VM MAX RATED
+  shaft horsepower, W/O PSS column (particle separator system isn't
+  modeled here), from the type's performance table (Table 4.2). Was
+  1000 HP/side, an arbitrary placeholder ("not sourced from a real
+  TV3-117MT datasheet", per this file's own prior comment) that turned
+  out to be the actual reason the aircraft could not generate enough
+  thrust to lift off at all: EnginePowerRPM_N1's cell values already
+  reach up to ~2124 HP (see FGTurboProp::Calculate(): EngPower_HP is
+  read from the table, THEN clamped to MaxPower), so the 1000 HP ceiling
+  was silently cutting delivered power by more than half regardless of
+  what the table's own shape allowed.
   EnginePowerRPM_N1's RPM axis is scaled from this model's own
-  transmission (mi17_main_rotor.xml gearratio=18.5 x nominalrpm=270 =
-  ~4995 EngineRPM at 100% N1), not copied from the AH-1S/M601-style
+  transmission (mi17_main_rotor.xml gearratio=78.125 x nominalrpm=192 =
+  15000 EngineRPM at 100% N1, matching the real Mi-17's ~15000 RPM
+  engine-to-gearbox input speed), not copied from the AH-1S/M601-style
   turboprop_example's propeller-shaft-scale RPM axis.
 -->
 <turboprop_engine name="mi17_main_engine_1">
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
-  <maxpower unit="HP">         1000.0   </maxpower>
+  <maxpower unit="HP">         2200.0   </maxpower>
   <psfc unit="LBS/HR/HP">         0.55  </psfc>
   <n1idle_max_delay>              1     </n1idle_max_delay>
   <maxstartingtime>              20     </maxstartingtime>
@@ -66,11 +75,17 @@
   <table name="EnginePowerRPM_N1" type="internal">
     <description>
       Per-side engine power [HP], function of EngineRPM (rotor RPM x
-      gearratio 18.5) and N1 [%]. Nominal main-rotor speed (270 RPM)
-      corresponds to EngineRPM ~4995, between the 4700 and 5200 rows.
+      gearratio 78.125) and N1 [%]. Nominal main-rotor speed (192 RPM)
+      corresponds to EngineRPM 15000, between the 14114 and 15616 rows.
+
+      Row axis rescaled by 15000/4995 (=1000/333) from the original
+      0/1900/2850/3800/4700/5200 breakpoints when gearratio/nominalrpm
+      were changed from the placeholder 18.5/270 to the real Mi-17
+      78.125/192 (see mi17_main_rotor.xml); same relative shape,
+      stretched to match the new EngineRPM scale.
 
       Each row here is the original (undocumented-source) reference
-      shape scaled by min(1, RPM/4995); i.e. available power now
+      shape scaled by min(1, RPM/15000); i.e. available power now
       scales down toward zero as RPM drops, not just as N1 drops.
       Without this, the table let a near-stalled shaft (RPM close to
       0) draw close to full rated power at high N1, and since
@@ -86,11 +101,11 @@
     <tableData>
               0     5     60     86     94     95     96     97     98     99    100    101
          0    0   1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4
-      1900    0   0.5     38    217    380    413    456    500    544    576    630    674
-      2850    0   0.8     49    375    652    701    766    823    896    962   1044   1109
-      3800    0   1.1     11    522    956   1032   1108   1195   1293   1369   1478   1565
-      4700    0   0.3    0.3    605   1210   1330   1411   1519   1640   1747   1882   2003
-      5200    0   0.3    0.3    586   1257   1371   1471   1600   1729   1843   1986   2124
+      5706    0   0.5     38    217    380    413    456    500    544    576    630    674
+      8559    0   0.8     49    375    652    701    766    823    896    962   1044   1109
+     11411    0   1.1     11    522    956   1032   1108   1195   1293   1369   1478   1565
+     14114    0   0.3    0.3    605   1210   1330   1411   1519   1640   1747   1882   2003
+     15616    0   0.3    0.3    586   1257   1371   1471   1600   1729   1843   1986   2124
     </tableData>
   </table>
 

@@ -118,17 +118,30 @@
       </function>
     </fcs_function>
 
+    <!-- Gains reduced 5x (0.001->0.0002, 0.01->0.002): thrust is very
+         sensitive to collective near this model's hover trim point
+         (~6000 lbs of thrust change across collective 0.4-0.7, per
+         scripts/_diag_hover_trim.xml), and the underlying propulsion/
+         governor dynamics settle over tens of seconds (scripts/_diag_
+         gov_settle.xml), much slower than this loop reacts every
+         frame. At the original gains this produced a large, slowly-
+         growing altitude/pitch oscillation once actually exercised in
+         scripts/test_mi17_hover.xml (h-agl-ft swinging 6 -> 22 -> 0.6
+         ft, pitch spiking to 35+ deg, v-down-fps swinging +-35) instead
+         of a damped approach to the target, a classic outer-loop-
+         faster-than-inner-loop instability. Retune further once a
+         clean hover is confirmed. -->
     <fcs_function name="ap/collective-cmd">
       <function>
         <sum>
           <product>
             <property> ap/altitude-error-ft </property>
-            <value> 0.001 </value>
+            <value> 0.0002 </value>
             <property> ap/altitude-hold-on </property>
           </product>
           <product>
             <property> ap/vertical-speed-error-fps </property>
-            <value> 0.01 </value>
+            <value> 0.002 </value>
             <property> ap/altitude-hold-on </property>
           </product>
         </sum>

@@ -7,16 +7,22 @@
   -->
 
   <!-- Governor properties -->
-  <property value="270.0"> governor/target-rpm </property>
-  <property value="5.0"> governor/gain </property>
-  <property value="0.1"> governor/integral-gain </property>
-  <property value="0.05"> governor/derivative-gain </property>
+  <!-- target-rpm=192.0: real Mi-17 main rotor nominal RPM, matching
+       mi17_main_rotor.xml's nominalrpm (previously 270.0, a placeholder
+       consistent with that file's old placeholder gearing). -->
+  <property value="192.0"> governor/target-rpm </property>
+  <!-- gain/integral-gain/derivative-gain operate on rpm-error-frac
+       (dimensionless, rpm-error/target-rpm), not raw RPM; see the
+       comment on governor/rpm-error-frac below for why. kp=2.5 alone
+       saturates the output at a >=40% underspeed (e.g. right at engine
+       start, shaft-rpm=0 => error-frac=1.0), giving full throttle
+       during spin-up; near target-rpm a few-percent error gives a
+       correspondingly small trim, with ki slowly removing any
+       remaining steady-state droop. -->
+  <property value="2.5"> governor/gain </property>
+  <property value="0.3"> governor/integral-gain </property>
+  <property value="0.1"> governor/derivative-gain </property>
   <property value="1.0"> governor/enabled </property>
-
-  <!-- Governor state -->
-  <property value="0.0"> governor/integral-error </property>
-  <property value="0.0"> governor/previous-error </property>
-  <property value="0.0"> governor/output </property>
 
   <!-- RPM control -->
   <channel name="rpm control">
@@ -29,81 +35,106 @@
       </function>
     </fcs_function>
 
-    <fcs_function name="governor/proportional-term">
+    <!-- Normalized error, not raw RPM: governor/throttle-output below
+         is now a DIRECT absolute throttle command (clipped to [0,1]),
+         not an increment added onto the current throttle position.
+         The previous design (throttle-output = throttle-pos-norm[0] +
+         a small per-frame correction) was effectively a second
+         integrator stacked on top of the <pid> component's own
+         internal integral term; combined with kp=5.0 operating on raw
+         RPM error (tens of RPM, so proportional term alone was in the
+         hundreds before any scaling), that produced a badly oscillating
+         governor once actually wired to the throttle: observed
+         pid-output swinging +5 -> -17.5 -> -82.5 -> -62 -> +29 while
+         holding a single fixed collective, and throttle-cmd-norm
+         dropping to 0.0 (full cutoff) while still 18+ RPM underspeed,
+         the opposite of what a governor should do. A direct PID on a
+         normalized error, output clamped once at the end, is the
+         standard, well-behaved way to do this. -->
+    <fcs_function name="governor/rpm-error-frac">
       <function>
-        <product>
+        <quotient>
           <property> governor/rpm-error </property>
-          <property> governor/gain </property>
-        </product>
+          <property> governor/target-rpm </property>
+        </quotient>
       </function>
     </fcs_function>
 
-    <fcs_function name="governor/integral-term">
-      <function>
-        <product>
-          <property> governor/integral-error </property>
-          <property> governor/integral-gain </property>
-        </product>
-      </function>
-    </fcs_function>
+    <!-- Anti-windup: without this, a transient RPM overshoot above
+         target (observed right after engine start, before the governor
+         has settled) drives rpm-error negative for several seconds,
+         and the <pid>'s own integral term accumulates a large negative
+         bias during that window. That bias then persists even once
+         shaft-rpm sags back below target-rpm and error turns positive
+         again, holding throttle near 0 while genuinely underspeed,
+         the exact failure observed in this branch's history (18+ RPM
+         underspeed, throttle-cmd-norm=0.0). References governor/pid-
+         output from the previous frame (the <pid> below hasn't run yet
+         this frame); a one-frame lag on freezing the integrator is
+         immaterial here. -->
+    <switch name="governor/pid-saturated">
+      <default value="0.0"/>
+      <test value="1.0">
+        governor/pid-output ge 1.0
+      </test>
+      <test value="1.0">
+        governor/pid-output le 0.0
+      </test>
+    </switch>
 
-    <fcs_function name="governor/derivative-term">
-      <function>
-        <product>
-          <difference>
-            <property> governor/rpm-error </property>
-            <property> governor/previous-error </property>
-          </difference>
-          <property> governor/derivative-gain </property>
-        </product>
-      </function>
-    </fcs_function>
+    <pid name="governor/pid-output">
+      <input> governor/rpm-error-frac </input>
+      <kp> governor/gain </kp>
+      <ki> governor/integral-gain </ki>
+      <kd> governor/derivative-gain </kd>
+      <trigger> governor/pid-saturated </trigger>
+    </pid>
+  </channel>
 
-    <fcs_function name="governor/pid-output">
-      <function>
-        <sum>
-          <property> governor/proportional-term </property>
-          <property> governor/integral-term </property>
-          <property> governor/derivative-term </property>
-        </sum>
-      </function>
-    </fcs_function>
-
-    <fcs_function name="governor/throttle-correction">
+  <!-- Drive the actual engine throttle commands from the governor.
+       governor/pid-output was computed above but, before today, never
+       reached fcs/throttle-cmd-norm[N] at all; nothing else in this
+       model's Systems/*.xml writes that property either, so the
+       governor had no effect on the running engines whatsoever; RPM
+       ran open-loop to whatever throttle was commanded externally (a
+       script <set>, or the pilot throttle axis) with nothing
+       regulating it back toward governor/target-rpm. Both engines
+       share the same gearbox output shaft, so both get the same
+       governor-computed throttle rather than each running its own
+       independent copy of this PID. -->
+  <channel name="governor throttle output">
+    <fcs_function name="governor/throttle-output">
       <function>
         <product>
           <property> governor/pid-output </property>
           <property> governor/enabled </property>
-          <value> 0.01 </value>
         </product>
       </function>
-    </fcs_function>
-  </channel>
-
-  <!-- Governor limits -->
-  <channel name="governor limits">
-    <fcs_function name="governor/throttle-limited">
-      <function>
-        <table>
-          <independentVar> governor/throttle-correction </independentVar>
-          <tableData>
-            -1.0   -0.1
-            -0.5   -0.05
-             0.0    0.0
-             0.5    0.05
-             1.0    0.1
-          </tableData>
-        </table>
-      </function>
+      <clipto>
+        <min> 0.0 </min>
+        <max> 1.0 </max>
+      </clipto>
     </fcs_function>
 
-    <fcs_function name="governor/throttle-output">
+    <fcs_function name="fcs/throttle-cmd-norm[0]">
       <function>
-        <sum>
-          <property> fcs/throttle-pos-norm[0] </property>
-          <property> governor/throttle-limited </property>
-        </sum>
+        <property> governor/throttle-output </property>
       </function>
+      <clipto>
+        <min> 0.0 </min>
+        <max> 1.0 </max>
+      </clipto>
+      <output> fcs/throttle-cmd-norm[0] </output>
+    </fcs_function>
+    <fcs_function name="fcs/throttle-cmd-norm[1]">
+      <function>
+        <property> governor/throttle-output </property>
+      </function>
+      <clipto>
+        <min> 0.0 </min>
+        <max> 1.0 </max>
+      </clipto>
+      <output> fcs/throttle-cmd-norm[1] </output>
     </fcs_function>
   </channel>
 

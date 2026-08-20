@@ -317,6 +317,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
     FGColumnVector3 vWhlDisplVec;
     double LGearProj = 1.0;
+    double LGearProjDiv = 1.0;
 
     if (height < 0.0) {
       WOW = true;
@@ -329,12 +330,38 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       double normalZ = (in.Tec2l*normal)(eZ);
       LGearProj = -(mTGear.Transposed() * vGroundNormal)(eZ);
 
+      // LGearProj is ~1.0 for a strut close to normal-to-ground and
+      // shrinks toward 0 as the aircraft attitude tilts the strut
+      // toward the ground plane. Both compressLength (below) and
+      // compressSpeed (see LGearProj use further down) divide by it;
+      // guarding only LGearProj > 0.0 lets a transiently tiny-but-
+      // positive value blow the division up to an unbounded spike
+      // (observed: compressLength jumping to >100 ft, compressSpeed to
+      // several thousand ft/s, in a single frame) during large attitude
+      // excursions while still WOW, well before the strut is actually
+      // near-horizontal. Floor it so the division stays bounded instead
+      // of singular.
+      LGearProjDiv = max(LGearProj, 0.05);
+
       // The following equations use the vector to the tire contact patch
       // including the strut compression.
       switch(eContactType) {
       case ctBOGEY:
         if (isSolid) {
-          compressLength = LGearProj > 0.0 ? height * normalZ / LGearProj : 0.0;
+          compressLength = LGearProj > 0.0 ? height * normalZ / LGearProjDiv : 0.0;
+          // The LGearProjDiv floor above only bounds the divisor, not the
+          // result: with height a few feet (an ordinary bounce) and
+          // LGearProjDiv down at its 0.05 floor (strut swung to near-
+          // perpendicular to the ground normal during a large attitude
+          // excursion), height*normalZ/LGearProjDiv can still reach
+          // hundreds of feet -- observed compressLength=204/211 ft and
+          // a resulting strut force (~1e9 lbs) that tripped *CRASH
+          // DETECTED* and corrupted the sim state shortly after, even
+          // though 500.0 is CrashDetect()'s own threshold. This formula
+          // is only a valid linearization near a vertical strut anyway,
+          // so clamp its output to a generous but physically sane strut
+          // travel instead of trusting it outside that regime.
+          compressLength = min(compressLength, 3.0);
           vWhlDisplVec = mTGear * FGColumnVector3(0., 0., -compressLength);
         } else {
           // Gears don't (or hardly) compress in liquids
@@ -368,7 +395,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       else {
         compressSpeed = -vGroundWhlVel(eZ);
         if (eContactType == ctBOGEY)
-          compressSpeed /= LGearProj;
+          compressSpeed /= LGearProjDiv;
 
         // If the gear is entering in contact with the ground during the current
         // time step, the compression speed might actually be lower than the

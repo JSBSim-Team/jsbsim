@@ -93,7 +93,7 @@
       fcs/adj/pedal-gain
       fcs/adj/pedal-bias
       fcs/adj/pedal-col-mix-infl
-      fcs/adj/pedal-col-mix-gain
+      fcs/adj/pedal-torque-mix-gain
       fcs/adj/pedal-col-mix-bias
 
    Simulator 'mapping' properties:
@@ -371,7 +371,53 @@
   <property value='0.00'> fcs/adj/pedal-bias </property>
 
   <property value='1.00'> fcs/adj/pedal-col-mix-infl </property>
-  <property value='0.70'> fcs/adj/pedal-col-mix-gain </property>
+  <!-- Antitorque gain history (collective-position feedforward, now
+       replaced by a torque feedforward, see fcs/adj/pedal-torque-mix-
+       gain below): 0.70 (matched to the old single mocked engine's
+       ~5000 ft-lb reference torque) -> 3.92 (~5.6x, reasoning from a
+       ~28000 ft-lb figure that turned out to be an artifact of the RPM
+       governor not being wired to throttle) -> reverted to 0.70
+       (reasoning from a ~5000-5800 ft-lb ground-idle torque figure
+       that was itself wrong, since engine power was still an
+       underpowered 1000 HP/side placeholder at the time, so the
+       aircraft could not lift off at all) -> 7.5 (scaled from real
+       hover torque, ~54000-56000 ft-lb combined, against the original
+       5000 ft-lb reference). Each of those was a single gain on
+       collective position, and none of them could be right across both
+       idle and hover once the governor started actively regulating
+       power: 7.5 alone gave ground-idle collective (bias-only, ~0.15
+       rad) a mix term of 0.15*7.5-0.12 = 1.005 rad, clamped to the
+       tail rotor's own 0.45 rad ceiling, commanding max tail rotor
+       pitch while just sitting on the gear with next to no real torque
+       to counter, and crashing on the initial ground settle. -->
+  <!-- Switched from a collective-POSITION feedforward to a TORQUE
+       feedforward: no single gain on collective can be right across
+       both idle and hover once the RPM governor is actively regulating
+       power, because torque doesn't scale simply with commanded
+       collective any more (it depends on however much throttle the
+       governor happens to be running at for the current RPM error).
+       Concretely: at gain=7.5 (sized for real hover torque, see below)
+       even ground-idle collective (bias-only, ~0.15 rad) already gave
+       mix_term = 0.15*7.5-0.12 = 1.005 rad, clamped to the tail rotor's
+       own 0.45 rad ceiling, commanding max tail rotor pitch while the
+       aircraft was just sitting on its gear with next to no real
+       torque to counter, and crashing on the initial ground settle.
+       Reading actual combined main rotor torque instead scales
+       correctly in any regime automatically: near-zero at idle,
+       proportionally large at hover, without needing to pick one gain
+       that's only right for one operating point.
+       gain sized from real hover data (scripts/test_mi17_hover.xml):
+       propulsion/engine[0]/torque-lbsft settles around 27000-28000
+       ft-lb at hover (this IS the combined main rotor reaction torque
+       already; FGRotor's own aerodynamic torque is a single value
+       for the one shared rotor, tied only at the gearbox's lowest
+       engine index per FGGearbox's convention, not duplicated per
+       engine: propulsion/engine[1]/torque-lbsft does not exist).
+       Solving so 27500 ft-lb maps to right at the tail rotor's own
+       0.45 rad pitch ceiling (full available authority at the real
+       worst-case load) gives gain = (0.45 - bias) / 27500 ~= 0.0000207
+       rad per ft-lb. -->
+  <property value='0.0000207'> fcs/adj/pedal-torque-mix-gain </property>
   <property value='-0.12'> fcs/adj/pedal-col-mix-bias </property>
 
   <channel name="pedal">
@@ -406,7 +452,11 @@
       <input> ap/rudder-cmd </input>
     </summer>
 
-    <!-- collective compensation -->
+    <!-- torque compensation: main rotor reaction torque, not
+         collective position; see fcs/adj/pedal-torque-mix-gain's
+         comment above for why. propulsion/engine[0]/torque-lbsft is
+         already the full rotor torque (a single physical value for the
+         one shared rotor, not per-engine); no summing needed. -->
     <fcs_function name="fcs/pedal-ctrl-rad">
       <function>
         <sum>
@@ -415,8 +465,8 @@
             <property> fcs/adj/pedal-col-mix-infl </property>
             <sum>
               <product>
-                <property> fcs/collective-ctrl-rad </property>
-                <property> fcs/adj/pedal-col-mix-gain </property>
+                <property> propulsion/engine[0]/torque-lbsft </property>
+                <property> fcs/adj/pedal-torque-mix-gain </property>
               </product>
               <property> fcs/adj/pedal-col-mix-bias </property>
             </sum>
@@ -429,6 +479,39 @@
       <input> fcs/pedal-ctrl-rad </input>
       <!-- c1 ranges: 10.0 - 50.0 -->
       <c1>   25.0 </c1>
+      <!-- Unlike fcs/collective-ctrl-rad-lag below, this chain had no
+           output clamp at all. With the mix gain raised (see the
+           antitorque gain history comment above) plus the yaw-rate SAS term
+           summed in via ap/rudder-cmd, an unclamped pedal-ctrl-rad was
+           observed commanding ~0.9-1.0 rad (52-59 deg) of tail rotor
+           blade pitch, more than double any physically real tail
+           rotor collective range, and self-reinforcing (more commanded
+           pitch drives more tail rotor shaft torque/reaction, which
+           drives more yaw rate, which drives more SAS correction).
+           Clamp to a plausible physical tail rotor pitch range, same
+           pattern as the main rotor's collective clamp.
+
+           Investigated (not just tuned) tail rotor authority before
+           touching this: propulsion/engine[2]/rotor-rpm tracks its
+           real 1200 RPM nominal correctly (confirms the gearing is
+           right), and propulsion/engine[2]/thrust-lbs at this clamp
+           fluctuates 590-1178 lbs against the ~853 lbs (torque/arm =
+           ~27000 ft-lb / 31.67 ft, tail rotor at x=580in vs CG
+           x=200in) needed to fully cancel real hover torque; i.e.
+           genuinely close, not fundamentally undersized. Tried raising
+           max to 0.55 for more SAS headroom; that made BOTH the
+           residual yaw rate (-6.7 -> -7.7 rad/sec) and roll (~0.2-0.3
+           -> ~0.4 rad) worse, not better, an unambiguous sign that more
+           commanded tail rotor pitch is adding a disturbance rather
+           than just providing more antitorque authority. Reverted to
+           0.45; points at the tail rotor's own reaction torque (its
+           <sense> defaults to the same CCW as the main rotor, since
+           neither rotor's XML specifies it) rather than the clamp
+           itself, see mi17_tail_rotor.xml. -->
+      <clipto>
+        <min> -0.26 </min>
+        <max>  0.45 </max>
+      </clipto>
       <!-- mind: tail rotor is on engine 1 -->
       <output> propulsion/engine[2]/antitorque-ctrl-rad </output>
     </lag_filter>

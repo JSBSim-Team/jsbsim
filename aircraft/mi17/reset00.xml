@@ -5,6 +5,20 @@
     twin-engine main rotor config. Location/attitude are placeholders
     (same template pattern as aircraft/ah1s/reset00.xml in this repo,
     not real Mi-17 basing data); adjust as needed for your test.
+
+    altitudeAGL=8.0, not the original 2.0: at 2.0 the gear legs start
+    ALREADY compressed by ~4.9 FT at t=0 (confirmed via temporary
+    FGLGear::CrashDetect() diagnostics: compressLength=4.91667,
+    StrutForce=-39333 lbs on main_gear_left at the very first frame),
+    which is a geometry mismatch between this value and the actual
+    gear-leg locations, not a spring/damping calibration issue. That
+    massive initial over-compression is what launched the violent
+    bounce/*CRASH DETECTED* cascade seen when testing liftoff/hover,
+    not the collective input that seemed to trigger it. 8.0 was found
+    empirically (not derived from exact gear geometry) to bring
+    initial compression down to a small, controlled settle instead;
+    revisit if a real static ground-rest compression figure becomes
+    available.
   -->
 
   <ubody unit="FT/SEC">    0.0 </ubody>
@@ -17,6 +31,6 @@
   <longitude   unit="DEG">  -117.87323 </longitude>
   <latitude    unit="DEG">    34.95416 </latitude>
   <elevation   unit="FT">   2283.5     </elevation>
-  <altitudeAGL unit="FT">      2.0     </altitudeAGL>
+  <altitudeAGL unit="FT">      8.0     </altitudeAGL>
 
 </initialize>

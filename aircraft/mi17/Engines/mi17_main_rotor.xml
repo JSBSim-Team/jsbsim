@@ -12,8 +12,17 @@
 
   <diameter  unit="FT">                  52.0 </diameter>
   <numblades>                               3 </numblades>
-  <gearratio>                           18.5 </gearratio>
-  <nominalrpm>                          270.0 </nominalrpm>
+  <!-- gearratio/nominalrpm match real Mi-17 figures: engine input to
+       the main gearbox is ~15000 RPM, main rotor nominal is 192 RPM,
+       so gearratio = 15000/192 = 78.125 (previously 18.5/270, a
+       placeholder pair that was internally consistent but not sourced
+       from real Mi-17 numbers). Every RPM-scaled table that reads
+       propulsion/engine[0]/engine-rpm (= rotor-rpm x gearratio) had to
+       be rescaled to match; see mi17_main_engine_1/2.xml's
+       EnginePowerRPM_N1 table and mi17_tail_rotor.xml's own
+       gearratio/nominalrpm, both updated together with this file. -->
+  <gearratio>                           78.125 </gearratio>
+  <nominalrpm>                          192.0 </nominalrpm>
   <chord unit="FT">                      2.5 </chord>
   <liftcurveslope>                        6.0 </liftcurveslope>
   <flappingmoment unit="SLUG*FT2">     2500.0 </flappingmoment>

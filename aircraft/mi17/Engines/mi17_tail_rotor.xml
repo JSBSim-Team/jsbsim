@@ -2,10 +2,26 @@
 
 <rotor name="mi17_tail_rotor">
 
-    <diameter unit="FT">                  10.5 </diameter>
+    <!-- diameter: real Mi-17 figure from the type's dimensioned
+         general-arrangement drawing, Ø3,908 mm = 12.822 ft (previously
+         10.5 ft, an undersized placeholder). -->
+    <diameter unit="FT">                  12.822 </diameter>
     <numblades>                             3 </numblades>
-    <gearratio>                        4.2 </gearratio>
-    <nominalrpm>                       1134.0 </nominalrpm>
+    <!-- gearratio/nominalrpm match real Mi-17 figures: tail rotor
+         nominal is ~1200 RPM. Real tail rotor drive shaft speed
+         (~2594 RPM, between the main gearbox's tail takeoff and the
+         tail rotor's own local 90-degree gearbox) isn't separately
+         representable here; FGRotor's ExternalRPM=0 path only knows
+         the single end-to-end ratio from the main rotor's own
+         reference (SourceGearRatio, mi17_main_rotor.xml's gearratio)
+         down to this rotor's blade RPM: 192 (main rotor nominal) x
+         (78.125/GearRatio) = 1200  =>  GearRatio = 15000/1200 = 12.5,
+         which cross-checks against the 15000 -> 2594 -> 1200 real
+         two-stage path (15000/2594 x 2594/1200 = 12.5 within rounding).
+         Previously 4.2/1134.0, a placeholder pair consistent with the
+         old (also placeholder) main rotor gearratio=18.5. -->
+    <gearratio>                        12.5 </gearratio>
+    <nominalrpm>                       1200.0 </nominalrpm>
     <chord unit="FT">                     0.8 </chord>
     <flappingmoment unit="SLUG*FT2">     2.5 </flappingmoment>
     <liftcurveslope>                      6.0 </liftcurveslope>

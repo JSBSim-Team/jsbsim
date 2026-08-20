@@ -81,10 +81,32 @@
   </mass_balance>
   
   <ground_reactions>
+    <!-- Gear layout corrected from real Mi-17 dimensions (user-supplied
+         from the type's dimensioned general-arrangement drawing):
+         nose-gear-to-main-gear wheelbase = 4.281 m = 168.543 in, main
+         gear track = 4.510 m = 177.559 in. Previously main_gear was at
+         x=180 (already close to mass_balance's CG x=200) but nose_gear
+         was at x=350, AFT of both the main gear and the CG, the
+         opposite of a real nose-gear layout, with only a ~60 in main
+         gear half-track (a ~120 in / 3.05 m track, well under the real
+         4.510 m). With only the main gear grounded (which touch down
+         first) and the CG sitting aft of that single support line, the
+         aircraft had nothing resisting rotation the instant it settled
+         onto the ground: a runaway pitch divergence starting within
+         the first ~0.3s of any ground test, present even with every
+         flight-control/autopilot channel disabled, that would
+         eventually couple into a full roll/tumble and tail strike,
+         this was the actual root cause of the ground-contact
+         instability chased earlier in this branch's history, not a
+         propulsion or FCS issue. main_gear x is kept as the anchor
+         (already reasonable, close to CG/mast) and nose_gear x is
+         derived from it by the real wheelbase: 180 - 168.543 = 11.457,
+         i.e. very close to the nose reference, consistent with the
+         drawing's nose gear position tucked right under the cockpit. -->
     <contact type="BOGEY" name="main_gear_left">
       <location unit="IN">
         <x>    180.0 </x>
-        <y>   -60.0 </y>
+        <y>   -88.78 </y>
         <z>    -8.0 </z>
       </location>
       <static_friction>    0.85  </static_friction>
@@ -98,7 +120,7 @@
     <contact type="BOGEY" name="main_gear_right">
       <location unit="IN">
         <x>   180.0 </x>
-        <y>    60.0 </y>
+        <y>    88.78 </y>
         <z>    -8.0 </z>
       </location>
       <static_friction>    0.85  </static_friction>
@@ -111,7 +133,7 @@
     </contact>
     <contact type="BOGEY" name="nose_gear">
       <location unit="IN">
-        <x>   350.0 </x>
+        <x>    11.46 </x>
         <y>     0.0 </y>
         <z>    -6.0 </z>
       </location>
@@ -163,18 +185,19 @@
            channels gives 225 each, following the same derivation
            gearbox_test.xml's comment documents for its own reference
            aircraft. gearratio matches mi17_main_rotor.xml's own
-           gearratio (18.5) on both channels, since both engines drive
-           the same shaft at the same ratio. -->
+           gearratio (78.125, real Mi-17 figure: 15000 RPM engine input
+           / 192 RPM main rotor nominal) on both channels, since both
+           engines drive the same shaft at the same ratio. -->
       <gearmoment unit="SLUG*FT2"> 500.0 </gearmoment>
       <maxbrakepower unit="HP">     50.0 </maxbrakepower>
 
       <input engine="0">
-        <gearratio>                    18.5 </gearratio>
+        <gearratio>                    78.125 </gearratio>
         <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
       <input engine="1">
-        <gearratio>                    18.5 </gearratio>
+        <gearratio>                    78.125 </gearratio>
         <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
@@ -209,6 +232,18 @@
           <pitch> 0.0 </pitch>
           <yaw>  90.0 </yaw>
         </orient>
+        <!-- 1 (CCW), same as the main rotor's own <sense> a few lines
+             up. Tried flipping to -1 (CW) to test whether the tail
+             rotor's own reaction torque (FGRotor::body_moments()'s
+             Torque*Sense term), same-signed as the main rotor's,
+             was adding to the residual hover yaw/roll disturbance
+             (raising the tail rotor's own commanded pitch made both
+             worse, not better, which is what motivated the test): that
+             caused an early, unrelated crash during the initial ground
+             settle instead, before any of the actual hover phase.
+             Reverted to 1; the sense/reaction-torque question is
+             unresolved, not ruled out, just not a safe change to make
+             this way. -->
         <sense> 1 </sense>
       </thruster>
     </engine>
