@@ -176,29 +176,35 @@
     </engine>
 
     <gearbox name="mi17-main-gearbox">
-      <!-- gearmoment/maxbrakepower/enginefriction: unsourced
-           placeholders, reused from aircraft/gearbox_test/
+      <!-- gearmoment/enginemoment rescaled 4.784x (2391.89/9567.57,
+           from 500.0/2000.0) after mi17_main_rotor.xml's polarmoment
+           was corrected from 4500 (unsourced placeholder) to 21527.04
+           (derived from a real 137 kg blade mass): these were
+           empirically tuned for numerical stability against the OLD
+           polarmoment scale, and left badly mismatched (too small
+           relative to the rotor) once polarmoment jumped ~4.8x,
+           observed as a fast, severe, unrecovered crash within ~2s of
+           engine start on the corrected rotor. Scaled by the same
+           ratio polarmoment itself grew, keeping the same relative
+           balance between gearbox and rotor inertia that was already
+           validated as stable. maxbrakepower/enginefriction: still
+           unsourced placeholders, reused from aircraft/gearbox_test/
            gearbox_test.xml's own fixture values (not derived from
-           Mi-17 data). enginemoment: FGRotor's single-engine default
-           is 0.1*polarmoment (mi17_main_rotor.xml polarmoment=4500,
-           so 450 total); split evenly across the 2 gearbox input
-           channels gives 225 each, following the same derivation
-           gearbox_test.xml's comment documents for its own reference
-           aircraft. gearratio matches mi17_main_rotor.xml's own
+           Mi-17 data). gearratio matches mi17_main_rotor.xml's own
            gearratio (78.125, real Mi-17 figure: 15000 RPM engine input
            / 192 RPM main rotor nominal) on both channels, since both
            engines drive the same shaft at the same ratio. -->
-      <gearmoment unit="SLUG*FT2"> 500.0 </gearmoment>
+      <gearmoment unit="SLUG*FT2"> 2391.89 </gearmoment>
       <maxbrakepower unit="HP">     50.0 </maxbrakepower>
 
       <input engine="0">
         <gearratio>                    78.125 </gearratio>
-        <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
+        <enginemoment unit="SLUG*FT2"> 9567.57 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
       <input engine="1">
         <gearratio>                    78.125 </gearratio>
-        <enginemoment unit="SLUG*FT2"> 2000.0 </enginemoment>
+        <enginemoment unit="SLUG*FT2"> 9567.57 </enginemoment>
         <enginefriction unit="HP">       1.0 </enginefriction>
       </input>
 

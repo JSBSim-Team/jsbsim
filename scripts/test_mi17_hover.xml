@@ -47,6 +47,7 @@
       <condition> simulation/sim-time-sec ge 0.0 </condition>
       <set name="propulsion/set-running" value="-1"/>
       <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
       <set name="ap/attitude-hold-on" value="1.0"/>
     </event>
 
@@ -55,6 +56,35 @@
            the whole flight, not just get kicked on once at t=0. -->
       <condition> simulation/sim-time-sec ge 0.0 </condition>
       <set name="ap/attitude-hold-on" value="1.0"/>
+    </event>
+
+    <event name="hold-ground-settle" persistent="true">
+      <!-- Zero fcs/adj/collective-bias until the climb-out collective
+           raise: the corrected main rotor (real Mi-17 diameter/blade
+           count, ~1.8x the old placeholder's disk area) produces
+           ~19000-20000 lbs of thrust from the default 0.15 rad bias
+           ALONE during the RPM-overshoot transient every engine start
+           goes through (shaft-rpm briefly hits ~300+ against a 192
+           target before the governor reels it in, see rpm_governor.xml)
+           , enough to cause an uncommanded partial liftoff while the
+           aircraft is still unsettled from the initial ground-touchdown
+           bounce, observed causing a violent roll (33 -> 55+ deg within
+           a few tenths of a second) and a full aerodynamic blowup
+           shortly after. Every other validated ground-run script
+           (test_mi17_gearbox_steadystate.xml, test_mi17_gearbox_oei.xml,
+           test_mi17_spinup_diag.xml) already zeroes both
+           collective-cmd-norm AND collective-bias for exactly this
+           reason; this script only zeroed the former. -->
+      <condition> simulation/sim-time-sec le 14.999 </condition>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+    <event name="restore-collective-bias" persistent="false">
+      <!-- Restore the normal 0.15 rad bias once actually climbing,
+           matching fcs/adj/collective-bias's own default (rotor_
+           control.xml) so collective behaves normally for the rest of
+           the flight. -->
+      <condition> simulation/sim-time-sec ge 15.0 </condition>
+      <set name="fcs/adj/collective-bias" value="0.15"/>
     </event>
 
     <event name="raise collective to climb" persistent="false">

@@ -10,8 +10,23 @@
        interface.md section 1 for the pattern this follows. -->
   <ExternalRPM>-1</ExternalRPM>
 
-  <diameter  unit="FT">                  52.0 </diameter>
-  <numblades>                               3 </numblades>
+  <!-- diameter: real Mi-17 figure from the type's dimensioned
+       general-arrangement drawing, Ø21,294 mm = 69.862 ft (previously
+       52.0 ft, an undersized placeholder; only ~55% of the real disk
+       area, (52/69.862)^2 ~= 0.554). numblades: real Mi-17 main rotor
+       has 5 blades (previously 3, also an unsourced placeholder).
+       Neither was caught when the tail rotor's diameter/gearing were
+       corrected from this same drawing earlier in this branch's
+       history; found while investigating whether this model's main
+       rotor torque/power estimate at hover was unrealistically high
+       relative to the aircraft's weight, since an undersized disk
+       directly inflates required induced power for a given thrust,
+       a likely major contributor, more so than the tail rotor's own
+       sizing. flappingmoment/massmoment/polarmoment below are now
+       derived from a real blade mass (137 kg); hingeoffset (4.0 ft)
+       is still an unsourced placeholder these derivations depend on. -->
+  <diameter  unit="FT">                  69.862 </diameter>
+  <numblades>                               5 </numblades>
   <!-- gearratio/nominalrpm match real Mi-17 figures: engine input to
        the main gearbox is ~15000 RPM, main rotor nominal is 192 RPM,
        so gearratio = 15000/192 = 78.125 (previously 18.5/270, a
@@ -23,14 +38,63 @@
        gearratio/nominalrpm, both updated together with this file. -->
   <gearratio>                           78.125 </gearratio>
   <nominalrpm>                          192.0 </nominalrpm>
-  <chord unit="FT">                      2.5 </chord>
+  <!-- chord: real Mi-17 figure, 520mm = 1.706 ft (previously 2.5 ft,
+       an unsourced placeholder). Cross-checks well: 5 blades x 1.706
+       ft chord / (pi x 34.931 ft radius) = 0.0777 rotor solidity,
+       matching the commonly-cited ~0.077-0.08 range for this rotor. -->
+  <chord unit="FT">                   1.706 </chord>
   <liftcurveslope>                        6.0 </liftcurveslope>
-  <flappingmoment unit="SLUG*FT2">     2500.0 </flappingmoment>
+  <!-- flappingmoment/massmoment (both per-blade; see FGRotor.cpp's
+       "Blade..." naming and its own default-estimate formulas, which
+       divide/don't-multiply by numblades) and polarmoment (total
+       across all blades; FGRotor's own default estimate multiplies by
+       numblades) derived from a real blade mass, 137 kg = 9.387 slug,
+       treated as a uniform rectangular blade spanning from the hinge
+       (hingeoffset=4.0 ft, still an unsourced placeholder) to the tip
+       (radius=34.931 ft):
+         Lb = R - hingeoffset = 30.931 ft
+         flappingmoment = mass*Lb^2/3 = 2993.75 slug*ft2 (per blade,
+           uniform rod about its own hinged end)
+         massmoment = mass*(Lb/2) = 145.18 slug*ft (per blade, first
+           moment about the hinge)
+         polarmoment = numblades * mass/Lb * (R^3-hingeoffset^3)/3
+           = 5 * 4305.41 = 21527.04 slug*ft2 (about the shaft axis,
+           summed over all blades)
+       Previously 2500.0/120.0/4500.0, unsourced placeholders sized
+       against the old 52 ft/3-blade rotor; notably polarmoment was
+       roughly 4.8x too small for the corrected rotor's real mass
+       distribution, which is likely why raising diameter/numblades/
+       chord alone (before this fix) caused a fast, severe pitch
+       divergence within ~2s of engine start: too little rotational
+       inertia makes the rotor respond explosively to torque
+       transients during spin-up. -->
+  <flappingmoment unit="SLUG*FT2">     2993.75 </flappingmoment>
   <twist>                              -0.12 </twist>
-  <massmoment>                          120.0 </massmoment>
+  <massmoment>                          145.18 </massmoment>
   <tiplossfactor>                         0.98 </tiplossfactor>
-  <polarmoment unit="SLUG*FT2">        4500.0 </polarmoment>
-  <inflowlag>                            0.12 </inflowlag>
+  <polarmoment unit="SLUG*FT2">       21527.04 </polarmoment>
+  <!-- inflowlag: induced-velocity response time constant
+       (FGRotor.cpp's nu update, calc_flow_and_thrust()). Previously
+       0.12, unchanged from before the diameter/numblades/chord
+       correction. With the corrected rotor (radius 52 -> 69.862 ft,
+       ~4.6x higher thrust sensitivity from numblades x chord x
+       radius^3 scaling in FGRotor's Thrust formula), even a pure
+       open-loop test (no autopilot/governor involved, collective held
+       perfectly fixed) showed a growing vertical thrust/climb-rate
+       oscillation. Tried scaling inflowlag with radius (0.12*69.862/
+       52=0.1612, still oscillating, crashed ~22s into scripts/_diag_
+       vertdyn.xml-style testing), then empirically bracketing: 0.32
+       bounded the oscillation furthest out (survived to ~32s, largest
+       window of any value tried) but 0.4 and 0.6 were both markedly
+       WORSE (h-agl spiking to 400-600+ ft, shaft-rpm to 1000+) than
+       0.32, a non-monotonic response to this one parameter. Left at
+       0.32 (locally best found), but this is empirical bracketing
+       around a fundamentally under-damped, borderline-chaotic system,
+       not a converged, validated fix; the corrected main rotor's
+       vertical dynamics are not fully stable and this needs further
+       real work (see mi17.xml's gearbox comment and this branch's
+       commit history for the full investigation). -->
+  <inflowlag>                          0.32 </inflowlag>
   <hingeoffset unit="FT">                4.0 </hingeoffset>
 
   <!-- Ground effect for Mi-17 -->
