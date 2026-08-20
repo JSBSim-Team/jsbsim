@@ -1,0 +1,184 @@
+<system name="electrical_system">
+
+  <!-- Mi-17 Electrical System -->
+  <!-- 
+       The Mi-17 has a 28V DC electrical system with:
+       - Main generator (28V, 200A)
+       - Backup generator (28V, 100A) 
+       - Battery (28V, 40Ah)
+       - Various electrical loads
+  -->
+
+  <!-- Electrical system properties -->
+  <property value="28.0"> electrical/main-voltage-v </property>
+  <property value="200.0"> electrical/main-generator-current-a </property>
+  <property value="100.0"> electrical/backup-generator-current-a </property>
+  <property value="40.0"> electrical/battery-capacity-ah </property>
+  <property value="0.8"> electrical/battery-charge-norm </property>
+
+  <!-- Generator status -->
+  <property value="1.0"> electrical/main-generator-on </property>
+  <property value="0.0"> electrical/backup-generator-on </property>
+  <property value="1.0"> electrical/battery-on </property>
+
+  <!-- Electrical loads -->
+  <property value="50.0"> electrical/avionics-load-a </property>
+  <property value="30.0"> electrical/lighting-load-a </property>
+  <property value="20.0"> electrical/hydraulic-pump-load-a </property>
+  <property value="15.0"> electrical/heating-load-a </property>
+  <property value="10.0"> electrical/misc-load-a </property>
+
+  <!-- Total electrical load calculation -->
+  <channel name="electrical loads">
+    <fcs_function name="electrical/total-load-a">
+      <function>
+        <sum>
+          <property> electrical/avionics-load-a </property>
+          <property> electrical/lighting-load-a </property>
+          <property> electrical/hydraulic-pump-load-a </property>
+          <property> electrical/heating-load-a </property>
+          <property> electrical/misc-load-a </property>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Available current from generators -->
+    <fcs_function name="electrical/available-current-a">
+      <function>
+        <sum>
+          <product>
+            <property> electrical/main-generator-current-a </property>
+            <property> electrical/main-generator-on </property>
+          </product>
+          <product>
+            <property> electrical/backup-generator-current-a </property>
+            <property> electrical/backup-generator-on </property>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Battery current (positive = charging, negative = discharging) -->
+    <fcs_function name="electrical/battery-current-a">
+      <function>
+        <difference>
+          <property> electrical/available-current-a </property>
+          <property> electrical/total-load-a </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <!-- Battery voltage (affected by load) -->
+    <fcs_function name="electrical/battery-voltage-v">
+      <function>
+        <sum>
+          <property> electrical/main-voltage-v </property>
+          <product>
+            <value> -0.1 </value>
+            <property> electrical/battery-current-a </property>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Electrical system health -->
+    <fcs_function name="electrical/system-health-norm">
+      <function>
+        <table>
+          <independentVar> electrical/battery-voltage-v </independentVar>
+          <tableData>
+            20.0   0.0
+            24.0   0.5
+            26.0   0.8
+            28.0   1.0
+            30.0   1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Generator failure simulation -->
+  <channel name="generator failures">
+    <fcs_function name="electrical/main-generator-failure">
+      <function>
+        <table>
+          <independentVar> propulsion/engine/rpm </independentVar>
+          <tableData>
+            0.0    0.0
+            1000.0 0.0
+            2000.0 0.0
+            3000.0 0.0
+            4000.0 0.0
+            5000.0 0.0
+            6000.0 0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Generator output based on engine RPM -->
+    <fcs_function name="electrical/main-generator-output-a">
+      <function>
+        <product>
+          <property> electrical/main-generator-current-a </property>
+          <property> electrical/main-generator-on </property>
+          <property> electrical/main-generator-failure </property>
+          <table>
+            <independentVar> propulsion/engine/rpm </independentVar>
+            <tableData>
+              0.0    0.0
+              1000.0 0.2
+              2000.0 0.4
+              3000.0 0.6
+              4000.0 0.8
+              5000.0 1.0
+              6000.0 1.0
+            </tableData>
+          </table>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Electrical warnings and indicators -->
+  <channel name="electrical indicators">
+    <fcs_function name="electrical/low-voltage-warning">
+      <function>
+        <table>
+          <independentVar> electrical/battery-voltage-v </independentVar>
+          <tableData>
+            0.0    1.0
+            24.0   1.0
+            26.0   0.0
+            30.0   0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="electrical/generator-fault">
+      <function>
+        <difference>
+          <value> 1.0 </value>
+          <property> electrical/main-generator-on </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="electrical/battery-discharge-warning">
+      <function>
+        <table>
+          <independentVar> electrical/battery-current-a </independentVar>
+          <tableData>
+            -50.0  1.0
+            -20.0  1.0
+            -10.0  0.0
+            50.0   0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+</system>

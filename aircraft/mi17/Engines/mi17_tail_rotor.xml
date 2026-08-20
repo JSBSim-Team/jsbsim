@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<rotor name="mi17_tail_rotor">
+
+    <diameter unit="FT">                  10.5 </diameter>
+    <numblades>                             3 </numblades>
+    <gearratio>                        4.2 </gearratio>
+    <nominalrpm>                       1134.0 </nominalrpm>
+    <chord unit="FT">                     0.8 </chord>
+    <flappingmoment unit="SLUG*FT2">     2.5 </flappingmoment>
+    <liftcurveslope>                      6.0 </liftcurveslope>
+    <twist>                               0.0 </twist>
+    <massmoment>                         0.8 </massmoment>
+    <tiplossfactor>                       1.0 </tiplossfactor>
+    <inflowlag>                          0.10 </inflowlag> 
+    <hingeoffset unit="FT">             0.02 </hingeoffset>
+
+    <ExternalRPM> 0 </ExternalRPM>
+    <controlmap> TAIL </controlmap>
+
+</rotor>

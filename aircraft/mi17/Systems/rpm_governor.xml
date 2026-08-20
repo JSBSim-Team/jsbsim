@@ -1,0 +1,157 @@
+<system name="rpm_governor">
+
+  <!-- Mi-17 RPM Governor System -->
+  <!-- 
+       The Mi-17 has an RPM governor that maintains
+       constant rotor RPM by adjusting engine power
+  -->
+
+  <!-- Governor properties -->
+  <property value="270.0"> governor/target-rpm </property>
+  <property value="5.0"> governor/gain </property>
+  <property value="0.1"> governor/integral-gain </property>
+  <property value="0.05"> governor/derivative-gain </property>
+  <property value="1.0"> governor/enabled </property>
+
+  <!-- Governor state -->
+  <property value="0.0"> governor/integral-error </property>
+  <property value="0.0"> governor/previous-error </property>
+  <property value="0.0"> governor/output </property>
+
+  <!-- RPM control -->
+  <channel name="rpm control">
+    <fcs_function name="governor/rpm-error">
+      <function>
+        <difference>
+          <property> governor/target-rpm </property>
+          <property> propulsion/engine/rpm </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/proportional-term">
+      <function>
+        <product>
+          <property> governor/rpm-error </property>
+          <property> governor/gain </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/integral-term">
+      <function>
+        <product>
+          <property> governor/integral-error </property>
+          <property> governor/integral-gain </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/derivative-term">
+      <function>
+        <product>
+          <difference>
+            <property> governor/rpm-error </property>
+            <property> governor/previous-error </property>
+          </difference>
+          <property> governor/derivative-gain </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/pid-output">
+      <function>
+        <sum>
+          <property> governor/proportional-term </property>
+          <property> governor/integral-term </property>
+          <property> governor/derivative-term </property>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/throttle-correction">
+      <function>
+        <product>
+          <property> governor/pid-output </property>
+          <property> governor/enabled </property>
+          <value> 0.01 </value>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Governor limits -->
+  <channel name="governor limits">
+    <fcs_function name="governor/throttle-limited">
+      <function>
+        <table>
+          <independentVar> governor/throttle-correction </independentVar>
+          <tableData>
+            -1.0   -0.1
+            -0.5   -0.05
+             0.0    0.0
+             0.5    0.05
+             1.0    0.1
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/throttle-output">
+      <function>
+        <sum>
+          <property> propulsion/engine/throttle-pos-norm </property>
+          <property> governor/throttle-limited </property>
+        </sum>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Governor status -->
+  <channel name="governor status">
+    <fcs_function name="governor/rpm-deviation-percent">
+      <function>
+        <product>
+          <quotient>
+            <property> governor/rpm-error </property>
+            <property> governor/target-rpm </property>
+          </quotient>
+          <value> 100.0 </value>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/governor-active">
+      <function>
+        <table>
+          <independentVar> governor/rpm-deviation-percent </independentVar>
+          <tableData>
+            -10.0  1.0
+            -5.0   1.0
+            -2.0   0.0
+             2.0   0.0
+             5.0   1.0
+            10.0   1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="governor/governor-warning">
+      <function>
+        <table>
+          <independentVar> governor/rpm-deviation-percent </independentVar>
+          <tableData>
+            -20.0  1.0
+            -10.0  0.0
+            -5.0   0.0
+             5.0   0.0
+            10.0   0.0
+            20.0   1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+</system>

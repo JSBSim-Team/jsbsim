@@ -1,0 +1,218 @@
+<system name="steady_flight_data">
+
+  <!-- Mi-17 Steady Flight Data -->
+  <!-- 
+       This system provides steady flight performance data
+       for the Mi-17 helicopter including:
+       - Hover performance
+       - Forward flight performance
+       - Climb performance
+       - Autorotation performance
+  -->
+
+  <!-- Performance data properties -->
+  <property value="0.0"> performance/hover-power-hp </property>
+  <property value="0.0"> performance/hover-fuel-flow-lbs-hr </property>
+  <property value="0.0"> performance/cruise-power-hp </property>
+  <property value="0.0"> performance/cruise-fuel-flow-lbs-hr </property>
+  <property value="0.0"> performance/max-climb-rate-fpm </property>
+  <property value="0.0"> performance/service-ceiling-ft </property>
+
+  <!-- Hover performance -->
+  <channel name="hover performance">
+    <fcs_function name="performance/hover-power-calc">
+      <function>
+        <table>
+          <independentVar> mass/total-mass-lbs </independentVar>
+          <tableData>
+            10000.0  800.0
+            12000.0  1000.0
+            14000.0  1250.0
+            15000.0  1400.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/hover-fuel-flow-calc">
+      <function>
+        <product>
+          <property> performance/hover-power-calc </property>
+          <value> 0.4 </value>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/hover-endurance-hrs">
+      <function>
+        <quotient>
+          <property> mass/fuel-lbs </property>
+          <property> performance/hover-fuel-flow-calc </property>
+        </quotient>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Forward flight performance -->
+  <channel name="forward flight performance">
+    <fcs_function name="performance/cruise-power-calc">
+      <function>
+        <table>
+          <independentVar> velocities/vt-fps </independentVar>
+          <tableData>
+            50.0    600.0
+            100.0   800.0
+            150.0   1000.0
+            200.0   1200.0
+            250.0   1400.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/cruise-fuel-flow-calc">
+      <function>
+        <product>
+          <property> performance/cruise-power-calc </property>
+          <value> 0.4 </value>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/cruise-range-nm">
+      <function>
+        <product>
+          <property> performance/cruise-fuel-flow-calc </property>
+          <value> -1.0 </value>
+          <property> mass/fuel-lbs </property>
+          <value> 0.0005 </value>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Climb performance -->
+  <channel name="climb performance">
+    <fcs_function name="performance/climb-power-calc">
+      <function>
+        <sum>
+          <property> performance/hover-power-calc </property>
+          <product>
+            <property> velocities/v-down-fps </property>
+            <value> 2.0 </value>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/max-climb-rate-calc">
+      <function>
+        <table>
+          <independentVar> position/altitude-ft </independentVar>
+          <tableData>
+            0.0     1500.0
+            5000.0  1200.0
+            10000.0 800.0
+            15000.0 400.0
+            20000.0 0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/service-ceiling-calc">
+      <function>
+        <table>
+          <independentVar> mass/total-mass-lbs </independentVar>
+          <tableData>
+            10000.0  20000.0
+            12000.0  18000.0
+            14000.0  16000.0
+            15000.0  14000.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Autorotation performance -->
+  <channel name="autorotation performance">
+    <fcs_function name="performance/autorotation-glide-ratio">
+      <function>
+        <table>
+          <independentVar> velocities/vt-fps </independentVar>
+          <tableData>
+            50.0    2.0
+            100.0   3.5
+            150.0   4.0
+            200.0   3.5
+            250.0   2.5
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/autorotation-sink-rate-fpm">
+      <function>
+        <quotient>
+          <property> velocities/vt-fps </property>
+          <property> performance/autorotation-glide-ratio </property>
+        </quotient>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/autorotation-range-nm">
+      <function>
+        <product>
+          <property> position/altitude-ft </property>
+          <property> performance/autorotation-glide-ratio </property>
+          <value> 0.000164579 </value>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Performance indicators -->
+  <channel name="performance indicators">
+    <fcs_function name="performance/power-available-hp">
+      <function>
+        <table>
+          <independentVar> propulsion/engine/throttle-pos-norm </independentVar>
+          <tableData>
+            0.0    0.0
+            0.5    1000.0
+            1.0    2000.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/power-required-hp">
+      <function>
+        <sum>
+          <property> performance/hover-power-calc </property>
+          <property> performance/cruise-power-calc </property>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/power-margin-hp">
+      <function>
+        <difference>
+          <property> performance/power-available-hp </property>
+          <property> performance/power-required-hp </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="performance/power-margin-percent">
+      <function>
+        <quotient>
+          <property> performance/power-margin-hp </property>
+          <property> performance/power-available-hp </property>
+        </quotient>
+      </function>
+    </fcs_function>
+  </channel>
+
+</system>

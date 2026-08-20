@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<rotor name="mi17_main_rotor">
+
+  <!-- ExternalRPM required: this branch's <gearbox> drives the shaft
+       externally (two mi17_main_engine_N turboprop_engine sides
+       combined), so FGRotor must not instantiate its own internal
+       single-engine FGTransmission. See aircraft/gearbox_test/Engines/
+       gearbox_test_rotor.xml and docs/interfaces/twin-engine-gearbox-
+       interface.md section 1 for the pattern this follows. -->
+  <ExternalRPM>-1</ExternalRPM>
+
+  <diameter  unit="FT">                  52.0 </diameter>
+  <numblades>                               3 </numblades>
+  <gearratio>                           18.5 </gearratio>
+  <nominalrpm>                          270.0 </nominalrpm>
+  <chord unit="FT">                      2.5 </chord>
+  <liftcurveslope>                        6.0 </liftcurveslope>
+  <flappingmoment unit="SLUG*FT2">     2500.0 </flappingmoment>
+  <twist>                              -0.12 </twist>
+  <massmoment>                          120.0 </massmoment>
+  <tiplossfactor>                         0.98 </tiplossfactor>
+  <polarmoment unit="SLUG*FT2">        4500.0 </polarmoment>
+  <inflowlag>                            0.12 </inflowlag>
+  <hingeoffset unit="FT">                4.0 </hingeoffset>
+
+  <!-- Ground effect for Mi-17 -->
+  <groundeffectexp>                     0.15 </groundeffectexp>
+  <groundeffectshift unit="FT">           12 </groundeffectshift>
+
+</rotor>

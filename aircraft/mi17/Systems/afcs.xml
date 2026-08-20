@@ -1,0 +1,225 @@
+<system name="afcs">
+
+  <!-- Mi-17 Automatic Flight Control System (AFCS) -->
+  <!-- 
+       The Mi-17 has a basic AFCS with:
+       - Attitude hold
+       - Heading hold
+       - Altitude hold
+       - Speed hold
+       - Stability augmentation
+  -->
+
+  <!-- AFCS properties -->
+  <property value="0.0"> ap/attitude-hold-on </property>
+  <property value="0.0"> ap/heading-hold-on </property>
+  <property value="0.0"> ap/altitude-hold-on </property>
+  <property value="0.0"> ap/speed-hold-on </property>
+  <property value="1.0"> ap/stability-aug-on </property>
+
+  <!-- AFCS gains -->
+  <property value="0.5"> ap/pitch-gain </property>
+  <property value="0.5"> ap/roll-gain </property>
+  <property value="0.3"> ap/yaw-gain </property>
+  <property value="0.4"> ap/collective-gain </property>
+
+  <!-- Attitude hold -->
+  <channel name="attitude hold">
+    <fcs_function name="ap/pitch-error-rad">
+      <function>
+        <difference>
+          <property> ap/pitch-target-rad </property>
+          <property> attitude/pitch-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/roll-error-rad">
+      <function>
+        <difference>
+          <property> ap/roll-target-rad </property>
+          <property> attitude/roll-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/elevator-cmd">
+      <function>
+        <product>
+          <property> ap/pitch-error-rad </property>
+          <property> ap/pitch-gain </property>
+          <property> ap/attitude-hold-on </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/aileron-cmd">
+      <function>
+        <product>
+          <property> ap/roll-error-rad </property>
+          <property> ap/roll-gain </property>
+          <property> ap/attitude-hold-on </property>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Heading hold -->
+  <channel name="heading hold">
+    <fcs_function name="ap/heading-error-rad">
+      <function>
+        <difference>
+          <property> ap/heading-target-rad </property>
+          <property> attitude/heading-rad </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/rudder-cmd">
+      <function>
+        <product>
+          <property> ap/heading-error-rad </property>
+          <property> ap/yaw-gain </property>
+          <property> ap/heading-hold-on </property>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Altitude hold -->
+  <channel name="altitude hold">
+    <fcs_function name="ap/altitude-error-ft">
+      <function>
+        <difference>
+          <property> ap/altitude-target-ft </property>
+          <property> position/altitude-ft </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/vertical-speed-error-fps">
+      <function>
+        <difference>
+          <property> ap/vertical-speed-target-fps </property>
+          <property> velocities/v-down-fps </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/collective-cmd">
+      <function>
+        <sum>
+          <product>
+            <property> ap/altitude-error-ft </property>
+            <value> 0.001 </value>
+            <property> ap/altitude-hold-on </property>
+          </product>
+          <product>
+            <property> ap/vertical-speed-error-fps </property>
+            <value> 0.01 </value>
+            <property> ap/altitude-hold-on </property>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Speed hold -->
+  <channel name="speed hold">
+    <fcs_function name="ap/speed-error-fps">
+      <function>
+        <difference>
+          <property> ap/speed-target-fps </property>
+          <property> velocities/vt-fps </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/speed-collective-cmd">
+      <function>
+        <product>
+          <property> ap/speed-error-fps </property>
+          <value> 0.005 </value>
+          <property> ap/speed-hold-on </property>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Stability augmentation -->
+  <channel name="stability augmentation">
+    <fcs_function name="ap/sas-pitch-cmd">
+      <function>
+        <product>
+          <property> velocities/q-rad_sec </property>
+          <value> -0.1 </value>
+          <property> ap/stability-aug-on </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/sas-roll-cmd">
+      <function>
+        <product>
+          <property> velocities/p-rad_sec </property>
+          <value> -0.1 </value>
+          <property> ap/stability-aug-on </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="ap/sas-yaw-cmd">
+      <function>
+        <product>
+          <property> velocities/r-rad_sec </property>
+          <value> -0.05 </value>
+          <property> ap/stability-aug-on </property>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Combined AFCS commands -->
+  <channel name="afcs commands">
+    <summer name="ap/total-elevator-cmd">
+      <input> ap/elevator-cmd </input>
+      <input> ap/sas-pitch-cmd </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+      <output> ap/elevator-cmd </output>
+    </summer>
+
+    <summer name="ap/total-aileron-cmd">
+      <input> ap/aileron-cmd </input>
+      <input> ap/sas-roll-cmd </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+      <output> ap/aileron-cmd </output>
+    </summer>
+
+    <summer name="ap/total-rudder-cmd">
+      <input> ap/rudder-cmd </input>
+      <input> ap/sas-yaw-cmd </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+      <output> ap/rudder-cmd </output>
+    </summer>
+
+    <summer name="ap/total-collective-cmd">
+      <input> ap/collective-cmd </input>
+      <input> ap/speed-collective-cmd </input>
+      <clipto>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </clipto>
+      <output> ap/collective-cmd </output>
+    </summer>
+  </channel>
+
+</system>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<!--
+  Dummy power source for the tail rotor. The Mi-17 has no separate
+  tail engine; the tail rotor is driven off the same transmission as
+  the main rotor, so this remains a placeholder single-source engine,
+  not a <twin_turboshaft_engine>. Follows the same minimal pattern this
+  repo's own origin/dev3 branch already used successfully for its AH-1S-
+  based rig (Engines/electric_1hp_dummy.xml): FGElectric only reads a
+  flat <power> value, not a throttle-mapped table, which is why the
+  previous <power><table>...</table></power> block here never matched
+  any recognized engine schema (see mi17-jsbsim-model verification
+  notes / fsim-hardware GameState work). 50 HP preserves this file's
+  previous max-power figure.
+-->
+<electric_engine name="mi17_tail_engine">
+  <power unit="HP"> 50.0 </power>
+</electric_engine>

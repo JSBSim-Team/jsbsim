@@ -1,0 +1,216 @@
+<system name="hydraulic_system">
+
+  <!-- Mi-17 Hydraulic System -->
+  <!-- 
+       The Mi-17 has a dual hydraulic system:
+       - Main hydraulic system (210 bar)
+       - Backup hydraulic system (210 bar)
+       - Emergency hydraulic system (hand pump)
+       - Various hydraulic actuators and pumps
+  -->
+
+  <!-- Hydraulic system properties -->
+  <property value="210.0"> hydraulic/main-pressure-bar </property>
+  <property value="210.0"> hydraulic/backup-pressure-bar </property>
+  <property value="50.0"> hydraulic/main-pump-flow-lpm </property>
+  <property value="30.0"> hydraulic/backup-pump-flow-lpm </property>
+  <property value="0.9"> hydraulic/reservoir-level-norm </property>
+
+  <!-- Pump status -->
+  <property value="1.0"> hydraulic/main-pump-on </property>
+  <property value="0.0"> hydraulic/backup-pump-on </property>
+  <property value="1.0"> hydraulic/emergency-pump-on </property>
+
+  <!-- Hydraulic loads -->
+  <property value="15.0"> hydraulic/flight-control-load-lpm </property>
+  <property value="10.0"> hydraulic/landing-gear-load-lpm </property>
+  <property value="8.0"> hydraulic/brake-load-lpm </property>
+  <property value="5.0"> hydraulic/misc-load-lpm </property>
+
+  <!-- Total hydraulic load calculation -->
+  <channel name="hydraulic loads">
+    <fcs_function name="hydraulic/total-load-lpm">
+      <function>
+        <sum>
+          <property> hydraulic/flight-control-load-lpm </property>
+          <property> hydraulic/landing-gear-load-lpm </property>
+          <property> hydraulic/brake-load-lpm </property>
+          <property> hydraulic/misc-load-lpm </property>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Available flow from pumps -->
+    <fcs_function name="hydraulic/available-flow-lpm">
+      <function>
+        <sum>
+          <product>
+            <property> hydraulic/main-pump-flow-lpm </property>
+            <property> hydraulic/main-pump-on </property>
+          </product>
+          <product>
+            <property> hydraulic/backup-pump-flow-lpm </property>
+            <property> hydraulic/backup-pump-on </property>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Hydraulic pressure calculation -->
+    <fcs_function name="hydraulic/system-pressure-bar">
+      <function>
+        <table>
+          <independentVar> hydraulic/available-flow-lpm </independentVar>
+          <tableData>
+            0.0    0.0
+            10.0   50.0
+            20.0   100.0
+            30.0   150.0
+            40.0   200.0
+            50.0   210.0
+            60.0   210.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Hydraulic system health -->
+    <fcs_function name="hydraulic/system-health-norm">
+      <function>
+        <table>
+          <independentVar> hydraulic/system-pressure-bar </independentVar>
+          <tableData>
+            0.0    0.0
+            50.0   0.2
+            100.0  0.5
+            150.0  0.8
+            200.0  1.0
+            210.0  1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Pump failure simulation -->
+  <channel name="pump failures">
+    <fcs_function name="hydraulic/main-pump-failure">
+      <function>
+        <table>
+          <independentVar> propulsion/engine/rpm </independentVar>
+          <tableData>
+            0.0    0.0
+            1000.0 0.0
+            2000.0 0.0
+            3000.0 0.0
+            4000.0 0.0
+            5000.0 0.0
+            6000.0 0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Pump output based on engine RPM -->
+    <fcs_function name="hydraulic/main-pump-output-lpm">
+      <function>
+        <product>
+          <property> hydraulic/main-pump-flow-lpm </property>
+          <property> hydraulic/main-pump-on </property>
+          <property> hydraulic/main-pump-failure </property>
+          <table>
+            <independentVar> propulsion/engine/rpm </independentVar>
+            <tableData>
+              0.0    0.0
+              1000.0 0.2
+              2000.0 0.4
+              3000.0 0.6
+              4000.0 0.8
+              5000.0 1.0
+              6000.0 1.0
+            </tableData>
+          </table>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Hydraulic warnings and indicators -->
+  <channel name="hydraulic indicators">
+    <fcs_function name="hydraulic/low-pressure-warning">
+      <function>
+        <table>
+          <independentVar> hydraulic/system-pressure-bar </independentVar>
+          <tableData>
+            0.0    1.0
+            100.0  1.0
+            150.0  0.0
+            210.0  0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="hydraulic/pump-fault">
+      <function>
+        <difference>
+          <value> 1.0 </value>
+          <property> hydraulic/main-pump-on </property>
+        </difference>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="hydraulic/reservoir-low-warning">
+      <function>
+        <table>
+          <independentVar> hydraulic/reservoir-level-norm </independentVar>
+          <tableData>
+            0.0    1.0
+            0.2    1.0
+            0.3    0.0
+            1.0    0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="hydraulic/overpressure-warning">
+      <function>
+        <table>
+          <independentVar> hydraulic/system-pressure-bar </independentVar>
+          <tableData>
+            0.0    0.0
+            200.0  0.0
+            220.0  1.0
+            250.0  1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Hydraulic actuator simulation -->
+  <channel name="hydraulic actuators">
+    <!-- Flight control actuator response -->
+    <lag_filter name="hydraulic/flight-control-response">
+      <input> fcs/collective-ctrl-rad </input>
+      <c1> 15.0 </c1>
+      <output> hydraulic/flight-control-actuator-rad </output>
+    </lag_filter>
+
+    <!-- Landing gear actuator response -->
+    <lag_filter name="hydraulic/gear-response">
+      <input> gear/gear-pos-norm </input>
+      <c1> 8.0 </c1>
+      <output> hydraulic/gear-actuator-norm </output>
+    </lag_filter>
+
+    <!-- Brake actuator response -->
+    <lag_filter name="hydraulic/brake-response">
+      <input> gear/brake-pos-norm </input>
+      <c1> 20.0 </c1>
+      <output> hydraulic/brake-actuator-norm </output>
+    </lag_filter>
+  </channel>
+
+</system>

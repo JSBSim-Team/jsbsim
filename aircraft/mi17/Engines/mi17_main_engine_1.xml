@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<!--
+  Mi-17 main rotor drive, side 1 of 2: one TV3-117MT turboshaft,
+  combined with mi17_main_engine_2 through <gearbox name="mi17-main-
+  gearbox"> in mi17.xml (this branch's FGGearbox, feature/REQ-003-
+  fggearbox) into the single main rotor shaft.
+
+  This is the same per-side derivation used on the sibling
+  feature/turboshaft branch's mi17_main_engine.xml (<twin_turboshaft_
+  engine>, which models both sides internally in one file); see that
+  file's comments for the full rationale. Recorded again here since
+  <turboprop_engine> (FGTurboProp) is a different, though closely
+  related, class: FGTwinTurboshaft's own header says its thermodynamics
+  "follow FGTurboProp per side", and both classes read the same element
+  names (idlen1, maxn1, maxpower, psfc, tables, etc.), so the same
+  1000 HP/side tables apply unchanged.
+
+  maxpower=1000 HP/side (2000 HP combined) preserves this model's
+  previously-documented total (mi17-jsbsim-model README.md: "TV3-117MT
+  turboshaft, 2,000 HP"); not sourced from a real TV3-117MT datasheet.
+  EnginePowerRPM_N1's RPM axis is scaled from this model's own
+  transmission (mi17_main_rotor.xml gearratio=18.5 x nominalrpm=270 =
+  ~4995 EngineRPM at 100% N1), not copied from the AH-1S/M601-style
+  turboprop_example's propeller-shaft-scale RPM axis.
+-->
+<turboprop_engine name="mi17_main_engine_1">
+  <idlen1>                       60.0   </idlen1>
+  <maxn1>                       100.0   </maxn1>
+  <maxpower unit="HP">         1000.0   </maxpower>
+  <psfc unit="LBS/HR/HP">         0.55  </psfc>
+  <n1idle_max_delay>              1     </n1idle_max_delay>
+  <maxstartingtime>              20     </maxstartingtime>
+  <startern1>                    20     </startern1>
+  <ielumaxtorque unit="FT*LB">  2100     </ielumaxtorque>
+  <itt_delay>                     0.05  </itt_delay>
+
+  <table name="EnginePowerVC">
+    <description> Engine power, function of airspeed and pressure </description>
+    <independentVar lookup="row">atmosphere/P-psf</independentVar>
+    <independentVar lookup="column">velocities/ve-kts</independentVar>
+    <tableData>
+                 0     50    100    150    200    250
+       503   0.357  0.380  0.400  0.425  0.457  0.486
+      1048   0.586  0.589  0.600  0.621  0.650  0.686
+      1328   0.707  0.721  0.731  0.757  0.786  0.821
+      1496   0.779  0.786  0.808  0.821  0.857  0.900
+      1684   0.850  0.857  0.874  0.900  0.943  0.979
+      1896   0.914  0.929  0.946  0.971  1      1.057
+      2135   1      1.011  1.029  1.043  1.083  1.150
+      2213   1.029  1.043  1.057  1.079  1.114  1.171
+    </tableData>
+  </table>
+
+  <table name="EnginePowerRPM_N1" type="internal">
+    <description>
+      Per-side engine power [HP], function of EngineRPM (rotor RPM x
+      gearratio 18.5) and N1 [%]. Nominal main-rotor speed (270 RPM)
+      corresponds to EngineRPM ~4995, between the 4700 and 5200 rows.
+    </description>
+    <tableData>
+              0     5     60     86     94     95     96     97     98     99    100    101
+         0    0   1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4    1.4
+      1900    0   1.4    100    571   1000   1086   1200   1314   1429   1514   1657   1771
+      2850    0   1.4     86    657   1143   1229   1343   1443   1571   1686   1829   1943
+      3800    0   1.4     14    686   1257   1357   1457   1571   1700   1800   1943   2057
+      4700    0   0.3    0.3    643   1286   1414   1500   1614   1743   1857   2000   2129
+      5200    0   0.3    0.3    586   1257   1371   1471   1600   1729   1843   1986   2124
+    </tableData>
+  </table>
+
+  <table name="ITT_N1" type="internal">
+    <description> Inter-Turbine Temperature ITT [deg C] depending on N1 and engine run (0=off / 1=running) </description>
+    <tableData>
+              0     1
+        0     0     0
+       15   100   100
+       60   180   520
+       96   270   680
+      100   280   730
+    </tableData>
+  </table>
+
+</turboprop_engine>

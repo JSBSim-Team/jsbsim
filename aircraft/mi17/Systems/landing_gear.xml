@@ -1,0 +1,219 @@
+<system name="landing_gear">
+
+  <!-- Mi-17 Landing Gear System -->
+  <!-- 
+       The Mi-17 has:
+       - Fixed main landing gear (left and right)
+       - Fixed nose landing gear
+       - Hydraulic brakes
+       - Wheel steering (limited)
+  -->
+
+  <!-- Landing gear properties -->
+  <property value="1.0"> gear/gear-pos-norm </property>
+  <property value="0.0"> gear/brake-pos-norm </property>
+  <property value="0.0"> gear/steering-pos-norm </property>
+
+  <!-- Gear status -->
+  <property value="1.0"> gear/main-gear-down </property>
+  <property value="1.0"> gear/nose-gear-down </property>
+  <property value="1.0"> gear/gear-locked </property>
+
+  <!-- Brake system -->
+  <property value="1.0"> gear/brake-system-on </property>
+  <property value="0.0"> gear/parking-brake-on </property>
+  <property value="0.0"> gear/anti-skid-on </property>
+
+  <!-- Gear position control -->
+  <channel name="gear position">
+    <fcs_function name="gear/gear-command">
+      <function>
+        <table>
+          <independentVar> gear/gear-pos-norm </independentVar>
+          <tableData>
+            0.0    0.0
+            0.5    0.0
+            1.0    1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Gear down indicator -->
+    <fcs_function name="gear/gear-down-indicator">
+      <function>
+        <product>
+          <property> gear/main-gear-down </property>
+          <property> gear/nose-gear-down </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <!-- Gear up indicator -->
+    <fcs_function name="gear/gear-up-indicator">
+      <function>
+        <difference>
+          <value> 1.0 </value>
+          <property> gear/gear-down-indicator </property>
+        </difference>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Brake system -->
+  <channel name="brake system">
+    <fcs_function name="gear/brake-pressure-psi">
+      <function>
+        <product>
+          <property> gear/brake-pos-norm </property>
+          <value> 1000.0 </value>
+          <property> gear/brake-system-on </property>
+        </product>
+      </function>
+    </fcs_function>
+
+    <!-- Brake temperature simulation -->
+    <fcs_function name="gear/brake-temp-c">
+      <function>
+        <sum>
+          <value> 20.0 </value>
+          <product>
+            <property> gear/brake-pressure-psi </property>
+            <value> 0.5 </value>
+          </product>
+        </sum>
+      </function>
+    </fcs_function>
+
+    <!-- Brake wear simulation -->
+    <fcs_function name="gear/brake-wear-norm">
+      <function>
+        <table>
+          <independentVar> gear/brake-temp-c </independentVar>
+          <tableData>
+            20.0   0.0
+            100.0  0.1
+            200.0  0.3
+            300.0  0.6
+            400.0  1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Brake effectiveness -->
+    <fcs_function name="gear/brake-effectiveness">
+      <function>
+        <difference>
+          <value> 1.0 </value>
+          <property> gear/brake-wear-norm </property>
+        </difference>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Steering system -->
+  <channel name="steering system">
+    <fcs_function name="gear/steering-angle-rad">
+      <function>
+        <product>
+          <property> gear/steering-pos-norm </property>
+          <value> 0.1745 </value> <!-- 10 degrees max -->
+        </product>
+      </function>
+    </fcs_function>
+
+    <!-- Steering effectiveness based on speed -->
+    <fcs_function name="gear/steering-effectiveness">
+      <function>
+        <table>
+          <independentVar> velocities/vt-fps </independentVar>
+          <tableData>
+            0.0    1.0
+            10.0   1.0
+            20.0   0.8
+            30.0   0.5
+            40.0   0.2
+            50.0   0.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Gear warnings -->
+  <channel name="gear warnings">
+    <fcs_function name="gear/gear-warning">
+      <function>
+        <product>
+          <property> gear/gear-up-indicator </property>
+          <table>
+            <independentVar> velocities/vt-fps </independentVar>
+            <tableData>
+              0.0    0.0
+              10.0   0.0
+              20.0   0.0
+              30.0   0.0
+              40.0   0.0
+              50.0   1.0
+            </tableData>
+          </table>
+        </product>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="gear/brake-hot-warning">
+      <function>
+        <table>
+          <independentVar> gear/brake-temp-c </independentVar>
+          <tableData>
+            0.0    0.0
+            200.0  0.0
+            250.0  1.0
+            300.0  1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <fcs_function name="gear/brake-wear-warning">
+      <function>
+        <table>
+          <independentVar> gear/brake-wear-norm </independentVar>
+          <tableData>
+            0.0    0.0
+            0.5    0.0
+            0.8    1.0
+            1.0    1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+  </channel>
+
+  <!-- Gear loads on ground -->
+  <channel name="ground loads">
+    <fcs_function name="gear/ground-load-factor">
+      <function>
+        <table>
+          <independentVar> gear/gear-down-indicator </independentVar>
+          <tableData>
+            0.0    0.0
+            1.0    1.0
+          </tableData>
+        </table>
+      </function>
+    </fcs_function>
+
+    <!-- Weight on wheels -->
+    <fcs_function name="gear/weight-on-wheels">
+      <function>
+        <product>
+          <property> gear/ground-load-factor </property>
+          <property> mass/total-mass-lbs </property>
+        </product>
+      </function>
+    </fcs_function>
+  </channel>
+
+</system>
