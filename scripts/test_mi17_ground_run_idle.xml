@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 low-speed ground run at idle"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Engines started (propulsion/set-running=-1) and then left to the
+    RPM governor (rpm_governor.xml, always loaded as a system on this
+    aircraft) rather than a scripted full-throttle hold like scripts/
+    test_mi17_gearbox_steadystate.xml and test_mi17_spinup_diag.xml
+    use: fcs/throttle-cmd-norm[0/1] is never set here, so the
+    governor alone drives throttle from its post-start decay up to
+    whatever holds governor/target-rpm (192, this model's only
+    governed RPM target -- there is no separate lower flight-idle
+    target modeled). Collective stays flat throughout (fcs/collective-
+    cmd-norm=0.0 and fcs/adj/collective-bias=0.0), so this is a
+    realistic "engine running, rotor engaged, sitting on the ground
+    before pulling collective" case: near-zero groundspeed, WOW on
+    the main gear the whole time, no attempt to climb.
+
+    Distinct from test_mi17_static_ground.xml (engines off entirely,
+    isolates the gear model alone) -- this adds the governor/engine/
+    rotor-torque loop back in, still with zero commanded lift, to
+    check whether that loop settles cleanly on the ground by itself
+    before layering in a collective raise and climb-out as test_mi17_
+    hover.xml does.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <run start="0.0" end="120.0" dt="0.0075">
+
+    <event name="start" persistent="false">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="propulsion/set-running" value="-1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="hold collective flat, let governor drive throttle" persistent="true">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="checkpoint 2s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 5s" persistent="false">
+      <condition> simulation/sim-time-sec ge 5.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 10s" persistent="false">
+      <condition> simulation/sim-time-sec ge 10.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 20s" persistent="false">
+      <condition> simulation/sim-time-sec ge 20.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 30s" persistent="false">
+      <condition> simulation/sim-time-sec ge 30.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 60s" persistent="false">
+      <condition> simulation/sim-time-sec ge 60.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 90s" persistent="false">
+      <condition> simulation/sim-time-sec ge 90.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint 120s" persistent="false">
+      <condition> simulation/sim-time-sec ge 119.9 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[1]/WOW </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
