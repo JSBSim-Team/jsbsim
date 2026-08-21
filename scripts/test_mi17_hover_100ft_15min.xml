@@ -32,11 +32,14 @@
        test_mi17_hover.xml.
 
     2. ap/altitude-target-ft is field elevation (2283.5, reset00.xml)
-       + 100 = 2383.5, not +30. The climb-out/backoff collective values
-       (0.75 climb, 0.68 backoff) and the afcs.xml altitude-hold gains
-       (P + rate + integral, ki=0.0000002) are unchanged from the
-       validated hover script -- this is the same aircraft and the
-       same closed loop, just a different target altitude.
+       + 100 = 2383.5, not +30. The closed-loop climb-out (ramp
+       collective straight to hover trim, ~0.092, while engaging
+       altitude hold at the same instant) and the afcs.xml altitude-
+       hold gains (P=0.005, rate=-0.05, ki=0.0000002) are unchanged
+       from the validated hover script -- this is the same aircraft and
+       the same closed loop, just a different target altitude. See
+       test_mi17_hover.xml's description for the full derivation of the
+       trim value and the sign-bug fix behind the rate gain.
 
     Holding "for 15 minutes" needs a start-of-hold reference point, but
     JSBSim scripts cannot declare their own property elements (a set or
@@ -135,12 +138,33 @@
       </notify>
     </event>
 
-    <event name="ramp collective to climb" persistent="false">
+    <event name="hold trim collective, engage altitude hold" persistent="true" continuous="true">
+      <!-- Closed-loop climb-out: replaces the old open-loop ramp to
+           0.75 followed by a late handoff/backoff to 0.68. Ramps
+           collective directly to the true hover-trim value (~0.092)
+           and engages altitude hold at the same instant, t=140 (once
+           the bias ramp above is done). See test_mi17_hover.xml's
+           description and this event's identical one there for the
+           full derivation of the trim value and why continuous="true"
+           (not just persistent="true") is required for the ramp's
+           <set> to remain the permanent owner of fcs/collective-cmd-
+           norm for the rest of the run. No h-agl-ft gate is needed:
+           the collective baseline here is already genuine trim, not an
+           aggressive climb target, so there is no large open-loop
+           excursion for a late gate to guard against. -->
       <condition> simulation/sim-time-sec ge 140.0 </condition>
-      <set name="fcs/collective-cmd-norm" value="0.75" action="FG_RAMP" tc="45.0"/>
+      <set name="ap/altitude-target-ft" value="2383.5"/>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <set name="fcs/collective-cmd-norm" value="0.092" action="FG_RAMP" tc="10.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
     </event>
 
-    <event name="checkpoint mid-ramp (165s)" persistent="false">
+    <event name="checkpoint 165s" persistent="false">
       <condition> simulation/sim-time-sec ge 165.0 </condition>
       <notify>
         <property> simulation/sim-time-sec </property>
@@ -154,7 +178,7 @@
       </notify>
     </event>
 
-    <event name="checkpoint ramp-complete (185s)" persistent="false">
+    <event name="checkpoint 185s" persistent="false">
       <condition> simulation/sim-time-sec ge 185.0 </condition>
       <notify>
         <property> simulation/sim-time-sec </property>
@@ -164,45 +188,6 @@
         <property> attitude/pitch-rad </property>
         <property> attitude/roll-rad </property>
       </notify>
-    </event>
-
-    <event name="engage altitude hold, ramp collective back toward trim" persistent="false">
-      <!-- 140.0 floor (when the climb ramp starts), not 185.0 (when it
-           would finish): see test_mi17_hover.xml's identical event for
-           the full derivation; with the corrected mass/CG/inertia the
-           aircraft clears h-agl-ft=15 well before a 185.0 gate would
-           open, so a 185.0 floor here would reproduce that script's
-           original 1197 ft AGL overshoot/porpoise/crash. -->
-      <condition>
-        simulation/sim-time-sec ge 140.0
-        position/h-agl-ft ge 15.0
-      </condition>
-      <set name="ap/altitude-target-ft" value="2383.5"/>
-      <set name="ap/altitude-hold-on" value="1.0"/>
-      <!-- fcs/collective-cmd-norm is owned by the persistent, continuous
-           hold-altitude-mode event below, not here; see that event's
-           comment and test_mi17_hover.xml's identical one for why a
-           one-shot ramp from a non-persistent event loses the race
-           against the still-running climb-ramp event above. -->
-      <notify>
-        <property> simulation/sim-time-sec </property>
-        <property> position/h-agl-ft </property>
-        <property> velocities/v-down-fps </property>
-      </notify>
-    </event>
-
-    <event name="hold-altitude-mode" persistent="true" continuous="true">
-      <!-- continuous="true" is required, not just persistent="true": see
-           test_mi17_hover.xml's identical event for the full FGScript.
-           cpp-sourced explanation of why persistent alone does not
-           re-apply a <set> every frame, only continuous does. -->
-      <condition>
-        simulation/sim-time-sec ge 140.0
-        position/h-agl-ft ge 15.0
-      </condition>
-      <set name="ap/altitude-hold-on" value="1.0"/>
-      <set name="ap/altitude-target-ft" value="2383.5"/>
-      <set name="fcs/collective-cmd-norm" value="0.68" action="FG_RAMP" tc="10.0"/>
     </event>
 
     <event name="checkpoint 30s post-handoff" persistent="false">

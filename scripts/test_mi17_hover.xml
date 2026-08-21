@@ -65,15 +65,35 @@
     instantaneous step, reproducing the same abrupt-0.15-rad-jump
     mechanism at t=120s instead of engine start and triggering a
     catastrophic blowup (KCAS ~306, all four gear units cycling WOW
-    within 7.5ms) within 6 seconds. The collective-cmd-norm ramp to the
-    climb value (0.75, t=140-185s) only starts once the bias ramp is
-    done. The climb-out target of 0.75 and the post-liftoff backoff
-    target of 0.68 are unvalidated estimates, not measurements -- this
-    model does not yet have a re-derived trim point for the corrected
-    rotor. Checkpoints are frequent (10-20s) through the settle/ramp/
-    climb-out phases specifically so that if this run also diverges,
-    the trace shows where and how, rather than just a silent stop like
-    the previous version's.
+    within 7.5ms) within 6 seconds. Checkpoints are frequent (10-20s)
+    through the settle/ramp/liftoff phases specifically so that if this
+    run also diverges, the trace shows where and how, rather than just
+    a silent stop like the previous version's.
+
+    UPDATE (closed-loop climb-out): the open-loop climb (ramp collective
+    to 0.75, hand off to altitude hold only after the fact at 0.68) that
+    replaced the description above is gone. It produced a large overshoot
+    (climbing to 1000+ ft against a 30 ft target) because 0.75/0.68 were
+    unvalidated guesses, both far above true hover trim, and altitude
+    hold only got a chance to react after most of the excess energy was
+    already built up. True trim was back-computed from a validated near-
+    zero-v-down equilibrium state using rotor_control.xml's collective
+    chain (fcs/collective-ctrl-rad = polymod(cmd_norm)*collective-gain +
+    ap/collective-cmd + collective-bias): fcs/collective-cmd-norm ~ 0.092
+    holds level with zero autopilot correction. The climb-out now ramps
+    collective directly to that trim value (10s) and engages altitude
+    hold (ap/altitude-hold-on=1.0) at the same instant, t=140 (once the
+    bias ramp is done), instead of first driving a large open-loop
+    excursion and correcting it afterward -- ap/collective-cmd does the
+    entire climb from a small, well-behaved error, closing the loop from
+    liftoff rather than only after it. This also required fixing a real
+    sign bug in afcs.xml's rate/damping term (ap/altitude-rate-gain was
+    positive, which reinforced whatever vertical rate already existed
+    instead of opposing it -- see that file's comment) and raising both
+    P and rate gains 50x once the sign was corrected, bracket-tested
+    1x-320x with no oscillation observed at any step. Validated first in
+    a throwaway diagnostic script before being applied here; see this
+    branch's commit history.
   </description>
 
   <use aircraft="mi17" initialize="reset00"/>
@@ -154,16 +174,6 @@
       </notify>
     </event>
 
-    <event name="ramp collective to climb" persistent="false">
-      <!-- Starts once the bias ramp above has finished (140s), so the
-           two ramps do not stack into a faster combined rate. Linear
-           ramp (not a step) from 0.0 to 0.75 over 45s; see the
-           description's rationale. 0.75 is an unvalidated estimate
-           for the corrected rotor, not a measured trim value. -->
-      <condition> simulation/sim-time-sec ge 140.0 </condition>
-      <set name="fcs/collective-cmd-norm" value="0.75" action="FG_RAMP" tc="45.0"/>
-    </event>
-
     <event name="checkpoint mid-bias-ramp (130s)" persistent="false">
       <condition> simulation/sim-time-sec ge 130.0 </condition>
       <notify>
@@ -177,7 +187,39 @@
       </notify>
     </event>
 
-    <event name="checkpoint mid-ramp (165s)" persistent="false">
+    <event name="hold trim collective, engage altitude hold" persistent="true" continuous="true">
+      <!-- Closed-loop climb-out: replaces the old open-loop ramp to
+           0.75 followed by a late handoff/backoff to 0.68. Starts once
+           the bias ramp above has finished (140s). Ramps collective
+           directly to the true hover-trim value (~0.092, back-computed
+           from a validated near-zero-v-down equilibrium via rotor_
+           control.xml's collective chain; see this script's description)
+           and engages altitude hold at the same instant, rather than
+           first driving a large excursion and correcting it afterward.
+           No h-agl-ft gate is needed here (unlike the old handoff): the
+           collective baseline is already the genuine trim value, not an
+           aggressive climb target, so there is no large open-loop
+           excursion for a late gate to guard against.
+
+           persistent + continuous, not a one-shot event: same reasoning
+           as this session's other hold-mode events; continuous="true"
+           is FGScript's mechanism for a <set> (FG_RAMP included) to keep
+           re-applying every frame after it saturates at its target, so
+           this event's <set>s remain the sole, permanent owner of these
+           properties for the rest of the run. -->
+      <condition> simulation/sim-time-sec ge 140.0 </condition>
+      <set name="ap/altitude-target-ft" value="2313.5"/>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <set name="fcs/collective-cmd-norm" value="0.092" action="FG_RAMP" tc="10.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 165s" persistent="false">
       <condition> simulation/sim-time-sec ge 165.0 </condition>
       <notify>
         <property> simulation/sim-time-sec </property>
@@ -192,7 +234,7 @@
       </notify>
     </event>
 
-    <event name="checkpoint ramp-complete (185s)" persistent="false">
+    <event name="checkpoint 185s" persistent="false">
       <condition> simulation/sim-time-sec ge 185.0 </condition>
       <notify>
         <property> simulation/sim-time-sec </property>
@@ -229,97 +271,6 @@
         <property> attitude/roll-rad </property>
         <property> velocities/r-rad_sec </property>
       </notify>
-    </event>
-
-    <event name="engage altitude hold, ramp collective back toward trim" persistent="false">
-      <!-- Time-gate was 185.0 (the collective-climb ramp's own
-           theoretical completion time), not 140.0 (when the ramp
-           actually starts). With the corrected mass/CG/inertia
-           (see mass_balance's comments in aircraft/mi17/mi17.xml),
-           the aircraft climbs far harder than the old, undersized-
-           inertia placeholder ever did: by the time the 185.0 gate
-           opened, it had already reached 1197 ft AGL at -58.4 fps
-           (~3500 fpm); h-agl-ft ge 15 had been true for a long time
-           before the time-gate let the handoff fire, so altitude hold
-           was fighting a ~1167 ft error the instant it engaged, which
-           is what produced the 1197->154->509 ft porpoise and the
-           eventual crash at t=303s (see this branch's commit history).
-           140.0 (the climb ramp's actual start) is the right floor:
-           it still guards against the ground-settle window (measured
-           steady-state h-agl-ft ~5 in both test_mi17_static_ground.xml
-           and test_mi17_ground_run_idle.xml, no bounce observed
-           anywhere near 15 ft before real collective is applied), but
-           no longer holds the handoff back once the aircraft has
-           genuinely lifted off. Backoff is still a ramp (10s), not a
-           step, to 0.68; still an unvalidated estimate, but the
-           handoff now happens close to actual liftoff instead of 45s
-           into full-power climb, so the excess-thrust exposure window
-           before hold engages should be seconds, not most of a minute. -->
-      <condition>
-        simulation/sim-time-sec ge 140.0
-        position/h-agl-ft ge 15.0
-      </condition>
-      <set name="ap/altitude-target-ft" value="2313.5"/>
-      <set name="ap/altitude-hold-on" value="1.0"/>
-      <!-- fcs/collective-cmd-norm is NOT set here; the persistent
-           hold-altitude-mode event below owns it instead, since a
-           one-shot ramp from this non-persistent event would just
-           lose the ongoing race against the still-running climb-ramp
-           event once this event's own ramp finishes; see hold-
-           altitude-mode's comment. -->
-      <notify>
-        <property> simulation/sim-time-sec </property>
-        <property> position/h-agl-ft </property>
-        <property> velocities/v-down-fps </property>
-      </notify>
-    </event>
-
-    <event name="hold-altitude-mode" persistent="true" continuous="true">
-      <!-- Same 140.0 fix as the handoff event above; must match or
-           this persistent event would re-arm/hold the mode gate on a
-           different, stale condition than the one that actually fired
-           the handoff.
-
-           fcs/collective-cmd-norm=0.68 added here, and continuous=
-           "true" added to the event itself, after the first attempt
-           at this fix (a plain persistent event with a one-shot ramp)
-           produced byte-for-byte the same wrong result as before:
-           collective-cmd-norm stuck at 0.75 for the whole post-
-           handoff run. Reading src/input_output/FGScript.cpp::
-           RunScript() to find out why: "persistent" only controls
-           whether Triggered resets to false when the CONDITION next
-           goes false (so the event can fire again later); it does
-           NOT make an event's <set> actions re-apply every frame. A
-           <set> (plain or FG_RAMP) only writes its property while
-           Transiting[i] is true, and Transiting is cleared the first
-           time the ramp/step completes (TimeSpan > TC), never to be
-           set again unless the condition goes false and becomes true
-           a second time. Since this event's condition, once true,
-           stays true for the rest of the run, "persistent" here
-           behaved identically to a one-shot event: the ramp to 0.68
-           ran once (over 10s) then stopped writing entirely, leaving
-           the still-running "ramp collective to climb" event (0.0->
-           0.75 FG_RAMP, t=140-185, entirely unaffected by anything
-           else) as the only thing still writing to fcs/collective-
-           cmd-norm from then until t=185, which is exactly why it
-           reclaimed the property and drove it back to 0.75.
-
-           continuous="true" is FGScript's actual mechanism for a
-           <set> that keeps re-applying every frame indefinitely: for
-           FG_RAMP, once TimeSpan exceeds TC, Transiting is normally
-           cleared (stops writing) unless Continuous is true, in which
-           case the ramped value keeps being written every frame after
-           saturating at its target; see the FG_RAMP case in
-           RunScript(). That is what actually wins the last-write-
-           each-frame race against climb-ramp for good, not merely
-           "persistent". -->
-      <condition>
-        simulation/sim-time-sec ge 140.0
-        position/h-agl-ft ge 15.0
-      </condition>
-      <set name="ap/altitude-hold-on" value="1.0"/>
-      <set name="ap/altitude-target-ft" value="2313.5"/>
-      <set name="fcs/collective-cmd-norm" value="0.68" action="FG_RAMP" tc="10.0"/>
     </event>
 
     <event name="checkpoint 30s post-handoff" persistent="false">

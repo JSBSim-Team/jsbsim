@@ -31,8 +31,50 @@
        "Property ap/altitude-integral-gain does not exist" when it was
        declared inline just above the <pid> that uses it). See the
        altitude hold channel's integral-term comment for what this
-       gain actually does. -->
+       gain actually does. ap/altitude-gain and ap/altitude-rate-gain
+       (the P and rate terms' own gains) are declared here for the
+       same reason, promoted from bare <value> literals so a script
+       can override them for bracket-testing without editing this
+       file each time.
+
+       Both raised 50x from their original values (0.0001 -> 0.005,
+       0.001 -> 0.05 in magnitude) as part of a broader fix: the old
+       climb-out (an open-loop collective ramp to 0.75, handed off to
+       altitude hold only after the fact) had no altitude awareness at
+       all and produced huge overshoot (climbing to 1000+ ft against a
+       100 ft target) before this slow, weak correction could claw it
+       back down over many minutes. Replacing that with a genuinely
+       closed-loop climb; engage altitude-hold at liftoff, holding
+       collective at the real trim value (~0.092, back-computed from a
+       validated near-zero-v-down state) and letting ap/collective-cmd
+       do 100% of the climbing; fixes the structural cause, but the
+       original P/rate gains were tuned for correcting a small residual
+       error near an already-good baseline, not driving a climb from
+       ~100 ft of error; at 1x they still converge cleanly, just slowly
+       (84 ft by 450s post-engage). Bracket-tested 1x up to 320x
+       (0.032/-3.2): stayed clean and monotonic at every step tried
+       (99+ ft within ~450s even at 1x, ~99 ft within ~80s at 50x, with
+       no oscillation observed even at the top of the bracket; the
+       plant's own response lag becomes the limiting factor well before
+       the loop itself would show instability). Settled on 50x for
+       comfortable margin under everything actually tested, not the
+       fastest value tried. -->
   <property value="0.0000002"> ap/altitude-integral-gain </property>
+  <property value="0.005"> ap/altitude-gain </property>
+  <!-- Negative, not positive: ap/vertical-speed-error-fps (below) is
+       defined as target(always 0) - v_down, so it comes out POSITIVE
+       while climbing (v_down < 0) and NEGATIVE while descending. A
+       positive gain on that sign convention adds collective while
+       already climbing and removes it while already descending;
+       positive feedback on the rate channel, not damping. Found the
+       hard way while bracket-testing the closed-loop climb-out
+       redesign: raising this gain (still positive at the time) made
+       overshoot dramatically WORSE (733 ft peak instead of settling
+       cleanly), the opposite of what a damping term should do.
+       Flipping the sign makes rate_term negative while climbing and
+       positive while descending, correctly opposing whatever vertical
+       rate already exists. -->
+  <property value="-0.05"> ap/altitude-rate-gain </property>
 
   <!-- AFCS targets: never declared in the original model, only ever read
        by the hold-mode error fcs_functions below. All hold modes default
@@ -220,12 +262,12 @@
         <sum>
           <product>
             <property> ap/altitude-error-ft </property>
-            <value> 0.0001 </value>
+            <property> ap/altitude-gain </property>
             <property> ap/altitude-hold-on </property>
           </product>
           <product>
             <property> ap/vertical-speed-error-fps </property>
-            <value> 0.001 </value>
+            <property> ap/altitude-rate-gain </property>
             <property> ap/altitude-hold-on </property>
           </product>
           <product>
@@ -234,6 +276,18 @@
           </product>
         </sum>
       </function>
+      <!-- Bounds the P+rate+integral correction to a sane fraction of
+           the 0-0.8 rad total collective-ctrl-rad range, independent
+           of the much looser +-1.0 clip already on ap/total-collective-
+           cmd's summer downstream (see the "afcs commands" channel);
+           added alongside the closed-loop climb-out redesign, where
+           ap/altitude-gain is large enough that a full ~100 ft ground-
+           level error could otherwise request an unreasonably large
+           single-frame correction. -->
+      <clipto>
+        <min> -0.3 </min>
+        <max>  0.3 </max>
+      </clipto>
     </fcs_function>
   </channel>
 
