@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 hover at 100 ft AGL, hold 15 minutes"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Climbs from a ground start to a 100 ft AGL hover and holds it for
+    15 minutes (900s). Built directly on scripts/test_mi17_hover.xml's
+    validated settle/bias-ramp/collective-ramp/handoff sequence (see
+    that script's own description and this branch's commit history for
+    the two real bugs found and fixed there: a handoff-timing gate that
+    let the aircraft rocket to 1197 ft AGL before altitude hold ever
+    engaged, and a collective-ramp race that silently undid the post-
+    handoff trim). Only two things differ from that script:
+
+    1. Initial conditions are "ground running steady state", not a
+       cold/instant start: the aircraft begins on the ground
+       (initialize="reset00", engines off) and holds flat collective
+       for a full 120s -- the window scripts/test_mi17_ground_run_idle.
+       xml measured the RPM governor actually needing to converge to
+       the real 192 RPM target (shaft-rpm ~187 at 30s, ~191.6 at 60s,
+       192.0 by 90-120s), not an arbitrary guess. JSBSim's initialize
+       IC files only support marking an engine running at t=0, not
+       injecting an already-converged shaft-rpm/governor-integrator
+       state directly (checked src/initialization/FGInitialCondition.
+       cpp -- no arbitrary property-override support there), so
+       "ground running steady state" is reached by actually running
+       the settle window, not skipped via some IC shortcut. Only once
+       that's genuinely reached does the climb begin, exactly as in
+       test_mi17_hover.xml.
+
+    2. ap/altitude-target-ft is field elevation (2283.5, reset00.xml)
+       + 100 = 2383.5, not +30. The climb-out/backoff collective values
+       (0.75 climb, 0.68 backoff) and the afcs.xml altitude-hold gains
+       (P + rate + integral, ki=0.0000002) are unchanged from the
+       validated hover script -- this is the same aircraft and the
+       same closed loop, just a different target altitude.
+
+    Holding "for 15 minutes" needs a start-of-hold reference point, but
+    JSBSim scripts cannot declare their own property elements (a set or
+    condition element referencing an undeclared property throws at
+    runtime -- confirmed the hard way against src/math/FGPropertyValue.
+    cpp), so there is no clean way to dynamically latch "the moment the
+    aircraft first settles near 100 ft" into a property and compute a
+    15-minutes-later deadline from it within this script alone. Instead
+    the hold window is anchored on real data: scripts/test_mi17_hover.
+    xml's long run (target 30 ft AGL, same aircraft/gains) crossed
+    h-agl-ft=100 around t=1500-1700s with v-down-fps already under
+    0.12 fps there, i.e. already close to settled. This script's
+    hold window is set generously later than that, t=2000-2900s (an
+    exact 900s span), to give real margin for this run's own dynamics
+    (different target altitude, so not an identical trajectory) to
+    actually settle before the window starts. This is an ESTIMATE, not
+    a guarantee -- the CSV output below is the authoritative record;
+    check it after running to confirm the aircraft was genuinely within
+    a tight band of 100 ft AGL for that whole window, and re-anchor the
+    checkpoint times if it wasn't.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <!-- CSV trace of the full run, 1 Hz; the authoritative record for
+       verifying the hold window actually covers a genuine, settled
+       100 ft AGL hover; see the description above. Script-scoped, not
+       added to aircraft/mi17/mi17.xml (JSBSim scripts support their
+       own <output>, loaded via FGScript::LoadScript() ->
+       FDMExec->GetOutput()->Load()), so it only applies to this run. -->
+  <output name="mi17_hover_100ft_15min.csv" type="CSV" rate="1">
+    <property> position/h-agl-ft </property>
+    <property> velocities/v-down-fps </property>
+    <property> attitude/roll-rad </property>
+    <property> attitude/pitch-rad </property>
+    <property> fcs/collective-cmd-norm </property>
+    <property> ap/altitude-hold-on </property>
+    <property> ap/altitude-integral-cmd </property>
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+  </output>
+
+  <run start="0.0" end="2960.0" dt="0.0075">
+
+    <event name="start" persistent="false">
+      <!-- Real, governor-moderated start via FGTurboshaft's starter-cmd/
+           cutoff-cmd, not propulsion/set-running; see scripts/test_mi17_
+           ground_run_idle.xml's identical event comment for the full
+           derivation, including why this needs ge 0.1 rather than
+           ge 0.0. Engine 2 (tail rotor, FGElectric) keeps its own simple
+           per-engine set-running. -->
+      <condition> simulation/sim-time-sec ge 0.1 </condition>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="1.0"/>
+    </event>
+
+    <event name="hold-attitude" persistent="true">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="ap/attitude-hold-on" value="1.0"/>
+    </event>
+
+    <event name="hold-ground-settle" persistent="true">
+      <!-- Ground running steady state: 120s, measured (not guessed) in
+           scripts/test_mi17_ground_run_idle.xml. -->
+      <condition> simulation/sim-time-sec le 119.999 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="checkpoint ground-steady-state (110s)" persistent="false">
+      <!-- Confirms steady state was actually reached before the climb
+           begins, not just assumed. -->
+      <condition> simulation/sim-time-sec ge 110.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="ramp-collective-bias" persistent="false">
+      <condition> simulation/sim-time-sec ge 120.0 </condition>
+      <set name="fcs/adj/collective-bias" value="0.15" action="FG_RAMP" tc="20.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="ramp collective to climb" persistent="false">
+      <condition> simulation/sim-time-sec ge 140.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.75" action="FG_RAMP" tc="45.0"/>
+    </event>
+
+    <event name="checkpoint mid-ramp (165s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 165.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> propulsion/engine[0]/collective-ctrl-rad </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint ramp-complete (185s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 185.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="engage altitude hold, ramp collective back toward trim" persistent="false">
+      <!-- 140.0 floor (when the climb ramp starts), not 185.0 (when it
+           would finish): see test_mi17_hover.xml's identical event for
+           the full derivation; with the corrected mass/CG/inertia the
+           aircraft clears h-agl-ft=15 well before a 185.0 gate would
+           open, so a 185.0 floor here would reproduce that script's
+           original 1197 ft AGL overshoot/porpoise/crash. -->
+      <condition>
+        simulation/sim-time-sec ge 140.0
+        position/h-agl-ft ge 15.0
+      </condition>
+      <set name="ap/altitude-target-ft" value="2383.5"/>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <!-- fcs/collective-cmd-norm is owned by the persistent, continuous
+           hold-altitude-mode event below, not here; see that event's
+           comment and test_mi17_hover.xml's identical one for why a
+           one-shot ramp from a non-persistent event loses the race
+           against the still-running climb-ramp event above. -->
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+      </notify>
+    </event>
+
+    <event name="hold-altitude-mode" persistent="true" continuous="true">
+      <!-- continuous="true" is required, not just persistent="true": see
+           test_mi17_hover.xml's identical event for the full FGScript.
+           cpp-sourced explanation of why persistent alone does not
+           re-apply a <set> every frame, only continuous does. -->
+      <condition>
+        simulation/sim-time-sec ge 140.0
+        position/h-agl-ft ge 15.0
+      </condition>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <set name="ap/altitude-target-ft" value="2383.5"/>
+      <set name="fcs/collective-cmd-norm" value="0.68" action="FG_RAMP" tc="10.0"/>
+    </event>
+
+    <event name="checkpoint 30s post-handoff" persistent="false">
+      <condition> simulation/sim-time-sec ge 245.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 500s" persistent="false">
+      <condition> simulation/sim-time-sec ge 500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 1000s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1000.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 1500s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <!-- Hold window: t=2000-2900s (an exact 900s span), anchored on
+         the previous run's convergence timing; see the description
+         above for why this is an estimate, and check the CSV output
+         to confirm h-agl-ft actually stayed close to 100 for this
+         whole span before treating this run as a validated 15-minute
+         hold. -->
+    <event name="hold window start (2000s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2000.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="hold window +3min (2180s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2180.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="hold window +6min (2360s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2360.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="hold window +9min (2540s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2540.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="hold window +12min (2720s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2720.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="hold window complete, +15min (2900s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2900.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> velocities/vt-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
