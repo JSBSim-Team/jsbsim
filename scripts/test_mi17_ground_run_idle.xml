@@ -30,11 +30,64 @@
 
   <use aircraft="mi17" initialize="reset00"/>
 
+  <!-- CSV trace of the full run, 10 Hz: added to visualize the
+       governor/engine spin-up transient continuously (the checkpoint
+       events below only sample specific instants) rather than
+       re-deriving it from the text log each time. Script-scoped, not
+       added to aircraft/mi17/mi17.xml, so it only applies to this
+       run; see test_mi17_hover.xml's identical pattern. -->
+  <output name="mi17_ground_run_idle.csv" type="CSV" rate="10">
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+    <property> propulsion/engine[0]/n1 </property>
+    <property> fcs/throttle-cmd-norm[0] </property>
+    <property> propulsion/engine[0]/output-torque-lbft </property>
+    <property> propulsion/engine[0]/thrust-lbs </property>
+    <property> position/h-agl-ft </property>
+    <property> attitude/pitch-rad </property>
+    <property> attitude/roll-rad </property>
+    <property> velocities/r-rad_sec </property>
+    <property> gear/unit[0]/WOW </property>
+  </output>
+
   <run start="0.0" end="120.0" dt="0.0075">
 
     <event name="start" persistent="false">
-      <condition> simulation/sim-time-sec ge 0.0 </condition>
-      <set name="propulsion/set-running" value="-1"/>
+      <!-- Real, governor-moderated start via FGTurboshaft's starter-cmd/
+           cutoff-cmd (src/models/propulsion/FGTurboshaft.{h,cpp}), not
+           propulsion/set-running: that forces full throttle directly
+           (FGPropulsion::SetEngineRunning()) and converges to a steady
+           state through FGPropulsion::GetSteadyState()'s internal
+           iteration loop inside a single frame, producing a large,
+           unphysical one-frame RPM overshoot (~300+ RPM against the 192
+           target, confirmed via this exact script before this fix) since
+           the governor never gets a chance to react during that
+           synthetic convergence. starter-cmd/cutoff-cmd instead drive the
+           real per-frame phase machine (motoring on the starter alone,
+           then light-off once cutoff is released, then a self-sustaining
+           run-up), so the governor's real throttle output is what the
+           engine sees throughout. Engine 2 (tail rotor) is still
+           electric_engine/FGElectric, which has no phase state machine to
+           get stuck in, so its own simple per-engine set-running is fine
+           as-is.
+
+           Condition is ge 0.1, not ge 0.0: JSBSim's own initialization
+           runs at least one dt=0 pass before the first real frame, which
+           forces FGTurboshaft::Calculate() into phase=tsTrim (see
+           "in.TotalDeltaT == 0" in that function); on the very next real
+           frame, the tsTrim exit branch runs BEFORE this event's <set>
+           actions would matter and, since Running is still false at that
+           point, unconditionally resets Cutoff back to true regardless of
+           what gets set moments later on that same frame; confirmed the
+           hard way, with cutoff-cmd=0 set at ge 0.0 having no effect at
+           all (N1 plateaus at StarterN1=20%, the exact starter-motoring-
+           with-no-fuel symptom). Delaying past that one-frame transition
+           avoids the conflict entirely. -->
+      <condition> simulation/sim-time-sec ge 0.1 </condition>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
       <set name="fcs/collective-cmd-norm" value="0.0"/>
       <set name="fcs/adj/collective-bias" value="0.0"/>
     </event>

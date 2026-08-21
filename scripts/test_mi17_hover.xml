@@ -78,11 +78,42 @@
 
   <use aircraft="mi17" initialize="reset00"/>
 
-  <run start="0.0" end="1320.0" dt="0.0075">
+  <!-- CSV trace of the full run, 1 Hz: added to see whether the
+       altitude-integral term (afcs.xml) actually converges to the
+       ~30 ft AGL target, or overshoots/oscillates, over a longer
+       window than the checkpoint events below cover. Script-scoped
+       (JSBSim scripts support their own <output>, loaded via
+       FGScript::LoadScript() -> FDMExec->GetOutput()->Load()), not
+       added to aircraft/mi17/mi17.xml, so it only applies to this
+       run, not every script that uses this aircraft. -->
+  <output name="mi17_hover_track.csv" type="CSV" rate="1">
+    <property> position/h-agl-ft </property>
+    <property> velocities/v-down-fps </property>
+    <property> attitude/roll-rad </property>
+    <property> attitude/pitch-rad </property>
+    <property> fcs/collective-cmd-norm </property>
+    <property> ap/altitude-hold-on </property>
+    <property> ap/altitude-integral-cmd </property>
+  </output>
+
+  <run start="0.0" end="3000.0" dt="0.0075">
 
     <event name="start" persistent="false">
-      <condition> simulation/sim-time-sec ge 0.0 </condition>
-      <set name="propulsion/set-running" value="-1"/>
+      <!-- Real, governor-moderated start via FGTurboshaft's starter-cmd/
+           cutoff-cmd, not propulsion/set-running; see scripts/test_mi17_
+           ground_run_idle.xml's identical event comment for the full
+           derivation (the old mechanism's ~329 RPM one-frame overshoot,
+           and why this needs ge 0.1 rather than ge 0.0; JSBSim's own
+           initial dt=0 trim pass leaves FGTurboshaft::Calculate() in a
+           state that would otherwise stomp cutoff-cmd back to true on
+           the very next frame). Engine 2 (tail rotor, FGElectric) keeps
+           its own simple per-engine set-running. -->
+      <condition> simulation/sim-time-sec ge 0.1 </condition>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
       <set name="fcs/collective-cmd-norm" value="0.0"/>
       <set name="fcs/adj/collective-bias" value="0.0"/>
       <set name="ap/attitude-hold-on" value="1.0"/>
@@ -387,7 +418,7 @@
       </notify>
     </event>
 
-    <event name="final checkpoint 900s post-handoff" persistent="false">
+    <event name="checkpoint 900s post-handoff" persistent="false">
       <condition> simulation/sim-time-sec ge 1114.9 </condition>
       <notify>
         <property> simulation/sim-time-sec </property>
@@ -397,6 +428,62 @@
         <property> attitude/pitch-rad </property>
         <property> attitude/roll-rad </property>
         <property> velocities/r-rad_sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+      </notify>
+    </event>
+
+    <!-- Extra checkpoints past the original 1320s end, added when the
+         run was extended to 3000s to see whether the altitude-integral
+         term actually converges to the ~30 ft AGL target rather than
+         just continuing to trend toward it indefinitely. The CSV
+         output above is the authoritative continuous record; these
+         are just readable anchor points in the text log. -->
+    <event name="checkpoint 1500s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 2000s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2000.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 2500s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint 2990s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2990.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> velocities/vt-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+        <property> ap/altitude-integral-cmd </property>
         <property> propulsion/gearbox[0]/shaft-rpm </property>
         <property> propulsion/engine[0]/n1 </property>
         <property> propulsion/engine[0]/thrust-lbs </property>
