@@ -1,0 +1,189 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 cold and dark"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Aircraft sits on the ground fully powered down: no battery, no
+    generators, no hydraulic pumps, engines never started, no
+    autopilot, controls neutral. This is a stricter baseline than
+    scripts/test_mi17_static_ground.xml, which only turns the engines
+    off but leaves electrical/hydraulic_system.xml's battery/
+    generator/pump properties at their aircraft-file defaults (all
+    "on" -- electrical/battery-on and electrical/main-generator-on
+    default to 1.0, hydraulic/main-pump-on and hydraulic/emergency-
+    pump-on default to 1.0 too, per those Systems files' own property
+    declarations), which is not actually a cold-and-dark state.
+
+    Matches the COLD_AND_DARK phase modeled in fsim-hardware/GameState/
+    fsm/ (the cockpit-startup FSM prototype for this same aircraft):
+    that phase means every source of electrical/hydraulic power is
+    off, not just "rotor not turning". Since electrical_system.xml and
+    hydraulic_system.xml compute bus voltage/pressure and downstream
+    warnings from these switch properties every frame regardless of
+    engine state, explicitly zeroing them here is the only way to
+    actually exercise a true cold-and-dark condition rather than one
+    that merely has the engines off while the electrical/hydraulic
+    models still believe they're powered.
+
+    Expected result: same as test_mi17_static_ground.xml (settle
+    within a couple of seconds, then sit still -- near-zero
+    compression-velocity-fps, near-zero body rates, no growing
+    oscillation, for the full run) plus electrical/battery-voltage-v
+    and hydraulic/main-pressure-bar decaying toward zero rather than
+    holding at their powered defaults.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <!-- CSV trace of the full run, 10 Hz: same script-scoped pattern as
+       the other scripts' <output> blocks (see test_mi17_hover.xml's
+       identical comment); lets the initial-settle transient and the
+       flat electrical/hydraulic traces be visualized continuously
+       instead of only at the sparse checkpoint times below. The flat
+       battery-voltage-v/main-pressure-bar traces are expected, not a
+       charting bug; see this script's tail-end discussion for why
+       (electrical/main-voltage-v and hydraulic/main-pressure-bar are
+       bare constants, never actually recomputed from the -on switches
+       this script forces to 0). -->
+  <output name="mi17_cold_and_dark.csv" type="CSV" rate="10">
+    <property> position/h-agl-ft </property>
+    <property> attitude/pitch-rad </property>
+    <property> attitude/roll-rad </property>
+    <property> velocities/p-rad_sec </property>
+    <property> velocities/q-rad_sec </property>
+    <property> velocities/r-rad_sec </property>
+    <property> gear/unit[0]/WOW </property>
+    <property> gear/unit[0]/compression-ft </property>
+    <property> gear/unit[0]/compression-velocity-fps </property>
+    <property> gear/unit[1]/WOW </property>
+    <property> gear/unit[2]/WOW </property>
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+    <property> electrical/battery-voltage-v </property>
+    <property> hydraulic/main-pressure-bar </property>
+  </output>
+
+  <run start="0.0" end="60.0" dt="0.0075">
+
+    <event name="hold everything off/neutral" persistent="true">
+      <!-- Engines are never started (no propulsion/set-running
+           command). Electrical and hydraulic sources are explicitly
+           forced off every frame, not just left at their defaults,
+           in case some other system file ever changes those
+           defaults; see the description above for why this matters
+           and test_mi17_static_ground.xml's identical pattern for the
+           flight-control/autopilot half of this. -->
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+      <set name="electrical/battery-on" value="0.0"/>
+      <set name="electrical/main-generator-on" value="0.0"/>
+      <set name="electrical/backup-generator-on" value="0.0"/>
+      <set name="hydraulic/main-pump-on" value="0.0"/>
+      <set name="hydraulic/backup-pump-on" value="0.0"/>
+      <set name="hydraulic/emergency-pump-on" value="0.0"/>
+    </event>
+
+    <event name="checkpoint 1s (initial settle)" persistent="false">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[0]/compression-velocity-fps </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+        <property> electrical/battery-voltage-v </property>
+        <property> hydraulic/main-pressure-bar </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 5s" persistent="false">
+      <condition> simulation/sim-time-sec ge 5.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[0]/compression-velocity-fps </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+        <property> electrical/battery-voltage-v </property>
+        <property> hydraulic/main-pressure-bar </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 15s" persistent="false">
+      <condition> simulation/sim-time-sec ge 15.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 30s" persistent="false">
+      <condition> simulation/sim-time-sec ge 30.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint 60s" persistent="false">
+      <condition> simulation/sim-time-sec ge 59.9 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/p-rad_sec </property>
+        <property> velocities/q-rad_sec </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> gear/unit[1]/WOW </property>
+        <property> gear/unit[2]/WOW </property>
+        <property> electrical/battery-voltage-v </property>
+        <property> hydraulic/main-pressure-bar </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
