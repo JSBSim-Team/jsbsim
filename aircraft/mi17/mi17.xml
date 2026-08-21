@@ -67,14 +67,93 @@
   </metrics>
   
   <mass_balance>
-    <ixx unit="SLUG*FT2">    3500.0 </ixx>
-    <iyy unit="SLUG*FT2">   18500.0 </iyy>
-    <izz unit="SLUG*FT2">   16500.0 </izz>
+    <!-- ESTIMATE, not manual data (no Mi-17 inertia figures exist in
+         any reference we have; weight-and-balance manuals essentially never publish
+         them). Replaces the old placeholder, which was just a ~1.4x
+         scale-up of ah1s.xml's own placeholder inertia (2593/14320/
+         12330); i.e. never Mi-17-derived at all. Built as a lumped
+         component-mass model, parallel-axis-summed about the real CG
+         above; to be refined once better data exists.
+
+         Real/sourced inputs used:
+         - Main rotor blades (5 x 137 kg = 46.94 slug total, real mass;
+           R=34.931 ft, hingeoffset=0.72178 ft = real 220mm, both from
+           mi17_main_rotor.xml). Modeled as a spinning disk smeared
+           over one revolution (standard treatment when rotor RPM >>
+           body rates, e.g. the TA82 reference already cited in this
+           file's fileheader): for a uniform blade from hinge to tip,
+           radius of gyration^2 about the shaft = (R^3-hingeoffset^3)
+           / (3*(R-hingeoffset)) = 415.30 ft^2. Contributes 0.5*N*m*
+           rgyr^2 = 9746.6 slug*ft2 to Ixx and Iyy (roll/pitch), and
+           N*m*rgyr^2 = 19493.3 slug*ft2 to Izz (yaw, shaft ~vertical).
+           This Izz figure landing almost exactly on mi17_main_rotor.
+           xml's own <polarmoment> (19493.24) is a strong cross-check,
+           even though they answer different questions: polarmoment
+           drives FGRotor's own rotor-RPM spin-up dynamics (relative
+           to the airframe), while this Izz term is the fuselage's
+           own yaw inertia from the same rigidly-geared rotor mass;
+           both real, both needed, not double-counting.
+         - Landing gear (real stations from ground_reactions above,
+           main_gear at x=180, y=+-88.78, z=-8) and tail rotor/gearbox
+           (real thruster mount, x=580, y=20, z=140); positions are
+           sourced, masses are the generic fractions below.
+
+         Estimated (generic, NOT Mi-17-sourced) mass split of the
+         501.3 slug empty mass, after removing the 46.94 slug of real
+         rotor blade mass (typical group-weight fractions for a
+         twin-turbine medium helicopter, applied to the remaining
+         454.37 slug):
+         - nose/cockpit group, 10% = 45.44 slug at x=30 (near the
+           pilots' real station, per the weight-and-balance manual's crew arms)
+         - main cabin/engines/gearbox/systems cluster, 75% = 340.78
+           slug at x=200 (at the mast/CG, so its exact split barely
+           matters: this lump contributes under 3% of any final axis
+           total, confirmed by direct calculation)
+         - landing gear, 1.5% each side = 6.82 slug at each real gear
+           station
+         - tail boom, 10% = 45.44 slug, modeled as a uniform rod from
+           x=220 to x=580 (own moment (1/12)*m*L^2 plus parallel-axis
+           shift of its center)
+         - tail rotor/gearbox structure, 2% = 9.09 slug at the real
+           thruster mount
+
+         Result: Ixx=11872.6, Iyy=45209.4, Izz=54372.8 slug*ft2;
+         roughly 3.4x/2.4x/3.3x the old placeholder. The rotor blades'
+         own contribution alone (9746.6/9746.6/19493.3) is ~80% of
+         Ixx, ~22% of Iyy, ~36% of Izz; i.e. this correction is
+         dominated by the real, sourced rotor mass/geometry, not by
+         the generic fuselage-fraction assumptions, so it should be
+         fairly robust even before further refinement. This also
+         directly targets the flapping-instability finding in docs/
+         testing/mi17-rotor-flapping-instability.md: the old Ixx=3500
+         understated roll inertia by ~3.4x against the rotor hub
+         moment (mf), which this correction should meaningfully
+         reduce (M/Ixx angular acceleration drops by the same ratio).
+         ixz: still 0.0, no data or reason to assume asymmetry. -->
+    <ixx unit="SLUG*FT2">   11872.6 </ixx>
+    <iyy unit="SLUG*FT2">   45209.4 </iyy>
+    <izz unit="SLUG*FT2">   54372.8 </izz>
     <ixz unit="SLUG*FT2">       0.0 </ixz>
-    <!-- grossweight: 12000 to 15000 lbs  -->
-    <emptywt unit="LBS">   12000.0 </emptywt>
+
+    <!-- Real factory data, Mi-17V-5 Weight and Balance Manual, Tables
+         3/4/5 (empty helicopter weight line, identical in all three):
+         7316.0 kg at CG X = -0.094 m. The manual's balance-data
+         coordinate system (section 3 BALANCE DATA, 3.1.2) has its
+         origin at the intersection of the main rotor shaft axis and
+         the flapping-hinge-plane axis (i.e. the mast), with X positive
+         FORWARD; this is confirmed internally by extreme-forward-CG
+         configs landing at positive X and extreme-aft-CG configs at
+         negative X. mi17.xml's own main rotor thruster is at x=200 IN
+         (structural X, positive AFT, per the existing nose/main/tail
+         gear stations), so the manual's origin maps to this file's
+         x=200. -0.094 m = 3.701 in AFT of the mast -> x=203.70.
+         emptywt: 7316.0 kg = 16,129 lb.
+         CG y/z: not given anywhere in the manual (section 3.2.1's
+         formula is explicitly X-coordinate only); left as previous
+         placeholders, not yet sourced. -->
+    <emptywt unit="LBS">   16129.0 </emptywt>
     <location name="CG" unit="IN">
-      <x>   200.0 </x>
+      <x>   203.70 </x>
       <y>     0.0 </y>
       <z>    80.0 </z>
     </location>
@@ -169,10 +248,12 @@
     <engine file="mi17_main_engine_1">
       <feed>0</feed>
       <feed>1</feed>
+      <feed>2</feed>
     </engine>
     <engine file="mi17_main_engine_2">
       <feed>0</feed>
       <feed>1</feed>
+      <feed>2</feed>
     </engine>
 
     <gearbox name="mi17-main-gearbox">
@@ -227,6 +308,7 @@
     <engine file="mi17_tail_engine">
       <feed>0</feed>
       <feed>1</feed>
+      <feed>2</feed>
       <thruster file="mi17_tail_rotor">
         <location unit="IN">
           <x> 580.0 </x>
@@ -253,25 +335,79 @@
         <sense> 1 </sense>
       </thruster>
     </engine>
-    <!-- Fuel tanks -->
+    <!-- Fuel tanks: real Mi-17 layout is 1 internal service tank plus 2
+         external (left/right) tanks, not the previous 2 centerline
+         tanks. Two independent real sources cross-validate here:
+
+         - Cera Sim MI-17 V5 Quick Start Manual (References/CSMI17_
+           Manual.pdf, page 4, "Fuel Capacity" table): service tank
+           109.6 gal = 415 l; each external tank 294 gal = 1114 l.
+         - Mi-17V-5 factory Weight and Balance Manual (user-supplied
+           photos, Table 3, "Normal takeoff weight", fuel line, SG
+           0.775 kg/l): service tank 322.0 kg at CG X=-1.320 m; both
+           external tanks combined 1640.0 kg at CG X=-0.025 m. Dividing
+           by 0.775 kg/l: service ~415.5 l (matches Cera Sim's 415 l
+           almost exactly); external combined ~2116 l (~1058 l/side,
+           within ~5% of Cera Sim's 1114 l/side; the weight-and-balance table's
+           figure is explicitly a reduced "50 kg less" load-out, not
+           full capacity, which accounts for the gap).
+
+         capacity: Cera Sim liters x 0.800 kg/l (matches the weight-and-balance
+         manual's own Table 5 specific gravity, and this file's
+         existing type="FUEL"/JP-5). service: 415 l -> 332.0 kg =
+         732.1 lb. external (each): 1114 l -> 891.2 kg = 1964.6 lb.
+
+         contents: taken directly from the weight-and-balance manual's Table 3 normal-
+         takeoff fuel load (a real, sourced in-service fuel state, not
+         an arbitrary fill fraction): service 322.0 kg = 709.9 lb;
+         external 1640.0 kg total / 2 = 820.0 kg = 1807.8 lb each.
+
+         x: derived from the weight-and-balance manual's CG arms, which are given
+         relative to the main rotor mast (see mass_balance's CG
+         comment for the coordinate-system derivation; mast is at
+         x=200 IN in this file). service arm -1.320 m = 51.97 in AFT
+         of the mast -> x=251.97. external arm -0.025 m = 0.98 in AFT
+         of the mast -> x=200.98 (external tanks sit almost directly
+         below the mast longitudinally, matching real Mi-8/17 photos
+         where the drum tanks are slung along the cabin sides near
+         the main gearbox deck).
+
+         y: NOT given anywhere in the weight-and-balance manual (its balance-data
+         section solves only the X-coordinate, see mass_balance's CG
+         comment); +/-40 in is an unsourced placeholder to give the
+         two external tanks the real left/right asymmetry they
+         physically have, not a drawing-derived figure.
+
+         z: left at the previous placeholder (45 in), also not
+         sourced. -->
     <tank number="0" type="FUEL">
       <location unit="IN">
-        <x>   180.0 </x>
+        <x>   251.97 </x>
         <y>     0.0 </y>
         <z>    45.0 </z>
       </location>
-      <capacity unit="LBS">    1200.0  </capacity>
-      <contents unit="LBS">    1000.0  </contents>
+      <capacity unit="LBS">     732.1 </capacity>
+      <contents unit="LBS">     709.9 </contents>
       <type>JP-5</type>
     </tank>
     <tank number="1" type="FUEL">
       <location unit="IN">
-        <x>   220.0 </x>
-        <y>     0.0 </y>
+        <x>   200.98 </x>
+        <y>    40.0 </y>
         <z>    45.0 </z>
       </location>
-      <capacity unit="LBS">    1200.0 </capacity>
-      <contents unit="LBS">    1000.0 </contents>
+      <capacity unit="LBS">    1964.6 </capacity>
+      <contents unit="LBS">    1807.8 </contents>
+      <type>JP-5</type>
+    </tank>
+    <tank number="2" type="FUEL">
+      <location unit="IN">
+        <x>   200.98 </x>
+        <y>   -40.0 </y>
+        <z>    45.0 </z>
+      </location>
+      <capacity unit="LBS">    1964.6 </capacity>
+      <contents unit="LBS">    1807.8 </contents>
       <type>JP-5</type>
     </tank>
   </propulsion>
