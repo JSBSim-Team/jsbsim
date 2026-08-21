@@ -6,20 +6,28 @@
     (same template pattern as aircraft/ah1s/reset00.xml in this repo,
     not real Mi-17 basing data); adjust as needed for your test.
 
-    altitudeAGL=8.0, not the original 2.0: at 2.0 the gear legs start
-    ALREADY compressed by ~4.9 FT at t=0 (confirmed via temporary
-    FGLGear::CrashDetect() diagnostics: compressLength=4.91667,
-    StrutForce=-39333 lbs on main_gear_left at the very first frame),
-    which is a geometry mismatch between this value and the actual
-    gear-leg locations, not a spring/damping calibration issue. That
-    massive initial over-compression is what launched the violent
-    bounce/*CRASH DETECTED* cascade seen when testing liftoff/hover,
-    not the collective input that seemed to trigger it. 8.0 was found
-    empirically (not derived from exact gear geometry) to bring
-    initial compression down to a small, controlled settle instead;
-    revisit if a real static ground-rest compression figure becomes
-    available.
-  -->
+    altitudeAGL: originally 2.0, which put the gear legs ALREADY
+    compressed by ~4.9 FT at t=0 (confirmed via temporary FGLGear::
+    CrashDetect() diagnostics: compressLength=4.91667, StrutForce=
+    -39333 lbs on main_gear_left at the very first frame), a geometry
+    mismatch between that value and the actual gear-leg locations, not
+    a spring/damping calibration issue; that massive initial over-
+    compression is what launched the violent bounce/*CRASH DETECTED*
+    cascade seen when testing liftoff/hover, not the collective input
+    that seemed to trigger it. Raised to 8.0 (found empirically, not
+    derived from exact gear geometry) to bring initial compression
+    down to a small, controlled settle instead.
+
+    4.575 (a user-supplied value) was checked against test_mi17_
+    static_ground.xml and test_mi17_ground_run_idle.xml: settles to
+    the same h-agl-ft~5.28/compression-ft~1.17 equilibrium as the 8.0
+    case, since both starting heights are above that equilibrium and
+    just free-fall a short distance to it, so the exact starting
+    height doesn't change the settled state (only how far it has to
+    fall to reach it). Now set to 5.4, another user-supplied value;
+    same reasoning applies (above the ~1.17 ft equilibrium compression
+    point), but re-run test_mi17_static_ground.xml after any further
+    change here to confirm rather than assume. -->
 
   <ubody unit="FT/SEC">    0.0 </ubody>
   <vbody unit="FT/SEC">    0.0 </vbody>
@@ -31,6 +39,6 @@
   <longitude   unit="DEG">  -117.87323 </longitude>
   <latitude    unit="DEG">    34.95416 </latitude>
   <elevation   unit="FT">   2283.5     </elevation>
-  <altitudeAGL unit="FT">      8.0     </altitudeAGL>
+  <altitudeAGL unit="FT">      5.4     </altitudeAGL>
 
 </initialize>
