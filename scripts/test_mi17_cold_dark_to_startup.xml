@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 cold and dark, then startup"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Two phases in one run: 15 minutes (900s) fully cold and dark
+    (battery, generators, and hydraulic pumps all off, engines never
+    started, controls neutral -- identical state to scripts/test_mi17_
+    cold_and_dark.xml), then a startup transition at t=900s that turns
+    electrical/hydraulic power back on and starts both engines,
+    followed by 30 minutes (1800s) to see the aircraft sit at steady
+    ground-running RPM for an extended period after the initial spin-up
+    settles, not just through the settle transient itself; run ends at
+    t=2700s (900 + 1800).
+
+    A real, notable result from the shorter (180s post-start) version
+    of this script: engine start after 900s cold-and-dark does NOT
+    ramp up smoothly from 0 the way scripts/test_mi17_ground_run_idle.
+    xml's immediate-start-at-t=0 case does. It spikes to ~329.5 RPM
+    (above the 192 target) at the instant propulsion/set-running fires,
+    then decays back down through ~303 (t+2s) -> ~199 (t+10s) -> ~187
+    (t+30s) -> ~192 (t+60-90s), settling cleanly with no further
+    oscillation. A brief nose-gear contact was also logged ~0.135s
+    after the startup event (h-agl-ft dipping to ~3.3 ft before
+    recovering to the same ~4.74 ft steady baseline test_mi17_ground_
+    run_idle.xml settles to) -- a small, self-correcting bounce from
+    the start transient, not a crash. The 30-minute extension here is
+    partly to confirm that settled state is genuinely durable over a
+    much longer post-start window, not just stable for the ~90-120s
+    scripts/test_mi17_ground_run_idle.xml originally measured.
+
+    Same governor-driven approach as that script: fcs/throttle-cmd-norm[0/1]
+    is never set directly here either, only propulsion/set-running;
+    the governor (rpm_governor.xml, always loaded on this aircraft)
+    drives throttle on its own. Collective stays flat and bias stays
+    zero for the whole run -- this demonstrates the cold-dark-to-
+    running electrical/engine transition, not a climb-out, so there is
+    no collective-bias ramp or climb-collective ramp here the way
+    scripts/test_mi17_hover.xml has.
+
+    electrical/main-generator-on, hydraulic/main-pump-on, and hydraulic/
+    emergency-pump-on are restored to 1.0 at the startup transition
+    (electrical/backup-generator-on and hydraulic/backup-pump-on stay
+    at 0.0) to match this aircraft's own file defaults in electrical_
+    system.xml/hydraulic_system.xml -- i.e. "normal running
+    configuration", not an arbitrarily chosen subset.
+
+    Known model limitation, carried over from test_mi17_cold_and_dark.
+    xml: electrical/battery-voltage-v and hydraulic/main-pressure-bar
+    are not actually wired to these -on switches (electrical/main-
+    voltage-v and hydraulic/main-pressure-bar are bare constant
+    properties in their respective Systems files, never recomputed
+    from switch state), so those two traces will stay flat across the
+    t=900s transition in the output CSV even though the switches
+    themselves visibly step from 0 to 1 there. The switch properties
+    are included in the CSV specifically so the transition timing is
+    still visible even though its electrical/hydraulic *effect* isn't
+    modeled.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <!-- CSV trace of the full run, 5 Hz; see test_mi17_hover.xml's
+       identical pattern for why this is a script-scoped output rather
+       than something added to aircraft/mi17/mi17.xml. 5 Hz over 2700s
+       is ~13500 samples; still a modest file (a few hundred KB to
+       ~1 MB of CSV text), and gives plenty of resolution for both the
+       15-minute cold-and-dark hold and the startup/spin-up transient
+       without needing a higher rate. -->
+  <output name="mi17_cold_dark_to_startup.csv" type="CSV" rate="5">
+    <property> position/h-agl-ft </property>
+    <property> attitude/pitch-rad </property>
+    <property> attitude/roll-rad </property>
+    <property> velocities/p-rad_sec </property>
+    <property> velocities/q-rad_sec </property>
+    <property> velocities/r-rad_sec </property>
+    <property> gear/unit[0]/WOW </property>
+    <property> gear/unit[0]/compression-ft </property>
+    <property> gear/unit[0]/compression-velocity-fps </property>
+    <property> gear/unit[1]/WOW </property>
+    <property> gear/unit[2]/WOW </property>
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+    <property> propulsion/engine[0]/n1 </property>
+    <property> fcs/throttle-cmd-norm[0] </property>
+    <property> propulsion/engine[0]/output-torque-lbft </property>
+    <property> propulsion/engine[0]/thrust-lbs </property>
+    <property> electrical/battery-on </property>
+    <property> electrical/battery-voltage-v </property>
+    <property> hydraulic/main-pump-on </property>
+    <property> hydraulic/main-pressure-bar </property>
+  </output>
+
+  <run start="0.0" end="2700.0" dt="0.0075">
+
+    <event name="hold cold-and-dark" persistent="true">
+      <!-- Same state as test_mi17_cold_and_dark.xml, held only while
+           sim-time-sec is under 900.0; see the "startup" event below
+           for the t=900 transition. Engines are never started here
+           (no propulsion/set-running command in this event). -->
+      <condition> simulation/sim-time-sec le 899.999 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+      <set name="electrical/battery-on" value="0.0"/>
+      <set name="electrical/main-generator-on" value="0.0"/>
+      <set name="electrical/backup-generator-on" value="0.0"/>
+      <set name="hydraulic/main-pump-on" value="0.0"/>
+      <set name="hydraulic/backup-pump-on" value="0.0"/>
+      <set name="hydraulic/emergency-pump-on" value="0.0"/>
+    </event>
+
+    <event name="checkpoint cold-dark 1s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[0]/compression-ft </property>
+        <property> electrical/battery-on </property>
+        <property> electrical/battery-voltage-v </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint cold-dark 300s" persistent="false">
+      <condition> simulation/sim-time-sec ge 300.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> electrical/battery-on </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint cold-dark 600s" persistent="false">
+      <condition> simulation/sim-time-sec ge 600.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> electrical/battery-on </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint cold-dark 899s (end of 15min hold)" persistent="false">
+      <condition> simulation/sim-time-sec ge 899.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> electrical/battery-on </property>
+        <property> electrical/battery-voltage-v </property>
+        <property> hydraulic/main-pump-on </property>
+        <property> hydraulic/main-pressure-bar </property>
+      </notify>
+    </event>
+
+    <event name="startup: power on, start engines" persistent="false">
+      <!-- Fires once at t=900.0, the moment hold-cold-and-dark above
+           stops re-asserting the off state every frame (its own
+           condition, sim-time-sec le 899.999, goes false the frame
+           before this one fires, so there is no one-frame fight
+           between the two events over the same properties).
+
+           Starts the main engines via FGTurboshaft's starter-cmd/
+           cutoff-cmd, not propulsion/set-running: the latter forces full
+           throttle directly and converges to a steady state inside a
+           single frame via FGPropulsion::GetSteadyState(), producing the
+           ~329 RPM one-frame overshoot documented in this script's own
+           description above. starter-cmd/cutoff-cmd drive the real
+           per-frame phase machine instead, so the governor actually gets
+           to moderate throttle throughout. Unlike test_mi17_ground_run_
+           idle.xml, no extra delay is needed here before engaging them:
+           this event already fires at t=900.0, long past the one-frame
+           tsTrim-transition window near t=0 that requires that delay
+           (see that script's own comment for why). Engine 2 (tail rotor)
+           stays on its own simple per-engine set-running, same reasoning
+           as that script: FGElectric has no phase state machine to get
+           stuck in. -->
+      <condition> simulation/sim-time-sec ge 900.0 </condition>
+      <set name="electrical/battery-on" value="1.0"/>
+      <set name="electrical/main-generator-on" value="1.0"/>
+      <set name="hydraulic/main-pump-on" value="1.0"/>
+      <set name="hydraulic/emergency-pump-on" value="1.0"/>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> electrical/battery-on </property>
+        <property> hydraulic/main-pump-on </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+      </notify>
+    </event>
+
+    <event name="hold collective flat through spin-up" persistent="true">
+      <!-- Same governor-driven approach as test_mi17_ground_run_idle.
+           xml: collective flat, no forced throttle, only propulsion/
+           set-running (already commanded once above) and letting
+           rpm_governor.xml drive fcs/throttle-cmd-norm[0/1] on its
+           own from here. -->
+      <condition> simulation/sim-time-sec ge 900.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="checkpoint startup +2s" persistent="false">
+      <condition> simulation/sim-time-sec ge 902.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +10s" persistent="false">
+      <condition> simulation/sim-time-sec ge 910.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +30s" persistent="false">
+      <condition> simulation/sim-time-sec ge 930.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +60s" persistent="false">
+      <condition> simulation/sim-time-sec ge 960.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +90s" persistent="false">
+      <condition> simulation/sim-time-sec ge 990.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> velocities/r-rad_sec </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +180s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1080.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <!-- Extended-hold checkpoints, added when this script's post-start
+         window was extended from 180s to 30 minutes (1800s): confirm
+         the governed RPM stays durably at 192 over a much longer
+         window than the initial spin-up settle, watching for the same
+         kind of slow ITT/torque thermal creep documented (and treated
+         as expected, not divergence) in scripts/test_mi17_spinup_diag.
+         xml's own long full-throttle hold. -->
+    <event name="checkpoint startup +5min" persistent="false">
+      <condition> simulation/sim-time-sec ge 1200.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +10min" persistent="false">
+      <condition> simulation/sim-time-sec ge 1500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +15min" persistent="false">
+      <condition> simulation/sim-time-sec ge 1800.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +20min" persistent="false">
+      <condition> simulation/sim-time-sec ge 2100.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +25min" persistent="false">
+      <condition> simulation/sim-time-sec ge 2400.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint startup +30min (t=2700s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 2699.9 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[0]/thrust-lbs </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+        <property> gear/unit[1]/WOW </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
