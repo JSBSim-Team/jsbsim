@@ -40,6 +40,21 @@
        cause. Treat this run's outcome as new diagnostic data, not a
        validated solution.
 
+    UPDATE: the run described above (settle/bias-ramp/collective-ramp
+    fixes) got much further -- no more violent roll divergence, roll
+    and pitch both stayed under ~7 degrees -- but crashed at t=303s
+    via a different mechanism: the "engage altitude hold" handoff was
+    gated on sim-time-sec ge 185.0 (the collective-climb ramp's own
+    completion time) AND h-agl-ft ge 15.0, but with the corrected
+    mass/CG/inertia the aircraft climbs hard enough to reach 1197 ft
+    AGL at -58.4 fps well before t=185, so altitude hold engaged
+    fighting a ~1167 ft error instead of the intended ~15 ft, causing
+    a large porpoise (1197->154->509 ft) and an eventual bad touchdown.
+    Fixed by changing the time floor to 140.0 (when the climb ramp
+    actually starts) on both the handoff event and the persistent
+    hold-altitude-mode event, so h-agl-ft ge 15 is the condition that
+    actually decides the handoff, matching the original intent.
+
     Collective-bias is zeroed for the entire ground-settle window (the
     fix validated in this branch's history: the corrected rotor
     produces ~19000-20000 lbs from the default 0.15 rad bias ALONE
@@ -186,22 +201,41 @@
     </event>
 
     <event name="engage altitude hold, ramp collective back toward trim" persistent="false">
-      <!-- Gated on both a real climb (h-agl-ft ge 15) and being past
-           the ramp-complete time, same guard against the initial
-           ground-touchdown mechanical bounce as the previous version
-           of this script used. Backoff is also a ramp (10s), not a
-           step, to 0.68; again an unvalidated estimate, chosen
-           slightly below the 0.75 climb value on the assumption (not
-           yet confirmed for this rotor) that trim sits somewhat below
-           climb power, matching the general shape of the old rotor's
-           now-invalid 0.90/0.72 pair. -->
+      <!-- Time-gate was 185.0 (the collective-climb ramp's own
+           theoretical completion time), not 140.0 (when the ramp
+           actually starts). With the corrected mass/CG/inertia
+           (see mass_balance's comments in aircraft/mi17/mi17.xml),
+           the aircraft climbs far harder than the old, undersized-
+           inertia placeholder ever did: by the time the 185.0 gate
+           opened, it had already reached 1197 ft AGL at -58.4 fps
+           (~3500 fpm); h-agl-ft ge 15 had been true for a long time
+           before the time-gate let the handoff fire, so altitude hold
+           was fighting a ~1167 ft error the instant it engaged, which
+           is what produced the 1197->154->509 ft porpoise and the
+           eventual crash at t=303s (see this branch's commit history).
+           140.0 (the climb ramp's actual start) is the right floor:
+           it still guards against the ground-settle window (measured
+           steady-state h-agl-ft ~5 in both test_mi17_static_ground.xml
+           and test_mi17_ground_run_idle.xml, no bounce observed
+           anywhere near 15 ft before real collective is applied), but
+           no longer holds the handoff back once the aircraft has
+           genuinely lifted off. Backoff is still a ramp (10s), not a
+           step, to 0.68; still an unvalidated estimate, but the
+           handoff now happens close to actual liftoff instead of 45s
+           into full-power climb, so the excess-thrust exposure window
+           before hold engages should be seconds, not most of a minute. -->
       <condition>
-        simulation/sim-time-sec ge 185.0
+        simulation/sim-time-sec ge 140.0
         position/h-agl-ft ge 15.0
       </condition>
       <set name="ap/altitude-target-ft" value="2313.5"/>
       <set name="ap/altitude-hold-on" value="1.0"/>
-      <set name="fcs/collective-cmd-norm" value="0.68" action="FG_RAMP" tc="10.0"/>
+      <!-- fcs/collective-cmd-norm is NOT set here; the persistent
+           hold-altitude-mode event below owns it instead, since a
+           one-shot ramp from this non-persistent event would just
+           lose the ongoing race against the still-running climb-ramp
+           event once this event's own ramp finishes; see hold-
+           altitude-mode's comment. -->
       <notify>
         <property> simulation/sim-time-sec </property>
         <property> position/h-agl-ft </property>
@@ -209,13 +243,52 @@
       </notify>
     </event>
 
-    <event name="hold-altitude-mode" persistent="true">
+    <event name="hold-altitude-mode" persistent="true" continuous="true">
+      <!-- Same 140.0 fix as the handoff event above; must match or
+           this persistent event would re-arm/hold the mode gate on a
+           different, stale condition than the one that actually fired
+           the handoff.
+
+           fcs/collective-cmd-norm=0.68 added here, and continuous=
+           "true" added to the event itself, after the first attempt
+           at this fix (a plain persistent event with a one-shot ramp)
+           produced byte-for-byte the same wrong result as before:
+           collective-cmd-norm stuck at 0.75 for the whole post-
+           handoff run. Reading src/input_output/FGScript.cpp::
+           RunScript() to find out why: "persistent" only controls
+           whether Triggered resets to false when the CONDITION next
+           goes false (so the event can fire again later); it does
+           NOT make an event's <set> actions re-apply every frame. A
+           <set> (plain or FG_RAMP) only writes its property while
+           Transiting[i] is true, and Transiting is cleared the first
+           time the ramp/step completes (TimeSpan > TC), never to be
+           set again unless the condition goes false and becomes true
+           a second time. Since this event's condition, once true,
+           stays true for the rest of the run, "persistent" here
+           behaved identically to a one-shot event: the ramp to 0.68
+           ran once (over 10s) then stopped writing entirely, leaving
+           the still-running "ramp collective to climb" event (0.0->
+           0.75 FG_RAMP, t=140-185, entirely unaffected by anything
+           else) as the only thing still writing to fcs/collective-
+           cmd-norm from then until t=185, which is exactly why it
+           reclaimed the property and drove it back to 0.75.
+
+           continuous="true" is FGScript's actual mechanism for a
+           <set> that keeps re-applying every frame indefinitely: for
+           FG_RAMP, once TimeSpan exceeds TC, Transiting is normally
+           cleared (stops writing) unless Continuous is true, in which
+           case the ramped value keeps being written every frame after
+           saturating at its target; see the FG_RAMP case in
+           RunScript(). That is what actually wins the last-write-
+           each-frame race against climb-ramp for good, not merely
+           "persistent". -->
       <condition>
-        simulation/sim-time-sec ge 185.0
+        simulation/sim-time-sec ge 140.0
         position/h-agl-ft ge 15.0
       </condition>
       <set name="ap/altitude-hold-on" value="1.0"/>
       <set name="ap/altitude-target-ft" value="2313.5"/>
+      <set name="fcs/collective-cmd-norm" value="0.68" action="FG_RAMP" tc="10.0"/>
     </event>
 
     <event name="checkpoint 30s post-handoff" persistent="false">

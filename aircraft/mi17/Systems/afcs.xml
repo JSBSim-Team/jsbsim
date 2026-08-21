@@ -129,19 +129,34 @@
          scripts/test_mi17_hover.xml (h-agl-ft swinging 6 -> 22 -> 0.6
          ft, pitch spiking to 35+ deg, v-down-fps swinging +-35) instead
          of a damped approach to the target, a classic outer-loop-
-         faster-than-inner-loop instability. Retune further once a
-         clean hover is confirmed. -->
+         faster-than-inner-loop instability.
+
+         Halved again (0.0002->0.0001, 0.002->0.001) alongside the
+         mi17.xml mass/CG/inertia correction and the test_mi17_hover.
+         xml handoff-timing fix (altitude hold used to engage ~45s
+         late, after a ~1167 ft error had already built up; it now
+         engages within seconds of actual liftoff, so the loop starts
+         from a small error instead of a huge one). This second
+         reduction is a conservative, not-yet-validated step in the
+         same direction as the first, made for the same underlying
+         reason: the plant (governor + rotor inflow) still settles far
+         slower than this per-frame loop reacts, and that mismatch is
+         a function of the airframe's response lag, not of how large
+         the initial error happens to be, so some further margin still
+         seemed prudent even with the handoff fix removing most of the
+         error spike. Retune based on the next hover run's actual
+         result, not just this reasoning. -->
     <fcs_function name="ap/collective-cmd">
       <function>
         <sum>
           <product>
             <property> ap/altitude-error-ft </property>
-            <value> 0.0002 </value>
+            <value> 0.0001 </value>
             <property> ap/altitude-hold-on </property>
           </product>
           <product>
             <property> ap/vertical-speed-error-fps </property>
-            <value> 0.002 </value>
+            <value> 0.001 </value>
             <property> ap/altitude-hold-on </property>
           </product>
         </sum>
