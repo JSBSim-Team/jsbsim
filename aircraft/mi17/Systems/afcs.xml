@@ -22,6 +22,17 @@
   <property value="0.5"> ap/roll-gain </property>
   <property value="0.3"> ap/yaw-gain </property>
   <property value="0.4"> ap/collective-gain </property>
+  <!-- Declared at system scope, not inside the "altitude hold"
+       channel below where it's used: a <property> element nested
+       inside a <channel> is not registered in time for a same-
+       channel <pid>'s <ki> to resolve it by name at parse time (no
+       other <property> in this aircraft's Systems/*.xml is nested
+       inside a <channel> either; confirmed the hard way: FGFCS threw
+       "Property ap/altitude-integral-gain does not exist" when it was
+       declared inline just above the <pid> that uses it). See the
+       altitude hold channel's integral-term comment for what this
+       gain actually does. -->
+  <property value="0.0000002"> ap/altitude-integral-gain </property>
 
   <!-- AFCS targets: never declared in the original model, only ever read
        by the hold-mode error fcs_functions below. All hold modes default
@@ -146,6 +157,64 @@
          seemed prudent even with the handoff fix removing most of the
          error spike. Retune based on the next hover run's actual
          result, not just this reasoning. -->
+
+    <!-- Integral term: the two products above are proportional-only
+         (position + rate), which can damp oscillation but can never
+         drive a standing error to zero; confirmed by an actual run
+         (scripts/test_mi17_hover.xml, this branch's history): with
+         the handoff-timing and collective-ramp-race bugs both fixed,
+         the aircraft climbs, stops porpoising, and holds level, but
+         stabilizes ~930-940 ft AGL against a ~30 ft AGL target and
+         just sits there; a stable but permanent offset, because the
+         base collective trim (0.68, unvalidated) is somewhat above
+         true hover-equilibrium thrust and nothing here ever integrates
+         that standing error away.
+
+         Anti-windup follows rpm_governor.xml's own <pid> pattern
+         (governor/pid-saturated -> <trigger>): freeze/reset via a
+         <switch>-driven trigger rather than letting the integrator
+         accumulate for the entire ~140s+ ground/climb-out phase
+         before altitude hold ever engages, or run away once its own
+         output saturates. -0.15/0.15 rad clip on the integral term
+         alone (not the full collective range) keeps its authority
+         bounded relative to the base 0.68 trim and the P/rate terms
+         above.
+
+         ki=0.0000002 is a rough, unvalidated starting point, not a
+         tuned value: at the observed ~900 ft standing error, it
+         contributes roughly 0.0000002*900 = 0.00018/sec, i.e. on the
+         order of 0.02-0.03 rad after a couple of minutes; deliberately
+         slow, on the same reasoning as afcs.xml's other gains above
+         (the plant settles over tens of seconds; a fast-reacting
+         integral risks the same outer-loop-faster-than-inner-loop
+         oscillation already seen once with the proportional gains).
+         Needs validation against an actual hover run, not just this
+         estimate. ap/altitude-integral-gain itself is declared up in
+         the AFCS gains block near the top of this file, not here;
+         see that declaration's comment for why. -->
+    <switch name="ap/altitude-integral-trigger">
+      <default value="0.0"/>
+      <test value="-1.0">
+        ap/altitude-hold-on lt 0.5
+      </test>
+      <test value="1.0">
+        ap/altitude-integral-cmd ge 0.15
+      </test>
+      <test value="1.0">
+        ap/altitude-integral-cmd le -0.15
+      </test>
+    </switch>
+
+    <pid name="ap/altitude-integral-cmd">
+      <input> ap/altitude-error-ft </input>
+      <ki> ap/altitude-integral-gain </ki>
+      <trigger> ap/altitude-integral-trigger </trigger>
+      <clipto>
+        <min> -0.15 </min>
+        <max>  0.15 </max>
+      </clipto>
+    </pid>
+
     <fcs_function name="ap/collective-cmd">
       <function>
         <sum>
@@ -157,6 +226,10 @@
           <product>
             <property> ap/vertical-speed-error-fps </property>
             <value> 0.001 </value>
+            <property> ap/altitude-hold-on </property>
+          </product>
+          <product>
+            <property> ap/altitude-integral-cmd </property>
             <property> ap/altitude-hold-on </property>
           </product>
         </sum>
