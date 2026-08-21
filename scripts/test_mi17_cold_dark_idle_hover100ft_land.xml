@@ -1,0 +1,474 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 cold and dark, idle ground run, hover at 100 ft AGL for 15min, then land"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Five phases in one run. Phases 1-4 are scripts/test_mi17_cold_dark_
+    idle_hover100ft.xml verbatim (same times, same closed-loop climb-out
+    -- see that script's description for the full derivation of each
+    piece), with phase 5 (descent and landing) added on top:
+
+    1. 15 minutes (0-900s) fully cold and dark.
+    2. Startup transition at t=900s (battery/hydraulics on, engines
+       started via starter-cmd/cutoff-cmd).
+    3. 15 minutes (900-1800s) idle ground run, collective flat,
+       governor-driven.
+    4. Liftoff at t=1800s, closed-loop climb to a 100 ft AGL hover
+       (ap/altitude-target-ft=2383.5, field elevation 2283.5 + 100):
+       collective ramps directly to the true hover-trim value (~0.092,
+       back-computed from rotor_control.xml's collective chain; see
+       scripts/test_mi17_hover.xml's description) while altitude hold
+       engages at the same instant (t=1820), rather than an open-loop
+       climb to an oversized collective value corrected only after the
+       fact. Held for 15 minutes, t=3680-4580.
+    5. Descent and landing, t=4580 onward, new in this script (the
+       cold-dark/idle/hover script this is based on stays airborne by
+       design). Two steps, both closed-loop where possible rather than
+       an uncontrolled drop:
+       a. t=4580-4700: ap/altitude-target-ft ramps down (60s) from
+          2383.5 (100 ft AGL) to 2291.5 (8 ft AGL) under the same
+          altitude-hold loop that flew the climb -- the rate-gain sign
+          fix (afcs.xml) makes this symmetric: the loop opposes
+          whatever vertical rate exists whether climbing or descending,
+          so a lower target produces a controlled descent, not a
+          separate mechanism. 120s total (60s ramp + 60s settle) is
+          double the time the climb-out took to reach 90%+ of a
+          similar-sized (92 ft) altitude change, for margin.
+       b. t=4700 onward: altitude hold disengages and both collective-
+          cmd-norm and collective-bias ramp to 0.0 over 30s -- the
+          reverse of the startup bias-ramp/climb-out, letting the
+          aircraft settle onto its gear as thrust decays rather than
+          cutting power in a step. Attitude hold (roll/pitch) stays on
+          throughout for stability during touchdown.
+       This is an ESTIMATE, not a guarantee, same caveat as the parent
+       script's hold window: check the CSV output and the GEAR_CONTACT
+       log lines after running to confirm a controlled touchdown (small
+       v-down at ground contact, no bounce cascade) rather than treating
+       this as validated a priori.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <!-- CSV trace of the full run, 2 Hz; see test_mi17_cold_dark_idle_
+       hover100ft.xml's identical script-scoped <output> pattern. -->
+  <output name="mi17_cold_dark_idle_hover100ft_land.csv" type="CSV" rate="2">
+    <property> position/h-agl-ft </property>
+    <property> velocities/v-down-fps </property>
+    <property> attitude/pitch-rad </property>
+    <property> attitude/roll-rad </property>
+    <property> fcs/collective-cmd-norm </property>
+    <property> fcs/adj/collective-bias </property>
+    <property> ap/altitude-hold-on </property>
+    <property> ap/altitude-target-ft </property>
+    <property> ap/altitude-integral-cmd </property>
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+    <property> propulsion/engine[0]/n1 </property>
+    <property> fcs/throttle-cmd-norm[0] </property>
+    <property> electrical/battery-on </property>
+    <property> hydraulic/main-pump-on </property>
+  </output>
+
+  <run start="0.0" end="4800.0" dt="0.0075">
+
+    <!-- ===== Phase 1: cold and dark, 0-900s ===== -->
+
+    <event name="hold cold-and-dark" persistent="true">
+      <condition> simulation/sim-time-sec le 899.999 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+      <set name="fcs/rudder-cmd-norm" value="0.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="0.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="0.0"/>
+      <set name="ap/attitude-hold-on" value="0.0"/>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+      <set name="electrical/battery-on" value="0.0"/>
+      <set name="electrical/main-generator-on" value="0.0"/>
+      <set name="electrical/backup-generator-on" value="0.0"/>
+      <set name="hydraulic/main-pump-on" value="0.0"/>
+      <set name="hydraulic/backup-pump-on" value="0.0"/>
+      <set name="hydraulic/emergency-pump-on" value="0.0"/>
+    </event>
+
+    <event name="checkpoint cold-dark 1s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> electrical/battery-on </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint cold-dark 899s (end of 15min hold)" persistent="false">
+      <condition> simulation/sim-time-sec ge 899.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> electrical/battery-on </property>
+      </notify>
+    </event>
+
+    <!-- ===== Phase 2: startup transition at t=900s ===== -->
+
+    <event name="startup: power on, start engines" persistent="false">
+      <condition> simulation/sim-time-sec ge 900.0 </condition>
+      <set name="electrical/battery-on" value="1.0"/>
+      <set name="electrical/main-generator-on" value="1.0"/>
+      <set name="hydraulic/main-pump-on" value="1.0"/>
+      <set name="hydraulic/emergency-pump-on" value="1.0"/>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
+      <set name="ap/attitude-hold-on" value="1.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> electrical/battery-on </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+      </notify>
+    </event>
+
+    <event name="hold-attitude" persistent="true">
+      <!-- Must re-engage attitude hold after the cold-and-dark event
+           above zeroes it; see test_mi17_cold_dark_idle_hover100ft.xml's
+           identical event comment for the liftoff instability this
+           caused when it was accidentally omitted. -->
+      <condition> simulation/sim-time-sec ge 900.0 </condition>
+      <set name="ap/attitude-hold-on" value="1.0"/>
+    </event>
+
+    <!-- ===== Phase 3: idle ground run, 900-1800s ===== -->
+
+    <event name="hold collective flat through idle run" persistent="true">
+      <condition>
+        simulation/sim-time-sec ge 900.0
+        simulation/sim-time-sec le 1799.999
+      </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="checkpoint startup +2s" persistent="false">
+      <condition> simulation/sim-time-sec ge 902.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint startup +90s (idle RPM should be near converged)" persistent="false">
+      <condition> simulation/sim-time-sec ge 990.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint idle run +10min (t=1500s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 1500.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint end of idle run (t=1799s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 1799.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <!-- ===== Phase 4: liftoff and closed-loop climb to 100 ft AGL
+         hover, from t=1800s. Same architecture as scripts/test_mi17_
+         hover_100ft_15min.xml, shifted +1680s. ===== -->
+
+    <event name="ramp-collective-bias" persistent="false">
+      <condition> simulation/sim-time-sec ge 1800.0 </condition>
+      <set name="fcs/adj/collective-bias" value="0.15" action="FG_RAMP" tc="20.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="hold trim collective, engage altitude hold" persistent="true" continuous="true">
+      <!-- Bounded le 4579.999 (unlike the identical event in test_mi17_
+           hover_100ft_15min.xml, which runs open-ended for the rest of
+           that script's run): this script has a phase 5 after the hold
+           window that needs to take over ap/altitude-target-ft and
+           fcs/collective-cmd-norm, and this event's continuous="true"
+           would otherwise keep re-asserting 2383.5/0.092 forever and
+           fight the descent. See "begin descent" below, which is
+           deliberately gated to start exactly where this event's
+           window ends. -->
+      <condition>
+        simulation/sim-time-sec ge 1820.0
+        simulation/sim-time-sec le 4579.999
+      </condition>
+      <set name="ap/altitude-target-ft" value="2383.5"/>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <set name="fcs/collective-cmd-norm" value="0.092" action="FG_RAMP" tc="10.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=1845s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1845.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=1865s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1865.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=1925s" persistent="false">
+      <condition> simulation/sim-time-sec ge 1925.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=2180s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2180.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=2680s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2680.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint t=3180s" persistent="false">
+      <condition> simulation/sim-time-sec ge 3180.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-integral-cmd </property>
+      </notify>
+    </event>
+
+    <!-- Hold window: t=3680-4580s (an exact 900s span). ESTIMATE, see
+         the description above. -->
+    <event name="hold window start (t=3680s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 3680.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="hold window +6min (t=4040s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4040.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="hold window complete, +15min (t=4580s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4580.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> velocities/vt-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> ap/altitude-integral-cmd </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <!-- ===== Phase 5: descent and landing, t=4580 onward =====
+         New in this script; see the description above for the two-step
+         rationale (closed-loop descent to a low hover, then a slow
+         collective/bias ramp-to-zero for the actual touchdown). -->
+
+    <event name="begin descent" persistent="true" continuous="true">
+      <!-- Ramps ap/altitude-target-ft down to 2291.5 (field elevation
+           2283.5 + 8 ft AGL) over 60s under the same altitude-hold loop
+           that flew the climb; see the description's note on why the
+           rate-gain sign fix makes this symmetric (opposes whatever
+           vertical rate exists, climbing or descending). Bounded
+           le 4699.999 so it releases ap/altitude-target-ft before the
+           final touchdown event below (which does not touch that
+           property, but the bound documents the phase boundary and
+           avoids relying on FG_RAMP's saturate-and-hold behavior for
+           longer than intended). continuous="true" for the same reason
+           as "hold trim collective, engage altitude hold" above: a
+           plain persistent event's <set> does not re-apply every frame
+           once the ramp itself has completed, only continuous does. -->
+      <condition>
+        simulation/sim-time-sec ge 4580.0
+        simulation/sim-time-sec le 4699.999
+      </condition>
+      <set name="ap/altitude-target-ft" value="2291.5" action="FG_RAMP" tc="60.0"/>
+      <set name="ap/altitude-hold-on" value="1.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-target-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint descent +40s (t=4620s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4620.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> ap/altitude-target-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint descent +80s, near-ground hover (t=4660s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4660.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint pre-touchdown (t=4700s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4700.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+      </notify>
+    </event>
+
+    <event name="final touchdown: disengage altitude hold, ramp collective and bias to zero" persistent="false">
+      <!-- The reverse of the startup bias-ramp/climb-out: collective-
+           cmd-norm and collective-bias both ramp to 0.0 over 30s,
+           letting weight settle onto the gear as thrust decays rather
+           than cutting power in a step (the same abrupt-input-step
+           failure mode documented on the bias-ramp events above and
+           in test_mi17_hover.xml's description). Altitude hold is
+           disengaged first so it is not fighting the actual gear-
+           contact forces once the aircraft is on the ground; attitude
+           hold stays on (never touched here) for roll/pitch stability
+           through touchdown. One-shot (persistent="false") is fine
+           here: nothing else writes these three properties afterward,
+           so there is no race for a continuous event to win. -->
+      <condition> simulation/sim-time-sec ge 4700.0 </condition>
+      <set name="ap/altitude-hold-on" value="0.0"/>
+      <set name="fcs/collective-cmd-norm" value="0.0" action="FG_RAMP" tc="30.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0" action="FG_RAMP" tc="30.0"/>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint touchdown +15s (t=4715s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4715.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint touchdown +30s, collective/bias should be near zero (t=4730s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4730.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> fcs/collective-cmd-norm </property>
+        <property> fcs/adj/collective-bias </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint touchdown +60s (t=4760s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4760.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint, aircraft should be resting on gear (t=4800s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 4800.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> position/h-agl-ft </property>
+        <property> velocities/v-down-fps </property>
+        <property> velocities/vt-fps </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> fcs/collective-cmd-norm </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>

@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript
+       name="Mi-17 sequential engine start, static ground run"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd">
+
+  <description>
+    Variant of scripts/test_mi17_ground_run_idle.xml with the two main
+    engines started one after the other instead of together, matching
+    the real Mi-17 start sequence (engine 1, let it stabilize, then
+    engine 2) rather than a simultaneous twin start. Same real,
+    governor-moderated start mechanism as that script (FGTurboshaft's
+    starter-cmd/cutoff-cmd, not propulsion/set-running -- see that
+    script's "start engine 1" event comment for the full derivation of
+    why, and why the first event needs ge 0.1 not ge 0.0). Collective
+    stays flat and bias stays zero throughout (fcs/collective-cmd-norm
+    and fcs/adj/collective-bias both 0.0 for the whole run): this is a
+    static ground run, not a climb-out, so there is no liftoff phase to
+    speak of.
+
+    Engine 1 starts at t=0.1s, alone. Engine 2 does not start until
+    t=150s -- generously past the ~90-120s convergence window scripts/
+    test_mi17_ground_run_idle.xml measured for a simultaneous twin
+    start, giving engine 1 (and the gearbox/governor loop it alone is
+    driving) plenty of margin to reach a genuine single-engine steady
+    state before the second engine is added, rather than guessing that
+    window down. The run continues 150s past the second start (to
+    t=300s total) to give the combined two-engine loop the same order
+    of settling time. Tail rotor (engine[2], FGElectric, no starter
+    phase machine) is started alongside engine 1, matching the real
+    aircraft's tail rotor being mechanically driven off the same
+    gearbox rather than independently started.
+
+    Checkpoints are frequent through both transients (single-engine
+    spin-up, then the second engine joining) specifically to see
+    whether the governor handles a lopsided single-engine torque
+    contribution differently than the simultaneous-start case, and
+    whether engine 2 joining a gearbox already at governed RPM produces
+    any transient (a torque-sharing step, an RPM bump) worth flagging.
+  </description>
+
+  <use aircraft="mi17" initialize="reset00"/>
+
+  <!-- CSV trace of the full run, 10 Hz; see test_mi17_ground_run_idle.
+       xml's identical script-scoped <output> pattern. Both engines'
+       n1/torque are tracked here (that script only tracked engine[0])
+       specifically to see the asymmetry while only one is running. -->
+  <output name="mi17_sequential_engine_start_ground_run.csv" type="CSV" rate="10">
+    <property> propulsion/gearbox[0]/shaft-rpm </property>
+    <property> propulsion/engine[0]/n1 </property>
+    <property> propulsion/engine[0]/output-torque-lbft </property>
+    <property> propulsion/engine[0]/thrust-lbs </property>
+    <property> propulsion/engine[1]/n1 </property>
+    <property> propulsion/engine[1]/output-torque-lbft </property>
+    <property> propulsion/engine[1]/thrust-lbs </property>
+    <property> fcs/throttle-cmd-norm[0] </property>
+    <property> fcs/throttle-cmd-norm[1] </property>
+    <property> position/h-agl-ft </property>
+    <property> attitude/pitch-rad </property>
+    <property> attitude/roll-rad </property>
+    <property> velocities/r-rad_sec </property>
+    <property> gear/unit[0]/WOW </property>
+  </output>
+
+  <run start="0.0" end="300.0" dt="0.0075">
+
+    <event name="start engine 1 (and tail rotor)" persistent="false">
+      <!-- ge 0.1, not ge 0.0: see test_mi17_ground_run_idle.xml's
+           identical event comment for the one-frame tsTrim-transition
+           reason this delay is required. -->
+      <condition> simulation/sim-time-sec ge 0.1 </condition>
+      <set name="propulsion/engine[0]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[0]/cutoff-cmd" value="0"/>
+      <set name="propulsion/engine[2]/set-running" value="1"/>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="start engine 2" persistent="false">
+      <!-- 150s after engine 1: generously past the ~90-120s single-
+           combined-start convergence window measured in test_mi17_
+           ground_run_idle.xml; see the description above. -->
+      <condition> simulation/sim-time-sec ge 150.0 </condition>
+      <set name="propulsion/engine[1]/starter-cmd" value="1"/>
+      <set name="propulsion/engine[1]/cutoff-cmd" value="0"/>
+    </event>
+
+    <event name="hold collective flat, let governor drive throttle" persistent="true">
+      <condition> simulation/sim-time-sec ge 0.0 </condition>
+      <set name="fcs/collective-cmd-norm" value="0.0"/>
+      <set name="fcs/adj/collective-bias" value="0.0"/>
+    </event>
+
+    <event name="checkpoint 2s" persistent="false">
+      <condition> simulation/sim-time-sec ge 2.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+        <property> position/h-agl-ft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 5s" persistent="false">
+      <condition> simulation/sim-time-sec ge 5.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 10s" persistent="false">
+      <condition> simulation/sim-time-sec ge 10.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 20s" persistent="false">
+      <condition> simulation/sim-time-sec ge 20.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 30s" persistent="false">
+      <condition> simulation/sim-time-sec ge 30.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 60s" persistent="false">
+      <condition> simulation/sim-time-sec ge 60.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 90s" persistent="false">
+      <condition> simulation/sim-time-sec ge 90.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint 120s" persistent="false">
+      <condition> simulation/sim-time-sec ge 120.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint pre-engine-2 (t=149s)" persistent="false">
+      <!-- Last snapshot of the single-engine steady state before
+           engine 2 joins. -->
+      <condition> simulation/sim-time-sec ge 149.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> fcs/throttle-cmd-norm[0] </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +5s (t=155s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 155.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +10s (t=160s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 160.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +20s (t=170s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 170.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +30s (t=180s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 180.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +60s (t=210s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 210.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="checkpoint engine-2 +90s (t=240s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 240.0 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+      </notify>
+    </event>
+
+    <event name="final checkpoint (t=299.9s)" persistent="false">
+      <condition> simulation/sim-time-sec ge 299.9 </condition>
+      <notify>
+        <property> simulation/sim-time-sec </property>
+        <property> propulsion/gearbox[0]/shaft-rpm </property>
+        <property> propulsion/engine[0]/n1 </property>
+        <property> propulsion/engine[1]/n1 </property>
+        <property> propulsion/engine[0]/output-torque-lbft </property>
+        <property> propulsion/engine[1]/output-torque-lbft </property>
+        <property> position/h-agl-ft </property>
+        <property> attitude/pitch-rad </property>
+        <property> attitude/roll-rad </property>
+        <property> velocities/r-rad_sec </property>
+        <property> gear/unit[0]/WOW </property>
+      </notify>
+    </event>
+
+  </run>
+
+</runscript>
