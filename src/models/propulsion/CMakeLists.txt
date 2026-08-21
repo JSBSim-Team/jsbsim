@@ -9,6 +9,7 @@ set(SOURCES FGElectric.cpp
             FGThruster.cpp
             FGTurbine.cpp
             FGTurboProp.cpp
+            FGTurboshaft.cpp
             FGTransmission.cpp
             FGRotor.cpp
             FGGearbox.cpp
@@ -25,6 +26,7 @@ set(HEADERS FGElectric.h
             FGThruster.h
             FGTurbine.h
             FGTurboProp.h
+            FGTurboshaft.h
             FGTransmission.h
             FGRotor.h
             FGGearbox.h

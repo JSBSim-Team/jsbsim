@@ -57,6 +57,7 @@ INCLUDES
 #include "models/propulsion/FGPiston.h"
 #include "models/propulsion/FGElectric.h"
 #include "models/propulsion/FGTurboProp.h"
+#include "models/propulsion/FGTurboshaft.h"
 #include "models/propulsion/FGTank.h"
 #include "models/propulsion/FGBrushLessDCMotor.h"
 #include "models/propulsion/FGGearbox.h"
@@ -496,6 +497,9 @@ bool FGPropulsion::Load(Element* el)
       } else if (engine_element->FindElement("turboprop_engine")) {
         Element *element = engine_element->FindElement("turboprop_engine");
         Engines.push_back(make_shared<FGTurboProp>(FDMExec, element, numEngines, in));
+      } else if (engine_element->FindElement("turboshaft_engine")) {
+        Element *element = engine_element->FindElement("turboshaft_engine");
+        Engines.push_back(make_shared<FGTurboshaft>(FDMExec, element, numEngines, in));
       } else if (engine_element->FindElement("rocket_engine")) {
         Element *element = engine_element->FindElement("rocket_engine");
         Engines.push_back(make_shared<FGRocket>(FDMExec, element, numEngines, in));

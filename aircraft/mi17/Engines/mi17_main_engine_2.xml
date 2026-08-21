@@ -3,10 +3,11 @@
 <!--
   Mi-17 main rotor drive, side 2 of 2. Identical tables to
   mi17_main_engine_1.xml (same TV3-117MT side); see that file for the
-  full derivation/rationale. Combined with side 1 through <gearbox
-  name="mi17-main-gearbox"> in mi17.xml.
+  full derivation/rationale, including why this is <turboshaft_engine>
+  (FGTurboshaft) rather than <turboprop_engine> (FGTurboProp). Combined
+  with side 1 through <gearbox name="mi17-main-gearbox"> in mi17.xml.
 -->
-<turboprop_engine name="mi17_main_engine_2">
+<turboshaft_engine name="mi17_main_engine_2">
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
   <!-- maxpower=2200 (real TV3-117VM MAX RATED, W/O PSS); see
@@ -70,4 +71,4 @@
     </tableData>
   </table>
 
-</turboprop_engine>
+</turboshaft_engine>

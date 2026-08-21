@@ -6,15 +6,35 @@
   gearbox"> in mi17.xml (this branch's FGGearbox, feature/REQ-003-
   fggearbox) into the single main rotor shaft.
 
-  This is the same per-side derivation used on the sibling
+  Now on <turboshaft_engine> (FGTurboshaft, src/models/propulsion/
+  FGTurboshaft.{h,cpp}), not <turboprop_engine> (FGTurboProp): same
+  thermodynamics/tables (FGTurboshaft is a derivative of FGTurboProp
+  with the propeller/beta-range/reverse-pitch handling removed, since
+  a turboshaft drives a gearbox/rotor, not a variable-pitch prop), but
+  with a real, script-settable starter-cmd property added. Without
+  that, the only way to start an FGTurboProp engine from a script is
+  propulsion/set-running, which forces full throttle directly
+  (FGPropulsion::SetEngineRunning()) and converges to a steady state
+  through FGPropulsion::GetSteadyState()'s internal iteration loop
+  inside a single simulation frame; for an aircraft with an RPM
+  governor moderating throttle in response to shaft RPM, that produces
+  a large, unphysical one-frame RPM overshoot (confirmed via this
+  aircraft's own ground-run scripts: shaft RPM spiking to ~1.7x the
+  governed target before settling back down), because the governor
+  never gets a chance to react during that synthetic convergence.
+  starter-cmd drives the real tsOff->tsSpinUp->tsStart->tsRun phase
+  machine on the real simulation dt instead, so the governor's normal
+  throttle output is what the engine actually sees throughout; see
+  scripts/test_mi17_ground_run_idle.xml for the updated start sequence
+  that exercises this.
+
+  This is the same per-side derivation once prototyped on the sibling
   feature/turboshaft branch's mi17_main_engine.xml (<twin_turboshaft_
-  engine>, which models both sides internally in one file); see that
-  file's comments for the full rationale. Recorded again here since
-  <turboprop_engine> (FGTurboProp) is a different, though closely
-  related, class: FGTwinTurboshaft's own header says its thermodynamics
-  "follow FGTurboProp per side", and both classes read the same element
-  names (idlen1, maxn1, maxpower, psfc, tables, etc.), so the same
-  1000 HP/side tables apply unchanged.
+  engine>, which models both sides internally in one combined class);
+  that approach was not used here; FGTurboshaft keeps this file's own
+  established per-side-engine-plus-FGGearbox architecture (feature/
+  REQ-003-fggearbox) intact rather than replacing it with a different
+  twin-engine design.
 
   maxpower=2200 HP/side (4400 HP combined): real TV3-117VM MAX RATED
   shaft horsepower, W/O PSS column (particle separator system isn't
@@ -33,7 +53,7 @@
   engine-to-gearbox input speed), not copied from the AH-1S/M601-style
   turboprop_example's propeller-shaft-scale RPM axis.
 -->
-<turboprop_engine name="mi17_main_engine_1">
+<turboshaft_engine name="mi17_main_engine_1">
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
   <maxpower unit="HP">         2200.0   </maxpower>
@@ -121,4 +141,4 @@
     </tableData>
   </table>
 
-</turboprop_engine>
+</turboshaft_engine>

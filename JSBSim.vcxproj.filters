@@ -272,6 +272,9 @@
     <ClCompile Include="src\models\propulsion\FGTurboProp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\models\propulsion\FGTurboshaft.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\input_output\FGXMLElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -635,6 +638,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\propulsion\FGTurboProp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\models\propulsion\FGTurboshaft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\input_output\FGXMLElement.h">

@@ -338,6 +338,7 @@
     <ClInclude Include="src\initialization\FGTrimAxis.h" />
     <ClInclude Include="src\models\propulsion\FGTurbine.h" />
     <ClInclude Include="src\models\propulsion\FGTurboProp.h" />
+    <ClInclude Include="src\models\propulsion\FGTurboshaft.h" />
     <ClInclude Include="src\input_output\FGXMLElement.h" />
     <ClInclude Include="src\input_output\FGXMLFileRead.h" />
     <ClInclude Include="src\input_output\FGXMLParse.h" />
@@ -456,6 +457,7 @@
     <ClCompile Include="src\initialization\FGTrimAxis.cpp" />
     <ClCompile Include="src\models\propulsion\FGTurbine.cpp" />
     <ClCompile Include="src\models\propulsion\FGTurboProp.cpp" />
+    <ClCompile Include="src\models\propulsion\FGTurboshaft.cpp" />
     <ClCompile Include="src\input_output\FGXMLElement.cpp" />
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
