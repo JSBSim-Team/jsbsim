@@ -246,6 +246,9 @@ void UJSBSimMovementComponent::LoadAircraft(bool ResetToDefaultSettings)
     InitGearDefaultProperties();
   }
 
+  //InitTankDefaultProperties();
+  //InitGearDefaultProperties();
+
   InitEnginesCommandAndStates();
 }
 
@@ -1136,13 +1139,13 @@ void UJSBSimMovementComponent::LogInitialization()
   {
     //typedef enum { setvt, setve, setvg } speedset; ???
   case JSBSim::setned: // North East Down
-    UE_LOG(LogJSBSim, Display, TEXT("  Vn,Ve,Vd= %f, $f, $f  ft/s"), Propagate->GetVel(JSBSim::FGJSBBase::eNorth), Propagate->GetVel(JSBSim::FGJSBBase::eEast), Propagate->GetVel(JSBSim::FGJSBBase::eDown));
+    UE_LOG(LogJSBSim, Display, TEXT("  Vn,Ve,Vd= %f, %f, %f  ft/s"), Propagate->GetVel(JSBSim::FGJSBBase::eNorth), Propagate->GetVel(JSBSim::FGJSBBase::eEast), Propagate->GetVel(JSBSim::FGJSBBase::eDown));
     break;
   case JSBSim::setuvw:
-    UE_LOG(LogJSBSim, Display, TEXT("  U,V,W= %f, $f, $f  ft/s"), Propagate->GetUVW(1), Propagate->GetUVW(2), Propagate->GetUVW(3));
+    UE_LOG(LogJSBSim, Display, TEXT("  U,V,W= %f, %f, %f  ft/s"), Propagate->GetUVW(1), Propagate->GetUVW(2), Propagate->GetUVW(3));
     break;
   case JSBSim::setmach:
-    UE_LOG(LogJSBSim, Display, TEXT("  Mach: %f, $f, $f  ft/s"), Auxiliary->GetMach());
+    UE_LOG(LogJSBSim, Display, TEXT("  Mach: %f"), Auxiliary->GetMach());
     break;
   case JSBSim::setvc:
   default:
