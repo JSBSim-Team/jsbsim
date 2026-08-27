@@ -44,6 +44,7 @@ JSBSim is used in a range of projects among which:
 * SITL (Software In The Loop) Drone Autopilot testing : [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
 * Machine Learning Aircraft control: [gym-jsbsim](https://github.com/Gor-Ren/gym-jsbsim)
 * [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition) where one of the AI went undefeated in five rounds of mock air combat against an Air Force fighter (see the [video on YouTube](https://www.youtube.com/watch?v=IOJhgC1ksNU)).
+* [Project AirSim](https://github.com/iamaisim/ProjectAirSim) is an open-source simulation platform for autonomous systems [recognized by Microsoft](https://github.com/microsoft/AirSim/blob/main/project_airsim.md) as the evolution of the original [AirSim](https://github.com/microsoft/AirSim). The current simulation environment provides a modular framework for drones, fixed-wing aircraft, robots, and other autonomous systems. Project AirSim features includes JSBSim integration for fixed-wing aircraft dynamics, [with public Cessna 310 and Skywalker X8 examples](https://github.com/iamaisim/ProjectAirSim/blob/main/docs/physics/jsbsim.md).
 
 ## Academic and Industry Research
 
