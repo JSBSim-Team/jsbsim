@@ -130,12 +130,8 @@ bool FGBuoyantForces::Load(Element *document)
 
   PostLoad(document, FDMExec);
 
-  // Load() is public and appends to the cell list, so it may be called more than
-  // once to add further gas cells. The properties must only be tied the first
-  // time: tying them again fails and logs an error for each one.
-  if (!NoneDefined && !isBound) {
+  if (!NoneDefined) {
     bind();
-    isBound = true;
   }
 
   return true;

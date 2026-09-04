@@ -38,6 +38,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <memory>
 #include <vector>
 #include "FGModel.h"
 #include "math/FGColumnVector3.h"
@@ -127,8 +128,7 @@ public:
   FGExternalReactions(FGFDMExec* fdmex);
   
   /** Destructor.
-      Within the destructor the Forces and interface_properties vectors are
-      cleared out and the items pointed to are deleted.
+      The forces are held by unique_ptr and released automatically.
   */
   ~FGExternalReactions(void) override;
 
@@ -151,6 +151,17 @@ public:
   */
   bool Load(Element* el) override;
 
+  /** Adds a force or moment created in code to the external reactions.
+      A host hands over its own FGExternalForce, or a class derived from it, and
+      ownership passes to FGExternalReactions through the unique_ptr. Whether
+      the object acts as a force or a moment is decided by how it was set up,
+      so both are added the same way. The forces and moments properties are
+      tied when the model is constructed, so a force added to an aircraft that
+      declares no external_reactions element is reported like any other.
+      @param force the force or moment to add. A null pointer is ignored.
+  */
+  void Add(std::unique_ptr<FGExternalForce> force);
+
   /** Retrieves the total forces defined in the external reactions.
       @return the total force in pounds.
   */
@@ -165,11 +176,10 @@ public:
 
 private:
 
-  std::vector <FGExternalForce*> Forces;
+  std::vector<std::unique_ptr<FGExternalForce>> Forces;
   //unsigned int numForces;
   FGColumnVector3 vTotalForces;
   FGColumnVector3 vTotalMoments;
-  bool isBound = false;
 
   void bind(void);
   void Debug(int from) override;

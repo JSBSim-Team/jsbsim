@@ -52,6 +52,7 @@ CLASS IMPLEMENTATION
 
 FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 {
+  bind();
   Debug(0);
 }
 
@@ -65,43 +66,39 @@ bool FGExternalReactions::Load(Element* el)
 
   Debug(2);
 
-  // Parse force elements
-
   Element* force_element = el->FindElement("force");
   while (force_element) {
-    Forces.push_back(new FGExternalForce(FDMExec));
-    Forces.back()->setForce(force_element);
+    auto force = std::make_unique<FGExternalForce>(FDMExec);
+    force->setForce(force_element);
+    Add(std::move(force));
     force_element = el->FindNextElement("force");
   }
 
-  // Parse moment elements
-
   Element* moment_element = el->FindElement("moment");
   while (moment_element) {
-    Forces.push_back(new FGExternalForce(FDMExec));
-    Forces.back()->setMoment(moment_element);
+    auto moment = std::make_unique<FGExternalForce>(FDMExec);
+    moment->setMoment(moment_element);
+    Add(std::move(moment));
     moment_element = el->FindNextElement("moment");
   }
 
   PostLoad(el, FDMExec);
-
-  // Load() is public and may be called more than once to add further forces, so
-  // the properties must only be tied the first time. Tying them again fails and
-  // logs an error for each one.
-  if (!Forces.empty() && !isBound) {
-    bind();
-    isBound = true;
-  }
 
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGExternalReactions::Add(std::unique_ptr<FGExternalForce> force)
+{
+  if (!force) return;
+  Forces.push_back(std::move(force));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGExternalReactions::~FGExternalReactions()
 {
-  for (unsigned int i=0; i<Forces.size(); i++) delete Forces[i];
-
   Debug(1);
 }
 
