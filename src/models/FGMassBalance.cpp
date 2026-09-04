@@ -55,9 +55,8 @@ CLASS IMPLEMENTATION
 
 
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "FGMassBalance")
 {
-  Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
 
   vbaseXYZcg.InitMatrix();

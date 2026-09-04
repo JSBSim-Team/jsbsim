@@ -81,10 +81,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex)
-  : FGModel(fdmex)
+  : FGModel(fdmex, "FGPropagate")
 {
-  Name = "FGPropagate";
-
   Inertial = FDMExec->GetInertial();
 
   /// These define the indices use to select the various integrators.
