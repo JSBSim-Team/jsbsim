@@ -119,7 +119,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGExternalReactions : public FGModel
+class JSBSIM_API FGExternalReactions : public FGModel
 {
 public:
   /** Constructor.
@@ -131,6 +131,10 @@ public:
       The forces are held by unique_ptr and released automatically.
   */
   ~FGExternalReactions(void) override;
+
+  /// The model owns its forces, so it cannot be copied.
+  FGExternalReactions(const FGExternalReactions&) = delete;
+  FGExternalReactions& operator=(const FGExternalReactions&) = delete;
 
   bool InitModel(void) override;
 
