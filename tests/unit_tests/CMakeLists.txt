@@ -19,6 +19,7 @@ set(UNIT_TESTS FGColumnVector3Test
                FGPropertyManagerTest
                FGAtmosphereTest
                FGAuxiliaryTest
+               FGExternalReactionsTest
                FGMSISTest
                FGLogTest)
 
@@ -39,10 +40,23 @@ if(WIN32 AND BUILD_SHARED_LIBS)
                   ${MSIS_SOURCE_DIR}/nrlmsise-00.c
                   ${MSIS_SOURCE_DIR}/nrlmsise-00_data.c)
 
-  # Windows needs the DLL to be copied locally for unit tests to run.
-  list(GET UNIT_TESTS 0 FIRST_UNIT_TEST) # Any target name will do so we just pick the first.
-  add_custom_command(TARGET ${FIRST_UNIT_TEST}1 POST_BUILD
-                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                      $<TARGET_FILE:libJSBSim>
-                      $<TARGET_FILE_DIR:${FIRST_UNIT_TEST}1>)
+  # Windows needs the DLL to be copied locally for unit tests to run. Every
+  # test target depends on the copy so that it is complete before any of them
+  # links: vcpkg's applocal step reads the DLL next to the test it is deploying,
+  # and a parallel build lets that happen while the copy is still writing.
+  # The destination is the tests' output directory, with the per-configuration
+  # subdirectory that multi-config generators add. It cannot be taken from a
+  # test target, since the tests depend on this copy.
+  if(CMAKE_CONFIGURATION_TYPES)
+    set(UNIT_TESTS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
+  else()
+    set(UNIT_TESTS_BIN_DIR ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
+  add_custom_target(copy_jsbsim_dll
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    $<TARGET_FILE:libJSBSim> ${UNIT_TESTS_BIN_DIR}
+                    DEPENDS libJSBSim)
+  foreach(test ${UNIT_TESTS})
+    add_dependencies(${test}1 copy_jsbsim_dll)
+  endforeach()
 endif(WIN32 AND BUILD_SHARED_LIBS)
