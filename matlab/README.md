@@ -136,7 +136,7 @@ In particular, this is how the Simulink block named `JSBSim_SFunction` appears w
 
 ![image](https://user-images.githubusercontent.com/819499/128169185-b334bbe0-27f9-4426-91f9-3e4393da6e07.png)
 
-When you run the test script you'll get the foloowing output in the Matlab command window:
+When you run the test script you'll get the following output in the Matlab command window:
 
 ```matlab
 >> TestJSBSim

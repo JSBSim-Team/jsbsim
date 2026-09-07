@@ -45,7 +45,7 @@ Unreal Engine requires that one plugin contains all its needed files in its sub-
 This application contains a `Plugins/JSBSimFlightDynamicsModel` folder containing the JSBSim files.
 In some of these subfolders, one has to place 
  - The JSBSim libraries, compiled as dynamic libs  
- - The aircrafts/engine/systems definition files.
+ - The aircraft/engine/systems definition files.
 
 When the UE application will be packaged, the resources will be copied along with the executable, and the application dynamically linked against the libs transparently.
 
