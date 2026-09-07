@@ -220,7 +220,7 @@ If you modify the documentation, you might need to generate the documentation lo
 > cmake --build . --target doc
 ```
 
-The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](www.doxygen.org) and [Graphviz](www.graphviz.org) to be installed.
+The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](https://www.doxygen.org) and [Graphviz](https://www.graphviz.org) to be installed.
 
 ## Frequently Asked Questions
 
