@@ -168,6 +168,8 @@ CLASS DOCUMENTATION
             <max_steer unit="DEG"> {number | 0 | 360} </max_steer>
             <brake_group> {NONE | LEFT | RIGHT | CENTER | NOSE | TAIL} </brake_group>
             <retractable>{0 | 1}</retractable>
+            <wheel_radius unit="{FT | IN | M}"> {number} </wheel_radius>
+            <wheel_inertia unit="{SLUG*FT2 | KG*M2}"> {number} </wheel_inertia>
             <table name="{CORNERING_COEFF}" type="internal">
                 <tableData>
                     {cornering parameters}
@@ -175,6 +177,24 @@ CLASS DOCUMENTATION
             </table>
         </contact>
 @endcode
+
+    <h3>Optional wheel rotational degree of freedom (BOGEY only)</h3>
+
+    When both \<wheel_radius> and \<wheel_inertia> are given, the wheel spin
+    rate becomes a state that is resolved together with the ground friction
+    multipliers. The tire tread force is bounded by static_friction times the
+    normal force and acts on the tread slip (axle ground speed minus radius
+    times spin); it reaches the airframe through the axle while the wheel
+    receives the opposite torque, so spin-up at touchdown is paid for by the
+    aircraft's momentum. Brakes and rolling resistance become a torque between
+    the wheel and the airframe, bounded by the usual braking friction force
+    times the radius: a braked wheel holds the same force as without the spin
+    DOF. Wheels in ground contact at initialization or trim start rolling
+    without slip; in the air they spin down at the same 13 ft/s^2 tread rate as
+    wheel-speed-fps, faster with brakes applied. The extra properties
+    gear/unit[i]/wheel-spin-rad_sec and gear/unit[i]/wheel-tread-slip-fps are
+    created. Without these elements the friction model is unchanged.
+
     @author Jon S. Berndt
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
@@ -223,7 +243,7 @@ public:
   /// Damping types
   enum DampType {dtLinear=0, dtSquare};
   /// Friction types
-  enum FrictionType {ftRoll=0, ftSide, ftDynamic};
+  enum FrictionType {ftRoll=0, ftSide, ftDynamic, ftWheelBrake};
   /** Constructor
       @param el a pointer to the XML element that contains the CONTACT info.
       @param Executive a pointer to the parent executive object
@@ -311,6 +331,12 @@ public:
   bool IsBogey(void) const             { return (eContactType == ctBOGEY);}
   double GetGearUnitPos(void) const;
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
+  /// True when <wheel_radius> and <wheel_inertia> give this BOGEY a spin DOF.
+  bool HasWheelSpin(void) const { return wheelSpinEnabled; }
+  /// Wheel spin rate about the axle in rad/s (0 without a spin DOF).
+  double GetWheelSpinRate(void) const { return wheelSpin.Rate; }
+  /// Tread slip speed (axle ground speed minus radius x spin) in ft/s.
+  double GetWheelTreadSlip(void) const { return wheelTreadSlip; }
   void SetSteerAngleDeg(double angle) {
     if (eSteerType != stFixed && !Castered)
       SteerAngle = degtorad * angle;
@@ -375,7 +401,14 @@ private:
   DampType    eDampTypeRebound;
   double  maxSteerAngle;
 
-  LagrangeMultiplier LMultiplier[3];
+  LagrangeMultiplier LMultiplier[4];
+
+  // Optional wheel rotational degree of freedom.
+  bool wheelSpinEnabled = false;
+  double wheelRadius = 0.0;  // ft
+  double wheelInertia = 0.0; // slug*ft^2
+  WheelSpinDOF wheelSpin;
+  double wheelTreadSlip = 0.0; // ft/s
 
   // NO std::shared_ptr<FGGroundReactions> here, to avoid circular references
   // since FGGroundReactions owns the instances of FGLGear.
@@ -392,6 +425,7 @@ private:
   void ComputeVerticalStrutForce(void);
   void ComputeGroundFrame(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
+  void ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec);
   void UpdateForces(void);
   void SetstaticFCoeff(double coeff);
   void CrashDetect(void);
