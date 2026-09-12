@@ -40,10 +40,13 @@ INCLUDES
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include <ws2tcpip.h>
-#elif defined(__OpenBSD__)
+#elif defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <netdb.h>
+#include <sys/select.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <fcntl.h>
 #else
