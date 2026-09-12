@@ -685,9 +685,9 @@ std::string error_string(int errnum)
   errno_t retcode;
   // Always makes the string in 'buf' null-terminated
   retcode = strerror_s(buf, sizeof(buf), errnum);
-#elif defined(_GNU_SOURCE)
+#elif defined(_GNU_SOURCE) && !defined(__EMSCRIPTEN__)
   return std::string(strerror_r(errnum, buf, sizeof(buf)));
-#elif (_POSIX_C_SOURCE >= 200112L) || defined(SG_MAC) || defined(__FreeBSD__)
+#elif (_POSIX_C_SOURCE >= 200112L) || defined(SG_MAC) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__)
   int retcode;
   // POSIX.1-2001 and POSIX.1-2008
   retcode = strerror_r(errnum, buf, sizeof(buf));
@@ -695,7 +695,7 @@ std::string error_string(int errnum)
 #error "Could not find a thread-safe alternative to strerror()."
 #endif
 
-#if !defined(_GNU_SOURCE)
+#if !defined(_GNU_SOURCE) || defined(__EMSCRIPTEN__)
   if (retcode) {
     std::string msg = "unable to get error message for a given error number";
     // C++11 would make this shorter with std::to_string()
@@ -713,7 +713,7 @@ std::string error_string(int errnum)
   }
 
   return std::string(buf);
-#endif  // !defined(_GNU_SOURCE)
+#endif  // !defined(_GNU_SOURCE) || defined(__EMSCRIPTEN__)
 }
 
 } // end namespace strutils
