@@ -50,8 +50,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGInputType::FGInputType(FGFDMExec* fdmex, bool isEnabled) :
-  FGModel(fdmex), enabled(isEnabled)
+  FGModel(fdmex, "")
 {
+  enabled = isEnabled;
   Debug(0);
 }
 
@@ -100,7 +101,6 @@ bool FGInputType::InitModel(void)
 bool FGInputType::Run(bool Holding)
 {
   if (FGModel::Run(Holding)) return true;
-  if (!enabled) return true;
 
   RunPreFunctions();
   Read(Holding);

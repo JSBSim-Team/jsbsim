@@ -222,7 +222,6 @@ public:
 
 private:
   std::vector<FGOutputType*> OutputTypes;
-  bool enabled;
   SGPath includePath;
 
   void Debug(int from) override;

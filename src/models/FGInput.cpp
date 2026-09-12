@@ -54,9 +54,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
+FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex, "FGInput")
 {
-  Name = "FGInput";
   enabled = true;
 
   Debug(0);
@@ -142,7 +141,6 @@ bool FGInput::Run(bool Holding)
 {
   if (FDMExec->GetTrimStatus()) return true;
   if (FGModel::Run(Holding)) return true;
-  if (!enabled) return true;
 
   vector<FGInputType*>::iterator it;
   for (it = InputTypes.begin(); it != InputTypes.end(); ++it)

@@ -51,9 +51,8 @@ namespace JSBSim {
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex, "FGAircraft")
 {
-  Name = "FGAircraft";
   WingSpan = 0.0;
   WingArea = 0.0;
   cbar = 0.0;
