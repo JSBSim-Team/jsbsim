@@ -97,6 +97,18 @@ CLASS DOCUMENTATION
     </tableData>
   </table>
 
+  <table name="CT_RPM_FACTOR" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
+  <table name="CP_RPM_FACTOR" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
 </propeller>
 ~~~
 
@@ -125,8 +137,10 @@ CLASS DOCUMENTATION
 Two tables are needed. One for coefficient of thrust (Ct) and one for
 coefficient of power (Cp).
 
-Two tables are optional. They apply a factor to Ct and Cp based on the
-helical tip Mach.
+Four tables are optional. CT_MACH and CP_MACH apply a factor to Ct and Cp
+based on helical tip Mach. CT_RPM_FACTOR and CP_RPM_FACTOR apply a
+Reynolds-number correction factor indexed by propeller RPM, normalised to
+1.0 at the RPM for which the baseline C_THRUST/C_POWER data were measured.
 
 The parameters <sense> and <p_factor> must be specified at the parent level i.e.
 in the <thruster> element. This allows to specify different sense and P factor
@@ -259,6 +273,11 @@ public:
   /// Retrieves propeller power Mach effects factor
   FGTable* GetCpMachTable(void) const { return CpMach; }
 
+  /// Retrieves propeller thrust RPM correction factor table
+  FGTable* GetCThrustRPMTable(void) const { return cThrustRPM; }
+  /// Retrieves propeller power RPM correction factor table
+  FGTable* GetCPowerRPMTable(void) const { return cPowerRPM; }
+
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   double GetTorque(void) const  { return vTorque(eX); }
 
@@ -332,6 +351,8 @@ private:
   FGTable *cPower;
   FGTable *CtMach;
   FGTable *CpMach;
+  FGTable *cThrustRPM;
+  FGTable *cPowerRPM;
   double CtFactor;
   double CpFactor;
   int    ConstantSpeed;
