@@ -83,7 +83,7 @@ jobs:
       - name: Build and exercise the captured repository
         run: npm run build -- --allow-network
       - name: Install the headless browser
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps --only-shell --no-remove chromium
       - name: Verify browser persistence and the built package
         run: npm run test:browser
       - name: Pack the checked package without publishing

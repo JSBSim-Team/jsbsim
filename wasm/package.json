@@ -50,7 +50,7 @@
     "@types/node": "^24.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.8.0",
-    "playwright": "1.58.2"
+    "playwright": "1.63.0"
   },
   "repository": {
     "type": "git",

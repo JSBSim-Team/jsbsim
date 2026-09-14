@@ -136,7 +136,7 @@ through Playwright request routing, and opens no dev server:
 
 ```sh
 cd wasm
-npx playwright install chromium
+npx playwright install --only-shell --no-remove chromium
 node test/browser-persistence.mjs
 ```
 
