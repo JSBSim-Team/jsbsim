@@ -39,6 +39,7 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 
@@ -351,10 +352,19 @@ double FGTurbine::Trim()
 {
     double idlethrust = MilThrust * IdleThrustLookup->GetValue();
     double milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
-    double N2 = IdleN2 + ThrottlePos * N2_factor;
-    double N2norm = (N2 - IdleN2) / N2_factor;
-    double thrust = (idlethrust + (milthrust * N2norm * N2norm))
-          * (1.0 - BleedDemand);
+    // Trim establishes steady thrust without advancing time. Keep the
+    // observable spool state consistent with that same operating point.
+    N1 = IdleN1 + ThrottlePos * N1_factor;
+    N2 = IdleN2 + ThrottlePos * N2_factor;
+    N2norm = (N2 - IdleN2) / N2_factor;
+    double dryThrust = idlethrust + (milthrust * N2norm * N2norm);
+    double thrust = dryThrust * (1.0 - BleedDemand);
+
+    // Run() derives fuel flow from the thrust produced before bleed extraction
+    // is deducted. Trim has no time to seek that value, so assign the same
+    // steady product directly; TSFC is evaluated at this operating point.
+    correctedTSFC = TSFC->GetValue();
+    FuelFlow_pph = std::max(IdleFF, dryThrust * correctedTSFC);
 
     if (AugMethod == 1) {
       if ((ThrottlePos > 0.99) && (N2 > 97.0)) {Augmentation = true;}
@@ -363,12 +373,14 @@ double FGTurbine::Trim()
 
     if ((Augmented == 1) && Augmentation && (AugMethod < 2)) {
       thrust = MaxThrust * MaxThrustLookup->GetValue();
+      FuelFlow_pph = thrust * ATSFC->GetValue();
     }
 
     if (AugMethod == 2) {
       if (AugmentCmd > 0.0) {
         double tdiff = (MaxThrust * MaxThrustLookup->GetValue()) - thrust;
         thrust += (tdiff * std::min(AugmentCmd, 1.0));
+        FuelFlow_pph = thrust * ATSFC->GetValue();
       }
     }
 
