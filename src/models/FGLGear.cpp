@@ -145,6 +145,23 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     staticFCoeff = el->FindElementValueAsNumber("static_friction");
   if (el->FindElement("rolling_friction"))
     rollingFCoeff = el->FindElementValueAsNumber("rolling_friction");
+
+  // Optional wheel rotational degree of freedom for BOGEY contacts. Both
+  // elements are required; without them the legacy friction model is used.
+  if (eContactType == ctBOGEY && el->FindElement("wheel_radius")
+      && el->FindElement("wheel_inertia")) {
+    wheelRadius = el->FindElementValueAsNumberConvertTo("wheel_radius", "FT");
+    wheelInertia = el->FindElementValueAsNumberConvertTo("wheel_inertia", "SLUG*FT2");
+    if (wheelRadius > 0.0 && wheelInertia > 0.0) {
+      wheelSpinEnabled = true;
+      wheelSpin.InvInertia = 1.0 / wheelInertia;
+    }
+    else {
+      FGXMLLogging log(el, LogLevel::ERROR);
+      log << "wheel_radius and wheel_inertia must be positive; the wheel spin"
+          << " degree of freedom of contact " << name << " is disabled.\n";
+    }
+  }
   if (el->FindElement("retractable"))
     isRetractable = ((unsigned int)el->FindElementValueAsNumber("retractable"))>0.0?true:false;
 
@@ -269,13 +286,17 @@ void FGLGear::ResetToIC(void)
   WheelSlip = 0.0;
 
   // Initialize Lagrange multipliers
-  for (int i=0; i < 3; i++) {
+  for (int i=0; i < 4; i++) {
     LMultiplier[i].ForceJacobian.InitMatrix();
     LMultiplier[i].LeverArm.InitMatrix();
     LMultiplier[i].Min = 0.0;
     LMultiplier[i].Max = 0.0;
     LMultiplier[i].value = 0.0;
   }
+
+  wheelSpin.Rate = 0.0;
+  wheelSpin.Accel = 0.0;
+  wheelTreadSlip = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,6 +306,14 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
   double gearPos = 1.0;
 
   vFn.InitMatrix();
+
+  if (wheelSpinEnabled) {
+    // Advance the spin with the acceleration from the last friction solve, in
+    // step with FGPropagate's use of the last airframe derivatives.
+    if (!fdmex->GetTrimStatus() && in.TotalDeltaT > 0.0)
+      wheelSpin.Rate += wheelSpin.Accel * in.TotalDeltaT;
+    wheelSpin.Accel = 0.0;
+  }
 
   // Compute AGL
   FGColumnVector3 normal, terrainVel, dummy;
@@ -363,6 +392,16 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
       vGroundWhlVel = mT.Transposed() * vBodyWhlVel;
 
+      if (wheelSpinEnabled) {
+        FGColumnVector3 roll(mT(eX,eX), mT(eY,eX), mT(eZ,eX));
+        FGColumnVector3 vAxleVel = vBodyWhlVel + in.PQR * (wheelRadius * vGroundNormal);
+        // Wheels touching the ground at initialization or during trim roll
+        // without slip; in flight they keep their integrated spin.
+        if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
+          wheelSpin.Rate = DotProduct(roll, vAxleVel) / wheelRadius;
+        wheelTreadSlip = DotProduct(roll, vAxleVel) - wheelRadius * wheelSpin.Rate;
+      }
+
       if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
         compressSpeed = 0.0; // Steady state is sought during trimming
       else {
@@ -400,6 +439,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       LMultiplier[ftRoll].value = 0.0;
       LMultiplier[ftSide].value = 0.0;
       LMultiplier[ftDynamic].value = 0.0;
+      LMultiplier[ftWheelBrake].value = 0.0;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
       SteerAngle *= max(gearPos-0.8, 0.0)/0.2;
@@ -412,6 +452,15 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     // Let wheel spin down slowly
     vWhlVelVec(eX) -= 13.0 * in.TotalDeltaT;
     if (vWhlVelVec(eX) < 0.0) vWhlVelVec(eX) = 0.0;
+
+    if (wheelSpinEnabled) {
+      // No tire torque in the air. Approximate bearing drag with the legacy
+      // 13 ft/s^2 tread deceleration; applied brakes stop the wheel faster.
+      double brake = eBrakeGrp != bgNone ? in.BrakePos[eBrakeGrp] : 0.0;
+      double decrement = (13.0 + 100.0 * brake) / wheelRadius * in.TotalDeltaT;
+      wheelSpin.Rate = sign(wheelSpin.Rate) * max(0.0, fabs(wheelSpin.Rate) - decrement);
+      wheelTreadSlip = 0.0;
+    }
   }
 
   if (!fdmex->GetTrimStatus()) {
@@ -727,7 +776,10 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     switch(eContactType) {
     case ctBOGEY:
-      LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eZ));
+      if (wheelSpinEnabled) // Tire grip; brakes act on the wheel instead.
+        LMultiplier[ftRoll].Max = fabs(staticFFactor * staticFCoeff * vFn(eZ));
+      else
+        LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eZ));
       LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eZ));
       break;
     case ctSTRUCTURE:
@@ -749,7 +801,46 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftRoll]);
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftSide]);
+
+    if (wheelSpinEnabled) {
+      ConfigureWheelSpinRows(vWhlContactVec);
+      GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftWheelBrake]);
+    }
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// With a wheel spin DOF, the tread force acts on the tire at the contact patch
+// but reaches the airframe through the axle: the airframe moment arm is the
+// axle, and the wheel receives -radius x force. Applying the force at the
+// contact point *and* spinning the wheel would count its moment twice.
+// Brakes and rolling resistance become a torque between wheel and airframe,
+// bounded by the legacy braking force times the radius, so a braked wheel
+// holds the same force as the legacy anti-skid model while spin-up drag at
+// touchdown now comes out of the aircraft's momentum.
+
+void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
+{
+  const FGColumnVector3 roll = LMultiplier[ftRoll].ForceJacobian;
+  const FGColumnVector3 axle = vWhlContactVec + wheelRadius * vGroundNormal;
+  // Positive spin rolls forward: spin axis = ground normal x roll direction.
+  const FGColumnVector3 spinAxis = vGroundNormal * roll;
+
+  LMultiplier[ftRoll].UseMomentJacobian = true;
+  LMultiplier[ftRoll].MomentJacobian = axle * roll;
+  LMultiplier[ftRoll].Wheel = &wheelSpin;
+  LMultiplier[ftRoll].WheelCoeff = -wheelRadius;
+
+  LagrangeMultiplier& brake = LMultiplier[ftWheelBrake];
+  brake.ForceJacobian.InitMatrix();
+  brake.LeverArm.InitMatrix();
+  brake.UseMomentJacobian = true;
+  brake.MomentJacobian = -1.0 * spinAxis;
+  brake.Wheel = &wheelSpin;
+  brake.WheelCoeff = 1.0;
+  brake.Max = fabs(BrakeFCoeff * vFn(eZ)) * wheelRadius;
+  brake.Min = -brake.Max;
+  brake.value = Constrain(brake.Min, brake.value, brake.Max);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -817,6 +908,13 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
                         &FGLGear::GetstaticFCoeff, &FGLGear::SetstaticFCoeff);
   property_name = base_property_name + "/dynamic_friction_coeff";
   PropertyManager->Tie( property_name.c_str(), &dynamicFCoeff );
+
+  if (wheelSpinEnabled) {
+    property_name = base_property_name + "/wheel-spin-rad_sec";
+    PropertyManager->Tie( property_name.c_str(), &wheelSpin.Rate );
+    property_name = base_property_name + "/wheel-tread-slip-fps";
+    PropertyManager->Tie( property_name.c_str(), &wheelTreadSlip );
+  }
 
   if (eContactType == ctBOGEY) {
     property_name = base_property_name + "/slip-angle-deg";
@@ -953,6 +1051,10 @@ void FGLGear::Debug(int from)
       log << "      Static Friction:  " << staticFCoeff  << "\n";
       if (eContactType == ctBOGEY) {
         log << "      Rolling Friction: " << rollingFCoeff << "\n";
+        if (wheelSpinEnabled) {
+          log << "      Wheel Radius:     " << wheelRadius << " ft\n";
+          log << "      Wheel Inertia:    " << wheelInertia << " slug*ft^2\n";
+        }
         log << "      Steering Type:    " << sSteerType[eSteerType] << "\n";
         log << "      Grouping:         " << sBrakeGroup[eBrakeGrp] << "\n";
         log << "      Max Steer Angle:  " << maxSteerAngle << "\n";

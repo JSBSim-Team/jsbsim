@@ -41,6 +41,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestStdAtmosphere
                  TestMiscellaneous
                  TestGndReactions
+                 TestWheelSpin
                  TestIntegrators
                  TestSwitch
                  TestGain

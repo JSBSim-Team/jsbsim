@@ -240,11 +240,42 @@ void FGAccelerations::CalculateFrictionForces(double dt)
   // If no gears are in contact with the ground then return
   if (!n) return;
 
+  // Multipliers coupled to a wheel spin degree of freedom (or carrying an
+  // explicit moment) use generalized Jacobians [linear, angular, wheel]. When
+  // none are present, the original formulation below is used unchanged.
+  bool generalized = false;
+  for (auto m : multipliers) {
+    if (m->UseMomentJacobian || m->Wheel) {
+      generalized = true;
+      if (m->Wheel) m->Wheel->Accel = 0.0; // Refilled by this solve
+    }
+  }
+  auto moment = [](const LagrangeMultiplier* m) {
+    return m->UseMomentJacobian ? m->MomentJacobian : m->LeverArm * m->ForceJacobian;
+  };
+
   vector<double> a(n*n); // Will contain Jac*M^-1*Jac^T
   vector<double> rhs(n);
 
   // Assemble the linear system of equations
   for (unsigned int i=0; i < n; i++) {
+    if (generalized) {
+      const LagrangeMultiplier* mi = multipliers[i];
+      FGColumnVector3 v1 = mi->ForceJacobian / in.Mass;
+      FGColumnVector3 v2 = in.Jinv * moment(mi);
+
+      for (unsigned int j=0; j < i; j++)
+        a[i*n+j] = a[j*n+i];
+
+      for (unsigned int j=i; j < n; j++) {
+        const LagrangeMultiplier* mj = multipliers[j];
+        a[i*n+j] = DotProduct(mj->ForceJacobian, v1) + DotProduct(moment(mj), v2);
+        if (mi->Wheel && mi->Wheel == mj->Wheel)
+          a[i*n+j] += mi->WheelCoeff * mj->WheelCoeff * mi->Wheel->InvInertia;
+      }
+      continue;
+    }
+
     FGColumnVector3 U = multipliers[i]->ForceJacobian;
     FGColumnVector3 r = multipliers[i]->LeverArm;
     FGColumnVector3 v1 = U / in.Mass;
@@ -281,7 +312,15 @@ void FGAccelerations::CalculateFrictionForces(double dt)
     FGColumnVector3 U = multipliers[i]->ForceJacobian;
     FGColumnVector3 r = multipliers[i]->LeverArm;
 
-    rhs[i] = -DotProduct(U, vdot + wdot*r)/d;
+    if (generalized) {
+      const LagrangeMultiplier* mi = multipliers[i];
+      // The wheel has no other applied torque here; drive its part of the
+      // constraint velocity to zero over the step like the airframe's.
+      double wheelTerm = (mi->Wheel && dt > 0.) ? mi->WheelCoeff * mi->Wheel->Rate / dt : 0.;
+      rhs[i] = -(DotProduct(U, vdot) + DotProduct(moment(mi), wdot) + wheelTerm)/d;
+    }
+    else
+      rhs[i] = -DotProduct(U, vdot + wdot*r)/d;
 
     for (unsigned int j=0; j < n; j++)
       a[i*n+j] /= d;
@@ -316,7 +355,14 @@ void FGAccelerations::CalculateFrictionForces(double dt)
 
     FGColumnVector3 F = lambda * U;
     vFrictionForces += F;
-    vFrictionMoments += r * F;
+    if (generalized) {
+      const LagrangeMultiplier* mi = multipliers[i];
+      vFrictionMoments += lambda * moment(mi);
+      if (mi->Wheel)
+        mi->Wheel->Accel += mi->WheelCoeff * lambda * mi->Wheel->InvInertia;
+    }
+    else
+      vFrictionMoments += r * F;
   }
 
   FGColumnVector3 accel = vFrictionForces / in.Mass;
