@@ -502,6 +502,15 @@ void FGTank::bind(FGPropertyManager* PropertyManager)
   property_name = base_property_name + "/z-position";
   PropertyManager->Tie(property_name.c_str(), (FGTank*)this, &FGTank::GetLocationZ, &FGTank::SetLocationZ);
 
+  // The fuel temperature is only computed for tanks that declare an initial
+  // temperature in their configuration (see FGTank::Calculate). For the other
+  // tanks Temperature holds the -9999.0 flag rather than a temperature, so the
+  // property is tied only when the thermal model is active.
+  if (Temperature != -9999.0) {
+    property_name = base_property_name + "/temperature-degC";
+    PropertyManager->Tie( property_name.c_str(), (FGTank*)this, &FGTank::GetTemperature_degC,
+                                         &FGTank::SetTemperature );
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -547,7 +556,10 @@ void FGTank::Debug(int from)
       log << "      currently at " << PctFull << "% of maximum capacity\n";
       log << "      Tank location (X, Y, Z): " << vXYZ(eX) << ", " << vXYZ(eY) << ", " << vXYZ(eZ) << "\n";
       log << "      Effective radius: " << Radius << " inches\n";
-      log << "      Initial temperature: " << Temperature << " Fahrenheit\n";
+      if (Temperature == -9999.0)
+        log << "      Initial temperature: not set, fuel temperature is not modeled\n";
+      else
+        log << "      Initial temperature: " << Temperature << " Celsius\n";
       log << "      Priority: " << Priority << "\n";
     }
   }
