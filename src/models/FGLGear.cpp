@@ -154,7 +154,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     wheelInertia = el->FindElementValueAsNumberConvertTo("wheel_inertia", "SLUG*FT2");
     if (wheelRadius > 0.0 && wheelInertia > 0.0) {
       wheelSpinEnabled = true;
-      wheelSpin.InvInertia = 1.0 / wheelInertia;
+      wheelSpin.Jinv = 1.0 / wheelInertia;
     }
     else {
       FGXMLLogging log(el, LogLevel::ERROR);
@@ -288,7 +288,7 @@ void FGLGear::ResetToIC(void)
   // Initialize Lagrange multipliers
   for (int i=0; i < 4; i++) {
     LMultiplier[i].ForceJacobian.InitMatrix();
-    LMultiplier[i].LeverArm.InitMatrix();
+    LMultiplier[i].MomentJacobian.InitMatrix();
     LMultiplier[i].Min = 0.0;
     LMultiplier[i].Max = 0.0;
     LMultiplier[i].value = 0.0;
@@ -750,7 +750,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftDynamic].ForceJacobian = mT * velocityDirection;
     LMultiplier[ftDynamic].Max = 0.;
     LMultiplier[ftDynamic].Min = -fabs(staticFFactor * dynamicFCoeff * vFn(eZ));
-    LMultiplier[ftDynamic].LeverArm = vWhlContactVec;
+    LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
 
     // The Lagrange multiplier value obtained from the previous iteration is
     // kept. This is supposed to accelerate the convergence of the projected
@@ -771,8 +771,8 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     LMultiplier[ftRoll].ForceJacobian = mT * FGColumnVector3(1.,0.,0.);
     LMultiplier[ftSide].ForceJacobian = mT * FGColumnVector3(0.,1.,0.);
-    LMultiplier[ftRoll].LeverArm = vWhlContactVec;
-    LMultiplier[ftSide].LeverArm = vWhlContactVec;
+    LMultiplier[ftRoll].MomentJacobian = vWhlContactVec * LMultiplier[ftRoll].ForceJacobian;
+    LMultiplier[ftSide].MomentJacobian = vWhlContactVec * LMultiplier[ftSide].ForceJacobian;
 
     switch(eContactType) {
     case ctBOGEY:
@@ -826,18 +826,15 @@ void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
   // Positive spin rolls forward: spin axis = ground normal x roll direction.
   const FGColumnVector3 spinAxis = vGroundNormal * roll;
 
-  LMultiplier[ftRoll].UseMomentJacobian = true;
   LMultiplier[ftRoll].MomentJacobian = axle * roll;
   LMultiplier[ftRoll].Wheel = &wheelSpin;
-  LMultiplier[ftRoll].WheelCoeff = -wheelRadius;
+  LMultiplier[ftRoll].WheelJacobian = -wheelRadius;
 
   LagrangeMultiplier& brake = LMultiplier[ftWheelBrake];
   brake.ForceJacobian.InitMatrix();
-  brake.LeverArm.InitMatrix();
-  brake.UseMomentJacobian = true;
   brake.MomentJacobian = -1.0 * spinAxis;
   brake.Wheel = &wheelSpin;
-  brake.WheelCoeff = 1.0;
+  brake.WheelJacobian = 1.0;
   brake.Max = fabs(BrakeFCoeff * vFn(eZ)) * wheelRadius;
   brake.Min = -brake.Max;
   brake.value = Constrain(brake.Min, brake.value, brake.Max);
