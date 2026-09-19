@@ -20,7 +20,8 @@ set(UNIT_TESTS FGColumnVector3Test
                FGAtmosphereTest
                FGAuxiliaryTest
                FGMSISTest
-               FGLogTest)
+               FGLogTest
+               FGAccelerationsTest)
 
 
 foreach(test ${UNIT_TESTS})
