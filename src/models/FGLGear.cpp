@@ -454,15 +454,28 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     if (vWhlVelVec(eX) < 0.0) vWhlVelVec(eX) = 0.0;
 
     if (wheelSpinEnabled) {
-      // No tire torque in the air. Approximate bearing drag with the legacy
-      // 13 ft/s^2 tread deceleration; applied brakes stop the wheel faster.
-      // Both act between the wheel and the airframe, so they damp the spin
-      // relative to the airframe. wheelSpin.Rate and in.PQR share the same
-      // reference frame, so the airframe rate about the axle is subtracted
-      // before damping and added back afterwards.
+      // No tire torque in the air, and the wheel is not in the friction solve.
+      // Instead, the spin relative to the airframe is reduced toward zero at a
+      // tread deceleration of legacyTreadDeceleration plus
+      // additionalBrakeTreadDeceleration times the normalized brake command.
+      // This is an approximation: no reaction torque is applied to the
+      // airframe. wheelSpin.Rate and in.PQR share the same reference frame,
+      // so the airframe rate about the axle is subtracted before damping and
+      // added back afterwards.
       if (!fdmex->GetTrimStatus() && in.TotalDeltaT > 0.0) {
+        // Copied from the legacy wheel-speed-fps spin-down above, which only
+        // changes the reported wheel speed.
+        constexpr double legacyTreadDeceleration = 13.0; // ft/s^2
+        // Extra tread deceleration at full brake, introduced with the wheel
+        // spin DOF as an uncalibrated approximation. It is not a measured
+        // brake torque and is not derived from BrakeFCoeff: the torque bound
+        // built from BrakeFCoeff is proportional to the normal load, which is
+        // zero in the air.
+        constexpr double additionalBrakeTreadDeceleration = 100.0; // ft/s^2
         double brake = eBrakeGrp != bgNone ? in.BrakePos[eBrakeGrp] : 0.0;
-        double decrement = (13.0 + 100.0 * brake) / wheelRadius * in.TotalDeltaT;
+        double decrement = (legacyTreadDeceleration
+                            + additionalBrakeTreadDeceleration * brake)
+                           / wheelRadius * in.TotalDeltaT;
         double bodyRate = DotProduct(in.PQR, GetWheelSpinAxis());
         double relativeRate = wheelSpin.Rate - bodyRate;
         wheelSpin.Rate = bodyRate + sign(relativeRate) * max(0.0, fabs(relativeRate) - decrement);
@@ -817,13 +830,27 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // With a wheel spin DOF, the tread force acts on the tire at the contact patch
-// but reaches the airframe through the axle: the airframe moment arm is the
-// axle, and the wheel receives -radius x force. Applying the force at the
-// contact point *and* spinning the wheel would count its moment twice.
-// Brakes and rolling resistance become a torque between wheel and airframe,
-// bounded by the legacy braking force times the radius, so a braked wheel
-// holds the same force as the legacy anti-skid model while spin-up drag at
-// touchdown now comes out of the aircraft's momentum.
+// but reaches the airframe through the axle: the airframe lever arm runs from
+// the CG to the axle, and the wheel receives -radius times the force, so
+// spin-up drag at touchdown comes out of the aircraft's momentum. Applying the
+// force at the contact point *and* spinning the wheel would count its moment
+// twice. Brakes and rolling_friction become a torque between wheel and
+// airframe, bounded by BrakeFCoeff times the normal load times the radius.
+//
+// Both rows use the same solver machinery. A row's Jacobian acts on the
+// airframe velocity, the airframe angular velocity and the wheel spin state
+// (ForceJacobian, MomentJacobian, WheelJacobian); the solver drives the
+// constraint velocity, the Jacobian times these velocities, toward zero within
+// the row's bounds. Below, U is the ground-projected rolling direction, r_axle
+// the lever arm from the CG to the axle, v_axle the axle velocity, R the wheel
+// radius, Rate the wheel spin state, PQR the airframe angular velocity and x
+// the cross product. For stationary terrain:
+// - roll (U, r_axle x U, -R) drives the tread slip at the axle,
+//   dot(U, v_axle) - R * Rate, toward zero: rolling without slip.
+// - brake (0, -spinAxis, +1) drives the wheel/body relative rate,
+//   Rate - dot(spinAxis, PQR), toward zero: no spin relative to the airframe.
+// Derivation of both conditions from the solver's right-hand side:
+// https://github.com/JSBSim-Team/jsbsim/pull/1502#issuecomment-5654721219
 
 void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
 {
