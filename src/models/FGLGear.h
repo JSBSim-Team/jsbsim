@@ -234,18 +234,23 @@ CLASS DOCUMENTATION
     spin-down of wheel-speed-fps; the 100 ft/s^2 is an uncalibrated value
     introduced with this model, not a measured brake torque. This
     approximation claims no fidelity to a measured aircraft and applies no
-    reaction torque to the airframe. The decrement per step is finite: the
-    relative spin reaches zero and stays there only while each step's
-    decrement is at least that step's change in the airframe rate about the
-    axle, so brakes do not hold the wheel to the airframe under arbitrary
+    reaction torque to the airframe.
+    The decrement per step is finite. On a positive-time airborne step
+    outside trim, damping reaches zero relative spin only if the decrement
+    is at least the magnitude of the relative spin immediately before
+    damping. Once the wheel has stopped relative to the airframe, it can
+    stay stopped only while the decrement can absorb the magnitude of
+    subsequent changes in the airframe rate projected on the current axle.
+    This approximation does not enforce a rigid brake lock under arbitrary
     body motion.
 
     <b>Spin axis.</b> In ground contact it is the ground normal cross the
     ground-projected rolling direction; in the air it is the gear's up axis
-    cross its steered forward direction. The two coincide when the ground
-    normal lies in the plane of those two gear directions (for instance, an
-    unsteered gear without \<orientation> on an aircraft that is pitched but
-    not banked over level ground) and can differ otherwise, as when banked or
+    cross its steered forward direction.
+    The two coincide when the ground normal lies in the plane spanned by
+    gear up and steered forward and has a positive component along gear up.
+    This includes unsteered gear without \<orientation> in wings-level,
+    upright contact over level ground. The axes can differ when banked or
     steered with the gear leg tilted. The spin state is not remapped when the
     axis changes, so the reported airframe-relative rate can jump at a
     contact transition, by the airframe rate projected on the difference
