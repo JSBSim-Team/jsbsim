@@ -588,4 +588,7 @@ class TestActuator(JSBSimTestCase):
             self.assertAlmostEqual(fdm[self.output_prop], 0.0)
 
 
-RunTest(TestActuator)
+# Guard against multiprocessing's spawn/forkserver methods re-importing this
+# module in the child process (as '__mp_main__') and re-running the tests.
+if __name__ == '__main__':
+    RunTest(TestActuator)
