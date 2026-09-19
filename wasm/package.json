@@ -1,0 +1,61 @@
+{
+  "name": "@jsbsim/wasm",
+  "version": "0.1.0",
+  "description": "Tooling and TypeScript SDK for JSBSim compiled to WebAssembly",
+  "license": "SEE LICENSE IN LICENSES.md",
+  "type": "module",
+  "author": {
+    "name": "Benedict Lewis",
+    "email": "ben@bl.je"
+  },
+  "files": [
+    "dist",
+    "LICENSES.md",
+    "NOTICE"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/wasm.d.ts",
+      "import": "./dist/wasm.js"
+    },
+    "./wasm/module": {
+      "default": "./dist/wasm/jsbsim_wasm.mjs"
+    },
+    "./wasm/binary": {
+      "default": "./dist/wasm/jsbsim_wasm.wasm"
+    },
+    "./build-metadata": "./dist/build-metadata.json"
+  },
+  "scripts": {
+    "test": "node scripts/run-built-check.mjs test",
+    "build": "node scripts/build.mjs",
+    "typecheck": "node scripts/run-built-check.mjs typecheck",
+    "test:source": "node --test test/source-contract.test.mjs",
+    "pack:build": "node scripts/pack-build.mjs",
+    "prepack": "node -e \"throw new Error('Use npm run pack:build for an identified, checked immutable candidate.')\"",
+    "build:dev": "node scripts/build.mjs --allow-dirty",
+    "test:browser": "node test/browser-persistence.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.0",
+    "playwright": "1.63.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JSBSim-Team/jsbsim.git",
+    "directory": "wasm"
+  },
+  "private": true
+}

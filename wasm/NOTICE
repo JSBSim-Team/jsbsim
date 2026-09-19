@@ -1,0 +1,11 @@
+The JavaScript/TypeScript SDK and binding generator are derived from
+0x62/jsbsim-wasm by Benedict Lewis (0x62):
+https://github.com/0x62/jsbsim-wasm
+Source revision: ffc620dc4f15e476a030846a9cf0d32197e493a8
+
+The original MIT license and copyright are retained in LICENSE.
+Subsequent in-tree build, lifecycle and diagnostic work is by Felipegalind0.
+The focused import was extracted from the preserved integrated revision
+f7a80a6f064d22efe0591c20c8637b9c38179ba9 of Felipegalind0/jsbsim.
+
+JSBSim and bundled native dependencies retain their own notices; see LICENSES.md.
