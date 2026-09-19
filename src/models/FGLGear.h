@@ -190,10 +190,11 @@ CLASS DOCUMENTATION
     the wheel and the airframe, bounded by the usual braking friction force
     times the radius: a braked wheel holds the same force as without the spin
     DOF. Wheels in ground contact at initialization or trim start rolling
-    without slip; in the air they spin down at the same 13 ft/s^2 tread rate as
-    wheel-speed-fps, faster with brakes applied. The extra properties
-    gear/unit[i]/wheel-spin-rad_sec and gear/unit[i]/wheel-tread-slip-fps are
-    created. Without these elements the friction model is unchanged.
+    without slip; in the air their spin relative to the airframe decays at the
+    same 13 ft/s^2 tread rate as wheel-speed-fps, faster with brakes applied.
+    The extra properties gear/unit[i]/wheel-spin-rad_sec (spin relative to the
+    airframe) and gear/unit[i]/wheel-tread-slip-fps are created. Without these
+    elements the friction model is unchanged.
 
     @author Jon S. Berndt
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
@@ -333,9 +334,17 @@ public:
   double GetSteerAngleDeg(void) const { return radtodeg*SteerAngle; }
   /// True when <wheel_radius> and <wheel_inertia> give this BOGEY a spin DOF.
   bool HasWheelSpin(void) const { return wheelSpinEnabled; }
-  /// Wheel spin rate about the axle in rad/s (0 without a spin DOF).
-  double GetWheelSpinRate(void) const { return wheelSpin.Rate; }
-  /// Tread slip speed (axle ground speed minus radius x spin) in ft/s.
+  /** Wheel spin rate about the axle relative to the airframe, in rad/s.
+      Positive when rolling forward; 0 without a spin DOF. The spin state is
+      kept in the solver's reference frame (see WheelSpinDOF); this returns
+      that state minus the airframe rate about the current spin axis. */
+  double GetWheelSpinRate(void) const;
+  /** Sets the wheel spin rate relative to the airframe, in rad/s, with the
+      same convention as GetWheelSpinRate(). Ignored without a spin DOF. */
+  void SetWheelSpinRate(double rate);
+  /** Tread slip speed (axle ground speed minus radius x spin) in ft/s. It
+      uses the spin state in the solver's reference frame and is 0 in the air.
+  */
   double GetWheelTreadSlip(void) const { return wheelTreadSlip; }
   void SetSteerAngleDeg(double angle) {
     if (eSteerType != stFixed && !Castered)
@@ -426,6 +435,7 @@ private:
   void ComputeGroundFrame(void);
   void ComputeJacobian(const FGColumnVector3& vWhlContactVec);
   void ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec);
+  FGColumnVector3 GetWheelSpinAxis(void) const;
   void UpdateForces(void);
   void SetstaticFCoeff(double coeff);
   void CrashDetect(void);

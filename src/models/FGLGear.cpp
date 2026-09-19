@@ -456,9 +456,17 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     if (wheelSpinEnabled) {
       // No tire torque in the air. Approximate bearing drag with the legacy
       // 13 ft/s^2 tread deceleration; applied brakes stop the wheel faster.
-      double brake = eBrakeGrp != bgNone ? in.BrakePos[eBrakeGrp] : 0.0;
-      double decrement = (13.0 + 100.0 * brake) / wheelRadius * in.TotalDeltaT;
-      wheelSpin.Rate = sign(wheelSpin.Rate) * max(0.0, fabs(wheelSpin.Rate) - decrement);
+      // Both act between the wheel and the airframe, so they damp the spin
+      // relative to the airframe. wheelSpin.Rate and in.PQR share the same
+      // reference frame, so the airframe rate about the axle is subtracted
+      // before damping and added back afterwards.
+      if (!fdmex->GetTrimStatus() && in.TotalDeltaT > 0.0) {
+        double brake = eBrakeGrp != bgNone ? in.BrakePos[eBrakeGrp] : 0.0;
+        double decrement = (13.0 + 100.0 * brake) / wheelRadius * in.TotalDeltaT;
+        double bodyRate = DotProduct(in.PQR, GetWheelSpinAxis());
+        double relativeRate = wheelSpin.Rate - bodyRate;
+        wheelSpin.Rate = bodyRate + sign(relativeRate) * max(0.0, fabs(relativeRate) - decrement);
+      }
       wheelTreadSlip = 0.0;
     }
   }
@@ -842,6 +850,37 @@ void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Positive spin axis in the body frame: gear up cross the rolling direction.
+// In ground contact this is the axis of the brake row, ground normal (pointing
+// away from the ground) cross the rolling direction projected on the ground.
+// In the air it follows the current gear orientation and steering angle.
+
+FGColumnVector3 FGLGear::GetWheelSpinAxis(void) const
+{
+  if (WOW)
+    return vGroundNormal * FGColumnVector3(mT(eX,eX), mT(eY,eX), mT(eZ,eX));
+
+  return mTGear * FGColumnVector3(sin(SteerAngle), -cos(SteerAngle), 0.0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGLGear::GetWheelSpinRate(void) const
+{
+  if (!wheelSpinEnabled) return 0.0;
+
+  return wheelSpin.Rate - DotProduct(in.PQR, GetWheelSpinAxis());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::SetWheelSpinRate(double rate)
+{
+  if (wheelSpinEnabled)
+    wheelSpin.Rate = rate + DotProduct(in.PQR, GetWheelSpinAxis());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // This routine is called after the Lagrange multiplier has been computed in
 // the FGAccelerations class. The friction forces of the landing gear are then
 // updated accordingly.
@@ -909,7 +948,8 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
 
   if (wheelSpinEnabled) {
     property_name = base_property_name + "/wheel-spin-rad_sec";
-    PropertyManager->Tie( property_name.c_str(), &wheelSpin.Rate );
+    PropertyManager->Tie( property_name.c_str(), (FGLGear*)this,
+                          &FGLGear::GetWheelSpinRate, &FGLGear::SetWheelSpinRate);
     property_name = base_property_name + "/wheel-tread-slip-fps";
     PropertyManager->Tie( property_name.c_str(), &wheelTreadSlip );
   }
