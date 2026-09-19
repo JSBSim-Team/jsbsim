@@ -776,10 +776,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     switch(eContactType) {
     case ctBOGEY:
-      if (wheelSpinEnabled) // Tire grip; brakes act on the wheel instead.
-        LMultiplier[ftRoll].Max = fabs(staticFFactor * staticFCoeff * vFn(eZ));
-      else
-        LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eZ));
+      LMultiplier[ftRoll].Max = fabs(BrakeFCoeff * vFn(eZ));
       LMultiplier[ftSide].Max = fabs(FCoeff * vFn(eZ));
       break;
     case ctSTRUCTURE:
@@ -790,6 +787,9 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
     LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
+
+    if (wheelSpinEnabled)
+      ConfigureWheelSpinRows(vWhlContactVec);
 
     // The Lagrange multiplier value obtained from the previous iteration is
     // kept. This is supposed to accelerate the convergence of the projected
@@ -802,10 +802,8 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftRoll]);
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftSide]);
 
-    if (wheelSpinEnabled) {
-      ConfigureWheelSpinRows(vWhlContactVec);
+    if (wheelSpinEnabled)
       GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftWheelBrake]);
-    }
   }
 }
 
@@ -821,12 +819,15 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
 void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
 {
-  const FGColumnVector3 roll = LMultiplier[ftRoll].ForceJacobian;
-  const FGColumnVector3 axle = vWhlContactVec + wheelRadius * vGroundNormal;
+  const FGColumnVector3 rollDirection = LMultiplier[ftRoll].ForceJacobian;
+  const FGColumnVector3 axleLeverArm = vWhlContactVec + wheelRadius * vGroundNormal;
   // Positive spin rolls forward: spin axis = ground normal x roll direction.
-  const FGColumnVector3 spinAxis = vGroundNormal * roll;
+  const FGColumnVector3 spinAxis = vGroundNormal * rollDirection;
 
-  LMultiplier[ftRoll].MomentJacobian = axle * roll;
+  // Tire grip; brakes act on the wheel instead.
+  LMultiplier[ftRoll].Max = fabs(staticFFactor * staticFCoeff * vFn(eZ));
+  LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
+  LMultiplier[ftRoll].MomentJacobian = axleLeverArm * rollDirection;
   LMultiplier[ftRoll].Wheel = &wheelSpin;
   LMultiplier[ftRoll].WheelJacobian = -wheelRadius;
 
