@@ -240,23 +240,29 @@ void FGAccelerations::CalculateFrictionForces(double dt)
   // If no gears are in contact with the ground then return
   if (!n) return;
 
+  // Wheel spin accelerations are refilled by this solve.
+  for (auto m : multipliers)
+    if (m->Wheel) m->Wheel->Accel = 0.0;
+
   vector<double> a(n*n); // Will contain Jac*M^-1*Jac^T
   vector<double> rhs(n);
 
-  // Assemble the linear system of equations
+  // Assemble the linear system of equations. The Jacobian of each multiplier
+  // acts on the airframe velocity (ForceJacobian), the airframe angular
+  // velocity (MomentJacobian) and the spin rate of its wheel (WheelJacobian).
   for (unsigned int i=0; i < n; i++) {
-    FGColumnVector3 U = multipliers[i]->ForceJacobian;
-    FGColumnVector3 r = multipliers[i]->LeverArm;
-    FGColumnVector3 v1 = U / in.Mass;
-    FGColumnVector3 v2 = in.Jinv * (r*U); // Should be J^-T but J is symmetric and so is J^-1
+    const LagrangeMultiplier* mi = multipliers[i];
+    FGColumnVector3 v1 = mi->ForceJacobian / in.Mass;
+    FGColumnVector3 v2 = in.Jinv * mi->MomentJacobian; // Should be J^-T but J is symmetric and so is J^-1
 
     for (unsigned int j=0; j < i; j++)
       a[i*n+j] = a[j*n+i]; // Takes advantage of the symmetry of Jac^T*M^-1*Jac
 
     for (unsigned int j=i; j < n; j++) {
-      U = multipliers[j]->ForceJacobian;
-      r = multipliers[j]->LeverArm;
-      a[i*n+j] = DotProduct(U, v1 + v2*r);
+      const LagrangeMultiplier* mj = multipliers[j];
+      a[i*n+j] = DotProduct(mj->ForceJacobian, v1) + DotProduct(mj->MomentJacobian, v2);
+      if (mi->Wheel && mi->Wheel == mj->Wheel)
+        a[i*n+j] += mi->WheelJacobian * mj->WheelJacobian * mi->Wheel->Jinv;
     }
   }
 
@@ -278,10 +284,12 @@ void FGAccelerations::CalculateFrictionForces(double dt)
   //    a division computation at each iteration of Gauss-Seidel.
   for (unsigned int i=0; i < n; i++) {
     double d = a[i*n+i];
-    FGColumnVector3 U = multipliers[i]->ForceJacobian;
-    FGColumnVector3 r = multipliers[i]->LeverArm;
+    const LagrangeMultiplier* mi = multipliers[i];
 
-    rhs[i] = -DotProduct(U, vdot + wdot*r)/d;
+    // The wheel has no other applied torque here; drive its part of the
+    // constraint velocity to zero over the step like the airframe's.
+    double wheelTerm = (mi->Wheel && dt > 0.) ? mi->WheelJacobian * mi->Wheel->Rate / dt : 0.;
+    rhs[i] = -(DotProduct(mi->ForceJacobian, vdot) + DotProduct(mi->MomentJacobian, wdot) + wheelTerm)/d;
 
     for (unsigned int j=0; j < n; j++)
       a[i*n+j] /= d;
@@ -310,13 +318,13 @@ void FGAccelerations::CalculateFrictionForces(double dt)
   // Calculate the total friction forces and moments
 
   for (unsigned int i=0; i< n; i++) {
-    double lambda = multipliers[i]->value;
-    FGColumnVector3 U = multipliers[i]->ForceJacobian;
-    FGColumnVector3 r = multipliers[i]->LeverArm;
+    const LagrangeMultiplier* mi = multipliers[i];
+    double lambda = mi->value;
 
-    FGColumnVector3 F = lambda * U;
-    vFrictionForces += F;
-    vFrictionMoments += r * F;
+    vFrictionForces += lambda * mi->ForceJacobian;
+    vFrictionMoments += lambda * mi->MomentJacobian;
+    if (mi->Wheel)
+      mi->Wheel->Accel += mi->WheelJacobian * lambda * mi->Wheel->Jinv;
   }
 
   FGColumnVector3 accel = vFrictionForces / in.Mass;
