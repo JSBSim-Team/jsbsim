@@ -255,9 +255,15 @@ void FGWinds::Turbulence(double h)
   case ttMilspec:
   case ttTustin: {
 
+    // The time constants use the airspeed relative to the air mass, which
+    // excludes the turbulence: feeding the filter outputs back into their own
+    // coefficients makes the Tustin filters drift, the more so the smaller the
+    // time step.
+    double V = (in.vUVW - in.Tl2b*(vWindNED + vGustNED + vCosineGust)).Magnitude();
+
     // an index of zero means turbulence is disabled
     // airspeed occurs as divisor in the code below
-    if (probability_of_exceedence_index == 0 || in.V == 0) {
+    if (probability_of_exceedence_index == 0 || V == 0) {
       vTurbulenceNED(eNorth) = vTurbulenceNED(eEast) = vTurbulenceNED(eDown) = 0.0;
       vTurbPQR(eP) = vTurbPQR(eQ) = vTurbPQR(eR) = 0.0;
       return;
@@ -293,11 +299,11 @@ void FGWinds::Turbulence(double h)
       //sig_q = sqrt(M_PI/2/L_w/b_w), // eq. (14)
       //sig_r = sqrt(2*M_PI/3/L_w/b_w), // eq. (17)
       L_p = sqrt(L_w*b_w)/2.6, // eq. (10)
-      tau_u = L_u/in.V, // eq. (6)
-      tau_w = L_w/in.V, // eq. (3)
-      tau_p = L_p/in.V, // eq. (9)
-      tau_q = 4*b_w/M_PI/in.V, // eq. (13)
-      tau_r =3*b_w/M_PI/in.V, // eq. (17)
+      tau_u = L_u/V, // eq. (6)
+      tau_w = L_w/V, // eq. (3)
+      tau_p = L_p/V, // eq. (9)
+      tau_q = 4*b_w/M_PI/V, // eq. (13)
+      tau_r =3*b_w/M_PI/V, // eq. (17)
       nu_u = generator->GetNormalRandomNumber(),
       nu_v = generator->GetNormalRandomNumber(),
       nu_w = generator->GetNormalRandomNumber(),
@@ -309,8 +315,8 @@ void FGWinds::Turbulence(double h)
     if (turbType == ttTustin) {
       // the following is the Tustin formulation of Yeager's report
       double
-        omega_w = in.V/L_w, // hidden in nomenclature p. 3
-        omega_v = in.V/L_u, // this is defined nowhere
+        omega_w = V/L_w, // hidden in nomenclature p. 3
+        omega_v = V/L_u, // this is defined nowhere
         C_BL  = 1/tau_u/tan(T_V/2/tau_u), // eq. (19)
         C_BLp = 1/tau_p/tan(T_V/2/tau_p), // eq. (22)
         C_BLq = 1/tau_q/tan(T_V/2/tau_q), // eq. (24)
@@ -336,10 +342,10 @@ void FGWinds::Turbulence(double h)
                + (omega_w/sqrt(3.) - C_BL)*nu_w_km2); // eq. (20) for w
       xi_p = -(1 - C_BLp*tau_p)/(1 + C_BLp*tau_p)*xi_p_km1
            + sig_p*sqrt(2*tau_p/T_V)/(1 + C_BLp*tau_p) * (nu_p + nu_p_km1); // eq. (21)
-      xi_q = -(1 - 4*b_w*C_BLq/M_PI/in.V)/(1 + 4*b_w*C_BLq/M_PI/in.V) * xi_q_km1
-           + C_BLq/in.V/(1 + 4*b_w*C_BLq/M_PI/in.V) * (xi_w - xi_w_km1); // eq. (23)
-      xi_r = - (1 - 3*b_w*C_BLr/M_PI/in.V)/(1 + 3*b_w*C_BLr/M_PI/in.V) * xi_r_km1
-           + C_BLr/in.V/(1 + 3*b_w*C_BLr/M_PI/in.V) * (xi_v - xi_v_km1); // eq. (25)
+      xi_q = -(1 - 4*b_w*C_BLq/M_PI/V)/(1 + 4*b_w*C_BLq/M_PI/V) * xi_q_km1
+           + C_BLq/V/(1 + 4*b_w*C_BLq/M_PI/V) * (xi_w - xi_w_km1); // eq. (23)
+      xi_r = - (1 - 3*b_w*C_BLr/M_PI/V)/(1 + 3*b_w*C_BLr/M_PI/V) * xi_r_km1
+           + C_BLr/V/(1 + 3*b_w*C_BLr/M_PI/V) * (xi_v - xi_v_km1); // eq. (25)
 
     } else if (turbType == ttMilspec) {
       // the following is the MIL-STD-1797A formulation

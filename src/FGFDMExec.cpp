@@ -454,7 +454,7 @@ void FGFDMExec::LoadInputs(unsigned int idx)
     Winds->in.DistanceAGL      = Propagate->GetDistanceAGL();
     Winds->in.Tl2b             = Propagate->GetTl2b();
     Winds->in.Tw2b             = Auxiliary->GetTw2b();
-    Winds->in.V                = Auxiliary->GetVt();
+    Winds->in.vUVW             = Propagate->GetUVW();
     Winds->in.totalDeltaT      = dT * Winds->GetRate();
     break;
   case eAuxiliary:

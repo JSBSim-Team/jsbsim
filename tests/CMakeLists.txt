@@ -19,6 +19,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestTurbulenceRandomSeed
                  TestCosineGust
                  TestTurbulenceGustStop
+                 TestTurbulenceTustin
                  TestScriptOutput
                  CheckSimTimeReset
                  TestHoldDown

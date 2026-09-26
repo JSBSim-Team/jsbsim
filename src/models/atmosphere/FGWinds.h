@@ -354,7 +354,7 @@ public:
   void NumberOfUpDownburstCells(int num);
 
   struct Inputs {
-    double V;
+    FGColumnVector3 vUVW;
     double wingspan;
     double DistanceAGL;
     double AltitudeASL;
