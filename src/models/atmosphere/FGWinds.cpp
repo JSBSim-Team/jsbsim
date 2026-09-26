@@ -303,7 +303,7 @@ void FGWinds::Turbulence(double h)
       tau_w = L_w/V, // eq. (3)
       tau_p = L_p/V, // eq. (9)
       tau_q = 4*b_w/M_PI/V, // eq. (13)
-      tau_r =3*b_w/M_PI/V, // eq. (17)
+      tau_r =3*b_w/M_PI/V, // eq. (16)
       nu_u = generator->GetNormalRandomNumber(),
       nu_v = generator->GetNormalRandomNumber(),
       nu_w = generator->GetNormalRandomNumber(),
