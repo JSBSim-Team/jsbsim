@@ -101,6 +101,57 @@ class TestTurbulenceGustStop(JSBSimTestCase):
 
         self.checkBaselineWind()
 
+    def testTurbulenceRates(self):
+        # Culp turbulence is a roll only model
+        self.runMilspecTurbulence()
+        self.fdm["atmosphere/turb-type"] = 2
+        self.fdm.run()
+
+        self.assertEqual(self.fdm['atmosphere/q-turb-rad_sec'], 0.0)
+        self.assertEqual(self.fdm['atmosphere/r-turb-rad_sec'], 0.0)
+
+        # Culp turbulence with a zero gain
+        self.runMilspecTurbulence()
+        self.fdm["atmosphere/turb-gain"] = 0
+        self.fdm["atmosphere/turb-type"] = 2
+        self.fdm.run()
+
+        self.checkNoTurbulence()
+
+        # Turbulence disabled (0) or not implemented (1: ttStandard)
+        for turb_type in (0, 1):
+            self.runMilspecTurbulence()
+            self.fdm["atmosphere/turb-type"] = turb_type
+            self.fdm.run()
+
+            self.checkNoTurbulence()
+
+    def testTurbulenceReset(self):
+        self.runMilspecTurbulence()
+
+        # Skip RunIC() so that only FGWinds::InitModel() is checked.
+        self.fdm.reset_to_initial_conditions(2)
+
+        self.checkNoTurbulence()
+
+    def runMilspecTurbulence(self):
+        self.fdm["atmosphere/turb-type"] = 3
+        self.fdm["atmosphere/turbulence/milspec/windspeed_at_20ft_AGL-fps"] = 75
+        self.fdm["atmosphere/turbulence/milspec/severity"] = 6
+
+        t_end = self.fdm.get_sim_time() + 1
+        while self.fdm.get_sim_time() < t_end:
+            self.fdm.run()
+
+        for axis in 'pqr':
+            self.assertNotEqual(self.fdm[f'atmosphere/{axis}-turb-rad_sec'], 0.0)
+
+    def checkNoTurbulence(self):
+        for axis in ('north', 'east', 'down'):
+            self.assertEqual(self.fdm[f'atmosphere/turb-{axis}-fps'], 0.0)
+        for axis in 'pqr':
+            self.assertEqual(self.fdm[f'atmosphere/{axis}-turb-rad_sec'], 0.0)
+
     def checkBaselineWind(self):
         # Confirm that winds have reset to baseline values before gusts/turbulence
         wn = self.fdm['atmosphere/total-wind-north-fps']

@@ -126,6 +126,7 @@ bool FGWinds::InitModel(void)
 
   vGustNED.InitMatrix();
   vTurbulenceNED.InitMatrix();
+  vTurbPQR.InitMatrix();
   vCosineGust.InitMatrix();
 
   oneMinusCosineGust.gustProfile.Running = false;
@@ -147,10 +148,7 @@ bool FGWinds::Run(bool Holding)
   if (FGModel::Run(Holding)) return true;
   if (Holding) return false;
 
-  if (turbType != ttNone)
-    Turbulence(in.AltitudeASL);
-  else
-    vTurbulenceNED.InitMatrix();
+  Turbulence(in.AltitudeASL);
   if (oneMinusCosineGust.gustProfile.Running) CosineGust();
 
   vTotalWindNED = vWindNED + vGustNED + vCosineGust + vTurbulenceNED;
@@ -206,7 +204,11 @@ void FGWinds::Turbulence(double h)
   case ttCulp: {
 
     vTurbPQR(eP) = wind_from_clockwise;
-    if (TurbGain == 0.0) return;
+    vTurbPQR(eQ) = vTurbPQR(eR) = 0.0;
+    if (TurbGain == 0.0) {
+      vTurbulenceNED.InitMatrix();
+      return;
+    }
 
     // keep the inputs within allowable limts for this model
     if (TurbGain < 0.0) TurbGain = 0.0;
@@ -233,7 +235,6 @@ void FGWinds::Turbulence(double h)
     // max vertical wind speed in fps, corresponds to TurbGain = 1.0
     double max_vs = 40;
 
-    vTurbulenceNED.InitMatrix();
     double delta = strength * max_vs * TurbGain * (1-Rhythmicity) * spike;
 
     // Vertical component of turbulence.
@@ -378,9 +379,12 @@ void FGWinds::Turbulence(double h)
     xi_p_km1 = xi_p; nu_p_km1 = nu_p;
     xi_q_km1 = xi_q;
     xi_r_km1 = xi_r;
-
+    break;
   }
   default:
+    // ttNone, and ttStandard which is not implemented: no turbulence.
+    vTurbulenceNED.InitMatrix();
+    vTurbPQR.InitMatrix();
     break;
   }
 
