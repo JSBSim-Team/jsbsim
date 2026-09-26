@@ -316,7 +316,7 @@ void FGWinds::Turbulence(double h)
       // the following is the Tustin formulation of Yeager's report
       double
         omega_w = V/L_w, // hidden in nomenclature p. 3
-        omega_v = V/L_u, // this is defined nowhere
+        omega_v = V/L_u, // Assuming L_u == L_v as per MIL-F-8785c, Fig. 10, p. 55
         C_BL  = 1/tau_u/tan(T_V/2/tau_u), // eq. (19)
         C_BLp = 1/tau_p/tan(T_V/2/tau_p), // eq. (22)
         C_BLq = 1/tau_q/tan(T_V/2/tau_q), // eq. (24)
