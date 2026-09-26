@@ -24,8 +24,10 @@ from JSBSim_utils import JSBSimTestCase, RunTest
 
 
 class TestTurbulenceTustin(JSBSimTestCase):
-    # Moderate turbulence (severity 4) at 2800 ft: MIL-F-8785C, Fig. 7
-    SIGMA_W = 10.1  # ft/s
+    # sigma_w of severity 4 (the 1e-3 curve of MIL-F-8785C Fig. 7) at the initial
+    # altitude, interpolated as in FGWinds. The aircraft only descends from there,
+    # so 2*SIGMA_W bounds the whole run.
+    SIGMA_W = 10.125  # ft/s
 
     def testFreeFlightIntensity(self):
         for turb_type in (3, 4):  # Milspec, Tustin
