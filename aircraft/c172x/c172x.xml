@@ -650,7 +650,8 @@
             <function name="aero/coefficient/CLadot">
                 <description>Lift due to alpha rate</description>
                 <product>
-                    <property>aero/qbar-area</property>
+                    <property>aero/qbarUW-psf</property>
+                    <property>metrics/Sw-sqft</property>
                     <property>aero/alphadot-rad_sec</property>
                     <property>aero/ci2vel</property>
                     <value>1.7</value>
@@ -1121,7 +1122,8 @@
             <function name="aero/coefficient/Cmadot">
                 <description>Pitch moment due to alpha rate</description>
                 <product>
-                    <property>aero/qbar-area</property>
+                    <property>aero/qbarUW-psf</property>
+                    <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
                     <property>aero/ci2vel</property>
                     <property>aero/alphadot-rad_sec</property>
