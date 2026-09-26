@@ -57,7 +57,7 @@ CLASS DOCUMENTATION
 ### Configuration File Format
 
 ~~~{.xml}
-<sense> {1 | -1} </sense> 
+<sense> {1 | -1} </sense>
 <p_factor> {number} </p_factor>
 <propeller name="{string}" version="{string}">
   <ixx> {number} </ixx>
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
     \<maxpitch>      - Maximum blade pitch angle.
     \<minrpm>        - Minimum rpm target for constant speed propeller.
     \<maxrpm>        - Maximum rpm target for constant speed propeller.
-    \<constspeed>    - 1 = constant speed mode, 0 = manual pitch mode. 
+    \<constspeed>    - 1 = constant speed mode, 0 = manual pitch mode.
     \<reversepitch>  - Blade pitch angle for reverse.
     \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
                         -1=anti-clockwise as viewed from cockpit). Sense is
@@ -141,6 +141,17 @@ Four tables are optional. CT_MACH and CP_MACH apply a factor to Ct and Cp
 based on helical tip Mach. CT_RPM_FACTOR and CP_RPM_FACTOR apply a
 Reynolds-number correction factor indexed by propeller RPM, normalised to
 1.0 at the RPM for which the baseline C_THRUST/C_POWER data were measured.
+
+The RPM-indexed Reynolds correction is intended for very small propellers,
+such as those used on UAVs and MAVs. It assumes that the air viscosity is
+effectively constant (as is generally reasonable for low-altitude operation)
+and that the blade-relative airflow is dominated by circumferential velocity,
+rather than the vehicle's translational velocity. RPM is therefore used as a
+proxy for the change in Reynolds number; the correction tables do not account
+for changes in atmospheric properties or flight speed. They should be
+calibrated for the propeller and operating atmosphere in question, and may
+need retuning when used in substantially different conditions, for example
+in the Martian atmosphere.
 
 The parameters <sense> and <p_factor> must be specified at the parent level i.e.
 in the <thruster> element. This allows to specify different sense and P factor
@@ -228,7 +239,7 @@ public:
   void SetPFactor(double pf) {P_Factor = pf;}
 
   /// Sets propeller into constant speed mode, or manual pitch mode
-  void SetConstantSpeed(int mode) {ConstantSpeed = mode;} 
+  void SetConstantSpeed(int mode) {ConstantSpeed = mode;}
 
   /// Sets coefficient of thrust multiplier
   void SetCtFactor(double ctf) {CtFactor = ctf;}
@@ -246,10 +257,10 @@ public:
   double GetPitch(void) const     { return Pitch;         }
 
   /// Retrieves the RPMs of the propeller
-  double GetRPM(void) const       { return RPM;           } 
+  double GetRPM(void) const       { return RPM;           }
 
   /// Calculates the RPMs of the engine based on gear ratio
-  double GetEngineRPM(void) const { return RPM * GearRatio;  } 
+  double GetEngineRPM(void) const { return RPM * GearRatio;  }
 
   /// Retrieves the propeller moment of inertia
   double GetIxx(void) const       { return Ixx;           }
@@ -365,4 +376,3 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-
