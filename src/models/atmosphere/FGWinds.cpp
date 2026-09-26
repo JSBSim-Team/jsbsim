@@ -205,8 +205,10 @@ void FGWinds::Turbulence(double h)
 
     vTurbPQR(eP) = wind_from_clockwise;
     vTurbPQR(eQ) = vTurbPQR(eR) = 0.0;
-    vTurbulenceNED.InitMatrix();
-    if (TurbGain == 0.0) return;
+    if (TurbGain == 0.0) {
+      vTurbulenceNED.InitMatrix();
+      return;
+    }
 
     // keep the inputs within allowable limts for this model
     if (TurbGain < 0.0) TurbGain = 0.0;
