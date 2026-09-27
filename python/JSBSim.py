@@ -220,6 +220,18 @@ def main():
 
     fdm.run_ic()
     fdm.print_simulation_configuration()
+    fdm.get_propagate().dump_state()
+
+    ic_trim_requested = fdm.get_ic().trim_requested()
+    if ic_trim_requested != jsbsim.TrimMode.NONE:
+        trimmer = jsbsim.FGTrim(fdm, ic_trim_requested)
+        trimmer.do_trim()
+
+        if fdm.get_debug_level() > 0:
+            trimmer.report()
+
+    print("\n---- JSBSim Execution beginning ... --------------------------------------------\n")
+
     frame_duration = fdm.get_delta_t()
     sleep_nseconds = (frame_duration if args.realtime else sleep_period) * 1E9
     current_seconds = initial_seconds = time.time()
