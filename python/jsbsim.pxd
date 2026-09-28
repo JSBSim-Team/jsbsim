@@ -38,8 +38,24 @@ cdef extern from "ExceptionManagement.h" namespace "JSBSim":
 
 cdef extern from "initialization/FGInitialCondition.h" namespace "JSBSim":
     cdef cppclass c_FGInitialCondition "JSBSim::FGInitialCondition":
-        c_FGInitialCondition(c_FGInitialCondition* ic)
+        c_FGInitialCondition(c_FGFDMExec* fdmex)
         bool Load(const c_SGPath& rstfile, bool useAircraftPath)
+        int TrimRequested()
+
+cdef extern from "initialization/FGTrim.h" namespace "JSBSim":
+    cdef enum c_TrimMode "JSBSim::TrimMode":
+        LONGITUDINAL = 0,
+        FULL = 1,
+        GROUND = 2,
+        PULLUP = 3,
+        CUSTOM = 4,
+        TURN = 5,
+        NONE = 6
+
+    cdef cppclass c_FGTrim "JSBSim::FGTrim":
+        c_FGTrim(c_FGFDMExec* fdmex, c_TrimMode tm)
+        bool DoTrim()
+        void Report()
 
 cdef extern from "initialization/FGLinearization.h" namespace "JSBSim":
     cdef cppclass c_FGLinearization "JSBSim::FGLinearization":
@@ -183,6 +199,7 @@ cdef extern from "models/FGPropagate.h" namespace "JSBSim":
         c_FGMatrix33& GetTl2b()
         c_FGMatrix33& GetTec2b()
         c_FGColumnVector3& GetUVW()
+        void DumpState()
 
 cdef extern from "models/propulsion/FGEngine.h" namespace "JSBSim":
     cdef cppclass c_FGEngine "JSBSim::FGEngine":
