@@ -92,7 +92,7 @@ class TestPlanet(JSBSimTestCase):
         # Reference values are the NASA Glenn model at altitude = 0:
         #   T = -25.68 + 459.67 = 433.99 R         (~241.1 K)
         #   P = 14.62 psf                          (~7 mbar)
-        #   rho = P / (1149 * T)
+        #   rho = P / (R * T), see check_mars_density
         tripod = FlightModel(self, 'tripod')
         mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
         tripod.include_planet_test_file(mars_file)
@@ -130,8 +130,9 @@ class TestPlanet(JSBSimTestCase):
 
     def check_mars_density(self):
         rho = nasa_mars_density(self.fdm['position/h-sl-ft'])
-        # NASA rounds the Rankine offset to 459.7, JSBSim uses 459.67.
-        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/rho, 1.0, delta=1E-4)
+        # NASA Glenn rounds R to 1149 and the Rankine offset to 459.7, while
+        # JSBSim derives R = Rstar/Mmars = 1143.23 and uses 459.67 (0.5% apart).
+        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/rho, 1.0, delta=6E-3)
 
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception

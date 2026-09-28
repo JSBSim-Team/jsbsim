@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 FGMars::FGMars(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 {
   Name = "FGMars";
-  Reng = 1149.0; // ft*lbf/(slug*R) - https://www.grc.nasa.gov/www/k-12/airplane/atmosmre.html
+  Reng = Rstar / Mmars;
 
   Debug(0);
 }
