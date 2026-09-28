@@ -18,10 +18,22 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import math
 import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 from jsbsim import GeographicError
+
+
+# NASA Glenn Mars atmosphere model, Imperial units (h in ft, rho in slugs/ft^3)
+# https://www.grc.nasa.gov/www/k-12/airplane/atmosmre.html
+def nasa_mars_density(h):
+    if h < 22960.0:
+        T = -25.68 - 0.000548*h  # deg F
+    else:
+        T = -10.34 - 0.001217*h  # deg F
+    p = 14.62*math.exp(-0.00003*h)  # psf
+    return p / (1149.0*(T + 459.7))
 
 
 class TestPlanet(JSBSimTestCase):
@@ -77,11 +89,10 @@ class TestPlanet(JSBSimTestCase):
 
     def test_mars_atmosphere(self):
         # Mars atmosphere via <planet><atmosphere model="Mars"/></planet>.
-        # Reference values are the closed-form output of FGMars::Calculate at
-        # altitude = 0:
+        # Reference values are the NASA Glenn model at altitude = 0:
         #   T = -25.68 + 459.67 = 433.99 R         (~241.1 K)
         #   P = 14.62 psf                          (~7 mbar)
-        #   rho = P / (Reng * T), Reng = 53.5*44.01 (CO2)
+        #   rho = P / (1149 * T)
         tripod = FlightModel(self, 'tripod')
         mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
         tripod.include_planet_test_file(mars_file)
@@ -99,8 +110,7 @@ class TestPlanet(JSBSimTestCase):
 
         self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
         self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
-        # rho = 14.62 / (53.5*44.01 * 433.99) ~ 1.4308e-5 slugs/ft^3
-        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3'], 1.4308e-5, delta=1E-8)
+        self.check_mars_density()
 
     def test_load_Mars_atmosphere(self):
         # Same as above but using FGFDMExec::LoadPlanet at runtime instead of
@@ -116,7 +126,12 @@ class TestPlanet(JSBSimTestCase):
 
         self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
         self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
-        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3'], 1.4308e-5, delta=1E-8)
+        self.check_mars_density()
+
+    def check_mars_density(self):
+        rho = nasa_mars_density(self.fdm['position/h-sl-ft'])
+        # NASA rounds the Rankine offset to 459.7, JSBSim uses 459.67.
+        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/rho, 1.0, delta=1E-4)
 
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception
