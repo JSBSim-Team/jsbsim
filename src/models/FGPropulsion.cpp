@@ -46,6 +46,7 @@ INCLUDES
 
 #include <iomanip>
 #include <array>
+#include <algorithm>
 
 #include "FGFDMExec.h"
 #include "FGPropulsion.h"
@@ -264,11 +265,11 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 
 bool FGPropulsion::GetSteadyState(void)
 {
-  int j = 0;
   bool steady = false;
   const bool TrimMode = FDMExec->GetTrimStatus();
   double TimeStep = FDMExec->GetDeltaT();
-  const int max_iterations = 6000 * static_cast<int>(Engines.size());
+  const int max_iterations = 6000;
+  vector<int> iterations(Engines.size(), 0);
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
@@ -279,23 +280,26 @@ bool FGPropulsion::GetSteadyState(void)
     // reach a steady state.
     in.TotalDeltaT = 0.5;
 
-    while (!steady && j < max_iterations) {
-      for (auto& engine: Engines) {
+    while (!steady) {
+      for (size_t i = 0; i < Engines.size(); ++i) {
+        auto& engine = Engines[i];
         double lastThrust = -1.0;
         int steady_count = 0;
-        while (steady_count <= 120 && j < max_iterations) {
+        while (steady_count <= 120 && iterations[i] < max_iterations) {
           engine->Calculate();
           double thrust = engine->GetThrust();
           steady_count = fabs(lastThrust - thrust) < 0.0001
                        ? steady_count + 1 : 0;
           lastThrust = thrust;
-          ++j;
+          ++iterations[i];
         }
       }
 
       // InitRunning() also calls this routine, but must keep its startup
       // controls fixed while the engine settles.
-      if (!TrimMode || j >= max_iterations) break;
+      if (!TrimMode || all_of(iterations.begin(), iterations.end(),
+                              [max_iterations](int n) { return n >= max_iterations; }))
+        break;
 
       // FCS functions may use the settled engine state to compute inputs such
       // as BSFC, volumetric efficiency, and mixture position. Refresh them
@@ -311,11 +315,13 @@ bool FGPropulsion::GetSteadyState(void)
       in.PropFeather = FCS->GetPropFeather();
 
       steady = true;
-      for (auto& engine: Engines) {
+      for (size_t i = 0; i < Engines.size(); ++i) {
+        if (iterations[i] >= max_iterations) continue;
+        auto& engine = Engines[i];
         double lastThrust = engine->GetThrust();
         engine->Calculate();
         steady = steady && fabs(lastThrust - engine->GetThrust()) < 0.0001;
-        ++j;
+        ++iterations[i];
       }
     }
 
