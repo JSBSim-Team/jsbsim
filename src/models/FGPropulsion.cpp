@@ -264,11 +264,11 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 
 bool FGPropulsion::GetSteadyState(void)
 {
-  double currentThrust = 0, lastThrust = -1;
-  int steady_count = 0, j = 0;
+  int j = 0;
   bool steady = false;
-  bool TrimMode = FDMExec->GetTrimStatus();
+  const bool TrimMode = FDMExec->GetTrimStatus();
   double TimeStep = FDMExec->GetDeltaT();
+  const int max_iterations = 6000 * static_cast<int>(Engines.size());
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
@@ -279,24 +279,47 @@ bool FGPropulsion::GetSteadyState(void)
     // reach a steady state.
     in.TotalDeltaT = 0.5;
 
-    for (auto& engine: Engines) {
-      steady=false;
-      steady_count=0;
-      j=0;
-      while (!steady && j < 6000) {
-        engine->Calculate();
-        lastThrust = currentThrust;
-        currentThrust = engine->GetThrust();
-        if (fabs(lastThrust-currentThrust) < 0.0001) {
-          steady_count++;
-          if (steady_count > 120) {
-            steady=true;
-          }
-        } else {
-          steady_count=0;
+    while (!steady && j < max_iterations) {
+      for (auto& engine: Engines) {
+        double lastThrust = -1.0;
+        int steady_count = 0;
+        while (steady_count <= 120 && j < max_iterations) {
+          engine->Calculate();
+          double thrust = engine->GetThrust();
+          steady_count = fabs(lastThrust - thrust) < 0.0001
+                       ? steady_count + 1 : 0;
+          lastThrust = thrust;
+          ++j;
         }
-        j++;
       }
+
+      // InitRunning() also calls this routine, but must keep its startup
+      // controls fixed while the engine settles.
+      if (!TrimMode || j >= max_iterations) break;
+
+      // FCS functions may use the settled engine state to compute inputs such
+      // as BSFC, volumetric efficiency, and mixture position. Refresh them
+      // between engine settling passes, rather than advancing all FCS channels
+      // at the engine's artificial 0.5 second time step.
+      auto FCS = FDMExec->GetFCS();
+      FCS->Run(false);
+      in.ThrottlePos = FCS->GetThrottlePos();
+      in.MixturePos = FCS->GetMixturePos();
+      in.ThrottleCmd = FCS->GetThrottleCmd();
+      in.MixtureCmd = FCS->GetMixtureCmd();
+      in.PropAdvance = FCS->GetPropAdvance();
+      in.PropFeather = FCS->GetPropFeather();
+
+      steady = true;
+      for (auto& engine: Engines) {
+        double lastThrust = engine->GetThrust();
+        engine->Calculate();
+        steady = steady && fabs(lastThrust - engine->GetThrust()) < 0.0001;
+        ++j;
+      }
+    }
+
+    for (auto& engine: Engines) {
       vForces  += engine->GetBodyForces();  // sum body frame forces
       vMoments += engine->GetMoments();     // sum body frame moments
     }
