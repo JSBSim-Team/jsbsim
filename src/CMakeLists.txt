@@ -48,12 +48,22 @@ set(OBJECT_LIBS Atmosphere
                 Xml)
 
 add_library(libJSBSim ${SOURCES})
-target_link_libraries(libJSBSim PRIVATE ${OBJECT_LIBS})
+# The object libraries are compiled into libJSBSim and are not part of its
+# installed interface: without BUILD_INTERFACE, install(EXPORT) of a static
+# libJSBSim would require every one of them in the export set.
+list(TRANSFORM OBJECT_LIBS REPLACE "^(.+)$" "$<BUILD_INTERFACE:\\1>"
+     OUTPUT_VARIABLE OBJECT_LIBS_BUILD_ONLY)
+target_link_libraries(libJSBSim PRIVATE ${OBJECT_LIBS_BUILD_ONLY})
+if(SYSTEM_EXPAT AND NOT BUILD_SHARED_LIBS)
+  # A static libJSBSim leaves libExpat to its consumers (see JSBSimConfig.cmake).
+  target_link_libraries(libJSBSim INTERFACE $<INSTALL_INTERFACE:EXPAT::EXPAT>)
+endif()
 
 target_compile_definitions(libJSBSim PUBLIC
                            JSBSIM_VERSION="${PROJECT_VERSION}${VERSION_MESSAGE}")
 target_include_directories(libJSBSim PUBLIC
-                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                           $<INSTALL_INTERFACE:include/JSBSim>)
 
 if(WIN32)
   target_compile_definitions(libJSBSim PUBLIC _USE_MATH_DEFINES)
@@ -79,12 +89,14 @@ endif(WIN32)
 
 set_target_properties(libJSBSim PROPERTIES
                                 OUTPUT_NAME JSBSim
+                                EXPORT_NAME JSBSim
                                 VERSION ${LIBRARY_VERSION})
 
 if(BUILD_SHARED_LIBS)
   set_target_properties(libJSBSim PROPERTIES
                             SOVERSION ${LIBRARY_SOVERSION})
-  install(TARGETS libJSBSim LIBRARY DESTINATION lib
+  install(TARGETS libJSBSim EXPORT JSBSimTargets
+                            LIBRARY DESTINATION lib
                             NAMELINK_SKIP
                             COMPONENT runtime
                             # For Mac
@@ -95,7 +107,8 @@ if(BUILD_SHARED_LIBS)
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
 else()
-  install(TARGETS libJSBSim ARCHIVE DESTINATION lib
+  install(TARGETS libJSBSim EXPORT JSBSimTargets
+                            ARCHIVE DESTINATION lib
                             COMPONENT devel
                             # For Mac
                             FRAMEWORK DESTINATION "/Library/Frameworks")
@@ -132,3 +145,30 @@ endif(MSVC AND BUILD_SHARED_LIBS)
 
 install(TARGETS JSBSim RUNTIME DESTINATION bin COMPONENT runtime)
 install(FILES ${HEADERS} DESTINATION include/JSBSim COMPONENT devel)
+
+################################################################################
+# CMake package config: find_package(JSBSim CONFIG) -> JSBSim::JSBSim          #
+################################################################################
+
+include(CMakePackageConfigHelpers)
+
+set(JSBSIM_CMAKE_INSTALL_DIR lib/cmake/JSBSim)
+# The package version must be numeric: drop a suffix such as ".dev1".
+string(REGEX MATCH "^[0-9]+" JSBSIM_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(JSBSIM_PACKAGE_VERSION
+    "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${JSBSIM_PACKAGE_VERSION_PATCH}")
+
+install(EXPORT JSBSimTargets
+        NAMESPACE JSBSim::
+        DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
+        COMPONENT devel)
+configure_package_config_file(${PROJECT_SOURCE_DIR}/JSBSimConfig.cmake.in
+                              ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
+                              INSTALL_DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR})
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
+                                 VERSION ${JSBSIM_PACKAGE_VERSION}
+                                 COMPATIBILITY SameMajorVersion)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
+        DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
+        COMPONENT devel)

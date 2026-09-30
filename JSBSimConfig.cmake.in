@@ -1,0 +1,22 @@
+@PACKAGE_INIT@
+
+# JSBSim::JSBSim - the JSBSim flight dynamics library.
+#
+#   find_package(JSBSim CONFIG REQUIRED)
+#   target_link_libraries(my_app PRIVATE JSBSim::JSBSim)
+#
+# Headers are included relative to include/JSBSim, as with pkg-config:
+#   #include "FGFDMExec.h"
+
+set(JSBSIM_SYSTEM_EXPAT @SYSTEM_EXPAT@)
+set(JSBSIM_SHARED_LIBS @BUILD_SHARED_LIBS@)
+
+include(CMakeFindDependencyMacro)
+# A static libJSBSim built against the system libExpat needs it at link time.
+if(JSBSIM_SYSTEM_EXPAT AND NOT JSBSIM_SHARED_LIBS)
+  find_dependency(EXPAT)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/JSBSimTargets.cmake")
+
+check_required_components(JSBSim)

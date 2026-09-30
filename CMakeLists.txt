@@ -136,6 +136,12 @@ if (PkgConfig_FOUND)
     get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
     foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
 
+      # Build-only entries ($<BUILD_INTERFACE:...>, the object libraries) are
+      # compiled into libJSBSim.
+      if (_LIB MATCHES "^\\$<")
+        continue()
+      endif()
+
       # Ensure this library is not a CMake object library or interface library
       if (TARGET ${_LIB}) # Non-CMake libraries are ok (specifically libm)
         get_target_property(LINK_LIB_TYPE ${_LIB} TYPE)
