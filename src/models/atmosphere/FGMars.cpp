@@ -59,7 +59,7 @@ CLASS IMPLEMENTATION
 FGMars::FGMars(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 {
   Name = "FGMars";
-  Reng = 53.5 * 44.01;
+  Reng = Rstar / Mmars;
 
   Debug(0);
 }
