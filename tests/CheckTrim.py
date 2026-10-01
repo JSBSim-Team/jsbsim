@@ -121,5 +121,95 @@ class CheckTrim(JSBSimTestCase):
             if fdm['simulation/trim-completed'] == 1:
                 break
 
+    def test_piston_steady_state_refreshes_fcs_engine_feedback(self):
+        # The FCS sets BSFC from MAP, which changes while the piston engine
+        # settles. A frozen BSFC is a false steady state (issue #1440).
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
+        aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
+                                                          self.sandbox)
+        system = et.SubElement(aircraft_tree.getroot(), 'system',
+                               name='Piston engine feedback')
+        channel = et.SubElement(system, 'channel', name='Engine BSFC')
+        channel.append(et.fromstring('''
+            <fcs_function name="systems/map-bsfc">
+              <function>
+                <sum>
+                  <value>0.3</value>
+                  <product>
+                    <value>0.005</value>
+                    <property>propulsion/engine/map-inhg</property>
+                  </product>
+                </sum>
+              </function>
+              <output>propulsion/engine/bsfc-lbs_hphr</output>
+            </fcs_function>'''))
+        aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
+                                         aircraft_name + '.xml'))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path(self.sandbox('aircraft'))
+        self.assertTrue(fdm.load_model(aircraft_name))
+        self.assertTrue(fdm.load_ic('reset01', True))
+        fdm['ic/h-sl-ft'] = 10000.0
+        fdm['ic/vc-kts'] = 90.0
+        self.assertTrue(fdm.run_ic())
+        self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+
+        fdm['fcs/throttle-cmd-norm'] = 0.2
+        fdm.run()
+        fdm.set_trim_status(True)
+        fdm.suspend_integration()
+        try:
+            fdm.get_propulsion().get_steady_state()
+        finally:
+            fdm.resume_integration()
+            fdm.set_trim_status(False)
+
+        map_inhg = fdm['propulsion/engine/map-inhg']
+        bsfc = fdm['propulsion/engine/bsfc-lbs_hphr']
+        self.assertAlmostEqual(bsfc, 0.3 + 0.005 * map_inhg, delta=1e-3)
+
+    def test_steady_state_budget_is_independent_for_each_engine(self):
+        # Engine 0 cannot settle in 6,000 calculations; it must not use up
+        # engine 1's budget before engine 1 is calculated.
+        script_path = self.sandbox.path_to_jsbsim_file('scripts',
+                                                       '737_cruise.xml')
+        aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
+                                                          self.sandbox)
+        first_engine = aircraft_tree.getroot().find('propulsion/engine')
+        del first_engine.attrib['file']
+        slow_turbine = et.parse(self.sandbox.path_to_jsbsim_file(
+            'engine', 'CFM56.xml')).getroot()
+        spool_down = et.SubElement(slow_turbine, 'function',
+                                   name='N2SpoolDown')
+        et.SubElement(spool_down, 'value').text = '0.001'
+        first_engine.insert(0, slow_turbine)
+        aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
+                                         aircraft_name + '.xml'))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path(self.sandbox('aircraft'))
+        self.assertTrue(fdm.load_model(aircraft_name))
+        self.assertTrue(fdm.load_ic('cruise_init', True))
+        self.assertTrue(fdm.run_ic())
+        propulsion = fdm.get_propulsion()
+        propulsion.init_running(-1)
+        fdm['fcs/throttle-cmd-norm[0]'] = 0.0
+        fdm['fcs/throttle-cmd-norm[1]'] = 0.0
+        fdm.run()
+        self.assertGreater(fdm['propulsion/engine[1]/n2'], 90.0)
+
+        fdm.set_trim_status(True)
+        fdm.suspend_integration()
+        try:
+            propulsion.get_steady_state()
+        finally:
+            fdm.resume_integration()
+            fdm.set_trim_status(False)
+
+        self.assertGreater(fdm['propulsion/engine[0]/n2'], 60.0)
+        self.assertAlmostEqual(fdm['propulsion/engine[1]/n2'], 60.0,
+                               delta=0.01)
+
 
 RunTest(CheckTrim)
