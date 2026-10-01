@@ -64,8 +64,8 @@ namespace JSBSim {
 
 class FGFDMExec;
 
-typedef enum { tLongitudinal=0, tFull, tGround, tPullup,
-               tCustom, tTurn, tNone } TrimMode;
+enum TrimMode { tLongitudinal=0, tFull, tGround, tPullup,
+                tCustom, tTurn, tNone } ;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -114,7 +114,7 @@ CLASS DOCUMENTATION
     }
     fgt.Report();
     @endcode
-    
+
     @author Tony Peden
 */
 
