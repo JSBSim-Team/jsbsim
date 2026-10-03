@@ -33,27 +33,26 @@ set(HEADERS FGFDMExec.h
 set(SOURCES FGFDMExec.cpp
             FGJSBBase.cpp)
 
-set(OBJECT_LIBS Atmosphere
-                FlightControl
-                GeographicLib
-                Init
-                InputOutput
-                IOStreams
-                Magvar
-                Math
-                Misc
-                Models
-                Properties
-                Propulsion
-                Xml)
-
-add_library(libJSBSim ${SOURCES})
 # The object libraries are compiled into libJSBSim and are not part of its
 # installed interface: without BUILD_INTERFACE, install(EXPORT) of a static
 # libJSBSim would require every one of them in the export set.
-list(TRANSFORM OBJECT_LIBS REPLACE "^(.+)$" "$<BUILD_INTERFACE:\\1>"
-     OUTPUT_VARIABLE OBJECT_LIBS_BUILD_ONLY)
-target_link_libraries(libJSBSim PRIVATE ${OBJECT_LIBS_BUILD_ONLY})
+set(OBJECT_LIBS $<BUILD_INTERFACE:Atmosphere>
+                $<BUILD_INTERFACE:FlightControl>
+                $<BUILD_INTERFACE:GeographicLib>
+                $<BUILD_INTERFACE:Init>
+                $<BUILD_INTERFACE:InputOutput>
+                $<BUILD_INTERFACE:IOStreams>
+                $<BUILD_INTERFACE:Magvar>
+                $<BUILD_INTERFACE:Math>
+                $<BUILD_INTERFACE:Misc>
+                $<BUILD_INTERFACE:Models>
+                $<BUILD_INTERFACE:Properties>
+                $<BUILD_INTERFACE:Propulsion>
+                $<BUILD_INTERFACE:Xml>)
+
+add_library(libJSBSim ${SOURCES})
+target_link_libraries(libJSBSim PRIVATE ${OBJECT_LIBS})
+
 if(SYSTEM_EXPAT AND NOT BUILD_SHARED_LIBS)
   # A static libJSBSim leaves libExpat to its consumers (see JSBSimConfig.cmake).
   target_link_libraries(libJSBSim INTERFACE $<INSTALL_INTERFACE:EXPAT::EXPAT>)
@@ -81,6 +80,7 @@ if(WIN32)
   endif(BUILD_SHARED_LIBS)
 
   foreach(OBJECT ${OBJECT_LIBS})
+    string(REGEX REPLACE "^\\$<BUILD_INTERFACE:(.+)>$" "\\1" OBJECT "${OBJECT}")
     target_compile_definitions(${OBJECT} PRIVATE ${JSBSIM_LIBRARY_TYPE})
   endforeach(OBJECT)
 elseif(UNIX)
@@ -150,25 +150,23 @@ install(FILES ${HEADERS} DESTINATION include/JSBSim COMPONENT devel)
 # CMake package config: find_package(JSBSim CONFIG) -> JSBSim::JSBSim          #
 ################################################################################
 
-include(CMakePackageConfigHelpers)
+if(NOT SKBUILD)
+  include(CMakePackageConfigHelpers)
 
-set(JSBSIM_CMAKE_INSTALL_DIR lib/cmake/JSBSim)
-# The package version must be numeric: drop a suffix such as ".dev1".
-string(REGEX MATCH "^[0-9]+" JSBSIM_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-set(JSBSIM_PACKAGE_VERSION
-    "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${JSBSIM_PACKAGE_VERSION_PATCH}")
+  set(JSBSIM_CMAKE_INSTALL_DIR lib/cmake/JSBSim)
 
-install(EXPORT JSBSimTargets
-        NAMESPACE JSBSim::
-        DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
-        COMPONENT devel)
-configure_package_config_file(${PROJECT_SOURCE_DIR}/JSBSimConfig.cmake.in
-                              ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
-                              INSTALL_DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR})
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
-                                 VERSION ${JSBSIM_PACKAGE_VERSION}
-                                 COMPATIBILITY SameMajorVersion)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
-        DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
-        COMPONENT devel)
+  install(EXPORT JSBSimTargets
+          NAMESPACE JSBSim::
+          DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
+          COMPONENT devel)
+  configure_package_config_file(${PROJECT_SOURCE_DIR}/JSBSimConfig.cmake.in
+                                ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
+                                INSTALL_DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR})
+  write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
+                                  VERSION ${PROJECT_VERSION}
+                                  COMPATIBILITY SameMinorVersion)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
+                ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
+          DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
+          COMPONENT devel)
+endif(NOT SKBUILD)
