@@ -159,7 +159,7 @@ if(NOT SKBUILD)
           NAMESPACE JSBSim::
           DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
           COMPONENT devel)
-  configure_package_config_file(${PROJECT_SOURCE_DIR}/JSBSimConfig.cmake.in
+  configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSimConfig.cmake.in
                                 ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfig.cmake
                                 INSTALL_DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR})
   write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
@@ -169,4 +169,26 @@ if(NOT SKBUILD)
                 ${CMAKE_CURRENT_BINARY_DIR}/JSBSimConfigVersion.cmake
           DESTINATION ${JSBSIM_CMAKE_INSTALL_DIR}
           COMPONENT devel)
+
+################################################################################
+# Build and install the pkg-config file                                        #
+################################################################################
+
+  find_package(PkgConfig)
+
+  if (PkgConfig_FOUND)
+    if (NOT BUILD_SHARED_LIBS)
+      get_target_property(libJSBSim_LINK_LIBRARIES libJSBSim LINK_LIBRARIES)
+      foreach(_LIB ${libJSBSim_LINK_LIBRARIES})
+        # Ignore build-only entries ($<BUILD_INTERFACE:...> i.e. the object libraries)
+        if (_LIB MATCHES "^\\$<BUILD_INTERFACE")
+          continue()
+        endif()
+
+        set(JSBSIM_PKG_CONFIG_LINK_LIBRARIES "${JSBSIM_PKG_CONFIG_LINK_LIBRARIES} -l${_LIB}")
+      endforeach(_LIB)
+    endif(NOT BUILD_SHARED_LIBS)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/JSBSim.pc.in ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/JSBSim.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig COMPONENT devel)
+  endif()
 endif(NOT SKBUILD)
