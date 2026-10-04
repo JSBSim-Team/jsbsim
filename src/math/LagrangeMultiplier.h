@@ -48,12 +48,30 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+/** Rotational state of a wheel whose spin is resolved together with the
+    ground friction multipliers (see the <wheel_inertia> element of FGLGear).
+    Rate uses the same reference as the airframe rates FGLGear receives in
+    in.PQR (FGPropagate::GetPQR(), relative to the ECEF frame), so Rate minus
+    the airframe rate about the axle is the spin relative to the airframe. */
+struct WheelSpinDOF {
+  double Jinv = 0.0;       ///< 1 / spin inertia about the axle [1/(slug*ft^2)]
+  double Rate = 0.0;       ///< spin rate about the axle in the ground reference frame [rad/s]
+  double Accel = 0.0;      ///< spin acceleration from the last friction solve [rad/s^2]
+};
+
 struct LagrangeMultiplier {
   FGColumnVector3 ForceJacobian;
-  FGColumnVector3 LeverArm;
   double Min;
   double Max;
   double value;
+  /// Moment applied to the airframe per unit multiplier: the lever arm cross
+  /// ForceJacobian for a force, or a torque acting between wheel and airframe.
+  FGColumnVector3 MomentJacobian;
+  /// Wheel spin degree of freedom coupled to this multiplier (or nullptr) and
+  /// the multiplier's Jacobian entry on that wheel's spin rate, i.e. the torque
+  /// on the wheel per unit multiplier [ft for a force, 1 for a torque].
+  WheelSpinDOF* Wheel = nullptr;
+  double WheelJacobian = 0.0;
 };
 
 } // namespace
