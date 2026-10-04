@@ -228,6 +228,27 @@ FGRotor::~FGRotor(){
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// Restores the dynamic values to the ones set by the constructor.
+
+void FGRotor::ResetToIC(void)
+{
+  FGThruster::ResetToIC();
+
+  RPM = Omega = 0.0;
+  beta_orient = 0.0;
+  a0 = a_1 = b_1 = a_dw = 0.0;
+  a1s = b1s = 0.0;
+  H_drag = J_side = Torque = C_T = 0.0;
+  lambda = -0.001; mu = 0.0; nu = 0.001; v_induced = 0.0;
+  theta_downwash = phi_downwash = 0.0;
+  EngineRPM = 0.0;
+
+  damp_hagl.reset();
+  if (Transmission) Transmission->ResetToIC();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 // 5in1: value-fetch-convert-default-return function
 
 double FGRotor::ConfigValueConv( Element* el, const string& ename, double default_val,

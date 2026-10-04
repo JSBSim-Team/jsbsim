@@ -201,6 +201,8 @@ FGPropeller::~FGPropeller()
 void FGPropeller::ResetToIC(void)
 {
   FGThruster::ResetToIC();
+  RPM = 0.0;
+  Pitch = MinPitch;
   Vinduced = 0.0;
 }
 

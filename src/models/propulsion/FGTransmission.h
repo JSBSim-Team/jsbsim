@@ -117,6 +117,9 @@ public:
   /// Destructor for FGTransmission
   ~FGTransmission();
 
+  /// Reset the initial conditions.
+  void ResetToIC(void);
+
   void Calculate(double EnginePower, double ThrusterTorque, double dt);
 
   void   SetMaxBrakePower(double x) {MaxBrakePower=x;}

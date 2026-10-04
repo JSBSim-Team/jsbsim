@@ -247,6 +247,9 @@ public:
   /// Destructor for FGRotor
   ~FGRotor();
 
+  /// Reset the initial conditions.
+  void ResetToIC(void);
+
   /// Returns the power required by the rotor.
   double GetPowerRequired(void) { return PowerRequired; }
 

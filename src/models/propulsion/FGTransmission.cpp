@@ -68,6 +68,15 @@ FGTransmission::~FGTransmission(){
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGTransmission::ResetToIC(void)
+{
+  FreeWheelTransmission = 1.0;
+  EngineRPM = ThrusterRPM = 0.0;
+  FreeWheelLag.reset();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 // basically P = Q*w and Q_Engine + (-Q_Rotor) = J * dw/dt, J = Moment
 //
 void FGTransmission::Calculate(double EnginePower, double ThrusterTorque, double dt) {

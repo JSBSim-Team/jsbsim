@@ -139,6 +139,7 @@ public:
       prev_out = out;
       return out;
     }
+    void reset(void) { prev_in = prev_out = 0.0; }
   };
 
   /** Returns the version number of JSBSim.
