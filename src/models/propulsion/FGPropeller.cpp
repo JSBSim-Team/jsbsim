@@ -55,7 +55,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   string name="";
   auto PropertyManager = exec->GetPropertyManager();
 
-  MaxPitch = MinPitch = P_Factor = Pitch = Advance = MinRPM = MaxRPM = 0.0;
+  MaxPitch = MinPitch = P_Factor = Advance = MinRPM = MaxRPM = 0.0;
   Sense = 1; // default clockwise rotation
   ReversePitch = 0.0;
   Reversed = false;
@@ -65,7 +65,6 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   CtFactor = CpFactor = 1.0;
   ConstantSpeed = 0;
   cThrust = cPower = CtMach = CpMach = cThrustRPM = cPowerRPM = 0;
-  Vinduced = 0.0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = max(prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2"), 1e-06);
@@ -146,11 +145,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     SetCpFactor( prop_element->FindElementValueAsNumber("cp_factor") );
 
   Type = ttPropeller;
-  RPM = 0;
   vTorque.InitMatrix();
   D4 = Diameter*Diameter*Diameter*Diameter;
   D5 = D4*Diameter;
-  Pitch = MinPitch;
+  InitDynamics();
 
   string property_name, base_property_name;
   base_property_name = CreateIndexedPropertyName("propulsion/engine", EngineNum);
@@ -201,6 +199,13 @@ FGPropeller::~FGPropeller()
 void FGPropeller::ResetToIC(void)
 {
   FGThruster::ResetToIC();
+  InitDynamics();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropeller::InitDynamics(void)
+{
   RPM = 0.0;
   Pitch = MinPitch;
   Vinduced = 0.0;

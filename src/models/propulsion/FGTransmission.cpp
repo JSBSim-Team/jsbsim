@@ -51,13 +51,12 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTransmission::FGTransmission(FGFDMExec *exec, int num, double dt) :
-  FreeWheelTransmission(1.0),
   ThrusterMoment(1.0), EngineMoment(1.0), EngineFriction(0.0),
-  ClutchCtrlNorm(1.0), BrakeCtrlNorm(0.0), MaxBrakePower(0.0),
-  EngineRPM(0.0), ThrusterRPM(0.0)
+  ClutchCtrlNorm(1.0), BrakeCtrlNorm(0.0), MaxBrakePower(0.0)
 {
   auto PropertyManager = exec->GetPropertyManager();
   FreeWheelLag = Filter(200.0,dt); // avoid too abrupt changes in transmission
+  InitDynamics();
   BindModel(num, PropertyManager.get());
 }
 
@@ -70,9 +69,16 @@ FGTransmission::~FGTransmission(){
 
 void FGTransmission::ResetToIC(void)
 {
+  InitDynamics();
+  FreeWheelLag.reset();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTransmission::InitDynamics(void)
+{
   FreeWheelTransmission = 1.0;
   EngineRPM = ThrusterRPM = 0.0;
-  FreeWheelLag.reset();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

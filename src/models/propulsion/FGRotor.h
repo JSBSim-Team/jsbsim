@@ -328,6 +328,9 @@ private:
 
   double Configure(Element* rotor_element);
 
+  /// Initializes the dynamic values, at construction and upon reset.
+  void InitDynamics(void);
+
   void CalcRotorState(void);
 
   // rotor dynamics
