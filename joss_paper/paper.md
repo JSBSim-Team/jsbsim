@@ -87,7 +87,8 @@ The more common execution from the command line involves running from a script, 
 
 JSBSim has been used by @Varriale:DeMarco:2018:Flight:Load:Assessment to assess the flight loads on light aircraft flying through or nearby wind turbine wakes. For this research JSBSim's autopilot system has been used to simulate realistic pilot behavior during navigation, see \autoref{fig:wake:crossing}.
 
-![Normal relative-wind component and aircraft normal load factor. Results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing}](assets/turbine_wake_crossing_scheme_plots_2.png)
+![Simulation results adapted from @Varriale:DeMarco:2018:Flight:Load:Assessment.\label{fig:wake:crossing} Example from a population of simulated scenarios in the presence of CFD calculated wind and turbulence fields. JSBSim's autopilot system has been used to simulate realistic pilot behavior during navigation. (Left) Top view of an airplane flying over a wind-turbine wake. (Right) Time histories of the normal relative-wind component (along z-body axis) induced by the turbine wake, and the normal load factor. Based on these results, preliminary guidelines and recommendations on safe encounter distances have 
+been provided for general aviation aircraft when flying in the proximity of wind farms.](assets/turbine_wake_crossing_scheme_plots.png)
 
 # Implementation and Engineering Practices
 
@@ -99,7 +100,7 @@ JSBSim adheres to modern open-source Quality Assurance standards through an exte
 
 # Research Impact Statement
 
-JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. Its use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms. In the existing scientific literature, the key works on JSBSim are those by @Berndt:2004:JSBSim, @DeMarco:2007:General:Solution:Trim, @Berndt:DeMarco:2009:Progress:JSBSim, @Murri:2015:Check:Cases.
+JSBSim is used across a broad range of aerospace applications, including flight control development, UAV research, aircraft design studies, and simulation-based testing. Its use in academic and industry research has resulted in over 1000 citations as per Google Scholar, and it has been integrated into several popular flight simulators and research platforms. In the existing scientific literature, the key works on JSBSim are those by @Berndt:2004:JSBSim, @DeMarco:2007:General:Solution:Trim, @Berndt:DeMarco:2009:Progress:JSBSim, and @Murri:2015:Check:Cases.
 
 Examples of use cases include:
 
@@ -107,7 +108,7 @@ Examples of use cases include:
 
 - Control system design. See the articles by @Vogeltanz:2018:Development:Control:System:Designer and @Vogeltanz:2020:Control:System:Designer.
 
-- Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being its use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition). See also the works by @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Chen:2026:Physics:Informed:Target:Aiming.
+- Reinforcement learning research, where JSBSim is used as the environment in which an agent learns to control an aircraft. One example being its use in the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition). See also the works by @DeMarco:2023:DRL:Hight:Performance:Aircraft, @Pope:2023:Hierarchical:RL:DARPA:Trials, @Chen:2026:Physics:Informed:Target:Aiming, and @qplane.
 
 - SITL (Software In The Loop) Drone autopilot testing: [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation).
 
