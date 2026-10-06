@@ -117,6 +117,9 @@ public:
   /// Destructor for FGTransmission
   ~FGTransmission();
 
+  /// Reset the initial conditions.
+  void ResetToIC(void);
+
   void Calculate(double EnginePower, double ThrusterTorque, double dt);
 
   void   SetMaxBrakePower(double x) {MaxBrakePower=x;}
@@ -141,6 +144,8 @@ public:
 
 private:
   bool BindModel(int num, FGPropertyManager* pm);
+  /// Initializes the dynamic values, at construction and upon reset.
+  void InitDynamics(void);
   void Debug(int from);
 
   inline double omega_to_rpm(double w) {

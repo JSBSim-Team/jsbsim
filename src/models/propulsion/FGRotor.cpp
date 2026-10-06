@@ -78,17 +78,10 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
     InflowLag(0.0), TipLossB(0.0),
     GroundEffectExp(0.0), GroundEffectShift(0.0), GroundEffectScaleNorm(1.0),
     LockNumberByRho(0.0), Solidity(0.0),            // derived parameters
-    RPM(0.0), Omega(0.0),                           // dynamic values
-    beta_orient(0.0),
-    a0(0.0), a_1(0.0), b_1(0.0), a_dw(0.0),
-    a1s(0.0), b1s(0.0),
-    H_drag(0.0), J_side(0.0), Torque(0.0), C_T(0.0),
-    lambda(-0.001), mu(0.0), nu(0.001), v_induced(0.0),
-    theta_downwash(0.0), phi_downwash(0.0),
     ControlMap(eMainCtrl),                          // control
     CollectiveCtrl(0.0), LateralCtrl(0.0), LongitudinalCtrl(0.0),
     Transmission(NULL),                             // interaction with engine
-    EngineRPM(0.0), MaxBrakePower(0.0), GearLoss(0.0), GearMoment(0.0)
+    MaxBrakePower(0.0), GearLoss(0.0), GearMoment(0.0)
 {
   FGColumnVector3 location(0.0, 0.0, 0.0), orientation(0.0, 0.0, 0.0);
   Element *thruster_element;
@@ -98,6 +91,7 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
   SetTransformType(FGForce::tCustom);
   Type = ttRotor;
   GearRatio = 1.0;
+  InitDynamics();
 
   dt = exec->GetDeltaT();
   for (int i=0; i<5; i++) R[i] = 0.0;
@@ -224,6 +218,32 @@ FGRotor::FGRotor(FGFDMExec *exec, Element* rotor_element, int num)
 FGRotor::~FGRotor(){
   if (Transmission) delete Transmission;
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// Resets the dynamic values, the hagl filter and the transmission.
+
+void FGRotor::ResetToIC(void)
+{
+  FGThruster::ResetToIC();
+  InitDynamics();
+  damp_hagl.reset();
+  if (Transmission) Transmission->ResetToIC();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGRotor::InitDynamics(void)
+{
+  RPM = Omega = 0.0;
+  beta_orient = 0.0;
+  a0 = a_1 = b_1 = a_dw = 0.0;
+  a1s = b1s = 0.0;
+  H_drag = J_side = Torque = C_T = 0.0;
+  lambda = -0.001; mu = 0.0; nu = 0.001; v_induced = 0.0;
+  theta_downwash = phi_downwash = 0.0;
+  EngineRPM = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

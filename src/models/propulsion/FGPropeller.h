@@ -367,6 +367,8 @@ private:
   double CtFactor;
   double CpFactor;
   int    ConstantSpeed;
+  /// Initializes the dynamic values, at construction and upon reset.
+  void InitDynamics(void);
   void Debug(int from);
   double ReversePitch; // Pitch, when fully reversed
   bool   Reversed;     // true, when propeller is reversed
