@@ -3,9 +3,10 @@
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/jsbsim)](https://anaconda.org/conda-forge/jsbsim)
 [![PyPI Downloads](https://static.pepy.tech/badge/jsbsim/week)](https://pepy.tech/projects/jsbsim)
 [![Downloads GitHub](https://img.shields.io/github/downloads/JSBSim-Team/jsbsim/total?label=Downloads%20GitHub)](https://github.com/JSBSim-Team/jsbsim/releases)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20258621.svg)](https://doi.org/10.5281/zenodo.20258621)
 
 <p align="center">
-<img width="250" heigth="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
+<img width="250" height="250" src="https://github.com/JSBSim-Team/jsbsim-logo/blob/master/logo_JSBSIM_globe.png">
 </p>
 
 # Introduction
@@ -43,6 +44,8 @@ JSBSim is used in a range of projects among which:
 * SITL (Software In The Loop) Drone Autopilot testing : [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-jsbsim.html), [PX4 Autopilot](https://docs.px4.io/main/en/sim_jsbsim/), [Paparazzi](https://wiki.paparazziuav.org/wiki/Simulation)
 * Machine Learning Aircraft control: [gym-jsbsim](https://github.com/Gor-Ren/gym-jsbsim)
 * [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition) where one of the AI went undefeated in five rounds of mock air combat against an Air Force fighter (see the [video on YouTube](https://www.youtube.com/watch?v=IOJhgC1ksNU)).
+* [Project AirSim](https://github.com/iamaisim/ProjectAirSim) is an open-source simulation platform for autonomous systems [recognized by Microsoft](https://github.com/microsoft/AirSim/blob/main/project_airsim.md) as the evolution of the original [AirSim](https://github.com/microsoft/AirSim). The current simulation environment provides a modular framework for drones, fixed-wing aircraft, robots, and other autonomous systems. Project AirSim features JSBSim integration for fixed-wing aircraft dynamics, [with public Cessna 310 and Skywalker X8 examples](https://github.com/iamaisim/ProjectAirSim/blob/main/docs/physics/jsbsim.md).
+* [PteroSim](https://github.com/PteroLabsAI/PteroSim-UAV-Simulator) is an Unreal Engine 5 UAV simulator that runs every vehicle (multirotors, helicopters, VTOLs, tailsitters, fixed-wing) on JSBSim, with PX4 or ArduPilot SITL in the loop and a Python API. Both autopilot projects document it ([PX4](https://docs.px4.io/main/en/sim_pterosim/), [ArduPilot](https://ardupilot.org/dev/docs/sitl-with-pterosim.html)). Epic Games covered it in an [Unreal Engine spotlight](https://www.unrealengine.com/spotlights/ue5-is-becoming-the-platform-of-choice-for-robotics-simulation). The [vehicle models](https://github.com/PteroLabsAI/PteroSimAircrafts) are plain JSBSim aircraft definitions.
 
 ## Academic and Industry Research
 
@@ -209,6 +212,9 @@ You can also quickly try it out using Google Colab by clicking on the icon.
 
 - [Thrust Vectoring Analysis.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb) vary the thrust vector angle to determine the minimum fuel burn for cruise and climb conditions.
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JSBSim-Team/jsbsim/blob/master/examples/python/Thrust%20Vectoring%20Analysis.ipynb)
+
+- [Pitch SAS Implementation.ipynb](https://github.com/JSBSim-Team/jsbsim/blob/master/examples/python/Pitch%20SAS%20Implementation.ipynb) implement a pitch Stability Augmentation Systen (SAS) to improve the pitch damping of an A4 fighter.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JSBSim-Team/jsbsim/blob/master/examples/python/Pitch%20SAS%20Implementation.ipynb)
 
 # Contributing Source Code Changes
 

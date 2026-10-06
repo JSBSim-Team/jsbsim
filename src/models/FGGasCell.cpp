@@ -43,6 +43,7 @@ INCLUDES
 
 using std::string;
 using std::max;
+using std::min;
 
 namespace JSBSim {
 
@@ -314,19 +315,19 @@ void FGGasCell::Calculate(double dt)
   //        an ad hoc formula which might not be a good representation
   //        of reality.
   if ((ValveCoefficient > 0.0) && (ValveOpen > 0.0)) {
-    // First compute the difference in pressure between the gas in the
-    // cell and the air above it.
-    // FixMe: CellHeight should depend on current volume.
-    const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
-    const double GasMass    = Contents * M_gas();                     // [slug]
+    // Scale CellHeight by the ratio of current gas volume to maximum
+    // volume so that as the cell deflates, the buoyancy-driven pressure
+    // differential diminishes naturally toward zero.
     const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft^3]
-    const double GasDensity = GasMass / GasVolume;
-    const double DeltaPressure =
-      Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
+    const double CellHeight = (2 * Zradius + Zwidth) *
+      min(1.0, GasVolume / MaxVolume);                                // [ft]
+    const double GasDensity = M_gas() * Pressure / (R * Temperature);
+    const double DeltaPressure = max(0.0,
+      Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure);
     const double VolumeValved =
       ValveOpen * ValveCoefficient * DeltaPressure * dt;
     Contents =
-      max(1E-8, Contents - Pressure * VolumeValved / (R * Temperature));
+      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
   }
 
   //-- Update ballonets. --

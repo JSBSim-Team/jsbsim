@@ -145,7 +145,6 @@ public:
 
 private:
   std::vector<FGInputType*> InputTypes;
-  bool enabled;
 
   void Debug(int from) override;
 };

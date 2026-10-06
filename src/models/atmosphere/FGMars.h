@@ -63,10 +63,21 @@ public:
   /// Constructor
   FGMars(FGFDMExec*);
 
-private:
-  void Calculate(double altitude);
+  double GetTemperature(double altitude) const override { return Temperature; }
+  double GetPressure(double altitude) const override { return Pressure; }
+  void SetTemperature(double t, double h, eTemperature unit) override {}
 
-  void Debug(int from);
+protected:
+  /** Mean molecular weight of the Martian atmosphere - slug/mol.
+      43.49 g/mol for 95.1% CO2, 2.59% N2, 1.94% Ar, ... from the NASA NSSDC
+      Mars Fact Sheet as updated 19 May 2025
+      https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html
+  */
+  static constexpr double Mmars = 43.49 * kgtoslug / 1000.0;
+
+private:
+  void Calculate(double altitude) override;
+  void Debug(int from) override;
 };
 
 } // namespace JSBSim

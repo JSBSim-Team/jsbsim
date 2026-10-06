@@ -18,10 +18,22 @@
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
 
+import math
 import xml.etree.ElementTree as et
 
 from JSBSim_utils import JSBSimTestCase, RunTest, FlightModel
 from jsbsim import GeographicError
+
+
+# NASA Glenn Mars atmosphere model, Imperial units (h in ft, rho in slugs/ft^3)
+# https://www.grc.nasa.gov/www/k-12/airplane/atmosmre.html
+def nasa_mars_density(h):
+    if h < 22960.0:
+        T = -25.68 - 0.000548*h  # deg F
+    else:
+        T = -10.34 - 0.001217*h  # deg F
+    p = 14.62*math.exp(-0.00003*h)  # psf
+    return p / (1149.0*(T + 459.7))
 
 
 class TestPlanet(JSBSimTestCase):
@@ -74,6 +86,53 @@ class TestPlanet(JSBSimTestCase):
         self.assertAlmostEqual(self.fdm['atmosphere/T-R']*5/9, 281.46476, delta=1E-5)
         self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/0.001940318, 1.263428, delta=1E-6)
         self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 2132.294, delta=1E-3)
+
+    def test_mars_atmosphere(self):
+        # Mars atmosphere via <planet><atmosphere model="Mars"/></planet>.
+        # Reference values are the NASA Glenn model at altitude = 0:
+        #   T = -25.68 + 459.67 = 433.99 R         (~241.1 K)
+        #   P = 14.62 psf                          (~7 mbar)
+        #   rho = P / (R * T), see check_mars_density
+        tripod = FlightModel(self, 'tripod')
+        mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
+        tripod.include_planet_test_file(mars_file)
+        self.fdm = tripod.start()
+        self.fdm['ic/h-agl-ft'] = 0.0
+        self.fdm['ic/long-gc-deg'] = 0.0
+        self.fdm['ic/lat-geod-deg'] = 0.0
+        self.fdm.run_ic()
+
+        # Mars equatorial radius = 3396.2 km
+        self.assertAlmostEqual(self.fdm['metrics/terrain-radius']*0.3048/3396200, 1.0)
+        # Surface gravity ~3.71-3.72 m/s^2 (JSBSim uses oblate-spheroid gravity,
+        # not point-mass GM/R^2, so the value is a few mGal above textbook).
+        self.assertAlmostEqual(self.fdm['accelerations/gravity-ft_sec2']*0.3048, 3.72, delta=5E-2)
+
+        self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
+        self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
+        self.check_mars_density()
+
+    def test_load_Mars_atmosphere(self):
+        # Same as above but using FGFDMExec::LoadPlanet at runtime instead of
+        # including the planet file at FDM construction time.
+        tripod = FlightModel(self, 'tripod')
+        mars_file = self.sandbox.path_to_jsbsim_file('tests/mars.xml')
+        self.fdm = tripod.start()
+        self.fdm.load_planet(mars_file, False)
+        self.fdm['ic/h-agl-ft'] = 0.0
+        self.fdm['ic/long-gc-deg'] = 0.0
+        self.fdm['ic/lat-geod-deg'] = 0.0
+        self.fdm.run_ic()
+
+        self.assertAlmostEqual(self.fdm['atmosphere/T-R'], 433.99, delta=1E-2)
+        self.assertAlmostEqual(self.fdm['atmosphere/P-psf'], 14.62, delta=1E-2)
+        self.check_mars_density()
+
+    def check_mars_density(self):
+        rho = nasa_mars_density(self.fdm['position/h-sl-ft'])
+        # NASA Glenn rounds R to 1149 and the Rankine offset to 459.7, while
+        # JSBSim derives R = Rstar/Mmars = 1143.23 and uses 459.67 (0.5% apart).
+        self.assertAlmostEqual(self.fdm['atmosphere/rho-slugs_ft3']/rho, 1.0, delta=6E-3)
 
     def test_planet_geographic_error1(self):
         # Check that a negative equatorial radius raises an exception

@@ -236,6 +236,11 @@ cdef class FGPropagate:
         self.__intercept_invalid_pointer()
         return _convertToNumpyVec(deref(self.thisptr).GetUVW())
 
+    def dump_state(self) -> None:
+        """@Dox(JSBSim::FGPropagate::DumpState)"""
+        self.__intercept_invalid_pointer()
+        deref(self.thisptr).DumpState()
+
 
 class Attribute(enum.IntEnum):
     NO_ATTR = 0
@@ -353,6 +358,65 @@ cdef class FGPropertyManager:
     def hasNode(self, path: str) -> bool:
         """@Dox(JSBSim::FGPropertyManager::HasNode)"""
         return deref(self.thisptr).HasNode(path.encode())
+
+
+class TrimMode(enum.IntEnum):
+        LONGITUDINAL = 0
+        FULL = 1
+        GROUND = 2
+        PULLUP = 3
+        CUSTOM = 4
+        TURN = 5
+        NONE = 6
+
+
+cdef class FGInitialCondition:
+    """@Dox(JSBSim::FGInitialCondition)"""
+
+    cdef shared_ptr[c_FGInitialCondition] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, *args, **kwargs):
+        if fdmex is not None:
+            self.thisptr.reset(new c_FGInitialCondition(fdmex.thisptr))
+            if not self.thisptr:
+                raise MemoryError()
+
+    def __bool__(self) -> bool:
+        """Check if the object is initialized."""
+        if self.thisptr:
+            return True
+        return False
+
+    cdef __intercept_invalid_pointer(self):
+        if not self.thisptr:
+            raise BaseError("Object is not initialized")
+
+    def load(self, rstfile: str, useAircraftPath: bool = True) -> bool:
+        """@Dox(JSBSim::FGInitialCondition::Load)"""
+        self.__intercept_invalid_pointer()
+        return deref(self.thisptr).Load(c_SGPath(rstfile.encode(), NULL), useAircraftPath)
+
+    def trim_requested(self) -> TrimMode:
+        """@Dox(JSBSim::FGInitialCondition::TrimRequested)"""
+        self.__intercept_invalid_pointer()
+        return TrimMode(deref(self.thisptr).TrimRequested())
+
+
+cdef class FGTrim:
+    """@Dox(JSBSim::FGTrim)"""
+
+    cdef shared_ptr[c_FGTrim] thisptr
+
+    def __cinit__(self, FGFDMExec fdmex, c_TrimMode tm, *args, **kwargs):
+        self.thisptr.reset(new c_FGTrim(fdmex.thisptr, tm))
+        if not self.thisptr:
+            raise MemoryError()
+
+    def do_trim(self) -> bool:
+        return deref(self.thisptr).DoTrim()
+
+    def report(self) -> None:
+        deref(self.thisptr).Report()
 
 cdef class FGGroundReactions:
     """@Dox(JSBSim::FGGroundReactions)"""
@@ -632,10 +696,6 @@ cdef class FGJSBBase:
     def get_version(self) -> str:
         """@Dox(JSBSim::FGJSBBase::GetVersion)"""
         return self.baseptr.GetVersion().decode('utf-8')
-
-    def disable_highlighting(self) -> None:
-        """@Dox(JSBSim::FGJSBBase::disableHighLighting)"""
-        self.baseptr.disableHighLighting()
 
 cdef class FGPropulsion:
     """@Dox(JSBSim::FGPropulsion)"""
@@ -1181,3 +1241,8 @@ cdef class FGFDMExec(FGJSBBase):
         propulsion = FGPropulsion(None)
         propulsion.thisptr = self.thisptr.GetPropulsion()
         return propulsion
+
+    def get_ic(self) -> FGInitialCondition:
+        ic = FGInitialCondition(None)
+        ic.thisptr = self.thisptr.GetIC()
+        return ic

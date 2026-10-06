@@ -218,7 +218,7 @@ double FGTurbine::Run()
             N1SpoolUp->GetValue(), N1SpoolDown->GetValue());
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
-  EGT_degC = in.TAT_c + 363.1 + ThrottlePos * 357.1;
+  EGT_degC = in.TAT_c + 363.1 + N2norm * 357.1;
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 

@@ -1056,12 +1056,12 @@ void FGPiston::Debug(int from)
 
       log << "\n";
       log << "      Combustion Efficiency table:\n";
-      Lookup_Combustion_Efficiency->Print();
+      Lookup_Combustion_Efficiency->Print(log);
       log << "\n";
 
       log << "\n";
       log << "      Mixture Efficiency Correlation table:\n";
-      Mixture_Efficiency_Correlation->Print();
+      Mixture_Efficiency_Correlation->Print(log);
       log << "\n";
     }
   }

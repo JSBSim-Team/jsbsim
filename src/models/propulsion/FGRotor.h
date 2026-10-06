@@ -247,6 +247,9 @@ public:
   /// Destructor for FGRotor
   ~FGRotor();
 
+  /// Reset the initial conditions.
+  void ResetToIC(void);
+
   /// Returns the power required by the rotor.
   double GetPowerRequired(void) { return PowerRequired; }
 
@@ -324,6 +327,9 @@ private:
                                   bool tell=false);
 
   double Configure(Element* rotor_element);
+
+  /// Initializes the dynamic values, at construction and upon reset.
+  void InitDynamics(void);
 
   void CalcRotorState(void);
 

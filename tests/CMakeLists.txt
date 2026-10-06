@@ -19,6 +19,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestTurbulenceRandomSeed
                  TestCosineGust
                  TestTurbulenceGustStop
+                 TestTurbulenceTustin
                  TestScriptOutput
                  CheckSimTimeReset
                  TestHoldDown
@@ -55,7 +56,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestLighterThanAir
                  TestUnusableFuel
                  TestSensorRandomSeed
-                 TestPQRdot)
+                 TestPQRdot
+                 TestThrusterReset)
 
 foreach(test ${PYTHON_TESTS})
   add_test(NAME ${test}

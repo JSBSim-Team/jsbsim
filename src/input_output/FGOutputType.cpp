@@ -54,9 +54,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGOutputType::FGOutputType(FGFDMExec* fdmex) :
-  FGModel(fdmex),
-  SubSystems(0),
-  enabled(true)
+  FGModel(fdmex, ""),
+  SubSystems(0)
 {
   Aerodynamics = FDMExec->GetAerodynamics();
   Auxiliary = FDMExec->GetAuxiliary();
@@ -186,7 +185,6 @@ bool FGOutputType::InitModel(void)
 bool FGOutputType::Run(bool Holding)
 {
   if (FGModel::Run(Holding)) return true;
-  if (!enabled) return true;
 
   RunPreFunctions();
   Print();

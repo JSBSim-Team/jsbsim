@@ -208,7 +208,7 @@ CLASS DOCUMENTATION
     @endcode
 */
 
-class FGExternalForce : public FGForce
+class JSBSIM_API FGExternalForce : public FGForce
 {
 public:
   /** Constructor.

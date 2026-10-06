@@ -190,7 +190,6 @@
       buoyant_forces/gas-cell/volume-ft3 ge buoyant_forces/gas-cell/max_volume-ft3
       buoyant_forces/gas-cell/burst ge 0.5
     </test>
-    <output>buoyant_forces/gas-cell/valve_open</output>
    </switch>
   </channel>
 

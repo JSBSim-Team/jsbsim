@@ -42,6 +42,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "input_output/FGModelLoader.h"
 #include "input_output/FGLog.h"
+#include "input_output/FGPropertyManager.h"
 
 using namespace std;
 
@@ -55,7 +56,8 @@ GLOBAL DECLARATIONS
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModel::FGModel(FGFDMExec* fdmex)
+FGModel::FGModel(FGFDMExec* fdmex, const std::string& name)
+ : Name(name)
 {
   FDMExec     = fdmex;
 
@@ -66,6 +68,15 @@ FGModel::FGModel(FGFDMExec* fdmex)
 
   exe_ctr     = 1;
   rate        = 1;
+
+  // A model that is scheduled by FGFDMExec is named and gets an enable property.
+  // The input and output types are not scheduled: they are instantiated one per
+  // <input> and <output> element, so a shared property path would be tied more
+  // than once. They pass an empty name and are enabled through the per-instance
+  // property that FGOutputType::SetIdx already binds, or through Enable() and
+  // Disable().
+  if (!Name.empty())
+    PropertyManager->Tie("simulation/models/" + Name + "/enabled", &enabled);
 
   Debug(0);
 }
@@ -91,12 +102,13 @@ bool FGModel::Run(bool Holding)
 {
   FGModel::Debug(2);
 
-  if (rate == 1) return false; // Fast exit if nothing to do
+  if (rate == 1) return !enabled; // Fast exit if nothing to do
 
   if (exe_ctr >= rate) exe_ctr = 0;
 
-  if (exe_ctr++ == 1) return false;
-  else              return true;
+  if (exe_ctr++ == 1) return !enabled;
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

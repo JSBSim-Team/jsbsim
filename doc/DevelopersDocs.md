@@ -210,7 +210,7 @@ The following packages are then built (with the extension `.rpm` if you selected
 
 ## C++ API documentation
 
-The JSBSim C++ API documentation is built from the source code with [Doxygen](http://www.stack.nl/~dimitri/doxygen/) and is automatically published on GitHub each time a commit is pushed to the JSBSim GitHub project. It can be viewed here:
+The JSBSim C++ API documentation is built from the source code with [Doxygen](https://www.doxygen.org) and is automatically published on GitHub each time a commit is pushed to the JSBSim GitHub project. It can be viewed here:
 
 <https://jsbsim-team.github.io/jsbsim/>.
 
@@ -220,7 +220,7 @@ If you modify the documentation, you might need to generate the documentation lo
 > cmake --build . --target doc
 ```
 
-The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](www.doxygen.org) and [Graphviz](www.graphviz.org) to be installed.
+The HTML documentation will then be available in the directory `build/documentation/html`. Note that you need [Doxygen](https://www.doxygen.org) and [Graphviz](https://www.graphviz.org) to be installed.
 
 ## Frequently Asked Questions
 
@@ -246,7 +246,7 @@ If you need to run all the tests which name contains `Altitude`, you can use
 > ctest -R Altitude
 ```
 
-If you need to run all the tests but thoses which name contains `Altitude`, you can use
+If you need to run all the tests but those which name contains `Altitude`, you can use
 
 ```bash
 > ctest -E Altitude
@@ -258,7 +258,7 @@ If you need to run tests #12 to #14, you can use
 > ctest -I 12,14
 ```
 
-You can find more informations about `ctest` from its [manual page](https://cmake.org/cmake/help/v3.0/manual/ctest.1.html)
+You can find more information about `ctest` from its [manual page](https://cmake.org/cmake/help/v3.0/manual/ctest.1.html)
 
 ### When I try to run `ctest`, most of the tests fail
 

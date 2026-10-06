@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JSBSim", "JSBSim.vcxproj", "{AF971B4F-3D53-4655-8A03-97E8054DC58B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep_plot", "src\utilities\prep_plot.vcxproj", "{12B68F94-0BC4-4483-86AA-9CEE10F1D525}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep_plot", "utils\simplot\prep_plot.vcxproj", "{12B68F94-0BC4-4483-86AA-9CEE10F1D525}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "aeromatic", "utils\aeromatic++\aeromatic.vcxproj", "{94724CD4-8BCE-4537-9CF1-7F1A0A293485}"
 EndProject

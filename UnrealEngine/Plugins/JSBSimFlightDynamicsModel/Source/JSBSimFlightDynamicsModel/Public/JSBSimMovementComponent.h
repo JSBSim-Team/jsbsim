@@ -211,7 +211,7 @@ public:
     /* This function is used in different contexts : 
     *  - When the used changed the Aircraft Model string - In that case, we call it with ResetToDefaultSettings to rebuild Engine, Tanks and Gears UE structures from the new aircraft
     *  - On begin play, in that case, we don't touch the UE structures because the user can have overriden some properties. */
-	UFUNCTION(CallInEditor, DisplayName ="Reset Initial Conditions")
+	UFUNCTION(BlueprintCallable, DisplayName ="Reset Initial Conditions")
 	void LoadAircraft(bool ResetToDefaultSettings = true);
 
     /* Query the ground for a contact point and normal - JSBSims uses a lot this function to query contacts */
