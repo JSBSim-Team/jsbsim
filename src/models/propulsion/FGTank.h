@@ -81,6 +81,13 @@ CLASS DOCUMENTATION
     The heat capacity of jet fuel is assumed to be 900 Joules/lbm/K, and the 
     heat transfer factor of the tank is 1.115 Watts/sq-ft/K.
 
+    The computed temperature is published as
+    <tt>propulsion/tank[i]/temperature-degC</tt> and may be both read and
+    written. Because the calculation is only performed for tanks which specify
+    an initial fuel temperature, this property is only created for those tanks:
+    a tank whose configuration omits <tt>&lt;temperature&gt;</tt> models no
+    temperature and therefore publishes none.
+
 <h3>Fuel Dump:</h3>
 
     Fuel dumping is handled by the FGPropulsion class.  A standpipe can be

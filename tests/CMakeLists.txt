@@ -8,6 +8,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestPointMassInertia
                  CheckMomentsUpdate
                  TestFuelTanksInertia
+                 TestFuelTankTemperature
                  TestInputSocket
                  TestInitialConditions
                  CheckScripts
