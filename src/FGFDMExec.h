@@ -556,6 +556,9 @@ public:
   /// Returns the simulation delta T.
   double GetDeltaT(void) const {return dT;}
 
+  /// Returns the integration time step even when integration is suspended.
+  double GetIntegrationDeltaT(void) const {return dT == 0.0 ? saved_dT : dT;}
+
   /// Suspends the simulation and sets the delta T to zero.
   void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
 
