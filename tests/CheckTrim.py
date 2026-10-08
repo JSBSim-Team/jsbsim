@@ -168,48 +168,58 @@ class CheckTrim(JSBSimTestCase):
         map_inhg = fdm['propulsion/engine/map-inhg']
         bsfc = fdm['propulsion/engine/bsfc-lbs_hphr']
         self.assertAlmostEqual(bsfc, 0.3 + 0.005 * map_inhg, delta=1e-3)
+        self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+        self.assertGreater(fdm['propulsion/engine/propeller-rpm'], 0.0)
 
-    def test_steady_state_budget_is_independent_for_each_engine(self):
-        # Engine 0 cannot settle in 6,000 calculations; it must not use up
-        # engine 1's budget before engine 1 is calculated.
-        script_path = self.sandbox.path_to_jsbsim_file('scripts',
-                                                       '737_cruise.xml')
+    def test_steady_state_settles_fcs_throttle_filter(self):
+        # A single FCS refresh leaves a lagged throttle short of its target.
+        # Thrust can remain unchanged for one calculation while RPM updates,
+        # so convergence must include successive FCS and engine updates.
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
         aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
                                                           self.sandbox)
-        first_engine = aircraft_tree.getroot().find('propulsion/engine')
-        del first_engine.attrib['file']
-        slow_turbine = et.parse(self.sandbox.path_to_jsbsim_file(
-            'engine', 'CFM56.xml')).getroot()
-        spool_down = et.SubElement(slow_turbine, 'function',
-                                   name='N2SpoolDown')
-        et.SubElement(spool_down, 'value').text = '0.001'
-        first_engine.insert(0, slow_turbine)
+        system = et.SubElement(aircraft_tree.getroot(), 'system',
+                               name='Throttle control')
+        channel = et.SubElement(system, 'channel', name='Throttle lag')
+        channel.append(et.fromstring('''
+            <lag_filter name="systems/throttle-lag">
+              <input>fcs/throttle-cmd-norm</input>
+              <c1>1.0</c1>
+              <output>fcs/throttle-pos-norm</output>
+            </lag_filter>'''))
         aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
                                          aircraft_name + '.xml'))
 
         fdm = self.create_fdm()
         fdm.set_aircraft_path(self.sandbox('aircraft'))
         self.assertTrue(fdm.load_model(aircraft_name))
-        self.assertTrue(fdm.load_ic('cruise_init', True))
+        self.assertTrue(fdm.load_ic('reset01', True))
+        fdm['ic/h-sl-ft'] = 10000.0
+        fdm['ic/vc-kts'] = 90.0
         self.assertTrue(fdm.run_ic())
         propulsion = fdm.get_propulsion()
-        propulsion.init_running(-1)
-        fdm['fcs/throttle-cmd-norm[0]'] = 0.0
-        fdm['fcs/throttle-cmd-norm[1]'] = 0.0
-        fdm.run()
-        self.assertGreater(fdm['propulsion/engine[1]/n2'], 90.0)
 
+        fdm['fcs/throttle-cmd-norm'] = 0.5
         fdm.set_trim_status(True)
         fdm.suspend_integration()
         try:
+            # Initialize the one-second filter while holding the aircraft's
+            # position and velocity fixed, then settle it at half throttle.
+            for _ in range(1200):
+                fdm.run()
             propulsion.get_steady_state()
+            self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], 0.5,
+                                   delta=1e-4)
+
+            fdm['fcs/throttle-cmd-norm'] = 0.8
+            fdm.run()
+            propulsion.get_steady_state()
+            self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], 0.8,
+                                   delta=1e-5)
+            self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
         finally:
             fdm.resume_integration()
             fdm.set_trim_status(False)
-
-        self.assertGreater(fdm['propulsion/engine[0]/n2'], 60.0)
-        self.assertAlmostEqual(fdm['propulsion/engine[1]/n2'], 60.0,
-                               delta=0.01)
 
 
 RunTest(CheckTrim)

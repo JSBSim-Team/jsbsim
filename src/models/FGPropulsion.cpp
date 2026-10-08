@@ -46,7 +46,6 @@ INCLUDES
 
 #include <iomanip>
 #include <array>
-#include <algorithm>
 
 #include "FGFDMExec.h"
 #include "FGPropulsion.h"
@@ -265,11 +264,8 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 
 bool FGPropulsion::GetSteadyState(void)
 {
-  bool steady = false;
   const bool TrimMode = FDMExec->GetTrimStatus();
   double TimeStep = FDMExec->GetDeltaT();
-  const int max_iterations = 6000;
-  vector<int> iterations(Engines.size(), 0);
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
@@ -280,49 +276,31 @@ bool FGPropulsion::GetSteadyState(void)
     // reach a steady state.
     in.TotalDeltaT = 0.5;
 
-    while (!steady) {
-      for (size_t i = 0; i < Engines.size(); ++i) {
-        auto& engine = Engines[i];
-        double lastThrust = -1.0;
-        int steady_count = 0;
-        while (steady_count <= 120 && iterations[i] < max_iterations) {
-          engine->Calculate();
-          double thrust = engine->GetThrust();
-          steady_count = fabs(lastThrust - thrust) < 0.0001
-                       ? steady_count + 1 : 0;
-          lastThrust = thrust;
-          ++iterations[i];
-        }
+    int steady_count = 0;
+    for (int j = 0; j < 6000 && steady_count <= 120; ++j) {
+      // Refresh feedback once per step for all engines. Settling engines
+      // individually would advance the other engines' FCS controllers with
+      // stale feedback. InitRunning() must retain its fixed startup controls.
+      if (TrimMode) {
+        auto FCS = FDMExec->GetFCS();
+        FCS->Run(false);
+        in.ThrottlePos = FCS->GetThrottlePos();
+        in.MixturePos = FCS->GetMixturePos();
+        in.ThrottleCmd = FCS->GetThrottleCmd();
+        in.MixtureCmd = FCS->GetMixtureCmd();
+        in.PropAdvance = FCS->GetPropAdvance();
+        in.PropFeather = FCS->GetPropFeather();
       }
 
-      // InitRunning() also calls this routine, but must keep its startup
-      // controls fixed while the engine settles.
-      if (!TrimMode || all_of(iterations.begin(), iterations.end(),
-                              [max_iterations](int n) { return n >= max_iterations; }))
-        break;
-
-      // FCS functions may use the settled engine state to compute inputs such
-      // as BSFC, volumetric efficiency, and mixture position. Refresh them
-      // between engine settling passes, rather than advancing all FCS channels
-      // at the engine's artificial 0.5 second time step.
-      auto FCS = FDMExec->GetFCS();
-      FCS->Run(false);
-      in.ThrottlePos = FCS->GetThrottlePos();
-      in.MixturePos = FCS->GetMixturePos();
-      in.ThrottleCmd = FCS->GetThrottleCmd();
-      in.MixtureCmd = FCS->GetMixtureCmd();
-      in.PropAdvance = FCS->GetPropAdvance();
-      in.PropFeather = FCS->GetPropFeather();
-
-      steady = true;
-      for (size_t i = 0; i < Engines.size(); ++i) {
-        if (iterations[i] >= max_iterations) continue;
-        auto& engine = Engines[i];
+      bool steady = true;
+      for (auto& engine: Engines) {
         double lastThrust = engine->GetThrust();
         engine->Calculate();
         steady = steady && fabs(lastThrust - engine->GetThrust()) < 0.0001;
-        ++iterations[i];
       }
+      // A propeller's thrust may lag a control change by one calculation.
+      // Require sustained convergence of the coupled FCS/engine calculation.
+      steady_count = steady ? steady_count + 1 : 0;
     }
 
     for (auto& engine: Engines) {
