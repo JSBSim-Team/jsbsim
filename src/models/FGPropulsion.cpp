@@ -272,9 +272,10 @@ bool FGPropulsion::GetSteadyState(void)
 
   if (!FGModel::Run(false)) {
     FDMExec->SetTrimStatus(true);
-    // This is a time marching algorithm so it needs a non-zero time step to
-    // reach a steady state.
-    in.TotalDeltaT = 0.5;
+    // Advance engines at the simulation rate, including while integration is
+    // suspended. A larger step can destabilize a propeller governor even with
+    // fixed controls, and during trim it also decouples engines from FCS time.
+    in.TotalDeltaT = FDMExec->GetIntegrationDeltaT();
 
     int steady_count = 0;
     for (int j = 0; j < 6000 && steady_count <= 120; ++j) {

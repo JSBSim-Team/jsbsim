@@ -19,6 +19,7 @@
 #
 
 import xml.etree.ElementTree as et
+from itertools import product
 
 from JSBSim_utils import JSBSimTestCase, RunTest, CopyAircraftDef
 from jsbsim import TrimFailureError
@@ -120,6 +121,55 @@ class CheckTrim(JSBSimTestCase):
         while fdm.run():
             if fdm['simulation/trim-completed'] == 1:
                 break
+
+    def test_p51d_trim_with_manifold_pressure_control(self):
+        # Trim must drive the pilot's MAP command, and the automatic controller
+        # must keep using engine feedback during and after settling (issue #1440).
+        for dt, use_starter in product((1.0 / 120.0, 1.0 / 60.0), (False, True)):
+            with self.subTest(dt=dt, use_starter=use_starter):
+                fdm = self.create_fdm()
+                fdm.set_dt(dt)
+                self.assertTrue(fdm.load_model('p51d'))
+                fdm['ic/h-sl-ft'] = 10000.0
+                fdm['ic/vc-kts'] = 240.0
+                fdm['fcs/throttle-cmd-norm'] = 0.6
+                self.assertTrue(fdm.run_ic())
+
+                if use_starter:
+                    fdm['fcs/mixture-cmd-norm'] = 0.5
+                    fdm['propulsion/magneto_cmd'] = 3
+                    fdm['propulsion/starter_cmd'] = 1
+                    for _ in range(round(2.5 / dt)):
+                        self.assertTrue(fdm.run())
+                    fdm['propulsion/starter_cmd'] = 0
+                else:
+                    fdm['propulsion/set-running'] = -1
+                    fdm['fcs/mixture-cmd-norm'] = 0.5
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+
+                sim_time = fdm.get_sim_time()
+                fdm['simulation/do_simple_trim'] = 0  # Longitudinal trim
+                self.assertEqual(fdm.get_sim_time(), sim_time)
+                self.assertEqual(fdm.get_delta_t(), dt)
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+                self.assertGreater(fdm['propulsion/engine/propeller-rpm'], 0.0)
+                for axis in ('udot-ft_sec2', 'wdot-ft_sec2', 'qdot-rad_sec2'):
+                    self.assertAlmostEqual(fdm['accelerations/' + axis], 0.0,
+                                           delta=1e-3)
+
+                map_inhg = fdm['propulsion/engine/map-inhg']
+                throttle = fdm['fcs/throttle-pos-norm']
+                self.assertAlmostEqual(map_inhg,
+                                       fdm['systems/engine/target-mp-inhg'],
+                                       delta=1e-3)
+                # The controller remains active: resuming flight must not cause
+                # a throttle/MAP jump from stale or reset controller state.
+                self.assertTrue(fdm.run())
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+                self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], throttle,
+                                       delta=1e-3)
+                self.assertAlmostEqual(fdm['propulsion/engine/map-inhg'], map_inhg,
+                                       delta=1e-2)
 
     def test_piston_steady_state_refreshes_fcs_engine_feedback(self):
         # The FCS sets BSFC from MAP, which changes while the piston engine
