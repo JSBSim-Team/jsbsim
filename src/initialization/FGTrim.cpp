@@ -291,7 +291,10 @@ bool FGTrim::DoTrim(void) {
       //Oh, well: two out of three ain't bad
       for(unsigned int current_axis=0;current_axis<TrimAxes.size();current_axis++) {
         //these checks need to be done after all the axes have run
-        if(!TrimAxes[current_axis].InTolerance()) {
+        // Other axes may have moved a solved axis out of tolerance. Revisit
+        // its local solution before testing the full control range, whose
+        // endpoints need not bracket a root (e.g. lift beyond stall).
+        if(!TrimAxes[current_axis].InTolerance() && !solution[current_axis]) {
           if(!checkLimits(TrimAxes[current_axis])) {
             // special case this for now -- if other cases arise proper
             // support can be added to FGTrimAxis
