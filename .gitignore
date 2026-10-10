@@ -112,3 +112,11 @@ UnrealEngine/UEReferenceApp.xcworkspace
 UnrealEngine/UEReferenceApp.sln
 UnrealEngine/.vsconfig
 UnrealEngine/UpgradeLog.htm
+
+# Authored JavaScript/WebAssembly build tooling.
+!wasm/build-toolchain.lock.json
+!wasm/scripts/build.mjs
+!wasm/scripts/build-wasm.mjs
+!wasm/scripts/build-wasm.sh
+!wasm/scripts/build-system/
+!wasm/scripts/build-system/**

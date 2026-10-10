@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "node": "v26.8.2",
+  "npm": "11.19.1",
+  "emscripten": {
+    "version": "6.0.9",
+    "profiles": [
+      {
+        "id": "homebrew-6.0.9",
+        "platforms": [
+          "darwin",
+          "linux"
+        ],
+        "banner": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.9-git",
+        "evidence": {
+          "sourceTag": "https://github.com/emscripten-core/emscripten/tree/6.0.9",
+          "sourceArchiveSha256": "f15e20d2b485f047fee35e5801cbf85be1edd696602c919d60f122f9d18d4529",
+          "installedFormulaSha256": "db7aeb855778dd7d7e0815168e2eb34960275e06cc3c72465944ad0aa15104b3"
+        }
+      },
+      {
+        "id": "emsdk-6.0.9",
+        "platforms": [
+          "linux",
+          "darwin"
+        ],
+        "banner": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.9",
+        "evidence": {
+          "releaseRevision": "f04ea239d533260dd1db760dd2d668d5f9a88d6b",
+          "versionRewriteSource": "https://chromium.googlesource.com/emscripten-releases/+/f04ea239d533260dd1db760dd2d668d5f9a88d6b/src/build.py",
+          "versionRewriteSourceSha256": "40072503d8f891874ea3b048f3375f824ba376ab0915f3e50004ea88b0ba8f78"
+        }
+      },
+      {
+        "id": "emsdk-6.0.9-revision",
+        "platforms": [
+          "linux",
+          "darwin"
+        ],
+        "banner": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.9 (4e4223852a0835923411059a3929907d7df1232e)",
+        "evidence": {
+          "sourceTag": "https://github.com/emscripten-core/emscripten/tree/6.0.9",
+          "sourceRevision": "4e4223852a0835923411059a3929907d7df1232e",
+          "releaseRevision": "f04ea239d533260dd1db760dd2d668d5f9a88d6b",
+          "releaseTagMappingSource": "https://github.com/emscripten-core/emsdk/blob/5eb0bde7585670252e8ba05e9d361627bffd08b5/emscripten-releases-tags.json",
+          "releaseTagMappingSourceSha256": "f78d31a9cc50deeee9c9c61d467ad76749da5e4dc82d3b4a910bf6711312c457",
+          "releaseDepsSource": "https://chromium.googlesource.com/emscripten-releases/+/f04ea239d533260dd1db760dd2d668d5f9a88d6b/DEPS",
+          "releaseDepsSourceSha256": "6573240bc51834574376040f45dac06132d0d3fc35edd3f9302b285fdcf94a76",
+          "revisionFileSource": "https://github.com/emscripten-core/emscripten/blob/4e4223852a0835923411059a3929907d7df1232e/tools/install.py",
+          "revisionFileSourceSha256": "88bef2a3288b1b68eeadfb5f8a733555e200545576dea7214c6c52265b914a54",
+          "versionStringSource": "https://github.com/emscripten-core/emscripten/blob/4e4223852a0835923411059a3929907d7df1232e/tools/cmdline.py",
+          "versionStringSourceSha256": "d0ceb94f413f873db7cc5eedf71651c59c279b3bae7ee875580c36b420ba0a25",
+          "versionRewriteSource": "https://chromium.googlesource.com/emscripten-releases/+/f04ea239d533260dd1db760dd2d668d5f9a88d6b/src/build.py",
+          "versionRewriteSourceSha256": "40072503d8f891874ea3b048f3375f824ba376ab0915f3e50004ea88b0ba8f78",
+          "observedWorkflowRun": "https://github.com/Felipegalind0/jsbsim/actions/runs/34791169097"
+        }
+      }
+    ]
+  },
+  "cmake": "cmake version 4.4.3"
+}
