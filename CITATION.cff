@@ -1,29 +1,40 @@
-cff-version: "1.2.0"
-title: "JSBSim - An Open Source Flight Dynamics Software Library"
-abstract: "JSBSim is a multi-platform, general purpose object-oriented Flight Dynamics Model (FDM) written in C++. JSBSim is a research software that can be run in a standalone batch mode flight simulator (no graphical displays a.k.a. console mode) for testing and study, or it can be integrated with the Unreal engine, FlightGear and many other simulation environments."
+cff-version: 1.2.0
+title: JSBSim - An Open Source Flight Dynamics Software Library
+message: >-
+  If you use this software, please cite it using these
+  metadata.
+type: software
 authors:
-- family-names: Berndt
-  given-names: Jon S.
-  orcid: "https://orcid.org/0009-0009-9701-2182"
-- family-names: Coconnier
-  given-names: Bertrand
-  orcid: "https://orcid.org/0009-0000-0065-3704"
-- family-names: De Marco
-  given-names: Agostino
-  orcid: "https://orcid.org/0000-0001-5985-9950"
-  affiliation: "University of Naples Federico II, Italy"
-- family-names: McLeod
-  given-names: Sean
-  orcid: "https://orcid.org/0009-0003-1039-8307"
-date-released: "2026-10-09"
+  - family-names: Berndt
+    given-names: Jon S.
+    orcid: 'https://orcid.org/0009-0009-9701-2182'
+  - family-names: Coconnier
+    given-names: Bertrand
+    orcid: 'https://orcid.org/0009-0000-0065-3704'
+  - family-names: De Marco
+    given-names: Agostino
+    orcid: 'https://orcid.org/0000-0001-5985-9950'
+    affiliation: 'University of Naples Federico II, Italy'
+  - family-names: McLeod
+    given-names: Sean
+    orcid: 'https://orcid.org/0009-0003-1039-8307'
 identifiers:
-  - description: "This is the collection of archived snapshots of all versions of JSBSim"
-    type: doi
+  - type: doi
     value: 10.5281/zenodo.20258621
+    description: >-
+      This is the latest version of archived JSBSim
+      snapshots
+repository-code: 'https://github.com/JSBSim-Team/jsbsim'
+abstract: >-
+  JSBSim is a multi-platform, general purpose
+  object-oriented Flight Dynamics Model (FDM) written in
+  C++. JSBSim is a research software that can be run as a
+  standalone batch-mode flight simulator (no graphical
+  displays a.k.a. console mode) for testing and study, or it
+  can be integrated with the Unreal engine, FlightGear and
+  many other simulation environments.
 keywords:
   - Flight Dynamics Modeling
   - Flight simulation
-license: "LGPL 2.1"
-message: "If you use this software, please cite it using these metadata."
-repository-code: "https://github.com/JSBSim-Team/jsbsim"
-doi: 10.5281/zenodo.20258621
+license: LGPL-2.1
+date-released: '2026-10-09'
