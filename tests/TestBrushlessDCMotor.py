@@ -83,17 +83,15 @@ class TestBrushlessDCMotor(JSBSimTestCase):
             pass
         driving = [self.torque_per_friction_free_current(n) for n in ENGINES]
 
-        braking = [None]*len(ENGINES)
-        for _ in self.run_steps(0.0, STOP_STEPS):
-            for n in ENGINES:
-                current = self.fdm['propulsion/engine[%d]/current-amperes' % n]
-                if braking[n] is None and current < -self.i0:
-                    braking[n] = self.torque_per_friction_free_current(n)
+        self.fdm['fcs/throttle-cmd-norm'] = 0.0
+        self.fdm.run()
+        self.fdm.run()
+
         for n in ENGINES:
-            self.assertIsNotNone(braking[n])
-            # Same torque law driving and braking: the friction resists the
-            # rotation in both.
-            self.assertAlmostEqual(braking[n] / driving[n], 1.0, places=9)
+            current = self.fdm[f'propulsion/engine[{n}]/current-amperes']
+            self.assertLess(current, -self.i0)
+            braking = self.torque_per_friction_free_current(n)
+            self.assertAlmostEqual(braking / driving[n], 1.0, places=9)
 
 
 RunTest(TestBrushlessDCMotor)
