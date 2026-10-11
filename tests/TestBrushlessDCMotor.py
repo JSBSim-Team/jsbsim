@@ -26,8 +26,8 @@ from JSBSim_utils import JSBSimTestCase, RunTest
 
 ENGINES = range(4)
 SPIN_UP_THROTTLE = 0.3  # Below the F450 hover throttle: it stays on the ground.
-SPIN_UP_STEPS = 480
-STOP_STEPS = 1200
+SPIN_UP_STEPS = 480  # 4 seconds at default 120Hz
+STOP_STEPS = 120  # 1 second at 120Hz
 
 
 class TestBrushlessDCMotor(JSBSimTestCase):
