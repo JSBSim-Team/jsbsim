@@ -46,8 +46,8 @@ class TestBrushlessDCMotor(JSBSimTestCase):
         self.fdm.run_ic()
 
     def run_steps(self, throttle, steps):
+        self.fdm['fcs/throttle-cmd-norm'] = throttle
         for _ in range(steps):
-            self.fdm['fcs/throttle-cmd-norm'] = throttle
             self.fdm.run()
             yield
 
