@@ -58,6 +58,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestSensorRandomSeed
                  TestPQRdot
                  TestThrusterReset
+                 TestMassChangeOnGround
                  TestBrushlessDCMotor)
 
 foreach(test ${PYTHON_TESTS})
