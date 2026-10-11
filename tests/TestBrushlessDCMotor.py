@@ -49,41 +49,39 @@ class TestBrushlessDCMotor(JSBSimTestCase):
         self.fdm['fcs/throttle-cmd-norm'] = throttle
         for _ in range(steps):
             self.fdm.run()
-            yield
 
     def torque_per_friction_free_current(self, n):
         # Motor torque, up to a constant factor, over the current that remains
         # once the friction is overcome by a turning shaft: (5) in Drela's
         # "First-Order DC Electric Motor Model".
-        engine = 'propulsion/engine[%d]/' % n
+        engine = f'propulsion/engine[{n}]/'
         current = self.fdm[engine + 'current-amperes']
-        volts = self.max_volts * self.fdm['fcs/throttle-pos-norm[%d]' % n]
+        volts = self.max_volts * self.fdm[f'fcs/throttle-pos-norm[{n}]']
         rpm = (volts - current * self.resistance) * self.kv
         return self.fdm[engine + 'power-hp'] / rpm / (current - self.i0)
 
     def test_cut_throttle_stops_propellers(self):
-        for _ in self.run_steps(SPIN_UP_THROTTLE, SPIN_UP_STEPS):
-            pass
+        self.run_steps(SPIN_UP_THROTTLE, SPIN_UP_STEPS)
         for n in ENGINES:
-            self.assertGreater(self.fdm['propulsion/engine[%d]/propeller-rpm' % n],
-                               1000.0)
+            self.assertGreater(
+                self.fdm[f'propulsion/engine[{n}]/propeller-rpm'], 1000.0)
 
-        for _ in self.run_steps(0.0, STOP_STEPS):
-            pass
+        self.run_steps(0.0, STOP_STEPS)
+        stall_rpm = self.i0*self.resistance*self.kv
         for n in ENGINES:
-            self.assertEqual(self.fdm['fcs/throttle-pos-norm[%d]' % n], 0.0)
+            self.assertEqual(self.fdm[f'fcs/throttle-pos-norm[{n}]'], 0.0)
             # The friction used to vanish below I0*R*Kv, where a motor whose
             # throttle is cut no longer draws I0 from its back EMF.
-            self.assertEqual(self.fdm['propulsion/engine[%d]/propeller-rpm' % n],
-                             0.0, msg='engine %d, the friction vanishes below '
-                             '%.1f RPM' % (n, self.i0*self.resistance*self.kv))
+            self.assertEqual(self.fdm[f'propulsion/engine[{n}]/propeller-rpm'],
+                             0.0, msg=f'engine {n}, the friction vanishes '
+                             f'below {stall_rpm:.1f} RPM')
 
     def test_friction_resists_rotation(self):
-        for _ in self.run_steps(SPIN_UP_THROTTLE, SPIN_UP_STEPS):
-            pass
+        self.run_steps(SPIN_UP_THROTTLE, SPIN_UP_STEPS)
         driving = [self.torque_per_friction_free_current(n) for n in ENGINES]
 
         self.fdm['fcs/throttle-cmd-norm'] = 0.0
+        # Effectors.xml runs before FlightControl.xml: the cut needs 2 frames.
         self.fdm.run()
         self.fdm.run()
 
