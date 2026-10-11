@@ -135,17 +135,21 @@ void FGBrushLessDCMotor::Calculate(void)
 
   Current = (V - RPM / Kv) / CoilResistance; // Equation (4) from Drela's document
 
-  // Compute torque from current with Kq=1/Kv considering NoLoadCurrent deadband
-  // The "zero torque current" is by definition the current necessary for the
-  // motor to overcome internal friction : it is always resisting the torque and
-  // consequently has an opposite to the current.
+  // Compute torque from current with Kq=1/Kv, equation (5) from Drela's
+  // document. The "zero torque current" is the current necessary for the motor
+  // to overcome its internal friction: the friction resists the rotation,
+  // whatever the sign of the current, and holds a motor at rest until the
+  // current overcomes it.
+  double FrictionCurrent;
 
-  double Torque = 0;
+  if (RPM > 0.0)
+    FrictionCurrent = ZeroTorqueCurrent;
+  else if (RPM < 0.0)
+    FrictionCurrent = -ZeroTorqueCurrent;
+  else
+    FrictionCurrent = Constrain(-ZeroTorqueCurrent, Current, ZeroTorqueCurrent);
 
-  if (Current >= ZeroTorqueCurrent)
-    Torque = (Current - ZeroTorqueCurrent) / Kv * WattperRPMtoftpound;
-  if (Current<=-ZeroTorqueCurrent)
-    Torque = (Current + ZeroTorqueCurrent) / Kv * WattperRPMtoftpound;
+  double Torque = (Current - FrictionCurrent) / Kv * WattperRPMtoftpound;
 
   // EnginePower must be non zero when accelerating from RPM == 0.0
   double EnginePower = ((2 * M_PI) * max(RPM, 0.0001) * Torque) / 60;  //units [#*ft/s]
