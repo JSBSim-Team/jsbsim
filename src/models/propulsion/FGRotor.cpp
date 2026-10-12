@@ -447,13 +447,13 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
   ct_l  = (1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda; // first time
 
   c0 = (LiftCurveSlope/2.0)*(ct_l + ct_t0 + ct_t1) * Solidity;
-  c0 = c0 / ( 2.0 * sqrt( sqr(mu) + sqr(lambda) ) + 1e-15);
+  c0 = flow_scale * c0 / ( 2.0 * sqrt( sqr(mu) + sqr(lambda) ) + 1e-15);
 
   // replacement for /SH79/ eqn(26).
-  // ref: dnu/dt = 1/tau ( Ct / (2*sqrt(mu^2+lambda^2))  -  nu )
+  // ref: dnu/dt = 1/tau ( flow_scale * Ct / (2*sqrt(mu^2+lambda^2))  -  nu )
   // taking mu and lambda constant, this integrates to
 
-  nu  = flow_scale * ((nu - c0) * exp(-dt/InflowLag) + c0);
+  nu  = (nu - c0) * exp(-dt/InflowLag) + c0;
 
   // now from nu to lambda, C_T, and Thrust
 
