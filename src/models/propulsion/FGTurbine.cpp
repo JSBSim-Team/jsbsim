@@ -351,7 +351,10 @@ double FGTurbine::Trim()
 {
     double idlethrust = MilThrust * IdleThrustLookup->GetValue();
     double milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
-    double N2 = IdleN2 + ThrottlePos * N2_factor;
+    // Trim establishes steady thrust without advancing time. Keep the
+    // observable spool state consistent with that same operating point.
+    N1 = IdleN1 + ThrottlePos * N1_factor;
+    N2 = IdleN2 + ThrottlePos * N2_factor;
     double N2norm = (N2 - IdleN2) / N2_factor;
     double thrust = (idlethrust + (milthrust * N2norm * N2norm))
           * (1.0 - BleedDemand);
