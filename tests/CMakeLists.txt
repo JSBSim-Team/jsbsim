@@ -60,7 +60,8 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestThrusterReset
                  TestMassChangeOnGround
                  TestBrushlessDCMotor
-                 TestRotorGroundEffect)
+                 TestRotorGroundEffect
+                 TestRotorZeroThrust)
 
 foreach(test ${PYTHON_TESTS})
   add_test(NAME ${test}
