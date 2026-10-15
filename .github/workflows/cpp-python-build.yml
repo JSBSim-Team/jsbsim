@@ -7,11 +7,13 @@ on:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "CITATION.cff"
       - "**/*.ipynb"
   pull_request:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "CITATION.cff"
       - "**/*.ipynb"
 
 env:
@@ -704,6 +706,10 @@ jobs:
       contents: write  # Needed for the GitHub release
       id-token: write  # Mandatory for PyPI trusted publishing
     steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Download files
         uses: actions/download-artifact@v8
       - name: Prepare files for deployment
@@ -721,16 +727,25 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: '3.10'
-      - name: PyPI deployment
-        uses: pypa/gh-action-pypi-publish@release/v1
-
-    # Deploy stable release to GitHub
       - name: Get JSBSim version
         run: |
           pip install -U 'numpy>=1.20'
           pip install jsbsim --no-index -f dist
-          export VERSION=`pip show jsbsim | grep -i version | awk '{ print $2 }'`
+          VERSION=$(pip show jsbsim | awk '/^Version:/ { print $2 }')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          # Check the version and release date of CITATION.cff
+          citation_version=$(sed -n 's/^version: *//p' CITATION.cff | tr -d "\"")
+          citation_version=${citation_version//\'/}
+          citation_date=$(sed -n 's/^date-released: *//p' CITATION.cff | tr -d "\"")
+          citation_date=${citation_date//\'/}
+          today=$(date -u +%F)
+          [[ "$citation_version" == "$VERSION" ]] || { echo "CITATION.cff version '$citation_version' does not match wheel version '$VERSION'"; exit 1; }
+          [[ "$citation_date" == "$today" ]] || { echo "CITATION.cff date-released '$citation_date' does not match today's UTC date '$today'"; exit 1; }
+      - name: PyPI deployment
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+    # Deploy stable release to GitHub
       - name: Get MSVC version
         run : |
           export MSVC_VERSION=`cat MSVC_version.txt`
@@ -760,10 +775,6 @@ jobs:
             GH_release/*.deb
 
       # Bump version
-      - name: Checkout JSBSim
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - name: Bump version
         run: |
           # Increment the value of PROJECT_VERSION_PATCH
@@ -772,6 +783,7 @@ jobs:
           echo "message(STATUS \"JSBSIM_VERSION:\${PROJECT_VERSION}\")" >> src/CMakeLists.txt
           export FUTURE_VERSION=`cmake . | grep JSBSIM_VERSION | awk -F':' '{print $2}'`
           echo "FUTURE_VERSION=$FUTURE_VERSION" >> $GITHUB_ENV
+          sed -ri "s/^version:.*/version: '$FUTURE_VERSION'/" CITATION.cff
           # Extract the project old version number
           export OLD_VERSION=`egrep 'JSBSim-([0-9]+\.)+[0-9]+-setup.exe' README.md | awk -F'JSBSim-' '{ print $2}' | awk -F'-setup.exe' '{ print $1}' | sed 's/\./\\\\./g'`
           echo "OLD_VERSION=$OLD_VERSION" >> $GITHUB_ENV
@@ -790,7 +802,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout $BRANCH_NAME
-          git commit -m "Bump stable release version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
+          git commit -m "Bump stable release version" CMakeLists.txt CITATION.cff README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
           git push origin $BRANCH_NAME
 
       # Bump stable version of the `master` branch
@@ -804,6 +816,9 @@ jobs:
         run: |
           # Increment the value of PROJECT_VERSION_PATCH
           sed -ri 's/(set\(PROJECT_VERSION_PATCH\s\")([0-9]+).*/echo "\1\\"$((\2+1))\.dev1\\"\\)/ge' CMakeLists.txt
+          TODAY=$(date -u +%F)
+          sed -ri "s/^version:.*/version: '${VERSION}'/" CITATION.cff
+          sed -ri "s/^date-released:.*/date-released: '${TODAY}'/" CITATION.cff
           # Update references to the current stable version in README.md
           sed -ri 's/_'"$OLD_VERSION"'-[0-9]+.amd64.deb/_'"$VERSION"'-'"$GITHUB_RUN_NUMBER"'.amd64.deb/g' README.md
           sed -ri 's/'"$OLD_VERSION"'/'"$VERSION"'/g' README.md
@@ -813,7 +828,7 @@ jobs:
           sed -ri 's/JSBSIM_VERSION=".*"/JSBSIM_VERSION="'$FUTURE_VERSION'.dev1"/g' JSBSimForUnreal.vcxproj
           # Update the MSVC version
           sed -ri 's/Visual Studio\s[A-Za-z0-9 ]+\s\(build\s[0-9.]+\)/'"$MSVC_VERSION"'/g' matlab/README.md
-          git commit -m "Bump version" CMakeLists.txt README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
+          git commit -m "Bump version" CMakeLists.txt CITATION.cff README.md matlab/README.md JSBSim.vcxproj JSBSimForUnreal.vcxproj
           git push origin master
 
   Documentation:
