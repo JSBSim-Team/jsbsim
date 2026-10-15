@@ -38,7 +38,9 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <cmath>
 #include <iomanip>
+#include <limits>
 
 #include "FGMassBalance.h"
 #include "FGFDMExec.h"
@@ -89,7 +91,8 @@ bool FGMassBalance::InitModel(void)
 {
   if (!FGModel::InitModel()) return false;
 
-  vLastXYZcg.InitMatrix();
+  // No CG seen yet. Not zero: a CG at the origin of the structural frame is valid.
+  vLastXYZcg.InitMatrix(std::numeric_limits<double>::quiet_NaN());
   vDeltaXYZcg.InitMatrix();
 
   return true;
@@ -207,7 +210,7 @@ bool FGMassBalance::Run(bool Holding)
 
   // Track frame-by-frame delta CG, and move the EOM-tracked location
   // by this amount.
-  if (vLastXYZcg.Magnitude() == 0.0) vLastXYZcg = vXYZcg;
+  if (std::isnan(vLastXYZcg(eX))) vLastXYZcg = vXYZcg;
   vDeltaXYZcg = vXYZcg - vLastXYZcg;
   vDeltaXYZcgBody = StructuralToBody(vLastXYZcg) - StructuralToBody(vXYZcg);
   vLastXYZcg = vXYZcg;

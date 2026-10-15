@@ -7,11 +7,13 @@ on:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "CITATION.cff"
       - "**/*.ipynb"
   pull_request:
     paths-ignore:
       - "**/*.md"
       - "joss_paper/**"
+      - "CITATION.cff"
       - "**/*.ipynb"
 
 jobs:
