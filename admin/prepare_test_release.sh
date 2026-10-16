@@ -2,6 +2,8 @@
 # Modify the files for a test release 0.99.xx where xx is the value passed
 # to the command line.
 
+set -e
+
 if [ -z "$1" ]; then
   echo "Please provide a patch version number."
   exit 1
@@ -18,5 +20,9 @@ sed -ri "/pypa\/gh-action-pypi-publish@release\/v1/a \        with:\n          r
 # Trigger a CodeQL review
 sed -ri "s/branches:\s\[master\]/branches: \[master, test-release\/v0.99\]/g" .github/workflows/codeql-analysis.yml
 
+# Prepare CITATION.cff
+sed -ri "s/^version:.*/version: '0.99.$1'/" CITATION.cff
+
+
 # Commit the changes.
-git commit -m "Prepare test release v0.99.$1" CMakeLists.txt JSBSim.vcxproj .github/workflows/cpp-python-build.yml .github/workflows/codeql-analysis.yml
+git commit -m "Prepare test release v0.99.$1" CMakeLists.txt CITATION.cff JSBSim.vcxproj .github/workflows/cpp-python-build.yml .github/workflows/codeql-analysis.yml
