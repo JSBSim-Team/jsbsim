@@ -4,6 +4,7 @@ on:
     paths:
       - joss_paper/**
       - .github/workflows/draft-pdf.yml
+      - CITATION.cff
 
 jobs:
   paper:
@@ -27,3 +28,17 @@ jobs:
           # paper.md
           path: joss_paper/paper.pdf
 
+  Citation-validation:
+    name: Citation metadata validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout JSBSim
+        uses: actions/checkout@v7
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.10'
+      - name: Install cffconvert
+        run: pip install cffconvert
+      - name: Validate CITATION.cff
+        run: cffconvert --validate --infile CITATION.cff
