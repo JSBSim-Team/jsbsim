@@ -264,10 +264,7 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 
 bool FGPropulsion::GetSteadyState(void)
 {
-  double currentThrust = 0, lastThrust = -1;
-  int steady_count = 0, j = 0;
-  bool steady = false;
-  bool TrimMode = FDMExec->GetTrimStatus();
+  const bool TrimMode = FDMExec->GetTrimStatus();
   double TimeStep = FDMExec->GetDeltaT();
 
   vForces.InitMatrix();
@@ -275,28 +272,39 @@ bool FGPropulsion::GetSteadyState(void)
 
   if (!FGModel::Run(false)) {
     FDMExec->SetTrimStatus(true);
-    // This is a time marching algorithm so it needs a non-zero time step to
-    // reach a steady state.
-    in.TotalDeltaT = 0.5;
+    // Advance engines at the simulation rate, including while integration is
+    // suspended. A larger step can destabilize a propeller governor even with
+    // fixed controls, and during trim it also decouples engines from FCS time.
+    in.TotalDeltaT = FDMExec->GetIntegrationDeltaT();
+
+    int steady_count = 0;
+    for (int j = 0; j < 6000 && steady_count <= 120; ++j) {
+      // Refresh feedback once per step for all engines. Settling engines
+      // individually would advance the other engines' FCS controllers with
+      // stale feedback. InitRunning() must retain its fixed startup controls.
+      if (TrimMode) {
+        auto FCS = FDMExec->GetFCS();
+        FCS->Run(false);
+        in.ThrottlePos = FCS->GetThrottlePos();
+        in.MixturePos = FCS->GetMixturePos();
+        in.ThrottleCmd = FCS->GetThrottleCmd();
+        in.MixtureCmd = FCS->GetMixtureCmd();
+        in.PropAdvance = FCS->GetPropAdvance();
+        in.PropFeather = FCS->GetPropFeather();
+      }
+
+      bool steady = true;
+      for (auto& engine: Engines) {
+        double lastThrust = engine->GetThrust();
+        engine->Calculate();
+        steady = steady && fabs(lastThrust - engine->GetThrust()) < 0.0001;
+      }
+      // A propeller's thrust may lag a control change by one calculation.
+      // Require sustained convergence of the coupled FCS/engine calculation.
+      steady_count = steady ? steady_count + 1 : 0;
+    }
 
     for (auto& engine: Engines) {
-      steady=false;
-      steady_count=0;
-      j=0;
-      while (!steady && j < 6000) {
-        engine->Calculate();
-        lastThrust = currentThrust;
-        currentThrust = engine->GetThrust();
-        if (fabs(lastThrust-currentThrust) < 0.0001) {
-          steady_count++;
-          if (steady_count > 120) {
-            steady=true;
-          }
-        } else {
-          steady_count=0;
-        }
-        j++;
-      }
       vForces  += engine->GetBodyForces();  // sum body frame forces
       vMoments += engine->GetMoments();     // sum body frame moments
     }
