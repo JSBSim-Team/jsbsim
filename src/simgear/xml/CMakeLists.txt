@@ -2,8 +2,7 @@ set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
 if(NOT SYSTEM_EXPAT)
-  list(APPEND SOURCES random_dev_urandom.c
-                      xmlparse.c
+  list(APPEND SOURCES xmlparse.c
                       xmltok.c
                       xmlrole.c)
   list(APPEND HEADERS ascii.h
@@ -17,7 +16,6 @@ if(NOT SYSTEM_EXPAT)
                       latin1tab.h
                       macconfig.h
                       nametab.h
-                      random_dev_urandom.h
                       utf8tab.h
                       winconfig.h
                       xcsinc.c
@@ -28,9 +26,18 @@ if(NOT SYSTEM_EXPAT)
                       xmltok_ns.c
                       expat_config.h
                       siphash.h)
+
   set_property(SOURCE xcsinc.c PROPERTY HEADER_FILE_ONLY)
   set_property(SOURCE xmltok_impl.c PROPERTY HEADER_FILE_ONLY)
   set_property(SOURCE xmltok_ns.c PROPERTY HEADER_FILE_ONLY)
+
+  if(WIN32)
+    list(APPEND SOURCES random_rand_s.c)
+    list(APPEND HEADERS random_rand_s.h)
+  else()
+    list(APPEND SOURCES random_dev_urandom.c)
+    list(APPEND HEADERS random_dev_urandom.h)
+  endif(WIN32)
 endif(NOT SYSTEM_EXPAT)
 
 add_library(Xml OBJECT ${SOURCES})
