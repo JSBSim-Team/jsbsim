@@ -14,7 +14,6 @@ if(NOT SYSTEM_EXPAT)
                       iasciitab.h
                       internal.h
                       latin1tab.h
-                      macconfig.h
                       nametab.h
                       utf8tab.h
                       winconfig.h

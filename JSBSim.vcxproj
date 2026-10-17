@@ -340,19 +340,24 @@
     <ClInclude Include="src\input_output\FGXMLElement.h" />
     <ClInclude Include="src\input_output\FGXMLFileRead.h" />
     <ClInclude Include="src\input_output\FGXMLParse.h" />
+    <ClInclude Include="src\simgear\xml\fallthrough.h" />
+    <ClInclude Include="src\simgear\xml\hash_table.h" />
     <ClInclude Include="src\simgear\xml\iasciitab.h" />
     <ClInclude Include="src\simgear\xml\internal.h" />
     <ClInclude Include="src\simgear\xml\latin1tab.h" />
-    <ClInclude Include="src\simgear\xml\macconfig.h" />
     <ClInclude Include="src\simgear\xml\nametab.h" />
+    <ClInclude Include="src\simgear\xml\random_rand_s.h" />
     <ClInclude Include="src\input_output\net_fdm.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
     <ClInclude Include="src\simgear\xml\winconfig.h" />
+    <ClInclude Include="src\simgear\xml\xcsinc.c" />
     <ClInclude Include="src\simgear\xml\xmlrole.h" />
     <ClInclude Include="src\simgear\xml\xmltok.h" />
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
+    <ClInclude Include="src\simgear\xml\xmltok_impl.c" />
+    <ClInclude Include="src\simgear\xml\xmltok_ns.c" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GeographicLib\Geodesic.cpp" />
@@ -458,6 +463,7 @@
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
     <ClCompile Include="src\simgear\props\props.cxx" />
+    <ClCompile Include="src\simgear\xml\random_rand_s.c" />
     <ClCompile Include="src\simgear\xml\xmlparse.c" />
     <ClCompile Include="src\simgear\xml\xmlrole.c" />
     <ClCompile Include="src\simgear\xml\xmltok.c" />
