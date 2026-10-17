@@ -80,7 +80,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;$(ProjectDir)src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>JSBSIM_STATIC_LINK;JSBSIM_VERSION="1.3.4.dev1";WIN32;NOMINMAX;_DEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -115,7 +115,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;$(ProjectDir)src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>JSBSIM_STATIC_LINK;JSBSIM_VERSION="1.3.4.dev1";WIN32;NOMINMAX;_DEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -152,7 +152,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;$(ProjectDir)src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>JSBSIM_STATIC_LINK;JSBSIM_VERSION="1.3.4.dev1";WIN32;NOMINMAX;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -195,7 +195,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)src\simgear\xml;$(ProjectDir)src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>JSBSIM_STATIC_LINK;JSBSIM_VERSION="1.3.4.dev1";WIN32;NOMINMAX;NDEBUG;_CONSOLE;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -267,7 +267,7 @@
     <ClInclude Include="src\simgear\magvar\coremag.hxx" />
     <ClInclude Include="src\simgear\xml\easyxml.hxx" />
     <ClInclude Include="src\simgear\xml\expat.h" />
-    <ClInclude Include="src\simgear\xml\expat_config.h" />
+    <ClInclude Include="src\simgear\xml\msvc\expat_config.h" />
     <ClInclude Include="src\simgear\xml\expat_external.h" />
     <ClInclude Include="src\models\flight_control\FGAccelerometer.h" />
     <ClInclude Include="src\models\flight_control\FGActuator.h" />
@@ -340,19 +340,24 @@
     <ClInclude Include="src\input_output\FGXMLElement.h" />
     <ClInclude Include="src\input_output\FGXMLFileRead.h" />
     <ClInclude Include="src\input_output\FGXMLParse.h" />
+    <ClInclude Include="src\simgear\xml\fallthrough.h" />
+    <ClInclude Include="src\simgear\xml\hash_table.h" />
     <ClInclude Include="src\simgear\xml\iasciitab.h" />
     <ClInclude Include="src\simgear\xml\internal.h" />
     <ClInclude Include="src\simgear\xml\latin1tab.h" />
-    <ClInclude Include="src\simgear\xml\macconfig.h" />
     <ClInclude Include="src\simgear\xml\nametab.h" />
+    <ClInclude Include="src\simgear\xml\random_rand_s.h" />
     <ClInclude Include="src\input_output\net_fdm.hxx" />
     <ClInclude Include="src\simgear\props\props.hxx" />
     <ClInclude Include="src\simgear\misc\stdint.hxx" />
     <ClInclude Include="src\simgear\xml\utf8tab.h" />
     <ClInclude Include="src\simgear\xml\winconfig.h" />
+    <ClInclude Include="src\simgear\xml\xcsinc.c" />
     <ClInclude Include="src\simgear\xml\xmlrole.h" />
     <ClInclude Include="src\simgear\xml\xmltok.h" />
     <ClInclude Include="src\simgear\xml\xmltok_impl.h" />
+    <ClInclude Include="src\simgear\xml\xmltok_impl.c" />
+    <ClInclude Include="src\simgear\xml\xmltok_ns.c" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GeographicLib\Geodesic.cpp" />
@@ -458,6 +463,7 @@
     <ClCompile Include="src\input_output\FGXMLParse.cpp" />
     <ClCompile Include="src\JSBSim.cpp" />
     <ClCompile Include="src\simgear\props\props.cxx" />
+    <ClCompile Include="src\simgear\xml\random_rand_s.c" />
     <ClCompile Include="src\simgear\xml\xmlparse.c" />
     <ClCompile Include="src\simgear\xml\xmlrole.c" />
     <ClCompile Include="src\simgear\xml\xmltok.c" />

@@ -49,6 +49,7 @@ sdist.include = [
     "python/CMakeLists.txt",
     "/COPYING",
     "src/simgear/xml/COPYING",
+    "src/simgear/xml/*.cmake",
     "src/GeographicLib/LICENSE.txt",
     "src/**/*.cpp",
     "src/**/*.hpp",
