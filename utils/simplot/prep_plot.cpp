@@ -4,7 +4,7 @@
  Author:       Jon S. Berndt
  Date started: 11/24/2006
  Purpose:      CSV -> gnuplot prepping tool
- 
+
  ------------- Copyright (C) 2006  Jon S. Berndt (jon@jsbsim.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -61,7 +61,7 @@ Compiling:
 g++ prep_plot.cpp plotXMLVisitor.cpp ../simgear/xml/easyxml.cxx -I ../ -L ../simgear/xml/ -lExpat -o prep_plot.exe
 
 These compiler options may produce a faster executable if your machines supports it:
--O9 -march=nocona 
+-O9 -march=nocona
 
 Usage:
 (note that an argument with embedded spaces needs to be surrounded by quotes)
@@ -102,6 +102,7 @@ INCLUDES
 #include "plotXMLVisitor.h"
 
 using namespace std;
+using namespace JSBSim;
 
 string plot_range;
 
@@ -112,7 +113,7 @@ typedef vector <string_array> multi_string_array;
 multi_string_array NamesArray;
 bool multiplot=false;
 
-string HaveTerm(const vector <string>&, const string); 
+string HaveTerm(const vector <string>&, const string);
 int GetTermIndex(const vector <string>&, const string);
 void EmitComparisonPlot(const vector <string>&, const int, const string);
 void EmitSinglePlot(const string, const int, const string);
@@ -155,7 +156,7 @@ int main(int argc, char **argv)
   unsigned int AXIS_FONT_SZ = 12;
   unsigned int TIMESTAMP_FONT_SZ = 10;
   unsigned int TICS_FONT_SZ = 10;
-  
+
   string start_time="", end_time="";
 
   if (argc == 1 || string(argv[1]) == "--help") {
@@ -203,9 +204,9 @@ int main(int argc, char **argv)
   getline(infile, in_string, '\n');
   string_array names = split(in_string, ',');
   unsigned int num_names=names.size();
-  
+
   // Read command line args
-  
+
   for (int i=2; i<argc; i++) {
     input_arg = string(argv[i]);
     if (input_arg.substr(0,6) == "--plot") {
@@ -320,7 +321,7 @@ int main(int argc, char **argv)
   if (!supplied_title.empty()) {
     cout << "set title \"" << supplied_title << "\" font \"" << TITLE_FONT << "\"" << endl;
   }
-  
+
   cout << "set datafile separator \",\"" << endl;
   cout << "set grid xtics ytics" << endl;
   cout << "set xtics font \"" << TICS_FONT << "\"" << endl;
@@ -331,9 +332,9 @@ int main(int argc, char **argv)
     cout << set_thickness << endl;
 
   if (comprehensive) {
-  
+
     for (unsigned int i=1;i<num_names;i++) {
-    
+
       if ( i <= num_names-3 &&
            (
              (
@@ -403,7 +404,7 @@ int main(int argc, char **argv)
     } else { // Straight single value to plot
 
         if (!supplied_title.empty()) { // title added
-          cout << "set title \"" << supplied_title 
+          cout << "set title \"" << supplied_title
                << "\\n" << names[i] << " vs. Time\" font \"" << TITLE_FONT << "\"" << endl;
         } else {
           cout << "set title \"" << names[i] << " vs. Time\" font \"" << TITLE_FONT << "\"" << endl;
@@ -459,7 +460,7 @@ int main(int argc, char **argv)
     for (int page=0; page<myVisitor.vPages.size(); page++) {
       int numPlots = myVisitor.vPages[page].vPlots.size();
       newPlot.str("");
-      
+
       // Calculate margins smartly
       float marginXLabel = 0.0;
       for (int plot=1; plot<numPlots; plot++)
@@ -505,7 +506,7 @@ int main(int argc, char **argv)
         if (!result) break;
         newPlot << "unset timestamp" << endl;
       }
-    
+
       newPlot << "unset multiplot" << endl;
       newPlot << "set size 1.0,1.0" << endl;
       newPlot << "set origin 0.0,0.0" << endl;
@@ -583,7 +584,7 @@ bool MakeArbitraryPlot(
       newPlot << "set title \"" << Title << "\" font \"" << LABEL_FONT << "\"" << endl;
     else
       newPlot << "unset title" << endl;
-    
+
     // X axis caption and ranges
     if (!myPlot.Axis_Caption[eX].empty()) {
       newPlot << "set xlabel \"" << myPlot.Axis_Caption[eX] << "\" font \"" << LABEL_FONT << "\"" << endl;
@@ -628,11 +629,11 @@ bool MakeArbitraryPlot(
         newPlot << ", \\" << endl;
         for (i=1; i<numLeftYAxisNames-1; i++) {
           newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
-               << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with " << plotType << " title \"" 
+               << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with " << plotType << " title \""
                << LeftYAxisNames[i] << "\", \\" << endl;
         }
-        newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
-             << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
+        newPlot << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":"
+             << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \""
              << LeftYAxisNames[numLeftYAxisNames-1] << "\"";
       }
       if (numRightYAxisNames > 0) {
@@ -686,11 +687,11 @@ bool MakeArbitraryPlot(
           newPlot << ", \\" << endl;
           for (i=1; i<numLeftYAxisNames-1; i++) {
             newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)
-                 << ":" << GetTermIndex(NamesArray[f], LeftYAxisNames[i]) << " with " << plotType << " title \"" 
+                 << ":" << GetTermIndex(NamesArray[f], LeftYAxisNames[i]) << " with " << plotType << " title \""
                  << LeftYAxisNames[i] << ": " << f << "\", \\" << endl;
           }
-          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)<< ":" 
-               << GetTermIndex(NamesArray[f], LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \"" 
+          newPlot << "     \"" << files[f] << "\" using " << GetTermIndex(NamesArray[f], XAxisName)<< ":"
+               << GetTermIndex(NamesArray[f], LeftYAxisNames[numLeftYAxisNames-1]) << " with " << plotType << " title \""
                << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {

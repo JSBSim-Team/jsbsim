@@ -11,7 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\simgear\xml\easyxml.cxx">
+    <ClCompile Include="..\..\src\simgear\xml\easyxml.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plotXMLVisitor.cpp">
@@ -20,84 +20,90 @@
     <ClCompile Include="prep_plot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\simgear\xml\random_rand_s.c">
+    <ClCompile Include="..\..\src\simgear\xml\random_rand_s.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\simgear\xml\xmlparse.c">
+    <ClCompile Include="..\..\src\simgear\xml\xmlparse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\simgear\xml\xmlrole.c">
+    <ClCompile Include="..\..\src\simgear\xml\xmlrole.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\simgear\xml\xmltok.c">
+    <ClCompile Include="..\..\src\simgear\xml\xmltok.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\input_output\FGLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\input_output\string_utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\simgear\xml\ascii.h">
+    <ClInclude Include="..\..\src\simgear\xml\ascii.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\asciitab.h">
+    <ClInclude Include="..\..\src\simgear\xml\asciitab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\easyxml.hxx">
+    <ClInclude Include="..\..\src\simgear\xml\easyxml.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\expat.h">
+    <ClInclude Include="..\..\src\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\msvc\expat_config.h">
+    <ClInclude Include="..\..\src\simgear\xml\msvc\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\expat_external.h">
+    <ClInclude Include="..\..\src\simgear\xml\expat_external.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\fallthrough.h">
+    <ClInclude Include="..\..\src\simgear\xml\fallthrough.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\hash_table.h">
+    <ClInclude Include="..\..\src\simgear\xml\hash_table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\iasciitab.h">
+    <ClInclude Include="..\..\src\simgear\xml\iasciitab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\internal.h">
+    <ClInclude Include="..\..\src\simgear\xml\internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\latin1tab.h">
+    <ClInclude Include="..\..\src\simgear\xml\latin1tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\random_rand_s.h">
+    <ClInclude Include="..\..\src\simgear\xml\random_rand_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\nametab.h">
+    <ClInclude Include="..\..\src\simgear\xml\nametab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="plotXMLVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\utf8tab.h">
+    <ClInclude Include="..\..\src\simgear\xml\utf8tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\winconfig.h">
+    <ClInclude Include="..\..\src\simgear\xml\winconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xcsinc.c">
+    <ClInclude Include="..\..\src\simgear\xml\xcsinc.c">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\xmlrole.h">
+    <ClInclude Include="..\..\src\simgear\xml\xmlrole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\xmltok.h">
+    <ClInclude Include="..\..\src\simgear\xml\xmltok.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\xmltok_impl.h">
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xmltok_impl.c">
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_impl.c">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\xmltok_ns.c">
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_ns.c">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

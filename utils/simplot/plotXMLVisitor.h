@@ -1,4 +1,4 @@
-#include "../simgear/xml/easyxml.hxx"
+#include "simgear/xml/easyxml.hxx"
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -52,7 +52,7 @@ public:
 
   vector <struct Plots> vPlots;
   vector <struct Page> vPages;
-  
+
   bool inPage;
 
 private:
