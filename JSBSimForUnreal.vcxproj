@@ -165,7 +165,7 @@
     <ClInclude Include="src\simgear\magvar\coremag.hxx" />
     <ClInclude Include="src\simgear\xml\easyxml.hxx" />
     <ClInclude Include="src\simgear\xml\expat.h" />
-    <ClInclude Include="src\simgear\xml\expat_config.h" />
+    <ClInclude Include="src\simgear\xml\msvc\expat_config.h" />
     <ClInclude Include="src\simgear\xml\expat_external.h" />
     <ClInclude Include="src\models\flight_control\FGAccelerometer.h" />
     <ClInclude Include="src\models\flight_control\FGActuator.h" />
