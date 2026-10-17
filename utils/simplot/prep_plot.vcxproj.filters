@@ -20,6 +20,9 @@
     <ClCompile Include="prep_plot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\simgear\xml\random_rand_s.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\simgear\xml\xmlparse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,7 +46,7 @@
     <ClInclude Include="..\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\expat_config.h">
+    <ClInclude Include="..\simgear\xml\msvc\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\simgear\xml\expat_external.h">

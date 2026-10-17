@@ -424,7 +424,7 @@
     <ClInclude Include="src\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\expat_config.h">
+    <ClInclude Include="src\simgear\xml\msvc\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\simgear\xml\expat_external.h">
