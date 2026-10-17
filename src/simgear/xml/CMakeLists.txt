@@ -23,7 +23,6 @@ if(NOT SYSTEM_EXPAT)
                       xmltok_impl.h
                       xmltok_impl.c
                       xmltok_ns.c
-                      expat_config.h
                       siphash.h)
 
   set_property(SOURCE xcsinc.c PROPERTY HEADER_FILE_ONLY)
@@ -50,8 +49,19 @@ if(SYSTEM_EXPAT)
     find_package(EXPAT)
     target_link_libraries(Xml EXPAT::EXPAT)
   endif()
-elseif(WIN32)
-  target_compile_definitions(Xml PRIVATE XML_STATIC)
-endif()
+else(NOT SYSTEM_EXPAT)
+  set(XML_GE 1)                # Make general entity parsing functionality available.
+  set(XML_CONTEXT_BYTES 1024)  # Specify how much context to retain around the current parse point, 0 to disable.
+  set(XML_DEV_URANDOM ON)      # Include code reading entropy from `/dev/urandom'.
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/ConfigureChecks.cmake)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/expat_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h)
+  list(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/expat_config.h)
+  target_include_directories(Xml PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
+  if(WIN32)
+    target_compile_definitions(Xml PRIVATE XML_STATIC)
+  endif()
+endif(SYSTEM_EXPAT)
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/simgear/xml COMPONENT devel)
