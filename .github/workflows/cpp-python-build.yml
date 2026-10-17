@@ -509,6 +509,10 @@ jobs:
       - name: Test JSBSim
         working-directory: build
         run: ctest --parallel $(sysctl -n hw.logicalcpu) --output-on-failure
+      - name: Update the docstrings in jsbsim.pyx.in
+        if: env.release == 'true'
+        run: |
+          python python/Doxy2PyDocStrings.py --pyxfile=python/jsbsim.pyx.in --doxdir=build/documentation
       - name: Build the source package for Python
         run: |
           python python/pyxstubgen.py --pyxfile=build/python/_jsbsim.pyx --output=python/__init__.pyi
@@ -604,7 +608,7 @@ jobs:
           SDIST_PATH=$(ls jsbsim-*.tar.gz | head -n 1)
           echo "SDIST_PATH=$SDIST_PATH" >> $GITHUB_ENV
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.3
+        uses: pypa/cibuildwheel@v4.3
         env:
           CIBW_ARCHS_MACOS: universal2
           CIBW_SKIP: cp*-musllinux_*
