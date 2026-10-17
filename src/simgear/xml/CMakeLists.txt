@@ -2,20 +2,25 @@ set(SOURCES easyxml.cxx)
 set(HEADERS easyxml.hxx)
 
 if(NOT SYSTEM_EXPAT)
-  list(APPEND SOURCES xmlparse.c
+  list(APPEND SOURCES random_dev_urandom.c
+                      xmlparse.c
                       xmltok.c
                       xmlrole.c)
   list(APPEND HEADERS ascii.h
                       asciitab.h
                       expat.h
                       expat_external.h
+                      fallthrough.h
+                      hash_table.h
                       iasciitab.h
                       internal.h
                       latin1tab.h
                       macconfig.h
                       nametab.h
+                      random_dev_urandom.h
                       utf8tab.h
                       winconfig.h
+                      xcsinc.c
                       xmlrole.h
                       xmltok.h
                       xmltok_impl.h
@@ -23,6 +28,7 @@ if(NOT SYSTEM_EXPAT)
                       xmltok_ns.c
                       expat_config.h
                       siphash.h)
+  set_property(SOURCE xcsinc.c PROPERTY HEADER_FILE_ONLY)
   set_property(SOURCE xmltok_impl.c PROPERTY HEADER_FILE_ONLY)
   set_property(SOURCE xmltok_ns.c PROPERTY HEADER_FILE_ONLY)
 endif(NOT SYSTEM_EXPAT)
