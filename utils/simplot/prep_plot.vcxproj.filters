@@ -20,6 +20,9 @@
     <ClCompile Include="prep_plot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\simgear\xml\random_rand_s.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\simgear\xml\xmlparse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,10 +46,16 @@
     <ClInclude Include="..\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\expat_config.h">
+    <ClInclude Include="..\simgear\xml\msvc\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\simgear\xml\expat_external.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simgear\xml\fallthrough.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\simgear\xml\hash_table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\simgear\xml\iasciitab.h">
@@ -58,7 +67,7 @@
     <ClInclude Include="..\simgear\xml\latin1tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\simgear\xml\macconfig.h">
+    <ClInclude Include="src\simgear\xml\random_rand_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\simgear\xml\nametab.h">
@@ -73,6 +82,9 @@
     <ClInclude Include="..\simgear\xml\winconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\simgear\xml\xcsinc.c">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\simgear\xml\xmlrole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -80,6 +92,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\simgear\xml\xmltok_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok_impl.c">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok_ns.c">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

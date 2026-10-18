@@ -80,7 +80,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -99,7 +99,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -118,7 +118,7 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -141,7 +141,7 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\simgear\xml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\simgear\xml;..\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -162,6 +162,7 @@
     <ClCompile Include="..\simgear\xml\easyxml.cxx" />
     <ClCompile Include="plotXMLVisitor.cpp" />
     <ClCompile Include="prep_plot.cpp" />
+    <ClCompile Include="..\simgear\xml\random_rand_s.c" />
     <ClCompile Include="..\simgear\xml\xmlparse.c" />
     <ClCompile Include="..\simgear\xml\xmlrole.c" />
     <ClCompile Include="..\simgear\xml\xmltok.c" />
@@ -173,17 +174,22 @@
     <ClInclude Include="..\simgear\xml\expat.h" />
     <ClInclude Include="..\simgear\xml\expat_config.h" />
     <ClInclude Include="..\simgear\xml\expat_external.h" />
+    <ClInclude Include="..\simgear\xml\fallthrough.h" />
+    <ClInclude Include="..\simgear\xml\hash_table.h" />
     <ClInclude Include="..\simgear\xml\iasciitab.h" />
     <ClInclude Include="..\simgear\xml\internal.h" />
     <ClInclude Include="..\simgear\xml\latin1tab.h" />
-    <ClInclude Include="..\simgear\xml\macconfig.h" />
     <ClInclude Include="..\simgear\xml\nametab.h" />
+    <ClInclude Include="..\simgear\xml\random_rand_s.h" />
     <ClInclude Include="plotXMLVisitor.h" />
     <ClInclude Include="..\simgear\xml\utf8tab.h" />
     <ClInclude Include="..\simgear\xml\winconfig.h" />
+    <ClInclude Include="..\simgear\xml\xcsinc.c" />
     <ClInclude Include="..\simgear\xml\xmlrole.h" />
     <ClInclude Include="..\simgear\xml\xmltok.h" />
     <ClInclude Include="..\simgear\xml\xmltok_impl.h" />
+    <ClInclude Include="..\simgear\xml\xmltok_impl.c" />
+    <ClInclude Include="..\simgear\xml\xmltok_ns.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
