@@ -40,6 +40,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v7
+      with:
+        persist-credentials: false
     - name: Setup Python
       if: matrix.language == 'python'
       uses: actions/setup-python@v7

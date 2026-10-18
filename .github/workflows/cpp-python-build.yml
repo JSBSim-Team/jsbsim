@@ -30,6 +30,8 @@ jobs:
           sudo apt-get install libxml2-utils
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Validate scripts files
         run: |
           for filename in scripts/*.xml; do
@@ -66,6 +68,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Configure the MSIS test program
         run: |
           mkdir build && cd build
@@ -108,6 +112,8 @@ jobs:
           sudo apt-get install cxxtest valgrind binutils-dev
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
@@ -139,6 +145,7 @@ jobs:
           repository: bombela/backward-cpp
           ref: 'v1.6'
           path: backward-cpp
+          persist-credentials: false
       - name: Configure Backward-cpp
         if: steps.BackwardCppCheckout.outcome == 'success'
         run: echo "JSBSIM_PREFIX_PATH=$PWD/backward-cpp" >> $GITHUB_ENV
@@ -197,6 +204,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Set up Matlab
         uses: matlab-actions/setup-matlab@v3
         with:
@@ -267,12 +276,15 @@ jobs:
           python-version: '3.10'
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Checkout CxxTest
         uses: actions/checkout@v7
         with:
           repository: CxxTest/cxxtest
           ref: '4.4'
           path: cxxtest
+          persist-credentials: false
       - name : Configure CxxTest
         working-directory: cxxtest
         run: |
@@ -315,6 +327,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
@@ -339,6 +353,7 @@ jobs:
           repository: CxxTest/cxxtest
           ref: '4.4'
           path: cxxtest
+          persist-credentials: false
       - name : Configure CxxTest
         working-directory: cxxtest
         run: |
@@ -350,6 +365,7 @@ jobs:
           repository: bombela/backward-cpp
           ref: 'v1.6'
           path: backward-cpp
+          persist-credentials: false
       - name: MSVC version
         run: |
           $MSVC_name = vswhere -property displayName
@@ -399,11 +415,14 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Checkout JSBSim logos
         uses: actions/checkout@v7
         with:
           repository: JSBSim-Team/jsbsim-logo
           path: jsbsim-logo
+          persist-credentials: false
       - name: Download binary file for JSBSim.iss
         uses: actions/download-artifact@v8
         with:
@@ -461,6 +480,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Cache Python packages & CTest cost data
         # CTestCostData.txt is used by CTest to optimize the distribution of the
         # tests between the CPU cores and reduce execution time.
@@ -494,6 +515,7 @@ jobs:
           repository: CxxTest/cxxtest
           ref: '4.4'
           path: cxxtest
+          persist-credentials: false
       - name: Configure CxxTest
         working-directory: cxxtest/python
         run: python setup.py install
@@ -598,6 +620,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Download source package
         uses: actions/download-artifact@v8
         with:
@@ -859,6 +883,8 @@ jobs:
         run: pip install -U 'numpy>=1.20' sphinx cython
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
