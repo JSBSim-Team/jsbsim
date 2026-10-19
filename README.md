@@ -80,7 +80,7 @@ Debian packages for Ubuntu Linux "Jammy" 22.04 LTS and "Noble" 24.04 LTS for 64 
 
 ### Python module
 
-JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.10, 3.11, 3.12, 3.13 and 3.14). These can be installed using either `pip` or `conda`.
+JSBSim provides binary wheel packages for its Python module on Windows, Mac OSX and Linux platforms for several Python versions (3.10, 3.11, 3.12, 3.13, 3.14 and 3.15). These can be installed using either `pip` or `conda`.
 
 #### Installation with `pip`
 
@@ -194,7 +194,7 @@ The default aircraft data is located in a directory which path can be retrieved 
 print(jsbsim.get_default_root_dir())
 ```
 
-A more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
+The Python API is described in more details in the [Python API documentation](https://jsbsim-team.github.io/jsbsim/python/) and a more elaborate example of Python code is [JSBSim.py](https://github.com/JSBSim-Team/jsbsim/blob/master/python/JSBSim.py), the Python equivalent to `JSBSim.exe`.
 
 ## Python module examples
 
@@ -228,7 +228,7 @@ We are also on Facebook: <https://www.facebook.com/jsbsim/>
 
 # Legal Notice
 
-<p><a href="https://opensource.org/licenses/LGPL-2.1">
+<p align="center"><a href="https://opensource.org/licenses/LGPL-2.1">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://opensource.org/wp-content/themes/osi/assets/img/osi-badge-light.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://opensource.org/wp-content/uploads/2022/10/osi-badge-dark.svg">
