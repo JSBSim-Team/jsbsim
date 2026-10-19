@@ -284,6 +284,9 @@
     <ClCompile Include="src\simgear\props\props.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\simgear\xml\random_rand_s.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\simgear\xml\xmlparse.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -421,7 +424,7 @@
     <ClInclude Include="src\simgear\xml\expat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\expat_config.h">
+    <ClInclude Include="src\simgear\xml\msvc\expat_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\simgear\xml\expat_external.h">
@@ -643,6 +646,12 @@
     <ClInclude Include="src\input_output\FGXMLParse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\simgear\xml\fallthrough.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\hash_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\simgear\xml\iasciitab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -652,7 +661,7 @@
     <ClInclude Include="src\simgear\xml\latin1tab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\simgear\xml\macconfig.h">
+    <ClInclude Include="src\simgear\xml\random_rand_s.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\simgear\xml\nametab.h">
@@ -673,6 +682,9 @@
     <ClInclude Include="src\simgear\xml\winconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\simgear\xml\xcsinc.c">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\simgear\xml\xmlrole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -680,6 +692,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\simgear\xml\xmltok_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok_impl.c">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simgear\xml\xmltok_ns.c">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\models\flight_control\FGLinearActuator.h">
