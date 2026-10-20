@@ -84,6 +84,11 @@ CLASS DOCUMENTATION
     3: Adams Bashforth 2
     4: Adams Bashforth 3
     5: Adams Bashforth 4
+    6: Buss 1 (rotational position only)
+    7: Buss 2 (rotational position only)
+    8: Local linearization (rotational position only)
+    9: Adams Bashforth 5
+    10: Implicit midpoint (rotational rate only)
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich, Bertrand Coconnier
@@ -154,7 +159,8 @@ public:
 
   /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2,
-                       eAdamsBashforth3, eAdamsBashforth4, eBuss1, eBuss2, eLocalLinearization, eAdamsBashforth5};
+                       eAdamsBashforth3, eAdamsBashforth4, eBuss1, eBuss2, eLocalLinearization, eAdamsBashforth5,
+                       eImplicitMidpoint};
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
       The base class FGModel::InitModel is called first, initializing pointers to the
@@ -612,6 +618,8 @@ public:
     FGColumnVector3 vPQRidot;
     FGColumnVector3 vUVWidot;
     FGColumnVector3 vOmegaPlanet;
+    FGMatrix33 J;
+    FGMatrix33 Jinv;
     double SemiMajor;
     double SemiMinor;
     double GM; // Gravitational parameter
@@ -675,6 +683,8 @@ private:
                   std::deque <FGQuaternion>& ValDot,
                   double dt,
                   eIntegrateType integration_type);
+
+  void IntegrateMidpoint(double dt);
 
   void UpdateLocationMatrices(void);
   void UpdateBodyMatrices(void);
