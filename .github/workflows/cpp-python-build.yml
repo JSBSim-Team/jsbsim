@@ -19,6 +19,8 @@ on:
 env:
   release: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')) }}
 
+permissions: {}
+
 jobs:
   XML-validation:
     name: XML validation
@@ -701,6 +703,9 @@ jobs:
     name: Deploy Rolling Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    environment: release
+    permissions:
+      contents: write  # Needed for the GitHub release
     steps:
       - name: Download files
         uses: actions/download-artifact@v8

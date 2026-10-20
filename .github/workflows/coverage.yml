@@ -16,6 +16,8 @@ on:
       - "CITATION.cff"
       - "**/*.ipynb"
 
+permissions: {}
+
 jobs:
   Codecov:
     name: Code coverage

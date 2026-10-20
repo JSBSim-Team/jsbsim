@@ -6,6 +6,8 @@ on:
       - .github/workflows/draft-pdf.yml
       - CITATION.cff
 
+permissions: {}
+
 jobs:
   paper:
     runs-on: ubuntu-latest
