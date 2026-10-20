@@ -90,7 +90,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   /// These define the indices use to select the various integrators.
   // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
 
-  integrator_rotational_rate = eRectEuler;
+  integrator_rotational_rate = eImplicitMidpoint;
   integrator_translational_rate = eAdamsBashforth2;
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
@@ -128,7 +128,7 @@ bool FGPropagate::InitModel(void)
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(5, FGColumnVector3(0.0,0.0,0.0));
 
-  integrator_rotational_rate = eRectEuler;
+  integrator_rotational_rate = eImplicitMidpoint;
   integrator_translational_rate = eAdamsBashforth2;
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;

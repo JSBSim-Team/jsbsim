@@ -147,10 +147,10 @@ public:
   /** Constructor.
       The constructor initializes several variables, and sets the initial set
       of integrators to use as follows:
-      - integrator, rotational rate = Adams Bashforth 2
+      - integrator, rotational rate = Implicit midpoint
       - integrator, translational rate = Adams Bashforth 2
-      - integrator, rotational position = Trapezoidal
-      - integrator, translational position = Trapezoidal
+      - integrator, rotational position = Rectangular Euler
+      - integrator, translational position = Adams Bashforth 3
       @param Executive a pointer to the parent executive object */
   explicit FGPropagate(FGFDMExec* Executive);
 
