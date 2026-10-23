@@ -145,6 +145,23 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number, const struct Inputs&
     staticFCoeff = el->FindElementValueAsNumber("static_friction");
   if (el->FindElement("rolling_friction"))
     rollingFCoeff = el->FindElementValueAsNumber("rolling_friction");
+
+  // Optional wheel rotational degree of freedom for BOGEY contacts. Both
+  // elements are required; without them the legacy friction model is used.
+  if (eContactType == ctBOGEY && el->FindElement("wheel_radius")
+      && el->FindElement("wheel_inertia")) {
+    wheelRadius = el->FindElementValueAsNumberConvertTo("wheel_radius", "FT");
+    wheelInertia = el->FindElementValueAsNumberConvertTo("wheel_inertia", "SLUG*FT2");
+    if (wheelRadius > 0.0 && wheelInertia > 0.0) {
+      wheelSpinEnabled = true;
+      wheelSpin.Jinv = 1.0 / wheelInertia;
+    }
+    else {
+      FGXMLLogging log(el, LogLevel::ERROR);
+      log << "wheel_radius and wheel_inertia must be positive; the wheel spin"
+          << " degree of freedom of contact " << name << " is disabled.\n";
+    }
+  }
   if (el->FindElement("retractable"))
     isRetractable = ((unsigned int)el->FindElementValueAsNumber("retractable"))>0.0?true:false;
 
@@ -269,13 +286,17 @@ void FGLGear::ResetToIC(void)
   WheelSlip = 0.0;
 
   // Initialize Lagrange multipliers
-  for (int i=0; i < 3; i++) {
+  for (int i=0; i < 4; i++) {
     LMultiplier[i].ForceJacobian.InitMatrix();
-    LMultiplier[i].LeverArm.InitMatrix();
+    LMultiplier[i].MomentJacobian.InitMatrix();
     LMultiplier[i].Min = 0.0;
     LMultiplier[i].Max = 0.0;
     LMultiplier[i].value = 0.0;
   }
+
+  wheelSpin.Rate = 0.0;
+  wheelSpin.Accel = 0.0;
+  wheelTreadSlip = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,6 +306,14 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
   double gearPos = 1.0;
 
   vFn.InitMatrix();
+
+  if (wheelSpinEnabled) {
+    // Advance the spin with the acceleration from the last friction solve, in
+    // step with FGPropagate's use of the last airframe derivatives.
+    if (!fdmex->GetTrimStatus() && in.TotalDeltaT > 0.0)
+      wheelSpin.Rate += wheelSpin.Accel * in.TotalDeltaT;
+    wheelSpin.Accel = 0.0;
+  }
 
   // Compute AGL
   FGColumnVector3 normal, terrainVel, dummy;
@@ -363,6 +392,16 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
 
       vGroundWhlVel = mT.Transposed() * vBodyWhlVel;
 
+      if (wheelSpinEnabled) {
+        FGColumnVector3 roll(mT(eX,eX), mT(eY,eX), mT(eZ,eX));
+        FGColumnVector3 vAxleVel = vBodyWhlVel + in.PQR * (wheelRadius * vGroundNormal);
+        // Wheels touching the ground at initialization or during trim roll
+        // without slip; in flight they keep their integrated spin.
+        if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
+          wheelSpin.Rate = DotProduct(roll, vAxleVel) / wheelRadius;
+        wheelTreadSlip = DotProduct(roll, vAxleVel) - wheelRadius * wheelSpin.Rate;
+      }
+
       if (fdmex->GetTrimStatus() || in.TotalDeltaT == 0.0)
         compressSpeed = 0.0; // Steady state is sought during trimming
       else {
@@ -400,6 +439,7 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
       LMultiplier[ftRoll].value = 0.0;
       LMultiplier[ftSide].value = 0.0;
       LMultiplier[ftDynamic].value = 0.0;
+      LMultiplier[ftWheelBrake].value = 0.0;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
       SteerAngle *= max(gearPos-0.8, 0.0)/0.2;
@@ -412,6 +452,36 @@ const FGColumnVector3& FGLGear::GetBodyForces(void)
     // Let wheel spin down slowly
     vWhlVelVec(eX) -= 13.0 * in.TotalDeltaT;
     if (vWhlVelVec(eX) < 0.0) vWhlVelVec(eX) = 0.0;
+
+    if (wheelSpinEnabled) {
+      // No tire torque in the air, and the wheel is not in the friction solve.
+      // Instead, the spin relative to the airframe is reduced toward zero at a
+      // tread deceleration of legacyTreadDeceleration plus
+      // additionalBrakeTreadDeceleration times the normalized brake command.
+      // This is an approximation: no reaction torque is applied to the
+      // airframe. wheelSpin.Rate and in.PQR share the same reference frame,
+      // so the airframe rate about the axle is subtracted before damping and
+      // added back afterwards.
+      if (!fdmex->GetTrimStatus() && in.TotalDeltaT > 0.0) {
+        // Copied from the legacy wheel-speed-fps spin-down above, which only
+        // changes the reported wheel speed.
+        constexpr double legacyTreadDeceleration = 13.0; // ft/s^2
+        // Extra tread deceleration at full brake, introduced with the wheel
+        // spin DOF as an uncalibrated approximation. It is not a measured
+        // brake torque and is not derived from BrakeFCoeff: the torque bound
+        // built from BrakeFCoeff is proportional to the normal load, which is
+        // zero in the air.
+        constexpr double additionalBrakeTreadDeceleration = 100.0; // ft/s^2
+        double brake = eBrakeGrp != bgNone ? in.BrakePos[eBrakeGrp] : 0.0;
+        double decrement = (legacyTreadDeceleration
+                            + additionalBrakeTreadDeceleration * brake)
+                           / wheelRadius * in.TotalDeltaT;
+        double bodyRate = DotProduct(in.PQR, GetWheelSpinAxis());
+        double relativeRate = wheelSpin.Rate - bodyRate;
+        wheelSpin.Rate = bodyRate + sign(relativeRate) * max(0.0, fabs(relativeRate) - decrement);
+      }
+      wheelTreadSlip = 0.0;
+    }
   }
 
   if (!fdmex->GetTrimStatus()) {
@@ -701,7 +771,7 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftDynamic].ForceJacobian = mT * velocityDirection;
     LMultiplier[ftDynamic].Max = 0.;
     LMultiplier[ftDynamic].Min = -fabs(staticFFactor * dynamicFCoeff * vFn(eZ));
-    LMultiplier[ftDynamic].LeverArm = vWhlContactVec;
+    LMultiplier[ftDynamic].MomentJacobian = vWhlContactVec * LMultiplier[ftDynamic].ForceJacobian;
 
     // The Lagrange multiplier value obtained from the previous iteration is
     // kept. This is supposed to accelerate the convergence of the projected
@@ -722,8 +792,8 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     LMultiplier[ftRoll].ForceJacobian = mT * FGColumnVector3(1.,0.,0.);
     LMultiplier[ftSide].ForceJacobian = mT * FGColumnVector3(0.,1.,0.);
-    LMultiplier[ftRoll].LeverArm = vWhlContactVec;
-    LMultiplier[ftSide].LeverArm = vWhlContactVec;
+    LMultiplier[ftRoll].MomentJacobian = vWhlContactVec * LMultiplier[ftRoll].ForceJacobian;
+    LMultiplier[ftSide].MomentJacobian = vWhlContactVec * LMultiplier[ftSide].ForceJacobian;
 
     switch(eContactType) {
     case ctBOGEY:
@@ -739,6 +809,9 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
     LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
     LMultiplier[ftSide].Min = -LMultiplier[ftSide].Max;
 
+    if (wheelSpinEnabled)
+      ConfigureWheelSpinRows(vWhlContactVec);
+
     // The Lagrange multiplier value obtained from the previous iteration is
     // kept. This is supposed to accelerate the convergence of the projected
     // Gauss-Seidel algorithm. The code just below is to make sure that the
@@ -749,7 +822,89 @@ void FGLGear::ComputeJacobian(const FGColumnVector3& vWhlContactVec)
 
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftRoll]);
     GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftSide]);
+
+    if (wheelSpinEnabled)
+      GroundReactions->RegisterLagrangeMultiplier(&LMultiplier[ftWheelBrake]);
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// With a wheel spin DOF, the tread force acts on the tire at the contact patch
+// but reaches the airframe through the axle: the airframe lever arm runs from
+// the CG to the axle, and the wheel receives -radius times the force, so
+// spin-up drag at touchdown comes out of the aircraft's momentum. Applying the
+// force at the contact point *and* spinning the wheel would count its moment
+// twice. Brakes and rolling_friction become a torque between wheel and
+// airframe, bounded by BrakeFCoeff times the normal load times the radius.
+//
+// Both rows use the same solver machinery. A row's Jacobian acts on the
+// airframe velocity, the airframe angular velocity and the wheel spin state
+// (ForceJacobian, MomentJacobian, WheelJacobian); the solver drives the
+// constraint velocity, the Jacobian times these velocities, toward zero within
+// the row's bounds. Below, U is the ground-projected rolling direction, r_axle
+// the lever arm from the CG to the axle, v_axle the axle velocity, R the wheel
+// radius, Rate the wheel spin state, PQR the airframe angular velocity and x
+// the cross product. For stationary terrain:
+// - roll (U, r_axle x U, -R) drives the tread slip at the axle,
+//   dot(U, v_axle) - R * Rate, toward zero: rolling without slip.
+// - brake (0, -spinAxis, +1) drives the wheel/body relative rate,
+//   Rate - dot(spinAxis, PQR), toward zero: no spin relative to the airframe.
+// Derivation of both conditions from the solver's right-hand side:
+// https://github.com/JSBSim-Team/jsbsim/pull/1502#issuecomment-5654721219
+
+void FGLGear::ConfigureWheelSpinRows(const FGColumnVector3& vWhlContactVec)
+{
+  const FGColumnVector3 rollDirection = LMultiplier[ftRoll].ForceJacobian;
+  const FGColumnVector3 axleLeverArm = vWhlContactVec + wheelRadius * vGroundNormal;
+  // Positive spin rolls forward: spin axis = ground normal x roll direction.
+  const FGColumnVector3 spinAxis = vGroundNormal * rollDirection;
+
+  // Tire grip; brakes act on the wheel instead.
+  LMultiplier[ftRoll].Max = fabs(staticFFactor * staticFCoeff * vFn(eZ));
+  LMultiplier[ftRoll].Min = -LMultiplier[ftRoll].Max;
+  LMultiplier[ftRoll].MomentJacobian = axleLeverArm * rollDirection;
+  LMultiplier[ftRoll].Wheel = &wheelSpin;
+  LMultiplier[ftRoll].WheelJacobian = -wheelRadius;
+
+  LagrangeMultiplier& brake = LMultiplier[ftWheelBrake];
+  brake.ForceJacobian.InitMatrix();
+  brake.MomentJacobian = -1.0 * spinAxis;
+  brake.Wheel = &wheelSpin;
+  brake.WheelJacobian = 1.0;
+  brake.Max = fabs(BrakeFCoeff * vFn(eZ)) * wheelRadius;
+  brake.Min = -brake.Max;
+  brake.value = Constrain(brake.Min, brake.value, brake.Max);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Positive spin axis in the body frame: gear up cross the rolling direction.
+// In ground contact this is the axis of the brake row, ground normal (pointing
+// away from the ground) cross the rolling direction projected on the ground.
+// In the air it follows the current gear orientation and steering angle.
+
+FGColumnVector3 FGLGear::GetWheelSpinAxis(void) const
+{
+  if (WOW)
+    return vGroundNormal * FGColumnVector3(mT(eX,eX), mT(eY,eX), mT(eZ,eX));
+
+  return mTGear * FGColumnVector3(sin(SteerAngle), -cos(SteerAngle), 0.0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGLGear::GetWheelSpinRate(void) const
+{
+  if (!wheelSpinEnabled) return 0.0;
+
+  return wheelSpin.Rate - DotProduct(in.PQR, GetWheelSpinAxis());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::SetWheelSpinRate(double rate)
+{
+  if (wheelSpinEnabled)
+    wheelSpin.Rate = rate + DotProduct(in.PQR, GetWheelSpinAxis());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -817,6 +972,14 @@ void FGLGear::bind(FGPropertyManager* PropertyManager)
                         &FGLGear::GetstaticFCoeff, &FGLGear::SetstaticFCoeff);
   property_name = base_property_name + "/dynamic_friction_coeff";
   PropertyManager->Tie( property_name.c_str(), &dynamicFCoeff );
+
+  if (wheelSpinEnabled) {
+    property_name = base_property_name + "/wheel-spin-rad_sec";
+    PropertyManager->Tie( property_name.c_str(), (FGLGear*)this,
+                          &FGLGear::GetWheelSpinRate, &FGLGear::SetWheelSpinRate);
+    property_name = base_property_name + "/wheel-tread-slip-fps";
+    PropertyManager->Tie( property_name.c_str(), &wheelTreadSlip );
+  }
 
   if (eContactType == ctBOGEY) {
     property_name = base_property_name + "/slip-angle-deg";
@@ -953,6 +1116,10 @@ void FGLGear::Debug(int from)
       log << "      Static Friction:  " << staticFCoeff  << "\n";
       if (eContactType == ctBOGEY) {
         log << "      Rolling Friction: " << rollingFCoeff << "\n";
+        if (wheelSpinEnabled) {
+          log << "      Wheel Radius:     " << wheelRadius << " ft\n";
+          log << "      Wheel Inertia:    " << wheelInertia << " slug*ft^2\n";
+        }
         log << "      Steering Type:    " << sSteerType[eSteerType] << "\n";
         log << "      Grouping:         " << sBrakeGroup[eBrakeGrp] << "\n";
         log << "      Max Steer Angle:  " << maxSteerAngle << "\n";
