@@ -1,8 +1,8 @@
 #include "plotXMLVisitor.h"
-#define BASE
 #include "input_output/string_utilities.h"
 
 using namespace std;
+using namespace JSBSim;
 
 plotXMLVisitor::plotXMLVisitor(void)
 {
@@ -28,7 +28,7 @@ void plotXMLVisitor::endXML(void)
 void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
 {
   current_element = name;
-  
+
   // defaults
   plotType = lines;
 
@@ -106,7 +106,7 @@ void plotXMLVisitor::endElement (const char * name)
     if (!inPage)
       if (trim(data_string) == "auto") vPlots.back().Autoscale = true;
     else
-      if (trim(data_string) == "auto") vPages.back().vPlots.back().Autoscale = true;    
+      if (trim(data_string) == "auto") vPages.back().vPlots.back().Autoscale = true;
 
   } else if (string(name) == string("min")) {                                          // Minimum
 
