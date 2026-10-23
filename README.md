@@ -55,6 +55,40 @@ In 2023 JSBSim was featured in the article ["A deep reinforcement learning contr
 
 Another more advanced application within the field of Deep Reinforcement Learning is presented in the article ["Hierarchical Reinforcement Learning for Air Combat at DARPA's AlphaDogfight Trials"](https://ieeexplore.ieee.org/document/9950612) by A. P. Pope et al. (2023), _IEEE Transactions on Artificial Intelligence_ (doi: 10.1109/TAI.2022.3222143), featuring a hierarchical reinforcement learning approach. The trained agent was designed alongside of and competed against active fighter pilots, and ultimately defeated a graduate of the United States Air Force's F-16 Weapons Instructor Course in match play. See also the [DARPA Virtual Air Combat Competition](https://www.darpa.mil/news/2019/virtual-air-combat-competition).
 
+# Citation
+
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.11129/status.svg)](https://doi.org/10.21105/joss.11129)
+
+If you use JSBSim in research, please cite [the paper by Berndt et al., (2026), titled ``JSBSim, An Open Source Flight Dynamics Software Library.'' published on the Journal of Open Source Software](https://joss.theoj.org/papers/10.21105/joss.11129), as follows:
+
+```BibTeX
+@article{Berndt:Coconnier:DeMarco:McLeod:2026,
+  author = {Berndt, Jon S. and Coconnier, Bertrand and {De~Marco}, Agostino and McLeod, Sean},
+  title = {JSBSim, An Open Source Flight Dynamics Software Library},
+  journal = {Journal of Open Source Software},
+  publisher = {The Open Journal},
+  year = {2026},
+  volume = {11},
+  number = {126},
+  pages = {11129},
+  doi = {10.21105/joss.11129},
+  url = {https://doi.org/10.21105/joss.11129},
+}
+```
+
+In addition, if you also want to reference this repository, please cite:
+
+```BibTeX
+@software{Berndt:Coconnier:DeMarco:McLeod:Zenodo:2026,
+  author = {Berndt, Jon S. and Coconnier, Bertrand and {De~Marco}, Agostino and McLeod, Sean},
+  title = {JSBSim - An Open Source Flight Dynamics Software Library},
+  year = 2026,
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.20258621},
+  url = {https://doi.org/10.5281/zenodo.20258621},
+}
+```
+
 # User Guide
 
 ## Installation
