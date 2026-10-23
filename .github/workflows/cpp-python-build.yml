@@ -188,11 +188,11 @@ jobs:
 
   Matlab-SFunction:
     name: Matlab S-Function
-    needs: [ Linux, MacOSX, Windows-MSVC ]
+    needs: [ Linux, MacOS, Windows-MSVC ]
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-14, ubuntu-22.04, windows-latest ]
+        os: [ macos-15, ubuntu-22.04, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout JSBSim
@@ -223,7 +223,7 @@ jobs:
           # See https://stackoverflow.com/questions/37921139/error-version-glibcxx-3-4-21-not-found
         if: runner.os == 'Linux'
         run: echo "LD_PRELOAD=/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
-      - name: Run Tests (Linux & MacOSX)
+      - name: Run Tests (Linux & MacOS)
         if: runner.os != 'Windows'
         id: tests-unix
         uses: matlab-actions/run-command@v3
@@ -236,7 +236,7 @@ jobs:
         with:
           command: addpath('build/matlab/RelWithDebInfo'), run('matlab/TestJSBSim.m')
 
-      - name: Upload Files for Release (Linux & MacOSX)
+      - name: Upload Files for Release (Linux & MacOS)
         if: steps.tests-unix.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
@@ -454,10 +454,10 @@ jobs:
           path: |
             build\Output\*.exe
 
-  MacOSX:
-    name: C/C++ build (MacOSX)
+  MacOS:
+    name: C/C++ build (MacOS)
     needs: [XML-validation, MSIS-validation]
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
@@ -534,7 +534,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: MacOSX.logs
+          name: MacOS.logs
           path: |
             build/Testing/Temporary/*.log
             build/tests/*-build.log
@@ -548,7 +548,7 @@ jobs:
 
   Test-Build-PyPackage-From-Source:
     name: Build Python Module from Source
-    needs: MacOSX
+    needs: MacOS
     strategy:
       fail-fast: false
       matrix:
@@ -588,12 +588,12 @@ jobs:
   Python-Wheels:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     name: Build Python wheels
-    needs: [Linux, Windows-MSVC, MacOSX]
+    needs: [Linux, Windows-MSVC, MacOS]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-14, windows-2022]
+        os: [ubuntu-latest, macos-15, windows-2022]
 
     steps:
       - name: Checkout JSBSim
