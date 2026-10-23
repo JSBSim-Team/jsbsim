@@ -715,19 +715,24 @@ jobs:
           find . -type f -name *.exe -exec cp {} dist/. \;
           find . -type f -name *.deb -exec cp {} dist/. \;
       - name: Rolling release
-        uses: softprops/action-gh-release@v3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: Rolling release
-          tag_name: Linux
-          prerelease: true
-          body: |
-            Contains the packages built from the bleeding edge code
-            (branch ${{ github.ref }} commit ${{ github.sha}})
-          files: |
-            dist/*.exe
-            dist/*.deb
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          notes_file="$RUNNER_TEMP/release-notes.md"
+          cat > "$notes_file" <<EOF
+          Contains the packages built from the bleeding edge code
+          (branch ${GITHUB_REF} commit ${GITHUB_SHA})
+          EOF
+
+          if gh release view Linux >/dev/null 2>&1; then
+            gh release edit Linux --title "Rolling release" --notes-file "$notes_file" --prerelease
+            gh release upload Linux dist/*.exe dist/*.deb --clobber
+          else
+            gh release create Linux dist/*.exe dist/*.deb \
+              --title "Rolling release" \
+              --notes-file "$notes_file" \
+              --prerelease
+          fi
 
   Stable-Release:
     name: Deploy Stable Release
@@ -784,28 +789,27 @@ jobs:
           export MSVC_VERSION=`cat MSVC_version.txt`
           echo "MSVC_VERSION=$MSVC_VERSION" >> $GITHUB_ENV
       - name: GitHub release
-        uses: softprops/action-gh-release@v3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: v${{ env.VERSION }}
-          body: |
-            JSBSim version ${{ env.VERSION }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          notes_file="$RUNNER_TEMP/release-notes.md"
+          cat > "$notes_file" <<'EOF'
+          JSBSim version @VERSION@
 
-            ## Release files
-            - Windows (64-bit)
-              - `JSBSim-${{ env.VERSION }}-setup.exe` — Windows installer compiled with Microsoft ${{ env.MSVC_VERSION }}
-            - Ubuntu Jammy 22.04 and Noble 24.04 (amd64)
-              - `*.deb` — Debian packages
-            - Python wheel packages are available on [PyPI](https://pypi.org/project/JSBSim/) and can be installed using `pip install jsbsim`. To upgrade an existing installation, use `pip install --upgrade jsbsim`.
-            - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install via conda, run `conda install -c conda-forge jsbsim`
+          ## Release files
+          - Windows (64-bit)
+            - `JSBSim-@VERSION@-setup.exe` — Windows installer compiled with Microsoft @MSVC_VERSION@
+          - Ubuntu Jammy 22.04 and Noble 24.04 (amd64)
+            - `*.deb` — Debian packages
+          - Python wheel packages are available on [PyPI](https://pypi.org/project/JSBSim/) and can be installed using `pip install jsbsim`. To upgrade an existing installation, use `pip install --upgrade jsbsim`.
+          - Conda packages are available from [conda-forge](https://anaconda.org/conda-forge/jsbsim). To install via conda, run `conda install -c conda-forge jsbsim`
 
-            ## Changelog
-          prerelease: false
-          draft: false
-          files: |
-            GH_release/*.exe
-            GH_release/*.deb
+          ## Changelog
+          EOF
+          sed -i "s/@VERSION@/${VERSION}/g; s/@MSVC_VERSION@/${MSVC_VERSION}/g" "$notes_file"
+          gh release create "$GITHUB_REF_NAME" GH_release/*.exe GH_release/*.deb \
+            --title "v${VERSION}" \
+            --notes-file "$notes_file"
 
       # Bump version
       - name: Bump version
