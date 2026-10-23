@@ -22,30 +22,30 @@
     <ProjectGuid>{12B68F94-0BC4-4483-86AA-9CEE10F1D525}</ProjectGuid>
     <RootNamespace>prep_plot</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -80,8 +80,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src;$(ProjectDir)..\..\src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSBSIM_STATIC_LINK;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -89,6 +89,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -99,14 +100,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;..\input_output;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src;$(ProjectDir)..\..\src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSBSIM_STATIC_LINK;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -118,8 +120,8 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\;..\simgear\xml;..\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src;$(ProjectDir)..\..\src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSBSIM_STATIC_LINK;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -127,6 +129,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -141,8 +144,8 @@
       <Optimization>Full</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\simgear\xml;..\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\src;$(ProjectDir)..\..\src\simgear\xml\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSBSIM_STATIC_LINK;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -150,6 +153,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -159,37 +163,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\simgear\xml\easyxml.cxx" />
+    <ClCompile Include="..\..\src\simgear\xml\easyxml.cxx" />
+    <ClCompile Include="..\..\src\input_output\FGLog.cpp" />
+    <ClCompile Include="..\..\src\input_output\string_utilities.cpp" />
     <ClCompile Include="plotXMLVisitor.cpp" />
     <ClCompile Include="prep_plot.cpp" />
-    <ClCompile Include="..\simgear\xml\random_rand_s.c" />
-    <ClCompile Include="..\simgear\xml\xmlparse.c" />
-    <ClCompile Include="..\simgear\xml\xmlrole.c" />
-    <ClCompile Include="..\simgear\xml\xmltok.c" />
+    <ClCompile Include="..\..\src\simgear\xml\random_rand_s.c" />
+    <ClCompile Include="..\..\src\simgear\xml\xmlparse.c" />
+    <ClCompile Include="..\..\src\simgear\xml\xmlrole.c" />
+    <ClCompile Include="..\..\src\simgear\xml\xmltok.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\simgear\xml\ascii.h" />
-    <ClInclude Include="..\simgear\xml\asciitab.h" />
-    <ClInclude Include="..\simgear\xml\easyxml.hxx" />
-    <ClInclude Include="..\simgear\xml\expat.h" />
-    <ClInclude Include="..\simgear\xml\expat_config.h" />
-    <ClInclude Include="..\simgear\xml\expat_external.h" />
-    <ClInclude Include="..\simgear\xml\fallthrough.h" />
-    <ClInclude Include="..\simgear\xml\hash_table.h" />
-    <ClInclude Include="..\simgear\xml\iasciitab.h" />
-    <ClInclude Include="..\simgear\xml\internal.h" />
-    <ClInclude Include="..\simgear\xml\latin1tab.h" />
-    <ClInclude Include="..\simgear\xml\nametab.h" />
-    <ClInclude Include="..\simgear\xml\random_rand_s.h" />
+    <ClInclude Include="..\..\src\simgear\xml\ascii.h" />
+    <ClInclude Include="..\..\src\simgear\xml\asciitab.h" />
+    <ClInclude Include="..\..\src\simgear\xml\easyxml.hxx" />
+    <ClInclude Include="..\..\src\simgear\xml\expat.h" />
+    <ClInclude Include="..\..\src\simgear\xml\msvc\expat_config.h" />
+    <ClInclude Include="..\..\src\simgear\xml\expat_external.h" />
+    <ClInclude Include="..\..\src\simgear\xml\fallthrough.h" />
+    <ClInclude Include="..\..\src\simgear\xml\hash_table.h" />
+    <ClInclude Include="..\..\src\simgear\xml\iasciitab.h" />
+    <ClInclude Include="..\..\src\simgear\xml\internal.h" />
+    <ClInclude Include="..\..\src\simgear\xml\latin1tab.h" />
+    <ClInclude Include="..\..\src\simgear\xml\nametab.h" />
+    <ClInclude Include="..\..\src\simgear\xml\random_rand_s.h" />
     <ClInclude Include="plotXMLVisitor.h" />
-    <ClInclude Include="..\simgear\xml\utf8tab.h" />
-    <ClInclude Include="..\simgear\xml\winconfig.h" />
-    <ClInclude Include="..\simgear\xml\xcsinc.c" />
-    <ClInclude Include="..\simgear\xml\xmlrole.h" />
-    <ClInclude Include="..\simgear\xml\xmltok.h" />
-    <ClInclude Include="..\simgear\xml\xmltok_impl.h" />
-    <ClInclude Include="..\simgear\xml\xmltok_impl.c" />
-    <ClInclude Include="..\simgear\xml\xmltok_ns.c" />
+    <ClInclude Include="..\..\src\simgear\xml\utf8tab.h" />
+    <ClInclude Include="..\..\src\simgear\xml\winconfig.h" />
+    <ClInclude Include="..\..\src\simgear\xml\xcsinc.c" />
+    <ClInclude Include="..\..\src\simgear\xml\xmlrole.h" />
+    <ClInclude Include="..\..\src\simgear\xml\xmltok.h" />
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_impl.h" />
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_impl.c" />
+    <ClInclude Include="..\..\src\simgear\xml\xmltok_ns.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
