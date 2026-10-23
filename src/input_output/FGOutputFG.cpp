@@ -47,7 +47,7 @@ INCLUDES
 #include "models/FGPropulsion.h"
 #include "models/FGFCS.h"
 #include "models/propulsion/FGPiston.h"
-#include "models/propulsion/FGElectric.h"
+#include "models/propulsion/FGThruster.h"
 #include "models/propulsion/FGTank.h"
 #include "FGLog.h"
 
@@ -233,7 +233,7 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
     case (FGEngine::etPiston):
       {
         auto piston_engine = static_pointer_cast<FGPiston>(engine);
-        net->rpm[i]       = (float)(piston_engine->getRPM());
+        net->rpm[i]       = (float)(engine->GetThruster()->GetEngineRPM());
         net->fuel_flow[i] = (float)(piston_engine->getFuelFlow_gph());
         net->fuel_px[i]   = 0; // Fuel pressure, psi  (N/A in current model)
         net->egt[i]       = (float)(piston_engine->GetEGT());
@@ -247,9 +247,11 @@ void FGOutputFG::SocketDataFill(FGNetFDM* net)
     case (FGEngine::etTurbine):
       break;
     case (FGEngine::etTurboprop):
+      // RPM for turboprops is propeller's
+      net->rpm[i] = static_cast<float>(engine->GetThruster()->GetRPM());
       break;
     case (FGEngine::etElectric):
-      net->rpm[i] = static_cast<float>(static_pointer_cast<FGElectric>(engine)->getRPM());
+      net->rpm[i] = static_cast<float>(engine->GetThruster()->GetEngineRPM());
       break;
     case (FGEngine::etUnknown):
       break;
