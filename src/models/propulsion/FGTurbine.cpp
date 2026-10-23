@@ -54,6 +54,42 @@ using namespace std;
 
 namespace JSBSim {
 
+class FGSpoolUp : public FGParameter
+{
+public:
+  FGSpoolUp(FGTurbine* _turb, double BPR, double factor)
+    : turb(_turb), delay(factor * 90.0 / (BPR + 3.0)) {}
+  std::string GetName(void) const { return std::string(); };
+  double GetValue(void) const {
+    // adjust acceleration for N2 and atmospheric density
+    double n = std::min(1.0, turb->N2norm + 0.1);
+    return delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - turb->in.DensityRatio));
+  }
+private:
+  FGTurbine* turb;
+  double delay; ///< Inverse spool-up time from idle to 100% (seconds)
+};
+
+class FGSimplifiedTSFC : public FGParameter
+{
+public:
+  FGSimplifiedTSFC(FGTurbine* _turb, double tsfcVal)
+    : turb(_turb), tsfc(tsfcVal) {}
+
+  std::string GetName(void) const { return std::string(); }
+
+  double GetValue(void) const {
+    // Correction/denormalisation for temp and thrust
+      double T = turb->in.Temperature;
+      double N2norm = turb->N2norm;
+      return tsfc * sqrt(T / 389.7) * (0.84 + (1 - N2norm) * (1 - N2norm));
+  }
+
+private:
+  FGTurbine* turb;
+  double tsfc;
+};
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
