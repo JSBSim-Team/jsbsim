@@ -283,10 +283,14 @@ void FGTrimAxis::setThrottlesPct(void) {
       // in the Propulsion::Inputs structure need to be set at this time.
       fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
       fdmex->GetPropulsion()->in.ThrottlePos[i] = tMin +control_value*(tMax - tMin);
+  }
 
-      fdmex->Initialize(fgic);
-      fdmex->Run(); //apply throttle change
-      fdmex->GetPropulsion()->GetSteadyState();
+  // Apply all engine commands before settling the coupled FCS/propulsion
+  // system. GetSteadyState() advances every engine, not just engine i.
+  if (fdmex->GetPropulsion()->GetNumEngines() > 0) {
+    fdmex->Initialize(fgic);
+    fdmex->Run(); // apply throttle changes
+    fdmex->GetPropulsion()->GetSteadyState();
   }
 }
 

@@ -218,6 +218,7 @@ public:
   FGFilter(FGFCS* fcs, Element* element);
   ~FGFilter();
 
+  void SetTrimDeltaT(double step) override;
   bool Run (void) override;
 
   void ResetPastStates(void) override;

@@ -172,6 +172,11 @@ CLASS DOCUMENTATION
                                 tCustom (4), tTurn (5). Setting this to a legal value
                                 (such as by a script) causes a trim to be performed. This
                                 property actually maps toa function call of DoTrim().
+    @property simulation/trim-dt Positive integration step for the control and
+                                engine dynamics while finding a trim solution
+                                (default 1/120 second). Flight integration and
+                                simulation time remain suspended. Reduce this
+                                step for control systems requiring a finer rate.
 
     @author Jon S. Berndt
     @version $Revision: 1.106 $
@@ -556,8 +561,14 @@ public:
   /// Returns the simulation delta T.
   double GetDeltaT(void) const {return dT;}
 
-  /// Returns the integration time step even when integration is suspended.
-  double GetIntegrationDeltaT(void) const {return dT == 0.0 ? saved_dT : dT;}
+  /** Time step used to settle the coupled controls and engines during trim.
+      This is independent of the flight integration rate and remains positive
+      when integration is suspended. It does not advance simulation time.
+      The default is 1/120 second; systems requiring a smaller integration
+      step can set simulation/trim-dt before trimming. */
+  double GetTrimDeltaT(void) const { return trim_dT; }
+  /// Sets a finite, positive trim step (also exposed as simulation/trim-dt).
+  void SetTrimDeltaT(double delta_t);
 
   /// Suspends the simulation and sets the delta T to zero.
   void SuspendIntegration(void) {saved_dT = dT; dT = 0.0;}
@@ -642,6 +653,7 @@ private:
   bool Terminate;
   double dT;
   double saved_dT;
+  double trim_dT = 1.0/120.0;
   double sim_time;
   bool holding;
   bool IncrementThenHolding;

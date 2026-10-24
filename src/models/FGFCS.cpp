@@ -157,6 +157,16 @@ bool FGFCS::Run(bool Holding)
   if (FGModel::Run(Holding)) return true; // fast exit if nothing to do
   if (Holding) return false;
 
+  // Trim advances the control dynamics on the same clock as propulsion,
+  // independently of the suspended flight integrators. All channels execute
+  // on each trim iteration, so their normal execution rates do not scale dt.
+  const double trimDeltaT = GetTrimStatus() ? FDMExec->GetTrimDeltaT() : 0.0;
+  if (trimDeltaT != activeTrimDeltaT) {
+    for (auto channel: SystemChannels)
+      channel->SetTrimDeltaT(trimDeltaT);
+    activeTrimDeltaT = trimDeltaT;
+  }
+
   RunPreFunctions();
 
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];

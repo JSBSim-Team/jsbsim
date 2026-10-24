@@ -100,7 +100,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   sim_time = 0.0;
   dT = 1.0/120.0; // a default timestep size. This is needed for when JSBSim is
                   // run in standalone mode with no initialization file.
-  saved_dT = dT;
 
   AircraftPath = "aircraft";
   EnginePath = "engine";
@@ -158,6 +157,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   instance->Tie("simulation/pause", &holding);
   instance->Tie("simulation/sim-time-sec", this, &FGFDMExec::GetSimTime);
   instance->Tie("simulation/dt", this, &FGFDMExec::GetDeltaT);
+  instance->Tie("simulation/trim-dt", this, &FGFDMExec::GetTrimDeltaT,
+                &FGFDMExec::SetTrimDeltaT);
   instance->Tie("simulation/jsbsim-debug", this, &FGFDMExec::GetDebugLevel, &FGFDMExec::SetDebugLevel);
   instance->Tie("simulation/frame", reinterpret_cast<int*>(&Frame));
   instance->Tie("simulation/trim-completed", &trim_completed);
@@ -1336,6 +1337,18 @@ void FGFDMExec::CheckIncrementalHold(void)
       TimeStepsUntilHold--;
     }
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::SetTrimDeltaT(double delta_t)
+{
+  if (!std::isfinite(delta_t) || delta_t <= 0.0) {
+    LogException err;
+    err << "The trim time step must be finite and positive.";
+    throw err;
+  }
+  trim_dT = delta_t;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

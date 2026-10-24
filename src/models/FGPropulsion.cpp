@@ -265,17 +265,17 @@ void FGPropulsion::ConsumeFuel(FGEngine* engine)
 bool FGPropulsion::GetSteadyState(void)
 {
   const bool TrimMode = FDMExec->GetTrimStatus();
-  double TimeStep = FDMExec->GetDeltaT();
+  const double TimeStep = in.TotalDeltaT;
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
   if (!FGModel::Run(false)) {
     FDMExec->SetTrimStatus(true);
-    // Advance engines at the simulation rate, including while integration is
-    // suspended. A larger step can destabilize a propeller governor even with
-    // fixed controls, and during trim it also decouples engines from FCS time.
-    in.TotalDeltaT = FDMExec->GetIntegrationDeltaT();
+    // Use the same positive step as the FCS dynamics. The flight integration
+    // rate can be zero (suspended) or much smaller than needed to settle the
+    // engines, while a large step can destabilize a propeller governor.
+    in.TotalDeltaT = FDMExec->GetTrimDeltaT();
 
     int steady_count = 0;
     for (int j = 0; j < 6000 && steady_count <= 120; ++j) {
