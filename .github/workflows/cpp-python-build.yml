@@ -717,6 +717,7 @@ jobs:
       - name: Rolling release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           notes_file="$RUNNER_TEMP/release-notes.md"
           cat > "$notes_file" <<EOF
