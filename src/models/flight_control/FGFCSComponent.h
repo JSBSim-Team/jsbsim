@@ -89,6 +89,11 @@ public:
   /// Destructor
   virtual ~FGFCSComponent();
 
+  /** Use a positive trim step, or restore the nominal channel step with zero.
+      Preserve past states so that flight can resume without a discontinuity.
+      Transport delays retain their nominal history: Delay() fills that
+      history with the current output during trim. */
+  virtual void SetTrimDeltaT(double step) { dt = step > 0.0 ? step : nominal_dt; }
   virtual bool Run(void) { return true; }
   virtual void SetOutput(void);
   double GetOutput (void) const {return Output;}
@@ -112,6 +117,7 @@ protected:
   unsigned int delay;
   int index;
   double dt;
+  double nominal_dt;
   bool clip, cyclic_clip;
 
   void Delay(void);

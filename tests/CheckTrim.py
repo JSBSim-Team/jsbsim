@@ -19,6 +19,8 @@
 #
 
 import xml.etree.ElementTree as et
+import math
+from itertools import product
 
 from JSBSim_utils import JSBSimTestCase, RunTest, CopyAircraftDef
 from jsbsim import TrimFailureError
@@ -120,6 +122,281 @@ class CheckTrim(JSBSimTestCase):
         while fdm.run():
             if fdm['simulation/trim-completed'] == 1:
                 break
+
+    def test_p51d_trim_with_manifold_pressure_control(self):
+        # Trim must drive the pilot's MAP command, and the automatic controller
+        # must keep using engine feedback during and after settling (issue #1440).
+        for dt, use_starter in product((1.0 / 960.0, 1.0 / 120.0, 1.0 / 60.0),
+                                       (False, True)):
+            with self.subTest(dt=dt, use_starter=use_starter):
+                fdm = self.create_fdm()
+                fdm.set_dt(dt)
+                self.assertTrue(fdm.load_model('p51d'))
+                fdm['ic/h-sl-ft'] = 10000.0
+                fdm['ic/vc-kts'] = 240.0
+                fdm['fcs/throttle-cmd-norm'] = 0.6
+                self.assertTrue(fdm.run_ic())
+
+                if use_starter:
+                    fdm['fcs/mixture-cmd-norm'] = 0.5
+                    fdm['propulsion/magneto_cmd'] = 3
+                    fdm['propulsion/starter_cmd'] = 1
+                    for _ in range(round(2.5 / dt)):
+                        self.assertTrue(fdm.run())
+                    fdm['propulsion/starter_cmd'] = 0
+                else:
+                    fdm['propulsion/set-running'] = -1
+                    fdm['fcs/mixture-cmd-norm'] = 0.5
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+
+                sim_time = fdm.get_sim_time()
+                fdm['simulation/do_simple_trim'] = 0  # Longitudinal trim
+                self.assertEqual(fdm.get_sim_time(), sim_time)
+                self.assertEqual(fdm.get_delta_t(), dt)
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+                self.assertGreater(fdm['propulsion/engine/propeller-rpm'], 0.0)
+                for axis in ('udot-ft_sec2', 'wdot-ft_sec2', 'qdot-rad_sec2'):
+                    self.assertAlmostEqual(fdm['accelerations/' + axis], 0.0,
+                                           delta=1e-3)
+
+                map_inhg = fdm['propulsion/engine/map-inhg']
+                throttle = fdm['fcs/throttle-pos-norm']
+                self.assertAlmostEqual(map_inhg,
+                                       fdm['systems/engine/target-mp-inhg'],
+                                       delta=1e-3)
+                # The controller remains active: resuming flight must not cause
+                # a throttle/MAP jump from stale or reset controller state.
+                self.assertTrue(fdm.run())
+                self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+                self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], throttle,
+                                       delta=1e-3)
+                self.assertAlmostEqual(fdm['propulsion/engine/map-inhg'], map_inhg,
+                                       delta=1e-2)
+
+                # Check sustained operation after resuming, not only the first
+                # frame. MAP must continue tracking as the aircraft moves.
+                resumed_time = fdm.get_sim_time()
+                for _ in range(round(5.0 / dt)):
+                    self.assertTrue(fdm.run())
+                    self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+                    self.assertGreater(fdm['propulsion/engine/propeller-rpm'], 0.0)
+                    self.assertAlmostEqual(fdm['propulsion/engine/map-inhg'],
+                                           fdm['systems/engine/target-mp-inhg'],
+                                           delta=0.1)
+                    for prop in ('velocities/u-fps', 'velocities/v-fps',
+                                 'velocities/w-fps', 'attitude/phi-rad',
+                                 'attitude/theta-rad'):
+                        self.assertTrue(math.isfinite(fdm[prop]), prop)
+                self.assertAlmostEqual(fdm.get_sim_time(), resumed_time + 5.0,
+                                       delta=1e-8)
+
+    def test_trim_control_time_step(self):
+        # Flight integration stays suspended, but PID and filter dynamics must
+        # advance on the trim clock, including channels with a slower rate.
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'ball.xml')
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
+        system = et.SubElement(tree.getroot(), 'system', name='Trim clock')
+        et.SubElement(system, 'property', value='0.0').text = 'test/input'
+        for rate in (1, 4):
+            channel = et.SubElement(system, 'channel', name=str(rate),
+                                    execrate=str(rate))
+            channel.append(et.fromstring(f'''
+                <pid name="test/pid-{rate}">
+                  <input>test/input</input>
+                  <ki type="rect">1.0</ki><kd>1.0</kd>
+                </pid>'''))
+            channel.append(et.fromstring(f'''
+                <lag_filter name="test/filter-{rate}">
+                  <input>test/input</input><c1>2.0</c1>
+                </lag_filter>'''))
+            channel.append(et.fromstring(f'''
+                <sensor name="test/sensor-{rate}">
+                  <input>test/input</input><lag>2.0</lag>
+                </sensor>'''))
+            channel.append(et.fromstring(f'''
+                <linear_actuator name="test/linear-{rate}">
+                  <input>test/input</input><module>100.0</module>
+                  <set>1.0</set><lag>2.0</lag>
+                </linear_actuator>'''))
+            channel.append(et.fromstring(f'''
+                <actuator name="test/actuator-{rate}">
+                  <input>test/input</input><lag>2.0</lag>
+                </actuator>'''))
+        tree.write(self.sandbox('aircraft', aircraft_name,
+                                aircraft_name + '.xml'))
+
+        for dt, trim_dt in product((1.0 / 960.0, 1.0 / 60.0),
+                                   (1.0 / 120.0, 1.0 / 60.0)):
+            with self.subTest(dt=dt, trim_dt=trim_dt):
+                fdm = self.create_fdm()
+                fdm.set_dt(dt)
+                fdm['simulation/trim-dt'] = trim_dt
+                fdm.set_aircraft_path(self.sandbox('aircraft'))
+                self.assertTrue(fdm.load_model(aircraft_name))
+                self.assertTrue(fdm.load_ic('reset00', True))
+                self.assertTrue(fdm.run_ic())
+                fdm['test/input'] = 1.0
+                sim_time = fdm.get_sim_time()
+                fdm.set_trim_status(True)
+                fdm.suspend_integration()
+                try:
+                    for i in range(8):
+                        self.assertTrue(fdm.run())
+                        # The first sample also exercises the derivative.
+                        expected = (i + 1) * trim_dt
+                        if i == 0:
+                            expected += 1.0 / trim_dt
+                        # Bilinear response to a unit step, with lag = 2.
+                        lag = 1.0 - ((1.0 - trim_dt) / (1.0 + trim_dt))**i \
+                            / (1.0 + trim_dt)
+                        for rate in (1, 4):
+                            self.assertTrue(math.isfinite(fdm[f'test/pid-{rate}']))
+                            self.assertAlmostEqual(fdm[f'test/pid-{rate}'], expected)
+                            for component in ('filter', 'sensor', 'linear'):
+                                self.assertAlmostEqual(
+                                    fdm[f'test/{component}-{rate}'], lag)
+                            # Actuators intentionally bypass lag during trim.
+                            self.assertEqual(fdm[f'test/actuator-{rate}'], 1.0)
+                        self.assertEqual(fdm.get_sim_time(), sim_time)
+                        self.assertEqual(fdm.get_delta_t(), 0.0)
+                finally:
+                    fdm.resume_integration()
+                    fdm.set_trim_status(False)
+
+                # Preserve filter history, restore nominal coefficients and
+                # channel scheduling on the first resumed frame.
+                for i in range(4):
+                    self.assertTrue(fdm.run())
+                    resumed_lag = 1.0 - (1.0 - lag) * \
+                        ((1.0 - dt) / (1.0 + dt))**(i + 1)
+                    self.assertAlmostEqual(fdm['test/pid-1'],
+                                           8 * trim_dt + (i + 1) * dt)
+                    for component in ('filter', 'sensor', 'linear'):
+                        self.assertAlmostEqual(fdm[f'test/{component}-1'],
+                                               resumed_lag)
+                self.assertAlmostEqual(fdm['test/pid-4'], 8 * trim_dt + 4 * dt)
+                for component in ('filter', 'sensor', 'linear'):
+                    self.assertAlmostEqual(fdm[f'test/{component}-4'],
+                        1.0 - (1.0 - lag) * (1.0 - 4 * dt) / (1.0 + 4 * dt))
+                self.assertEqual(fdm.get_delta_t(), dt)
+
+                # Actuator lag must also use nominal coefficients again.
+                fdm['test/input'] = 0.0
+                for i in range(4):
+                    self.assertTrue(fdm.run())
+                    self.assertAlmostEqual(fdm['test/actuator-1'],
+                        ((1.0 - dt) / (1.0 + dt))**i / (1.0 + dt))
+                self.assertAlmostEqual(fdm['test/actuator-4'], 1.0 / (1.0 + 4 * dt))
+
+    def test_trim_time_step_must_be_positive_and_finite(self):
+        fdm = self.create_fdm()
+        step = fdm['simulation/trim-dt']
+        self.assertGreater(step, 0.0)
+        for invalid in (0.0, -1.0, math.inf, -math.inf, math.nan):
+            with self.subTest(step=invalid):
+                with self.assertRaises(RuntimeError):
+                    fdm['simulation/trim-dt'] = invalid
+                self.assertEqual(fdm['simulation/trim-dt'], step)
+
+    def test_piston_steady_state_refreshes_fcs_engine_feedback(self):
+        # The FCS sets BSFC from MAP, which changes while the piston engine
+        # settles. A frozen BSFC is a false steady state (issue #1440).
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
+        aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
+                                                          self.sandbox)
+        system = et.SubElement(aircraft_tree.getroot(), 'system',
+                               name='Piston engine feedback')
+        channel = et.SubElement(system, 'channel', name='Engine BSFC')
+        channel.append(et.fromstring('''
+            <fcs_function name="systems/map-bsfc">
+              <function>
+                <sum>
+                  <value>0.3</value>
+                  <product>
+                    <value>0.005</value>
+                    <property>propulsion/engine/map-inhg</property>
+                  </product>
+                </sum>
+              </function>
+              <output>propulsion/engine/bsfc-lbs_hphr</output>
+            </fcs_function>'''))
+        aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
+                                         aircraft_name + '.xml'))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path(self.sandbox('aircraft'))
+        self.assertTrue(fdm.load_model(aircraft_name))
+        self.assertTrue(fdm.load_ic('reset01', True))
+        fdm['ic/h-sl-ft'] = 10000.0
+        fdm['ic/vc-kts'] = 90.0
+        self.assertTrue(fdm.run_ic())
+        self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+
+        fdm['fcs/throttle-cmd-norm'] = 0.2
+        fdm.run()
+        # Select trim feedback; InitRunning() keeps its startup controls fixed.
+        # Suspended integration is covered by test_trim_control_time_step.
+        fdm.set_trim_status(True)
+        try:
+            fdm.get_propulsion().get_steady_state()
+        finally:
+            fdm.set_trim_status(False)
+
+        map_inhg = fdm['propulsion/engine/map-inhg']
+        bsfc = fdm['propulsion/engine/bsfc-lbs_hphr']
+        self.assertAlmostEqual(bsfc, 0.3 + 0.005 * map_inhg, delta=1e-3)
+        self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+        self.assertGreater(fdm['propulsion/engine/propeller-rpm'], 0.0)
+
+    def test_steady_state_settles_fcs_throttle_filter(self):
+        # A single FCS refresh leaves a lagged throttle short of its target.
+        # Thrust can remain unchanged for one calculation while RPM updates,
+        # so convergence must include successive FCS and engine updates.
+        script_path = self.sandbox.path_to_jsbsim_file('scripts', 'c1722.xml')
+        aircraft_tree, aircraft_name, _ = CopyAircraftDef(script_path,
+                                                          self.sandbox)
+        system = et.SubElement(aircraft_tree.getroot(), 'system',
+                               name='Throttle control')
+        channel = et.SubElement(system, 'channel', name='Throttle lag')
+        channel.append(et.fromstring('''
+            <lag_filter name="systems/throttle-lag">
+              <input>fcs/throttle-cmd-norm</input>
+              <c1>1.0</c1>
+              <output>fcs/throttle-pos-norm</output>
+            </lag_filter>'''))
+        aircraft_tree.write(self.sandbox('aircraft', aircraft_name,
+                                         aircraft_name + '.xml'))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path(self.sandbox('aircraft'))
+        self.assertTrue(fdm.load_model(aircraft_name))
+        self.assertTrue(fdm.load_ic('reset01', True))
+        fdm['ic/h-sl-ft'] = 10000.0
+        fdm['ic/vc-kts'] = 90.0
+        self.assertTrue(fdm.run_ic())
+        propulsion = fdm.get_propulsion()
+
+        fdm['fcs/throttle-cmd-norm'] = 0.5
+        fdm.set_trim_status(True)
+        fdm.suspend_integration()
+        try:
+            # Initialize the one-second filter while holding the aircraft's
+            # position and velocity fixed, then settle it at half throttle.
+            for _ in range(1200):
+                fdm.run()
+            propulsion.get_steady_state()
+            self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], 0.5,
+                                   delta=1e-4)
+
+            fdm['fcs/throttle-cmd-norm'] = 0.8
+            fdm.run()
+            propulsion.get_steady_state()
+            self.assertAlmostEqual(fdm['fcs/throttle-pos-norm'], 0.8,
+                                   delta=1e-5)
+            self.assertEqual(fdm['propulsion/engine/set-running'], 1.0)
+        finally:
+            fdm.resume_integration()
+            fdm.set_trim_status(False)
 
 
 RunTest(CheckTrim)

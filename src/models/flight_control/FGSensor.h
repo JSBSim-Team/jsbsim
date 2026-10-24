@@ -148,6 +148,7 @@ public:
   int GetNoiseRandomSeed(void) const;
   void SetNoiseRandomSeed(int seed);
 
+  void SetTrimDeltaT(double step) override;
   bool Run (void) override;
   void ResetPastStates(void) override;
 

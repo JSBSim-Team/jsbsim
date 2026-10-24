@@ -160,6 +160,18 @@ FGLinearActuator::~FGLinearActuator()
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGLinearActuator::SetTrimDeltaT(double step)
+{
+  FGFCSComponent::SetTrimDeltaT(step);
+  if (lag > 0.0) {
+    const double denom = 2.0 + dt*lag;
+    ca = dt*lag / denom;
+    cb = (2.0 - dt*lag) / denom;
+  }
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGLinearActuator::Run(void )
 {
   if (ptrSet && !ptrSet->IsConstant()) set = ptrSet->GetValue() >= 0.5;

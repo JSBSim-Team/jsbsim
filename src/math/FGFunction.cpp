@@ -319,7 +319,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
   auto sum = [](const decltype(Parameters)& Parameters)->double {
                double temp = 0.0;
 
-               for (auto p: Parameters)
+               for (const auto& p: Parameters)
                  temp += p->GetValue();
 
                return temp;
@@ -383,7 +383,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double temp = 1.0;
 
-                 for (auto p: Parameters)
+                 for (const auto& p: Parameters)
                    temp *= p->GetValue();
 
                  return temp;
@@ -410,7 +410,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _min = HUGE_VAL;
 
-                 for (auto p : Parameters) {
+                 for (const auto& p : Parameters) {
                    double x = p->GetValue();
                    if (x < _min)
                      _min = x;
@@ -423,7 +423,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
       auto f = [](const decltype(Parameters)& Parameters)->double {
                  double _max = -HUGE_VAL;
 
-                 for (auto p : Parameters) {
+                 for (const auto& p : Parameters) {
                    double x = p->GetValue();
                    if (x > _max)
                      _max = x;
@@ -435,7 +435,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "and") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
-                 for (auto p : Parameters) {
+                 for (const auto& p : Parameters) {
                    if (!GetBinary(p->GetValue(), ctxMsg)) // As soon as one parameter is false, the expression is guaranteed to be false.
                      return 0.0;
                  }
@@ -447,7 +447,7 @@ void FGFunction::Load(Element* el, FGPropertyValue* var, FGFDMExec* fdmex,
     } else if (operation == "or") {
       string ctxMsg = element->ReadFrom();
       auto f = [ctxMsg](const decltype(Parameters)& Parameters)->double {
-                 for (auto p : Parameters) {
+                 for (const auto& p : Parameters) {
                    if (GetBinary(p->GetValue(), ctxMsg)) // As soon as one parameter is true, the expression is guaranteed to be true.
                      return 1.0;
                  }
@@ -959,7 +959,7 @@ FGFunction::~FGFunction()
 
 bool FGFunction::IsConstant(void) const
 {
-  for (auto p: Parameters) {
+  for (const auto& p: Parameters) {
     if (!p->IsConstant())
       return false;
   }
