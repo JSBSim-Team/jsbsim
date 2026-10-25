@@ -6,6 +6,8 @@ on:
       - .github/workflows/draft-pdf.yml
       - CITATION.cff
 
+permissions: {}
+
 jobs:
   paper:
     runs-on: ubuntu-latest
@@ -13,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Build draft PDF
         uses: openjournals/openjournals-draft-action@master
         with:
@@ -34,6 +38,8 @@ jobs:
     steps:
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Set up Python 3.10
         uses: actions/setup-python@v7
         with:

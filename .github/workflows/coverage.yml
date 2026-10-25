@@ -16,6 +16,8 @@ on:
       - "CITATION.cff"
       - "**/*.ipynb"
 
+permissions: {}
+
 jobs:
   Codecov:
     name: Code coverage
@@ -28,6 +30,8 @@ jobs:
           sudo apt-get install cxxtest lcov
       - name: Checkout JSBSim
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
