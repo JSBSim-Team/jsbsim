@@ -163,6 +163,16 @@ std::string& to_lower(std::string& str)
 
 bool is_number(const std::string& str)
 {
+  // Most nonnumeric inputs are property paths. Reject them before invoking
+  // the numeric parser, which would otherwise construct an exception.
+  auto first = str.find_first_not_of(" \t\n\r\f\v");
+  if (first == std::string::npos) return false;
+  if (str[first] == '+' || str[first] == '-') ++first;
+  if (first == str.size()) return false;
+  const char c = str[first];
+  if ((c < '0' || c > '9') && c != '.')
+    return false;
+
   try {
     atof_locale_c(str);
   } catch (InvalidNumber&) {

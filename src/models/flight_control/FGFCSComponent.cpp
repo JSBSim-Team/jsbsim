@@ -56,7 +56,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   delay = index = 0;
   ClipMin = ClipMax = new FGRealValue(0.0);
   clip = cyclic_clip = false;
-  dt = fcs->GetChannelDeltaT();
+  nominal_dt = dt = fcs->GetChannelDeltaT();
 
   auto PropertyManager = fcs->GetPropertyManager();
   if        (element->GetName() == string("lag_filter")) {
@@ -241,7 +241,7 @@ void FGFCSComponent::CheckInputNodes(size_t MinNodes, size_t MaxNodes, Element* 
 
 void FGFCSComponent::SetOutput(void)
 {
-  for (auto node: OutputNodes)
+  for (const auto& node: OutputNodes)
     node->setDoubleValue(Output);
 }
 
