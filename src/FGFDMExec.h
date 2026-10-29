@@ -644,6 +644,7 @@ private:
   bool IncrementThenHolding;
   int TimeStepsUntilHold;
   bool Constructing;
+  bool modelLoadAttempted;
   bool modelLoaded;
   bool IsChild;
   std::string modelName;
@@ -708,6 +709,7 @@ private:
   void LoadPlanetConstants(void);
   bool LoadPlanet(Element* el);
   void LoadModelConstants(void);
+  void Bind(void);
   bool Allocate(void);
   bool DeAllocate(void);
   void InitializeModels(void);
