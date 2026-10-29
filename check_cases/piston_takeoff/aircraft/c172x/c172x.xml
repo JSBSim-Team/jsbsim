@@ -83,7 +83,7 @@
             </location>
         </pointmass>
     </mass_balance>
-    
+
     <ground_reactions>
 
         <contact type="BOGEY" name="Nose Gear">
@@ -222,7 +222,7 @@
             <contents unit="LBS">100</contents>
         </tank>
     </propulsion>
-    
+
     <system name="Navigation">
       <channel name="Heading">
         <sensor name="navigation/actual-heading-rad">
@@ -237,7 +237,7 @@
     <system name="Mixture control">
       <!--
       E = 1.3 * Mixture * P_std / P_amb
-  
+
       Mixture = P_amb / P_std
       -->
       <channel name="Automatic Mixture Control">
@@ -255,14 +255,14 @@
         </fcs_function>
       </channel>
     </system>
-  
+
     <system file="GNCUtilities"/>
 
     <system file="Autopilot">
       <property value="0.523"> guidance/roll-angle-limit </property>
       <property value="0.174"> guidance/roll-rate-limit </property>
     </system>
-    
+
     <autopilot file="c172ap"/>
 
     <flight_control name="c172">
@@ -327,7 +327,7 @@
                 <max> 15</max>
               </range>
             </aerosurface_scale>
-    
+
             <actuator name="fcs/left-aileron-actuator">
               <description> The input to this actuator is in radians. </description>
               <input> fcs/left-aileron-control </input>
@@ -339,7 +339,7 @@
               </clipto>
               <output>fcs/left-aileron-pos-rad</output>
             </actuator>
-            
+
             <aerosurface_scale name="fcs/right-aileron-control">
               <description> The output from this control is in radians. </description>
               <input>-fcs/roll-trim-sum</input>
@@ -361,13 +361,13 @@
               </clipto>
               <output>fcs/right-aileron-pos-rad</output>
             </actuator>
-            
+
             <summer name="fcs/effective-aileron-pos">
               <input> fcs/left-aileron-pos-rad </input>
               <input> -fcs/right-aileron-pos-rad </input>
               <gain> 0.5 </gain>
             </summer>
-            
+
         </channel>
 
         <channel name="Yaw">
@@ -573,7 +573,8 @@
             <function name="aero/coefficient/CLadot">
                 <description>Lift due to alpha rate</description>
                 <product>
-                    <property>aero/qbar-area</property>
+                    <property>aero/qbarUW-psf</property>
+                    <property>metrics/Sw-sqft</property>
                     <property>aero/alphadot-rad_sec</property>
                     <property>aero/ci2vel</property>
                     <value>1.7</value>
@@ -1044,7 +1045,8 @@
             <function name="aero/coefficient/Cmadot">
                 <description>Pitch moment due to alpha rate</description>
                 <product>
-                    <property>aero/qbar-area</property>
+                    <property>aero/qbarUW-psf</property>
+                    <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
                     <property>aero/ci2vel</property>
                     <property>aero/alphadot-rad_sec</property>
@@ -1195,7 +1197,6 @@
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
-    </output> 
+    </output>
     -->
 </fdm_config>
-
