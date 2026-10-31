@@ -12,9 +12,9 @@ set(HEADERS FGMSIS.h
 add_library(Atmosphere OBJECT ${SOURCES})
 add_library(MSIS OBJECT MSIS/nrlmsise-00.c MSIS/nrlmsise-00_data.c)
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(Atmosphere)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/atmosphere
                          COMPONENT devel)

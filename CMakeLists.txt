@@ -116,14 +116,16 @@ endif(BUILD_MATLAB_SFUNCTION)
 # Build the unit tests (needs CxxTest)                                         #
 ################################################################################
 
-if (CXXTEST_FOUND)
+if(CXXTEST_FOUND)
   enable_testing()
   add_subdirectory(tests/unit_tests)
-  list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/JSBSim.cpp'")
-  list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/GeographicLib/*'")
-  list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/simgear/*'")
-  list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/unit_tests/*'")
-  coverage_evaluate()
+  if(LCOV_FOUND)
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/JSBSim.cpp'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/GeographicLib/*'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/src/simgear/*'")
+    list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/unit_tests/*'")
+    coverage_evaluate()
+  endif(LCOV_FOUND)
 endif(CXXTEST_FOUND)
 
 ################################################################################
