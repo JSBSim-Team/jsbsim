@@ -32,8 +32,8 @@ set(HEADERS FGColumnVector3.h
 
 add_library(Math OBJECT ${SOURCES})
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(Math)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/math COMPONENT devel)

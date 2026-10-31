@@ -46,6 +46,7 @@ set(OBJECT_LIBS $<BUILD_INTERFACE:Atmosphere>
                 $<BUILD_INTERFACE:Math>
                 $<BUILD_INTERFACE:Misc>
                 $<BUILD_INTERFACE:Models>
+                $<BUILD_INTERFACE:MSIS>
                 $<BUILD_INTERFACE:Properties>
                 $<BUILD_INTERFACE:Propulsion>
                 $<BUILD_INTERFACE:Xml>)
@@ -121,11 +122,11 @@ endif()
 add_executable(JSBSim JSBSim.cpp)
 target_link_libraries(JSBSim libJSBSim)
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
   add_coverage(libJSBSim)
   # Add JSBSim to the coverage analysis to avoid linking errors
   add_coverage(JSBSim)
-endif(CXXTEST_FOUND)
+endif()
 
 if(MSVC AND BUILD_SHARED_LIBS)
   # Under Windows, during the linking process, executables must have a
