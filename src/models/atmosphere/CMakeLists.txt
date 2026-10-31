@@ -1,9 +1,7 @@
 set(SOURCES FGMSIS.cpp
             FGMars.cpp
             FGStandardAtmosphere.cpp
-            FGWinds.cpp
-            MSIS/nrlmsise-00.c
-            MSIS/nrlmsise-00_data.c)
+            FGWinds.cpp)
 
 set(HEADERS FGMSIS.h
             FGMars.h
@@ -12,6 +10,7 @@ set(HEADERS FGMSIS.h
             MSIS/nrlmsise-00.h)
 
 add_library(Atmosphere OBJECT ${SOURCES})
+add_library(MSIS OBJECT MSIS/nrlmsise-00.c MSIS/nrlmsise-00_data.c)
 
 if(CXXTEST_FOUND)
     add_coverage(Atmosphere)

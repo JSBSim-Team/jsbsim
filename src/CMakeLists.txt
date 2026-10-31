@@ -46,6 +46,7 @@ set(OBJECT_LIBS $<BUILD_INTERFACE:Atmosphere>
                 $<BUILD_INTERFACE:Math>
                 $<BUILD_INTERFACE:Misc>
                 $<BUILD_INTERFACE:Models>
+                $<BUILD_INTERFACE:MSIS>
                 $<BUILD_INTERFACE:Properties>
                 $<BUILD_INTERFACE:Propulsion>
                 $<BUILD_INTERFACE:Xml>)
