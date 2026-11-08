@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <assert.h>
+#include <charconv>
 #include <limits>
 #include <optional>
 
@@ -152,16 +153,13 @@ std::optional<unsigned int> ParseLookupAxis(const string& lookup_axis)
   if (lookup_axis == "table" || lookup_axis == "axis3")
     return 2u;
 
-  try {
-    if (lookup_axis.rfind("axis", 0) == 0) {
-      const string suffix = lookup_axis.substr(4);
-      const unsigned long axis = std::stoul(suffix);
-      if (axis >= 1ul)
-        return static_cast<unsigned int>(axis - 1ul);
-    }
-  } catch (std::exception& e) {
-    FGLogging err(LogLevel::ERROR);
-    err << e.what() << "\n";
+  if (lookup_axis.rfind("axis", 0) == 0) {
+    const string suffix = lookup_axis.substr(4);
+    unsigned int axis = 0u;
+    const auto result = std::from_chars(suffix.data(), suffix.data() + suffix.size(), axis);
+    if (result.ec == std::errc{} &&
+        result.ptr == suffix.data() + suffix.size() && axis >= 1u)
+      return axis - 1u;
   }
 
   return std::nullopt;
@@ -265,6 +263,9 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
 
   unsigned int declared_dimension = 0u;
 
+  // GetNumElements() advances the Element child-iteration cursor, so count
+  // first, then reset it with FindElement() before traversing the children.
+  const unsigned int nIndependentVars = el->GetNumElements("independentVar");
   Element* axisElement = el->FindElement("independentVar");
   if (axisElement) {
 
@@ -293,6 +294,15 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       if (!axis.has_value()) {
         XMLLogException err(axisElement);
         err << "FGTable: lookup axis specification not understood: " << lookup_axis <<"\n";
+        throw err;
+      }
+
+      // A valid table has one distinct lookup axis per independent variable.
+      // Check this before SetLookupProperty() resizes the axis vector, so that
+      // malformed large axis numbers cannot overflow the index or exhaust memory.
+      if (*axis >= nIndependentVars) {
+        XMLLogException err(axisElement);
+        err << "FGTable: lookup axis out of range: " << lookup_axis << "\n";
         throw err;
       }
 
