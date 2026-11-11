@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
+#include <memory>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -148,7 +149,11 @@ private:
 
   eIntegrateType IntType;
 
-  FGParameter *Kp, *Ki, *Kd, *Trigger, *ProcessVariableDot;
+  std::unique_ptr<FGParameter> Kp;
+  std::unique_ptr<FGParameter> Ki;
+  std::unique_ptr<FGParameter> Kd;
+  std::unique_ptr<FGParameter> Trigger;
+  std::unique_ptr<FGParameter> ProcessVariableDot;
 
   void bind(Element* el, FGPropertyManager* pm) override;
   void Debug(int from) override;

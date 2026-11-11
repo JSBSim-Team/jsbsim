@@ -68,9 +68,9 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   el = element->FindElement("kp");
   if (el)
-    Kp = new FGParameterValue(el, PropertyManager);
+    Kp = std::make_unique<FGParameterValue>(el, PropertyManager);
   else
-    Kp = new FGRealValue(0.0);
+    Kp = std::make_unique<FGRealValue>(0.0);
 
   el = element->FindElement("ki");
   if (el) {
@@ -87,25 +87,25 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       IntType = eAdamsBashforth2;
     }
 
-    Ki = new FGParameterValue(el, PropertyManager);
+    Ki = std::make_unique<FGParameterValue>(el, PropertyManager);
   }
   else
-    Ki = new FGRealValue(0.0);
+    Ki = std::make_unique<FGRealValue>(0.0);
 
 
   el = element->FindElement("kd");
   if (el)
-    Kd = new FGParameterValue(el, PropertyManager);
+    Kd = std::make_unique<FGParameterValue>(el, PropertyManager);
   else
-    Kd = new FGRealValue(0.0);
+    Kd = std::make_unique<FGRealValue>(0.0);
 
   el = element->FindElement("pvdot");
   if (el)
-    ProcessVariableDot = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
+    ProcessVariableDot = std::make_unique<FGPropertyValue>(el->GetDataLine(), PropertyManager, el);
 
   el = element->FindElement("trigger");
   if (el)
-    Trigger = new FGPropertyValue(el->GetDataLine(), PropertyManager, el);
+    Trigger = std::make_unique<FGPropertyValue>(el->GetDataLine(), PropertyManager, el);
 
   bind(el, PropertyManager.get());
 }
