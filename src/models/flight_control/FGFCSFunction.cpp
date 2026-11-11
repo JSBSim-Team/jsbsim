@@ -58,7 +58,7 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
   Element *function_element = element->FindElement("function");
 
   if (function_element)
-    function = new FGFunction(fcs->GetExec(), function_element);
+    function = std::make_unique<FGFunction>(fcs->GetExec(), function_element);
   else {
     XMLLogException err(element);
     err << "FCS Function should contain a \"function\" element\n";
@@ -73,7 +73,6 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element)
 
 FGFCSFunction::~FGFCSFunction()
 {
-  delete function;
   Debug(1);
 }
 
