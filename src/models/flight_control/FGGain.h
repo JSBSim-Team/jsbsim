@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
+#include <memory>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -223,7 +224,7 @@ public:
   bool Run (void) override;
 
 private:
-  FGTable* Table;
+  std::unique_ptr<FGTable> Table;
   FGParameter_ptr Gain;
   double InMin, InMax, OutMin, OutMax;
   bool ZeroCentered;

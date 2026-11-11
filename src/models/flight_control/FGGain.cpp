@@ -113,7 +113,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (Type == "SCHEDULED_GAIN") {
     if (element->FindElement("table")) {
-      Table = new FGTable(PropertyManager, element->FindElement("table"));
+      Table = std::make_unique<FGTable>(PropertyManager, element->FindElement("table"));
     } else {
       XMLLogException err(element);
       err << "A table must be provided for the scheduled gain component\n";
@@ -130,8 +130,6 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGGain::~FGGain()
 {
-  delete Table;
-
   Debug(1);
 }
 
