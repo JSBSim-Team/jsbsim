@@ -62,7 +62,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   PreviousLagInput = PreviousLagOutput = 0.0;
   bias = hysteresis_width = deadband_width = 0.0;
   lag = nullptr;
-  rate_limit_incr = rate_limit_decr = 0; // no limit
+  rate_limit_incr = rate_limit_decr = nullptr; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
   ca = cb = 0.0;
   initialized = 0;
@@ -84,7 +84,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   Element* ratelim_el = element->FindElement("rate_limit");
   while ( ratelim_el ) {
     string rate_limit_str = ratelim_el->GetDataLine();
-    FGParameter* rate_limit = new FGParameterValue(rate_limit_str,
+    auto rate_limit = std::make_shared<FGParameterValue>(rate_limit_str,
                                                    PropertyManager, ratelim_el);
 
     if (ratelim_el->HasAttribute("sense")) {
@@ -108,7 +108,7 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
   Element* lag_el = element->FindElement("lag");
   if ( lag_el ) {
     string lag_str = lag_el->GetDataLine();
-    lag = new FGParameterValue(lag_str, PropertyManager, lag_el);
+    lag = std::make_shared<FGParameterValue>(lag_str, PropertyManager, lag_el);
     InitializeLagCoefficients();
   }
 
@@ -121,12 +121,6 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element)
 
 FGActuator::~FGActuator()
 {
-  delete rate_limit_incr;
-  if (rate_limit_decr != rate_limit_incr)
-    delete rate_limit_decr;
-
-  delete lag;
-
   Debug(1);
 }
 
@@ -162,7 +156,7 @@ bool FGActuator::Run(void )
     Output = PreviousOutput;
   } else {
     if (lag)                Lag();        // models actuator lag
-    if (rate_limit_incr != 0 || rate_limit_decr != 0) RateLimit();  // limit the actuator rate
+    if (rate_limit_incr || rate_limit_decr) RateLimit();  // limit the actuator rate
     if (deadband_width != 0.0)   Deadband();
     if (hysteresis_width != 0.0) Hysteresis();
     if (bias != 0.0)             Bias();       // models a finite bias
@@ -346,13 +340,13 @@ void FGActuator::Debug(int from)
           log << "      OUTPUT: " << node->getNameString() << "\n";
       }
       if (bias != 0.0) log << "      Bias: " << bias << "\n";
-      if (rate_limit_incr != 0) {
+      if (rate_limit_incr) {
         log << "      Increasing rate limit: " << rate_limit_incr->GetName() << "\n";
       }
-      if (rate_limit_decr != 0) {
+      if (rate_limit_decr) {
         log << "      Decreasing rate limit: " << rate_limit_decr->GetName() << "\n";
       }
-      if (lag != 0) log << "      Actuator lag: " << lag->GetName() << "\n";
+      if (lag) log << "      Actuator lag: " << lag->GetName() << "\n";
       if (hysteresis_width != 0) log << "      Hysteresis width: " << hysteresis_width << "\n";
       if (deadband_width != 0) log << "      Deadband width: " << deadband_width << "\n";
     }

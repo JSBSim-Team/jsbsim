@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
+#include <memory>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -154,11 +155,11 @@ public:
 private:
   //double span;
   double bias;
-  FGParameter* rate_limit_incr;
-  FGParameter* rate_limit_decr;
+  std::shared_ptr<FGParameter> rate_limit_incr;
+  std::shared_ptr<FGParameter> rate_limit_decr;
   double hysteresis_width;
   double deadband_width;
-  FGParameter* lag;
+  std::shared_ptr<FGParameter> lag;
   double lagVal;
   double ca; // lag filter coefficient "a"
   double cb; // lag filter coefficient "b"
