@@ -10,9 +10,9 @@ set(HEADERS FGInitialCondition.h
 
 add_library(Init OBJECT ${SOURCES})
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(Init)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/initialization
                          COMPONENT devel)

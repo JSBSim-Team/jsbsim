@@ -30,9 +30,9 @@ set(HEADERS FGElectric.h
 
 add_library(Propulsion OBJECT ${SOURCES})
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(Propulsion)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/propulsion
                          COMPONENT devel)
