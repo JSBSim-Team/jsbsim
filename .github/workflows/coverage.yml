@@ -35,7 +35,7 @@ jobs:
       - name: Configure JSBSim
         run: |
           mkdir build && cd build
-          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF ..
+          cmake -DENABLE_COVERAGE=ON -DBUILD_PYTHON_MODULE=OFF -DBUILD_DOCS=OFF -DGENINFO_EXTRA_FLAGS=--quiet -DLCOV_EXTRA_FLAGS=--quiet ..
       - name: Build JSBSim
         working-directory: build
         run: make --jobs=$(nproc)
