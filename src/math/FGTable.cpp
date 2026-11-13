@@ -261,11 +261,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // is part of a higher-dimensional table, in which case its independentVar
   // property indexes will be set by a call from the owning table during creation
 
-  unsigned int declared_dimension = 0u;
-
-  // GetNumElements() advances the Element child-iteration cursor, so count
-  // first, then reset it with FindElement() before traversing the children.
-  const unsigned int nIndependentVars = el->GetNumElements("independentVar");
+  const unsigned int declared_dimension = el->GetNumElements("independentVar");
   Element* axisElement = el->FindElement("independentVar");
   if (axisElement) {
 
@@ -297,12 +293,11 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
         throw err;
       }
 
-      // A valid table has one distinct lookup axis per independent variable.
-      // Check this before SetLookupProperty() resizes the axis vector, so that
-      // malformed large axis numbers cannot overflow the index or exhaust memory.
-      if (*axis >= nIndependentVars) {
+      // Check the axis bound before SetLookupProperty() resizes its storage.
+      if (*axis >= declared_dimension) {
         XMLLogException err(axisElement);
-        err << "FGTable: lookup axis out of range: " << lookup_axis << "\n";
+        err << "FGTable: lookup axis " << (*axis + 1u) << " exceeds the "
+            << declared_dimension << " <independentVar> elements declared\n";
         throw err;
       }
 
@@ -313,7 +308,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       }
 
       SetLookupProperty(*axis, node);
-      declared_dimension = std::max(declared_dimension, *axis + 1u);
       axisElement = el->FindNextElement("independentVar");
     }
 
