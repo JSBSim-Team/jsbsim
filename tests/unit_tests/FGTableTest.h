@@ -1447,6 +1447,48 @@ public:
     TS_ASSERT_THROWS(FGTable t_2x2(pm, el_table), BaseException&);
   }
 
+  void testMalformedLookupAxisNumbers() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    pm->GetNode("x", true);
+
+    // These labels must not be interpreted as the valid "axis1" alias.
+    // In particular, an axis of 2^32 used to overflow the index passed to
+    // SetLookupProperty(), causing an out-of-bounds vector access.
+    for (const std::string& lookup : {
+        "axis1junk", "axis+1", "axis2", "axis4294967296",
+        "axis4294967297", "axis999999999"}) {
+      const std::string xml =
+        "<dummy><table><independentVar lookup=\"" + lookup +
+        "\">x</independentVar><tableData>0.0 1.0\n1.0 2.0\n"
+        "</tableData></table></dummy>";
+      Element_ptr elm = readFromXML(xml);
+      Element* el_table = elm->FindElement("table");
+      TS_ASSERT_THROWS(FGTable table(pm, el_table), BaseException&);
+    }
+  }
+
+  void testLookupAxisExceedsIndependentVarCount() {
+    auto pm = std::make_shared<FGPropertyManager>();
+    pm->GetNode("x", true);
+    pm->GetNode("y", true);
+
+    Element_ptr elm = readFromXML(
+      "<dummy><table>"
+      "<independentVar lookup=\"axis1\">x</independentVar>"
+      "<independentVar lookup=\"axis3\">y</independentVar>"
+      "<tableData>0.0 1.0\n1.0 2.0\n</tableData>"
+      "</table></dummy>");
+
+    try {
+      FGTable table(pm, elm->FindElement("table"));
+      TS_FAIL("An axis beyond the number of independent variables was accepted");
+    } catch (const BaseException& e) {
+      const std::string message(e.what());
+      TS_ASSERT_DIFFERS(message.find("axis 3"), std::string::npos);
+      TS_ASSERT_DIFFERS(message.find("2 <independentVar>"), std::string::npos);
+    }
+  }
+
   void testMalformedData() {
     auto pm = std::make_shared<FGPropertyManager>();
     // FGTable expects <table> to be the child of another XML element, hence the
