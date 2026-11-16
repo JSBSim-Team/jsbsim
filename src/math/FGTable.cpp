@@ -38,6 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <assert.h>
+#include <charconv>
 #include <limits>
 #include <optional>
 
@@ -152,16 +153,13 @@ std::optional<unsigned int> ParseLookupAxis(const string& lookup_axis)
   if (lookup_axis == "table" || lookup_axis == "axis3")
     return 2u;
 
-  try {
-    if (lookup_axis.rfind("axis", 0) == 0) {
-      const string suffix = lookup_axis.substr(4);
-      const unsigned long axis = std::stoul(suffix);
-      if (axis >= 1ul)
-        return static_cast<unsigned int>(axis - 1ul);
-    }
-  } catch (std::exception& e) {
-    FGLogging err(LogLevel::ERROR);
-    err << e.what() << "\n";
+  if (lookup_axis.rfind("axis", 0) == 0) {
+    const string suffix = lookup_axis.substr(4);
+    unsigned int axis = 0u;
+    const auto result = std::from_chars(suffix.data(), suffix.data() + suffix.size(), axis);
+    if (result.ec == std::errc{} &&
+        result.ptr == suffix.data() + suffix.size() && axis >= 1u)
+      return axis - 1u;
   }
 
   return std::nullopt;
@@ -263,8 +261,7 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
   // is part of a higher-dimensional table, in which case its independentVar
   // property indexes will be set by a call from the owning table during creation
 
-  unsigned int declared_dimension = 0u;
-
+  const unsigned int declared_dimension = el->GetNumElements("independentVar");
   Element* axisElement = el->FindElement("independentVar");
   if (axisElement) {
 
@@ -296,6 +293,14 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
         throw err;
       }
 
+      // Check the axis bound before SetLookupProperty() resizes its storage.
+      if (*axis >= declared_dimension) {
+        XMLLogException err(axisElement);
+        err << "FGTable: lookup axis " << (*axis + 1u) << " exceeds the "
+            << declared_dimension << " <independentVar> elements declared\n";
+        throw err;
+      }
+
       if (HasLookupProperty(*axis)) {
         XMLLogException err(axisElement);
         err << "FGTable: duplicate lookup axis \"" << LookupAxisName(*axis) << "\"\n";
@@ -303,7 +308,6 @@ FGTable::FGTable(std::shared_ptr<FGPropertyManager> pm, Element* el,
       }
 
       SetLookupProperty(*axis, node);
-      declared_dimension = std::max(declared_dimension, *axis + 1u);
       axisElement = el->FindNextElement("independentVar");
     }
 
