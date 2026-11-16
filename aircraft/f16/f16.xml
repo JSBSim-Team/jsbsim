@@ -460,13 +460,13 @@
    </summer>
 
    <summer name="fcs/flaperon-summer">
-    <input>fcs/left-flaperon-norm</input>
+    <input>-fcs/left-flaperon-norm</input>
     <input>fcs/right-flaperon-norm</input>
    </summer>
 
    <pure_gain name="fcs/flaperon-mix-rad">
     <input>fcs/flaperon-summer</input>
-    <gain>1.4324</gain>
+    <gain>0.5</gain>
    </pure_gain>
 
    <aerosurface_scale name="fcs/left-aileron-control">
