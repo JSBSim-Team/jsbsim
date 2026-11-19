@@ -98,7 +98,7 @@ void FGOutputSocket::SetOutputName(const string& fname)
     port = fname.substr(slash_pos + 1, string::npos);
 
   // set the model name
-  Name = name + ":" + port + "/" + proto;
+  Name = name + ":" + proto + "/" + port;
 
   // set the socket params
   SockName = name;
