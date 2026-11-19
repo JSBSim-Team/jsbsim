@@ -228,6 +228,7 @@ public:
   ~FGLinearActuator();
 
   /// The execution method for this FCS component.
+  void SetTrimDeltaT(double step) override;
   bool Run(void) override;
         
 private:

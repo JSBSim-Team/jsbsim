@@ -61,7 +61,7 @@
 
         <summer name="ap/map-error">
             <input> systems/engine/target-mp-inhg </input> 
-            <input> -/engines/engine/mp-inhg </input>
+            <input> -propulsion/engine/map-inhg </input>
             <clipto>
                <min>-ap/max_MP </min>
                <max> ap/max_MP </max>

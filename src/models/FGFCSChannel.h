@@ -136,6 +136,11 @@ public:
         FCSComponents[i]->Run();
     }
   }
+  /// Apply the trim step to every component, including filter coefficients.
+  void SetTrimDeltaT(double step) {
+    for (auto component: FCSComponents)
+      component->SetTrimDeltaT(step);
+  }
   /// Get the channel rate
   int GetRate(void) const { return ExecRate; }
 

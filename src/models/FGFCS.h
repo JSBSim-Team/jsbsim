@@ -587,6 +587,7 @@ private:
   double TailhookPos, WingFoldPos;
   SystemType systype;
   int ChannelRate;
+  double activeTrimDeltaT = 0.0;
 
   typedef std::vector <FGFCSChannel*> Channels;
   Channels SystemChannels;

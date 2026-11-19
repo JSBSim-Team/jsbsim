@@ -135,6 +135,7 @@ public:
   /** This function processes the input.
       It calls private functions if needed to perform the hysteresis, lag,
       limiting, etc. functions. */
+  void SetTrimDeltaT(double step) override;
   bool Run (void) override;
   void ResetPastStates(void) override;
 

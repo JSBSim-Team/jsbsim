@@ -142,6 +142,14 @@ void FGActuator::ResetPastStates(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGActuator::SetTrimDeltaT(double step)
+{
+  FGFCSComponent::SetTrimDeltaT(step);
+  if (lag) InitializeLagCoefficients();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGActuator::Run(void )
 {
   Input = InputNodes[0]->getDoubleValue();

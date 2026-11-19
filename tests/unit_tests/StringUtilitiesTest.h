@@ -48,6 +48,13 @@ public:
     TS_ASSERT(is_number("1526"));
     TS_ASSERT(is_number(".01256"));
     TS_ASSERT(is_number("-1.0e+1"));
+    TS_ASSERT(is_number(" \t-1.25e+2\r\n"));
+    TS_ASSERT(is_number(" +.5 "));
+    TS_ASSERT(!is_number("fcs/throttle-cmd-norm"));
+    TS_ASSERT(!is_number(" \t-fcs/throttle-cmd-norm "));
+    TS_ASSERT(!is_number("nan"));
+    TS_ASSERT(!is_number("0x1"));
+    TS_ASSERT(!is_number("1e999"));
     TS_ASSERT(!is_number(empty));
     TS_ASSERT(!is_number("125x5#"));
     TS_ASSERT(!is_number("x"));
