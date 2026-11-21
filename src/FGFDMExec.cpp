@@ -147,6 +147,13 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root, std::shared_ptr<unsigned int> fdmc
   ta_mode     = 99;
   trim_completed = 0;
 
+  Bind();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::Bind(void)
+{
   Constructing = true;
   instance->Tie<FGFDMExec, int>("simulation/do_simple_trim", this, nullptr, &FGFDMExec::DoTrim);
   instance->Tie<FGFDMExec, int>("simulation/do_linearization", this, nullptr, &FGFDMExec::DoLinearization);
@@ -261,6 +268,7 @@ bool FGFDMExec::Allocate(void)
   IC = std::make_shared<FGInitialCondition>(this);
   IC->bind(instance.get());
 
+  modelLoadAttempted = false;
   modelLoaded = false;
 
   return result;
@@ -395,8 +403,12 @@ void FGFDMExec::InitializeModels(void)
 
 bool FGFDMExec::DeAllocate(void)
 {
-
+  // Untying reads the last value from each bound object. Do this while all
+  // models and initial conditions are still alive, before replacing them.
+  Unbind();
   Models.clear();
+  PropertyCatalog.clear();
+  modelLoadAttempted = false;
   modelLoaded = false;
   return modelLoaded;
 }
@@ -856,10 +868,14 @@ bool FGFDMExec::LoadModel(const string& model, bool addModelToPath)
   if (addModelToPath) FullAircraftPath.append(model);
   aircraftCfgFileName = FullAircraftPath/(model + ".xml");
 
-  if (modelLoaded) {
+  // A failed XML load may already have populated part of the model. Every
+  // subsequent attempt needs fresh models, not only a prior successful load.
+  if (modelLoadAttempted) {
     DeAllocate();
     Allocate();
+    Bind();
   }
+  modelLoadAttempted = true;
 
   int saved_debug_lvl = debug_lvl;
   FGXMLFileRead XMLFileRead;
