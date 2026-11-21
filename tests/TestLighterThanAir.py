@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>
 #
-from JSBSim_utils import JSBSimTestCase, RunTest, ExecuteUntil
+from JSBSim_utils import JSBSimTestCase, RunTest, ExecuteUntil, CopyAircraftDef
 
 import fpectl
 
@@ -39,5 +39,37 @@ class TestLighterThanAir(JSBSimTestCase):
 
         fpectl.turnoff_sigfpe()
 
+    def testAirCellWeighsTheAirItDisplaces(self):
+        # A cell of air must weigh what the atmosphere's density says it
+        # displaces, whatever its pressure and temperature.
+        script_path = self.sandbox.path_to_jsbsim_file(
+            "scripts", "weather-balloon.xml"
+        )
+        tree, aircraft_name, _ = CopyAircraftDef(script_path, self.sandbox)
+        tree.getroot().find("buoyant_forces/gas_cell").attrib["type"] = "AIR"
+        tree.write(self.sandbox("aircraft", aircraft_name, aircraft_name + ".xml"))
+
+        fdm = self.create_fdm()
+        fdm.set_aircraft_path("aircraft")
+        fdm.load_script(script_path)
+        fdm.run_ic()
+        fdm.run()
+
+        gas_weight = (
+            fdm["inertia/weight-lbs"]
+            - fdm["inertia/empty-weight-lbs"]
+            - fdm["inertia/pointmass-weight-lbs"]
+        )
+        gas_mass = gas_weight * fdm["inertia/mass-slugs"] / fdm["inertia/weight-lbs"]
+        density_ratio = (
+            fdm["buoyant_forces/gas-cell/pressure-psf"] / fdm["atmosphere/P-psf"]
+        ) * (fdm["atmosphere/T-R"] / fdm["buoyant_forces/gas-cell/temp-R"])
+        displaced_mass = (
+            fdm["buoyant_forces/gas-cell/volume-ft3"]
+            * fdm["atmosphere/rho-slugs_ft3"]
+            * density_ratio
+        )
+
+        self.assertAlmostEqual(gas_mass / displaced_mass, 1.0, delta=1e-4)
 
 RunTest(TestLighterThanAir)

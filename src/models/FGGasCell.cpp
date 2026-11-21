@@ -52,9 +52,9 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /* Constants. */
 const double FGGasCell::R = 3.4071;              // [lbf ft/(mol Rankine)]
-const double FGGasCell::M_air = 0.0019186;       // [slug/mol]
-const double FGGasCell::M_hydrogen = 0.00013841; // [slug/mol]
-const double FGGasCell::M_helium = 0.00027409;   // [slug/mol]
+const double FGGasCell::M_air = 0.0019847;       // [slug/mol], 28.9645 g/mol as in FGAtmosphere
+const double FGGasCell::M_hydrogen = 0.00013813; // [slug/mol], 2.01588 g/mol (NIST)
+const double FGGasCell::M_helium = 0.00027427;   // [slug/mol], 4.002602 g/mol (NIST)
 
 FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, unsigned int num,
                      const struct Inputs& input)
@@ -494,7 +494,7 @@ void FGGasCell::Debug(int from)
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 const double FGBallonet::R = 3.4071;              // [lbs ft/(mol Rankine)]
-const double FGBallonet::M_air = 0.0019186;       // [slug/mol]
+const double FGBallonet::M_air = 0.0019847;       // [slug/mol], 28.9645 g/mol as in FGAtmosphere
 const double FGBallonet::Cv_air = 5.0/2.0;        // [??]
 
 FGBallonet::FGBallonet(FGFDMExec* exec, Element* el, unsigned int num,
