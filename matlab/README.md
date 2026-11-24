@@ -657,6 +657,79 @@ and in Simulink you'll have the following outputs:
 
 So you just have to try it out and adapt this workflow to your needs.
 
+## Build instructions for Linux
+
+These instructions describe building the S-function from the JSBSim repository on Linux. The example was run with MATLAB R2026b on Ubuntu 24.04 using GCC.
+
+### Prerequisites
+
+Install CMake and a C++ compiler. On Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install cmake build-essential
+```
+
+In MATLAB, select the C++ compiler:
+
+```matlab
+mex -setup C++
+```
+
+### Build JSBSim
+
+From the repository root:
+
+```bash
+cmake -S . -B build
+cmake --build build -j"$(nproc)"
+```
+
+With this CMake build, the JSBSim static library is created at `build/src/libJSBSim.a`.
+
+### Stage the example data and I/O configuration
+
+The example needs JSBSim data files and its S-function I/O XML configuration in the runtime directory. From the repository root:
+
+```bash
+cp -rn aircraft engine scripts systems build/src/
+cp matlab/ex737cruise_io.xml build/src/
+```
+
+The `-n` option leaves already-staged folders in place. The I/O XML file is required: the S-function reads it to configure its Simulink input and output ports. Without it, the current S-function code may dereference a null XML document and crash MATLAB, because the C++ code does not check for nullptr.
+
+### Build the MEX file
+
+The repository’s Linux compile command may need adjustment for the CMake build and the C++ standard used by JSBSim. Edit `matlab/JSBSimSimulinkCompile.m` to use this Linux command:
+
+```matlab
+mex -v -R2018a CXXFLAGS='$CXXFLAGS -std=c++17' ./JSBSim_SFunction.cpp ./JSBSimInterface.cpp -I../src -L../build/src -lJSBSim
+```
+
+The paths are relative to the `matlab` directory. Run the script from MATLAB like this:
+
+```matlab
+cd('/path/to/jsbsim')
+run('matlab/JSBSimSimulinkCompile.m')
+```
+
+MATLAB’s `run` changes to the script’s directory while executing it, so the source paths in the command above start with `./`, not `./matlab/`.
+
+A successful build creates `matlab/JSBSim_SFunction.mexa64`. Copy it into the example runtime directory:
+
+```bash
+cp matlab/JSBSim_SFunction.mexa64 build/src/
+```
+
+### Run the example
+
+In MATLAB:
+
+```matlab
+cd('/path/to/jsbsim/build/src')
+TestJSBSim
+```
+
 ## License
 
 The JSBSim interface with MATLAB including the S-Function is open source and is licensed under the [BSD license](https://opensource.org/licenses/bsd-license.php). The license is included in the source code file [LICENSE.txt](https://github.com/JSBSim-Team/jsbsim/blob/master/matlab/LICENSE.txt).
