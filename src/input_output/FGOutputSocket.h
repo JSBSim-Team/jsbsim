@@ -76,7 +76,7 @@ public:
       This method is taken into account if it is called before
       FGFDMExec::RunIC() otherwise it is ignored until the next call to
       SetStartNewOutput().
-      @param name new name in the form "hostname:port/proto"
+      @param name new name in the form "hostname:proto/port"
                   hostname could be an ip, port a numerical value and
                   proto should be UDP or TCP (the default if omitted)
   */
