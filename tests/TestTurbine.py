@@ -35,11 +35,11 @@ def seek(x, target, accel, decel):
 
 class TestTurbine(JSBSimTestCase):
     def defaultSpoolUp(self, N2norm):
-        sigma = self.fdm['atmosphere/sigma']
         n = min(1.0, N2norm + 0.1)
-        return self.delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma))
+        return self.delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - self.sigma))
 
     def runScript(self, n1SpoolUp, n1SpoolDown, n2SpoolUp, n2SpoolDown):
+        previous = None
         while self.fdm.run():
             n1 = self.fdm['propulsion/engine/n1']
             n2 = self.fdm['propulsion/engine/n2']
@@ -50,20 +50,25 @@ class TestTurbine(JSBSimTestCase):
                 self.fdm['fcs/throttle-cmd-norm'] = 0.0
 
             if N2norm > 0.0:
+                # Predict N1 & N2 from the engine state at the previous time
+                # step. The engine has been updated with the atmosphere computed
+                # at the beginning of the current time step, so sigma must be
+                # read after the time step: the value read before it lags by
+                # one step, which matters when the altitude changes quickly.
+                self.n1, prevN2, prevN2norm, throttlePos = previous
+                self.sigma = self.fdm['atmosphere/sigma']
+                targetN1 = self.idleN1+throttlePos*self.N1_factor
+                targetN2 = self.idleN2+throttlePos*self.N2_factor
+                newN1 = seek(self.n1, targetN1, n1SpoolUp(prevN2norm),
+                             n1SpoolDown(prevN2norm))
+                newN2 = seek(prevN2, targetN2, n2SpoolUp(prevN2norm),
+                             n2SpoolDown(prevN2norm))
                 self.assertAlmostEqual(n1, newN1)
                 self.assertAlmostEqual(n2, newN2)
 
             if  n2 > 15.0:
-                sigma = self.fdm['atmosphere/sigma']
-                n = min(1.0, N2norm + 0.1)
-                spoolup = self.delay / (1 + 3 * (1-n)*(1-n)*(1-n) + (1 - sigma))
-                throttlePos = self.fdm['fcs/throttle-cmd-norm']
-                targetN1 = self.idleN1+throttlePos*self.N1_factor
-                targetN2 = self.idleN2+throttlePos*self.N2_factor
-                newN1 = seek(n1, targetN1, n1SpoolUp(N2norm),
-                             n1SpoolDown(N2norm))
-                newN2 = seek(n2, targetN2, n2SpoolUp(N2norm),
-                             n2SpoolDown(N2norm))
+                previous = (n1, n2, N2norm,
+                            self.fdm['fcs/throttle-cmd-norm'])
 
             if N2norm == 0.0 and self.fdm['fcs/throttle-cmd-norm'] == 0.0:
                 break
@@ -122,7 +127,7 @@ class TestTurbine(JSBSimTestCase):
         self.fdm.load_script(script_path)
         self.fdm.run_ic()
 
-        self.runScript(lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+        self.runScript(lambda n2Norm: self.n1*self.dt/20.0,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
                        self.defaultSpoolUp,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
@@ -139,7 +144,7 @@ class TestTurbine(JSBSimTestCase):
         self.fdm.run_ic()
 
         self.runScript(self.defaultSpoolUp,
-                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+                       lambda n2Norm: self.n1*self.dt/20.0,
                        self.defaultSpoolUp,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
 
@@ -156,7 +161,7 @@ class TestTurbine(JSBSimTestCase):
 
         self.runScript(self.defaultSpoolUp,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
-                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0,
+                       lambda n2Norm: self.n1*self.dt/20.0,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*3.0)
 
         del self.fdm
@@ -173,6 +178,6 @@ class TestTurbine(JSBSimTestCase):
         self.runScript(self.defaultSpoolUp,
                        lambda n2Norm: self.defaultSpoolUp(n2Norm)*2.4,
                        self.defaultSpoolUp,
-                       lambda n2Norm: self.fdm['propulsion/engine/n1']*self.dt/20.0)
+                       lambda n2Norm: self.n1*self.dt/20.0)
 
 RunTest(TestTurbine)
