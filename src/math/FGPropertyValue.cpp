@@ -51,10 +51,8 @@ FGPropertyValue::FGPropertyValue(const std::string& propName,
     Sign = -1.0;
   }
 
-  if (PropertyManager->HasNode(PropertyName)) {
-    PropertyNode = PropertyManager->GetNode(PropertyName);
-
-    assert(PropertyNode);
+  PropertyNode = PropertyManager->GetNode(PropertyName);
+  if (PropertyNode) {
     XML_def = nullptr; // Now that the property is bound, we no longer need that.
   }
 }
@@ -88,7 +86,9 @@ SGPropertyNode* FGPropertyValue::GetNode(void) const
 
 double FGPropertyValue::GetValue(void) const
 {
-  return GetNode()->getDoubleValue()*Sign;
+  SGPropertyNode* node = PropertyNode;
+  if (!node) node = GetNode();
+  return node->getDoubleValue()*Sign;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

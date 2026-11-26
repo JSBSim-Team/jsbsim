@@ -151,6 +151,14 @@ void FGFilter::CalculateDynamicFilters(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFilter::SetTrimDeltaT(double step)
+{
+  FGFCSComponent::SetTrimDeltaT(step);
+  CalculateDynamicFilters();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGFilter::Run(void)
 {
   if (Initialize) {

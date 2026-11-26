@@ -4,8 +4,6 @@
 
 <system name="Propulsion">
     
-    <property>systems/engine/mp-inhg</property>
-    <property>/engines/engine[0]/mp-inhg</property>
     <property> /engines/engine/oil-temperature-degf </property>
     <property>/engines/engine/cht-degf</property>
     <!--<property>atmosphere/density-altitude</property>-->
@@ -25,7 +23,9 @@
         <scheduled_gain name="systems/engine/target-mp-inhg">
             <input>propulsion/engine/set-running</input>
             <table>
-                <independentVar>/controls/engines/engine/throttle</independentVar>
+                <!-- Use the pilot/trim command to request manifold pressure;
+                     the automatic controller still drives the butterfly. -->
+                <independentVar>fcs/throttle-cmd-norm</independentVar>
                 <tableData>
                       0.0    10.95
                       0.97   66.99
@@ -91,7 +91,7 @@
           <function>
                 <table>
                     <independentVar lookup="row">atmosphere/density-altitude</independentVar>
-                    <independentVar lookup="column">/engines/engine/mp-inhg</independentVar>
+                    <independentVar lookup="column">propulsion/engine/map-inhg</independentVar>
                     <independentVar lookup="table">propulsion/engine/boost-speed</independentVar>
                     <tableData breakPoint="0">
                                 36      46      61      67      75
@@ -125,7 +125,7 @@
         <fcs_function name="systems/engine/VE-MP-curve">
           <function>
                 <table>
-                    <independentVar lookup="row">/engines/engine/mp-inhg</independentVar>
+                    <independentVar lookup="row">propulsion/engine/map-inhg</independentVar>
                     <tableData>
                             30   0.75    
                             36   0.69 
@@ -312,4 +312,3 @@
 
     </channel>   
 </system>
-
