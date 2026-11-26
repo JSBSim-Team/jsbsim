@@ -1,12 +1,9 @@
 # This file is part of CMake-codecov.
 #
-# Copyright (c)
-#   2015-2020 RWTH Aachen University, Federal Republic of Germany
+# SPDX-FileCopyrightText: RWTH Aachen University, Federal Republic of Germany
+# SPDX-FileContributor: Alexander Haase, alexander.haase@rwth-aachen.de
 #
-# See the LICENSE file in the package base directory for details
-#
-# Written by Alexander Haase, alexander.haase@rwth-aachen.de
-#
+# SPDX-License-Identifier: BSD-3-Clause
 
 
 # Add an option to choose, if coverage should be enabled or not. If enabled
@@ -117,12 +114,14 @@ foreach (LANG ${ENABLED_LANGUAGES})
 				endif ()
 			endif()
 
+			unset(CMAKE_REQUIRED_FLAGS)
+
 			if (COVERAGE_FLAG_DETECTED)
 				set(COVERAGE_${COMPILER}_FLAGS "${FLAG}"
 					CACHE STRING "${COMPILER} flags for code coverage.")
 				mark_as_advanced(COVERAGE_${COMPILER}_FLAGS)
 				break()
-			else ()
+			elseif (NOT CMAKE_REQUIRED_QUIET)
 				message(WARNING "Code coverage is not available for ${COMPILER}"
 				        " compiler. Targets using this compiler will be "
 				        "compiled without it.")

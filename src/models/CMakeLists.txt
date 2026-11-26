@@ -47,8 +47,8 @@ set(HEADERS FGAerodynamics.h
 
 add_library(Models OBJECT ${SOURCES})
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(Models)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models COMPONENT devel)

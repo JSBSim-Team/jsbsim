@@ -1,5 +1,6 @@
 # Declare the tests to CTest so that they can be executed by 'make test'
 set(PYTHON_TESTS ResetOutputFiles
+                 TestOutputSocketName
                  TestICOverride
                  RunCheckCases
                  TestModelLoading

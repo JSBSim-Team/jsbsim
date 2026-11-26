@@ -39,9 +39,9 @@ set(HEADERS FGDeadBand.h
 
 add_library(FlightControl OBJECT ${SOURCES})
 
-if(CXXTEST_FOUND)
+if(LCOV_FOUND)
     add_coverage(FlightControl)
-endif(CXXTEST_FOUND)
+endif()
 
 install(FILES ${HEADERS} DESTINATION include/JSBSim/models/flight_control
                          COMPONENT devel)

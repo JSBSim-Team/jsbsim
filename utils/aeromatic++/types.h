@@ -78,7 +78,7 @@
 #define FEET_TO_METER		(1.0/METER_TO_FEET)
 
 #define M2_TO_FT2		10.7639104f
-#define FT2_TO_M2		(1.0/M@_TO_FT2)
+#define FT2_TO_M2		(1.0/M2_TO_FT2)
 
 // one horsepower equals 745.69987 Watts 
 #define KW_TO_HP		1.341f
