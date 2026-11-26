@@ -1079,7 +1079,7 @@
     <product>
      <property>aero/qbar-psf</property>
      <property>metrics/Sw-sqft</property>
-     <property>fcs/flaperon-mix-rad</property>
+     <abs><property>fcs/flaperon-mix-rad</property></abs>
      <value>0.0800</value>
     </product>
    </function>
