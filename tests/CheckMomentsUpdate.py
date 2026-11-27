@@ -22,7 +22,7 @@
 import pandas as pd
 from JSBSim_utils import JSBSimTestCase, CreateFDM, ExecuteUntil, RunTest
 
-mol2lbs = 0.00013841 * 32.174049
+mol2lbs = 0.00013813 * 32.174049
 
 
 class CheckMomentsUpdate(JSBSimTestCase):
