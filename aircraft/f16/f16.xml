@@ -1170,6 +1170,37 @@
        </table>
     </product>
    </function>
+   <function name="aero/coefficient/CDbeta">
+    <description>Drag_due_to_sideslip</description>
+    <!-- NASA TP-1538 (1979), table III, delta_h = 0 (low-speed wind-tunnel data, M 0.1-0.2, no compressibility):
+         wind-axis drag change from beta = 0, from the axial force C_X and the side force C_Y projected on the
+         relative wind, averaged over +/-beta, negative values set to 0. The C_Z term is left out entirely
+         (its change with beta and its cos(beta) projection), since the LIFT axis has no beta term.
+         TP-1538 has no C_X increments for aileron or rudder. -->
+    <product>
+     <property>aero/qbar-psf</property>
+     <property>metrics/Sw-sqft</property>
+       <table>
+        <independentVar lookup="row">aero/alpha-rad</independentVar>
+        <independentVar lookup="column">aero/mag-beta-rad</independentVar>
+        <tableData>
+                    0.0000   0.0349   0.0698   0.1047   0.1396   0.1745   0.2618   0.3491   0.4363   0.5236
+          -0.1745   0.0000   0.0000   0.0000   0.0005   0.0073   0.0171   0.0538   0.0966   0.1460   0.1951
+          -0.0873   0.0000   0.0007   0.0036   0.0087   0.0163   0.0259   0.0603   0.1131   0.1816   0.2513
+           0.0000   0.0000   0.0008   0.0038   0.0098   0.0186   0.0306   0.0718   0.1340   0.2094   0.2966
+           0.0873   0.0000   0.0018   0.0047   0.0107   0.0203   0.0330   0.0752   0.1413   0.2263   0.3213
+           0.1745   0.0000   0.0010   0.0040   0.0112   0.0216   0.0358   0.0828   0.1525   0.2295   0.3333
+           0.2618   0.0000   0.0008   0.0049   0.0130   0.0246   0.0396   0.0894   0.1510   0.2310   0.3379
+           0.3491   0.0000   0.0005   0.0027   0.0093   0.0205   0.0335   0.0773   0.1281   0.2104   0.3125
+           0.4363   0.0000   0.0000   0.0012   0.0056   0.0154   0.0267   0.0610   0.1066   0.1849   0.2703
+           0.5236   0.0000   0.0011   0.0047   0.0112   0.0196   0.0307   0.0606   0.1191   0.1823   0.2575
+           0.6109   0.0000   0.0008   0.0040   0.0118   0.0226   0.0341   0.0717   0.1154   0.1830   0.2328
+           0.6981   0.0000   0.0004   0.0056   0.0118   0.0218   0.0305   0.0746   0.1148   0.1561   0.2124
+           0.7854   0.0000   0.0024   0.0077   0.0141   0.0206   0.0299   0.0516   0.0508   0.0824   0.1309
+        </tableData>
+       </table>
+    </product>
+   </function>
   </axis>
 
   <axis name="SIDE">
