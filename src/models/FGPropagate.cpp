@@ -58,6 +58,8 @@ COMMENTS, REFERENCES,  and NOTES
 [8] Phillips W.F, Hailey C.E and Gebert G.A, "Review of Attitude Representations
     Used for Aircraft Kinematics", Journal Of Aircraft Vol. 38, No. 4,
     July-August 2001
+[9] Ernst Hairer, Christian Lubich and Gerhard Wanner, "Geometric Numerical
+    Integration", Second edition (2006), Springer
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -88,7 +90,7 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex)
   /// These define the indices use to select the various integrators.
   // eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3, eAdamsBashforth4};
 
-  integrator_rotational_rate = eRectEuler;
+  integrator_rotational_rate = eImplicitMidpoint;
   integrator_translational_rate = eAdamsBashforth2;
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
@@ -126,7 +128,7 @@ bool FGPropagate::InitModel(void)
   VState.dqInertialVelocity.resize(5, FGColumnVector3(0.0,0.0,0.0));
   VState.dqQtrndot.resize(5, FGColumnVector3(0.0,0.0,0.0));
 
-  integrator_rotational_rate = eRectEuler;
+  integrator_rotational_rate = eImplicitMidpoint;
   integrator_translational_rate = eAdamsBashforth2;
   integrator_rotational_position = eRectEuler;
   integrator_translational_position = eAdamsBashforth3;
@@ -224,7 +226,10 @@ bool FGPropagate::Run(bool Holding)
 
   if (!FDMExec->IntegrationSuspended()) {
     Integrate(VState.qAttitudeECI,      VState.vQtrndot,      VState.dqQtrndot,          dt, integrator_rotational_position);
-    Integrate(VState.vPQRi,             in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
+    if (integrator_rotational_rate == eImplicitMidpoint)
+      IntegrateMidpoint(dt);
+    else
+      Integrate(VState.vPQRi,           in.vPQRidot,          VState.dqPQRidot,          dt, integrator_rotational_rate);
     Integrate(VState.vInertialPosition, VState.vInertialVelocity, VState.dqInertialVelocity, dt, integrator_translational_position);
     Integrate(VState.vInertialVelocity, in.vUVWidot,          VState.dqUVWidot,          dt, integrator_translational_rate);
   }
@@ -331,6 +336,100 @@ void FGPropagate::CalculateUVW(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// The implicit midpoint step needs the inertia, so only the body rates take it.
+[[noreturn]] static void ThrowMidpointMisuse(void)
+{
+  LogException err;
+  err << "Can only use the implicit midpoint method for the rotational rate!" << endl;
+  throw err;
+}
+
+// Over 300 random bodies, Newton took at most 7 iterations for a part turning
+// 1 rad and failed for some at 2.25 rad.
+constexpr double MaxTurnPerPartRad = 1.0;
+constexpr int MaxNewtonIterations = 20;
+// 1000 rad a step is 240000 rad/s at 240 Hz, beyond any rigid body: faster
+// rates are diverging.
+constexpr double MaxTurnPerStepRad = 1000.0;
+// Newton converges quadratically: a step this small leaves an error far below
+// double precision.
+constexpr double NewtonTolerance = 1E-12;
+// Chosen: m x (J*m) rounds to about 2E-16 times the inertia ratio of the body in
+// a part turning 1 rad, so a correction stalled by rounding is taken up to
+// ratios of 5E7.
+constexpr double RoundingTolerance = 1E-8;
+
+static FGMatrix33 Skew(const FGColumnVector3& v)
+{ return FGMatrix33(0.0, -v(3), v(2), v(3), 0.0, -v(1), -v(2), v(1), 0.0); }
+
+// The rates after h from J*(w2-w1) = h*(M - m x (J*m)), m = (w1+w2)/2, solved
+// by Newton in parts that each turn the body at most MaxTurnPerPartRad at the
+// spin given.
+static FGColumnVector3 MidpointRates(const FGMatrix33& J, const FGColumnVector3& M,
+                                     FGColumnVector3 w, double h, double spin)
+{
+  const int parts = max(1, static_cast<int>(ceil(h * spin / MaxTurnPerPartRad)));
+  const double dt = h / parts;
+  for (int part = 0; part < parts; ++part) {
+    FGColumnVector3 w2 = w;
+    double lastSize = 0.0;
+    for (int iteration = 0;; ++iteration) {
+      const FGColumnVector3 m = 0.5 * (w + w2);
+      const FGColumnVector3 Jm = J * m;
+      const FGMatrix33 Jacobian = J + 0.5 * dt * (Skew(m) * J - Skew(Jm));
+      if (iteration == MaxNewtonIterations || !Jacobian.Invertible()) {
+        LogException err;
+        err << "FGPropagate: no midpoint step for the body rates at "
+            << w.Magnitude() << " rad/s: "
+            << (Jacobian.Invertible() ? "Newton did not converge" : "singular Jacobian")
+            << endl;
+        throw err;
+      }
+      const FGColumnVector3 step = Jacobian.Inverse() * (J * (w2 - w) + dt * (m * Jm - M));
+      w2 -= step;
+      // Rounding scales with the larger rates, wherever the moment takes them.
+      const double scale = max(w.Magnitude(), w2.Magnitude());
+      const double size = step.Magnitude();
+      // A correction that stops shrinking has met the rounding of m x (J*m).
+      if (size <= NewtonTolerance * scale
+          || (iteration > 0 && size >= lastSize && size <= RoundingTolerance * scale))
+        break;
+      lastSize = size;
+    }
+    w = w2;
+  }
+  return w;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// The implicit midpoint rule keeps the kinetic energy and |J*w| of a free body
+// whatever the step (see ref [9], section IV.2): explicit Euler adds energy to a
+// tumbling body. The moment stays explicit.
+
+void FGPropagate::IntegrateMidpoint(double dt)
+{
+  VState.dqPQRidot.push_front(in.vPQRidot);
+  VState.dqPQRidot.pop_back();
+
+  const FGColumnVector3 w = VState.vPQRi;
+  // The moment the derivative was computed from, friction included. Not
+  // FGAccelerations::GetMoments(): a hold-down overrides the derivative only.
+  const FGColumnVector3 Moment = in.J * in.vPQRidot + w * (in.J * w);
+  const double spin = w.Magnitude();
+  // A strike can spin a resting body up within the step.
+  const double pushedSpin = (w + dt * (in.Jinv * Moment)).Magnitude();
+  // Diverging or NaN rates or moments fail the test and are stepped by Euler,
+  // as is a body FGMassBalance has not run for yet (a run before RunIC, a child
+  // FDM): its inertia is still zero.
+  if (in.J.Invertible() && dt * spin <= MaxTurnPerStepRad
+      && dt * pushedSpin <= MaxTurnPerStepRad)
+    VState.vPQRi = MidpointRates(in.J, Moment, w, dt, max(spin, pushedSpin));
+  else
+    VState.vPQRi += dt * in.vPQRidot;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::Integrate( FGColumnVector3& Integrand,
                              FGColumnVector3& Val,
                              deque <FGColumnVector3>& ValDot,
@@ -363,6 +462,8 @@ void FGPropagate::Integrate( FGColumnVector3& Integrand,
       err << "Can only use Buss (1 & 2) or local linearization integration methods in for rotational position!";
       throw err;
     }
+  case eImplicitMidpoint:
+    ThrowMidpointMisuse();
   default:
     break;
   }
@@ -466,6 +567,8 @@ void FGPropagate::Integrate( FGQuaternion& Integrand,
     break; // The quaternion q is not normal so the normalization needs to be done.
   case eNone: // do nothing, freeze rotational rate
     break;
+  case eImplicitMidpoint:
+    ThrowMidpointMisuse();
   default:
     break;
   }
