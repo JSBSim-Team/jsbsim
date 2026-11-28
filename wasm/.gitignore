@@ -1,0 +1,14 @@
+node_modules/
+build/
+dist/
+generated/
+src/generated/
+*.log
+*.tsbuildinfo
+.DS_Store
+!build-toolchain.lock.json
+!src/build-identity.ts
+!scripts/build-system/
+!scripts/build-system/**
+!scripts/build*.mjs
+!scripts/build-wasm.sh

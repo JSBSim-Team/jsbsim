@@ -17,6 +17,11 @@ set(LIBRARY_SOVERSION ${PROJECT_VERSION_MAJOR})
 
 option(SYSTEM_EXPAT "Set to ON to build JSBSim using the system libExpat" OFF)
 
+option(BUILD_WASM_MODULE "Set to ON to build the JavaScript/WebAssembly module with Emscripten" OFF)
+if(BUILD_WASM_MODULE AND NOT EMSCRIPTEN)
+  message(FATAL_ERROR "BUILD_WASM_MODULE requires the Emscripten toolchain. See wasm/README.md for the package build command.")
+endif()
+
 function(get_tail INPUT_STRING OUTPUT_STRING SEPARATOR)
   string(REPLACE ${SEPARATOR} " " TEMP_LIST ${INPUT_STRING})
   separate_arguments(TEMP_LIST)
@@ -40,7 +45,16 @@ if(CXXTEST_FOUND)
 endif(CXXTEST_FOUND)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if(BUILD_WASM_MODULE)
+  # Engine object libraries must retain their C++ catch blocks as well as the
+  # bindings. Enabling exceptions only at the final link cannot restore them.
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fexceptions>)
+endif()
 add_subdirectory(src)
+
+if(BUILD_WASM_MODULE)
+  add_subdirectory(wasm)
+endif()
 
 ################################################################################
 # Documentation                                                                #

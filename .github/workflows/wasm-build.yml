@@ -1,0 +1,97 @@
+name: JavaScript and WebAssembly package
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+    paths:
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'wasm/**'
+      - 'aircraft/**'
+      - 'engine/**'
+      - 'systems/**'
+      - 'scripts/**'
+      - '.github/workflows/wasm-build.yml'
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - 'wasm/**'
+      - 'aircraft/**'
+      - 'engine/**'
+      - 'systems/**'
+      - 'scripts/**'
+      - '.github/workflows/wasm-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: Native build with WebAssembly disabled by default
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # No Node.js, npm or Emscripten setup belongs in the native build.
+      - name: Configure native JSBSim
+        run: cmake -S . -B build/native -DBUILD_DOCS=OFF -DBUILD_PYTHON_MODULE=OFF
+      - name: Check default component isolation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          cache = Path('build/native/CMakeCache.txt').read_text()
+          assert 'BUILD_WASM_MODULE:BOOL=OFF' in cache
+          assert not Path('build/native/wasm').exists()
+          PY
+      - name: Reject a native compiler with WebAssembly enabled
+        run: |
+          if cmake -S . -B build/invalid-wasm -DBUILD_WASM_MODULE=ON > build/invalid-wasm.log 2>&1; then
+            cat build/invalid-wasm.log
+            exit 1
+          fi
+          grep -q "requires the Emscripten toolchain" build/invalid-wasm.log
+      - name: Build and start native JSBSim
+        run: |
+          cmake --build build/native --target JSBSim --parallel 2
+          build/native/src/JSBSim --version
+
+  wasm:
+    name: Build, test and pack the in-tree SDK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wasm
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26.8.2
+          cache: npm
+          cache-dependency-path: wasm/package-lock.json
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.9
+      - name: Install pinned packaging tools
+        run: |
+          npm install --global npm@11.19.1
+          python -m pip install cmake==4.4.3
+      - run: npm ci
+      - name: Verify source and build contracts
+        run: npm run test:source
+      - name: Build and exercise the captured repository
+        run: npm run build -- --allow-network
+      - name: Install the headless browser
+        run: npx playwright install --with-deps --only-shell --no-remove chromium
+      - name: Verify browser persistence and the built package
+        run: npm run test:browser
+      - name: Pack the checked package without publishing
+        run: npm run pack:build -- --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jsbsim-wasm-package
+          path: |
+            wasm/build/artifacts/
+            wasm/build/packages/
+          if-no-files-found: error

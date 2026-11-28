@@ -4,6 +4,7 @@ set(PYTHON_TESTS ResetOutputFiles
                  TestICOverride
                  RunCheckCases
                  TestModelLoading
+                 TestModelReload
                  TestActuator
                  TestGustReset
                  TestPointMassInertia
