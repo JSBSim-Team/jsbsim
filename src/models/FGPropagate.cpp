@@ -290,7 +290,6 @@ void FGPropagate::SetHoldDown(bool hd)
     VState.vPQR.InitMatrix();
     VState.vPQRi = Ti2b * in.vOmegaPlanet;
     CalculateQuatdot();
-    InitializeDerivatives();
   }
 }
 

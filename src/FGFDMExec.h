@@ -609,6 +609,10 @@ public:
       @param FGIC The initial conditions that will be passed to the simulation. */
   void Initialize(const FGInitialCondition* FGIC);
 
+  /** Treats the current conditions as already established, avoiding a
+      spurious transient when integration starts or resumes. */
+  void InitializeSteadyState(void);
+
   /** Sets the property forces/hold-down. This allows to do hard 'hold-down'
       such as for rockets on a launch pad with engines ignited.
       @param hd enables the 'hold-down' function if non-zero

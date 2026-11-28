@@ -631,6 +631,14 @@ void FGFDMExec::LoadModelConstants(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::InitializeSteadyState(void)
+{
+  LoadInputs(ePropagate);
+  Propagate->InitializeDerivatives();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // This call will cause the sim time to reset to 0.0
 
 bool FGFDMExec::RunIC(void)
@@ -642,7 +650,7 @@ bool FGFDMExec::RunIC(void)
   Models[eOutput]->InitModel();
 
   Run();
-  Propagate->InitializeDerivatives();
+  InitializeSteadyState();
   ResumeIntegration(); // Restores the integration rate to what it was.
 
   if (debug_lvl > 0) {
@@ -707,11 +715,8 @@ void FGFDMExec::SetHoldDown(bool hd)
 {
   HoldDown = hd;
   Accelerations->SetHoldDown(hd);
-  if (hd) {
-    Propagate->in.vPQRidot = Accelerations->GetPQRidot();
-    Propagate->in.vUVWidot = Accelerations->GetUVWidot();
-  }
   Propagate->SetHoldDown(hd);
+  if (hd) InitializeSteadyState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

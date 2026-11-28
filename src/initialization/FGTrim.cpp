@@ -354,7 +354,7 @@ bool FGTrim::DoTrim(void) {
     }
   }
 
-  fdmex->GetPropagate()->InitializeDerivatives();
+  fdmex->InitializeSteadyState();
   fdmex->ResumeIntegration();
   fdmex->SetTrimStatus(false);
 
