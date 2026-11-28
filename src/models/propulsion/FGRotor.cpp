@@ -43,6 +43,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <limits>
+
 #include "FGRotor.h"
 #include "models/FGMassBalance.h"
 #include "models/FGPropulsion.h" // to get the GearRatio from a linked rotor
@@ -433,8 +435,14 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
                                     double flow_scale)
 {
 
+  // Doublings that take a step from the smallest double to overflow: a cap
+  // that keeps the search below finite if NaN compares true (fast math).
+  const int max_doublings = std::numeric_limits<double>::max_exponent
+                          - std::numeric_limits<double>::min_exponent
+                          + std::numeric_limits<double>::digits;
+
   double ct_over_sigma = 0.0;
-  double c0, ct_l, ct_t0, ct_t1;
+  double ct_l, ct_t0, ct_t1;
   double mu2;
 
   mu = Uw/(Omega*Radius); // /SH79/ eqn(24)
@@ -444,20 +452,56 @@ void FGRotor::calc_flow_and_thrust( double theta_0, double Uw, double Ww,
   ct_t0 = (1.0/3.0*B[3] + 1.0/2.0 * TipLossB*mu2 - 4.0/(9.0*M_PI) * mu*mu2 ) * theta_0;
   ct_t1 = (1.0/4.0*B[4] + 1.0/4.0 * B[2]*mu2) * BladeTwist;
 
-  ct_l  = (1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda; // first time
+  // inflow ratio of the hub velocity alone, positive up through the disc
+  const double lambda_w = Ww/(Omega*Radius);
 
-  c0 = (LiftCurveSlope/2.0)*(ct_l + ct_t0 + ct_t1) * Solidity;
-  c0 = c0 / ( 2.0 * sqrt( sqr(mu) + sqr(lambda) ) + 1e-15);
+  // the inflow that momentum theory gives for the thrust at a given inflow
+  auto c0 = [&](double nu_try) {
+    double lambda_try = lambda_w - nu_try; // /SH79/ eqn(25)
+    double ct = (LiftCurveSlope/2.0)*((1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda_try
+                                      + ct_t0 + ct_t1) * Solidity;
+    return flow_scale * ct / ( 2.0 * sqrt( mu2 + sqr(lambda_try) ) + 1e-15);
+  };
 
   // replacement for /SH79/ eqn(26).
-  // ref: dnu/dt = 1/tau ( Ct / (2*sqrt(mu^2+lambda^2))  -  nu )
-  // taking mu and lambda constant, this integrates to
+  // ref: dnu/dt = 1/tau ( flow_scale * Ct / (2*sqrt(mu^2+lambda^2))  -  nu )
+  // taking c0 constant over the step, this integrates to
+  //   nu_new = (nu - c0) * exp(-dt/tau) + c0
+  // with c0 taken at nu_new. Taken at the old nu, c0 grows without bound as mu
+  // and lambda approach zero near zero thrust, and nu flips sign every step.
 
-  nu  = flow_scale * ((nu - c0) * exp(-dt/InflowLag) + c0);
+  const double decay = exp(-dt/InflowLag);
+  auto residual = [&](double nu_new) {
+    double c = c0(nu_new);
+    return nu_new - ((nu - c) * decay + c);
+  };
+
+  // Bracket nu_new between nu and the explicit step, then bisect. A step across
+  // the pole of c0 (lambda = 0) is cut there if the root lies before it, so the
+  // inflow does not leap past its steady value onto the other branch; where c0
+  // grows toward the pole the root lies past the step, which is then doubled.
+  double c_old = c0(nu);
+  double lo = nu;
+  double hi = (nu - c_old) * decay + c_old;
+  const double step = hi - lo;
+  if (step != 0.0) {
+    if ((lambda_w - nu) * (lambda_w - hi) < 0.0 && residual(lambda_w) * step > 0.0)
+      hi = lambda_w;
+    for (int i = 0; i < max_doublings && residual(hi) * step <= 0.0; i++) {
+      lo = hi;
+      hi = nu + 2.0 * (hi - nu);
+    }
+    for (int i = 0; i < std::numeric_limits<double>::digits; i++) {
+      double mid = 0.5 * (lo + hi);
+      if (residual(mid) * step > 0.0) hi = mid;
+      else lo = mid;
+    }
+    nu = 0.5 * (lo + hi);
+  }
 
   // now from nu to lambda, C_T, and Thrust
 
-  lambda = Ww/(Omega*Radius) - nu; // /SH79/ eqn(25)
+  lambda = lambda_w - nu; // /SH79/ eqn(25)
 
   ct_l  = (1.0/2.0*B[2] + 1.0/4.0 * mu2) * lambda;
 
